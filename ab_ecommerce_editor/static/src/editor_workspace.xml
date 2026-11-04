@@ -1,0 +1,228 @@
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_editor.Workspace">
+        <section t-ref="root" class="ab_editor" t-att-dir="interfaceDirection" t-att-class="(state.view === 'editor' ? 'ab_editor--editing' : 'ab_editor--library') + (state.workspaceOpen ? ' ab_editor--open' : '') + (state.darkMode ? ' ab_editor--dark' : '') + (state.navigating ? ' is-navigating' : '')" t-att-aria-busy="state.navigating" t-on-click="onWorkspaceClick">
+            <div t-if="!state.ready" class="ab_editor__loading" role="status"><span class="ab_editor__loading-mark"/>Loading editor...</div>
+            <t t-else="">
+                <header class="ab_editor__topbar">
+                    <button type="button" class="ab_editor__brand" t-att-aria-label="workspaceToggleLabel" t-att-title="workspaceToggleLabel" t-att-aria-pressed="state.workspaceOpen" t-on-click="toggleWorkspace">
+                        <span class="ab_editor__brand-mark" aria-hidden="true"><i class="fa fa-magic"/></span>
+                        <div><strong>Abdin Studio</strong><small>eCommerce content editor</small></div>
+                        <i t-att-class="state.workspaceOpen ? 'fa fa-compress ab_editor__workspace-indicator' : 'fa fa-expand ab_editor__workspace-indicator'" aria-hidden="true"/>
+                    </button>
+                    <div t-if="state.view === 'editor'" class="ab_editor__layout-controls" role="group" aria-label="Editor panels">
+                        <button type="button" class="ab_editor__layout-toggle" t-att-class="state.toolsOpen ? 'is-active' : ''" t-att-title="toolsToggleLabel" t-att-aria-label="toolsToggleLabel" t-att-aria-pressed="state.toolsOpen" aria-controls="ab-editor-tools" t-on-click="() => this.togglePanel('tools')"><span class="ab_editor__layout-icon ab_editor__layout-icon--start" aria-hidden="true"/></button>
+                        <button type="button" class="ab_editor__layout-toggle" t-att-class="state.layersOpen ? 'is-active' : ''" t-att-title="layersToggleLabel" t-att-aria-label="layersToggleLabel" t-att-aria-pressed="state.layersOpen" aria-controls="ab-editor-trash" t-on-click="() => this.togglePanel('layers')"><span class="ab_editor__layout-icon ab_editor__layout-icon--bottom" aria-hidden="true"/></button>
+                        <button type="button" class="ab_editor__layout-toggle" t-att-class="state.inspectorOpen ? 'is-active' : ''" t-att-title="inspectorToggleLabel" t-att-aria-label="inspectorToggleLabel" t-att-aria-pressed="state.inspectorOpen" aria-controls="ab-editor-inspector" t-on-click="() => this.togglePanel('inspector')"><span class="ab_editor__layout-icon ab_editor__layout-icon--end" aria-hidden="true"/></button>
+                    </div>
+                    <button type="button" class="ab_editor__theme-toggle" t-att-title="themeToggleLabel" t-att-aria-label="themeToggleLabel" t-att-aria-pressed="state.darkMode" t-on-click="toggleTheme"><i t-att-class="state.darkMode ? 'fa fa-sun-o' : 'fa fa-moon-o'" aria-hidden="true"/></button>
+                    <label t-if="state.view === 'library' &amp;&amp; state.websites.length > 1" class="ab_editor__site-picker">Website<select t-att-value="state.websiteId" t-on-change="(ev) => this.state.websiteId = Number(ev.target.value)"><option t-foreach="state.websites" t-as="website" t-key="website.id" t-att-value="website.id" t-esc="website.name"/></select></label>
+                    <div class="ab_editor__top-actions" t-if="state.view === 'editor'">
+                        <span class="ab_editor__state" t-att-class="'ab_editor__state--' + state.draft.state" t-esc="stateLabel(state.draft.state)"/>
+                        <span t-if="state.dirty" class="ab_editor__unsaved">Unsaved changes</span>
+                        <button class="ab_editor__icon-button" type="button" title="Undo" aria-label="Undo" t-att-disabled="!state.history.length" t-on-click="undo"><i class="fa fa-undo"/></button>
+                        <button class="ab_editor__icon-button" type="button" title="Redo" aria-label="Redo" t-att-disabled="!state.future.length" t-on-click="redo"><i class="fa fa-repeat"/></button>
+                        <button class="ab_editor__button ab_editor__button--quiet" type="button" t-if="!state.templateId" t-att-disabled="state.dirty" title="Save the draft before opening the storefront preview" t-on-click="previewStorefront"><i class="fa fa-eye" aria-hidden="true"/>Storefront preview</button>
+                        <button class="ab_editor__button ab_editor__button--quiet" type="button" t-if="!state.templateId" t-att-disabled="!liveUrl" t-on-click="openLive"><i class="fa fa-external-link" aria-hidden="true"/>Open live page</button>
+                        <div class="ab_editor__draft-actions">
+                            <button class="ab_editor__button ab_editor__button--primary" type="button" t-att-disabled="!state.dirty || isLocked" t-on-click="saveDraft"><i class="fa fa-floppy-o" aria-hidden="true"/>Save current changes</button>
+                            <button class="ab_editor__button ab_editor__button--quiet ab_editor__top-back" type="button" t-on-click="backToLibrary"><i class="fa fa-arrow-left" aria-hidden="true"/>Back</button>
+                        </div>
+                    </div>
+                </header>
+
+                <div t-if="state.view === 'library'" class="ab_editor__library" t-key="'library'">
+                    <div class="ab_editor__library-hero">
+                        <div class="ab_editor__hero-copy">
+                            <span class="ab_editor__overline">CONTENT WORKSPACE</span>
+                            <h1>Build something brilliant.</h1>
+                            <p>Create pages and articles, preview every change, then publish a version when it is ready.</p>
+                            <div class="ab_editor__hero-actions">
+                                <button class="ab_editor__button ab_editor__button--primary" type="button" t-on-click="() => this.createDocument('page')"><i class="fa fa-plus" aria-hidden="true"/>Create page</button>
+                                <button class="ab_editor__button ab_editor__button--light" type="button" t-on-click="() => this.createDocument('blog')"><i class="fa fa-pencil" aria-hidden="true"/>Write article</button>
+                            </div>
+                        </div>
+                        <div class="ab_editor__hero-art" aria-hidden="true">
+                            <div class="ab_editor__art-glow"/>
+                            <div class="ab_editor__art-sheet ab_editor__art-sheet--back"/>
+                            <div class="ab_editor__art-sheet ab_editor__art-sheet--front"><span/><span/><span/><span/></div>
+                            <div class="ab_editor__art-orbit ab_editor__art-orbit--one"/>
+                            <div class="ab_editor__art-orbit ab_editor__art-orbit--two"/>
+                        </div>
+                    </div>
+                    <div class="ab_editor__library-main">
+                        <div class="ab_editor__section-heading">
+                            <div><span class="ab_editor__overline">YOUR WORK</span><h2>Content library</h2></div>
+                            <div class="ab_editor__segmented" role="group" aria-label="Content type">
+                                <button type="button" t-att-class="state.filter === 'all' ? 'is-active' : ''" t-att-aria-pressed="state.filter === 'all'" t-on-click="() => this.state.filter = 'all'">All</button>
+                                <button type="button" t-att-class="state.filter === 'page' ? 'is-active' : ''" t-att-aria-pressed="state.filter === 'page'" t-on-click="() => this.state.filter = 'page'">Pages</button>
+                                <button type="button" t-att-class="state.filter === 'blog' ? 'is-active' : ''" t-att-aria-pressed="state.filter === 'blog'" t-on-click="() => this.state.filter = 'blog'">Articles</button>
+                                <button type="button" t-att-class="state.filter === 'templates' ? 'is-active' : ''" t-att-aria-pressed="state.filter === 'templates'" t-on-click="() => this.state.filter = 'templates'">Templates</button>
+                            </div>
+                        </div>
+                        <div t-if="state.filter === 'templates'" class="ab_editor__document-grid"><button t-foreach="filteredTemplates" t-as="template" t-key="template.id" type="button" class="ab_editor__document-card" t-on-click="() => this.openTemplate(template.id)"><span class="ab_editor__document-icon"><i class="fa fa-clone" aria-hidden="true"/></span><span class="ab_editor__document-info"><strong t-esc="template.name"/><small>Reusable template</small></span></button><p t-if="!filteredTemplates.length">Save a page or a block as a template to reuse it here.</p></div>
+                        <div t-elif="!filteredDocuments.length" class="ab_editor__empty"><i class="fa fa-files-o" aria-hidden="true"/><h3>No content yet</h3><p>Create your first page or article to begin.</p></div>
+                        <div t-else="" class="ab_editor__document-grid">
+                            <button t-foreach="filteredDocuments" t-as="document" t-key="document.id" t-att-data-editor-document-id="document.id" type="button" class="ab_editor__document-card" t-on-click="() => this.openDocument(document.id)">
+                                <span class="ab_editor__document-icon" aria-hidden="true"><i t-att-class="document.kind === 'blog' ? 'fa fa-pencil' : 'fa fa-file-text-o'"/></span>
+                                <span class="ab_editor__document-info"><strong t-esc="documentTitle(document)"/><small t-esc="'/' + document.kind + '/' + document.slug"/></span>
+                                <span class="ab_editor__document-footer"><span t-esc="kindLabel(document.kind)"/><span t-esc="stateLabel(document.state)"/></span>
+                                <i class="fa fa-arrow-right ab_editor__document-arrow" aria-hidden="true"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div t-else="" class="ab_editor__workspace" t-att-class="(state.toolsOpen ? '' : ' ab_editor__workspace--no-tools') + (state.layersOpen ? '' : ' ab_editor__workspace--no-layers') + (state.inspectorOpen ? '' : ' ab_editor__workspace--no-inspector')" t-att-style="layoutStyle" t-key="'editor'">
+                    <aside id="ab-editor-tools" class="ab_editor__rail" aria-label="Editor tools" t-att-hidden="!state.toolsOpen">
+                        <button type="button" class="ab_editor__back" t-on-click="() => this.state.selectedId = null"><i class="fa fa-sliders" aria-hidden="true"/>Page settings</button>
+                        <div class="ab_editor__rail-section">
+                            <span class="ab_editor__rail-label">ADD BLOCK</span>
+                            <div class="ab_editor__block-palette">
+                                <button t-foreach="blockPalette" t-as="item" t-key="item.type" type="button" t-att-disabled="isLocked" t-on-click="() => this.addBlock(item.type)"><i t-att-class="item.icon" aria-hidden="true"/><span t-esc="item.label"/></button>
+                            </div>
+                        </div>
+                        <div t-if="state.templates.length &amp;&amp; !state.templateId" class="ab_editor__rail-section">
+                            <span class="ab_editor__rail-label">REUSABLE BLOCKS</span>
+                            <button t-foreach="state.templates" t-as="template" t-key="template.id" t-if="template.website_id[0] === state.draft.website_id[0] &amp;&amp; (template.scope === 'global' || template.scope === state.draft.kind)" type="button" class="ab_editor__template-option" t-att-disabled="isLocked" t-on-click="() => this.addTemplate(template.id)"><i class="fa fa-clone" aria-hidden="true"/><span t-esc="template.name"/><i class="fa fa-plus" aria-hidden="true"/></button>
+                        </div>
+                        <div class="ab_editor__rail-section ab_editor__rail-layers">
+                            <div class="ab_editor__layers-header"><strong>Layers</strong><span t-esc="blocks.length"/></div>
+                            <div class="ab_editor__layers" t-on-dragover="onRestoreDragOver" t-on-drop="onRestoreDrop">
+                                <div t-foreach="blocks" t-as="block" t-key="block.id" class="ab_editor__layer" t-att-data-motion-id="'layer-' + block.id" t-att-data-source-id="block.id" t-att-class="(state.selectedId === block.id ? 'is-selected' : '') + dragClass(block.id)" t-att-draggable="isLocked ? 'false' : 'true'" t-on-dragstart="(ev) => this.onDragStart(block.id, ev)" t-on-dragover="(ev) => this.onDragOver(block.id, ev)" t-on-dragend="onDragEnd" t-on-drop="(ev) => this.onDrop(block.id, ev)">
+                                    <button type="button" class="ab_editor__layer-select" t-on-click="() => this.state.selectedId = block.id"><i class="fa fa-bars" aria-hidden="true"/><span t-esc="blockLabel(block.type)"/></button>
+                                    <button type="button" class="ab_editor__layer-move" aria-label="Move block up" t-att-disabled="isLocked || block_index === 0" t-on-click="() => this.moveBlock(block.id, -1)"><i class="fa fa-chevron-up"/></button>
+                                    <button type="button" class="ab_editor__layer-move" aria-label="Move block down" t-att-disabled="isLocked || block_index === blocks.length - 1" t-on-click="() => this.moveBlock(block.id, 1)"><i class="fa fa-chevron-down"/></button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div class="ab_editor__resize-handle ab_editor__resize-handle--tools" role="separator" tabindex="0" aria-label="Resize tools panel" aria-orientation="vertical" aria-controls="ab-editor-tools" aria-valuemin="150" aria-valuemax="500" t-att-aria-valuenow="state.toolsWidth" t-att-hidden="!state.toolsOpen" t-on-pointerdown="(ev) => this.startResize('tools', ev)" t-on-keydown="(ev) => this.onResizeKeydown('tools', ev)"/>
+
+                    <main class="ab_editor__canvas-area" t-att-class="state.canvasToolbarOpen ? '' : 'ab_editor__canvas-area--toolbar-collapsed'">
+                        <div id="ab-editor-canvas-toolbar" class="ab_editor__canvas-toolbar" t-att-aria-hidden="!state.canvasToolbarOpen">
+                            <div class="ab_editor__canvas-title">
+                                <div class="ab_editor__breadcrumb"><span t-esc="kindLabel(state.draft.kind)"/><i class="fa fa-angle-right" aria-hidden="true"/><strong t-esc="state.draft.name"/></div>
+                                <button type="button" class="ab_editor__canvas-toolbar-toggle" t-att-title="canvasToolbarToggleLabel" t-att-aria-label="canvasToolbarToggleLabel" aria-expanded="true" aria-controls="ab-editor-canvas-toolbar" t-on-click="toggleCanvasToolbar"><i class="fa fa-chevron-up" aria-hidden="true"/></button>
+                            </div>
+                            <div class="ab_editor__canvas-preview-note"><span class="ab_editor__live-dot"/>Live preview of your draft. Your published page stays unchanged until you publish.</div>
+                            <div class="ab_editor__canvas-controls">
+                                <div t-if="!state.templateId" class="ab_editor__segmented" role="group" aria-label="Preview language"><button type="button" t-att-class="state.language === 'en_US' ? 'is-active' : ''" t-att-aria-pressed="state.language === 'en_US'" t-on-click="() => this.state.language = 'en_US'">EN</button><button type="button" t-att-class="state.language === 'ar_001' ? 'is-active' : ''" t-att-aria-pressed="state.language === 'ar_001'" t-on-click="() => this.state.language = 'ar_001'">AR</button></div>
+                                <div class="ab_editor__segmented" role="group" aria-label="Preview device"><button type="button" aria-label="Desktop preview" t-att-class="state.device === 'desktop' ? 'is-active' : ''" t-att-aria-pressed="state.device === 'desktop'" t-on-click="() => this.state.device = 'desktop'"><i class="fa fa-desktop"/></button><button type="button" aria-label="Mobile preview" t-att-class="state.device === 'mobile' ? 'is-active' : ''" t-att-aria-pressed="state.device === 'mobile'" t-on-click="() => this.state.device = 'mobile'"><i class="fa fa-mobile"/></button></div>
+                            </div>
+                        </div>
+                        <button t-if="!state.canvasToolbarOpen" type="button" class="ab_editor__canvas-toolbar-reveal" t-att-title="canvasToolbarToggleLabel" t-att-aria-label="canvasToolbarToggleLabel" aria-expanded="false" aria-controls="ab-editor-canvas-toolbar" t-on-click="toggleCanvasToolbar"><span aria-hidden="true"/><i class="fa fa-chevron-down" aria-hidden="true"/></button>
+                        <div class="ab_editor__stage" t-att-class="state.device === 'mobile' ? 'ab_editor__stage--mobile' : ''">
+                            <div class="ab_editor__preview-shell" t-key="state.currentId + ':' + state.templateId" t-att-dir="state.language === 'ar_001' ? 'rtl' : 'ltr'">
+                                <div class="ab_editor__preview-browser"><span/><span/><span/><small t-esc="'/editor/' + state.draft.kind + '/' + state.draft.slug"/></div>
+                                <div class="ab_editor__preview-page" t-att-style="tokenStyle" t-on-dragover="onRestoreDragOver" t-on-drop="onRestoreDrop">
+                                    <div class="ab_editor__preview-heading"><span t-if="state.draft.category" class="ab_editor__preview-eyebrow" t-esc="state.draft.category"/><h1 t-esc="previewTitle"/><p t-if="previewSummary" t-esc="previewSummary"/></div>
+                                    <div t-foreach="previewBlocks" t-as="block" t-key="block.id" class="ab_editor__preview-item" t-att-class="state.actionMenuId === block.id ? 'has-actions' : ''">
+                                    <div t-if="state.actionMenuId === block.id" class="ab_editor__preview-actions" role="group" aria-label="Block actions">
+                                        <button type="button" aria-label="Duplicate block" title="Duplicate block" t-att-disabled="isLocked" t-on-click="() => this.duplicateBlock(block.sourceId)"><i class="fa fa-clone" aria-hidden="true"/></button>
+                                        <button type="button" aria-label="Remove block" title="Remove block" t-att-disabled="isLocked" t-on-click="() => this.removeBlock(block.sourceId)"><i class="fa fa-trash-o" aria-hidden="true"/></button>
+                                    </div>
+                                    <button type="button" class="ab_editor__preview-block" t-att-data-motion-id="'canvas-' + block.id" t-att-data-source-id="block.sourceId" t-att-class="(state.selectedId === block.sourceId ? 'is-selected ' : '') + (state.armedDeleteId === block.id ? 'is-delete-armed ' : '') + 'ae-visibility-' + (block.style?.visibility || 'all') + dragClass(block.sourceId)" t-att-draggable="isLocked ? 'false' : 'true'" title="Drag to reorder" t-on-pointerdown="(ev) => this.onPreviewPointerDown(block.sourceId, block.id, ev)" t-on-pointermove="onPreviewPointerMove" t-on-pointerup="onPreviewPointerUp" t-on-pointercancel="onPreviewPointerUp" t-on-pointerleave="cancelPreviewPress" t-on-keydown="(ev) => this.onPreviewKeydown(block.sourceId, block.id, ev)" t-on-dragstart="(ev) => this.onDragStart(block.sourceId, ev)" t-on-dragover="(ev) => this.onDragOver(block.sourceId, ev)" t-on-dragend="onDragEnd" t-on-drop="(ev) => this.onDrop(block.sourceId, ev)" t-att-style="styleFor(block.style)" t-on-click="(ev) => this.onPreviewClick(block.sourceId, block.id, ev)">
+                                        <span class="ab_editor__preview-block-tag" t-esc="blockLabel(block.type)"/>
+                                        <span t-if="block.type === 'hero'" class="ab_editor__preview-hero"><strong t-esc="block.title"/><span t-esc="block.body"/><em t-if="block.label" t-esc="block.label"/></span>
+                                        <strong t-elif="block.type === 'heading'" class="ab_editor__preview-h2" t-esc="block.title"/>
+                                        <span t-elif="block.type === 'text'" class="ab_editor__preview-text" t-esc="block.body"/>
+                                        <span t-elif="block.type === 'image'" class="ab_editor__preview-image"><img draggable="false" t-if="block.url" t-att-src="block.url" t-att-alt="block.alt || ''"/><span t-else="">Choose an image</span></span>
+                                        <span t-elif="block.type === 'button'" class="ab_editor__preview-cta" t-esc="block.label"/>
+                                        <span t-elif="block.type === 'divider'" class="ab_editor__preview-divider"/>
+                                    </button>
+                                    </div>
+                                    <div t-if="!previewBlocks.length" class="ab_editor__preview-empty">Add a block to start building this page.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <div class="ab_editor__resize-handle ab_editor__resize-handle--layers" role="separator" tabindex="0" aria-label="Resize deleted blocks panel" aria-orientation="horizontal" aria-controls="ab-editor-trash" aria-valuemin="100" aria-valuemax="500" t-att-aria-valuenow="state.layersHeight" t-att-hidden="!state.layersOpen" t-on-pointerdown="(ev) => this.startResize('layers', ev)" t-on-keydown="(ev) => this.onResizeKeydown('layers', ev)"/>
+
+                    <section id="ab-editor-trash" class="ab_editor__layers-panel ab_editor__trash-panel" t-att-class="state.trashDropActive ? 'is-drop-target' : ''" aria-label="Recently deleted" t-att-hidden="!state.layersOpen" t-on-dragover="onTrashDragOver" t-on-dragleave="onTrashDragLeave" t-on-drop="onTrashDrop">
+                        <div class="ab_editor__trash">
+                            <div class="ab_editor__trash-heading"><i class="fa fa-trash-o" aria-hidden="true"/><strong>Recently deleted</strong><small>Temporary session</small><b t-esc="sessionTrash.length"/></div>
+                            <div class="ab_editor__trash-body">
+                                <p t-if="!sessionTrash.length" class="ab_editor__trash-empty">No deleted blocks in this session.</p>
+                                <div t-foreach="sessionTrash" t-as="entry" t-key="entry.id" class="ab_editor__trash-item" t-att-class="state.trashDragId === entry.id ? 'is-dragging' : ''" t-att-data-trash-id="entry.id" t-att-draggable="isLocked ? 'false' : 'true'" t-on-dragstart="(ev) => this.onTrashDragStart(entry.id, ev)" t-on-dragend="onDragEnd">
+                                    <span><strong t-esc="blockLabel(entry.block.type)"/><small t-esc="trashTitle(entry)"/></span>
+                                    <button type="button" aria-label="Restore block" title="Restore block" t-att-disabled="isLocked" t-on-click="() => this.restoreDeletedBlock(entry.id)"><i class="fa fa-undo" aria-hidden="true"/></button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <aside id="ab-editor-inspector" class="ab_editor__inspector" aria-label="Content inspector" t-att-hidden="!state.inspectorOpen">
+                        <div class="ab_editor__inspector-head"><span class="ab_editor__overline">INSPECTOR</span><h2 t-esc="inspectorTitle"/></div>
+                        <div class="ab_editor__inspector-tabs" role="group" aria-label="Inspector sections">
+                            <button type="button" t-att-class="state.inspector === 'content' ? 'is-active' : ''" t-att-aria-pressed="state.inspector === 'content'" t-on-click="() => this.state.inspector = 'content'">Content</button>
+                            <button type="button" t-att-class="state.inspector === 'design' ? 'is-active' : ''" t-att-aria-pressed="state.inspector === 'design'" t-on-click="() => this.state.inspector = 'design'">Design</button>
+                            <button t-if="!state.templateId" type="button" t-att-class="state.inspector === 'seo' ? 'is-active' : ''" t-att-aria-pressed="state.inspector === 'seo'" t-on-click="() => this.state.inspector = 'seo'">SEO</button>
+                            <button t-if="!state.templateId" type="button" t-att-class="state.inspector === 'versions' ? 'is-active' : ''" t-att-aria-pressed="state.inspector === 'versions'" t-on-click="() => this.state.inspector = 'versions'">Versions</button>
+                        </div>
+                        <div class="ab_editor__inspector-body" t-key="state.inspector + (state.selectedId || 'page')">
+                            <div t-if="state.inspector === 'content'" class="ab_editor__panel">
+                                <t t-if="!selectedBlock">
+                                    <label>Internal name<input type="text" t-att-value="state.draft.name" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField('name', ev)"/></label>
+                                    <t t-if="!state.templateId"><label>URL slug<input type="text" dir="ltr" t-att-value="state.draft.slug" t-att-disabled="isLocked || state.draft.version" t-on-input="(ev) => this.updateField('slug', ev)"/></label>
+                                    <label>Page title<input type="text" t-att-value="state.language === 'ar_001' ? state.draft.title_ar : state.draft.title_en" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField(state.language === 'ar_001' ? 'title_ar' : 'title_en', ev)"/></label>
+                                    <label>Summary<textarea rows="3" t-att-value="state.language === 'ar_001' ? state.draft.summary_ar : state.draft.summary_en" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField(state.language === 'ar_001' ? 'summary_ar' : 'summary_en', ev)"/></label>
+                                    <label>Category<input type="text" t-att-value="state.draft.category" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField('category', ev)"/></label>
+                                    <label>Cover image URL<input type="url" dir="ltr" t-att-value="state.draft.image_url" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField('image_url', ev)"/></label></t>
+                                </t>
+                                <t t-elif="selectedBlock.type === 'template'"><p>This block stays linked to its reusable source in drafts.</p><button type="button" class="ab_editor__button ab_editor__button--quiet" t-att-disabled="isLocked" t-on-click="detachTemplate">Detach for this page</button></t>
+                                <t t-else="">
+                                    <label t-if="['hero', 'heading'].includes(selectedBlock.type)">Heading<input type="text" t-att-value="selectedBlock.title || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('title', ev)"/></label>
+                                    <label t-if="['hero', 'text'].includes(selectedBlock.type)">Body text<textarea rows="5" t-att-value="selectedBlock.body || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('body', ev)"/></label>
+                                    <label t-if="['hero', 'button'].includes(selectedBlock.type)">Button label<input type="text" t-att-value="selectedBlock.label || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('label', ev)"/></label>
+                                    <label t-if="['hero', 'button', 'image'].includes(selectedBlock.type)">Link or image URL<input type="url" dir="ltr" t-att-value="selectedBlock.url || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('url', ev)"/></label>
+                                    <label t-if="selectedBlock.type === 'image' &amp;&amp; state.currentId">Upload image<input type="file" accept="image/png,image/jpeg,image/webp" t-att-disabled="isLocked" t-on-change="uploadImage"/></label>
+                                    <label t-if="selectedBlock.type === 'image'">Image description<input type="text" t-att-value="selectedBlock.alt || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('alt', ev)"/></label>
+                                    <div class="ab_editor__block-actions"><button type="button" class="ab_editor__button ab_editor__button--quiet" t-att-disabled="isLocked" t-on-click="saveReusable"><i class="fa fa-clone" aria-hidden="true"/>Save reusable</button><button type="button" class="ab_editor__button ab_editor__button--danger" t-att-disabled="isLocked" t-on-click="() => this.removeBlock(selectedBlock.id)"><i class="fa fa-trash-o" aria-hidden="true"/>Remove block</button></div>
+                                </t>
+                            </div>
+                            <div t-elif="state.inspector === 'design'" class="ab_editor__panel">
+                                <p class="ab_editor__panel-intro" t-esc="designHint"/>
+                                <t t-set="style" t-value="selectedBlock &amp;&amp; selectedBlock.type !== 'template' ? selectedBlock.style || {} : state.draft.design_tokens || {}"/>
+                                <label>Font family<select aria-label="Font family" t-att-value="style.font || 'system'" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-change="(ev) => this.updateStyle('font', ev, selectedBlock ? 'block' : 'global')"><option t-foreach="fonts" t-as="font" t-key="font" t-att-value="font" t-esc="fontLabel(font)"/></select></label>
+                                <label>Text size <output t-esc="style.size || 16"/><input type="range" min="12" max="72" t-att-value="style.size || 16" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-input="(ev) => this.updateStyle('size', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Text color<input type="color" t-att-value="style.color || '#172554'" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-input="(ev) => this.updateStyle('color', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Background color<input type="color" t-att-value="style.background || '#ffffff'" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-input="(ev) => this.updateStyle('background', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Spacing <output t-esc="style.padding || 0"/><input type="range" min="0" max="96" t-att-value="style.padding || 0" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-input="(ev) => this.updateStyle('padding', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Corner radius <output t-esc="style.radius || 0"/><input type="range" min="0" max="48" t-att-value="style.radius || 0" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-input="(ev) => this.updateStyle('radius', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Font weight<select aria-label="Font weight" t-att-value="style.weight || (['hero', 'heading'].includes(selectedBlock?.type) ? 'bold' : 'normal')" t-att-disabled="isLocked" t-on-change="(ev) => this.updateStyle('weight', ev, selectedBlock ? 'block' : 'global')"><option value="normal">Normal</option><option value="bold">Bold</option></select></label>
+                                <label>Italic<input type="checkbox" t-att-checked="style.italic || false" t-att-disabled="isLocked" t-on-change="(ev) => this.updateStyle('italic', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Border color<input type="color" t-att-value="style.border_color || '#d8e0ef'" t-att-disabled="isLocked" t-on-input="(ev) => this.updateStyle('border_color', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Border width<input type="range" min="0" max="8" t-att-value="style.border_width || 0" t-att-disabled="isLocked" t-on-input="(ev) => this.updateStyle('border_width', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label>Mobile text size<input type="range" min="12" max="48" t-att-value="style.mobile_size || 16" t-att-disabled="isLocked" t-on-input="(ev) => this.updateStyle('mobile_size', ev, selectedBlock ? 'block' : 'global')"/></label>
+                                <label t-if="selectedBlock &amp;&amp; selectedBlock.type !== 'template'">Visibility<select aria-label="Visibility" t-att-value="style.visibility || 'all'" t-att-disabled="isLocked" t-on-change="(ev) => this.updateStyle('visibility', ev)"><option value="all">All devices</option><option value="desktop">Desktop only</option><option value="mobile">Mobile only</option></select></label>
+                                <label>Alignment<select aria-label="Alignment" t-att-value="style.align || 'start'" t-att-disabled="isLocked || selectedBlock?.type === 'template'" t-on-change="(ev) => this.updateStyle('align', ev, selectedBlock ? 'block' : 'global')"><option value="start">Start</option><option value="center">Center</option><option value="end">End</option></select></label>
+                            </div>
+                            <div t-elif="state.inspector === 'seo'" class="ab_editor__panel">
+                                <label>Search title<input type="text" t-att-value="state.language === 'ar_001' ? state.draft.seo_title_ar : state.draft.seo_title_en" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField(state.language === 'ar_001' ? 'seo_title_ar' : 'seo_title_en', ev)"/></label>
+                                <label>Search description<textarea rows="5" t-att-value="state.language === 'ar_001' ? state.draft.seo_description_ar : state.draft.seo_description_en" t-att-disabled="isLocked" t-on-input="(ev) => this.updateField(state.language === 'ar_001' ? 'seo_description_ar' : 'seo_description_en', ev)"/></label>
+                            </div>
+                            <div t-else="" class="ab_editor__panel">
+                                <button type="button" class="ab_editor__button ab_editor__button--quiet" t-att-disabled="isLocked" t-on-click="saveVersion"><i class="fa fa-bookmark-o" aria-hidden="true"/>Save version</button>
+                                <div t-if="!state.versions.length" class="ab_editor__version-empty">No saved versions yet.</div>
+                                <div t-foreach="state.versions" t-as="version" t-key="version.id" class="ab_editor__version"><strong>Version <t t-esc="version.number"/></strong><small t-esc="version.create_date"/><button type="button" t-att-disabled="isLocked" t-on-click="() => this.restoreVersion(version.id)">Restore</button></div>
+                            </div>
+                        </div>
+                        <div t-if="!state.templateId" class="ab_editor__publish-panel">
+                            <div class="ab_editor__publish-heading"><i class="fa fa-shield" aria-hidden="true"/><strong>Publishing</strong></div>
+                            <p>Draft changes stay in the studio until a publisher releases a version.</p>
+                            <button t-if="['draft', 'published'].includes(state.draft.state)" type="button" class="ab_editor__button ab_editor__button--quiet" t-on-click="submitReview">Submit for review</button>
+                            <button t-if="state.canReview &amp;&amp; ['review', 'scheduled'].includes(state.draft.state)" type="button" class="ab_editor__button ab_editor__button--quiet" t-on-click="returnDraft">Return to draft</button>
+                            <button t-if="state.canPublish &amp;&amp; state.draft.state === 'review'" type="button" class="ab_editor__button ab_editor__button--primary" t-on-click="publish">Publish now</button>
+                            <div t-if="state.canPublish &amp;&amp; state.draft.state === 'review'" class="ab_editor__schedule"><label>Schedule publication<input type="datetime-local" t-model="state.scheduleAt"/></label><button type="button" class="ab_editor__button ab_editor__button--quiet" t-att-disabled="!state.scheduleAt" t-on-click="schedule">Schedule</button></div>
+                            <button type="button" class="ab_editor__button ab_editor__button--quiet" t-on-click="savePageTemplate">Save as template</button><button type="button" class="ab_editor__button ab_editor__button--quiet" t-on-click="duplicateDocument">Duplicate as draft</button>
+                        </div>
+                        <div t-if="state.templateId" class="ab_editor__publish-panel"><p>Linked draft instances follow this template. Published versions keep their approved content.</p><button type="button" class="ab_editor__button ab_editor__button--primary" t-on-click="useTemplate">Use as new page</button><button type="button" class="ab_editor__button ab_editor__button--quiet" t-on-click="duplicateDocument">Duplicate template</button></div>
+                    </aside>
+                    <div class="ab_editor__resize-handle ab_editor__resize-handle--inspector" role="separator" tabindex="0" aria-label="Resize inspector panel" aria-orientation="vertical" aria-controls="ab-editor-inspector" aria-valuemin="180" aria-valuemax="520" t-att-aria-valuenow="state.inspectorWidth" t-att-hidden="!state.inspectorOpen" t-on-pointerdown="(ev) => this.startResize('inspector', ev)" t-on-keydown="(ev) => this.onResizeKeydown('inspector', ev)"/>
+                </div>
+            </t>
+        </section>
+    </t>
+</templates>

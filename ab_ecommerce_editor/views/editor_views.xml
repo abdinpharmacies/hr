@@ -1,0 +1,13 @@
+<odoo>
+    <record id="action_editor_workspace" model="ir.actions.client">
+        <field name="name">eCommerce Editor</field>
+        <field name="tag">ab_ecommerce_editor.workspace</field>
+        <field name="target">current</field>
+    </record>
+    <record id="action_editor_launcher" model="ir.actions.client">
+        <field name="name">eCommerce Editor</field>
+        <field name="tag">ab_ecommerce_editor.workspace</field>
+        <field name="target">current</field>
+    </record>
+    <menuitem id="menu_editor_root" name="eCommerce Editor" sequence="45" groups="ab_ecommerce_editor.group_editor_editor" action="action_editor_workspace" web_icon="ab_ecommerce_editor,static/description/icon.svg"/>
+</odoo>

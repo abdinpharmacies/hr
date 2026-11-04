@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Abdin editor published content v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "revision_id",
+    "kind",
+    "slug",
+    "language",
+    "title",
+    "summary",
+    "category",
+    "image_url",
+    "blocks",
+    "design_tokens",
+    "seo",
+    "unsupported_components",
+    "published_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "revision_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "kind": {
+      "enum": [
+        "page",
+        "blog"
+      ]
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "language": {
+      "enum": [
+        "en_US",
+        "ar_001"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "blocks": {
+      "type": "array",
+      "maxItems": 80,
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/block"
+          },
+          {
+            "$ref": "#/$defs/unsupported"
+          }
+        ]
+      }
+    },
+    "design_tokens": {
+      "$ref": "#/$defs/style"
+    },
+    "seo": {
+      "type": "object",
+      "required": [
+        "title",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "unsupported_components": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "published_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "border_color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "font": {
+          "enum": [
+            "system",
+            "arabic",
+            "georgia",
+            "monospace"
+          ]
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 12,
+          "maximum": 72
+        },
+        "mobile_size": {
+          "type": "integer",
+          "minimum": 12,
+          "maximum": 48
+        },
+        "padding": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 96
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 48
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "align": {
+          "enum": [
+            "start",
+            "center",
+            "end"
+          ]
+        },
+        "weight": {
+          "enum": [
+            "normal",
+            "bold"
+          ]
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "visibility": {
+          "enum": [
+            "all",
+            "desktop",
+            "mobile"
+          ]
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{1,48}$"
+        },
+        "type": {
+          "enum": [
+            "hero",
+            "heading",
+            "text",
+            "image",
+            "button",
+            "divider"
+          ]
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "url": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "alt": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      }
+    },
+    "unsupported": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "fallback"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "const": "unsupported"
+        },
+        "fallback": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

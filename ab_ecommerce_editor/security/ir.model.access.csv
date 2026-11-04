@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_editor_document,Editor documents,model_ab_ecommerce_editor_document,ab_ecommerce_editor.group_editor_editor,1,1,1,0
+access_editor_revision,Editor versions,model_ab_ecommerce_editor_revision,ab_ecommerce_editor.group_editor_editor,1,0,0,0
+access_editor_template,Editor reusable blocks,model_ab_ecommerce_editor_template,ab_ecommerce_editor.group_editor_editor,1,1,1,0
+access_editor_layout,Editor layout,model_ab_ecommerce_editor_layout,ab_ecommerce_editor.group_editor_editor,1,1,1,0

@@ -1,0 +1,11 @@
+<odoo>
+    <record id="cron_publish_editor_content" model="ir.cron">
+        <field name="name">Publish scheduled eCommerce content</field>
+        <field name="model_id" ref="model_ab_ecommerce_editor_document"/>
+        <field name="state">code</field>
+        <field name="code">model._publish_due()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

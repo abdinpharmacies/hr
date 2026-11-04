@@ -1,0 +1,1684 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_ecommerce_editor
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-28 07:50+0000\n"
+"PO-Revision-Date: 2026-10-28 12:00+0300\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "A content block is invalid."
+msgstr "إحدى كتل المحتوى غير صالحة."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "A design value is outside the supported range."
+msgstr "إحدى قيم التصميم خارج النطاق المسموح."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "A fresh story starts here"
+msgstr "حكاية جديدة تبدأ هنا"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "A page can contain up to 80 blocks."
+msgstr "يمكن أن تحتوي الصفحة على 80 كتلة بحد أقصى."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "A reusable block is missing from this website."
+msgstr "إحدى الكتل القابلة لإعادة الاستخدام غير موجودة في هذا الموقع."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "A version was saved."
+msgstr "تم حفظ نسخة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "ADD BLOCK"
+msgstr "إضافة كتلة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "AR"
+msgstr "عربي"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Abdin Studio"
+msgstr "استوديو عابدين"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__active
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Add a block to start building this page."
+msgstr "أضف كتلة لبدء تصميم هذه الصفحة."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Add an image and a description to every image block before review."
+msgstr "أضف صورة ووصفًا لكل كتلة صور قبل المراجعة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Alignment"
+msgstr "المحاذاة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "All"
+msgstr "الكل"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_template__scope__global
+msgid "All content"
+msgstr "كل المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "All devices"
+msgstr "كل الأجهزة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Arabic font"
+msgstr "الخط العربي"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Archive content instead of deleting it."
+msgstr "أرشف المحتوى بدلًا من حذفه."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_template.py:0
+msgid "Archive reusable blocks instead of deleting them."
+msgstr "أرشف الكتل القابلة لإعادة الاستخدام بدلًا من حذفها."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Article"
+msgstr "مقال"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Articles"
+msgstr "المقالات"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__author_id
+msgid "Author"
+msgstr "الكاتب"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Back"
+msgstr "الرجوع"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Background color"
+msgstr "لون الخلفية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Block actions"
+msgstr "إجراءات الكتلة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Block text is too long."
+msgstr "نص الكتلة طويل جدًا."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__blocks
+msgid "Blocks"
+msgstr "الكتل"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__blocks_ar
+msgid "Blocks Ar"
+msgstr "الكتل بالعربية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__blocks_en
+msgid "Blocks En"
+msgstr "الكتل بالإنجليزية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__kind__blog
+msgid "Blog post"
+msgstr "مقال مدونة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_template__scope__blog
+msgid "Blog posts"
+msgstr "مقالات المدونة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Body text"
+msgstr "النص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Bold"
+msgstr "عريض"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Border color"
+msgstr "لون الحدود"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Border width"
+msgstr "سُمك الحدود"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Build something brilliant."
+msgstr "صمم تجربتك"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Button"
+msgstr "زر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Button label"
+msgstr "نص الزر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "CONTENT WORKSPACE"
+msgstr "مساحة عمل المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__category
+msgid "Category"
+msgstr "التصنيف"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Center"
+msgstr "الوسط"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Choose a future time for reviewed content."
+msgstr "اختر موعدًا مستقبليًا للمحتوى الذي تمت مراجعته."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Choose a valid JPEG, PNG, or WebP image."
+msgstr "اختر صورة صالحة بصيغة JPEG أو PNG أو WebP."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Choose a website in your allowed companies."
+msgstr "اختر موقعًا تابعًا للشركات المسموح لك بها."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Choose an image"
+msgstr "اختر صورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Choose an image smaller than 5 MB."
+msgstr "اختر صورة أصغر من 5 ميجابايت."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Content"
+msgstr "المحتوى"
+
+#. module: ab_ecommerce_editor
+#: model:res.groups.privilege,name:ab_ecommerce_editor.privilege_ecommerce_editor
+msgid "Content access"
+msgstr "صلاحيات المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Content inspector"
+msgstr "خصائص المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Content library"
+msgstr "مكتبة المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Content sent for review."
+msgstr "تم إرسال المحتوى للمراجعة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Content type"
+msgstr "نوع المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Copy"
+msgstr "نسخة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Corner radius"
+msgstr "استدارة الزوايا"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Cover image URL"
+msgstr "رابط صورة الغلاف"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Create a duplicate to change the website or URL of versioned content."
+msgstr "أنشئ نسخة مكررة لتغيير الموقع أو رابط محتوى له نسخ محفوظة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Create page"
+msgstr "إنشاء صفحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid ""
+"Create pages and articles, preview every change, then publish a version when"
+" it is ready."
+msgstr ""
+"أنشئ الصفحات والمقالات، وعاين كل تغيير، ثم انشر النسخة عندما تكون جاهزة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Create your first page or article to begin."
+msgstr "أنشئ أول صفحة أو مقال للبدء."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Design"
+msgstr "التصميم"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__design_tokens
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__design_tokens
+msgid "Design Tokens"
+msgstr "قيم التصميم"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Desktop only"
+msgstr "الحاسوب فقط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Desktop preview"
+msgstr "معاينة الحاسوب"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Detach for this page"
+msgstr "فصل عن نموذج المحتوى لهذه الصفحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Discard unsaved changes?"
+msgstr "هل تريد تجاهل التغييرات غير المحفوظة؟"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Divider"
+msgstr "فاصل"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__document_id
+msgid "Document"
+msgstr "المستند"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__draft_token
+msgid "Draft Token"
+msgstr "رمز المسودة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Draft changes stay in the studio until a publisher releases a version."
+msgstr "تظل تغييرات المسودة داخل الاستوديو حتى ينشر المسؤول نسخة منها."
+
+#. module: ab_ecommerce_editor
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.public_content
+msgid "Draft preview — only signed-in editors can see this version."
+msgstr "معاينة مسودة — لا تظهر هذه النسخة إلا للمحررين المسجلين."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Draft saved. The live site is unchanged."
+msgstr "تم حفظ المسودة. لم يتغير الموقع المنشور."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Duplicate as draft"
+msgstr "تكرار كمسودة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Duplicate block"
+msgstr "تكرار الكتلة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Duplicate template"
+msgstr "تكرار نموذج المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "EN"
+msgstr "EN"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Each content block needs a unique identifier."
+msgstr "تحتاج كل كتلة محتوى إلى معرّف فريد."
+
+#. module: ab_ecommerce_editor
+#: model:res.groups,name:ab_ecommerce_editor.group_editor_editor
+msgid "Editor"
+msgstr "محرر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Editor tools"
+msgstr "أدوات المحرر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "End"
+msgstr "النهاية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Explore"
+msgstr "اكتشف"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__flutter_overrides
+msgid "Flutter Overrides"
+msgstr "تخصيصات Flutter"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Font family"
+msgstr "نوع الخط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Font weight"
+msgstr "سُمك الخط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Georgia"
+msgstr "جورجيا"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Heading"
+msgstr "عنوان"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Hero"
+msgstr "قسم رئيسي"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "INSPECTOR"
+msgstr "الخصائص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Image"
+msgstr "صورة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__image_url
+msgid "Image Url"
+msgstr "رابط الصورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Image description"
+msgstr "وصف الصورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__state__review
+msgid "In review"
+msgstr "قيد المراجعة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Inspector sections"
+msgstr "أقسام الخصائص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Internal name"
+msgstr "الاسم الداخلي"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Italic"
+msgstr "مائل"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "LAYERS"
+msgstr "الطبقات"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Library"
+msgstr "المكتبة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Link or image URL"
+msgstr "رابط الصفحة أو الصورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid ""
+"Linked draft instances follow this template. Published versions keep their "
+"approved content."
+msgstr ""
+"تتبع المسودات المرتبطة نموذج المحتوى هذا. وتحتفظ النسخ المنشورة بمحتواها المعتمد."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid ""
+"Live preview of your draft. Your published page stays unchanged until you "
+"publish."
+msgstr "معاينة مباشرة لمسودتك. تظل الصفحة المنشورة كما هي حتى تنشر التغييرات."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Loading editor..."
+msgstr "جارٍ تحميل المحرر..."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Mobile only"
+msgstr "الهاتف فقط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Mobile preview"
+msgstr "معاينة الهاتف"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Mobile text size"
+msgstr "حجم النص على الهاتف"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Monospace"
+msgstr "خط ثابت العرض"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Move block down"
+msgstr "نقل الكتلة لأسفل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Move block up"
+msgstr "نقل الكتلة لأعلى"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__name
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "New article"
+msgstr "مقال جديد"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "New page"
+msgstr "صفحة جديدة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "No content yet"
+msgstr "لا يوجد محتوى بعد"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "No deleted blocks in this session."
+msgstr "لم تُحذف أي كتل في هذه الجلسة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "No saved versions yet."
+msgstr "لا توجد نسخ محفوظة بعد."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Normal"
+msgstr "عادي"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__number
+msgid "Number"
+msgstr "الرقم"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Only a draft can be submitted for review."
+msgstr "يمكن إرسال المسودة فقط للمراجعة."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Only draft content can be saved from the editor."
+msgstr "يمكن حفظ محتوى المسودة فقط من المحرر."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Open live page"
+msgstr "فتح الصفحة المنشورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__kind__page
+msgid "Page"
+msgstr "صفحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Page settings"
+msgstr "إعدادات الصفحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Page template saved."
+msgstr "تم حفظ نموذج محتوى الصفحة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Page title"
+msgstr "عنوان الصفحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_template__scope__page
+msgid "Pages"
+msgstr "الصفحات"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__payload
+msgid "Payload"
+msgstr "بيانات المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Preview device"
+msgstr "جهاز المعاينة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Preview language"
+msgstr "لغة المعاينة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Publication scheduled."
+msgstr "تمت جدولة النشر."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Publish now"
+msgstr "نشر الآن"
+
+#. module: ab_ecommerce_editor
+#: model:ir.actions.server,name:ab_ecommerce_editor.cron_publish_editor_content_ir_actions_server
+msgid "Publish scheduled eCommerce content"
+msgstr "نشر محتوى المتجر المجدول"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__state__published
+msgid "Published"
+msgstr "منشور"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__published_at
+msgid "Published At"
+msgstr "تاريخ النشر"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__published_revision_id
+msgid "Published Revision"
+msgstr "النسخة المنشورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Published version is live."
+msgstr "النسخة المنشورة متاحة الآن على الموقع."
+
+#. module: ab_ecommerce_editor
+#: model:res.groups,name:ab_ecommerce_editor.group_editor_publisher
+msgid "Publisher"
+msgstr "ناشر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Publishing"
+msgstr "النشر"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Publishing fields can only change through editor actions."
+msgstr "لا يمكن تغيير حقول النشر إلا من خلال إجراءات المحرر."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "REUSABLE BLOCKS"
+msgstr "الكتل القابلة لإعادة الاستخدام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Recently deleted"
+msgstr "المحذوفة مؤخرًا"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Redo"
+msgstr "إعادة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__released_at
+msgid "Released At"
+msgstr "تاريخ إصدار النسخة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__released_by_id
+msgid "Released By"
+msgstr "أصدر النسخة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Remove block"
+msgstr "إزالة الكتلة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Restore"
+msgstr "استعادة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Restore block"
+msgstr "استعادة الكتلة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Restore this saved version into a new draft?"
+msgstr "هل تريد استعادة هذه النسخة المحفوظة كمسودة جديدة؟"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Return this content to draft before editing."
+msgstr "أعد المحتوى إلى مسودة قبل تعديله."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Return to draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Reusable block"
+msgstr "كتلة قابلة لإعادة الاستخدام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Reusable block name"
+msgstr "اسم الكتلة القابلة لإعادة الاستخدام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Reusable block saved."
+msgstr "تم حفظ الكتلة القابلة لإعادة الاستخدام."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Reusable template"
+msgstr "نموذج محتوى قابل لإعادة الاستخدام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Reusable template updated. Published versions stay fixed."
+msgstr "تم تحديث نموذج المحتوى. تظل النسخ المنشورة ثابتة."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__review_revision_id
+msgid "Review Revision"
+msgstr "نسخة المراجعة"
+
+#. module: ab_ecommerce_editor
+#: model:res.groups,name:ab_ecommerce_editor.group_editor_reviewer
+msgid "Reviewer"
+msgstr "مراجع"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__revision_ids
+msgid "Revision"
+msgstr "نسخة محفوظة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "SEO"
+msgstr "محركات البحث"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save a page or a block as a template to reuse it here."
+msgstr "احفظ صفحة أو كتلة كنموذج محتوى لإعادة استخدامها هنا."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save as template"
+msgstr "حفظ كنموذج محتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save current changes"
+msgstr "حفظ التغييرات الحالية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save draft"
+msgstr "حفظ المسودة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save reusable"
+msgstr "حفظ لإعادة الاستخدام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save the draft before opening the storefront preview"
+msgstr "احفظ المسودة قبل فتح معاينة المتجر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Save version"
+msgstr "حفظ نسخة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Saved versions cannot be changed."
+msgstr "لا يمكن تعديل النسخ المحفوظة."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Saved versions cannot be deleted."
+msgstr "لا يمكن حذف النسخ المحفوظة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Schedule"
+msgstr "جدولة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Schedule publication"
+msgstr "جدولة النشر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__state__scheduled
+msgid "Scheduled"
+msgstr "مجدول"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__scheduled_at
+msgid "Scheduled At"
+msgstr "موعد النشر المجدول"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__scheduled_by_id
+msgid "Scheduled By"
+msgstr "تمت الجدولة بواسطة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__scope
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Search description"
+msgstr "وصف محركات البحث"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Search title"
+msgstr "عنوان محركات البحث"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__seo_description_ar
+msgid "Seo Description Ar"
+msgstr "وصف محركات البحث بالعربية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__seo_description_en
+msgid "Seo Description En"
+msgstr "وصف محركات البحث بالإنجليزية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__seo_title_ar
+msgid "Seo Title Ar"
+msgstr "عنوان محركات البحث بالعربية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__seo_title_en
+msgid "Seo Title En"
+msgstr "عنوان محركات البحث بالإنجليزية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Set the design tokens for this page."
+msgstr "اضبط قيم التصميم لهذه الصفحة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Set up a website before creating content."
+msgstr "أعدّ موقعًا إلكترونيًا قبل إنشاء المحتوى."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Share a clear message with your customers."
+msgstr "شارك رسالة واضحة مع عملائك."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__slug
+msgid "Slug"
+msgstr "مسار الرابط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Spacing"
+msgstr "المسافات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Start"
+msgstr "البداية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Storefront preview"
+msgstr "معاينة المتجر"
+
+#. module: ab_ecommerce_editor
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.public_blog_index
+msgid "Stories and articles"
+msgstr "حكايات ومقالات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Style the selected block."
+msgstr "نسّق الكتلة المحددة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Submit for review"
+msgstr "إرسال للمراجعة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Submit this content for review before publishing."
+msgstr "أرسل هذا المحتوى للمراجعة قبل نشره."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Summary"
+msgstr "الملخص"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__summary_ar
+msgid "Summary Ar"
+msgstr "الملخص بالعربية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__summary_en
+msgid "Summary En"
+msgstr "الملخص بالإنجليزية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "System font"
+msgstr "خط النظام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Template name"
+msgstr "اسم نموذج المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Templates"
+msgstr "نماذج المحتوى"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Temporary session"
+msgstr "جلسة مؤقتة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Text"
+msgstr "نص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Text color"
+msgstr "لون النص"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Text contrast must be at least 4.5:1 before review."
+msgstr "يجب ألا تقل نسبة تباين النص عن 4.5:1 قبل المراجعة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Text size"
+msgstr "حجم النص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "The draft could not be saved."
+msgstr "تعذّر حفظ المسودة."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "The reusable block reference is invalid."
+msgstr "مرجع الكتلة القابلة لإعادة الاستخدام غير صالح."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.constraint,message:ab_ecommerce_editor.constraint_ab_ecommerce_editor_revision_unique_number
+msgid "The version number must be unique for this document."
+msgstr "يجب أن يكون رقم النسخة فريدًا لهذا المستند."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.constraint,message:ab_ecommerce_editor.constraint_ab_ecommerce_editor_document_unique_route
+msgid "This URL is already used on this website."
+msgstr "هذا الرابط مستخدم بالفعل في هذا الموقع."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This alignment is not supported."
+msgstr "هذه المحاذاة غير مدعومة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "This block stays linked to its reusable source in drafts."
+msgstr "تظل هذه الكتلة مرتبطة بمصدرها القابل لإعادة الاستخدام في المسودات."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This block type is not supported."
+msgstr "نوع الكتلة غير مدعوم."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This content is not awaiting review or publication."
+msgstr "هذا المحتوى ليس في انتظار المراجعة أو النشر."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This content link is invalid."
+msgstr "رابط المحتوى غير صالح."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This design style is not supported."
+msgstr "نمط التصميم غير مدعوم."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This document is being changed by another editor. Try again."
+msgstr "يعدّل محرر آخر هذا المستند. حاول مرة أخرى."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This draft changed in another session. Reload it before saving."
+msgstr "تغيّرت هذه المسودة في جلسة أخرى. أعد تحميلها قبل الحفظ."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This font is not supported."
+msgstr "هذا الخط غير مدعوم."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This version does not belong to the document."
+msgstr "هذه النسخة لا تنتمي إلى المستند."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__title_ar
+msgid "Title Ar"
+msgstr "العنوان بالعربية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__title_en
+msgid "Title En"
+msgstr "العنوان بالإنجليزية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "URL slug"
+msgstr "مسار الرابط"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Undo"
+msgstr "تراجع"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Unsaved changes"
+msgstr "تغييرات غير محفوظة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Upload image"
+msgstr "رفع صورة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Use an HTTPS link or an allowed site path."
+msgstr "استخدم رابط HTTPS أو مسارًا مسموحًا داخل الموقع."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Use as new page"
+msgstr "استخدام كصفحة جديدة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Use lowercase letters, numbers, and hyphens for the URL."
+msgstr "استخدم حروفًا إنجليزية صغيرة وأرقامًا وشرطات في الرابط."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "Use six-digit hex colors for content styles."
+msgstr "استخدم أكواد ألوان سداسية من ست خانات لتنسيق المحتوى."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__version
+msgid "Version"
+msgstr "نسخة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Version restored as a draft."
+msgstr "تمت استعادة النسخة كمسودة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Versions"
+msgstr "النسخ"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Visibility"
+msgstr "الظهور"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__web_overrides
+msgid "Web Overrides"
+msgstr "تخصيصات الويب"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__website_id
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Write article"
+msgstr "كتابة مقال"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Write your story here."
+msgstr "اكتب حكايتك هنا."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "YOUR WORK"
+msgstr "أعمالك"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "You do not have permission for this editor action."
+msgstr "ليست لديك صلاحية لتنفيذ هذا الإجراء."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Your heading"
+msgstr "عنوانك"
+
+#. module: ab_ecommerce_editor
+#: model:ir.actions.client,name:ab_ecommerce_editor.action_editor_workspace
+#: model:ir.actions.client,name:ab_ecommerce_editor.action_editor_launcher
+#: model:ir.module.category,name:ab_ecommerce_editor.category_ecommerce_editor
+#: model:ir.ui.menu,name:ab_ecommerce_editor.menu_editor_root
+msgid "eCommerce Editor"
+msgstr "محرر المتجر الإلكتروني"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model,name:ab_ecommerce_editor.model_ab_ecommerce_editor_document
+msgid "eCommerce Editor Document"
+msgstr "مستند محرر المتجر"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model,name:ab_ecommerce_editor.model_ab_ecommerce_editor_template
+msgid "eCommerce Editor Reusable Block"
+msgstr "كتلة قابلة لإعادة الاستخدام في محرر المتجر"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model,name:ab_ecommerce_editor.model_ab_ecommerce_editor_revision
+msgid "eCommerce Editor Version"
+msgstr "نسخة محرر المتجر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "eCommerce content editor"
+msgstr "محرر محتوى المتجر الإلكتروني"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Drag to reorder"
+msgstr "اسحب لتغيير الترتيب"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Open workspace"
+msgstr "فتح مساحة العمل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Close workspace"
+msgstr "إغلاق مساحة العمل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Editor panels"
+msgstr "لوحات المحرر"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Layers"
+msgstr "الطبقات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Hide tools panel"
+msgstr "إخفاء لوحة الأدوات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Show tools panel"
+msgstr "إظهار لوحة الأدوات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Hide layers panel"
+msgstr "إخفاء لوحة الطبقات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Show layers panel"
+msgstr "إظهار لوحة الطبقات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Hide inspector panel"
+msgstr "إخفاء لوحة الخصائص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Show inspector panel"
+msgstr "إظهار لوحة الخصائص"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Could not save the editor layout."
+msgstr "تعذر حفظ ترتيب لوحات المحرر."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.constraint,message:ab_ecommerce_editor.constraint_ab_ecommerce_editor_layout_unique_user
+msgid "Each user can have only one editor layout."
+msgstr "يمكن أن يكون لكل مستخدم ترتيب واحد فقط للوحات المحرر."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.constraint,message:ab_ecommerce_editor.constraint_ab_ecommerce_editor_layout_valid_sizes
+msgid "Editor panel sizes are outside the supported range."
+msgstr "أحجام لوحات المحرر خارج النطاق المسموح."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Resize tools panel"
+msgstr "تغيير حجم لوحة الأدوات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Resize layers panel"
+msgstr "تغيير حجم لوحة الطبقات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Resize inspector panel"
+msgstr "تغيير حجم لوحة الخصائص"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model,name:ab_ecommerce_editor.model_ab_ecommerce_editor_layout
+msgid "eCommerce Editor Layout"
+msgstr "ترتيب لوحات محرر المتجر الإلكتروني"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_layout.py:0
+msgid "You can only edit your own editor layout."
+msgstr "يمكنك تعديل ترتيب لوحات المحرر الخاص بك فقط."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__inspector_open
+msgid "Inspector Open"
+msgstr "لوحة الخصائص مفتوحة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__inspector_width
+msgid "Inspector Width"
+msgstr "عرض لوحة الخصائص"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__layers_height
+msgid "Layers Height"
+msgstr "ارتفاع لوحة الطبقات"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__layers_open
+msgid "Layers Open"
+msgstr "لوحة الطبقات مفتوحة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__tools_open
+msgid "Tools Open"
+msgstr "لوحة الأدوات مفتوحة"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__tools_width
+msgid "Tools Width"
+msgstr "عرض لوحة الأدوات"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__dark_mode
+msgid "Dark Mode"
+msgstr "الوضع الداكن"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Switch to dark theme"
+msgstr "التبديل إلى المظهر الداكن"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Switch to light theme"
+msgstr "التبديل إلى المظهر الفاتح"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__canvas_toolbar_open
+msgid "Canvas Toolbar Open"
+msgstr "شريط أدوات المعاينة مفتوح"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Hide preview controls"
+msgstr "إخفاء عناصر تحكم المعاينة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Show preview controls"
+msgstr "إظهار عناصر تحكم المعاينة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Hide deleted blocks panel"
+msgstr "إخفاء لوحة العناصر المحذوفة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Show deleted blocks panel"
+msgstr "إظهار لوحة العناصر المحذوفة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Resize deleted blocks panel"
+msgstr "تغيير حجم لوحة العناصر المحذوفة"

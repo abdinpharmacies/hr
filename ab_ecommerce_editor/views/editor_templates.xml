@@ -1,0 +1,49 @@
+<odoo>
+    <template id="public_content" name="Editor content page">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="content['seo']['title']"/>
+            <t t-set="website_meta_description" t-value="content['seo']['description']"/>
+            <main id="wrap" class="ab-editor-public" t-att-dir="content['language'] == 'ar_001' and 'rtl' or 'ltr'" t-att-style="block_style(content['design_tokens'])">
+                <div t-if="is_editor_preview" class="alert alert-info" role="status">Draft preview — only signed-in editors can see this version.</div>
+                <article class="ab-editor-public__article">
+                    <header class="ab-editor-public__header">
+                        <p t-if="content['category']" class="ab-editor-public__eyebrow" t-esc="content['category']"/>
+                        <h1 t-esc="content['title']"/>
+                        <p t-if="content['summary']" class="ab-editor-public__summary" t-esc="content['summary']"/>
+                    </header>
+                    <div t-foreach="content['blocks']" t-as="block" t-key="block['id']" t-att-class="'ab-editor-public__block ae-visibility-%s' % block.get('style', {}).get('visibility', 'all')" t-att-style="block_style(block.get('style', {}))">
+                        <section t-if="block['type'] == 'hero'" class="ab-editor-public__hero">
+                            <h2 t-esc="block.get('title', '')"/>
+                            <p t-esc="block.get('body', '')"/>
+                            <a t-if="block.get('url')" t-att-href="block['url']" class="ab-editor-public__button" t-esc="block.get('label') or block.get('title')"/>
+                        </section>
+                        <h2 t-elif="block['type'] == 'heading'" t-esc="block.get('title', '')"/>
+                        <p t-elif="block['type'] == 'text'" class="ab-editor-public__text" t-esc="block.get('body', '')"/>
+                        <figure t-elif="block['type'] == 'image'">
+                            <img t-att-src="block.get('url')" t-att-alt="block.get('alt', '')" loading="lazy"/>
+                        </figure>
+                        <a t-elif="block['type'] == 'button'" t-att-href="block.get('url') or '#'" class="ab-editor-public__button" t-esc="block.get('label', '')"/>
+                        <hr t-elif="block['type'] == 'divider'"/>
+                    </div>
+                </article>
+            </main>
+        </t>
+    </template>
+    <template id="public_blog_index" name="Editor blog index">
+        <t t-call="website.layout">
+            <main id="wrap" class="ab-editor-public ab-editor-public__index">
+                <div class="ab-editor-public__article">
+                    <header class="ab-editor-public__header"><h1>Stories and articles</h1></header>
+                    <div class="ab-editor-public__grid">
+                        <a t-foreach="posts" t-as="post" t-key="post['slug']" t-att-href="'/editor/blog/%s' % post['slug']" class="ab-editor-public__card">
+                            <img t-if="post['image_url']" t-att-src="post['image_url']" t-att-alt="post['title']" loading="lazy"/>
+                            <span t-if="post['category']" class="ab-editor-public__eyebrow" t-esc="post['category']"/>
+                            <h2 t-esc="post['title']"/>
+                            <p t-esc="post['summary']"/>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </t>
+    </template>
+</odoo>
