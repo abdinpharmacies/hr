@@ -713,3 +713,17 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+f439ab21 — yahyazakaria22 — 2026-11-04
+fix: retrieve current-day ETA UUIDs and invoice details
+
+- Retrieve today's invoice and receipt UUID summaries as well as earlier days, then let the detail cron enrich saved UUIDs immediately.
+- Limit today's searches to the current time, revisit recent invoice submissions, and complete yesterday's streams after midnight.
+- Preserve receipt search checkpoints through the current day, rescan the active hour, and revisit the full day after midnight for late receipts.
+- Use the ETA document-details endpoint for invoice enrichment while keeping the working raw endpoint for receipts.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
