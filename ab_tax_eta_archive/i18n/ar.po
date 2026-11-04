@@ -995,6 +995,11 @@ msgstr "المفتاح المشترك للإشعارات"
 msgid "Callback Base URL"
 msgstr "الرابط الأساسي لاستقبال الإشعارات"
 
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
+#. module: ab_tax_eta_archive
+msgid "Last ETA detail request"
+msgstr "وقت آخر طلب لتفاصيل منظومة الضرائب"
+
 #. module: ab_tax_eta_archive
 msgid "ETA Callback Registration"
 msgstr "تسجيل إشعارات مصلحة الضرائب"

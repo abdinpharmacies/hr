@@ -14,7 +14,7 @@ from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
 ETA_MAX_RECEIPTS_PER_SEARCH = 3000
-ETA_RECEIPT_PAGE_SIZE = 1000
+ETA_RECEIPT_PAGE_SIZE = 100
 ETA_MAX_RECEIPT_PAGE_NO = 300
 ETA_MAX_INVOICE_PAGES = 20
 ETA_INVOICE_SEARCH_DELAY = 2.1
@@ -710,7 +710,7 @@ class EtaSync(models.Model):
             pages, _('Saving ETA receipt pages'), total=len(pages))
 
     def _request_receipt_page(self, api_url, headers, params, page_no, page_size):
-        sizes = (page_size, 200, 100, 50, 10) if page_no == 1 else (page_size,)
+        sizes = (min(page_size, 100), 50, 10) if page_no == 1 else (min(page_size, 100),)
         for candidate in dict.fromkeys(sizes):
             try:
                 payload = self._request(

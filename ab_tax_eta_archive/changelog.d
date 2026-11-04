@@ -825,3 +825,21 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Select up to 1,000 eligible invoice UUIDs across dates and directions as one batch, then select receipts after eligible invoices are exhausted.
+- Persist each ETA detail request timestamp so the four-second spacing is preserved across Odoo cron callbacks and sub-batches.
+- Report actual attempted UUID progress without marking an interrupted 1,000-row batch complete.
+- Cap ETA receipt search page size at the documented API maximum of 100.
+- Add Arabic labels for the persisted pacing timestamp.
+- Validation: reviewed the supplied server logs and git diff --check passed; throughput and ETA API behavior require server execution.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

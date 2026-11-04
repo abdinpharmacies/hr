@@ -17,6 +17,8 @@ class EtaConfig(models.Model):
     callback_key = fields.Char(string='Callback Pre-shared Key', copy=False,
                                default=lambda self: secrets.token_urlsafe(32),
                                groups='ab_tax_eta_archive.group_eta_manager')
+    detail_last_request_at = fields.Datetime(string='Last ETA detail request',
+                                             copy=False, readonly=True)
     callback_url = fields.Char(string='Callback Base URL', compute='_compute_callback_url',
                                groups='ab_tax_eta_archive.group_eta_manager')
 

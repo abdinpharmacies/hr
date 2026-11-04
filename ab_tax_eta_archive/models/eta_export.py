@@ -227,27 +227,37 @@ class EtaExport(models.Model):
         models = [('invoice', self.env['ab_tax_eta_archive_invoice']),
                   ('receipt', self.env['ab_tax_eta_archive_receipt'])]
         retry_before = fields.Datetime.now() - timedelta(minutes=5)
-        selected = None
+        selected_kind = None
+        selected_batch = self.env['ab_tax_eta_archive_invoice']
         for kind, model in models:
-            record = model.search([
+            batch = model.search([
                 ('config_id', 'in', configs.ids),
                 ('report_date', '<=', today),
                 '|', ('detail_json', '=', False), ('detail_json', '=', ''),
                 '|', '|', ('detail_attempt_at', '=', False),
                 ('detail_error', '=', False),
                 ('detail_attempt_at', '<', retry_before),
-            ], order='report_date desc', limit=1)
-            if record:
-                selected = (record.config_id, kind, record.direction, record.report_date)
+            ], order='report_date desc, id desc', limit=1000)
+            if batch:
+                selected_kind, selected_batch = kind, batch
                 break
-        if selected:
-            config, kind, direction, report_date = selected
-            if time.monotonic() < deadline:
-                self._enrich_details(config, kind, report_date, direction,
-                                     deadline=deadline, batch_size=1000)
-            else:
-                _logger.info('ETA UUID detail cron time budget exhausted before '
-                             'fetching a batch for %s', report_date)
+        if selected_batch:
+            groups = {}
+            for record in selected_batch:
+                key = (record.config_id.id, record.report_date, record.direction)
+                groups.setdefault(key, []).append(record.id)
+            _logger.info('ETA UUID detail selection: kind=%s selected=%s groups=%s',
+                         selected_kind, len(selected_batch), len(groups))
+            progress_offset = 0
+            for (config_id, report_date, direction), record_ids in groups.items():
+                if time.monotonic() >= deadline:
+                    break
+                processed = self._enrich_details(
+                    self.env['ab_tax_eta_archive_config'].browse(config_id),
+                    selected_kind, report_date, direction, deadline=deadline,
+                    batch_size=len(record_ids), record_ids=record_ids,
+                    progress_offset=progress_offset, progress_total=len(selected_batch))
+                progress_offset += processed
         else:
             pending = any(model.search([
                 ('config_id', 'in', configs.ids),
@@ -261,7 +271,7 @@ class EtaExport(models.Model):
                          'pending_any=%s dated_through_today_any=%s eligible=0',
                          len(configs), pending, due_date)
         if self.env.context.get('cron_id'):
-            self.env['ir.cron']._commit_progress(remaining=int(bool(selected)))
+            self.env['ir.cron']._commit_progress(remaining=int(bool(selected_batch)))
 
     @api.model
     def _cron_export_and_send(self):
@@ -486,7 +496,8 @@ class EtaExport(models.Model):
 
     @api.model
     def _enrich_details(self, config, kind, report_date, direction, deadline=None,
-                        batch_size=80):
+                        batch_size=80, record_ids=None, progress_offset=0,
+                        progress_total=None):
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         base_domain = [
             ('config_id', '=', config.id), ('report_date', '=', report_date),
@@ -494,11 +505,14 @@ class EtaExport(models.Model):
             '|', ('detail_json', '=', False), ('detail_json', '=', ''),
         ]
         retry_before = fields.Datetime.now() - timedelta(minutes=5)
-        missing = model.search(base_domain + [
+        missing_domain = base_domain + [
             '|', '|', ('detail_attempt_at', '=', False),
             ('detail_error', '=', False),
             ('detail_attempt_at', '<', retry_before),
-        ], order='id desc', limit=batch_size)
+        ]
+        if record_ids is not None:
+            missing_domain.append(('id', 'in', record_ids))
+        missing = model.search(missing_domain, order='id desc', limit=batch_size)
         if not missing:
             return 0
         if deadline is not None and time.monotonic() >= deadline:
@@ -525,9 +539,17 @@ class EtaExport(models.Model):
         processed = 0
         ready = 0
         shape_logged = False
-        next_request_at = time.monotonic()
-        for record_id in self._progress_iter(missing.ids, _('Retrieving ETA export details'),
-                                             total=len(missing)):
+        progress = getattr(self, 'web_progress_percent', None)
+        progress_message = _('Retrieving ETA export details')
+        progress_total = progress_total or len(missing)
+        if progress and not progress_offset:
+            progress(0, msg=progress_message, cancellable=False)
+        last_request_at = fields.Datetime.to_datetime(config.detail_last_request_at) \
+            if config.detail_last_request_at else None
+        request_wait = (max(0, 4 - (fields.Datetime.now() - last_request_at).total_seconds())
+                        if last_request_at else 0)
+        next_request_at = time.monotonic() + request_wait
+        for record_id in missing.ids:
             # Keep each request's field prefetch bounded after progress commits.
             record = model.browse(record_id)
             if processed and deadline is not None and time.monotonic() >= deadline:
@@ -541,6 +563,8 @@ class EtaExport(models.Model):
                     break
                 if wait:
                     time.sleep(wait)
+                config.write({'detail_last_request_at': fields.Datetime.now()})
+                self.env['ir.cron']._commit_progress(0, remaining=1)
                 next_request_at = time.monotonic() + 4.0
                 detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}'
                 payload = request('GET', detail_url, headers=headers)
@@ -558,6 +582,8 @@ class EtaExport(models.Model):
                     wait = max(0, next_request_at - time.monotonic())
                     if wait:
                         time.sleep(wait)
+                    config.write({'detail_last_request_at': fields.Datetime.now()})
+                    self.env['ir.cron']._commit_progress(0, remaining=1)
                     next_request_at = time.monotonic() + 4.0
                     payload = request('GET',
                                       f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
@@ -587,6 +613,9 @@ class EtaExport(models.Model):
                     shape_logged = True
                 _logger.warning('ETA export detail failed for %s: %s', record.uuid, exc)
             processed += 1
+            if progress:
+                progress(100.0 * (progress_offset + processed) / progress_total,
+                         msg=progress_message, cancellable=False)
             if (self.env.context.get('cron_id') and
                     not self.env['ir.cron']._commit_progress(1, remaining=1)):
                 break
