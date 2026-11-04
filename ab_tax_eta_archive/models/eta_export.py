@@ -197,33 +197,43 @@ class EtaExport(models.Model):
         deadline = min(time.monotonic() + 25,
                        self.env.context.get('cron_end_time', float('inf')) - 2)
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
-        streams = [(config, kind, direction) for config in configs
-                   for _category, _label, kind, direction in CATEGORIES]
-        if streams:
-            offset = int(now.timestamp() // 60) % len(streams)
-            streams = streams[offset:] + streams[:offset]
+        models = [('invoice', self.env['ab_tax_eta_archive_invoice']),
+                  ('receipt', self.env['ab_tax_eta_archive_receipt'])]
+        if int(now.timestamp() // 60) % 2:
+            models.reverse()
+        retry_before = fields.Datetime.now() - timedelta(hours=1)
         selected = None
-        for config, kind, direction in streams:
-            if time.monotonic() >= deadline:
-                return
-            model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
-                             else 'ab_tax_eta_archive_receipt']
-            retry_before = fields.Datetime.now() - timedelta(hours=1)
+        for kind, model in models:
             record = model.search([
-                ('config_id', '=', config.id), ('direction', '=', direction),
+                ('config_id', 'in', configs.ids),
                 ('report_date', '<=', today),
                 '|', ('detail_json', '=', False), ('detail_json', '=', ''),
                 '|', '|', ('detail_attempt_at', '=', False),
                 ('detail_error', '=', False),
                 ('detail_attempt_at', '<', retry_before),
-            ], order='report_date desc, issued_at desc, uuid', limit=1)
+            ], order='report_date desc', limit=1)
             if record and (selected is None or record.report_date > selected[3]):
-                selected = (config, kind, direction, record.report_date)
+                selected = (record.config_id, kind, record.direction, record.report_date)
         if selected:
             config, kind, direction, report_date = selected
             if time.monotonic() < deadline:
                 self._enrich_details(config, kind, report_date, direction,
                                      deadline=deadline, batch_size=10000)
+            else:
+                _logger.warning('ETA UUID detail selection used the cron time budget '
+                                'before fetching a batch for %s', report_date)
+        else:
+            pending = any(model.search([
+                ('config_id', 'in', configs.ids),
+                '|', ('detail_json', '=', False), ('detail_json', '=', ''),
+            ], limit=1) for _kind, model in models)
+            due_date = any(model.search([
+                ('config_id', 'in', configs.ids), ('report_date', '<=', today),
+                '|', ('detail_json', '=', False), ('detail_json', '=', ''),
+            ], limit=1) for _kind, model in models)
+            _logger.info('ETA UUID detail selection: active_connections=%s '
+                         'pending_any=%s dated_through_today_any=%s eligible=0',
+                         len(configs), pending, due_date)
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(remaining=int(bool(selected)))
 
@@ -459,10 +469,12 @@ class EtaExport(models.Model):
             '|', '|', ('detail_attempt_at', '=', False),
             ('detail_error', '=', False),
             ('detail_attempt_at', '<', retry_before),
-        ], order='issued_at desc, uuid', limit=batch_size)
+        ], order='id desc', limit=batch_size)
         if not missing:
             return 0
         if deadline is not None and time.monotonic() >= deadline:
+            _logger.warning('ETA UUID detail batch search used the cron time budget '
+                            'before fetching details for %s', report_date)
             return 0
         try:
             api_url, headers = self._detail_headers(config, kind)
