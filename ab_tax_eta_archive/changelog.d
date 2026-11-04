@@ -605,7 +605,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+829c2e91 — yahyazakaria22 — 2026-11-04
+fix: create ETA files per completed day
 
 - Treat each issue day independently: its four retrieval streams must be Done before building its daily XLSX files.
 - Create files for completed recent days without automatic Telegram delivery; automatically send every ready unsent day on or before the Cairo four-day cutoff.
