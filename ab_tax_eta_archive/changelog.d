@@ -677,3 +677,15 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+c1511bc3 — yahyazakaria22 — 2026-11-04
+fix: start ETA UUID batches without scanning every stream
+
+- Find the newest eligible issue day with one lookup per document model, reducing selection work before the detail request starts.
+- Use issue-day ordering for selection and indexed row IDs within the selected 10,000-row batch.
+- Log whether active connections have pending rows, whether any are dated through today, and when selection or batch search consumes the cron time budget.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
