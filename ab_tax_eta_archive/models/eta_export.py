@@ -523,12 +523,24 @@ class EtaExport(models.Model):
                 if wait:
                     time.sleep(wait)
                 next_request_at = time.monotonic() + 0.51
-                payload = request('GET',
-                                  f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}',
-                                  headers=headers)
+                detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}'
+                payload = request('GET', detail_url, headers=headers)
                 if not isinstance(payload, dict):
                     raise ValueError('ETA detail response is not an object')
-                values = _detail_values(payload, kind)
+                try:
+                    values = _detail_values(payload, kind)
+                except ValueError:
+                    if kind != 'invoice':
+                        raise
+                    # ETA exposes separate invoice details and raw endpoints. Some
+                    # registered documents lack the details wrapper, while raw
+                    # still returns the full DocumentExtended object.
+                    payload = request('GET',
+                                      f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
+                                      headers=headers)
+                    if not isinstance(payload, dict):
+                        raise ValueError('ETA invoice raw response is not an object')
+                    values = _detail_values(payload, kind)
                 record.write({'detail_json': json.dumps(values, ensure_ascii=False,
                                                         sort_keys=True), 'detail_error': False,
                               'detail_attempt_at': fields.Datetime.now()})
