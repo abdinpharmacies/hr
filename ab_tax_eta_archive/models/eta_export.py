@@ -458,7 +458,18 @@ class EtaExport(models.Model):
         ], order='detail_attempt_at, issued_at, uuid', limit=batch_size + 1)
         if not missing:
             return not model.search_count(base_domain)
-        api_url, headers = self._detail_headers(config, kind)
+        try:
+            api_url, headers = self._detail_headers(config, kind)
+        except (UserError, ValueError, requests.RequestException) as exc:
+            attempted_at = fields.Datetime.now()
+            for record in missing[:batch_size]:
+                record.write({'detail_error': str(exc)[:500],
+                              'detail_attempt_at': attempted_at})
+            _logger.warning('ETA UUID detail authentication failed for %s %s: %s',
+                            kind, report_date, exc)
+            if self.env.context.get('cron_id'):
+                self.env['ir.cron']._commit_progress(len(missing[:batch_size]), remaining=1)
+            return False
         request = self.env['ab_tax_eta_archive_sync']._request
         processed = 0
         for record in self._progress_iter(missing[:batch_size], _('Retrieving ETA export details'),

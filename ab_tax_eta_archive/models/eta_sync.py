@@ -80,7 +80,7 @@ class EtaSync(models.Model):
             domain = (fields.Domain('config_id', 'in', runs.mapped('config_id').ids) &
                       fields.Domain('report_date', 'in', runs.mapped('report_date')) &
                       fields.Domain('direction', 'in', runs.mapped('direction')))
-            groupby = ['config_id', 'report_date', 'direction']
+            groupby = ['config_id', 'report_date:day', 'direction']
             for config, day, direction, count in model._read_group(domain, groupby, ['__count']):
                 for run in by_key.get((config.id, day, direction), []):
                     run.issue_day_rows = count

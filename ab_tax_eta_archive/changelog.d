@@ -638,3 +638,14 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Fix the Odoo 19 Retrievals coverage view by grouping the report date at day granularity.
+- Record UUID detail authentication failures on affected transactions with attempt time, so the detail job shows Error instead of silently leaving every row Pending.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
