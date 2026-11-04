@@ -296,6 +296,7 @@ class EPlusConnect(models.AbstractModel):
             "physical connection is not usable",
             "connection is closed",
             "connection not open",
+            "not connected to any ms sql server",
             "dbprocess is dead",
             "db-lib error message 20047",
             "connection reset",
