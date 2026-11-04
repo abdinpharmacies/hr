@@ -119,8 +119,17 @@ class EtaSync(models.Model):
             runs = self.search([
                 ('config_id', '=', config.id),
                 ('report_date', '>=', config.start_date),
-                ('report_date', '<', today),
+                ('report_date', '<=', today),
             ])
+            yesterday_receipts = runs.filtered(
+                lambda run: run.kind == 'receipt' and run.report_date == yesterday and
+                run.state == 'pending' and run.next_receipt_window_at and run.last_run_at and
+                fields.Datetime.to_datetime(run.last_run_at).replace(
+                    tzinfo=timezone.utc).astimezone(cairo).date() < today)
+            yesterday_receipts.write({
+                'next_receipt_window_at': False,
+                'receipt_issue_dates_json': False,
+            })
             old_receipts = runs.filtered(
                 lambda run: run.kind == 'receipt' and run.state != 'done' and
                 run.report_date < oldest_searchable_day)
@@ -143,13 +152,13 @@ class EtaSync(models.Model):
             overlap_days = {
                 run.report_date for run in runs
                 if run.state == 'done' and
-                max(config.start_date, today - timedelta(days=14)) <= run.report_date < yesterday and
+                max(config.start_date, today - timedelta(days=14)) <= run.report_date <= yesterday and
                 (not run.last_run_at or
                  fields.Datetime.to_datetime(run.last_run_at).replace(
                      tzinfo=timezone.utc).astimezone(cairo).date() < today)
             }
-            priority_days = [day for day in (yesterday, delivery_day)
-                             if config.start_date <= day < today]
+            priority_days = [day for day in (today, yesterday, delivery_day)
+                             if config.start_date <= day <= today]
             ordered_days = list(dict.fromkeys(
                 priority_days + sorted(unfinished_days) + sorted(overlap_days)))
             for day in ordered_days:
@@ -157,9 +166,15 @@ class EtaSync(models.Model):
                     run = by_day_stream.get((day, kind, direction))
                     if not run:
                         continue
+                    if (day == today and run.last_run_at and
+                            fields.Datetime.to_datetime(run.last_run_at) >
+                            fields.Datetime.now() - timedelta(minutes=1)):
+                        continue
                     due = ((run.kind != 'receipt' or
                             day >= oldest_searchable_day) and
                            (run.state == 'pending' or
+                            (run.state == 'done' and run.kind == 'invoice' and
+                             day == today) or
                             (run.state == 'error' and
                              (not run.last_run_at or
                               fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)) or
@@ -173,7 +188,7 @@ class EtaSync(models.Model):
                     made_progress |= progressed
                     if not keep_running:
                         return
-                if day in unfinished_days:
+                if day in unfinished_days and day != today:
                     break
         if self.env.context.get('cron_id'):
             remaining = (sum(self._eligible_remaining(config, today, error_retry_before)
@@ -185,7 +200,7 @@ class EtaSync(models.Model):
         runs = self.search([
             ('config_id', '=', config.id),
             ('report_date', '>=', config.start_date),
-            ('report_date', '<', today),
+            ('report_date', '<=', today),
             ('state', 'in', ['pending', 'error']),
         ])
         return len(runs.filtered(
@@ -200,12 +215,6 @@ class EtaSync(models.Model):
             ('report_date', '>=', config.start_date),
             ('report_date', '<=', today),
         ])
-        today_runs = existing.filtered(lambda run: run.report_date == today)
-        today_runs.filtered(lambda run: run.state == 'done').write({'state': 'pending'})
-        today_runs.filtered(
-            lambda run: run.kind == 'receipt' and
-            (run.next_receipt_window_at or run.receipt_issue_dates_json)
-        ).write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
         known = {(run.report_date, run.kind, run.direction) for run in existing}
         missing = []
         day = config.start_date
@@ -252,6 +261,12 @@ class EtaSync(models.Model):
                                run.item_count != previous_count or
                                run.next_receipt_window_at != previous_window)
             progressed |= step_progressed
+            if (step_progressed and
+                    run.report_date == datetime.now(pytz.timezone('Africa/Cairo')).date()):
+                _logger.info('ETA current-day retrieval: kind=%s direction=%s '
+                             'count=%s state=%s next_receipt_window=%s',
+                             run.kind, run.direction, run.item_count, run.state,
+                             run.next_receipt_window_at if run.kind == 'receipt' else False)
             if in_cron and not self.env['ir.cron']._commit_progress(
                     int(step_progressed), remaining=1):
                 return False, progressed
@@ -259,6 +274,12 @@ class EtaSync(models.Model):
                 return True, progressed
             if (run.next_receipt_window_at and
                     run.next_receipt_window_at != previous_window):
+                if (run.report_date == datetime.now(pytz.timezone('Africa/Cairo')).date() and
+                        fields.Datetime.to_datetime(run.next_receipt_window_at).replace(
+                            minute=0, second=0, microsecond=0) >=
+                        fields.Datetime.now().replace(
+                            minute=0, second=0, microsecond=0)):
+                    return True, progressed
                 continue
             return True, progressed
         return True, progressed
@@ -302,13 +323,13 @@ class EtaSync(models.Model):
         count, issue_dates = result
         self.write({'state': 'done', 'item_count': count,
                     'last_run_at': fields.Datetime.now(), 'error_message': False})
-        # The export cron enriches UUID details only after all four streams are complete.
+        # A separate cron fetches UUID details from saved invoice and receipt rows.
 
     def _retrieve(self, auth_cache=None):
         self.ensure_one()
         config = self.config_id
         cairo = pytz.timezone('Africa/Cairo')
-        if self.report_date >= datetime.now(cairo).date():
+        if self.report_date > datetime.now(cairo).date():
             return None
         if (self.kind == 'receipt' and
                 self.report_date < datetime.now(cairo).date()
@@ -353,6 +374,16 @@ class EtaSync(models.Model):
         start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
+        current_day = self.report_date == datetime.now(cairo).date()
+        if current_day:
+            end = min(end, datetime.now(timezone.utc) - timedelta(milliseconds=1))
+            if self.kind == 'invoice' and self.state == 'done' and self.last_run_at:
+                start = max(start, fields.Datetime.to_datetime(self.last_run_at).replace(
+                    tzinfo=timezone.utc) - timedelta(minutes=30))
+            if (self.kind == 'receipt' and self.next_receipt_window_at and
+                    fields.Datetime.to_datetime(self.next_receipt_window_at).replace(
+                        tzinfo=timezone.utc) > end):
+                return None
         receipt_checkpoint = (json.loads(self.receipt_issue_dates_json or '[]')
                               if self.kind == 'receipt' and self.state != 'done' else [])
         if self.kind == 'invoice':
@@ -422,6 +453,20 @@ class EtaSync(models.Model):
                 ('issued_at', '>=', start.replace(tzinfo=None)),
                 ('issued_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
             ])
+            current_hour_end = (window_start.replace(minute=0, second=0,
+                                                     microsecond=0) + timedelta(hours=1)
+                                - timedelta(milliseconds=1))
+            if current_day and window_end == end and end < current_hour_end:
+                self.write({
+                    'next_receipt_window_at': window_start.replace(
+                        minute=0, second=0, microsecond=0, tzinfo=None),
+                    'receipt_issue_dates_json': json.dumps({
+                        'basis': 'issued',
+                        'issue_dates': sorted(fields.Date.to_string(value) for value in issue_dates),
+                    }),
+                    'item_count': document_count,
+                })
+                return None
             self._record_receipt_segment_done(
                 window_start, window_end, len(seen_uuids),
                 last_receipt_uuid, last_receipt_at)
@@ -430,7 +475,7 @@ class EtaSync(models.Model):
                 ('sync_id', '=', self.id), ('state', '=', 'error'),
                 ('end_at', '<', next_window.replace(tzinfo=None)),
             ]).write({'state': 'resolved'})
-            if next_window <= end:
+            if next_window <= end or current_day:
                 self.write({
                     'next_receipt_window_at': next_window.replace(tzinfo=None),
                     'receipt_issue_dates_json': json.dumps({
@@ -442,6 +487,14 @@ class EtaSync(models.Model):
                 return None
             self.write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
             return document_count, issue_dates
+        if current_day:
+            day_start = cairo.localize(datetime.combine(
+                self.report_date, day_time.min)).astimezone(timezone.utc)
+            return model.search_count([
+                ('config_id', '=', config.id), ('direction', '=', self.direction),
+                ('received_at', '>=', day_start.replace(tzinfo=None)),
+                ('received_at', '<=', end.replace(tzinfo=None)),
+            ]), issue_dates
         return len(seen_uuids), issue_dates
 
     def _record_receipt_segment_done(self, start, end, count, last_uuid, last_at):
@@ -471,7 +524,7 @@ class EtaSync(models.Model):
             return
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
-        if self.report_date >= today or self.report_date < today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS):
+        if self.report_date > today or self.report_date < today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS):
             return
         start = cairo.localize(datetime.combine(self.report_date, day_time.min))
         start = start.astimezone(timezone.utc)
@@ -486,6 +539,8 @@ class EtaSync(models.Model):
             cairo.localize(datetime.combine(
                 self.report_date + timedelta(days=1), day_time.min)
             ).astimezone(timezone.utc) - timedelta(milliseconds=1))
+        if self.report_date == today:
+            end = min(end, datetime.now(timezone.utc) - timedelta(milliseconds=1))
         values = {
             'sync_id': self.id,
             'start_at': start.replace(tzinfo=None),

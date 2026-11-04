@@ -512,10 +512,12 @@ class EtaExport(models.Model):
             if processed and deadline is not None and time.monotonic() >= deadline:
                 break
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
+            detail_endpoint = 'details' if kind == 'invoice' else 'raw'
             payload = None
             try:
                 time.sleep(0.51)
-                payload = request('GET', f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
+                payload = request('GET',
+                                  f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}',
                                   headers=headers)
                 if not isinstance(payload, dict):
                     raise ValueError('ETA detail response is not an object')
