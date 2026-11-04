@@ -702,3 +702,14 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+a22e2f90 — yahyazakaria22 — 2026-11-04
+fix: preserve ETA UUID cron backlog progress
+
+- Preserve a remaining-work indicator when an Odoo cron loop starts after its time budget is exhausted.
+- Show the unattempted portion of each selected UUID detail window in the batch log.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
