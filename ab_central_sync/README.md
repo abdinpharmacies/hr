@@ -8,21 +8,33 @@ on `ab_branch_api`. Purchasing and other inventory workflows are unchanged.
 
 ## Deployment status
 
-The `ab_central_sync` v2 source changes have been copied into the `branch19`
-and `dev-central19` worktrees at the user's request. No database upgrade,
-service restart, enrollment or configuration change was performed for this transfer.
-The isolated development copies are retained.
+The existing Central `abdin_replica19` on Proxmox and local Branch
+`abdin_replica_branch19` contain a test-store pilot using `SYNC-PILOT-102`.
+Replica 102 selects that store explicitly for synchronization. Existing stores
+29 and 140 and their historical documents remain outside the synchronization
+scope; their existing default stores are preserved. The pilot opening receipt
+contains test stock only and is not a real branch opening balance.
 
-Both `ab_central_sync` and its required `ab_sales_inventory` extension hooks
-have been transferred into these worktrees. Database upgrades and activation
-remain pending. The optional branch/callcenter adapter changes remain in isolated
-development worktrees. Keep branches used by the running callcenter outside the
-central cutover until those adapters and their stored reference fields are ready.
+## Store scope and HTTPS trust
 
-Existing v1 Branch/Central role settings are not inert: upgrading these installations
-activates v2 readiness checks. Schedule a coordinated cutover; an upgrade without
-enrollment and initial stock readiness can block sales. This transfer does not reset
-existing roles or inventory backend settings.
+On the replica record, Synchronization Stores selects a subset of Allowed Sales
+Stores. Synchronization Default Store must belong to that selection. An empty
+selection retains the existing whole-replica behavior for older configurations.
+The branch and central must agree on the selected scope. Enrolled assignments
+are immutable. Open POS bills never block enrollment merely because they are open. Drafts stay
+local and create no synchronization operation until POS confirmation. Every newly
+enrolled store is checked for unreconciled native stock movements and confirmed
+transactions without matching journal records, including when reconnecting.
+
+Only selected stores use central transport, cached reservations and snapshots.
+Other stores retain their configured inventory backend. Stock snapshots include
+products with inventory history in the selected store, including depleted stock;
+a fully initialized branch treats products absent from that snapshot as zero
+stock. The product catalog must still match for every stock-bearing product.
+
+Central CA Bundle optionally points to a locally installed trusted certificate
+file for that HTTPS endpoint. A blank value uses normal system trust. Certificate
+verification remains enabled. Do not copy credentials into module files.
 
 ## One-time setup
 
@@ -38,8 +50,9 @@ existing roles or inventory backend settings.
 4. On the branch, select Branch, enter the central HTTPS URL, database and pairing
    code, then Connect to Central. URL/database can be provisioned as shared system
    parameter defaults. The service generates the credential; there is no peer JSON
-   or manual per-user mapping. The branch's existing replica/store assignments
-   must match central, and open sales/returns must be completed before enrollment.
+   or manual per-user mapping. The branch's selected replica/store scope
+   must match central, and confirmed native effects must be reconciled before enrollment. Open POS drafts
+   remain local until explicitly confirmed.
 5. Download the initial stock snapshot before selling. Missing catalog identities
    stop the download. Enrolled sales use central inventory automatically; there is
    no E-Plus fallback. Pairing is per database installation, not per login/session.

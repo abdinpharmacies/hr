@@ -20,6 +20,8 @@ class Replica(models.Model):
     central_key_hash = fields.Char(readonly=True, copy=False, groups='base.group_system')
     central_pair_hash = fields.Char(readonly=True, copy=False, groups='base.group_system', index=True)
     central_pair_expires = fields.Datetime(readonly=True, copy=False, groups='base.group_system')
+    central_store_ids = fields.Many2many('ab_store', 'ab_central_sync_replica_store_rel', 'replica_id', 'store_id', string='Synchronization Stores', groups='base.group_system')
+    central_default_store_id = fields.Many2one('ab_store', string='Synchronization Default Store', groups='base.group_system')
     central_ready = fields.Boolean(string='Opening balances and return history reviewed', groups='base.group_system')
     central_last_seen = fields.Datetime(readonly=True, copy=False)
     central_backlog = fields.Integer(readonly=True, copy=False)
@@ -35,9 +37,25 @@ class Replica(models.Model):
     def write(self, vals):
         if any(key.startswith('central_') for key in vals) and not self.env.user.has_group('base.group_system'):
             raise AccessError(_('Only system administrators can manage enrollment.'))
-        if {'allowed_sales_store_ids', 'default_sales_store_id'} & vals.keys() and self.filtered('central_key_hash'):
-            raise ValidationError(_('Revoke the connection before changing an enrolled branch store assignment.'))
+        if {'allowed_sales_store_ids', 'default_sales_store_id', 'central_store_ids', 'central_default_store_id'} & vals.keys():
+            journal = self.env['ab_central_sync_operation']
+            local = self.get_current_from_config()
+            enrolled_local = journal._param('role') == 'branch' and journal._param('enrolled') and bool(local) and local in self
+            if self.filtered('central_key_hash') or enrolled_local:
+                raise ValidationError(_('Revoke the connection before changing an enrolled branch store assignment.'))
         return super().write(vals)
+
+    @api.constrains('central_store_ids', 'central_default_store_id', 'allowed_sales_store_ids')
+    def _check_sync_scope(self):
+        for replica in self:
+            if replica.central_store_ids - replica.allowed_sales_store_ids:
+                raise ValidationError(_('Synchronization stores must belong to the replica.'))
+            if replica.central_store_ids and replica.central_default_store_id not in replica.central_store_ids:
+                raise ValidationError(_('Select a default store within the synchronization scope.'))
+
+    def _sync_stores(self):
+        self.ensure_one()
+        return self.central_store_ids or self.allowed_sales_store_ids
 
     def _check_central_admin(self):
         if not self.env.user.has_group('base.group_system'):
@@ -48,9 +66,9 @@ class Replica(models.Model):
     def action_pairing_code(self):
         self.ensure_one()
         self._check_central_admin()
-        if not self.central_ready or not self.allowed_sales_store_ids or not self.default_sales_store_id:
+        if not self.central_ready or not self._sync_stores() or not (self.central_default_store_id or self.default_sales_store_id):
             raise ValidationError(_('Review opening balances, return history, and assigned stores before enrollment.'))
-        if any(not store.code for store in self.allowed_sales_store_ids):
+        if any(not store.code for store in self._sync_stores()):
             raise ValidationError(_('Every assigned store requires a stable code.'))
         code = secrets.token_urlsafe(24)
         self.write({'central_pair_hash': secret_hash(code),
@@ -92,7 +110,7 @@ class Replica(models.Model):
     def _connection_info(self):
         self.ensure_one()
         return {'version': 2, 'origin': self.central_origin, 'replica_serial': self.db_serial,
-                'stores': self.allowed_sales_store_ids.mapped('code'), 'default_store': self.default_sales_store_id.code}
+                'stores': self._sync_stores().mapped('code'), 'default_store': (self.central_default_store_id or self.default_sales_store_id).code}
 
 
 class Settings(models.TransientModel):
@@ -102,6 +120,7 @@ class Settings(models.TransientModel):
                                    config_parameter='ab_central_sync.role', groups='base.group_system')
     central_url = fields.Char(string='Central URL', config_parameter='ab_central_sync.url', groups='base.group_system')
     central_database = fields.Char(string='Central Database', config_parameter='ab_central_sync.database', groups='base.group_system')
+    central_ca_bundle = fields.Char(string='Central CA Bundle', config_parameter='ab_central_sync.ca_bundle', groups='base.group_system')
     central_pairing_code = fields.Char(string='Pairing Code', groups='base.group_system')
     central_connection = fields.Char(string='Connection', compute='_compute_central_connection')
 

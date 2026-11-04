@@ -6,6 +6,8 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
                 <group string="Central Synchronization" groups="base.group_system">
+                    <field name="central_store_ids" widget="many2many_tags"/>
+                    <field name="central_default_store_id"/>
                     <field name="central_ready"/>
                     <field name="central_origin"/>
                     <field name="central_pair_expires"/>
@@ -36,9 +38,28 @@
                 <block title="Connection">
                     <setting string="Installation role"><field name="central_role"/></setting>
                     <setting string="Central server" invisible="central_role != 'branch'">
-                        <field name="central_url" placeholder="https://central.example.com"/>
-                        <field name="central_database"/><field name="central_pairing_code" password="True"/>
-                        <field name="central_connection"/>
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="central_url" class="col-lg-4 o_light_label"/>
+                                <field name="central_url" placeholder="https://central.example.com" class="col-lg-8"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="central_database" class="col-lg-4 o_light_label"/>
+                                <field name="central_database" class="col-lg-8"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="central_ca_bundle" class="col-lg-4 o_light_label"/>
+                                <field name="central_ca_bundle" class="col-lg-8"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="central_pairing_code" class="col-lg-4 o_light_label"/>
+                                <field name="central_pairing_code" password="True" class="col-lg-8"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="central_connection" class="col-lg-4 o_light_label"/>
+                                <field name="central_connection" class="col-lg-8"/>
+                            </div>
+                        </div>
                         <button name="action_connect_central" type="object" string="Connect to Central" class="btn-primary"/>
                         <button name="action_sync_now" type="object" string="Sync Now"/>
                         <div class="text-muted">Connect once per branch installation. Sessions and restarts reconnect automatically.</div>

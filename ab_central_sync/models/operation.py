@@ -82,8 +82,21 @@ class CentralOperation(models.Model):
         return self.env['ir.config_parameter'].sudo().get_param('ab_central_sync.' + key, default)
 
     @api.model
+    def _uses_central(self, store, role=None):
+        current_role = self._param('role')
+        if not store or current_role not in ('branch', 'central') or (role and current_role != role):
+            return False
+        if current_role == 'branch':
+            replica = self.env['ab_replica_db'].get_current_from_config()
+            return bool(replica and store in replica._sync_stores())
+        replicas = self.env['ab_replica_db'].sudo().search(fields.Domain('central_ready', '=', True) & fields.Domain('central_key_hash', '!=', False))
+        return any(store in replica._sync_stores() for replica in replicas)
+
+    @api.model
     def _enqueue(self, document, kind, payload):
-        if self._param('role') != 'branch':
+        if not self._uses_central(document.store_id, 'branch'):
+            return
+        if kind == 'sale' and not document.native_submitted:
             return
         self._check_enrolled_store(document.store_id)
         document.check_access('read')
@@ -131,7 +144,7 @@ class CentralOperation(models.Model):
             raise ValidationError(_('Configure the central HTTPS URL, database, and API key.'))
         response = requests.post(url + '/ab_central_sync/v2/' + action,
             headers={'Authorization': 'Bearer ' + key, 'X-Odoo-Database': database},
-            json=body, timeout=(5, 20), allow_redirects=False)
+            json=body, timeout=(5, 20), allow_redirects=False, verify=self._param('ca_bundle') or True)
         response.raise_for_status()
         result = response.json()
         if not isinstance(result, dict) or result.get('error'):
@@ -208,6 +221,33 @@ class CentralOperation(models.Model):
             raise ValidationError(_('Connect this branch and download its stock snapshot before selling.'))
 
     @api.model
+    def _check_enrollment_integrity(self, stores):
+        if not stores:
+            return
+        domain = fields.Domain('store_id', 'in', stores.ids)
+        if self.env['ab_sales_stock_allocation'].sudo().search_count(domain, limit=1):
+            raise ValidationError(_('Reconcile existing local native stock movements before enabling central synchronization.'))
+        sales = self.env['ab_sales_header'].sudo().with_context(active_test=False).search(
+            domain & (fields.Domain('native_submitted', '=', True) | fields.Domain('native_posted', '=', True)))
+        returns = self.env['ab_sales_return_header'].sudo().with_context(active_test=False).search(
+            domain & fields.Domain('native_posted', '=', True))
+        payments = self.env['ab_sales_native_payment'].sudo().search(domain)
+        events = [('sale', sales), ('return', returns),
+                  ('sale_settle', payments.filtered(lambda payment: not payment.return_id).sale_id),
+                  ('return_settle', payments.return_id)]
+        origin = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
+        for kind, documents in events:
+            if not documents:
+                continue
+            operations = self.sudo().with_context(active_test=False).search(
+                domain & fields.Domain('direction', '=', 'out') & fields.Domain('origin', '=', origin)
+                & fields.Domain('kind', '=', kind) & fields.Domain('document_model', '=', documents._name)
+                & fields.Domain('document_id', 'in', documents.ids))
+            recorded = {(operation.document_id, operation.store_id.id) for operation in operations}
+            if {(document.id, document.store_id.id) for document in documents} - recorded:
+                raise ValidationError(_('Confirmed native transactions require reconciliation before enabling central synchronization.'))
+
+    @api.model
     def _save_connection(self, info):
         if info.get('version') != 2 or info.get('origin') != self.env['ir.config_parameter'].sudo().get_param('database.uuid'):
             raise ValidationError(_('Invalid enrollment response.'))
@@ -220,14 +260,14 @@ class CentralOperation(models.Model):
         if not codes or len(stores) != len(codes) or info.get('default_store') not in codes:
             raise ValidationError(_('Synchronize assigned stores before connecting.'))
         replica = self.env['ab_replica_db'].get_current_from_config()
-        if not replica or replica.db_serial != info['replica_serial'] or set(replica.allowed_sales_store_ids.ids) != set(stores.ids):
+        if not replica or replica.db_serial != info['replica_serial'] or set(replica._sync_stores().ids) != set(stores.ids):
             raise ValidationError(_('Replicate the branch identity and store assignments before connecting.'))
-        for model in ('ab_sales_header', 'ab_sales_return_header'):
-            if not self._param('enrolled') and self.env[model].sudo().search_count(
-                    fields.Domain('store_id', 'in', stores.ids) & fields.Domain('status', 'in', ['prepending', 'pending'])):
-                raise ValidationError(_('Complete open sales and returns before connecting.'))
+        previous_codes = json.loads(self._param('stores', '[]')) if self._param('enrolled') else []
+        new_stores = stores.filtered(lambda store: store.code not in previous_codes)
+        new_stores.lock_for_update(allow_referencing=True)
+        self._check_enrollment_integrity(new_stores)
         params = self.env['ir.config_parameter'].sudo()
-        if not self._param('enrolled'):
+        if not self._param('enrolled') or new_stores:
             params.set_param('ab_central_sync.ready', False)
         params.set_param('ab_central_sync.stores', json.dumps(codes))
         params.set_param('ab_central_sync.origin', info['origin'])
@@ -281,7 +321,9 @@ class CentralOperation(models.Model):
         operations = self.with_context(active_test=False).search(fields.Domain('direction', '=', 'in')
             & fields.Domain('origin', '=', origin) & fields.Domain('store_id', '=', store.id)
             & fields.Domain('state', '=', 'accepted'), order='serial desc', limit=1)
-        domain = fields.Domain('id', '>', after)
+        stocked = self.env['ab_inventory']._read_group(
+            fields.Domain('store_id', '=', store.id), ['product_id'], [])
+        domain = fields.Domain('id', '>', after) & fields.Domain('id', 'in', [product.id for product, in stocked if product])
         if codes is not None:
             if not isinstance(codes, list) or len(codes) > 200 or any(not isinstance(code, str) for code in codes):
                 raise ValidationError(_('Invalid product snapshot request.'))
