@@ -21,6 +21,7 @@ ETA_INVOICE_SEARCH_DELAY = 2.1
 ETA_RECEIPT_SEARCH_DELAY = 0.6
 ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT = 4
 ETA_RECEIPT_SEARCH_DAYS = 29
+ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED = False
 
 
 class EtaSearchNoResult(Exception):
@@ -132,10 +133,13 @@ class EtaSync(models.Model):
             by_day_stream = {(run.report_date, run.kind, run.direction): run for run in runs}
             unfinished_days = {
                 run.report_date for run in runs
-                if (run.state == 'pending' or
-                 (run.state == 'error' and
-                  (not run.last_run_at or
-                   fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)))
+                if ((ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED or
+                     run.kind != 'receipt' or
+                     run.report_date >= today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)) and
+                    (run.state == 'pending' or
+                     (run.state == 'error' and
+                      (not run.last_run_at or
+                       fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))))
             }
             overlap_days = {
                 run.report_date for run in runs
@@ -153,6 +157,10 @@ class EtaSync(models.Model):
                 for kind, direction in streams:
                     run = by_day_stream.get((day, kind, direction))
                     if not run:
+                        continue
+                    if (run.kind == 'receipt' and
+                            run.report_date < today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS) and
+                            not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED):
                         continue
                     if (day == today and run.last_run_at and
                             fields.Datetime.to_datetime(run.last_run_at) >
@@ -190,7 +198,10 @@ class EtaSync(models.Model):
             ('state', 'in', ['pending', 'error']),
         ])
         return len(runs.filtered(
-            lambda run: (run.state == 'pending' or not run.last_run_at or
+            lambda run: (ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED or
+                         run.kind != 'receipt' or
+                         run.report_date >= today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)) and
+            (run.state == 'pending' or not run.last_run_at or
              fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)))
 
     def _ensure_run_days(self, config, today):
@@ -315,6 +326,8 @@ class EtaSync(models.Model):
         if (self.kind == 'receipt' and
                 self.report_date < datetime.now(cairo).date()
                 - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)):
+            if not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED:
+                return None
             return self._retrieve_historical_receipts()
         receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
         if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':

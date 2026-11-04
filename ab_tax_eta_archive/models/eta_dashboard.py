@@ -3,6 +3,7 @@ import pytz
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
+from .eta_sync import ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED, ETA_RECEIPT_SEARCH_DAYS
 
 
 class EtaDashboard(models.Model):
@@ -109,8 +110,11 @@ class EtaDashboard(models.Model):
             'sent': export_model.search_count(export_domain + [('telegram_sent_at', '!=', False)]),
             'corrections': export_model.search_count(export_domain + [('revision', '>', 1)]),
         }
-        recent_errors = self.search(retrieval_domain + [('state', '=', 'error')],
-                                    order='last_run_at desc, id desc', limit=5)
+        error_domain = retrieval_domain + [('state', '=', 'error')]
+        if not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED:
+            error_domain += ['|', ('kind', '!=', 'receipt'),
+                             ('report_date', '>=', today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS))]
+        recent_errors = self.search(error_domain, order='last_run_at desc, id desc', limit=5)
         latest_done = self.search(retrieval_domain + [('state', '=', 'done')],
                                   order='last_run_at desc, id desc', limit=1)
         return {

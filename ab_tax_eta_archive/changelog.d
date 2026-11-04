@@ -843,3 +843,17 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Disable historical receipt package requests so package API failures do not create sync errors while this path is paused.
+- Exclude paused historical package runs from daily retrieval scheduling and dashboard errors.
+- Give the UUID detail cron priority over daily document retrieval to reduce starvation.
+- Validation: reviewed the supplied server logs and git diff --check passed; live Odoo scheduling requires server execution.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/models/eta_dashboard.py
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/changelog.d
