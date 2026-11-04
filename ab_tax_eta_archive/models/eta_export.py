@@ -493,6 +493,7 @@ class EtaExport(models.Model):
             _logger.warning('ETA UUID detail batch search used the cron time budget '
                             'before fetching details for %s', report_date)
             return 0
+        batch_started_at = time.monotonic()
         try:
             api_url, headers = self._detail_headers(config, kind)
         except (UserError, ValueError, requests.RequestException) as exc:
@@ -508,6 +509,7 @@ class EtaExport(models.Model):
         processed = 0
         ready = 0
         shape_logged = False
+        next_request_at = time.monotonic()
         for record in missing:
             if processed and deadline is not None and time.monotonic() >= deadline:
                 break
@@ -515,7 +517,12 @@ class EtaExport(models.Model):
             detail_endpoint = 'details' if kind == 'invoice' else 'raw'
             payload = None
             try:
-                time.sleep(0.51)
+                wait = max(0, next_request_at - time.monotonic())
+                if deadline is not None and time.monotonic() + wait >= deadline:
+                    break
+                if wait:
+                    time.sleep(wait)
+                next_request_at = time.monotonic() + 0.51
                 payload = request('GET',
                                   f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}',
                                   headers=headers)
@@ -545,9 +552,10 @@ class EtaExport(models.Model):
                     not self.env['ir.cron']._commit_progress(1, remaining=1)):
                 break
         _logger.info('ETA UUID detail batch: connection=%s kind=%s direction=%s day=%s '
-                     'selected=%s attempted=%s ready=%s errors=%s unattempted=%s',
+                     'selected=%s attempted=%s ready=%s errors=%s unattempted=%s elapsed=%.2fs',
                      config.id, kind, direction, report_date, len(missing), processed,
-                     ready, processed - ready, len(missing) - processed)
+                     ready, processed - ready, len(missing) - processed,
+                     time.monotonic() - batch_started_at)
         return processed
 
     def _progress_iter(self, data, message, total=None):
