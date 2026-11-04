@@ -689,3 +689,16 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+2466e011 — yahyazakaria22 — 2026-11-04
+fix: validate ETA UUID raw response shapes
+
+- Accept ETA invoice and receipt details from a validated wrapped object, nested result object, or direct document body; parse JSON document text when returned.
+- Reject responses without the required document structure instead of marking incomplete data as ready.
+- Log response key names and body type once per failed batch to diagnose ETA payload variations without recording document values.
+- Stop reporting the next cron loop's exhausted time budget as a slow selection query.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
