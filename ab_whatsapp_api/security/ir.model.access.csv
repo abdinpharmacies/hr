@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_whatsapp_contact_system,access_ab_whatsapp_contact_system,model_ab_whatsapp_contact,base.group_system,1,1,1,1
+access_ab_whatsapp_message_system,access_ab_whatsapp_message_system,model_ab_whatsapp_message,base.group_system,1,1,1,1
+access_ab_whatsapp_service_system,access_ab_whatsapp_service_system,model_ab_whatsapp_service,base.group_system,1,1,1,1
+access_ab_whatsapp_template_system,access_ab_whatsapp_template_system,model_ab_whatsapp_template,base.group_system,1,1,1,1

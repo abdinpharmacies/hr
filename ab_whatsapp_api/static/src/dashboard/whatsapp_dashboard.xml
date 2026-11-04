@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_whatsapp_api.WhatsAppDashboardAction">
+        <div class="o_ab_whatsapp_dashboard">
+            <t t-if="state.loading">
+                <div class="abwa-loading">Loading WhatsApp dashboard...</div>
+            </t>
+            <t t-else="">
+                <div class="abwa-layout">
+                    <aside class="abwa-sidebar">
+                        <div class="abwa-contacts-head">
+                            <span>Contacts</span>
+                            <div class="abwa-contacts-actions">
+                                <button type="button" class="abwa-btn-ghost" t-on-click="openContactModal">Add</button>
+                                <button
+                                    type="button"
+                                    class="abwa-btn-ghost"
+                                    t-att-disabled="!hasActiveContact"
+                                    t-on-click="onEditContactClick"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    type="button"
+                                    class="abwa-btn-ghost"
+                                    t-att-disabled="!hasActiveContact"
+                                    t-on-click="onDeleteContactClick"
+                                >
+                                    Delete
+                                </button>
+                                <button
+                                    type="button"
+                                    class="abwa-btn-ghost"
+                                    t-on-click="onRefreshClick"
+                                >
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="abwa-contacts">
+                            <t t-if="!state.contacts.length">
+                                <div class="abwa-empty">No contacts yet.</div>
+                            </t>
+                            <t t-else="">
+                                <t t-foreach="state.contacts" t-as="contact" t-key="contact.id">
+                                    <button
+                                        type="button"
+                                        t-att-class="contactButtonClass(contact)"
+                                        t-att-data-wa-id="contact.wa_id"
+                                        t-on-click="onContactClick"
+                                    >
+                                        <div class="abwa-contact-name">
+                                            <t t-esc="(contact.name || '').trim() || contact.wa_id"/>
+                                        </div>
+                                        <div class="abwa-contact-preview">
+                                            <t t-esc="contactPreview(contact)"/>
+                                        </div>
+                                    </button>
+                                </t>
+                            </t>
+                        </div>
+                    </aside>
+
+                    <section class="abwa-conversation">
+                        <header class="abwa-conversation-top">
+                            <div>
+                                <h3 t-esc="activeContactLabel"/>
+                                <div class="abwa-subtitle">
+                                    <t t-esc="state.activeWaId || 'Select or add a contact to chat.'"/>
+                                </div>
+                            </div>
+                            <div class="abwa-updated">Updated <t t-esc="state.lastUpdated"/></div>
+                        </header>
+
+                        <div class="abwa-messages" t-ref="messagesBox">
+                            <t t-if="!state.activeWaId">
+                                <div class="abwa-empty">Select a contact to view conversation.</div>
+                            </t>
+                            <t t-elif="!hasRenderableMessages">
+                                <div class="abwa-empty">No messages in this conversation yet.</div>
+                            </t>
+                            <t t-else="">
+                                <t t-foreach="renderMessages" t-as="msg" t-key="msg.id">
+                                    <div t-att-class="bubbleWrapClass(msg)">
+                                        <article t-att-class="bubbleClass(msg)">
+                                            <t t-set="replyMsg" t-value="repliedMessage(msg)"/>
+                                            <div t-if="replyMsg" class="abwa-reply-snippet">
+                                                <span><t t-esc="isOutgoing(replyMsg) ? 'You' : activeContactLabel"/></span>
+                                                <p t-esc="replySnippet(replyMsg)"/>
+                                            </div>
+
+                                            <t t-if="isEditing(msg)">
+                                                <textarea class="abwa-edit-textarea" rows="2" t-model="state.editMessageText"/>
+                                                <div class="abwa-inline-actions">
+                                                    <button
+                                                        type="button"
+                                                        class="abwa-btn-ghost"
+                                                        t-att-data-message-id="msg.id"
+                                                        t-on-click="onSaveEditClick"
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    <button type="button" class="abwa-btn-ghost" t-on-click="onCancelEditClick">Cancel</button>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div
+                                                    t-if="msg.text_content || hasMessageActions(msg)"
+                                                    class="abwa-main-row"
+                                                >
+                                                    <p class="abwa-body" t-if="msg.text_content">
+                                                        <t t-foreach="messageTextParts(msg)" t-as="part" t-key="part.key">
+                                                            <a
+                                                                t-if="part.is_link"
+                                                                class="abwa-body-link"
+                                                                t-att-href="part.href"
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <t t-esc="part.text"/>
+                                                            </a>
+                                                            <t t-else="">
+                                                                <t t-esc="part.text"/>
+                                                            </t>
+                                                        </t>
+                                                    </p>
+                                                    <div
+                                                        t-if="hasMessageActions(msg)"
+                                                        class="abwa-message-menu-wrap"
+                                                        t-on-click.stop="noop"
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            class="abwa-message-menu-toggle"
+                                                            title="Message Actions"
+                                                            aria-label="Message Actions"
+                                                            t-att-data-message-id="msg.id"
+                                                            t-on-click="onToggleMessageMenu"
+                                                        >
+                                                            <i class="fa fa-chevron-down"></i>
+                                                        </button>
+                                                        <div
+                                                            t-if="isMessageMenuOpen(msg)"
+                                                            class="abwa-message-menu"
+                                                            t-att-style="messageMenuStyle(msg)"
+                                                            t-att-data-menu-message-id="msg.id"
+                                                        >
+                                                            <button
+                                                                t-if="canReply(msg)"
+                                                                type="button"
+                                                                class="abwa-message-menu-item"
+                                                                t-att-data-meta-message-id="msg.meta_message_id"
+                                                                t-on-click="onReplyClick"
+                                                            >
+                                                                Reply
+                                                            </button>
+                                                            <button
+                                                                t-if="canReact(msg)"
+                                                                type="button"
+                                                                class="abwa-message-menu-item"
+                                                                t-att-data-meta-message-id="msg.meta_message_id"
+                                                                t-on-click="onReactClick"
+                                                            >
+                                                                React
+                                                            </button>
+                                                            <button
+                                                                t-if="canEdit(msg)"
+                                                                type="button"
+                                                                class="abwa-message-menu-item"
+                                                                t-att-data-message-id="msg.id"
+                                                                t-on-click="onEditClick"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                t-if="canDelete(msg)"
+                                                                type="button"
+                                                                class="abwa-message-menu-item danger"
+                                                                t-att-data-message-id="msg.id"
+                                                                t-on-click="onDeleteClick"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <img
+                                                    t-if="isImageMessage(msg)"
+                                                    class="abwa-media-image"
+                                                    t-att-src="mediaUrl(msg)"
+                                                    alt="Image message"
+                                                />
+                                                <video
+                                                    t-if="isVideoMessage(msg)"
+                                                    class="abwa-media-video"
+                                                    controls="controls"
+                                                    t-att-src="mediaUrl(msg)"
+                                                ></video>
+                                                <audio
+                                                    t-if="isAudioMessage(msg)"
+                                                    class="abwa-media-audio"
+                                                    controls="controls"
+                                                    preload="metadata"
+                                                    t-att-src="mediaUrl(msg)"
+                                                ></audio>
+                                                <a
+                                                    t-if="hasDownloadableMedia(msg)"
+                                                    class="abwa-media-link"
+                                                    t-att-href="mediaUrl(msg, true)"
+                                                    target="_blank"
+                                                >
+                                                    Download <t t-esc="msg.media_filename || (msg.message_type || 'file')"/>
+                                                </a>
+                                            </t>
+
+                                            <div t-if="hasReactions(msg)" class="abwa-reactions" t-esc="reactionLine(msg)"/>
+
+                                            <div class="abwa-bubble-footer">
+                                                <small>
+                                                    <t t-esc="formatTime(msg.created_at)"/>
+                                                    <t t-if="msg.edited_at">(edited)</t>
+                                                </small>
+                                                <span
+                                                    t-if="showOutgoingStatus(msg)"
+                                                    t-att-class="statusBadgeClass(msg)"
+                                                    t-att-title="msg.status || 'sent'"
+                                                >
+                                                    <t t-esc="statusSymbol(msg)"/>
+                                                </span>
+                                            </div>
+                                        </article>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+
+                        <div class="abwa-composer">
+                            <div t-if="replyTargetMessage" class="abwa-reply-box">
+                                <span>Replying to: <t t-esc="replySnippet(replyTargetMessage)"/></span>
+                                <button type="button" class="abwa-mini-btn" t-on-click="onClearReplyClick">Clear</button>
+                            </div>
+
+                            <div t-if="state.pendingFiles.length" class="abwa-file-chip">
+                                <span>Attached: <t t-esc="pendingFilesLabel()"/></span>
+                                <button type="button" class="abwa-mini-btn" t-on-click="onRemovePendingFileClick">Remove</button>
+                            </div>
+
+                            <textarea
+                                class="abwa-textarea"
+                                rows="3"
+                                t-ref="composerTextarea"
+                                t-model="state.composeMessage"
+                                placeholder="Type a message..."
+                                t-on-paste="onComposerPaste"
+                                t-on-keydown="onComposerKeydown"
+                            />
+
+                            <div t-if="state.showEmojiPanel" class="abwa-emoji-panel">
+                                <t t-foreach="emojiChoices()" t-as="emoji" t-key="emoji">
+                                    <button
+                                        type="button"
+                                        class="abwa-emoji-btn"
+                                        t-att-data-emoji="emoji"
+                                        t-on-click="onEmojiClick"
+                                    >
+                                        <t t-esc="emoji"/>
+                                    </button>
+                                </t>
+                            </div>
+
+                            <input
+                                type="file"
+                                class="abwa-file-hidden"
+                                t-ref="fileInput"
+                                multiple="multiple"
+                                t-on-change="onFileInputChange"
+                            />
+
+                            <div class="abwa-compose-actions">
+                                <button
+                                    type="button"
+                                    class="abwa-action-btn secondary"
+                                    title="Templates"
+                                    aria-label="Templates"
+                                    t-on-click="onTemplateButtonClick"
+                                >
+                                    <i class="fa fa-clone"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="abwa-action-btn secondary"
+                                    title="Emoji"
+                                    aria-label="Emoji"
+                                    t-on-click="onToggleEmojiPanelClick"
+                                >
+                                    <i class="fa fa-smile-o"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    t-att-class="recordButtonClass()"
+                                    t-att-title="recordButtonTitle()"
+                                    aria-label="Record Audio"
+                                    t-on-click="onRecordAudioClick"
+                                >
+                                    <i t-att-class="recordIconClass()"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="abwa-action-btn secondary"
+                                    title="Attach"
+                                    aria-label="Attach"
+                                    t-on-click="onAttachClick"
+                                >
+                                    <i class="fa fa-paperclip"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="abwa-action-btn primary"
+                                    title="Send Message"
+                                    aria-label="Send Message"
+                                    t-att-disabled="state.sendingComposer"
+                                    t-on-click="onSendClick"
+                                >
+                                    <i class="fa fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+
+            <div
+                t-att-class="templateModalClass()"
+                t-on-click="onTemplateModalBackdropClick"
+            >
+                <div class="abwa-modal-card abwa-template-modal-card" t-on-click.stop="noop">
+                    <div class="abwa-modal-top">
+                        <h3>Send Template</h3>
+                        <button type="button" class="abwa-icon-btn" t-on-click="closeTemplateModal">X</button>
+                    </div>
+                    <div class="abwa-modal-body">
+                        <div class="abwa-template-form">
+                            <label>New Template Name</label>
+                            <input
+                                type="text"
+                                class="abwa-input"
+                                t-model="state.submitTemplateName"
+                                placeholder="order_ready_update"
+                            />
+
+                            <label>New Template Body</label>
+                            <textarea
+                                class="abwa-textarea"
+                                rows="3"
+                                t-model="state.submitTemplateBody"
+                                placeholder="Your order is ready for pickup."
+                            />
+
+                            <div class="abwa-template-form-grid">
+                                <div>
+                                    <label>Category</label>
+                                    <select class="abwa-input" t-model="state.submitTemplateCategory">
+                                        <option value="UTILITY">UTILITY</option>
+                                        <option value="MARKETING">MARKETING</option>
+                                        <option value="AUTHENTICATION">AUTHENTICATION</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Language</label>
+                                    <input
+                                        type="text"
+                                        class="abwa-input"
+                                        t-model="state.submitTemplateLanguage"
+                                        placeholder="en_US"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <label>Template</label>
+                        <select
+                            class="abwa-input"
+                            t-model="state.selectedTemplateId"
+                            t-on-change="onTemplateSelectionChange"
+                        >
+                            <option value="">Select template</option>
+                            <t t-foreach="state.templates" t-as="tmpl" t-key="tmpl.id">
+                                <option t-att-value="tmpl.id">
+                                    <t t-esc="templateOptionLabel(tmpl)"/>
+                                </option>
+                            </t>
+                        </select>
+
+                        <div t-if="selectedTemplate" class="abwa-template-preview">
+                            <div class="abwa-template-meta">
+                                <span class="abwa-template-tag">
+                                    <t t-esc="(selectedTemplate.status || 'UNKNOWN').toUpperCase()"/>
+                                </span>
+                                <span class="abwa-template-tag muted">
+                                    <t t-esc="selectedTemplate.category || 'GENERAL'"/>
+                                </span>
+                            </div>
+                            <p t-esc="selectedTemplate.body_preview || 'No template body preview.'"/>
+                        </div>
+
+                        <div
+                            t-if="selectedTemplate and templateParamFields().length"
+                            class="abwa-template-params"
+                        >
+                            <t t-foreach="templateParamFields()" t-as="paramField" t-key="paramField.key">
+                                <label t-esc="templateParamLabel(paramField.placeholderIndex)"/>
+                                <input
+                                    type="text"
+                                    class="abwa-input"
+                                    t-att-data-position="paramField.position"
+                                    t-att-value="templateParamValue(paramField.position)"
+                                    t-on-input="onTemplateParamInput"
+                                    placeholder="Enter parameter value"
+                                />
+                            </t>
+                        </div>
+
+                        <div
+                            t-if="selectedTemplate and !selectedTemplate.is_sendable"
+                            class="abwa-template-warning"
+                        >
+                            Only approved templates can be sent.
+                        </div>
+
+                        <div class="abwa-modal-actions abwa-template-actions">
+                            <button
+                                type="button"
+                                class="abwa-btn secondary"
+                                t-att-disabled="state.syncingTemplates || state.sendingTemplate || state.submittingTemplate || !canSubmitTemplate()"
+                                t-on-click="onSubmitTemplateClick"
+                            >
+                                Submit Template
+                            </button>
+                            <button
+                                type="button"
+                                class="abwa-btn secondary"
+                                t-att-disabled="state.syncingTemplates || state.sendingTemplate || state.submittingTemplate"
+                                t-on-click="onRefreshTemplatesClick"
+                            >
+                                Sync Templates
+                            </button>
+                            <button
+                                type="button"
+                                class="abwa-btn"
+                                t-att-disabled="state.syncingTemplates || state.sendingTemplate || state.submittingTemplate || !canSendSelectedTemplate()"
+                                t-on-click="onSendTemplateClick"
+                            >
+                                Send Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                t-att-class="modalClass()"
+                t-on-click="onModalBackdropClick"
+            >
+                <div class="abwa-modal-card" t-on-click.stop="noop">
+                    <div class="abwa-modal-top">
+                        <h3 t-esc="contactModalTitle()"/>
+                        <button type="button" class="abwa-icon-btn" t-on-click="closeContactModal">X</button>
+                    </div>
+                    <div class="abwa-modal-body">
+                        <label>Name (optional)</label>
+                        <input type="text" class="abwa-input" t-model="state.newContactName" placeholder="Client name"/>
+
+                        <label>WhatsApp Number (E.164)</label>
+                        <input
+                            type="text"
+                            class="abwa-input"
+                            t-model="state.newContactWaId"
+                            placeholder="201098320212"
+                            t-att-readonly="isEditContactMode"
+                        />
+
+                        <div class="abwa-modal-actions">
+                            <button type="button" class="abwa-btn secondary" t-on-click="closeContactModal">Cancel</button>
+                            <button
+                                type="button"
+                                class="abwa-btn"
+                                t-on-click="onSaveContactClick"
+                            >
+                                <t t-esc="contactSaveButtonLabel()"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
