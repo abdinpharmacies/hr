@@ -1,0 +1,59 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 15:26+0000\n"
+"PO-Revision-Date: 2026-11-03 15:26+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_gateway
+#. odoo-python
+#: code:addons/ab_crm_gateway/models/gateway.py:0
+msgid "An event ID cannot be reused with different content."
+msgstr "لا يمكن إعادة استخدام معرّف الحدث بمحتوى مختلف."
+
+#. module: ab_crm_gateway
+#: model:ir.model,name:ab_crm_gateway.model_ab_crm_gateway_api
+msgid "CRM Gateway API"
+msgstr "واجهة بوابة إدارة العملاء"
+
+#. module: ab_crm_gateway
+#: model:ir.model.fields,field_description:ab_crm_gateway.field_ab_crm_gateway_api__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_crm_gateway
+#: model:ir.model.fields,field_description:ab_crm_gateway.field_ab_crm_gateway_api__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_crm_gateway
+#. odoo-python
+#: code:addons/ab_crm_gateway/models/gateway.py:0
+msgid "Invalid incoming message."
+msgstr "الرسالة الواردة غير صالحة."
+
+#. module: ab_crm_gateway
+#. odoo-python
+#: code:addons/ab_crm_gateway/models/gateway.py:0
+msgid "Invalid outbound delivery evidence."
+msgstr "دليل تسليم الرسالة الصادرة غير صالح."
+
+#. module: ab_crm_gateway
+#: model:res.groups,name:ab_crm_gateway.group_gateway
+#: model:res.groups.privilege,name:ab_crm_gateway.privilege_service
+msgid "Message Gateway"
+msgstr "بوابة الرسائل"
+
+#. module: ab_crm_gateway
+#. odoo-python
+#: code:addons/ab_crm_gateway/models/gateway.py:0
+msgid "Only the gateway service can exchange messages."
+msgstr "يسمح لخدمة البوابة فقط بتبادل الرسائل."
