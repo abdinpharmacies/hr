@@ -19,8 +19,5 @@ class Replication(models.AbstractModel):
             return
         if model_name == 'ab_replica_db':
             extra_fields = {key: value for key, value in (extra_fields or {}).items() if not key.startswith('central_')}
-        if model_name == 'ab_sales_inventory' and self.env['ab_central_sync_operation']._param('role') == 'branch':
-            codes = json.loads(self.env['ab_central_sync_operation']._param('stores', '[]'))
-            extra_domain = list(fields.Domain(extra_domain or []) & fields.Domain('store_id.code', 'not in', codes))
         return super()._replicate_model(model_name, limit, commit, extra_fields,
                                        replicate_all, extra_domain, *args, **kwargs)

@@ -1,11 +1,12 @@
 """Capture native lifecycle events; replay through the same business methods."""
+import math
 import uuid
 from contextvars import ContextVar
 
 REPLAY_ORIGIN = ContextVar("central_sync_origin", default=None)
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 HEADER = ('customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
           'is_delivery', 'description', 'invoice_address', 'bill_customer_name', 'bill_customer_phone',
@@ -53,40 +54,6 @@ class Sale(models.Model):
             return replica
         return super()._promotion_eligibility_replica(program)
 
-    def _central_snapshot(self):
-        self.ensure_one()
-        return {'header': snapshot(self, HEADER), 'lines': [dict(snapshot(line, LINE),
-            source_line=str(line.id), uom_factor=line.uom_id.factor,
-            amounts={name: line[name] for name in AMOUNTS if name in line._fields}) for line in self.line_ids.sorted('id')],
-            'allocations': allocation_snapshot(self),
-            'promotions': [reference(p) for p in self.applied_program_ids],
-            'totals': {key: value for key, value in self.native_totals.items() if type(value) in (int, float)},
-            'created_at': fields.Datetime.to_string(self.create_date),
-            'net': self.native_totals.get('total_bill_net'), 'source_document': str(self.id)}
-
-    def action_submit(self, request_token=None):
-        was_submitted = self.native_submitted if len(self) == 1 else False
-        result = super().action_submit(request_token=request_token)
-        journal = self.env['ab_central_sync_operation']
-        if journal._uses_central(self.store_id, 'branch') and self.native_backend and not was_submitted and self.native_submitted:
-            journal._enqueue(self, 'sale', self._central_snapshot())
-        return result
-
-    def _native_settled(self):
-        pending = self.filtered(lambda sale: sale.status != 'saved')
-        result = super()._native_settled()
-        for sale in pending:
-            self.env['ab_central_sync_operation']._enqueue(sale, 'sale_settle', {'source_document': str(sale.id)})
-        return result
-
-    def action_cancel_native(self, reason):
-        was_cancelled = self.status == 'cancelled'
-        result = super().action_cancel_native(reason)
-        if not was_cancelled:
-            self.env['ab_central_sync_operation']._enqueue(self, 'sale_cancel',
-                {'source_document': str(self.id), 'reason': reason})
-        return result
-
 
 class Return(models.Model):
     _inherit = 'ab_sales_return_header'
@@ -94,15 +61,6 @@ class Return(models.Model):
     def _validate_invoice_return_window(self, sth_id, sec_insert_date=None):
         origin = REPLAY_ORIGIN.get()
         if not origin:
-            journal = self.env['ab_central_sync_operation']
-            if journal._uses_central(self.store_id, 'branch') and self.native_origin_id:
-                parent = journal.sudo().with_context(active_test=False).search(
-                    fields.Domain('direction', '=', 'out') & fields.Domain('kind', '=', 'sale')
-                    & fields.Domain('store_id', '=', self.store_id.id)
-                    & fields.Domain('document_id', '=', self.native_origin_id.id)
-                    & fields.Domain('origin', '=', self.env['ir.config_parameter'].sudo().get_param('database.uuid')), limit=1)
-                if not parent:
-                    raise ValidationError(_('Historical returns require a reviewed original transaction import.'))
             return super()._validate_invoice_return_window(sth_id, sec_insert_date)
         self.ensure_one()
         parent = self.env['ab_central_sync_operation'].sudo().with_context(active_test=False).search(fields.Domain([
@@ -121,28 +79,126 @@ class Return(models.Model):
             raise ValidationError(_('The return exceeds the originating branch return period.'))
 
 
-    def action_set_pending(self):
-        pending = self.filtered(lambda rec: rec.native_origin_id and rec.status == 'prepending')
-        result = super().action_set_pending()
-        journal = self.env['ab_central_sync_operation']
-        if journal._param('role') == 'branch':
-            for rec in pending:
-                journal._enqueue(rec, 'return', {'source_document': str(rec.id),
-                    'source_sale': str(rec.native_origin_id.id), 'net': rec.native_refund,
-                    'lines': [{'source_line': str(line.native_origin_line_id.id), 'qty_str': line.qty_str,
-                               'uom_factor': line.uom_id.factor} for line in rec.line_ids if line.qty > 0]})
-        return result
-
-    def _native_settled(self):
-        pending = self.filtered(lambda rec: rec.status != 'saved')
-        result = super()._native_settled()
-        for rec in pending:
-            self.env['ab_central_sync_operation']._enqueue(rec, 'return_settle', {'source_document': str(rec.id)})
-        return result
-
-
 class Replay(models.Model):
     _inherit = 'ab_central_sync_operation'
+
+    def _check_sale_reconciliation(self):
+        self.ensure_one()
+        if not self.env.user.has_group('base.group_system'):
+            raise AccessError(_('Only system administrators can reconcile rejected sales.'))
+        self.check_access('write')
+        if (self._param('role') != 'central' or self.direction != 'in'
+                or self.kind != 'sale' or self.state != 'rejected'):
+            raise ValidationError(_('Select a rejected incoming sale on central.'))
+
+    def action_open_sale_reconciliation(self):
+        self._check_sale_reconciliation()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Reconcile Rejected Sale'),
+            'res_model': 'ab_central_sync_sale_reconciliation',
+            'view_mode': 'form', 'target': 'new',
+            'context': {'default_operation_id': self.id},
+        }
+
+    def _reconcile_posted_sale(self, sale, reason):
+        """Bind reviewed posting evidence without replaying or skipping stock.
+
+        Batch sources/costs may differ from the offline reservation, but the
+        customer's agreement and per-line stock quantities must still match.
+        The replacement must be pending so queued settlement/cancellation keeps
+        its original actor and exactly-once business behavior.
+        """
+        self._check_sale_reconciliation()
+        sale.ensure_one()
+        sale.check_access('read')
+        reason = (reason or '').strip()
+        if not reason or len(reason) > 2000:
+            raise ValidationError(_('Enter a reconciliation reason of at most 2,000 characters.'))
+        self.store_id._lock_stock_scope()
+        self.lock_for_update(allow_referencing=True)
+        self.invalidate_recordset()
+        self._check_sale_reconciliation()
+        sale.lock_for_update(allow_referencing=True)
+        sale.invalidate_recordset()
+        sale.line_ids.invalidate_recordset()
+        if (sale.store_id != self.store_id or not sale.native_backend
+                or not sale.native_submitted or not sale.native_posted or sale.status != 'pending'):
+            raise ValidationError(_('Select a posted, unsettled native sale in the same store.'))
+        journal = self.sudo().with_context(active_test=False)
+        previous = journal.search_count(fields.Domain('direction', '=', 'in')
+            & fields.Domain('origin', '=', self.origin) & fields.Domain('store_id', '=', self.store_id.id)
+            & fields.Domain('serial', '<', self.serial) & fields.Domain('state', '=', 'accepted'))
+        if self.payload.get('version') != 3 and previous != self.serial - 1:
+            raise ValidationError(_('Earlier process serials must be accepted first.'))
+        if journal.search_count(fields.Domain('direction', '=', 'in')
+                & fields.Domain('kind', '=', 'sale') & fields.Domain('document_model', '=', sale._name)
+                & fields.Domain('document_id', '=', sale.id), limit=1):
+            raise ValidationError(_('This central sale already belongs to a synchronization operation.'))
+        if (self.env['ab_sales_native_payment'].sudo().search_count(fields.Domain('sale_id', '=', sale.id), limit=1)
+                or self.env['ab_sales_return_header'].sudo().with_context(active_test=False).search_count(
+                    fields.Domain('native_origin_id', '=', sale.id), limit=1)):
+            raise ValidationError(_('The reconciliation sale must have no payments or returns.'))
+        sale._validate_native_approval()
+        mapping = self._match_reconciliation_sale(sale)
+        now = fields.Datetime.now()
+        allocations = self.env['ab_sales_stock_allocation'].sudo().search(
+            fields.Domain('sale_line_id.header_id', '=', sale.id) & fields.Domain('return_line_id', '=', False))
+        self.sudo().write({
+            'state': 'accepted', 'accepted_at': now, 'error': False,
+            'document_model': sale._name, 'document_id': sale.id,
+            'result': {'model': sale._name, 'id': sale.id, 'lines': mapping, 'reconciled': True},
+            'resolution_reason': reason, 'resolved_by_id': self.env.uid, 'resolved_at': now,
+            'resolution_evidence': {
+                'payload_hash': self.payload_hash, 'previous_error': self.error,
+                'branch_reservations': self.payload['cache_reservations'],
+                'central_allocations': [{'line': a.sale_line_id.id, 'source_id': a.source_id.id,
+                    'qty': a.qty_smallest, 'price': a.source_unit_price, 'cost': a.unit_cost,
+                    'movement_id': a.inventory_movement_id.id} for a in allocations],
+            },
+            'history': ((self.history or []) + [{'at': str(now), 'state': 'accepted',
+                'resolution': 'posted_sale', 'user_id': self.env.uid, 'sale_id': sale.id}])[-50:],
+        })
+        return True
+
+    def _match_reconciliation_sale(self, sale):
+        payload = self.payload
+
+        def matches(actual, expected):
+            if type(expected) in (int, float):
+                return (type(actual) in (int, float) and math.isfinite(actual)
+                        and math.isfinite(expected) and abs(actual - expected) <= 0.0001)
+            return (actual or False) == (expected or False)
+
+        def check_values(record, values):
+            return all(matches(record[name].id if record._fields[name].type == 'many2one'
+                               else record[name], value) for name, value in values.items())
+
+        header = self._values('ab_sales_header', payload['header'], HEADER)
+        programs = [self._resolve('ab_promo_program', ref) for ref in payload['promotions']]
+        if not check_values(sale, header) or set(sale.applied_program_ids.ids) != set(programs):
+            raise ValidationError(_('The reconciliation sale must match the original customer, header and promotions.'))
+        lines = sale.line_ids.sorted('id')
+        source_lines = payload['lines']
+        reservations = {item['source_line']: item['batches'] for item in payload['cache_reservations']}
+        if (len(lines) != len(source_lines) or len({item['source_line'] for item in source_lines}) != len(lines)
+                or set(reservations) != {item['source_line'] for item in source_lines}):
+            raise ValidationError(_('The reconciliation sale must contain the original lines in the original order.'))
+        mapping = {}
+        for line, item in zip(lines, source_lines):
+            values = self._values('ab_sales_line', {k: v for k, v in item.items() if k in LINE}, LINE)
+            if (not check_values(line, values) or not matches(line.uom_id.factor, item['uom_factor'])
+                    or any(not matches(line[name], amount) for name, amount in item['amounts'].items() if name in AMOUNTS)
+                    or (not line.product_id.is_service and not matches(line.native_stock_qty,
+                        sum(batch['qty'] for batch in reservations[item['source_line']])))):
+                raise ValidationError(_('Reconciled lines must preserve products, units, quantities, prices, discounts and stock deductions.'))
+            mapping[item['source_line']] = line.id
+        totals = {key: value for key, value in sale.native_totals.items() if type(value) in (int, float)}
+        if (totals.keys() != payload['totals'].keys()
+                or any(not matches(totals[key], value) for key, value in payload['totals'].items())
+                or not matches(sale.native_totals['total_bill_net'], payload['net'])):
+            raise ValidationError(_('Central totals differ from the agreed branch totals.'))
+        return mapping
 
     @api.model
     def _resolve(self, model, value):
@@ -175,6 +231,20 @@ class Replay(models.Model):
             result[name] = self._resolve(field.comodel_name, value) if field.type == 'many2one' else value
         return result
 
+    def _dependency_pending(self):
+        self.ensure_one()
+        if self.kind == 'sale':
+            return False
+        kind = 'return' if self.kind == 'return_settle' else 'sale'
+        source = self.payload.get('source_sale') if self.kind == 'return' else self.payload.get('source_document')
+        try:
+            self._parent(kind, source)
+            if self.kind == 'return':
+                self._parent('sale_settle', source)
+        except ValidationError:
+            return True
+        return False
+
     def _parent(self, kind, source):
         candidates = self.sudo().with_context(active_test=False).search(fields.Domain([('direction', '=', 'in'), ('origin', '=', self.origin),
             ('store_id', '=', self.store_id.id), ('kind', '=', kind), ('state', '=', 'accepted'),
@@ -201,7 +271,13 @@ class Replay(models.Model):
             for item in payload['lines']:
                 vals = self.with_env(env)._values('ab_sales_line', {k: v for k, v in item.items() if k in LINE}, LINE)
                 product = env['ab_product'].browse(vals['product_id'])
-                unit = env['ab_product_uom'].search(fields.Domain([('category_id', '=', product.uom_category_id.id), ('factor', '=', item['uom_factor'])]), limit=2)
+                unit_domain = fields.Domain('category_id', '=', product.uom_category_id.id) & fields.Domain('factor', '=', item['uom_factor'])
+                if item.get('product_uom'):
+                    identity = item['product_uom']
+                    if not isinstance(identity, dict) or set(identity) != {'name', 'type'}:
+                        raise ValidationError(_('Invalid product unit identity.'))
+                    unit_domain &= fields.Domain('name', '=', identity['name']) & fields.Domain('uom_type', '=', identity['type'])
+                unit = env['ab_product_uom'].search(unit_domain, limit=2)
                 if len(unit) != 1:
                     raise ValidationError(_('The synchronized unit is missing or ambiguous.'))
                 vals.update(header_id=sale.id, uom_id=unit.id)
@@ -221,6 +297,11 @@ class Replay(models.Model):
             actual = env['ab_sales_stock_allocation'].sudo().search(fields.Domain([('sale_line_id.header_id', '=', sale.id), ('return_line_id', '=', False)]))
             observed = sorted((a.sale_line_id.id, a.source_id.id, a.qty_smallest,
                                round(a.source_unit_price, 6), round(a.unit_cost, 6)) for a in actual)
+            if payload.get('version') == 3:
+                expected = sorted((mapping[item['source_line']], sum(batch['qty'] for batch in item['batches']))
+                                  for item in payload['cache_reservations'])
+                observed = sorted((line_id, sum(a.qty_smallest for a in actual if a.sale_line_id.id == line_id))
+                                  for line_id in mapping.values())
             if expected != observed:
                 raise ValidationError(_('Central allocations differ from the original branch allocations.'))
             for item in payload['lines']:
@@ -254,9 +335,9 @@ class Replay(models.Model):
         if self.kind == 'sale_cancel':
             document.action_cancel_native(payload['reason'])
         elif self.kind == 'sale_settle':
-            env['ab_sales_native_payment']._settle(document)
+            document._native_settled() if payload.get('version') == 3 else env['ab_sales_native_payment']._settle(document)
         elif self.kind == 'return_settle':
-            env['ab_sales_native_payment']._settle(document.native_origin_id, document)
+            document._native_settled() if payload.get('version') == 3 else env['ab_sales_native_payment']._settle(document.native_origin_id, document)
         else:
             raise ValidationError(_('Unsupported synchronization operation.'))
         return {'model': document._name, 'id': document.id}

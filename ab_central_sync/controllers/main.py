@@ -11,7 +11,7 @@ from ..models.sales import REPLAY_ORIGIN
 
 
 class CentralSync(http.Controller):
-    @http.route('/ab_central_sync/v2/<string:action>', type='http', auth='none', methods=['POST'], csrf=False, save_session=False)
+    @http.route('/ab_central_sync/v3/<string:action>', type='http', auth='none', methods=['POST'], csrf=False, save_session=False)
     def transport(self, action):
         for attempt in range(3):
             try:
@@ -22,7 +22,7 @@ class CentralSync(http.Controller):
 
     def _dispatch(self, action):
         database = request.httprequest.headers.get('X-Odoo-Database', '')
-        if action not in ('submit', 'status', 'reconcile', 'pair', 'connection', 'snapshot') or not database or not http.db_filter([database]):
+        if action not in ('submit', 'retry', 'status', 'reconcile', 'connection', 'snapshot') or not database or not http.db_filter([database]):
             return request.make_json_response({'error': _('Unavailable endpoint')}, status=404)
         if request.httprequest.content_length is None or request.httprequest.content_length > 2_000_000:
             return request.make_json_response({'error': _('Invalid request size')}, status=413)
@@ -37,18 +37,16 @@ class CentralSync(http.Controller):
                 if Journal._param('role') != 'central':
                     raise AccessError('Disabled')
                 supplied = request.httprequest.headers.get('Authorization', '')
-                if action == 'pair':
-                    replica = env['ab_replica_db']._enroll(dict(payload, origin=origin))
-                else:
-                    replica = env['ab_replica_db']._authenticate(origin, supplied)
+                user = env['ab_replica_db']._authenticate_inventory_key(supplied)
+                serial = int(request.httprequest.headers.get('X-Branch-Replica', '0'))
+                replica, allowed_stores, info = env['ab_replica_db']._inventory_connection(user, serial, origin)
                 replica.write({'central_last_seen': fields.Datetime.now()})
-                if action in ('pair', 'connection'):
-                    result = replica._connection_info()
+                if action == 'connection':
                     cr.commit()
-                    return request.make_json_response(result)
+                    return request.make_json_response(info)
                 if not isinstance(payload.get('store'), str):
                     raise AccessError('Store forbidden')
-                store = replica._sync_stores().filtered(lambda store: store.active and store.code == payload['store'])
+                store = allowed_stores.filtered(lambda store: store.code == payload['store'])
                 if len(store) != 1:
                     raise AccessError('Store unavailable')
                 env['ab_inventory_process']._lock_stores([store.id])
@@ -68,10 +66,10 @@ class CentralSync(http.Controller):
                 else:
                     token = str(UUID(payload['token']))
                     operation = Journal.search(fields.Domain(base + [('token', '=', token)]), limit=1)
-                    if action == 'submit':
+                    if action in ('submit', 'retry'):
                         if not isinstance(payload.get('source_document'), str) or not payload['source_document']:
                             raise ValueError()
-                        if payload.get('version') != 2 or type(payload.get('serial')) is not int or payload['serial'] <= 0:
+                        if payload.get('version') != 3 or type(payload.get('serial')) is not int or payload['serial'] <= 0:
                             raise ValueError()
                         fingerprint = digest(payload)
                         if operation and operation.payload_hash != fingerprint:
@@ -82,21 +80,24 @@ class CentralSync(http.Controller):
                             operation = Journal.create({'origin': origin, 'token': token, 'store_id': store.id,
                                 'serial': payload['serial'], 'kind': payload['kind'], 'direction': 'in',
                                 'payload': payload, 'payload_hash': fingerprint})
-                        previous = Journal.search_count(fields.Domain(base + [('serial', '<', operation.serial), ('state', '=', 'accepted')]))
-                        ordered = previous == operation.serial - 1
+                        if action == 'retry' and operation.state == 'rejected':
+                            if payload.get('version') != 3:
+                                raise ValidationError(_('Legacy operations require reconciliation before retry.'))
+                            operation.write({'state': 'retryable', 'error': False})
+                        ordered = payload.get('version') == 3 or Journal.search_count(fields.Domain(base + [('serial', '<', operation.serial), ('state', '=', 'accepted')])) == operation.serial - 1
                         if operation.state in ('queued', 'retryable') and not ordered:
                             operation.write({'state': 'retryable', 'error': _('Earlier process serials must be accepted first.')})
                         if operation.state in ('queued', 'retryable') and ordered:
                             try:
                                 with cr.savepoint():
-                                    result = self._apply_as_actor(env, operation, replica, payload, store, token)
+                                    result = self._apply_as_inventory_writer(env, operation, user, replica, payload, store, token)
                                     operation.write({'state': 'accepted', 'result': result, 'error': False, 'accepted_at': fields.Datetime.now(),
                                                      'document_model': result['model'], 'document_id': result['id']})
                             except LockError:
                                 raise
                             except (AccessError, ValidationError, UserError) as error:
-                                operation.write({'state': 'rejected', 'error': str(error)})
-                            operation.write({'attempts': operation.attempts + 1, 'history': ((operation.history or []) + [{'at': str(fields.Datetime.now()), 'state': operation.state}])[-50:]})
+                                operation.write({'state': 'retryable' if operation._dependency_pending() else 'rejected', 'error': str(error)})
+                            operation.write({'attempts': operation.attempts + 1, 'history': ((operation.history or []) + [{'at': str(fields.Datetime.now()), 'state': operation.state, 'inventory_writer_id': user.id}])[-50:]})
                     result = {'token': token, 'state': operation.state if operation else 'not_found',
                               'payload_hash': operation.payload_hash if operation else False,
                               'result': operation.result if operation else False,
@@ -111,49 +112,39 @@ class CentralSync(http.Controller):
         except (AccessError, ValidationError, UserError, ValueError, KeyError, TypeError):
             return request.make_json_response({'error': _('Invalid or unauthorized synchronization request')}, status=403)
 
-    @http.route('/ab_central_sync/v1/<string:action>', type='http', auth='none', methods=['POST'], csrf=False, save_session=False)
+    @http.route(['/ab_central_sync/v1/<string:action>', '/ab_central_sync/v2/<string:action>'], type='http', auth='none', methods=['POST'], csrf=False, save_session=False)
     def obsolete(self, action):
-        return request.make_json_response({'error': _('Upgrade this branch to central synchronization version 2.')}, status=426)
+        return request.make_json_response({'error': _('Upgrade this branch to inventory protocol 3.')}, status=426)
 
-    def _apply_as_actor(self, env, operation, replica, payload, store, token):
-        user = env['res.users'].search(fields.Domain([('login', '=', payload.get('actor')), ('active', '=', True)]), limit=1)
-        if not user or user.id == SUPERUSER_ID:
-            raise AccessError(_('Replicated actor required.'))
-        # Administrative reversals require an explicit existing store assignment.
-        # A branch credential cannot impersonate an unrestricted central administrator.
-        if payload['kind'] == 'sale_cancel' and store not in user.inventory_store_ids:
-            raise AccessError(_('Administrative actor is not assigned to this store.'))
-        if payload['kind'] != 'sale_cancel' and (
-                'pos_service_user_id' not in store._fields or store.pos_service_user_id != user):
-            raise AccessError(_('The replicated store service user is required.'))
-        actor_env = api.Environment(env.cr, user.id, {})
+    def _apply_as_inventory_writer(self, env, operation, user, replica, payload, store, token):
+        if store not in user._central_inventory_stores():
+            raise AccessError(_('The API user has no inventory access to this branch.'))
+        actor_env = api.Environment(env.cr, user.id, {'allowed_company_ids': user.company_ids.ids})
+        # This server-only ContextVar cannot be supplied through an ORM RPC context.
+        origin_token = REPLAY_ORIGIN.set(dict(payload, replica_serial=replica.db_serial,
+            inventory_writer_id=user.id, inventory_store_id=store.id))
         replay_session = False
-        if payload['kind'] != 'sale_cancel' and 'ab_employee_access_sales_pos_session' in env.registry:
-            employee_ref = payload.get('actor_employee')
-            if not employee_ref:
-                raise AccessError(_('Replicated employee required.'))
-            employee_id = operation.with_env(actor_env)._resolve('ab_hr_employee', employee_ref)
-            profile = env['ab_employee_access'].search(fields.Domain([('employee_id', '=', employee_id), ('pos_allow_login', '=', True)]), limit=2)
-            if len(profile) != 1 or not profile._is_store_allowed_for_pos(store):
-                raise AccessError(_('Employee profile does not permit this store.'))
-            profile.lock_for_update(allow_referencing=True)
-            actor_env['ab_employee_access_sales_pos_api']._check_service_user(store.with_env(actor_env))
-            # Enrollment authenticates the branch; the existing store service
-            # user and employee profile authorize every business action.
-            replay_session = env['ab_employee_access_sales_pos_session'].create({
-                'employee_id': employee_id, 'profile_id': profile.id,
-                'role_id': profile.pos_role_id.id, 'service_user_id': user.id,
-                'store_id': store.id, 'device_uid': 'central-sync:' + token,
-                'device_name': _('Central Synchronization'),
-            })
-            actor_env = api.Environment(env.cr, user.id, {name: replay_session.session_token for name in ('native_pos_hr_token', 'ab_return_session_token', 'native_cashier_session_token')})
         try:
+            if payload['kind'] != 'sale_cancel' and 'ab_employee_access_sales_pos_session' in env.registry:
+                employee_ref = payload.get('actor_employee') or payload.get('header', {}).get('employee_id')
+                employee_id = operation.with_env(actor_env)._resolve('ab_hr_employee', employee_ref)
+                profile = env['ab_employee_access'].search(fields.Domain('employee_id', '=', employee_id), limit=2)
+                if not employee_id or len(profile) != 1:
+                    raise ValidationError(_('Replicate the bill employee and profile before synchronization.'))
+                # Preserve the branch employee on the mirrored bill. API-user scope,
+                # not the employee PIN/profile permissions, authorizes this transport.
+                replay_session = env['ab_employee_access_sales_pos_session'].create({
+                    'employee_id': employee_id, 'profile_id': profile.id,
+                    'role_id': profile.pos_role_id.id, 'service_user_id': user.id,
+                    'store_id': store.id, 'device_uid': 'central-api:' + token,
+                    'device_name': _('Central Synchronization'),
+                })
+                actor_env = api.Environment(env.cr, user.id, dict(actor_env.context,
+                    **{name: replay_session.session_token for name in ('native_pos_hr_token',
+                        'ab_return_session_token', 'native_cashier_session_token')}))
             actor_env['ab_sales_backend']._check_store(store.id)
-            origin_token = REPLAY_ORIGIN.set(dict(payload, replica_serial=replica.db_serial))
-            try:
-                return operation._apply(actor_env['ab_sales_header'])
-            finally:
-                REPLAY_ORIGIN.reset(origin_token)
+            return operation._apply(actor_env['ab_sales_header'])
         finally:
             if replay_session:
                 replay_session.close_session()
+            REPLAY_ORIGIN.reset(origin_token)

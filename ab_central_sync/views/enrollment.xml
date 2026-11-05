@@ -6,17 +6,10 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="inside">
                 <group string="Central Synchronization" groups="base.group_system">
-                    <field name="central_store_ids" widget="many2many_tags"/>
-                    <field name="central_default_store_id"/>
-                    <field name="central_ready"/>
-                    <field name="central_origin"/>
-                    <field name="central_pair_expires"/>
                     <field name="central_last_seen"/>
                     <field name="central_backlog"/>
                     <field name="central_error"/>
-                    <button name="action_pairing_code" type="object" string="Generate Pairing Code"/>
-                    <button name="action_revoke_central" type="object" string="Revoke Connection"/>
-                </group>
+                    </group>
             </xpath>
         </field>
     </record>
@@ -29,43 +22,4 @@
         </xpath></field>
     </record>
     <menuitem id="menu_branches" name="Branches" parent="menu_root" action="ab_store.ab_replica_db_action" groups="base.group_system"/>
-    <record id="settings_form" model="ir.ui.view">
-        <field name="name">Central synchronization settings</field><field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-            <app string="Central Synchronization" name="ab_central_sync" groups="base.group_system">
-                <block title="Connection">
-                    <setting string="Installation role"><field name="central_role"/></setting>
-                    <setting string="Central server" invisible="central_role != 'branch'">
-                        <div class="content-group">
-                            <div class="row mt16">
-                                <label for="central_url" class="col-lg-4 o_light_label"/>
-                                <field name="central_url" placeholder="https://central.example.com" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_database" class="col-lg-4 o_light_label"/>
-                                <field name="central_database" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_ca_bundle" class="col-lg-4 o_light_label"/>
-                                <field name="central_ca_bundle" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_pairing_code" class="col-lg-4 o_light_label"/>
-                                <field name="central_pairing_code" password="True" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_connection" class="col-lg-4 o_light_label"/>
-                                <field name="central_connection" class="col-lg-8"/>
-                            </div>
-                        </div>
-                        <button name="action_connect_central" type="object" string="Connect to Central" class="btn-primary"/>
-                        <button name="action_sync_now" type="object" string="Sync Now"/>
-                        <div class="text-muted">Connect once per branch installation. Sessions and restarts reconnect automatically.</div>
-                    </setting>
-                </block>
-            </app>
-        </xpath></field>
-    </record>
-</odoo>
+    </odoo>

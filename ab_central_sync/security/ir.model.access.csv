@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_operation_manager,Central operation manager,model_ab_central_sync_operation,group_manager,1,1,0,0
+access_sale_reconciliation_admin,Central sale reconciliation administrator,model_ab_central_sync_sale_reconciliation,base.group_system,1,1,1,1
