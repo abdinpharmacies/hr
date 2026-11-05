@@ -1,0 +1,15 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_crm_channel_order,ab_crm_channel_order,model_ab_crm_channel_order,group_agent,1,1,1,0
+access_ab_crm_channel_order_line,ab_crm_channel_order_line,model_ab_crm_channel_order_line,group_agent,1,1,1,0
+access_ab_crm_channel_order_audit,ab_crm_channel_order_audit,model_ab_crm_channel_order_audit,group_agent,1,0,0,0
+access_ab_crm_workspace_read,ab_crm_workspace_read,model_ab_crm_workspace_read,ab_crm_core.group_manager,1,0,0,0
+access_ab_crm_workspace_read_admin,ab_crm_workspace_read,model_ab_crm_workspace_read,base.group_system,1,0,0,0
+access_chatter_session,chatter_session,model_ab_crm_chatter_session,group_agent,1,0,0,0
+access_chatter_telegram_setup,chatter_telegram_setup,model_ab_crm_chatter_telegram_setup,base.group_system,1,1,1,1
+access_saved_reply_staff,Saved replies,model_ab_crm_saved_reply,group_agent,1,0,0,0
+access_saved_reply_manager,Manage saved replies,model_ab_crm_saved_reply,ab_crm_core.group_manager,1,1,1,0
+access_saved_reply_admin,Admin saved replies,model_ab_crm_saved_reply,base.group_system,1,1,1,0
+access_ab_crm_workspace_alert_admin,ab_crm_workspace_alert,model_ab_crm_workspace_alert,base.group_system,1,0,0,0
+access_ab_crm_workspace_alert_manager,ab_crm_workspace_alert,model_ab_crm_workspace_alert,ab_crm_core.group_manager,1,0,0,0
+access_ab_crm_workspace_audit_admin,ab_crm_workspace_audit,model_ab_crm_workspace_audit,base.group_system,1,0,0,0
+access_ab_crm_workspace_audit_manager,ab_crm_workspace_audit,model_ab_crm_workspace_audit,ab_crm_core.group_manager,1,0,0,0

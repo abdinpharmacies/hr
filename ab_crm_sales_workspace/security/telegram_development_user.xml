@@ -1,0 +1,10 @@
+<odoo noupdate="1">
+    <record id="user_telegram_development" model="res.users">
+        <field name="name">Telegram Sales Chatter Service</field>
+        <field name="login">crm-telegram-sales-chatter</field>
+        <field name="active" eval="False"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="company_ids" eval="[(6, 0, [ref('base.main_company')])]"/>
+        <field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('ab_crm_messaging.group_service')])]"/>
+    </record>
+</odoo>

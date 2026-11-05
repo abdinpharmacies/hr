@@ -1,0 +1,39 @@
+.ab_chatter_order_modal {
+    --order-accent: #0f766e;
+    .modal-header { padding: 8px 12px; background: #0f172a; color: white; }
+    .modal-body { padding: 0; background: #f1f5f9; overflow: hidden; }
+    .ab_order_window_controls { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .ab_order_window_controls button { margin-inline-start: 6px; }
+    .ab_chatter_order { height: 100%; min-height: 0; display: flex; flex-direction: column; }
+    .ab_order_workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: 280px minmax(0, 1fr); }
+    .ab_order_drafts { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 16px; background: #f8fafc; border-inline-end: 1px solid #cbd5e1; }
+    .ab_order_drafts h3 { font-size: 1.1rem; }
+    .ab_order_drafts button { min-height: 100px; border: 1px solid #cbd5e1; border-radius: 12px; text-align: start; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: white; color: #0f172a; }
+    .ab_order_drafts button.btn-primary { background: #f0fdfa; border-color: var(--order-accent); box-shadow: inset 4px 0 var(--order-accent); }
+    .ab_order_main { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 12px; gap: 12px; overflow: auto; }
+    .ab_order_top { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(260px, 1.6fr) minmax(180px, 1fr); gap: 12px; flex: 0 0 auto; }
+    .ab_order_branch, .ab_order_customer, .ab_order_summary { background: white; border: 1px solid #dce3eb; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    label { display: block; width: 100%; font-weight: 600; }
+    .ab_order_customer fieldset { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ab_order_customer textarea { min-height: 40px; height: 40px; }
+    .ab_order_summary output { font-size: 2rem; font-weight: 700; color: var(--order-accent); }
+    .ab_order_summary button { margin-inline-end: 6px; margin-block: 3px; }
+    .ab_order_body { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.6fr); gap: 12px; flex: 1; min-height: 260px; }
+    .ab_order_catalog, .ab_order_lines { background: white; border: 1px solid #dce3eb; border-radius: 10px; padding: 12px; overflow: auto; min-width: 0; }
+    .ab_order_catalog form { display: grid; gap: 8px; }
+    .ab_order_products { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin: 12px 0 0; }
+    .ab_order_products .col { padding: 0; }
+    .ab_order_products [role="button"]:focus-visible { outline: 3px solid var(--order-accent); outline-offset: 2px; }
+    .ab_order_lines .table th { white-space: nowrap; background: #f8fafc; position: sticky; top: 0; }
+    .ab_order_lines td:first-child { min-width: 130px; }
+    .ab_order_lines td:nth-child(3) { min-width: 130px; }
+    .ab_order_lines input { min-width: 75px; }
+    .ab_order_quantity { display: flex; align-items: center; }
+    .ab_order_quantity input { width: 65px; min-width: 55px; text-align: center; }
+    .ab_order_audit { margin-block: 1rem; }
+    .ab_chatter_order.is-minimized { display: none; }
+    &.is-minimized .modal-body { display: none; }
+    @media (max-width: 1200px) { .ab_order_workspace { grid-template-columns: 200px minmax(0, 1fr); } .ab_order_top { grid-template-columns: 1fr 1.4fr; } .ab_order_summary { grid-column: 1 / -1; flex-direction: row; align-items: center; flex-wrap: wrap; } }
+    @media (max-width: 900px) { .modal-body { overflow: auto; } .ab_order_workspace { grid-template-columns: minmax(0, 1fr); } .ab_order_drafts { flex-direction: row; overflow-x: auto; } .ab_order_drafts button { min-width: 160px; min-height: 75px; } .ab_order_body { grid-template-columns: minmax(0, 1fr); } .ab_order_main, .ab_order_catalog, .ab_order_lines { overflow: visible; } }
+    @media (max-width: 540px) { .ab_order_top, .ab_order_customer fieldset { grid-template-columns: minmax(0, 1fr); } .ab_order_window_controls strong { font-size: .85rem; } }
+}

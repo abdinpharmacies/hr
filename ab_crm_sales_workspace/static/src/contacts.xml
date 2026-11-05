@@ -1,0 +1,30 @@
+<templates xml:space="preserve">
+<t t-name="ab_crm_sales_workspace.Contacts">
+    <Dialog title="title" size="'md'">
+        <div class="ab_chatter_contacts" t-att-dir="direction">
+            <p t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+            <t t-if="!state.editing">
+                <input t-ref="search" class="form-control" t-model="state.query" t-on-input="queryChanged" placeholder="Search by name or phone" aria-label="Search by name or phone"/>
+                <p t-if="state.loading" role="status">Loading…</p>
+                <p t-elif="!state.contacts.length">No saved contacts found.</p>
+                <button t-foreach="state.contacts" t-as="contact" t-key="contact.id" class="btn btn-light d-block w-100 text-start my-2" t-on-click="() => this.select(contact)"><bdi t-esc="contact.name"/> · <bdi dir="ltr" t-esc="contact.phone"/></button>
+                <button class="btn btn-light" t-att-disabled="!state.offset || state.loading" t-on-click="() => this.page(-1)">Previous</button>
+                <button class="btn btn-light" t-att-disabled="!state.more || state.loading" t-on-click="() => this.page(1)">Next</button>
+            </t>
+            <t t-elif="props.mode === 'delete'">
+                <p><span>Delete contact?</span> <bdi t-esc="state.selected.name"/></p>
+                <p>The contact will be archived. Messages and orders remain. Future incoming messages will still appear.</p>
+            </t>
+            <t t-else="">
+                <label class="form-label" for="ab_contact_name">Name</label><input id="ab_contact_name" t-ref="name" class="form-control mb-2" t-model="state.name" maxlength="200"/>
+                <label class="form-label" for="ab_contact_phone">Phone</label><input id="ab_contact_phone" class="form-control mb-2" t-model="state.phone" t-on-input="() => state.confirmedDuplicate = false" type="tel" dir="ltr"/>
+                <label class="form-label" for="ab_contact_address">Address</label><textarea id="ab_contact_address" class="form-control mb-2" t-model="state.address" maxlength="2000"/>
+                <t t-if="!state.selected"><label class="form-label" for="ab_contact_branch">Branch</label><select id="ab_contact_branch" class="form-select" t-model="state.branch"><option t-foreach="state.branches" t-as="branch" t-key="branch.id" t-att-value="branch.id" t-esc="branch.name"/></select></t>
+                <p class="text-muted mt-2">Contact details do not verify identity or enable sending.</p>
+                <div t-if="state.duplicates?.length" class="alert alert-info"><p>Potential duplicates. Select an existing contact or save separately.</p><button t-foreach="state.duplicates" t-as="contact" t-key="contact.id" class="btn btn-light d-block" t-on-click="() => this.useExisting(contact)"><bdi t-esc="contact.name"/> · <bdi dir="ltr" t-esc="contact.phone"/></button><button class="btn btn-outline-primary mt-2" t-att-disabled="state.loading" t-on-click="() => { state.confirmedDuplicate = true; this.save(); }">Save separately</button></div>
+            </t>
+        </div>
+        <t t-set-slot="footer"><button t-if="state.editing" class="btn" t-att-class="props.mode === 'delete' ? 'btn-danger' : 'btn-primary'" t-att-disabled="state.loading" t-on-click="save"><t t-if="props.mode === 'delete'">Delete</t><t t-else="">Save</t></button><button class="btn btn-secondary" t-on-click="props.close">Cancel</button></t>
+    </Dialog>
+</t>
+</templates>

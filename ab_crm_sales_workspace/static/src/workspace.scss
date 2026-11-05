@@ -1,0 +1,104 @@
+.ab_crm_sales_workspace {
+    height: 100%; min-height: 0; display: flex; flex-direction: column; padding: 1rem; background: #f8fbff; color: #102a43; overflow: hidden;
+    > header { display: flex; align-items: center; gap: 1rem; flex: 0 0 auto; margin-block-end: .65rem; }
+    > header h2 { font-size: 1.3rem; margin: 0; }
+    > header > div { margin-inline-start: auto; display: flex; align-items: center; gap: .7rem; }
+    .ab_workspace_navigation { display: flex; gap: .3rem; }
+    .ab_workspace_navigation .active { background: #e5f3ef; color: #006d5f; }
+    .ab_workspace_columns { flex: 1; min-height: 0; display: grid; grid-template-columns: 340px minmax(0, 1fr); border: 1px solid #d9e2ec; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 14px 32px rgba(12,35,70,.12); }
+    aside { background: #f8fbff; border-inline-end: 1px solid #d9e2ec; padding: 14px; min-height: 0; overflow-y: auto; }
+    .ab_contacts_header { display: flex; align-items: center; justify-content: space-between; margin-block-end: .5rem; }
+    h3 { font-size: 1.05rem; margin: 0; }
+    .ab_contacts_header h3 { font-weight: 700; }
+    .ab_contacts_header .btn { border: 1px solid #d9e2ec; border-radius: 8px; background: white; }
+    .ab_conversation { width: 100%; text-align: start; color: inherit; background: white; border: 1px solid #d9e2ec; padding: 10px; border-radius: 11px; margin-block-start: 8px; display: block; }
+    .ab_conversation.selected { background: #eef6ff; border-color: #69a9ff; }
+    .ab_conversation small { display: block; color: #60748a; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; margin-block-start: 4px; }
+    .ab_channels { display: inline-flex; gap: .5rem; margin-inline: .5rem; color: #707070; }
+    .source-whatsapp { color: #2bbc37; }
+    .source-telegram { color: #32a0dc; }
+    .source-website { color: #f38121; }
+    .ab_chat, .ab_orders_view { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    .ab_chat_header { display: flex; flex: 0 0 auto; justify-content: space-between; align-items: center; gap: 10px; min-height: 70px; padding: 14px 16px; border-block-end: 1px solid #d9e2ec; }
+    .ab_chat_header small { color: #60748a; font-size: .82rem; }
+    .ab_chat_actions { display: flex; align-items: center; gap: .4rem; }
+    .ab_message_search { padding: .5rem 1rem; }
+    .ab_messages { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: linear-gradient(180deg, rgba(236,247,255,.9), rgba(239,250,244,.72)); }
+    .ab_empty { color: #60748a; padding: 16px; }
+    .ab_message { flex: 0 0 auto; padding: 8px 12px; background: #e9f3ff; border-radius: 14px; width: fit-content; max-width: 82%; overflow-wrap: anywhere; box-shadow: 0 4px 14px rgba(13,30,53,.08); }
+    .ab_message p { white-space: pre-wrap; margin-block-end: .4rem; }
+    .ab_message.out { background: #d9f8e8; margin-inline-start: auto; }
+    .ab_message time, .ab_message small { font-size: .75rem; color: #60748a; }
+    .ab_message_tools { display: flex; gap: .25rem; }
+    .ab_composer { flex: 0 0 auto; border-block-start: 1px solid #d9e2ec; padding: 14px 16px 16px; background: white; }
+    .ab_composer fieldset { min-width: 0; }
+    .ab_composer_input { border: 1px solid #d9e2ec; border-radius: 10px; resize: vertical; height: 85px; min-height: 64px; max-height: 160px; }
+    .ab_composer_tools { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-block-start: 10px; }
+    .ab_composer_tools .btn { width: 42px; height: 42px; border: 0; border-radius: 12px; margin: 0; color: white; background: linear-gradient(135deg, #60748a, #3b4960); }
+    .ab_composer_tools .ab_send { background: #008577; }
+    .ab_composer_tools .btn:disabled { opacity: .5; }
+    .ab_attachment_drafts { display: flex; gap: .5rem; overflow-x: auto; }
+    .ab_attachment_drafts > div { max-width: 260px; }
+    .ab_media_preview { display: block; max-width: 240px; max-height: 180px; object-fit: contain; }
+    audio { max-width: 100%; }
+    .ab_orders_content { padding: 1rem; overflow-y: auto; flex: 1; background: #f1f5f9; }
+    .ab_order_history { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .ab_order_card { display: flex; flex-direction: column; gap: 10px; text-align: start; padding: 18px; min-height: 140px; border: 1px solid #cbd5e1; border-radius: 12px; background: white; color: #102a43; }
+    .ab_order_card:hover { border-color: #0f766e; background: #f0fdfa; }
+    .ab_order_card small { color: #60748a; }
+    .ab_workspace_login { max-width: 30rem; }
+    @media (max-width: 800px) { .ab_workspace_columns { grid-template-columns: 240px minmax(0, 1fr); } }
+    @media (max-width: 600px) {
+        padding: .5rem;
+        > header { flex-wrap: wrap; gap: .4rem; }
+        > header h2 { font-size: 1.1rem; }
+        > header > div { font-size: .8rem; }
+        .ab_workspace_columns { grid-template-columns: minmax(0, 1fr); grid-template-rows: 150px minmax(0, 1fr); }
+        aside { padding: 8px; border-inline-end: 0; border-block-end: 1px solid #d9e2ec; }
+        .ab_contacts_header { display: none; }
+        .ab_chat_header { min-height: 56px; padding: 8px; }
+        .ab_composer { padding: 8px; }
+        .ab_composer_input { height: 64px; }
+        .ab_composer_tools .btn { width: 36px; height: 36px; }
+    }
+}
+
+.ab_chatter_login_modal {
+    max-width: 430px;
+    margin: auto;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(26, 57, 92, 0.12);
+    box-shadow: 0 22px 60px rgba(13, 34, 58, 0.18);
+    .modal-body { padding: 0; }
+}
+.ab_chatter_login {
+    position: relative;
+    padding: 1.4rem;
+    h3 { margin: 0; font-size: 1.45rem; font-weight: 800; color: #173452; }
+    .ab_chatter_login_subtitle { color: #5b7288; }
+    .ab_chatter_login_row { display: flex; flex-direction: column; gap: .35rem; }
+    .ab_chatter_login_close { position: absolute; top: .9rem; inset-inline-end: .9rem; width: 2rem; height: 2rem; padding: 0; border-radius: 999px; }
+}
+
+
+.ab_crm_sales_workspace {
+    .ab_contacts_header { flex-wrap: wrap; gap: 2px; h3 { flex: 1; } }
+    .ab_message_footer { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: .8rem; color: #596572; }
+    .ab_message_footer.status-read { color: #1689d4; }
+    .ab_message_footer.status-failed, .ab_message_footer.status-retry_failed { color: #b42318; }
+    .ab_message_footer.status-uncertain { color: #8a6100; }
+    .ab_second_tick { margin-inline-start: -6px; }
+    .ab_message_focus { outline: 3px solid #1689d4; outline-offset: 3px; }
+    .ab_message_explanation { font-size: .85rem; margin-top: 4px; }
+}
+
+.ab_chatter_alert_stack {
+    position: fixed; inset-block-end: 12px; inset-inline-end: 12px;
+    z-index: 1050; width: 360px; max-width: calc(100vw - 24px); max-height: 35vh;
+    overflow-y: auto; pointer-events: none;
+    .ab_chatter_customer_alert { pointer-events: auto; background: var(--o-view-background-color, white); color: var(--body-color, #263238); border: 1px solid #bad5e9; border-radius: 8px; box-shadow: 0 3px 12px #0002; padding: 12px; margin-top: 8px; }
+    .ab_alert_title { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+    p { overflow-wrap: anywhere; margin: 6px 0; }
+}
+
+.ab_chatter_contacts .form-label { display: block; text-align: start; }

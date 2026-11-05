@@ -1,0 +1,15 @@
+<odoo>
+    <record id="view_telegram_setup" model="ir.ui.view">
+        <field name="name">ab_crm_chatter_telegram_setup.form</field>
+        <field name="model">ab_crm_chatter_telegram_setup</field>
+        <field name="arch" type="xml">
+            <form string="Telegram Connection" class="ab_chatter_telegram_setup">
+                <div class="alert alert-info">Enter the BotFather token only in Settings → Technical → Parameters → System Parameters using the key below. Then prepare the connection here.</div>
+                <group><field name="account_code"/><field name="bot_username"/><field name="parameter_key" readonly="1"/><field name="token_configured" readonly="1"/><field name="provider_account" readonly="1"/></group>
+                <footer><button name="action_save" type="object" string="Prepare connection" class="btn-primary"/><button string="Cancel" special="cancel"/></footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_telegram_setup" model="ir.actions.act_window"><field name="name">Telegram Connection</field><field name="res_model">ab_crm_chatter_telegram_setup</field><field name="view_mode">form</field><field name="target">new</field></record>
+    <menuitem id="menu_telegram_setup" name="Telegram Connection" parent="ab_sales.config_sub_menu" action="action_telegram_setup" sequence="90" groups="base.group_system"/>
+</odoo>

@@ -1,0 +1,88 @@
+<odoo>
+    <record id="branch_intake" model="ir.ui.view">
+        <field name="name">ab_crm_branch.intake</field>
+        <field name="model">ab_crm_branch</field>
+        <field name="inherit_id" ref="ab_crm_core.view_ab_crm_branch_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after"><field name="replica_id"/><field name="intake_store_id"/></field>
+        </field>
+    </record>
+    <record id="action_workspace" model="ir.actions.client">
+        <field name="name">Sales Chatter</field>
+        <field name="tag">ab_crm_sales_workspace.workspace</field>
+    </record>
+    <menuitem id="menu_workspace" name="Sales Chatter" parent="ab_sales.sales_menu_root" action="action_workspace" sequence="1" groups="group_agent"/>
+    <record id="action_orders" model="ir.actions.client">
+        <field name="name">Orders</field>
+        <field name="tag">ab_crm_sales_workspace.orders</field>
+    </record>
+    <menuitem id="menu_conversations" name="Conversations" parent="menu_workspace" action="action_workspace" sequence="1" groups="group_agent"/>
+    <menuitem id="menu_orders" name="Orders" parent="menu_workspace" action="action_orders" sequence="2" groups="group_agent"/>
+    <record id="conversation_identity_review" model="ir.ui.view">
+        <field name="name">ab_crm_conversation.identity.review</field>
+        <field name="model">ab_crm_conversation</field>
+        <field name="inherit_id" ref="ab_crm_core.view_ab_crm_conversation_form"/>
+        <field name="arch" type="xml">
+            <button name="action_claim" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+            <sheet position="inside">
+                <notebook>
+                    <page string="Contact identification">
+                        <group><field name="confirmed_phone"/><field name="phone_confirmed_by"/><field name="phone_confirmed_at"/><field name="contact_evidence_id"/><field name="catalog_match_state"/></group>
+                        <group groups="ab_crm_core.group_manager,base.group_system">
+                            <field name="catalog_candidate_ids" widget="many2many_tags"/>
+                            <field name="review_catalog_customer_id" domain="[('id', 'in', catalog_candidate_ids)]" options="{'no_create': True}"/>
+                            <button name="action_review_catalog" type="object" string="Approve catalog match"/>
+                        </group>
+                    </page>
+                    <page string="Staff read history" groups="ab_crm_core.group_manager,base.group_system"><field name="staff_read_ids" readonly="1"><list create="0" delete="0"><field name="employee_id"/><field name="user_id"/><field name="read_at"/><field name="last_message_id"/></list></field></page>
+                    <page string="Channel orders"><field name="order_ids" readonly="1"><list create="0" delete="0"><field name="name"/><field name="state"/><field name="revision"/><field name="store_id"/><field name="total"/></list></field></page>
+                </notebook>
+            </sheet>
+        </field>
+    </record>
+    <record id="customer_catalog_review" model="ir.ui.view">
+        <field name="name">ab_crm_customer.catalog.review</field>
+        <field name="model">ab_crm_customer</field>
+        <field name="inherit_id" ref="ab_crm_core.view_ab_crm_customer_form"/>
+        <field name="arch" type="xml">
+            <field name="phone" position="after"><field name="catalog_customer_id"/></field>
+        </field>
+    </record>
+    <record id="message_contact_evidence" model="ir.ui.view">
+        <field name="name">ab_crm_message.contact.evidence</field>
+        <field name="model">ab_crm_message</field>
+        <field name="inherit_id" ref="ab_crm_core.view_ab_crm_message_form"/>
+        <field name="arch" type="xml">
+            <field name="body" position="after"><field name="telegram_phone"/><field name="telegram_contact_owned"/></field>
+        </field>
+    </record>
+    <record id="view_workspace_audit_list" model="ir.ui.view">
+        <field name="name">ab_crm_workspace_audit.list</field>
+        <field name="model">ab_crm_workspace_audit</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="at"/><field name="action"/><field name="employee_id"/><field name="user_id"/>
+                <field name="conversation_id"/><field name="customer_id"/><field name="branch_id"/><field name="company_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_workspace_audit_form" model="ir.ui.view">
+        <field name="name">ab_crm_workspace_audit.form</field>
+        <field name="model">ab_crm_workspace_audit</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0"><sheet><group>
+                <field name="at"/><field name="action"/><field name="employee_id"/><field name="user_id"/>
+                <field name="conversation_id"/><field name="message_id"/><field name="customer_id"/>
+                <field name="branch_id"/><field name="company_id"/><field name="values"/>
+            </group></sheet></form>
+        </field>
+    </record>
+    <record id="action_workspace_audit" model="ir.actions.act_window">
+        <field name="name">Chatter Action Log</field>
+        <field name="res_model">ab_crm_workspace_audit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_workspace_audit" name="Chatter Action Log" parent="ab_crm_core.menu_root" action="action_workspace_audit" groups="ab_crm_core.group_manager,base.group_system"/>
+</odoo>

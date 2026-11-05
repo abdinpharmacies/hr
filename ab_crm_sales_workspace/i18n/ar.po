@@ -1,0 +1,2563 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Accept order"
+msgstr "قبول الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid ""
+"Acceptance requires a confirmed phone, customer, branch, order lines and "
+"customer confirmation."
+msgstr ""
+"يتطلب القبول رقم هاتف مؤكداً وعميلاً وفرعاً وأصناف الطلب وتأكيد العميل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_channel_order__state__accepted
+msgid "Accepted"
+msgstr "مقبول"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__accepted_at
+msgid "Accepted At"
+msgstr "وقت القبول"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__accepted_by
+msgid "Accepted By"
+msgstr "تم القبول بواسطة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__accepted_employee_id
+msgid "Accepted Employee"
+msgstr "الموظف الذي قبل الطلب"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__action
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__action
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__active
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__active
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__active
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_chatter_session__state__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__actor_id
+msgid "Actor"
+msgstr "المنفذ"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "An authorized employee session is required."
+msgstr "يلزم تسجيل دخول موظف مصرح له."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Archive order lines instead of deleting them."
+msgstr "أرشف أصناف الطلب بدلاً من حذفها."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__assigned_employee_id
+msgid "Assigned Employee"
+msgstr "الموظف المسؤول"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__at
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__at
+msgid "At"
+msgstr "الوقت"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__audit_ids
+msgid "Audit"
+msgstr "سجل التدقيق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Audit records are managed by workflow actions."
+msgstr "تُدار سجلات التدقيق من خلال إجراءات سير العمل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Audit records cannot be changed."
+msgstr "لا يمكن تعديل سجلات التدقيق."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Audit records cannot be deleted."
+msgstr "لا يمكن حذف سجلات التدقيق."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__branch_id
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_branch
+msgid "CRM Branch"
+msgstr "فرع إدارة علاقات العملاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_conversation
+msgid "CRM Conversation"
+msgstr "محادثة إدارة علاقات العملاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_customer
+msgid "CRM Customer"
+msgstr "عميل إدارة علاقات العملاء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Cancel order"
+msgstr "إلغاء الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Cancel orders instead of deleting them."
+msgstr "ألغِ الطلبات بدلاً من حذفها."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__cancelled
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_channel_order__state__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__catalog_customer_id
+msgid "Catalog Customer"
+msgstr "عميل دليل العملاء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__channel_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__channel_id
+msgid "Channel"
+msgstr "القناة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_channel_order
+msgid "Channel Order"
+msgstr "طلب قناة التواصل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_channel_order_audit
+msgid "Channel Order Audit"
+msgstr "سجل تدقيق طلب قناة التواصل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_channel_order_line
+msgid "Channel Order Line"
+msgstr "صنف طلب قناة التواصل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Claim conversation"
+msgstr "استلام المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Claim this conversation with your employee session first."
+msgstr "استلم هذه المحادثة باستخدام جلسة الموظف الخاصة بك أولاً."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Close order"
+msgstr "إغلاق الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_channel_order__state__closed
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_chatter_session__state__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid ""
+"Configure the intake replica, default store and company country before "
+"activation."
+msgstr "حدد قاعدة الاستقبال والفرع الافتراضي ودولة الشركة قبل التفعيل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Confirm customer"
+msgstr "تأكيد العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Confirm typed or third-party phone numbers before linking."
+msgstr "أكد أرقام الهواتف المكتوبة أو الخاصة بطرف آخر قبل الربط."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__confirmed_phone
+msgid "Confirmed Phone"
+msgstr "الهاتف المؤكد"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__conversation_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__conversation_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__conversation_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__conversation_id
+msgid "Conversation"
+msgstr "المحادثة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_workspace_read
+msgid "Conversation Read Position"
+msgstr "موضع قراءة المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_conversations
+msgid "Conversations"
+msgstr "المحادثات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Created"
+msgstr "تم الإنشاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__create_uid
+msgid "Created by"
+msgstr "أُنشئ بواسطة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__customer_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__customer_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__confirmation
+msgid "Customer Confirmation"
+msgstr "تأكيد العميل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__customer_name
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Customer confirmation"
+msgstr "تأكيد العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Customer name"
+msgstr "اسم العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Customer phone"
+msgstr "هاتف العميل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__delivery_notes
+msgid "Delivery Notes"
+msgstr "ملاحظات التوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Delivery notes"
+msgstr "ملاحظات التوصيل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_channel__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_identity__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_scoped__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_channel_order__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__employee_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__employee_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__employee_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__employee_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Employee code"
+msgstr "كود الموظف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Enter a valid customer phone number."
+msgstr "أدخل رقم هاتف صحيحاً للعميل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__store_id
+msgid "Fulfillment Branch"
+msgstr "فرع تنفيذ الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Fulfillment branch"
+msgstr "فرع تنفيذ الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "I confirmed this phone with the customer"
+msgstr "أكدت رقم الهاتف هذا مع العميل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_channel__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_api__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_identity__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_api__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_scoped__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__replica_id
+msgid "Intake Replica"
+msgstr "قاعدة بيانات الاستقبال"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__intake_store_id
+msgid "Intake Store"
+msgstr "فرع الاستقبال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Invalid read position."
+msgstr "موضع القراءة غير صالح."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__last_message_id
+msgid "Last Message"
+msgstr "آخر رسالة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__line_ids
+msgid "Line"
+msgstr "الصنف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Line added"
+msgstr "تمت إضافة صنف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Line changed"
+msgstr "تم تعديل صنف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Loading…"
+msgstr "جارٍ التحميل…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Matching customer"
+msgstr "العميل المطابق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_messaging_account
+msgid "Messaging Account"
+msgstr "حساب المراسلة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__name
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "New Order"
+msgstr "طلب جديد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "New order"
+msgstr "طلب جديد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "No conversations yet."
+msgstr "لا توجد محادثات بعد."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Only accepted orders can be closed."
+msgstr "يمكن إغلاق الطلبات المقبولة فقط."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_workspace_read_reader_unique
+msgid "Only one read position per user is allowed."
+msgstr "يسمح بموضع قراءة واحد لكل مستخدم."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Operation failed."
+msgstr "فشلت العملية."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__order_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__order_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__order_ids
+msgid "Order"
+msgstr "الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Order editor"
+msgstr "تحرير الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Order evidence is managed by workflow actions."
+msgstr "تُدار بيانات إثبات الطلب من خلال إجراءات سير العمل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Order history"
+msgstr "سجل الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Order line ownership and product cannot be changed."
+msgstr "لا يمكن تغيير الطلب المرتبط بالصنف أو المنتج."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "PIN"
+msgstr "الرقم السري"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__phone
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__phone_confirmed_at
+msgid "Phone Confirmed At"
+msgstr "وقت تأكيد الهاتف"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__phone_confirmed_by
+msgid "Phone Confirmed By"
+msgstr "تم تأكيد الهاتف بواسطة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__price
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Price:"
+msgstr "السعر:"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Provide a reason to cancel the order."
+msgstr "أدخل سبب إلغاء الطلب."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Provide a reason to reopen an accepted or closed order."
+msgstr "أدخل سبب إعادة فتح طلب مقبول أو مغلق."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Quantity:"
+msgstr "الكمية:"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Record how and when the customer accepted this order"
+msgstr "سجل كيف ومتى وافق العميل على هذا الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Remove"
+msgstr "إزالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Reopen revision"
+msgstr "إعادة فتح نسخة الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Reopen the order before editing an accepted revision."
+msgstr "أعد فتح الطلب قبل تعديل نسخة مقبولة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Reopened"
+msgstr "تمت إعادة الفتح"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Reply"
+msgstr "الرد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Request contact"
+msgstr "طلب مشاركة الهاتف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__revision
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__revision
+msgid "Revision"
+msgstr "النسخة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_workspace
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_workspace
+msgid "Sales Operations"
+msgstr "عمليات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#: model:res.groups,name:ab_crm_sales_workspace.group_agent
+msgid "Sales Operations Agent"
+msgstr "موظف عمليات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Sales Operations access is required."
+msgstr "يلزم امتلاك صلاحية عمليات المبيعات."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Save draft"
+msgstr "حفظ المسودة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Search products"
+msgstr "البحث عن منتجات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Select a conversation to begin."
+msgstr "اختر محادثة للبدء."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Select a fulfillment branch first."
+msgstr "اختر فرع تنفيذ الطلب أولاً."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Select an authorized matching customer."
+msgstr "اختر عميلاً مطابقاً ضمن صلاحياتك."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Select branch"
+msgstr "اختر الفرع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Select matching customer"
+msgstr "اختر العميل المطابق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Send reply"
+msgstr "إرسال الرد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Sending / review"
+msgstr "جارٍ الإرسال / قيد المراجعة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Sign in"
+msgstr "تسجيل الدخول"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__state
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__state
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__state
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "The fulfillment branch is not permitted."
+msgstr "فرع تنفيذ الطلب غير مسموح به."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "This Telegram identity is already linked to another contact."
+msgstr "هوية تيليجرام هذه مرتبطة بالفعل بجهة اتصال أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "This conversation is already assigned."
+msgstr "هذه المحادثة مسندة بالفعل إلى موظف."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "This product requires a whole quantity."
+msgstr "يتطلب هذا المنتج كمية صحيحة دون كسور."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "This product requires its default sales unit."
+msgstr "يتطلب هذا المنتج وحدة البيع الافتراضية."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Too many phone candidates. Review the customer catalog first."
+msgstr "هناك عدد كبير من الأرقام المحتملة. راجع دليل العملاء أولاً."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__total
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Total:"
+msgstr "الإجمالي:"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__uom_id
+msgid "Uom"
+msgstr "وحدة القياس"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid ""
+"Use an active sale product, valid unit, positive quantity and nonnegative "
+"price."
+msgstr "استخدم منتجاً نشطاً للبيع ووحدة صالحة وكمية موجبة وسعراً غير سالب."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Use shared contact"
+msgstr "استخدام الهاتف المُشارَك"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Use the workspace to confirm customer identity."
+msgstr "استخدم مساحة العمل لتأكيد هوية العميل."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_res_users
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__user_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__user_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__user_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__values
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__values
+msgid "Values"
+msgstr "القيم"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_identity
+msgid "CRM Identity Link"
+msgstr "رابط هوية إدارة علاقات العملاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_messaging_api
+msgid "Messaging Gateway API"
+msgstr "واجهة برمجة بوابة المراسلة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Contacted channels"
+msgstr "قنوات التواصل المستخدمة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__delivered
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Delivery review"
+msgstr "مراجعة التسليم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Invalid conversation search."
+msgstr "البحث عن المحادثات غير صالح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Older conversations"
+msgstr "محادثات أقدم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Older messages"
+msgstr "رسائل أقدم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__read
+msgid "Read"
+msgstr "تمت القراءة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_workspace
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_workspace
+msgid "Sales Chatter"
+msgstr "محادثات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Search contacts"
+msgstr "البحث عن جهات الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_telegram.selection__ab_crm_messaging_account__provider__telegram
+msgid "Telegram"
+msgstr "تيليجرام"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "This channel integration is deferred."
+msgstr "تكامل هذه القناة مؤجل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+msgid "A staff Odoo login is required for Sales Chatter."
+msgstr "يلزم تسجيل الدخول إلى أودو بحساب موظف لاستخدام محادثات المبيعات."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__account_code
+msgid "Account Code"
+msgstr "رمز الحساب"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__provider_account
+msgid "Bot ID"
+msgstr "معرّف البوت"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__bot_username
+msgid "Bot Username"
+msgstr "اسم مستخدم البوت"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__bot_token
+msgid "BotFather Token"
+msgstr "رمز وصول BotFather"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_scoped
+msgid "CRM Branch Scope"
+msgstr "نطاق فرع إدارة علاقات العملاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_message
+msgid "CRM Message"
+msgstr "رسالة إدارة علاقات العملاء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__chatter_blocked_until
+msgid "Chatter Blocked Until"
+msgstr "حظر المحادثات حتى"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__chatter_failed_attempts
+msgid "Chatter Failed Attempts"
+msgstr "محاولات دخول المحادثات الفاشلة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_chatter_session_token_unique
+msgid "Chatter session tokens must be unique."
+msgstr "يجب أن تكون رموز جلسات المحادثات فريدة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+msgid "Close chatter sessions instead of deleting them."
+msgstr "أغلق جلسات المحادثات بدلاً من حذفها."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "Configure a dedicated messaging service user for this company first."
+msgstr "أعدّ مستخدم خدمة مراسلة مخصصاً لهذه الشركة أولاً."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "Configure the BotFather token in Telegram Setup first."
+msgstr "أدخل رمز وصول BotFather في إعداد تيليجرام أولاً."
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid ""
+"Create or open your bot in BotFather, copy its token and paste it below. "
+"Saving prepares a disabled connection. The gateway verifies the bot before "
+"activation."
+msgstr ""
+"أنشئ البوت أو افتحه في BotFather، ثم انسخ رمز الوصول والصقه أدناه. يجهّز "
+"الحفظ اتصالاً غير مفعّل. تتحقق البوابة من البوت قبل التفعيل."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__device_uid
+msgid "Device Uid"
+msgstr "معرّف الجهاز"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.js:0
+msgid "Employee and PIN are required."
+msgstr "يلزم اختيار الموظف وإدخال الرقم السري."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Employee login"
+msgstr "دخول الموظف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "Enter a valid BotFather token."
+msgstr "أدخل رمز وصول صالحاً من BotFather."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__expires_at
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__expires_at
+msgid "Expires At"
+msgstr "ينتهي في"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__branch_id
+msgid "Intake"
+msgstr "جهة استقبال الطلبات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+msgid "Invalid chatter login."
+msgstr "بيانات دخول المحادثات غير صالحة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+#: code:addons/ab_crm_sales_workspace/models/alerts.py:0
+msgid "Invalid notification position."
+msgstr "موضع الإشعارات غير صالح."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__last_activity_at
+msgid "Last Activity At"
+msgstr "وقت آخر نشاط"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__login_at
+msgid "Login At"
+msgstr "وقت تسجيل الدخول"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.js:0
+msgid "Login failed."
+msgstr "تعذر تسجيل الدخول."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+msgid "New message from %s"
+msgstr "رسالة جديدة من %s"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "No authorized Call Center employee is available."
+msgstr "لا يوجد موظف مركز اتصال مخوّل متاح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "Only administrators can configure Telegram."
+msgstr "يمكن للمسؤولين فقط إعداد تيليجرام."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/alerts.xml:0
+msgid "Open conversation"
+msgstr "فتح المحادثة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_messaging_operation
+msgid "Outgoing Messaging Operation"
+msgstr "عملية إرسال رسالة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__parameter_key
+msgid "Parameter Key"
+msgstr "مفتاح معلمة النظام"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid "Paste the BotFather token"
+msgstr "الصق رمز وصول BotFather"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__profile_id
+msgid "Profile"
+msgstr "ملف الصلاحيات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_chatter_session
+msgid "Sales Chatter Employee Session"
+msgstr "جلسة موظف محادثات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_chatter_api
+msgid "Sales Chatter Login API"
+msgstr "واجهة دخول محادثات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_chatter_telegram_setup
+msgid "Sales Chatter Telegram Setup"
+msgstr "إعداد تيليجرام لمحادثات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.js:0
+msgid "Sales Chatter employee login"
+msgstr "دخول موظف محادثات المبيعات"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid "Save connection"
+msgstr "حفظ الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Search employees"
+msgstr "البحث عن الموظفين"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+msgid "Select an authorized Call Center employee and enter the correct PIN."
+msgstr "اختر موظف مركز اتصال مخوّلاً وأدخل الرقم السري الصحيح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Select employee..."
+msgstr "اختر الموظف..."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Select your Call Center employee and enter your existing PIN."
+msgstr "اختر موظف مركز الاتصال وأدخل الرقم السري الحالي."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Sign in to Sales Chatter with your employee and PIN."
+msgstr "سجّل الدخول إلى محادثات المبيعات باختيار الموظف وإدخال الرقم السري."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Sign out"
+msgstr "تسجيل الخروج"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Signing in..."
+msgstr "جارٍ تسجيل الدخول..."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.actions.act_window,name:ab_crm_sales_workspace.action_telegram_setup
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_telegram_setup
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid "Telegram Setup"
+msgstr "إعداد تيليجرام"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "The messaging account is not authorized."
+msgstr "حساب المراسلة غير مخوّل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/saved_reply.py:0
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "The selected company or branch is not allowed."
+msgstr "الشركة أو الفرع المحدد غير مسموح به."
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid ""
+"The token is stored in an administrator-only Odoo system parameter. The "
+"dedicated gateway retrieves only its own account token. Staff chatter "
+"sessions cannot read it."
+msgstr ""
+"يُحفظ رمز الوصول في معلمة نظام أودو متاحة للمسؤولين فقط. تسترجع البوابة "
+"المخصصة رمز حسابها فقط. لا يمكن لجلسات محادثات الموظفين قراءته."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "This account code is already mapped to another connection."
+msgstr "رمز الحساب هذا مرتبط باتصال آخر بالفعل."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__token_configured
+msgid "Token Configured"
+msgstr "تم إعداد رمز الوصول"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__token_hash
+msgid "Token Hash"
+msgstr "بصمة رمز الوصول"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid ""
+"Token saved. Verify the bot with the gateway before enabling reception or "
+"sending."
+msgstr ""
+"تم حفظ رمز الوصول. تحقّق من البوت عبر البوابة قبل تفعيل الاستقبال أو "
+"الإرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+msgid "Too many login attempts. Try again in five minutes."
+msgstr "محاولات دخول كثيرة. حاول مجدداً بعد خمس دقائق."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "Use letters, numbers, underscores or hyphens for the account code."
+msgstr "استخدم حروفاً لاتينية أو أرقاماً أو شرطات سفلية أو شرطات لرمز الحساب."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/session.py:0
+msgid "Your chatter session expired. Sign in again."
+msgstr "انتهت جلسة المحادثات. سجّل الدخول مجدداً."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid ""
+"Add a valid BotFather token in System Parameters using the displayed key."
+msgstr ""
+"أضف رمز وصول صالحاً من BotFather في معلمات النظام باستخدام المفتاح المعروض."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "Configure the BotFather token in System Parameters first."
+msgstr "أدخل رمز وصول BotFather في معلمات النظام أولاً."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid ""
+"Connection prepared. Verify the bot with the gateway before enabling "
+"reception or sending."
+msgstr ""
+"تم تجهيز الاتصال. تحقّق من البوت عبر البوابة قبل تفعيل الاستقبال أو الإرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Employee Login"
+msgstr "دخول الموظف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Enter PIN"
+msgstr "أدخل الرقم السري"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid ""
+"Enter the BotFather token only in Settings → Technical → Parameters → System"
+" Parameters using the key below. Then prepare the connection here."
+msgstr ""
+"أدخل رمز وصول BotFather فقط في الإعدادات ← تقني ← المعلمات ← معلمات النظام "
+"باستخدام المفتاح أدناه. ثم جهّز الاتصال هنا."
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid "Prepare connection"
+msgstr "تجهيز الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
+msgid "Select employee and enter PIN on the branch service user session."
+msgstr "اختر الموظف وأدخل الرقم السري في جلسة مستخدم خدمة الفرع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+#: model:ir.actions.act_window,name:ab_crm_sales_workspace.action_telegram_setup
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_telegram_setup
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+msgid "Telegram Connection"
+msgstr "اتصال تيليجرام"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid ""
+"The company must have one configured messaging branch before preparing the "
+"connection."
+msgstr "يجب أن يكون للشركة فرع مراسلة واحد مُعدّ قبل تجهيز الاتصال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "All"
+msgstr "الكل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Archive template"
+msgstr "أرشفة القالب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Attach"
+msgstr "إرفاق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Attach up to four files, 20 MB per file and 10 MB per image."
+msgstr ""
+"يمكن إرفاق أربعة ملفات بحد أقصى، 20 ميجابايت للملف و10 ميجابايت للصورة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+msgid "Balance unavailable"
+msgstr "الرصيد غير متاح"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Balances are cached; preparing an order does not reserve stock."
+msgstr "الأرصدة مخزنة مؤقتًا؛ إعداد الطلب لا يحجز المخزون."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__body
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__body
+msgid "Body"
+msgstr "المحتوى"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Branch price"
+msgstr "سعر الفرع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Branch recalculation"
+msgstr "إعادة حساب أسعار الفرع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+msgid "Cached balance"
+msgstr "رصيد مخزن مؤقتًا"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Cancel recording"
+msgstr "إلغاء التسجيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid ""
+"Changing branch recalculates all line prices and validates products and "
+"units."
+msgstr "تغيير الفرع يعيد حساب أسعار جميع البنود ويتحقق من المنتجات والوحدات."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_saved_reply
+msgid "Channel Saved Reply"
+msgstr "رد محفوظ للقناة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Channel order"
+msgstr "طلب القناة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Confirm branch recalculation before saving."
+msgstr "أكد إعادة حساب أسعار الفرع قبل الحفظ."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Confirm order"
+msgstr "تأكيد الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Connection status unavailable"
+msgstr "حالة الاتصال غير متاحة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Continue editing"
+msgstr "متابعة التعديل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Copy"
+msgstr "نسخ"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__delivery_address
+msgid "Delivery Address"
+msgstr "عنوان التوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Delivery address"
+msgstr "عنوان التوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Delivery evidence"
+msgstr "سجل الإرسال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Discard unsaved edits"
+msgstr "تجاهل التعديلات غير المحفوظة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Download"
+msgstr "تنزيل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__edit_version
+msgid "Edit Version"
+msgstr "إصدار التعديل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Emoji"
+msgstr "رموز تعبيرية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Identification required before confirmation"
+msgstr "يجب تحديد هوية العميل قبل التأكيد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Identified customer"
+msgstr "تم تحديد هوية العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Insert into composer"
+msgstr "إدراج في محرر الرسالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Invalid media."
+msgstr "مرفق غير صالح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Invalid order lines."
+msgstr "بنود الطلب غير صالحة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Items"
+msgstr "أصناف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Line total"
+msgstr "إجمالي البند"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Maximum price"
+msgstr "أقصى سعر"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Media captions must not exceed 1024 characters."
+msgstr "يجب ألا يتجاوز وصف المرفق 1024 حرفًا."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Medicine"
+msgstr "دواء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Message template"
+msgstr "قالب الرسالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Minimum price"
+msgstr "أقل سعر"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "New saved reply"
+msgstr "رد محفوظ جديد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Non-medicine"
+msgstr "غير دوائي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/saved_reply.py:0
+msgid "Only managers can maintain saved replies."
+msgstr "يمكن للمديرين فقط إدارة الردود المحفوظة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_orders
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_orders
+msgid "Orders"
+msgstr "الطلبات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Outgoing sending is disabled. No request will be queued."
+msgstr "الإرسال معطل. لن تتم إضافة أي طلب إلى قائمة الانتظار."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Product category"
+msgstr "فئة المنتج"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Product name, code or barcode"
+msgstr "اسم المنتج أو الكود أو الباركود"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Provider accepted"
+msgstr "قبله مزود الخدمة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "React"
+msgstr "إضافة تفاعل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__read_at
+msgid "Read At"
+msgstr "وقت القراءة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Recalculate prices"
+msgstr "إعادة حساب الأسعار"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Record audio"
+msgstr "تسجيل صوت"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+#: code:addons/ab_crm_sales_workspace/models/saved_reply.py:0
+msgid "Replies must contain between 1 and 4096 characters."
+msgstr "يجب أن يحتوي الرد على حرف واحد إلى 4096 حرفًا."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Reply to"
+msgstr "رد على"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Save template"
+msgstr "حفظ القالب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Save your changes?"
+msgstr "هل تريد حفظ التعديلات؟"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid ""
+"Saved replies are inserted into the composer. Review them and explicitly "
+"send."
+msgstr "تُدرج الردود المحفوظة في محرر الرسالة. راجعها ثم اضغط إرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Saved reply"
+msgstr "رد محفوظ"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Search branch name or code"
+msgstr "البحث باسم الفرع أو الكود"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Search conversation"
+msgstr "البحث في المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Select a message from this conversation."
+msgstr "اختر رسالة من هذه المحادثة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Send message"
+msgstr "إرسال رسالة"
+
+#. module: ab_crm_sales_workspace
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.conversation_identity_review
+msgid "Staff read history"
+msgstr "سجل قراءة الموظفين"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+msgid "Stale balance"
+msgstr "رصيد قديم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Stop recording"
+msgstr "إيقاف التسجيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Templates"
+msgstr "القوالب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+msgid "The selected unit is unavailable in this branch."
+msgstr "الوحدة المحددة غير متاحة في هذا الفرع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "This order changed in another window. Reopen it before saving."
+msgstr "تم تغيير الطلب في نافذة أخرى. أعد فتحه قبل الحفظ."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Unidentified sender"
+msgstr "مرسل غير محدد الهوية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Unsaved edits"
+msgstr "تعديلات غير محفوظة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Use {{customer}} and {{phone}} placeholders"
+msgstr "استخدم المتغيرين {{customer}} و{{phone}}"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__failed
+msgid "Download failed"
+msgstr "فشل التنزيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__pending
+msgid "Pending download"
+msgstr "بانتظار التنزيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "A self-shared contact is required for catalog review."
+msgstr ""
+"يلزم أن يشارك العميل جهة اتصاله بنفسه لمراجعة المطابقة مع سجل العملاء."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid ""
+"Acceptance requires a branch, valid order lines and customer confirmation."
+msgstr "يتطلب قبول الطلب فرعاً وبنود طلب صالحة وموافقة العميل."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_conversation__catalog_match_state__ambiguous
+msgid "Ambiguous"
+msgstr "مطابقات متعددة"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.conversation_identity_review
+msgid "Approve catalog match"
+msgstr "اعتماد مطابقة العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Cancel reply"
+msgstr "إلغاء الرد"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__catalog_candidate_ids
+msgid "Catalog Candidate"
+msgstr "عميل مرشح للمطابقة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__catalog_match_state
+msgid "Catalog Match State"
+msgstr "حالة مطابقة سجل العملاء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Channel order drafts"
+msgstr "مسودات طلبات القنوات"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.conversation_identity_review
+msgid "Channel orders"
+msgstr "طلبات القنوات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__contact_evidence_id
+msgid "Contact Evidence"
+msgstr "دليل جهة الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Contact details pending"
+msgstr "بيانات جهة الاتصال قيد الاستكمال"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.conversation_identity_review
+msgid "Contact identification"
+msgstr "تحديد هوية جهة الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Decrease quantity"
+msgstr "تقليل الكمية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Full Screen"
+msgstr "ملء الشاشة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_conversation__catalog_match_state__conflict
+msgid "Identity conflict"
+msgstr "تعارض الهوية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Increase quantity"
+msgstr "زيادة الكمية"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_conversation__catalog_match_state__invalid
+msgid "Invalid phone"
+msgstr "رقم هاتف غير صالح"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_conversation__catalog_match_state__matched
+msgid "Matched"
+msgstr "تمت المطابقة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Maximize"
+msgstr "تكبير"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Messaging is disabled for this account."
+msgstr "المراسلة معطلة لهذا الحساب."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Minimize"
+msgstr "تصغير"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_conversation__catalog_match_state__unmatched
+msgid "No catalog match"
+msgstr "لا توجد مطابقة في سجل العملاء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Only CRM managers can review contact matches."
+msgstr "يمكن لمديري إدارة علاقات العملاء فقط مراجعة مطابقات جهات الاتصال."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_conversation__catalog_match_state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Preparing message…"
+msgstr "جارٍ تجهيز الرسالة…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Remove attachment"
+msgstr "إزالة المرفق"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__review_catalog_customer_id
+msgid "Review Catalog Customer"
+msgstr "عميل السجل للمراجعة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__staff_read_ids
+msgid "Staff Read"
+msgstr "قراءة الموظفين"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Stop or cancel recording before sending."
+msgstr "أوقف التسجيل أو ألغِه قبل الإرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Type a message"
+msgstr "اكتب رسالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Write a message or attach a file."
+msgstr "اكتب رسالة أو أرفق ملفاً."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Contacts"
+msgstr "جهات الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "No messages in this conversation yet."
+msgstr "لا توجد رسائل في هذه المحادثة بعد."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "No messages yet."
+msgstr "لا توجد رسائل بعد."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "No orders yet."
+msgstr "لا توجد طلبات بعد."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+msgid "%s pending messages · %s"
+msgstr "%s رسائل معلّقة · %s"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__acknowledged_ids
+msgid "Acknowledged messages"
+msgstr "الرسائل التي تم تأكيد الاطلاع عليها"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+msgid "Add contact"
+msgstr "إضافة جهة اتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__chatter_address
+msgid "Chatter Address"
+msgstr "العنوان في المحادثات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__chatter_name
+msgid "Chatter Name"
+msgstr "الاسم في المحادثات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__chatter_override
+msgid "Chatter Override"
+msgstr "بيانات محلية للمحادثات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__chatter_phone
+msgid "Chatter Phone"
+msgstr "الهاتف في المحادثات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Contact details do not verify identity or enable sending."
+msgstr "بيانات جهة الاتصال لا تثبت الهوية ولا تتيح الإرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Couldn’t confirm sending"
+msgstr "تعذّر تأكيد الإرسال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Couldn’t open the conversation. Try again."
+msgstr "تعذّر فتح المحادثة. حاول مرة أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Delete"
+msgstr "حذف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+msgid "Delete contact"
+msgstr "حذف جهة اتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Delete contact?"
+msgstr "حذف جهة الاتصال؟"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Edit"
+msgstr "تعديل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+msgid "Edit contact"
+msgstr "تعديل جهة اتصال"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_workspace_alert
+msgid "Employee Conversation Alert Acknowledgment"
+msgstr "تأكيد الموظف للاطلاع على تنبيه المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Enter a name, phone and address."
+msgstr "أدخل الاسم والهاتف والعنوان."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Invalid contact search."
+msgstr "بحث غير صالح عن جهة اتصال."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_audit__message_id
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "No saved contacts found."
+msgstr "لا توجد جهات اتصال محفوظة مطابقة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Not sent"
+msgstr "لم تُرسل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_workspace_alert_alert_unique
+msgid "Only one alert position per employee and conversation is allowed."
+msgstr "يُسمح بسجل تنبيه واحد لكل موظف ومحادثة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Potential duplicates. Select an existing contact or save separately."
+msgstr "قد توجد جهات اتصال مكررة. اختر جهة اتصال موجودة أو احفظ بشكل منفصل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_workspace_audit
+msgid "Protected Chatter Action Log"
+msgstr "سجل إجراءات المحادثات المحمي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Protected chatter logs cannot be changed."
+msgstr "لا يمكن تغيير سجلات المحادثات المحمية."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Reply to a message"
+msgstr "رد على رسالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Retry failed"
+msgstr "فشلت إعادة المحاولة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Retrying…"
+msgstr "جارٍ إعادة المحاولة…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Save separately"
+msgstr "حفظ بشكل منفصل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Search by name or phone"
+msgstr "البحث بالاسم أو الهاتف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Select a saved contact."
+msgstr "اختر جهة اتصال محفوظة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid ""
+"Sending could not be confirmed. Ask a manager to check before sending again."
+msgstr "تعذّر تأكيد الإرسال. اطلب من المدير التحقق قبل الإرسال مرة أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Sending is available after this contact starts a channel conversation."
+msgstr "يتاح الإرسال بعد أن تبدأ جهة الاتصال محادثة عبر إحدى القنوات."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Sending…"
+msgstr "جارٍ الإرسال…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid ""
+"The contact will be archived. Messages and orders remain. Future incoming "
+"messages will still appear."
+msgstr ""
+"ستتم أرشفة جهة الاتصال مع الاحتفاظ بالرسائل والطلبات. وستظل الرسائل الواردة "
+"مستقبلًا تظهر."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "The message was not sent. Try again when sending is available."
+msgstr "لم تُرسل الرسالة. حاول مرة أخرى عندما يتاح الإرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "This attachment couldn’t be sent. Choose another file."
+msgstr "تعذّر إرسال هذا المرفق. اختر ملفًا آخر."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "This message cannot be retried."
+msgstr "لا يمكن إعادة محاولة إرسال هذه الرسالة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Updated"
+msgstr "آخر تحديث"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Use Contacts in Sales Chatter to edit this contact."
+msgstr "استخدم جهات الاتصال في محادثات المبيعات لتعديل جهة الاتصال هذه."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/alerts.py:0
+msgid "Use conversation notifications to acknowledge messages."
+msgstr "استخدم تنبيهات المحادثة لتأكيد الاطلاع على الرسائل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Waiting to send"
+msgstr "في انتظار الإرسال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/alerts.xml:0
+msgid "Customer message alerts"
+msgstr "تنبيهات رسائل العملاء"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/alerts.xml:0
+msgid "Dismiss alert"
+msgstr "إغلاق التنبيه"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.actions.act_window,name:ab_crm_sales_workspace.action_workspace_audit
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_workspace_audit
+msgid "Chatter Action Log"
+msgstr "سجل إجراءات المحادثات"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__history
+msgid "History"
+msgstr "السجل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Only managers can review uncertain sends."
+msgstr "يمكن للمديرين فقط مراجعة الرسائل غير المؤكدة."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__review_note
+msgid "Review Note"
+msgstr "ملاحظة المراجعة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__reviewed_at
+msgid "Reviewed At"
+msgstr "وقت المراجعة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__reviewed_by
+msgid "Reviewed By"
+msgstr "تمت المراجعة بواسطة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__error_code
+msgid "Error Code"
+msgstr "رمز الخطأ"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__provider_reference
+msgid "Provider Reference"
+msgstr "مرجع مزوّد الخدمة"

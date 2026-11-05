@@ -1,0 +1,13 @@
+<odoo>
+    <record id="group_agent" model="res.groups">
+        <field name="name">Sales Operations Agent</field>
+        <field name="privilege_id" ref="ab_crm_core.privilege_crm"/>
+        <field name="implied_ids" eval="[(4, ref('ab_crm_core.group_user'))]"/>
+    </record>
+    <record id="ab_sales.group_call_center" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_agent'))]"/>
+    </record>
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_agent'))]"/>
+    </record>
+</odoo>

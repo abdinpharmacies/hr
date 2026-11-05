@@ -1,0 +1,54 @@
+<templates xml:space="preserve">
+<t t-name="ab_crm_sales_workspace.OrderDialog">
+<OrderFrame title="title" size="state.maximized ? 'fullscreen' : 'xl'" footer="false" requestClose.bind="close" contentClass="'ab_chatter_order_modal' + (state.minimized ? ' is-minimized' : '')">
+<t t-set-slot="header">    <div class="ab_order_window_controls" t-att-dir="direction"><strong>Channel order</strong><div><button class="btn btn-light" t-on-click="fullScreen" title="Full Screen" aria-label="Full Screen"><i class="fa fa-expand"/></button><button class="btn btn-light" t-on-click="() => state.minimized = !state.minimized" title="Minimize" aria-label="Minimize"><i t-att-class="state.minimized ? 'fa fa-window-restore' : 'fa fa-window-minimize'"/></button><button class="btn btn-light" t-on-click="toggleMaximize" title="Maximize" aria-label="Maximize"><i class="fa fa-window-maximize"/></button><button class="btn-close btn-close-white" t-on-click="close" title="Close" aria-label="Close"/></div></div></t>
+<div class="ab_chatter_order" t-att-dir="direction" t-att-class="{'is-minimized': state.minimized}">
+
+    <div class="ab_order_workspace"><aside class="ab_order_drafts" aria-label="Channel order drafts"><h3>Orders</h3><button t-foreach="draftChoices" t-as="draft" t-key="draft.id" class="btn" t-att-class="draft.id === state.order.id ? 'btn-primary' : 'btn-light'" t-att-disabled="state.busy" t-on-click="() => this.switchDraft(draft.id)"><strong><t t-esc="draft.name"/> #<t t-esc="draft.id"/></strong><span t-esc="stateLabel(draft.state)"/><small><span>Revision</span> <t t-esc="draft.revision"/></small></button></aside><div class="ab_order_main">
+    <div t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+    <div t-if="state.closing" class="alert alert-warning d-flex gap-2 align-items-center" role="alertdialog" aria-label="Unsaved edits"><strong>Save your changes?</strong><button class="btn btn-primary" t-on-click="() => this.save(false, true)" t-att-disabled="state.busy">Save</button><button class="btn btn-outline-danger" t-on-click="discard" t-att-disabled="state.busy">Discard unsaved edits</button><button class="btn btn-light" t-on-click="() => state.closing = false">Continue editing</button></div>
+    <div t-if="state.branch" class="alert alert-warning" role="alertdialog" aria-label="Branch recalculation"><p>Changing branch recalculates all line prices and validates products and units.</p><button class="btn btn-primary" t-on-click="() => this.applyBranch()" t-att-disabled="state.busy">Recalculate prices</button><button class="btn btn-light" t-on-click="() => state.branch = false">Continue editing</button></div>
+    <div class="ab_order_top">
+        <fieldset class="ab_order_branch" t-att-disabled="!editable || state.busy"><label>Select branch</label><ABMany2one relation="'ab_store'" value="store" update.bind="selectBranch" domain.bind="branchDomain" context="props.context" placeholder.translate="Search branch name or code" canCreate="false" canCreateEdit="false" canQuickCreate="false" canOpen="false"/><strong t-if="store" t-esc="store.code"/><small>Connection status unavailable</small><small>Balances are cached; preparing an order does not reserve stock.</small></fieldset>
+        <div class="ab_order_customer"><strong><bdi t-esc="state.order.customer_name"/></strong><span><bdi dir="ltr" t-esc="state.order.phone"/></span><span t-esc="channelLabel()"/><small t-if="state.order.identified">Identified customer</small><small t-else="">Contact details pending</small><fieldset t-att-disabled="!editable || state.busy"><label>Delivery address<textarea class="form-control" t-model="state.order.delivery_address"/></label><label>Delivery notes<textarea class="form-control" t-model="state.order.delivery_notes"/></label></fieldset></div>
+        <div class="ab_order_summary"><strong><t t-esc="state.order.lines.length"/> <span>Items</span></strong><output t-esc="total.toFixed(2)"/><span t-esc="stateLabel(state.order.state)"/><div t-if="editable"><button class="btn btn-outline-primary" t-on-click="() => this.save()" t-att-disabled="state.busy || !!state.branch">Save draft</button><button class="btn btn-primary" t-on-click="() => this.save(true)" t-att-disabled="state.busy || !!state.branch">Confirm order</button></div><button class="btn btn-light" t-on-click="() => state.history = !state.history">Order history</button></div>
+    </div>
+    <div class="ab_order_body">
+        <fieldset class="ab_order_catalog" t-att-disabled="!editable || state.busy || !state.order.store_id">
+            <form t-on-submit.prevent="search"><input class="form-control" t-ref="search" t-on-keydown="searchKeydown" t-model="state.query" placeholder="Product name, code or barcode" aria-label="Product name, code or barcode"/><div class="d-flex gap-2"><input class="form-control" type="number" min="0" t-model="state.minimum" placeholder="Minimum price" aria-label="Minimum price"/><input class="form-control" type="number" min="0" t-model="state.maximum" placeholder="Maximum price" aria-label="Maximum price"/></div><select class="form-select" t-model="state.category" aria-label="Product category"><option value="all">All</option><option value="medicine">Medicine</option><option value="non_medicine">Non-medicine</option></select><button class="btn btn-primary">Search</button></form>
+            <p t-if="!state.order.store_id">Select a fulfillment branch first.</p>
+            <div class="ab_order_products row row-cols-1 g-2" t-ref="cards" t-on-keydown="cardKeydown">
+                <t t-foreach="state.products" t-as="product" t-key="product.id">
+                    <t t-call="ab_sales.ProductCard">
+                        <t t-set="p" t-value="productCard(product)"/>
+                        <t t-set="idx" t-value="product_index"/>
+                        <t t-set="selectionIndex" t-value="state.selectionIndex"/>
+                        <t t-set="qtyBuffer" t-value="state.qtyBuffer"/>
+                        <t t-set="qtyBufferProductId" t-value="state.products[state.selectionIndex]?.id"/>
+                        <t t-set="showPosBalanceAge" t-value="false"/>
+                        <t t-set="onAdd" t-value="(product) => this.add(product)"/>
+                        <t t-set="onOpenBalance" t-value="(product) => this.showBalance(product)"/>
+                        <t t-set="onRefreshBalance" t-value="false"/>
+                        <t t-set="formatPrice" t-value="formatPrice"/>
+                        <t t-set="formatQty" t-value="formatQty"/>
+                        <t t-set="productLabel" t-value="productLabel"/>
+                    </t>
+                    <small class="text-muted"><t t-esc="balanceLabel(product)"/> · <time t-if="product.balance_at" t-esc="product.balance_at"/></small>
+                </t>
+            </div>
+            <div t-if="state.balance" class="alert alert-info" role="status"><strong t-esc="state.balance.name"/> · <t t-esc="balanceLabel(state.balance)"/>: <t t-esc="state.balance.balance"/> <time t-esc="state.balance.balance_at"/><button class="btn btn-light" t-on-click="() => state.balance = false" aria-label="Close"><i class="fa fa-times"/></button></div>
+        </fieldset>
+        <div class="ab_order_lines"><fieldset t-att-disabled="!editable || state.busy"><div class="table-responsive"><table class="table"><thead><tr><th>Product</th><th>Quantity</th><th>Unit</th><th>Branch price</th><th>Line total</th><th/></tr></thead><tbody><tr t-foreach="state.order.lines" t-as="line" t-key="line.id"><td t-esc="line.product"/><td><div class="ab_order_quantity"><button class="btn btn-light" t-on-click="() => this.changeQuantity(line, -1)" aria-label="Decrease quantity"><i class="fa fa-minus"/></button><input class="form-control" type="number" min="0" step="any" t-model="line.quantity" aria-label="Quantity"/><button class="btn btn-light" t-on-click="() => this.changeQuantity(line, 1)" aria-label="Increase quantity"><i class="fa fa-plus"/></button></div></td><td><ABMany2one relation="'ab_product_uom'" value="unit(line)" update="(value) => this.updateUnit(line, value)" domain="() => this.unitDomain(line)" context="props.context" canCreate="false" canCreateEdit="false" canQuickCreate="false" canOpen="false"/></td><td><input class="form-control" type="number" min="0" step="0.01" t-model="line.price" aria-label="Price"/></td><td t-esc="(line.quantity * line.price).toFixed(2)"/><td><button class="btn btn-outline-danger" t-on-click="() => this.remove(line)" title="Remove"><i class="fa fa-trash"/></button></td></tr></tbody></table></div><label>Customer confirmation<textarea class="form-control" t-model="state.order.confirmation" placeholder="Record how and when the customer accepted this order"/></label></fieldset>
+            <div t-if="state.history" class="ab_order_audit"><h4>Order history</h4><article t-foreach="state.order.audits" t-as="audit" t-key="audit.id"><strong t-esc="auditLabel(audit.action)"/> · <t t-esc="audit.actor"/> · <time t-esc="audit.at"/><p t-if="audit.values.reason" t-esc="audit.values.reason"/>
+                <p t-if="audit.values.old &amp;&amp; audit.values.old.price !== undefined"><span>Price:</span> <t t-esc="audit.values.old.price"/> → <t t-esc="audit.values.new.price"/></p>
+                <p t-if="audit.values.old &amp;&amp; audit.values.old.quantity !== undefined"><span>Quantity:</span> <t t-esc="audit.values.old.quantity"/> → <t t-esc="audit.values.new.quantity"/></p>
+                <t t-set="snapshot" t-value="audit.values.snapshot || audit.values"/>
+                <div t-if="snapshot.lines"><p t-esc="snapshot.customer_name"/><bdi dir="ltr" t-esc="snapshot.phone"/><p t-esc="snapshot.confirmation"/><p t-esc="snapshot.delivery_address"/><p t-esc="snapshot.delivery_notes"/><p t-foreach="snapshot.lines" t-as="pastLine" t-key="pastLine.id"><t t-esc="pastLine.product"/> · <t t-esc="pastLine.uom"/> · <t t-esc="pastLine.quantity"/> × <t t-esc="pastLine.price"/></p></div></article></div>
+            <fieldset t-att-disabled="state.busy"><label>Reason<input class="form-control" t-model="state.reason"/></label><button t-if="state.order.state === 'accepted'" class="btn btn-primary" t-on-click="() => this.transition('action_close')">Close order</button><button t-if="['accepted', 'closed'].includes(state.order.state)" class="btn btn-outline-primary" t-on-click="() => this.transition('action_reopen')">Reopen revision</button><button t-if="state.order.state !== 'cancelled'" class="btn btn-outline-danger" t-on-click="() => this.transition('action_cancel')">Cancel order</button></fieldset>
+        </div>
+    </div>
+</div></div>
+</div>
+</OrderFrame>
+</t>
+</templates>
