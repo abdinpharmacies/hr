@@ -11,7 +11,7 @@ class AbSalesReturnUiApi(models.TransientModel):
         sale_header.check_access("read")
         token = str(session_token or self.env.context.get("ab_return_session_token") or "").strip()
         self._validate_return_session_for_store(sale_header.store_id, token)
-        return super().open_from_sale_header(sale_header_id, **kwargs)
+        return super(AbSalesReturnUiApi, self.with_context(ab_return_session_token=token)).open_from_sale_header(sale_header_id, **kwargs)
 
     @api.model
     def _validate_return_session_for_store(self, store, session_token, states=None):
@@ -49,7 +49,7 @@ class AbSalesReturnUiApi(models.TransientModel):
     @api.model
     def get_state(self, return_header_id, session_token=False):
         self._validate_return_employee_session(return_header_id, session_token, states=["active"])
-        return super().get_state(return_header_id)
+        return super(AbSalesReturnUiApi, self.with_context(ab_return_session_token=str(session_token or self.env.context.get("ab_return_session_token") or "").strip())).get_state(return_header_id)
 
     @api.model
     def save_notes(self, return_header_id, notes="", session_token=False):
