@@ -1,0 +1,28 @@
+[Unit]
+Description=Callcenter durable messaging delivery worker
+After=network.target postgresql.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=abdin_04
+Group=abdin_04
+WorkingDirectory=/opt/odoo19/worktrees/callcenter19/crm_messaging_gateway
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=CRM_MESSAGING_CONFIG=/home/abdin_04/.config/crm-messaging/config.json
+ExecStart=/home/abdin_04/.config/crm-messaging/venv/bin/python -m app.worker
+Restart=on-failure
+RestartSec=30
+KillMode=control-group
+TimeoutStopSec=20
+UMask=0077
+LimitCORE=0
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

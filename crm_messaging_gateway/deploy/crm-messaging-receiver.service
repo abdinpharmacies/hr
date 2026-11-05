@@ -1,0 +1,19 @@
+[Unit]
+Description=CRM Telegram polling receiver
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=crm-messaging
+WorkingDirectory=/opt/crm-messaging
+Environment=CRM_MESSAGING_CONFIG=/etc/crm-messaging/config.json
+ExecStart=/opt/crm-messaging/venv/bin/python -m app.receiver tg-pilot
+Restart=no
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

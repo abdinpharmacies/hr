@@ -1,0 +1,23 @@
+[Unit]
+Description=CRM messaging webhook ingress
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=crm-messaging
+Group=crm-messaging
+WorkingDirectory=/opt/crm-messaging
+Environment=CRM_MESSAGING_CONFIG=/etc/crm-messaging/config.json
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/crm-messaging/venv/bin/uvicorn app.main:create_app --factory --host 127.0.0.1 --port 5088 --no-access-log --no-proxy-headers
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
