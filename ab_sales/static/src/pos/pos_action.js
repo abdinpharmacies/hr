@@ -5039,20 +5039,26 @@ class AbSalesPosAction extends Component {
     }
 
     applyBranchSubmission(bill, result) {
+        const native = result?.inventory_backend === "central";
+        if (native && (!Number.isInteger(result.native_invoice_id) ||
+            result.native_invoice_id !== result.branch_header_id || result.eplus_serial !== 0)) return false;
+        if (bill.submission?.native_invoice_id && (!native ||
+            bill.submission.native_invoice_id !== result.native_invoice_id)) return false;
         if (result?.token !== bill.header?.pos_client_token || result?.submission_guard_version !== 1 ||
             !["prepending", "unknown", "rejected", "pending", "saved"].includes(result.status) ||
             !Number.isInteger(result.request_revision) || result.request_revision < 1 ||
             !Number.isInteger(result.local_header_id) || result.local_header_id <= 0 ||
             !Number.isInteger(result.branch_header_id) || result.branch_header_id < 0 ||
             !Number.isInteger(result.eplus_serial) || result.eplus_serial < 0 ||
-            (["pending", "saved"].includes(result.status) && (!result.branch_header_id || !result.eplus_serial)) ||
+            (["pending", "saved"].includes(result.status) && (!result.branch_header_id || (!native && !result.eplus_serial))) ||
             (bill.submission?.revision && result.request_revision < bill.submission.revision) ||
             (["pending", "saved"].includes(bill.submission?.status) && !["pending", "saved"].includes(result.status)) ||
             (bill.submission?.status === "saved" && result.status !== "saved")) return false;
         bill.submission = {...bill.submission, attempted: result.submission_attempted ?? !!result.local_header_id,
             status: result.status, message: result.message || "", checking: false,
             local_header_id: result.local_header_id, revision: result.request_revision,
-            branch_header_id: result.branch_header_id, unresolved: false,
+            branch_header_id: result.branch_header_id, inventory_backend: native ? "central" : "legacy",
+            native_invoice_id: native ? result.native_invoice_id : 0, unresolved: false,
             in_progress: !!result.submission_in_progress};
         if (!result.correction || result.correction.id !== bill.correction?.id) {
             if (bill.correction) this._correctionRefreshTokens = new Set([...(this._correctionRefreshTokens || []), bill.id]);

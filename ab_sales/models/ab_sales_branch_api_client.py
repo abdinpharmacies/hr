@@ -151,7 +151,7 @@ class BranchClient(models.AbstractModel):
             draft._ab_contract_validate()
             draft._ab_contract_validate_store_allowed(check_status=False)
         ignored = {'branch_submission_payload', 'branch_submission_started', 'branch_request_revision',
-                   'branch_header_id', 'push_state', 'push_message', 'eplus_serial', 'store_id', 'pos_client_token', 'status', 'pos_hr_profile_id', 'pos_hr_role_id',
+                   'branch_sync_token', 'branch_sync_state', 'branch_sync_message', 'branch_native_invoice_id', 'branch_header_id', 'push_state', 'push_message', 'eplus_serial', 'store_id', 'pos_client_token', 'status', 'pos_hr_profile_id', 'pos_hr_role_id',
                    'pos_hr_shift_id', 'pos_hr_session_id', 'pos_hr_service_user_id',
                    # Contract POS display values; branch business logic computes totals.
                    'contract_name', 'company_pay', 'cust_pay'}
@@ -271,6 +271,7 @@ class BranchReturn(models.Model):
 
     branch_request_token = fields.Char(string='Branch Request Token', default=lambda self: str(uuid4()),
                                        copy=False, readonly=True, index=True)
+    branch_native_origin_id = fields.Integer(string='Native Branch Original Invoice', readonly=True, copy=False)
     branch_return_id = fields.Integer(string='Branch Return ID', readonly=True, copy=False)
     return_employee_id = fields.Many2one(
         'ab_hr_employee', string='Return Employee', copy=False, ondelete='restrict',
@@ -284,9 +285,16 @@ class BranchReturn(models.Model):
         config = self.env['ab_sales_branch_client']._config(self.store_id)
         config._validate_identity(response)
         db_serial = config.db_serial
+        native = response.get('inventory_backend') == 'central'
+        if (bool(self.branch_native_origin_id) != native
+                or native and (response.get('native_invoice_id') != self.branch_native_origin_id
+                    or response.get('native_return_id') != response.get('branch_return_id')
+                    or response.get('sales_return_id') or response.get('f_transaction_id')
+                    or response.get('status') == 'saved' and not response.get('native_payment_id'))):
+            raise UserError(_('The branch returned invalid native return status.'))
         if (type(response.get('db_serial')) is not int or response['db_serial'] != db_serial
-                or response.get('invoice') != int(self.origin_header_id)
-                or any(int(row['sth_id']) != int(self.origin_header_id)
+                or response.get('invoice') != self._branch_invoice_reference()
+                or any(int(row['sth_id']) != self._branch_invoice_reference()
                        or int(row['sto_id']) != self.store_id.eplus_serial for row in response['lines'])):
             raise UserError(_('The branch returned lines from another invoice or store.'))
         self.write({'branch_return_id': response['branch_return_id'], 'total_sales_net': response['total_sales_net'],
@@ -339,17 +347,29 @@ class BranchReturn(models.Model):
         client = self.env['ab_sales_branch_client']
         self.ensure_one()
         self.check_access('write')
-        if not self.origin_header_id:
+        if not self._branch_invoice_reference():
             raise UserError(_('Please enter sth_id (Original Invoice) first.'))
-        if self.line_ids and self.line_ids[0].sth_id != self.origin_header_id:
+        if self.line_ids and self.line_ids[0].sth_id != self._branch_invoice_reference():
             raise UserError(_('Clear the return lines before changing the invoice.'))
         if not self.branch_request_token:
             self.branch_request_token = str(uuid4())
-        response = client._call(self.store_id, 'get_return_invoice', int(self.origin_header_id),
+        response = self._branch_return_call('get_return_invoice', self._branch_invoice_reference(),
                                 self.branch_request_token, self._branch_selections() if self.line_ids else False)
         self._branch_snapshot(response)
         return {'type': 'ir.actions.act_window', 'res_model': self._name, 'res_id': self.id,
                 'view_mode': 'form', 'target': self.env.context.get('curr_target', 'current')}
+
+    def _branch_invoice_reference(self):
+        self.ensure_one()
+        return int(self.branch_native_origin_id or self.origin_header_id or 0)
+
+    def _branch_return_call(self, method, *args):
+        self.ensure_one()
+        if self.branch_native_origin_id:
+            if method == 'get_return_invoice':
+                args = (*args, self._branch_return_employee_reference())
+            method = {'get_return_invoice': 'get_native_return_invoice', 'submit_return': 'submit_native_return'}[method]
+        return self.env['ab_sales_branch_client']._call(self.store_id, method, *args)
 
     def _branch_return_employee_reference(self):
         self.ensure_one()
@@ -390,7 +410,7 @@ class BranchReturn(models.Model):
             'state': 'started', 'submitted_by_id': self.env.uid, 'submitted_at': fields.Datetime.now()})
         self.env.cr.commit()
         try:
-            response = client._call(self.store_id, 'submit_return', int(self.origin_header_id), self.branch_request_token,
+            response = self._branch_return_call('submit_return', self._branch_invoice_reference(), self.branch_request_token,
                                    self._branch_selections(), self.notes or '', employee_ref)
             log.write({'state': 'success', 'remote_header_id': response['branch_return_id'],
                        'remote_status': response['status'], 'remote_eplus_serial': response['sales_return_id']})
@@ -429,7 +449,7 @@ class BranchReturnPreview(models.TransientModel):
         client = self.env['ab_sales_branch_client']
         header = self._get_return_header(return_header_id)
         if header.status != 'saved' and header.line_ids:
-            response = client._call(header.store_id, 'get_return_invoice', int(header.origin_header_id),
+            response = header._branch_return_call('get_return_invoice', header._branch_invoice_reference(),
                                     header.branch_request_token, header._branch_selections())
             header._branch_snapshot(response)
             result = super().get_state(return_header_id, **kwargs)

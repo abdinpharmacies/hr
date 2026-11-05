@@ -3945,7 +3945,7 @@ msgstr ""
 #. module: ab_sales
 #: model:ir.model,name:ab_sales.model_ab_sales_inventory
 msgid "ab_sales_inventory"
-msgstr ""
+msgstr "مخزون المبيعات"
 
 #. module: ab_sales
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_form
@@ -8053,3 +8053,52 @@ msgstr "لم يتم العثور على أرصدة موجبة للفروع."
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 msgid "A positive callcenter DB serial is required to submit this promotion."
 msgstr "يلزم رقم تسلسلي موجب لقاعدة بيانات الكول سنتر لإرسال هذا العرض."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_native_invoice_id
+msgid "Native Branch Invoice"
+msgstr "فاتورة الفرع على النظام"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__branch_native_origin_id
+msgid "Native Branch Original Invoice"
+msgstr "فاتورة الفرع الأصلية على النظام"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/central_inventory_client.py:0
+msgid "Settle the original invoice before returning it."
+msgstr "سدّد الفاتورة الأصلية قبل إرجاعها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "The branch returned invalid native return status."
+msgstr "أعاد الفرع حالة مرتجع غير صحيحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/central_inventory_client.py:0
+msgid "The native original invoice cannot be changed."
+msgstr "لا يمكن تغيير فاتورة النظام الأصلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/central_inventory_client.py:0
+msgid "The native original invoice must belong to this store."
+msgstr "يجب أن تنتمي فاتورة النظام الأصلية إلى هذا المخزن."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_sync_message
+msgid "Central Posting Message"
+msgstr "رسالة الترحيل المركزي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_sync_state
+msgid "Central Posting State"
+msgstr "حالة الترحيل المركزي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_sync_token
+msgid "Synchronization Token"
+msgstr "رمز المزامنة"
