@@ -247,7 +247,7 @@ class NativeSale(models.Model):
                 'is_service': plan['service'],
                 'uom_factor': plan['line'].uom_id.factor,
                 'stock_qty': plan['qty'],
-                'stock_unit_id': plan['line'].product_id.unit_s_id.id if not plan['service'] else False,
+                'stock_unit_id': Allocation._stock_context_unit_id(plan['line'].product_id) if not plan['service'] else False,
                 'deducted_qty': deducted,
                 'shortage_qty': plan['shortage'],
             }

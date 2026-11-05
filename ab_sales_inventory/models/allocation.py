@@ -142,6 +142,15 @@ class SalesStockAllocation(models.Model):
             ) % '\n'.join('- %s' % name for name in missing))
 
     @api.model
+    def _stock_unit_values(self, product):
+        return {'uom_id': product.unit_s_id.id}
+
+    @api.model
+    def _stock_context_unit_id(self, product):
+        values = self._stock_unit_values(product)
+        return values.get('stock_uom_id') or values.get('uom_id')
+
+    @api.model
     def _post_sale_plan(self, sale, plans):
         created = self.browse()
         Shortage = self.env['ab_sales_stock_shortage']
@@ -157,7 +166,7 @@ class SalesStockAllocation(models.Model):
                     'sale_line_id': line.id,
                     'store_id': sale.store_id.id,
                     'source_id': row['source_id'],
-                    'uom_id': line.product_id.unit_s_id.id,
+                    **self._stock_unit_values(line.product_id),
                     'sale_uom_id': line.uom_id.id,
                     'sale_qty': row['take'] / plan['factor'],
                     'unit_factor': plan['factor'],
@@ -233,7 +242,7 @@ class SalesStockAllocation(models.Model):
                 'original_id': original_allocation.id,
                 'store_id': store.id,
                 'source_id': original_allocation.source_id.id,
-                'uom_id': original_allocation.uom_id.id,
+                **self._stock_unit_values(original.product_id),
                 'sale_uom_id': original_allocation.sale_uom_id.id or original.uom_id.id,
                 'sale_qty': take / (original_allocation.unit_factor or original.native_unit_factor),
                 'unit_factor': original_allocation.unit_factor or original.native_unit_factor,

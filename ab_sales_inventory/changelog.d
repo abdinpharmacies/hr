@@ -127,3 +127,14 @@ Files changed:
 Validation:
 
 - Fresh isolated installation, targeted upgrades, behavior/security checks, translation validation and operational evidence are recorded in `ab_independence_dev_plans/13_phase_1_6_execution.md`.
+
+
+Current changes before commit (2026-11-05):
+Reference commit: 6262be0f — Hossam Elsheikh — 2026-11-03
+Original subject: ab_sales_inventory/refactor: expose approval and POS stock hooks for central synchronization
+- Add a unit-metadata hook so synchronization modules can store ab_product_uom on new allocations and approval context. Default native behavior remains available to other installations.
+Files changed:
+- ab_sales_inventory/__manifest__.py
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/sale.py
+- ab_sales_inventory/changelog.d
