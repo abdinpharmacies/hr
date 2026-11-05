@@ -1,0 +1,13 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_crm_branch_user,Branches,model_ab_crm_branch,ab_crm_core.group_user,1,0,0,0
+access_ab_crm_branch_manager,Branches administration,model_ab_crm_branch,ab_crm_core.group_manager,1,1,1,0
+access_ab_crm_channel_user,Channels,model_ab_crm_channel,ab_crm_core.group_user,1,0,0,0
+access_ab_crm_channel_manager,Channels administration,model_ab_crm_channel,ab_crm_core.group_manager,1,1,1,0
+access_ab_crm_customer_user,Customers,model_ab_crm_customer,ab_crm_core.group_user,1,1,1,0
+access_ab_crm_customer_manager,Customers administration,model_ab_crm_customer,ab_crm_core.group_manager,1,1,1,0
+access_ab_crm_identity_user,Identity Links,model_ab_crm_identity,ab_crm_core.group_user,1,1,1,0
+access_ab_crm_identity_manager,Identity Links administration,model_ab_crm_identity,ab_crm_core.group_manager,1,1,1,0
+access_ab_crm_conversation_user,Conversations,model_ab_crm_conversation,ab_crm_core.group_user,1,1,1,0
+access_ab_crm_conversation_manager,Conversations administration,model_ab_crm_conversation,ab_crm_core.group_manager,1,1,1,0
+access_ab_crm_message_user,Messages and Notes,model_ab_crm_message,ab_crm_core.group_user,1,1,1,0
+access_ab_crm_message_manager,Messages and Notes administration,model_ab_crm_message,ab_crm_core.group_manager,1,1,1,0

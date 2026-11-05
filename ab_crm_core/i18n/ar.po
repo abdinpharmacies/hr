@@ -1,0 +1,511 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 15:26+0000\n"
+"PO-Revision-Date: 2026-11-03 15:26+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__active
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__active
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__active
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__active
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__address
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Append a new message or note instead of changing history."
+msgstr "أضف رسالة أو ملاحظة جديدة بدلاً من تعديل السجل."
+
+#. module: ab_crm_core
+#: model_terms:ir.ui.view,arch_db:ab_crm_core.view_ab_crm_message_form
+msgid "Approve Reply"
+msgstr "اعتماد الرد"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__delivery_state__approved
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__approved_at
+msgid "Approved At"
+msgstr "تاريخ الاعتماد"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__approved_by
+msgid "Approved By"
+msgstr "اعتمد بواسطة"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Archive records instead of deleting them."
+msgstr "أرشف السجلات بدلاً من حذفها."
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__assigned_id
+msgid "Assigned Staff"
+msgstr "الموظف المسؤول"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__user_ids
+msgid "Authorized Staff"
+msgstr "الموظفون المصرح لهم"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__body
+msgid "Body"
+msgstr "المحتوى"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__branch_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__branch_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__branch_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__branch_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__branch_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_scoped__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Branch and company cannot be changed after creation."
+msgstr "لا يمكن تغيير الفرع والشركة بعد إنشاء السجل."
+
+#. module: ab_crm_core
+#: model:ir.model.constraint,message:ab_crm_core.constraint_ab_crm_branch_code_unique
+msgid "Branch code must be unique per company."
+msgstr "يجب أن يكون رمز الفرع فريدًا لكل شركة."
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_branch
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_branch
+msgid "Branches"
+msgstr "الفروع"
+
+#. module: ab_crm_core
+#: model:ir.ui.menu,name:ab_crm_core.menu_root
+msgid "CRM / OMS"
+msgstr "إدارة العملاء والطلبات"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_branch
+msgid "CRM Branch"
+msgstr "فرع إدارة العملاء"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_scoped
+msgid "CRM Branch Scope"
+msgstr "نطاق فرع إدارة العملاء"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_channel
+msgid "CRM Channel"
+msgstr "قناة إدارة العملاء"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_conversation
+msgid "CRM Conversation"
+msgstr "محادثة العميل"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_customer
+msgid "CRM Customer"
+msgstr "ملف العميل"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_identity
+msgid "CRM Identity Link"
+msgstr "ربط هوية العميل"
+
+#. module: ab_crm_core
+#: model:ir.model,name:ab_crm_core.model_ab_crm_message
+msgid "CRM Message"
+msgstr "رسالة العميل"
+
+#. module: ab_crm_core
+#: model:res.groups.privilege,name:ab_crm_core.privilege_crm
+msgid "CRM and OMS"
+msgstr "إدارة العملاء والطلبات"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__channel_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__channel_id
+msgid "Channel"
+msgstr "القناة"
+
+#. module: ab_crm_core
+#: model:ir.model.constraint,message:ab_crm_core.constraint_ab_crm_channel_code_unique
+msgid "Channel code must be unique."
+msgstr "يجب أن يكون رمز القناة فريدًا."
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_channel
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_channel
+msgid "Channels"
+msgstr "القنوات"
+
+#. module: ab_crm_core
+#: model_terms:ir.ui.view,arch_db:ab_crm_core.view_ab_crm_conversation_form
+msgid "Claim"
+msgstr "استلام المسؤولية"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_conversation__state__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__code
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__code
+msgid "Code"
+msgstr "رمز"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__company_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__company_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__company_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__company_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__company_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__company_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_scoped__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__conversation_id
+msgid "Conversation"
+msgstr "المحادثة"
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_conversation
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_conversation
+msgid "Conversations"
+msgstr "المحادثات"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__create_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__create_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__create_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__create_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__create_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__create_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__create_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__create_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__create_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__create_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__customer_id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__customer_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Customer Candidates"
+msgstr "العملاء المحتمل تطابقهم"
+
+#. module: ab_crm_core
+#: model:ir.module.category,name:ab_crm_core.category_crm
+msgid "Customer Operations"
+msgstr "عمليات خدمة العملاء"
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_customer
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_customer
+msgid "Customers"
+msgstr "العملاء"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__delivery_state
+msgid "Delivery State"
+msgstr "حالة الإرسال"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__direction
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__display_name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__display_name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__display_name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__display_name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_scoped__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__delivery_state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__external_key
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__external_key
+msgid "External Key"
+msgstr "المعرّف الخارجي"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__delivery_state__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_crm_core
+#: model_terms:ir.ui.view,arch_db:ab_crm_core.view_ab_crm_customer_form
+msgid "Find Phone Candidates"
+msgstr "البحث عن عملاء بنفس الهاتف"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_scoped__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__identity_ids
+msgid "Identity"
+msgstr "الهوية"
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_identity
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_identity
+msgid "Identity Links"
+msgstr "روابط الهوية"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_conversation__state__progress
+msgid "In Progress"
+msgstr "قيد العمل"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__direction__in
+msgid "Incoming"
+msgstr "وارد"
+
+#. module: ab_crm_core
+#: model:res.groups,name:ab_crm_core.group_service
+msgid "Integration Service Account"
+msgstr "حساب خدمة التكامل"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Integration service accounts cannot approve staff decisions."
+msgstr "لا يمكن لحسابات خدمات التكامل اعتماد قرارات الموظفين."
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__write_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__write_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__write_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__write_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__write_uid
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__write_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__write_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__write_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__write_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_identity__write_date
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_crm_core
+#: model:res.groups,name:ab_crm_core.group_manager
+msgid "Manager"
+msgstr "مدير"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__message_ids
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Message delivery evidence is managed by the gateway."
+msgstr "تدير البوابة أدلة تسليم الرسائل."
+
+#. module: ab_crm_core
+#: model:ir.model.constraint,message:ab_crm_core.constraint_ab_crm_message_token_unique
+msgid "Message token must be unique."
+msgstr "يجب أن يكون رمز الرسالة فريدًا."
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_message
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_message
+msgid "Messages and Notes"
+msgstr "الرسائل والملاحظات"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_branch__name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__name
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_conversation__state__new
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Only a draft reply with a destination can be approved."
+msgstr "يمكن اعتماد مسودة رد لها وجهة فقط."
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__direction__out
+msgid "Outgoing"
+msgstr "صادر"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_customer__phone
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_channel__provider__phone
+msgid "Phone"
+msgstr "رقم الهاتف"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_channel__provider
+msgid "Provider"
+msgstr "المزود"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__provider_event
+msgid "Provider Event"
+msgstr "حدث مزود الخدمة"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__provider_reference
+msgid "Provider Reference"
+msgstr "مرجع المزود"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Related records must belong to the same branch."
+msgstr "يجب أن تنتمي السجلات المرتبطة إلى الفرع نفسه."
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__delivery_state__sent
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_crm_core
+#: model:res.groups,name:ab_crm_core.group_user
+msgid "Staff"
+msgstr "الموظفون"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__direction__note
+msgid "Staff Note"
+msgstr "ملاحظة موظف"
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_conversation__state
+msgid "State"
+msgstr "الولاية"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_channel__provider__telegram
+msgid "Telegram"
+msgstr "تيليجرام"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "The selected company or branch is not allowed."
+msgstr "الشركة أو الفرع المحدد غير مسموح به."
+
+#. module: ab_crm_core
+#: model:ir.model.constraint,message:ab_crm_core.constraint_ab_crm_conversation_thread_unique
+msgid "This conversation already exists."
+msgstr "هذه المحادثة موجودة بالفعل."
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "This conversation is already assigned."
+msgstr "هذه المحادثة مسندة إلى موظف بالفعل."
+
+#. module: ab_crm_core
+#: model:ir.model.constraint,message:ab_crm_core.constraint_ab_crm_identity_identity_unique
+msgid "This identity is already linked."
+msgstr "هذه الهوية مرتبطة بالفعل."
+
+#. module: ab_crm_core
+#: model:ir.model.constraint,message:ab_crm_core.constraint_ab_crm_message_event_unique
+msgid "This message was already received."
+msgstr "تم استلام هذه الرسالة مسبقًا."
+
+#. module: ab_crm_core
+#: model:ir.model.fields,field_description:ab_crm_core.field_ab_crm_message__token
+msgid "Token"
+msgstr "رمز العملية"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_message__delivery_state__unknown
+msgid "Unknown"
+msgstr "غير معروف"
+
+#. module: ab_crm_core
+#. odoo-python
+#: code:addons/ab_crm_core/models/core.py:0
+msgid "Use Claim to assign a conversation."
+msgstr "استخدم استلام المسؤولية لإسناد المحادثة."
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_conversation__state__waiting
+msgid "Waiting"
+msgstr "بانتظار الرد"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_channel__provider__website
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_crm_core
+#: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_channel__provider__whatsapp
+msgid "WhatsApp"
+msgstr "WhatsApp"

@@ -1,0 +1,9 @@
+<odoo>
+<menuitem id="menu_root" name="CRM / OMS" groups="group_user" web_icon="ab_crm_core,static/description/icon.png"/>
+<menuitem id="menu_ab_crm_branch" name="Branches" parent="ab_crm_core.menu_root" action="action_ab_crm_branch"/>
+<menuitem id="menu_ab_crm_channel" name="Channels" parent="ab_crm_core.menu_root" action="action_ab_crm_channel"/>
+<menuitem id="menu_ab_crm_customer" name="Customers" parent="ab_crm_core.menu_root" action="action_ab_crm_customer"/>
+<menuitem id="menu_ab_crm_identity" name="Identity Links" parent="ab_crm_core.menu_root" action="action_ab_crm_identity"/>
+<menuitem id="menu_ab_crm_conversation" name="Conversations" parent="ab_crm_core.menu_root" action="action_ab_crm_conversation"/>
+<menuitem id="menu_ab_crm_message" name="Messages and Notes" parent="ab_crm_core.menu_root" action="action_ab_crm_message"/>
+</odoo>
