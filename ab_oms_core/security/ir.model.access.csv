@@ -1,0 +1,14 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_oms_request_user,Requests,model_ab_oms_request,ab_crm_core.group_user,1,1,1,0
+access_ab_oms_request_manager,Requests administration,model_ab_oms_request,ab_crm_core.group_manager,1,1,1,0
+access_ab_oms_line_user,Request Lines,model_ab_oms_line,ab_crm_core.group_user,1,1,1,0
+access_ab_oms_line_manager,Request Lines administration,model_ab_oms_line,ab_crm_core.group_manager,1,1,1,0
+access_ab_oms_attempt_user,Submissions,model_ab_oms_attempt,ab_crm_core.group_user,1,1,1,0
+access_ab_oms_attempt_manager,Submissions administration,model_ab_oms_attempt,ab_crm_core.group_manager,1,1,1,0
+access_ab_oms_note_user,Follow-up Notes,model_ab_oms_note,ab_crm_core.group_user,1,1,1,0
+access_ab_oms_note_manager,Follow-up Notes administration,model_ab_oms_note,ab_crm_core.group_manager,1,1,1,0
+access_ab_oms_price_history_user,Price History,model_ab_oms_price_history,ab_crm_core.group_user,1,1,1,0
+access_ab_oms_price_history_manager,Price History administration,model_ab_oms_price_history,ab_crm_core.group_manager,1,1,1,0
+access_correction,Correction,model_ab_oms_correction,ab_crm_core.group_user,1,1,1,1
+access_correction_line,Correction quantity,model_ab_oms_correction_line,ab_crm_core.group_user,1,1,1,1
+access_replacement,Replacement branch,model_ab_oms_replacement,ab_crm_core.group_user,1,1,1,1

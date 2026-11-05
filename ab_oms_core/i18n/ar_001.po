@@ -1,0 +1,849 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 15:26+0000\n"
+"PO-Revision-Date: 2026-11-03 15:26+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid ""
+"A confirmed editable rejection and renewed customer approval are required."
+msgstr "يلزم رفض مؤكد قابل للتعديل وموافقة جديدة من العميل."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "A confirmed editable rejection is required."
+msgstr "يلزم رفض مؤكد يسمح بالتعديل."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "A replacement request already exists."
+msgstr "يوجد طلب بديل بالفعل."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "A source database serial is required for promotions."
+msgstr "يلزم الرقم التسلسلي لقاعدة بيانات المصدر لتطبيق العروض."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "A valid promotion and source database reference are required."
+msgstr "يلزم مرجع عرض صحيح ومرجع قاعدة بيانات المصدر."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Add lines and verified branch customer and employee references."
+msgstr "أضف الأصناف ومراجع العميل والموظف المتحقق منها لدى الفرع."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Append a new note instead of changing history."
+msgstr "أضف ملاحظة جديدة بدلاً من تعديل السجل."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__approved_at
+msgid "Approved At"
+msgstr "تاريخ الاعتماد"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__approved_by
+msgid "Approved By"
+msgstr "اعتمد بواسطة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__assigned_id
+msgid "Assigned Staff"
+msgstr "الموظف المسؤول"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__attempt_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__attempt_ids
+msgid "Attempt"
+msgstr "محاولة الإرسال"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__body
+msgid "Body"
+msgstr "المحتوى"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__branch_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__branch_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__branch_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__branch_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__branch_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__customer_reference
+msgid "Branch Customer Reference"
+msgstr "مرجع العميل لدى الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__employee_reference
+msgid "Branch Employee Reference"
+msgstr "مرجع الموظف لدى الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__branch_header_id
+msgid "Branch Header"
+msgstr "رأس مستند الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__branch_product_reference
+msgid "Branch Product Reference"
+msgstr "مرجع الصنف لدى الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__promotion_reference
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__promotion_reference
+msgid "Branch Promotion Reference"
+msgstr "مرجع العرض لدى الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__shortage_authorization
+msgid "Branch Shortage Authorization"
+msgstr "تصريح الفرع بشأن نقص المخزون"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__unit_factor
+msgid "Branch Unit Factor"
+msgstr "معامل الوحدة لدى الفرع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__can_edit
+msgid "Can Edit"
+msgstr "يمكن التعديل"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_correction_form
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_replacement_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__cancellation_requested
+msgid "Cancellation Requested"
+msgstr "تم طلب الإلغاء"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__change_date
+msgid "Change Date"
+msgstr "تاريخ التغيير"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__changed_by
+msgid "Changed By"
+msgstr "تم التغيير بواسطة"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Choose a follow-up reason on an unsubmitted request."
+msgstr "اختر سبب المتابعة لطلب لم يتم إرساله."
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_request_form
+msgid "Claim"
+msgstr "استلام المسؤولية"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Claim the draft and record customer approval first."
+msgstr "استلم مسؤولية المسودة وسجل موافقة العميل أولاً."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__company_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__company_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__company_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__company_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__conversation_id
+msgid "Conversation"
+msgstr "المحادثة"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_attempt_form
+msgid "Correct Rejected Submission"
+msgstr "تصحيح الإرسال المرفوض"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_request_form
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_replacement_form
+msgid "Create Linked Replacement"
+msgstr "إنشاء طلب بديل مرتبط"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__create_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__create_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__customer_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__customer_address
+msgid "Customer Address"
+msgstr "عنوان العميل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__approval_note
+msgid "Customer Approval Evidence"
+msgstr "دليل موافقة العميل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__state__approved
+msgid "Customer Approved"
+msgstr "وافق العميل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__customer_name
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__customer_phone
+msgid "Customer Phone"
+msgstr "هاتف العميل"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Customer approval is required before submission."
+msgstr "موافقة العميل مطلوبة قبل الإرسال."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__delivery_instructions
+msgid "Delivery Instructions"
+msgstr "تعليمات التوصيل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__destination
+msgid "Destination"
+msgstr "الوجهة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__display_name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__display_name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__display_name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__display_name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__display_name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__state__followup
+msgid "Follow-up"
+msgstr "متابعة"
+
+#. module: ab_oms_core
+#: model:ir.actions.act_window,name:ab_oms_core.action_ab_oms_note
+#: model:ir.ui.menu,name:ab_oms_core.menu_ab_oms_note
+msgid "Follow-up Notes"
+msgstr "ملاحظات المتابعة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__followup_reason
+msgid "Followup Reason"
+msgstr "سبب المتابعة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__history
+msgid "History"
+msgstr "السجل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Install and configure the branch adapter before submitting."
+msgstr "ثبت موصل الفرع واضبطه قبل الإرسال."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__invoice_reference
+msgid "Invoice Reference"
+msgstr "مرجع الفاتورة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__is_delivery
+msgid "Is Delivery"
+msgstr "طلب توصيل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__last_success
+msgid "Last Success"
+msgstr "آخر نجاح"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__write_uid
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__write_date
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__line_ids
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__line_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__line_ids
+msgid "Line"
+msgstr "البند"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__followup_reason__lost
+msgid "Lost Sale"
+msgstr "فرصة بيع مفقودة"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Map every product and unit before submission."
+msgstr "اربط كل صنف ووحدة بمراجع الفرع قبل الإرسال."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__name
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__new_price
+msgid "New Price"
+msgstr "السعر الجديد"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_line__shortage_reason__not_entered
+msgid "Not Entered"
+msgstr "لم يتم إدخاله"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_line__shortage_reason__not_transferred
+msgid "Not Transferred"
+msgstr "لم يتم نقله"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__note_ids
+msgid "Note"
+msgstr "الملاحظات"
+
+#. module: ab_oms_core
+#: model:ir.model,name:ab_oms_core.model_ab_oms_correction_line
+msgid "OMS Correction Quantity"
+msgstr "كمية التصحيح"
+
+#. module: ab_oms_core
+#: model:ir.model,name:ab_oms_core.model_ab_oms_note
+msgid "OMS Follow-up Note"
+msgstr "ملاحظة متابعة الطلب"
+
+#. module: ab_oms_core
+#: model:ir.model,name:ab_oms_core.model_ab_oms_price_history
+msgid "OMS Price History"
+msgstr "سجل أسعار الطلبات"
+
+#. module: ab_oms_core
+#: model:ir.model,name:ab_oms_core.model_ab_oms_correction
+msgid "OMS Rejected Submission Correction"
+msgstr "تصحيح إرسال طلب مرفوض"
+
+#. module: ab_oms_core
+#: model:ir.model,name:ab_oms_core.model_ab_oms_replacement
+msgid "OMS Replacement Branch"
+msgstr "فرع الطلب البديل"
+
+#. module: ab_oms_core
+#: model:ir.model,name:ab_oms_core.model_ab_oms_line
+msgid "OMS Request Line"
+msgstr "بند الطلب"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_price_history__old_price
+msgid "Old Price"
+msgstr "السعر السابق"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Only an unsubmitted approval can be reopened."
+msgstr "يمكن إعادة فتح الموافقة فقط قبل إرسال الطلب."
+
+#. module: ab_oms_core
+#: model:ir.model.constraint,message:ab_oms_core.constraint_ab_oms_attempt_request_unique
+msgid "Only one operation is allowed per request."
+msgstr "يسمح بعملية واحدة فقط لكل طلب."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Only unresolved or rejected original submissions can be retried."
+msgstr "يمكن إعادة محاولة الإرسال الأصلي غير المحسوم أو المرفوض فقط."
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_line__shortage_reason__other
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__followup_reason__other
+msgid "Other"
+msgstr "غير ذلك"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__paid_amount
+msgid "Paid Amount"
+msgstr "المبلغ المدفوع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__payload
+msgid "Payload"
+msgstr "محتوى الإرسال"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__payment_references
+msgid "Payment References"
+msgstr "مراجع الدفع"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_attempt__state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid ""
+"Prepaid requests require manual payment reconciliation before branch "
+"submission."
+msgstr "تتطلب الطلبات المدفوعة مسبقًا تسوية الدفع يدويًا قبل إرسالها للفرع."
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_attempt__state__prepending
+msgid "Prepending"
+msgstr "قبل الانتظار"
+
+#. module: ab_oms_core
+#: model:ir.actions.act_window,name:ab_oms_core.action_ab_oms_price_history
+#: model:ir.ui.menu,name:ab_oms_core.menu_ab_oms_price_history
+msgid "Price History"
+msgstr "سجل الأسعار"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Price history is immutable."
+msgstr "لا يمكن تعديل سجل الأسعار."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Price history is recorded automatically."
+msgstr "يسجل تاريخ الأسعار تلقائيًا."
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_line__shortage_reason__promised_customer
+msgid "Promised to Customer"
+msgstr "تم الوعد للعميل"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Provide one quantity for every original line."
+msgstr "حدد كمية واحدة لكل بند أصلي."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid ""
+"Quantities and unit factors must be positive; prices cannot be negative."
+msgstr ""
+"يجب أن تكون الكميات ومعاملات الوحدات موجبة، ولا يجوز أن تكون الأسعار سالبة."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Quantities must be finite positive numbers."
+msgstr "يجب أن تكون الكميات أرقامًا موجبة محدودة."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__quantity
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_request_form
+msgid "Record Customer Approval"
+msgstr "تسجيل موافقة العميل"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_request_form
+msgid "Record Follow-up"
+msgstr "تسجيل متابعة"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Record branch authorization for stock shortages."
+msgstr "سجل تصريح الفرع بشأن نقص المخزون."
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_attempt__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Related records must belong to the same branch."
+msgstr "يجب أن تنتمي السجلات المرتبطة إلى الفرع نفسه."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction__approval_note
+msgid "Renewed Customer Approval"
+msgstr "موافقة العميل المجددة"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_request_form
+msgid "Reopen Draft"
+msgstr "إعادة فتح المسودة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__replacement_of
+msgid "Replacement Of"
+msgstr "بديل للطلب"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__request_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__request_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_note__request_id
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_replacement__request_id
+msgid "Request"
+msgstr "طلب"
+
+#. module: ab_oms_core
+#: model:ir.actions.act_window,name:ab_oms_core.action_ab_oms_line
+#: model:ir.ui.menu,name:ab_oms_core.menu_ab_oms_line
+msgid "Request Lines"
+msgstr "بنود الطلب"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Request lines cannot be moved between requests."
+msgstr "لا يمكن نقل البنود بين الطلبات."
+
+#. module: ab_oms_core
+#: model:ir.model.constraint,message:ab_oms_core.constraint_ab_oms_request_name_unique
+msgid "Request reference must be unique."
+msgstr "يجب أن يكون مرجع الطلب فريدًا."
+
+#. module: ab_oms_core
+#: model:ir.actions.act_window,name:ab_oms_core.action_ab_oms_request
+#: model:ir.ui.menu,name:ab_oms_core.menu_ab_oms_request
+msgid "Requests"
+msgstr "الطلبات"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Requests in another currency require manual review."
+msgstr "تتطلب الطلبات بعملة أخرى مراجعة يدوية."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Resolve the cancellation request before submission."
+msgstr "احسم طلب الإلغاء قبل الإرسال."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Resolve the original attempt with the branch before replacing it."
+msgstr "احسم نتيجة المحاولة الأصلية مع الفرع قبل استبدالها."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__result
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__retired
+msgid "Retired"
+msgstr "متوقف عن الاستخدام"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_attempt_form
+msgid "Retry Original Operation"
+msgstr "إعادة محاولة العملية الأصلية"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__revision
+msgid "Revision"
+msgstr "مراجعة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_attempt__state__saved
+msgid "Saved"
+msgstr "محفوظ"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__sequence
+msgid "Sequence"
+msgstr "تسلسل"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__shortage_detail
+msgid "Shortage Detail"
+msgstr "تفاصيل النقص"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__shortage_reason
+msgid "Shortage Reason"
+msgstr "سبب النقص"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__source_db_serial
+msgid "Source Database Serial"
+msgstr "الرقم التسلسلي لقاعدة بيانات المصدر"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__source_product_reference
+msgid "Source Product Reference"
+msgstr "مرجع الصنف في المصدر"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__source_reference
+msgid "Source Reference"
+msgstr "مرجع المصدر"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__source_revision
+msgid "Source Revision"
+msgstr "مراجعة المصدر"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__source_snapshot
+msgid "Source Snapshot"
+msgstr "نسخة بيانات المصدر"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__source_unit_reference
+msgid "Source Unit Reference"
+msgstr "مرجع الوحدة في المصدر"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__followup_reason__special
+msgid "Special Request"
+msgstr "طلب خاص"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__state
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_request__state
+msgid "State"
+msgstr "الولاية"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__followup_reason__shortage
+msgid "Stock Shortage"
+msgstr "نقص المخزون"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_line__shortage_reason__stocktaking_error
+msgid "Stocktaking Error"
+msgstr "خطأ جرد"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Submission evidence is managed by the adapter."
+msgstr "يدير الموصل أدلة الإرسال."
+
+#. module: ab_oms_core
+#: model:ir.model.constraint,message:ab_oms_core.constraint_ab_oms_attempt_token_unique
+msgid "Submission token must be unique."
+msgstr "يجب أن يكون رمز الإرسال فريدًا."
+
+#. module: ab_oms_core
+#: model:ir.actions.act_window,name:ab_oms_core.action_ab_oms_attempt
+#: model:ir.ui.menu,name:ab_oms_core.menu_ab_oms_attempt
+msgid "Submissions"
+msgstr "عمليات الإرسال"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_ab_oms_request_form
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_oms_core
+#: model_terms:ir.ui.view,arch_db:ab_oms_core.view_correction_form
+msgid "Submit Corrected Revision"
+msgstr "إرسال المراجعة المصححة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_request__state__submitted
+msgid "Submitted"
+msgstr "تم الإرسال"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Submitted and approved requests are frozen."
+msgstr "الطلبات المرسلة والمعتمدة مجمدة وغير قابلة للتعديل."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "The corrected revision must change quantities or promotion."
+msgstr "يجب أن تغير المراجعة المصححة الكميات أو العرض."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "The selected company or branch is not allowed."
+msgstr "الشركة أو الفرع المحدد غير مسموح به."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "This request is already assigned."
+msgstr "هذا الطلب مسند إلى موظف بالفعل."
+
+#. module: ab_oms_core
+#: model:ir.model.constraint,message:ab_oms_core.constraint_ab_oms_request_source_unique
+msgid "This website request was already imported."
+msgstr "تم استيراد طلب الموقع مسبقًا."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_attempt__token
+msgid "Token"
+msgstr "رمز العملية"
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_line__price_unit
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_attempt__state__unknown
+msgid "Unknown"
+msgstr "غير معروف"
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Use Submit to create a frozen submission."
+msgstr "استخدم إرسال لإنشاء عملية إرسال مجمدة."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Use the supported OMS workflow."
+msgstr "استخدم مسار العمل المعتمد لإدارة الطلبات."
+
+#. module: ab_oms_core
+#. odoo-python
+#: code:addons/ab_oms_core/models/oms.py:0
+msgid "Website references are immutable."
+msgstr "لا يمكن تعديل مراجع الموقع."
+
+#. module: ab_oms_core
+#: model:ir.model.fields,field_description:ab_oms_core.field_ab_oms_correction_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: ab_oms_core
+#: model:ir.model.fields.selection,name:ab_oms_core.selection__ab_oms_line__shortage_reason__wrong_price
+msgid "Wrong Price"
+msgstr "سعر غير صحيح"

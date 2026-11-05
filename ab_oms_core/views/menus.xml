@@ -1,0 +1,7 @@
+<odoo>
+<menuitem id="menu_ab_oms_request" name="Requests" parent="ab_crm_core.menu_root" action="action_ab_oms_request"/>
+<menuitem id="menu_ab_oms_line" name="Request Lines" parent="ab_crm_core.menu_root" action="action_ab_oms_line"/>
+<menuitem id="menu_ab_oms_attempt" name="Submissions" parent="ab_crm_core.menu_root" action="action_ab_oms_attempt"/>
+<menuitem id="menu_ab_oms_note" name="Follow-up Notes" parent="ab_crm_core.menu_root" action="action_ab_oms_note"/>
+<menuitem id="menu_ab_oms_price_history" name="Price History" parent="ab_crm_core.menu_root" action="action_ab_oms_price_history"/>
+</odoo>
