@@ -1,0 +1,182 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_crm_telegram
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 17:54+0000\n"
+"PO-Revision-Date: 2026-11-03 18:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_channel__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_identity__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_scoped__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_channel__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_api__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_identity__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_scoped__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_crm_telegram
+#: model:ir.model,name:ab_crm_telegram.model_ab_crm_messaging_account
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_conversation__messaging_account_id
+msgid "Messaging Account"
+msgstr "حساب المراسلة"
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Only Telegram private chats are supported."
+msgstr "تُدعم محادثات تيليجرام الخاصة فقط."
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__provider
+msgid "Provider"
+msgstr "مزود الخدمة"
+
+#. module: ab_crm_telegram
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_telegram.selection__ab_crm_messaging_account__provider__telegram
+msgid "Telegram"
+msgstr "تيليجرام"
+
+#. module: ab_crm_telegram
+#: model:ir.model,name:ab_crm_telegram.model_ab_crm_conversation
+msgid "CRM Conversation"
+msgstr "محادثة إدارة علاقات العملاء"
+
+#. module: ab_crm_telegram
+#: model:ir.model,name:ab_crm_telegram.model_ab_crm_message
+msgid "CRM Message"
+msgstr "رسالة إدارة علاقات العملاء"
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Contact sharing is available only in Telegram."
+msgstr "مشاركة جهة الاتصال متاحة في تيليجرام فقط."
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Invalid Telegram contact event."
+msgstr "حدث جهة اتصال تيليجرام غير صالح."
+
+#. module: ab_crm_telegram
+#: model:ir.model,name:ab_crm_telegram.model_ab_crm_messaging_api
+msgid "Messaging Gateway API"
+msgstr "واجهة برمجة بوابة المراسلة"
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Please share your phone using the Share contact button."
+msgstr "يرجى مشاركة رقم هاتفك باستخدام زر مشاركة جهة الاتصال."
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Share contact"
+msgstr "مشاركة جهة الاتصال"
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__telegram_contact_owned
+msgid "Telegram Contact Owned"
+msgstr "جهة الاتصال تخص مرسل تيليجرام"
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__telegram_phone
+msgid "Telegram Phone"
+msgstr "هاتف تيليجرام"
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__telegram_request_contact
+msgid "Telegram Request Contact"
+msgstr "طلب جهة اتصال تيليجرام"
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Telegram contact evidence is managed by the gateway."
+msgstr "تُدار بيانات إثبات جهة اتصال تيليجرام من خلال بوابة المراسلة."
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Invalid Telegram profile event."
+msgstr "بيانات ملف تيليجرام غير صالحة."
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Outgoing sending is disabled. No request has been queued."
+msgstr "الإرسال معطل. لم تتم إضافة أي طلب إلى قائمة الانتظار."
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__telegram_profile_name
+msgid "Telegram Profile Name"
+msgstr "اسم ملف تيليجرام"
+
+#. module: ab_crm_telegram
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__telegram_username
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_crm_telegram
+#. odoo-python
+#: code:addons/ab_crm_telegram/models/account.py:0
+msgid "Telegram profile evidence is managed by the gateway."
+msgstr "تُدار بيانات ملف تيليجرام من خلال البوابة."
