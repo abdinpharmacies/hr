@@ -1,0 +1,324 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 15:26+0000\n"
+"PO-Revision-Date: 2026-11-03 15:26+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid ""
+"A newer website snapshot requires staff comparison with the retained draft."
+msgstr "توجد نسخة أحدث من طلب الموقع تتطلب مقارنتها بالمسودة المحفوظة."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "An event ID cannot be reused with different content."
+msgstr "لا يمكن إعادة استخدام معرّف الحدث بمحتوى مختلف."
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_event__state__applied
+msgid "Applied"
+msgstr "تم التطبيق"
+
+#. module: ab_oms_sync
+#: model_terms:ir.ui.view,arch_db:ab_oms_sync.view_ab_oms_sync_update_form
+msgid "Approve Status Update"
+msgstr "اعتماد تحديث الحالة"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_update__state__review
+msgid "Awaiting Review"
+msgstr "بانتظار المراجعة"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__branch_id
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__company_id
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_oms_sync
+#: model_terms:ir.ui.view,arch_db:ab_oms_sync.view_ab_oms_sync_event_form
+msgid "Confirm Snapshot Review"
+msgstr "تأكيد مراجعة نسخة الموقع"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__create_uid
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__create_date
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__digest
+msgid "Digest"
+msgstr "بصمة المحتوى"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_attempt__display_name
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_request__display_name
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__display_name
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__event_id
+msgid "Event"
+msgstr "الفعالية"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_attempt__id
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_request__id
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__id
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Invalid website event."
+msgstr "حدث الموقع غير صالح."
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__last_success
+msgid "Last Success"
+msgstr "آخر نجاح"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__write_uid
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__write_date
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_event__state__review
+msgid "Manual Review"
+msgstr "مراجعة يدوية"
+
+#. module: ab_oms_sync
+#: model:ir.model,name:ab_oms_sync.model_ab_oms_request
+msgid "OMS Request"
+msgstr "طلب تنسيق"
+
+#. module: ab_oms_sync
+#: model:ir.model,name:ab_oms_sync.model_ab_oms_attempt
+msgid "OMS Submission"
+msgstr "إرسال الطلب"
+
+#. module: ab_oms_sync
+#: model:ir.model,name:ab_oms_sync.model_ab_oms_sync_event
+msgid "OMS Website Event"
+msgstr "حدث موقع إدارة الطلبات"
+
+#. module: ab_oms_sync
+#: model:ir.model,name:ab_oms_sync.model_ab_oms_sync_update
+msgid "OMS Website Update"
+msgstr "تحديث الموقع من إدارة الطلبات"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_event__state__obsolete
+msgid "Obsolete"
+msgstr "نسخة قديمة"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Only an unreviewed update can be approved."
+msgstr "يمكن اعتماد تحديث لم تتم مراجعته فقط."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Only approved updates can be acknowledged."
+msgstr "يمكن تأكيد استلام التحديثات المعتمدة فقط."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Only the synchronization service can receive website events."
+msgstr "يسمح لخدمة المزامنة فقط باستقبال أحداث الموقع."
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__payload
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__payload
+msgid "Payload"
+msgstr "محتوى الإرسال"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_update__state__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_event__state__received
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Record the outcome of comparing the website snapshot with the draft."
+msgstr "سجل نتيجة مقارنة نسخة الموقع بالمسودة."
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__reference
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__reference
+msgid "Reference"
+msgstr "الرقم المرجعي"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__request_id
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__request_id
+msgid "Request"
+msgstr "طلب"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid ""
+"Resolve the frozen branch submission before reviewing changed website "
+"requirements."
+msgstr "احسم الإرسال المجمد لدى الفرع قبل مراجعة متطلبات الموقع المتغيرة."
+
+#. module: ab_oms_sync
+#: model_terms:ir.ui.view,arch_db:ab_oms_sync.view_ab_oms_sync_event_form
+msgid "Retry Import"
+msgstr "إعادة محاولة الاستيراد"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__review_note
+msgid "Review Note"
+msgstr "ملاحظة المراجعة"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Review the latest website changes before submission."
+msgstr "راجع أحدث تغييرات الموقع قبل الإرسال."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Review the linked request before applying a newer snapshot."
+msgstr "راجع الطلب المرتبط قبل تطبيق نسخة أحدث."
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__revision
+msgid "Revision"
+msgstr "مراجعة"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields.selection,name:ab_oms_sync.selection__ab_oms_sync_update__state__sent
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__source
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_oms_sync
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_event__state
+#: model:ir.model.fields,field_description:ab_oms_sync.field_ab_oms_sync_update__state
+msgid "State"
+msgstr "الولاية"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Status updates are created from confirmed branch evidence."
+msgstr "تنشأ تحديثات الحالة من أدلة الفرع المؤكدة."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "The website currency is not configured."
+msgstr "عملة الموقع غير مضبوطة."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid ""
+"The website event needs staff review. Its original payload has been "
+"retained."
+msgstr "يتطلب حدث الموقع مراجعة الموظف. تم الاحتفاظ بالمحتوى الأصلي."
+
+#. module: ab_oms_sync
+#: model:ir.model.constraint,message:ab_oms_sync.constraint_ab_oms_sync_update_payload_unique
+msgid "This status update already exists."
+msgstr "تحديث الحالة موجود بالفعل."
+
+#. module: ab_oms_sync
+#: model:ir.model.constraint,message:ab_oms_sync.constraint_ab_oms_sync_event_event_unique
+msgid "This website event was already received."
+msgstr "تم استلام حدث الموقع مسبقًا."
+
+#. module: ab_oms_sync
+#: model:ir.model.constraint,message:ab_oms_sync.constraint_ab_oms_sync_event_revision_unique
+msgid "This website revision was already received."
+msgstr "تم استلام مراجعة الموقع مسبقًا."
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Use the supported status review workflow."
+msgstr "استخدم مسار مراجعة الحالة المعتمد."
+
+#. module: ab_oms_sync
+#: model:ir.actions.act_window,name:ab_oms_sync.action_ab_oms_sync_event
+#: model:ir.ui.menu,name:ab_oms_sync.menu_ab_oms_sync_event
+msgid "Website Events"
+msgstr "أحداث الموقع"
+
+#. module: ab_oms_sync
+#: model:res.groups,name:ab_oms_sync.group_sync
+#: model:res.groups.privilege,name:ab_oms_sync.privilege_service
+msgid "Website Synchronization"
+msgstr "مزامنة الموقع"
+
+#. module: ab_oms_sync
+#: model:ir.actions.act_window,name:ab_oms_sync.action_ab_oms_sync_update
+#: model:ir.ui.menu,name:ab_oms_sync.menu_ab_oms_sync_update
+msgid "Website Updates"
+msgstr "تحديثات الموقع"
+
+#. module: ab_oms_sync
+#. odoo-python
+#: code:addons/ab_oms_sync/models/sync.py:0
+msgid "Website events are managed by the integration service."
+msgstr "تدير خدمة التكامل أحداث الموقع."
