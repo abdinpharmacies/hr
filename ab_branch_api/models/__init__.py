@@ -16,3 +16,5 @@ from . import customer_sync
 from . import sale_metadata
 
 from . import source_identity
+
+from . import central_inventory

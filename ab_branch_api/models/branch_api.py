@@ -449,6 +449,8 @@ class BranchApi(models.AbstractModel):
             header.line_ids.unlink()
             values.pop('pos_client_token')
             values.pop('status')
+            if self._uses_central_inventory(store):
+                values.pop('store_id', None)
             header.write(values)
             if 'applied_program_ids' in header._fields:
                 header.applied_program_ids = [fields.Command.clear()]

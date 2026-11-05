@@ -1254,3 +1254,46 @@ msgstr ""
 #: code:addons/ab_branch_api/models/source_identity.py:0
 msgid "Invalid source database UUID metadata."
 msgstr "بيانات معرّف UUID لقاعدة بيانات المصدر غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid "A replicated active employee is required."
+msgstr "يلزم وجود موظف نشط ومتزامن."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid "Callcenter API"
+msgstr "واجهة برمجة مركز الاتصال"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid "Invalid native invoice reference."
+msgstr "مرجع فاتورة النظام غير صحيح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid "The employee is not authorized for this store."
+msgstr "الموظف غير مصرح له باستخدام هذا المخزن."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid "The settled native invoice must belong to this store."
+msgstr "يجب أن تنتمي فاتورة النظام المسددة إلى هذا المخزن."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid "Central synchronization needs attention."
+msgstr "تحتاج المزامنة المركزية إلى مراجعة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/central_inventory.py:0
+msgid ""
+"Synchronize the customer catalog before creating sales for this customer."
+msgstr "زامن دليل العملاء قبل إنشاء مبيعات لهذا العميل."
