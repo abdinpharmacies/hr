@@ -1,0 +1,23 @@
+[Unit]
+Description=CRM delivery and website synchronization worker
+After=network-online.target
+
+[Service]
+Type=simple
+User=crm-gateway
+WorkingDirectory=/srv/crm_gateway
+Environment=CRM_GATEWAY_CONFIG=/etc/crm_gateway/config.json
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/srv/crm_gateway/.venv/bin/python -m app.worker
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+MemoryMax=256M
+CPUQuota=50%
+TasksMax=32
+
+[Install]
+WantedBy=multi-user.target
