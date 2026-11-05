@@ -1,0 +1,11 @@
+.ab_pos_window_header .ab_branch_sync_status {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 3px 8px;
+    margin-inline-end: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    cursor: pointer;
+    .fa-circle { font-size: 7px; }
+}
