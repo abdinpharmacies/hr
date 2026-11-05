@@ -2451,77 +2451,77 @@ msgstr "يمكن إغلاق المطالبة"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Approve Inventory"
-msgstr "المخازن: اعتماد المطالبة"
+msgstr "اعتماد المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Reject Inventory"
-msgstr "المخازن: رفض المطالبة"
+msgstr "رفض المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Defer Inventory"
-msgstr "المخازن: تأجيل المطالبة"
+msgstr "تأجيل المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Approve Purchasing"
-msgstr "المشتريات: اعتماد المطالبة"
+msgstr "اعتماد المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Reject Purchasing"
-msgstr "المشتريات: رفض المطالبة"
+msgstr "رفض المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Defer Purchasing"
-msgstr "المشتريات: تأجيل المطالبة"
+msgstr "تأجيل المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Approve Supplier Accounts"
-msgstr "حسابات الموردين: اعتماد المطالبة"
+msgstr "اعتماد المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Reject Supplier Accounts"
-msgstr "حسابات الموردين: رفض المطالبة"
+msgstr "رفض المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Defer Supplier Accounts"
-msgstr "حسابات الموردين: تأجيل المطالبة"
+msgstr "تأجيل المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Approve Bank Accounts"
-msgstr "حسابات البنوك: اعتماد المطالبة"
+msgstr "اعتماد المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Reject Bank Accounts"
-msgstr "حسابات البنوك: رفض المطالبة"
+msgstr "رفض المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Defer Bank Accounts"
-msgstr "حسابات البنوك: تأجيل المطالبة"
+msgstr "تأجيل المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Approve Tax"
-msgstr "الضرائب: اعتماد المطالبة"
+msgstr "اعتماد المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Reject Tax"
-msgstr "الضرائب: رفض المطالبة"
+msgstr "رفض المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Defer Tax"
-msgstr "الضرائب: تأجيل المطالبة"
+msgstr "تأجيل المطالبة"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 msgid "Rejections & Deferrals"
