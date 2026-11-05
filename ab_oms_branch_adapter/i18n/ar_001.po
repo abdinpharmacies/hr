@@ -1,0 +1,298 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 15:26+0000\n"
+"PO-Revision-Date: 2026-11-03 15:26+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.constraint,message:ab_oms_branch_adapter.constraint_ab_oms_reference_map_mapping_unique
+msgid "A product and unit mapping already exists for this branch and source."
+msgstr "يوجد ربط للصنف والوحدة لهذا الفرع والمصدر بالفعل."
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__active
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__api_key
+msgid "Api Key"
+msgstr "مفتاح واجهة البرمجة"
+
+#. module: ab_oms_branch_adapter
+#: model_terms:ir.ui.view,arch_db:ab_oms_branch_adapter.line_mapping
+msgid "Apply Product Mapping"
+msgstr "تطبيق ربط الصنف"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__branch_id
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.actions.act_window,name:ab_oms_branch_adapter.action_ab_oms_connection
+#: model:ir.ui.menu,name:ab_oms_branch_adapter.menu_ab_oms_connection
+msgid "Branch Connections"
+msgstr "اتصالات الفروع"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__branch_product_reference
+msgid "Branch Product Reference"
+msgstr "مرجع الصنف لدى الفرع"
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Branch and database serials must be positive."
+msgstr "يجب أن تكون الأرقام التسلسلية للفرع وقاعدة البيانات موجبة."
+
+#. module: ab_oms_branch_adapter
+#: model_terms:ir.ui.view,arch_db:ab_oms_branch_adapter.view_attempt_branch_actions
+msgid "Check Branch Status"
+msgstr "التحقق من حالة الفرع"
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Choose an active product mapping for the request branch."
+msgstr "اختر ربط صنف نشطًا لفرع الطلب."
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__company_id
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__create_uid
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__create_date
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__database
+msgid "Database"
+msgstr "قاعدة البيانات"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__db_serial
+msgid "Db Serial"
+msgstr "الرقم التسلسلي لقاعدة البيانات"
+
+#. module: ab_oms_branch_adapter
+#: model:res.groups,name:ab_oms_branch_adapter.group_worker
+#: model:res.groups.privilege,name:ab_oms_branch_adapter.privilege_service
+msgid "Delivery Worker"
+msgstr "عامل تسليم العمليات"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__display_name
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__endpoint
+msgid "Endpoint"
+msgstr "عنوان الخدمة"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__id
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__write_uid
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__write_date
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__name
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model,name:ab_oms_branch_adapter.model_ab_oms_connection
+msgid "OMS Branch Connection"
+msgstr "اتصال فرع إدارة الطلبات"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model,name:ab_oms_branch_adapter.model_ab_oms_reference_map
+msgid "OMS Product and Unit Mapping"
+msgstr "ربط الأصناف والوحدات للطلبات"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.constraint,message:ab_oms_branch_adapter.constraint_ab_oms_connection_branch_unique
+msgid "Only one connection is allowed per branch."
+msgstr "يسمح باتصال واحد فقط لكل فرع."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Only the integration worker can deliver submissions."
+msgstr "يسمح لعامل التكامل فقط بتسليم الطلبات."
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__product_reference
+msgid "Product Reference"
+msgstr "مرجع الصنف"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.actions.act_window,name:ab_oms_branch_adapter.action_mapping
+#: model:ir.ui.menu,name:ab_oms_branch_adapter.menu_mapping
+msgid "Product and Unit Mappings"
+msgstr "روابط الأصناف والوحدات"
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Provide a positive branch product reference and unit factor."
+msgstr "حدد مرجع صنف ومعامل وحدة موجبين لدى الفرع."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Related records must belong to the same branch."
+msgstr "يجب أن تنتمي السجلات المرتبطة إلى الفرع نفسه."
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__store_serial
+msgid "Store Serial"
+msgstr "الرقم التسلسلي للفرع"
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The branch connection is inactive."
+msgstr "اتصال الفرع غير نشط."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The branch does not support guarded submissions."
+msgstr "لا يدعم الفرع بروتوكول الإرسال المحمي من التكرار."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The branch response exceeds the supported size."
+msgstr "يتجاوز رد الفرع الحجم المدعوم."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The branch returned invalid submission evidence."
+msgstr "أعاد الفرع أدلة إرسال غير صالحة."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The branch returned mismatched identity evidence."
+msgstr "أعاد الفرع أدلة هوية غير متطابقة."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The frozen destination no longer matches the verified connection."
+msgstr "لم تعد الوجهة المجمدة تطابق الاتصال المتحقق منه."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "The mapping does not match the website product and unit."
+msgstr "لا يطابق الربط صنف الموقع ووحدته."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid ""
+"The outcome is unknown. Check branch status before retrying the original "
+"operation."
+msgstr ""
+"النتيجة غير معروفة. تحقق من حالة الفرع قبل إعادة محاولة العملية الأصلية."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "This delivery lease is no longer valid."
+msgstr "لم يعد تصريح تسليم هذه العملية صالحًا."
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__unit_factor
+msgid "Unit Factor"
+msgstr "معامل الوحدة"
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_reference_map__unit_reference
+msgid "Unit Reference"
+msgstr "مرجع الوحدة"
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Unsupported branch operation."
+msgstr "عملية الفرع غير مدعومة."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Use an HTTPS origin without credentials, path or query."
+msgstr "استخدم أصل عنوان HTTPS دون بيانات اعتماد أو مسار أو معاملات استعلام."
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_connection__verified
+msgid "Verified"
+msgstr "مصدق "
+
+#. module: ab_oms_branch_adapter
+#: model:ir.model.fields,field_description:ab_oms_branch_adapter.field_ab_oms_line__mapping_id
+msgid "Verified Product Mapping"
+msgstr "ربط الصنف المعتمد"
+
+#. module: ab_oms_branch_adapter
+#: model_terms:ir.ui.view,arch_db:ab_oms_branch_adapter.view_ab_oms_connection_form
+msgid "Verify Connection"
+msgstr "التحقق من الاتصال"
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Verify the branch connection through the supported action."
+msgstr "تحقق من اتصال الفرع باستخدام الإجراء المعتمد."
+
+#. module: ab_oms_branch_adapter
+#. odoo-python
+#: code:addons/ab_oms_branch_adapter/models/adapter.py:0
+msgid "Verify the selected branch connection before submitting."
+msgstr "تحقق من اتصال الفرع المحدد قبل الإرسال."

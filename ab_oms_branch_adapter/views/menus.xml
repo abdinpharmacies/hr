@@ -1,0 +1,3 @@
+<odoo>
+<menuitem id="menu_ab_oms_connection" name="Branch Connections" parent="ab_crm_core.menu_root" action="action_ab_oms_connection"/>
+<menuitem id="menu_mapping" name="Product and Unit Mappings" parent="ab_crm_core.menu_root" action="action_mapping"/></odoo>

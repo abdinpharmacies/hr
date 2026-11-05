@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_oms_connection_user,Branch Connections,model_ab_oms_connection,ab_crm_core.group_user,1,0,0,0
+access_ab_oms_connection_manager,Branch Connections administration,model_ab_oms_connection,ab_crm_core.group_manager,1,1,1,0
+access_mapping_staff,Product mappings,model_ab_oms_reference_map,ab_crm_core.group_user,1,0,0,0
+access_mapping_manager,Product mapping administration,model_ab_oms_reference_map,ab_crm_core.group_manager,1,1,1,0
