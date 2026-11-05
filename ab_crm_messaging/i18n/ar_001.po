@@ -1,0 +1,874 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_crm_messaging
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 17:54+0000\n"
+"PO-Revision-Date: 2026-11-03 18:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_messaging_account_channel_unique
+msgid "A channel can have only one messaging account."
+msgstr "يمكن ربط القناة بحساب مراسلة واحد فقط."
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_messaging_operation_message_unique
+msgid "A message can have only one outgoing operation."
+msgstr "يمكن ربط الرسالة بعملية إرسال واحدة فقط."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__account_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__account_id
+msgid "Account"
+msgstr "الحساب"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Account and channel must have the same provider, branch and company."
+msgstr "يجب أن يتطابق مزود الخدمة والفرع والشركة في الحساب والقناة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_messaging_account_code_unique
+msgid "Account code must be unique."
+msgstr "يجب أن يكون رمز الحساب فريدًا."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Account mapping is immutable. Archive the account to replace it."
+msgstr "لا يمكن تغيير ربط الحساب. أرشف الحساب لاستبداله."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__active
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__active
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__active
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_chatter_session__state__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "An event identity cannot be reused with different content."
+msgstr "لا يمكن إعادة استخدام معرّف الحدث بمحتوى مختلف."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__approved_at
+msgid "Approved At"
+msgstr "وقت الاعتماد"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__approved_by
+msgid "Approved By"
+msgstr "اعتمد بواسطة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid ""
+"Assign a messaging service user authorized for this branch and company."
+msgstr "عيّن مستخدم خدمة مراسلة مصرحًا له بهذا الفرع وهذه الشركة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__attempt
+msgid "Attempt"
+msgstr "المحاولة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__body
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__body
+msgid "Body"
+msgstr "المحتوى"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__branch_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_channel
+msgid "CRM Channel"
+msgstr "قناة إدارة علاقات العملاء"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_conversation
+msgid "CRM Conversation"
+msgstr "محادثة إدارة علاقات العملاء"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_message
+msgid "CRM Message"
+msgstr "رسالة إدارة علاقات العملاء"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__channel_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__channel_id
+msgid "Channel"
+msgstr "القناة"
+
+#. module: ab_crm_messaging
+#: model_terms:ir.ui.view,arch_db:ab_crm_messaging.view_operation_form
+msgid "Close Review"
+msgstr "إغلاق المراجعة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__company_id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Configure a messaging account before approving replies."
+msgstr "أعدّ حساب مراسلة قبل اعتماد الردود."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__create_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__create_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__delivered
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__destination
+msgid "Destination"
+msgstr "الوجهة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Disable the previous gateway worker before enabling messaging."
+msgstr "أوقف عامل البوابة السابق قبل تفعيل المراسلة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_channel__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_identity__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_scoped__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__display_name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Enter a review note before closing an uncertain send."
+msgstr "أدخل ملاحظة مراجعة قبل إغلاق عملية إرسال غير مؤكدة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__error_code
+msgid "Error Code"
+msgstr "رمز الخطأ"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__event_key
+msgid "Event Key"
+msgstr "معرّف الحدث"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__expires_at
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__expires_at
+msgid "Expires At"
+msgstr "وقت انتهاء الصلاحية"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__fingerprint
+msgid "Fingerprint"
+msgstr "البصمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__received
+msgid "Gateway Received"
+msgstr "استلمت البوابة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__history
+msgid "History"
+msgstr "السجل"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_channel__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_api__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_ledger__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_api__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_identity__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_scoped__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__id
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_res_users__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_messaging_event
+msgid "Incoming Messaging Event"
+msgstr "حدث رسالة واردة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Invalid delivery evidence."
+msgstr "إثبات التسليم غير صالح."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Invalid durable receipt."
+msgstr "إيصال التخزين الدائم غير صالح."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Invalid incoming messaging event."
+msgstr "حدث الرسالة الواردة غير صالح."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Invalid messaging destination."
+msgstr "وجهة المراسلة غير صالحة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__write_uid
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_audit__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order_line__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__write_date
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__lease_token
+msgid "Lease Token"
+msgstr "رمز حجز الإرسال"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__lease_until
+msgid "Lease Until"
+msgstr "نهاية حجز الإرسال"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__leased
+msgid "Leased"
+msgstr "محجوز للإرسال"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__message_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__message_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__message_id
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_messaging_account
+#: model:ir.model,name:ab_crm_telegram.model_ab_crm_messaging_account
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_conversation__messaging_account_id
+msgid "Messaging Account"
+msgstr "حساب المراسلة"
+
+#. module: ab_crm_messaging
+#: model:ir.actions.act_window,name:ab_crm_messaging.action_accounts
+#: model:ir.ui.menu,name:ab_crm_messaging.menu_accounts
+msgid "Messaging Accounts"
+msgstr "حسابات المراسلة"
+
+#. module: ab_crm_messaging
+#: model:ir.actions.act_window,name:ab_crm_messaging.action_operations
+#: model:ir.ui.menu,name:ab_crm_messaging.menu_operations
+msgid "Messaging Delivery"
+msgstr "تسليم الرسائل"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_conversation__messaging_enabled
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__enabled
+msgid "Messaging Enabled"
+msgstr "المراسلة مفعلة"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_messaging_api
+msgid "Messaging Gateway API"
+msgstr "واجهة برمجة بوابة المراسلة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_conversation__messaging_last_inbound
+msgid "Messaging Last Inbound"
+msgstr "آخر رسالة واردة"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_messaging_ledger
+msgid "Messaging Ledger"
+msgstr "سجل المراسلة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__messaging_operation_ids
+msgid "Messaging Operation"
+msgstr "عملية المراسلة"
+
+#. module: ab_crm_messaging
+#: model:res.groups,name:ab_crm_messaging.group_service
+msgid "Messaging Service Account"
+msgstr "حساب خدمة المراسلة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Messaging destinations cannot be changed."
+msgstr "لا يمكن تغيير وجهات المراسلة."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Messaging evidence is managed by the gateway."
+msgstr "تدير البوابة إثباتات المراسلة."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Messaging is disabled for this account."
+msgstr "المراسلة معطلة لهذا الحساب."
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__name
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__review
+msgid "Needs Review"
+msgstr "بحاجة إلى مراجعة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__none
+msgid "No error"
+msgstr "لا يوجد خطأ"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Only a dedicated messaging service account can use this API."
+msgstr "يمكن لحساب خدمة مراسلة مخصص فقط استخدام هذه الواجهة."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Only a definitively rejected retryable send can be retried."
+msgstr "يمكن إعادة المحاولة فقط لإرسال مرفوض بشكل مؤكد وقابل لإعادة المحاولة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_messaging_operation_token_unique
+msgid "Operation token must be unique."
+msgstr "يجب أن يكون رمز العملية فريدًا."
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_messaging_operation
+msgid "Outgoing Messaging Operation"
+msgstr "عملية إرسال رسالة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__legacy_worker_disabled
+msgid "Previous Worker Disabled"
+msgstr "عامل البوابة السابق متوقف"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__provider
+msgid "Provider"
+msgstr "مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__accepted
+msgid "Provider Accepted"
+msgstr "قبِل مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__provider_account
+msgid "Provider Account"
+msgstr "حساب مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__provider_reference
+msgid "Provider Reference"
+msgstr "مرجع مزود الخدمة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Provider acceptance is not recorded yet. Retry this status later."
+msgstr "لم يُسجل قبول مزود الخدمة بعد. أعد محاولة تحديث الحالة لاحقًا."
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_messaging_account_provider_unique
+msgid "Provider account must be unique."
+msgstr "يجب أن يكون حساب مزود الخدمة فريدًا."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Provider addons cannot be removed while messaging accounts exist."
+msgstr "لا يمكن إزالة إضافات مزود الخدمة مع وجود حسابات مراسلة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__rate_limit
+msgid "Provider rate limit reached"
+msgstr "تم بلوغ حد معدل الإرسال لدى مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__rejected
+msgid "Provider rejected the message"
+msgstr "رفض مزود الخدمة الرسالة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__unavailable
+msgid "Provider temporarily unavailable"
+msgstr "مزود الخدمة غير متاح مؤقتًا"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__read
+msgid "Read"
+msgstr "تمت القراءة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__receipt
+msgid "Receipt"
+msgstr "الإيصال"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+#: code:addons/ab_crm_sales_workspace/models/saved_reply.py:0
+msgid "Replies must contain between 1 and 4096 characters."
+msgstr "يجب أن يتراوح طول الرد بين حرف واحد و4096 حرفًا."
+
+#. module: ab_crm_messaging
+#: model_terms:ir.ui.view,arch_db:ab_crm_messaging.view_operation_form
+msgid "Retry Rejected Send"
+msgstr "إعادة محاولة الإرسال المرفوض"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__retryable
+msgid "Retryable"
+msgstr "قابل لإعادة المحاولة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__resolved
+msgid "Review Closed"
+msgstr "أُغلقت المراجعة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__review_note
+msgid "Review Note"
+msgstr "ملاحظة المراجعة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__reviewed_at
+msgid "Reviewed At"
+msgstr "وقت المراجعة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__reviewed_by
+msgid "Reviewed By"
+msgstr "راجع بواسطة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__ambiguous
+msgid "Sending outcome is uncertain; review required"
+msgstr "نتيجة الإرسال غير مؤكدة؛ المراجعة مطلوبة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__service_user_id
+msgid "Service User"
+msgstr "مستخدم الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__state
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__state
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__state
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+#: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+msgid "The messaging account is not authorized."
+msgstr "حساب المراسلة غير مصرح به."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "The outgoing lease has expired."
+msgstr "انتهت صلاحية حجز الإرسال."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "The outgoing operation is not authorized."
+msgstr "عملية الإرسال غير مصرح بها."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "The provider of a configured messaging channel cannot be changed."
+msgstr "لا يمكن تغيير مزود الخدمة لقناة مراسلة تم إعدادها."
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_messaging_event_event_unique
+msgid "This event was already received."
+msgstr "تم استلام هذا الحدث مسبقًا."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__token
+msgid "Token"
+msgstr "الرمز"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Unsupported attachment received. Staff review is required."
+msgstr "تم استلام مرفق غير مدعوم. يلزم مراجعته بواسطة الموظف."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__window
+msgid "WhatsApp reply window has expired"
+msgstr "انتهت مهلة الرد في واتساب"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Review notes can only be edited while a send needs review."
+msgstr ""
+"يمكن تعديل ملاحظات المراجعة فقط عندما تكون عملية الإرسال بحاجة إلى مراجعة."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Contact events require a supported provider addon."
+msgstr "تتطلب أحداث جهات الاتصال إضافة مزود مدعومة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__provider_timestamp
+msgid "Provider Timestamp"
+msgstr "توقيت مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__kind__audio
+msgid "Audio"
+msgstr "صوت"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__contact_automation
+msgid "Automatic Contact Request"
+msgstr "طلب مشاركة جهة الاتصال تلقائيًا"
+
+#. modules: ab_crm_messaging, ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__cancelled
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_channel_order__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__content
+msgid "Content"
+msgstr "المحتوى"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__data
+msgid "Data"
+msgstr "البيانات"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__kind__document
+msgid "Document"
+msgstr "مستند"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__failed
+msgid "Download failed"
+msgstr "فشل التنزيل"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__duration
+msgid "Duration"
+msgstr "المدة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__kind__image
+msgid "Image"
+msgstr "صورة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid "Invalid media content or size."
+msgstr "محتوى المرفق أو حجمه غير صالح."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid "Invalid media type, size or recording duration."
+msgstr "نوع المرفق أو حجمه أو مدة التسجيل غير صالحة."
+
+#. modules: ab_crm_messaging, ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Invalid media."
+msgstr "مرفق غير صالح."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__media_ids
+msgid "Media"
+msgstr "المرفقات"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid "Media content cannot be replaced."
+msgstr "لا يمكن استبدال محتوى المرفق."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid "Media content does not match its declared type."
+msgstr "محتوى المرفق لا يطابق نوعه المعلن."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid ""
+"Media exceeds the 20 MB file, 10 MB image or five-minute recording limit."
+msgstr ""
+"تجاوز المرفق حد 20 ميجابايت للملف أو 10 ميجابايت للصورة أو خمس دقائق "
+"للتسجيل."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid "Media is managed by the conversation workflow."
+msgstr "تُدار المرفقات من خلال إجراءات المحادثة."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+msgid "Media is not available yet."
+msgstr "المرفق غير متاح بعد."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__mimetype
+msgid "Mimetype"
+msgstr "نوع الملف"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Only an unsent, never-leased operation can be cancelled."
+msgstr "يمكن إلغاء عملية لم تُرسل ولم يستلمها عامل الإرسال مطلقًا فقط."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__outgoing_enabled
+msgid "Outgoing Sending Enabled"
+msgstr "تفعيل الإرسال"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__pending
+msgid "Pending download"
+msgstr "بانتظار التنزيل"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_message_media
+msgid "Private Message Media"
+msgstr "مرفقات الرسائل الخاصة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Provide a cancellation reason."
+msgstr "أدخل سبب الإلغاء."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__provider_file_id
+msgid "Provider File"
+msgstr "ملف مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__reaction
+msgid "Reaction"
+msgstr "تفاعل"
+
+#. module: ab_crm_messaging
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__reply_reference
+msgid "Reply Reference"
+msgstr "مرجع الرد"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__size
+msgid "Size"
+msgstr "الحجم"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__kind__voice
+msgid "Voice"
+msgstr "رسالة صوتية"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__media
+msgid "Media validation failed before sending"
+msgstr "فشل التحقق من المرفق قبل الإرسال"

@@ -1,0 +1,64 @@
+<odoo>
+  <record id="rule_account_company" model="ir.rule">
+    <field name="name">Messaging account: company</field>
+    <field name="model_id" ref="model_ab_crm_messaging_account"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="rule_account_branch" model="ir.rule">
+    <field name="name">Messaging account: branch</field>
+    <field name="model_id" ref="model_ab_crm_messaging_account"/>
+    <field name="domain_force">[('service_user_id', '=', user.id), ('branch_id.user_ids', 'in', [user.id])] if user.has_group('ab_crm_messaging.group_service') else ([] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])])</field>
+  </record>
+  <record id="rule_operation_company" model="ir.rule">
+    <field name="name">Messaging operation: company</field>
+    <field name="model_id" ref="model_ab_crm_messaging_operation"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="rule_operation_branch" model="ir.rule">
+    <field name="name">Messaging operation: branch</field>
+    <field name="model_id" ref="model_ab_crm_messaging_operation"/>
+    <field name="domain_force">[('account_id.service_user_id', '=', user.id), ('branch_id.user_ids', 'in', [user.id])] if user.has_group('ab_crm_messaging.group_service') else ([] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])])</field>
+  </record>
+  <record id="rule_event_company" model="ir.rule">
+    <field name="name">Messaging event: company</field>
+    <field name="model_id" ref="model_ab_crm_messaging_event"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="rule_event_branch" model="ir.rule">
+    <field name="name">Messaging event: branch</field>
+    <field name="model_id" ref="model_ab_crm_messaging_event"/>
+    <field name="domain_force">[('account_id.service_user_id', '=', user.id), ('branch_id.user_ids', 'in', [user.id])] if user.has_group('ab_crm_messaging.group_service') else ([] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])])</field>
+  </record>
+  <record id="service_deny_branch" model="ir.rule">
+    <field name="name">Messaging service: no direct CRM access</field>
+    <field name="model_id" ref="ab_crm_core.model_ab_crm_branch"/>
+    <field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else []</field>
+  </record>
+  <record id="service_deny_channel" model="ir.rule">
+    <field name="name">Messaging service: no direct CRM access</field>
+    <field name="model_id" ref="ab_crm_core.model_ab_crm_channel"/>
+    <field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else []</field>
+  </record>
+  <record id="service_deny_customer" model="ir.rule">
+    <field name="name">Messaging service: no direct CRM access</field>
+    <field name="model_id" ref="ab_crm_core.model_ab_crm_customer"/>
+    <field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else []</field>
+  </record>
+  <record id="service_deny_identity" model="ir.rule">
+    <field name="name">Messaging service: no direct CRM access</field>
+    <field name="model_id" ref="ab_crm_core.model_ab_crm_identity"/>
+    <field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else []</field>
+  </record>
+  <record id="service_deny_conversation" model="ir.rule">
+    <field name="name">Messaging service: no direct CRM access</field>
+    <field name="model_id" ref="ab_crm_core.model_ab_crm_conversation"/>
+    <field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else []</field>
+  </record>
+  <record id="service_deny_message" model="ir.rule">
+    <field name="name">Messaging service: no direct CRM access</field>
+    <field name="model_id" ref="ab_crm_core.model_ab_crm_message"/>
+    <field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else []</field>
+  </record>
+<record id="media_company" model="ir.rule"><field name="name">Private media company</field><field name="model_id" ref="model_ab_crm_message_media"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="media_branch" model="ir.rule"><field name="name">Private media branch</field><field name="model_id" ref="model_ab_crm_message_media"/><field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else ([] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])])</field></record>
+</odoo>

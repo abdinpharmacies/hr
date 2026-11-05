@@ -1,0 +1,7 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_account_staff,Messaging account,model_ab_crm_messaging_account,ab_crm_core.group_user,1,0,0,0
+access_account_manager,Messaging account administration,model_ab_crm_messaging_account,ab_crm_core.group_manager,1,1,1,0
+access_account_service,Messaging service account mapping,model_ab_crm_messaging_account,group_service,1,0,0,0
+access_operation_staff,Messaging operation,model_ab_crm_messaging_operation,ab_crm_core.group_user,1,1,0,0
+access_event_staff,Messaging event,model_ab_crm_messaging_event,ab_crm_core.group_user,1,0,0,0
+access_media_staff,Private message media,model_ab_crm_message_media,ab_crm_core.group_user,1,0,0,0

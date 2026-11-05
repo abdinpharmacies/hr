@@ -1,0 +1,118 @@
+<odoo>
+  <record id="view_account_list" model="ir.ui.view">
+    <field name="name">messaging.account.list</field>
+    <field name="model">ab_crm_messaging_account</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="provider"/>
+        <field name="channel_id"/>
+        <field name="branch_id"/>
+        <field name="company_id"/>
+        <field name="enabled"/><field name="outgoing_enabled"/><field name="contact_automation"/>
+      </list>
+    </field>
+  </record>
+  <record id="view_account_form" model="ir.ui.view">
+    <field name="name">messaging.account.form</field>
+    <field name="model">ab_crm_messaging_account</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="code" readonly="id"/>
+            <field name="provider" readonly="id"/>
+            <field name="provider_account" readonly="id"/>
+            <field name="channel_id" readonly="id"/>
+            <field name="branch_id" readonly="id"/>
+            <field name="company_id" readonly="id"/>
+            <field name="service_user_id"/>
+            <field name="legacy_worker_disabled"/>
+            <field name="enabled"/><field name="outgoing_enabled"/><field name="contact_automation"/>
+            <field name="active"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_accounts" model="ir.actions.act_window">
+    <field name="name">Messaging Accounts</field>
+    <field name="res_model">ab_crm_messaging_account</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <record id="view_operation_list" model="ir.ui.view">
+    <field name="name">messaging.operation.list</field>
+    <field name="model">ab_crm_messaging_operation</field>
+    <field name="arch" type="xml">
+      <list create="0" delete="0">
+        <field name="message_id"/>
+        <field name="account_id"/>
+        <field name="state"/>
+        <field name="error_code"/>
+        <field name="approved_by"/>
+        <field name="approved_at"/>
+      </list>
+    </field>
+  </record>
+  <record id="view_operation_form" model="ir.ui.view">
+    <field name="name">messaging.operation.form</field>
+    <field name="model">ab_crm_messaging_operation</field>
+    <field name="arch" type="xml">
+      <form create="0" delete="0">
+        <header>
+          <button name="action_retry" type="object" string="Retry Rejected Send" invisible="state != 'failed' or not retryable"/>
+          <button name="action_close_review" type="object" string="Close Review" invisible="state != 'review'"/>
+          <field name="state" widget="statusbar" readonly="1"/>
+        </header>
+        <sheet>
+          <group>
+            <field name="account_id" readonly="1"/>
+            <field name="message_id" readonly="1"/>
+            <field name="body" readonly="1"/>
+            <field name="destination" readonly="1"/>
+            <field name="approved_by" readonly="1"/>
+            <field name="approved_at" readonly="1"/>
+            <field name="attempt" readonly="1"/>
+            <field name="expires_at" readonly="1"/>
+            <field name="provider_reference" readonly="1"/>
+            <field name="error_code" readonly="1"/>
+            <field name="retryable" invisible="1"/>
+            <field name="review_note" readonly="state != 'review'"/>
+            <field name="reviewed_by" readonly="1"/>
+            <field name="reviewed_at" readonly="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_operations" model="ir.actions.act_window">
+    <field name="name">Messaging Delivery</field>
+    <field name="res_model">ab_crm_messaging_operation</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <record id="view_message_messaging" model="ir.ui.view">
+    <field name="name">crm.message.messaging</field>
+    <field name="model">ab_crm_message</field>
+    <field name="inherit_id" ref="ab_crm_core.view_ab_crm_message_form"/>
+    <field name="arch" type="xml">
+      <field name="approved_at" position="after">
+        <field name="messaging_operation_ids" readonly="1" groups="ab_crm_core.group_manager,base.group_system"/>
+      </field>
+    </field>
+  </record>
+  <record id="view_conversation_messaging" model="ir.ui.view">
+    <field name="name">crm.conversation.messaging</field>
+    <field name="model">ab_crm_conversation</field>
+    <field name="inherit_id" ref="ab_crm_core.view_ab_crm_conversation_form"/>
+    <field name="arch" type="xml">
+      <field name="channel_id" position="after">
+        <field name="messaging_account_id"/>
+        <field name="messaging_enabled"/>
+        <field name="messaging_last_inbound"/>
+      </field>
+    </field>
+  </record>
+  <menuitem id="menu_accounts" name="Messaging Accounts" parent="ab_crm_core.menu_root" action="action_accounts" groups="ab_crm_core.group_manager"/>
+  <menuitem id="menu_operations" name="Messaging Delivery" parent="ab_crm_core.menu_root" action="action_operations" groups="ab_crm_core.group_manager,base.group_system"/>
+</odoo>

@@ -1,0 +1,6 @@
+<odoo>
+  <record id="group_service" model="res.groups">
+    <field name="name">Messaging Service Account</field>
+    <field name="implied_ids" eval="[(4, ref('ab_crm_core.group_service'))]"/>
+  </record>
+</odoo>
