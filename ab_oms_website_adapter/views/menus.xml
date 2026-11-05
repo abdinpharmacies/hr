@@ -1,0 +1,4 @@
+<odoo>
+<menuitem id="menu_root" name="OMS Integration" groups="base.group_system,group_sync"/>
+<menuitem id="menu_ab_oms_website_event" name="OMS Integration Events" parent="menu_root" action="action_ab_oms_website_event"/>
+</odoo>
