@@ -7122,6 +7122,16 @@ body.ab-storefront .ab-storefront-closing-panel {
 
         #add_to_cart {
             min-height: 52px;
+            color: $ab-surface;
+            background-color: $ab-green;
+            border-color: $ab-green;
+
+            &:hover,
+            &:focus-visible {
+                color: $ab-surface;
+                background-color: $ab-green-dark;
+                border-color: $ab-green-dark;
+            }
         }
     }
 
