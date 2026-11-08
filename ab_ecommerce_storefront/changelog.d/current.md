@@ -1,20 +1,272 @@
 # Storefront change log
 
-## Current changes before commit
+## Current changes before commit:
 
-- Hide the password row from OAuth customer account details.
-- Refresh an existing Google customer's displayed email from Google's verified identity on sign-in.
-- Cover password visibility and verified OAuth email refresh with regression tests.
+- Refresh the module history with order tracking, add-to-cart contrast, and translation-reference commits.
+- Preserve prior storefront commit references and their affected files.
+- Commit preparation passed Python/XML parsing, JavaScript syntax, SCSS compilation, catalog format checks, and translated order labels in both Arabic catalogs. Database upgrades and runtime suites were not rerun.
 
 Files changed:
 
-- `ab_ecommerce_storefront/controllers/portal.py`
-- `ab_ecommerce_storefront/models/res_users.py`
-- `ab_ecommerce_storefront/tests/test_auth_http.py`
-- `ab_ecommerce_storefront/views/portal.xml`
 - `ab_ecommerce_storefront/changelog.d/current.md`
 
 ## Recent commits
+
+Commit: `075948bec2f1db6a7a77d672a2d933dec5ea216c`
+Author: Mohamed Fawzy
+Date: 2026-11-08
+Original subject: `ab_ecommerce_storefront/I18N: refresh model metadata translation references`
+
+- Refresh existing model metadata references in both Arabic catalogs.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `1219b678fc1f7e731244c405bf7d295b37c4892f`
+Author: Mohamed Fawzy
+Date: 2026-11-08
+Original subject: `ab_ecommerce_storefront/IMP: simplify customer order tracking summaries`
+
+- Group the order reference, status, total, and payment method without repeating details.
+
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/portal.xml`
+
+Commit: `f899339aa0d6558cacc882b5c03700ae1c41c75a`
+Author: Mohamed Fawzy
+Date: 2026-11-08
+Original subject: `ab_ecommerce_storefront/FIX: keep add-to-cart text readable on hover`
+
+- Keep Add to cart text white on its green normal, hover, and focus backgrounds.
+
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+
+Commit: `a28adac1`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/FIX: allow admin deletion of staff users`
+
+User-facing changes:
+
+- Let administrators delete staff users and their linked tracking records together.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/staff_account.py`
+
+Commit: `59f0968c`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/FIX: show published site images to staff`
+
+User-facing changes:
+
+- Show published homepage banners and testimonials to signed-in employees without exposing unpublished records.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/customer_testimonial.py`
+- `ab_ecommerce_storefront/models/website_carousel_slide.py`
+
+Commit: `c96161b2`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/FIX: label staff password on creation`
+
+User-facing changes:
+
+- Show Password instead of New Password when creating a staff user, with the Arabic label «كلمة السر».
+
+Files changed:
+
+- `ab_ecommerce_storefront/wizard/staff_user.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `24b3fa7e`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/IMP: expose full staff access rights`
+
+User-facing changes:
+
+- Show Odoo's full application access rights, including Settings administrator access, when Website editors add or edit their own staff users.
+- Keep Login From Anywhere visible but read-only in the staff form and preserve an administrator's changes to it.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/staff_account.py`
+- `ab_ecommerce_storefront/wizard/staff_user.py`
+- `ab_ecommerce_storefront/views/staff_user_views.xml`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `42421e75`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/FIX: enable remote sign-in for created staff`
+
+User-facing changes:
+
+- Let Website editors save staff users and accept Odoo's native password rules.
+- Enable Login From Anywhere for new staff users while preserving an administrator's later removal.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/models/staff_account.py`
+- `ab_ecommerce_storefront/wizard/staff_user.py`
+- `ab_ecommerce_storefront/security/ir.model.access.csv`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `ee47b4df`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/IMP: place category and staff menus in Abdin Management`
+
+User-facing changes:
+
+- Place eCommerce Categories under Abdin Management Products and Add Staff User directly under Abdin Management.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/management_menus.xml`
+- `ab_ecommerce_storefront/views/staff_user_views.xml`
+
+Commit: `a41b471b`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/IMP: let website editors set staff passwords`
+
+User-facing changes:
+
+- Let Website editors set temporary staff passwords and see when an invitation email was not sent.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/staff_account.py`
+- `ab_ecommerce_storefront/wizard/staff_user.py`
+- `ab_ecommerce_storefront/views/staff_user_views.xml`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `2ff4e9b1`
+Author: Mohamed Fawzy
+Date: 2026-11-02
+Original subject: `ab_ecommerce_storefront/IMP: manage website staff users by creator`
+
+User-facing changes:
+
+- Show Website editors the staff users they created and let them update account details and Website roles.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/staff_account.py`
+- `ab_ecommerce_storefront/wizard/staff_user.py`
+- `ab_ecommerce_storefront/views/staff_user_views.xml`
+- `ab_ecommerce_storefront/security/ir.model.access.csv`
+- `ab_ecommerce_storefront/security/record_rules.xml`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `41bf67a4`
+Author: Mohamed Fawzy
+Date: 2026-11-01
+Original subject: `ab_ecommerce_storefront/FIX: show staff user action under Site`
+
+User-facing changes:
+
+- Put the staff-user action under the visible Website Site menu.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/staff_user_views.xml`
+
+Commit: `bae1940f`
+Author: Mohamed Fawzy
+Date: 2026-11-01
+Original subject: `ab_ecommerce_storefront/I18N: register staff user terms in POT`
+
+User-facing changes:
+
+- Load the staff-user form, menu, and messages in Arabic after the module upgrade.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+
+Commit: `a72f4e5f`
+Author: Mohamed Fawzy
+Date: 2026-11-01
+Original subject: `ab_ecommerce_storefront/I18N: load staff user Arabic labels`
+
+User-facing changes:
+
+- Keep new staff-user translations before obsolete catalog entries in both Arabic locales.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `1630bfdd`
+Author: Mohamed Fawzy
+Date: 2026-11-01
+Original subject: `ab_ecommerce_storefront/IMP: let website editors create staff users`
+
+User-facing changes:
+
+- Let Website editors add internal employee accounts for their active company from the Website menu.
+- Restrict new accounts to the employee role and send Odoo's invitation when email delivery is available.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__init__.py`
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/security/ir.model.access.csv`
+- `ab_ecommerce_storefront/views/staff_user_views.xml`
+- `ab_ecommerce_storefront/wizard/__init__.py`
+- `ab_ecommerce_storefront/wizard/staff_user.py`
+
+Commit: `c41e59e5`
+Author: Mohamed Fawzy
+Date: 2026-10-27
+Original subject: `ab_ecommerce_storefront/FIX: reserve synced Eplus stock at checkout`
+
+User-facing changes:
+
+- Reserve synced E-Plus stock at checkout and keep failed online payment attempts from reserving stock.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/2026-10-27-eplus-checkout-inventory.md`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/payment_status.py`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/cart_hold.py`
+- `ab_ecommerce_storefront/models/eplus_sync_guard.py`
+- `ab_ecommerce_storefront/models/payment_transaction.py`
+- `ab_ecommerce_storefront/tests/test_checkout_reservation.py`
+- `ab_ecommerce_storefront/tests/test_stock_availability.py`
+- `ab_ecommerce_storefront/views/portal.xml`
 
 Commit: `35fe9683`
 Author: Mohamed Fawzy
