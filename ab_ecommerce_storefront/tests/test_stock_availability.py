@@ -1,7 +1,6 @@
-from unittest.mock import patch
-from datetime import timedelta
+from unittest.mock import MagicMock, patch
 
-from odoo import Command, fields
+from odoo import Command
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
@@ -92,32 +91,162 @@ class TestStorefrontStockAvailability(TransactionCase):
         self.assertEqual(self.available(), 7.0)
         self.assertEqual(self.snapshot.itm_qty, 100.0)
 
-    def test_eplus_resync_cannot_restore_delivered_website_stock(self):
-        previous_sync = self.env["ab_eplus_inventory_sync_job"].create({
-            "state": "done", "warehouse_id": self.warehouse.id,
-            "location_id": self.warehouse.lot_stock_id.id,
-            "date_done": fields.Datetime.now() - timedelta(hours=1),
-        })
+    def test_eplus_resync_replaces_stock_after_website_delivery(self):
+        order = self.order(quantity=1)
+        order.action_confirm()
+        picking = self.deliver(order)
+        self.assertEqual(self.on_hand(), 9.0)
+        with patch.object(
+            type(self.snapshot), "_get_inventory_sync_warehouse", return_value=self.warehouse,
+        ):
+            for quantity in (5.0, 12.0, 0.0):
+                self.snapshot.itm_qty = quantity
+                self.snapshot._sync_to_odoo_inventory()
+                self.assertEqual(self.on_hand(), quantity)
+                result = self.snapshot._sync_to_odoo_inventory()
+                self.assertEqual(result["updated"], 0)
+                self.assertEqual(self.on_hand(), quantity)
+        self.assertEqual(picking.state, "done")
+        self.assertEqual(picking.move_ids.quantity, 1.0)
+
+    def test_eplus_full_sync_uses_source_after_delivery(self):
         order = self.order(quantity=1)
         order.action_confirm()
         self.deliver(order)
-        with patch.object(
-            type(self.snapshot), "_get_inventory_sync_warehouse", return_value=self.warehouse,
-        ), self.assertRaisesRegex(UserError, "would restore sold stock"):
-            self.snapshot._sync_to_odoo_inventory()
         job = self.env["ab_eplus_inventory_sync_job"].create({
             "warehouse_id": self.warehouse.id,
             "location_id": self.warehouse.lot_stock_id.id,
         })
-        with self.assertRaisesRegex(UserError, "would restore sold stock"):
+        with patch.object(
+            type(self.snapshot), "_get_inventory_sync_stock_groups",
+            return_value=[(self.source, 6.0)],
+        ):
             job._prepare_full_sync()
-        job.state = "running"
-        self.assertFalse(job._process_next_batch())
-        self.assertEqual(job.state, "failed")
-        previous_sync.state = "failed"
-        with self.assertRaisesRegex(UserError, "would restore sold stock"):
-            self.env["ab_eplus_stock_snapshot"]._ab_require_safe_website_resync(self.warehouse)
-        self.assertEqual(self.on_hand(), 9.0)
+        job._process_all_remaining_batches()
+        self.assertEqual(job.state, "done")
+        self.assertEqual(self.on_hand(), 6.0)
+        self.assertEqual(job.updated_count, 1)
+
+    def test_eplus_full_sync_clears_disappeared_source_stock(self):
+        self.snapshot.active = False
+        groups = self.snapshot._get_inventory_sync_stock_groups()
+        self.assertEqual(dict(groups)[self.source], 0.0)
+        job = self.env["ab_eplus_inventory_sync_job"].create({
+            "warehouse_id": self.warehouse.id,
+            "location_id": self.warehouse.lot_stock_id.id,
+        })
+        with patch.object(
+            type(self.snapshot), "_get_inventory_sync_stock_groups",
+            return_value=[(self.source, dict(groups)[self.source])],
+        ):
+            job._prepare_full_sync()
+        job._process_all_remaining_batches()
+        self.assertEqual(job.state, "done")
+        self.assertEqual(self.on_hand(), 0.0)
+        self.assertTrue(self.product.exists())
+        self.assertTrue(self.snapshot.exists())
+
+    def branch_row(self, store_id, quantity):
+        return self.snapshot._normalize_eplus_store_row({
+            "itm_id": self.snapshot.itm_id, "itm_code": self.source.code,
+            "sto_id": store_id, "itm_qty": quantity,
+        })
+
+    def test_branch_refresh_replaces_in_batches_and_archives_missing(self):
+        Store = self.env["ab_eplus_stock_snapshot_store"]
+        Store._refresh_from_eplus_rows([self.branch_row(7001, 30), self.branch_row(7003, 20)])
+        with patch.object(type(self.snapshot), "_fetch_eplus_stock_store_rows", return_value=iter([
+            [self.branch_row(7001, 7)], [self.branch_row(7002, 9)],
+        ])):
+            result = self.snapshot._refresh_branch_stock_from_eplus()
+        rows = Store.search([("itm_id", "=", self.snapshot.itm_id)])
+        self.assertEqual({row.sto_id: row.itm_qty for row in rows}, {7001: 7, 7002: 9})
+        self.assertEqual(result["total"], 2)
+        self.assertEqual(result["matched"], 2)
+        archived = Store.with_context(active_test=False).search([
+            ("itm_id", "=", self.snapshot.itm_id), ("sto_id", "=", 7003),
+        ])
+        self.assertTrue(archived)
+        self.assertFalse(archived.active)
+
+    def test_branch_refresh_failure_preserves_previous_snapshot(self):
+        Store = self.env["ab_eplus_stock_snapshot_store"]
+        Store._refresh_from_eplus_rows([self.branch_row(7001, 30)])
+
+        def failing_batches():
+            yield [self.branch_row(7001, 7)]
+            raise RuntimeError("source disconnected")
+
+        with patch.object(type(self.snapshot), "_fetch_eplus_stock_store_rows", return_value=failing_batches()):
+            with self.assertRaisesRegex(RuntimeError, "source disconnected"):
+                self.snapshot._refresh_branch_stock_from_eplus()
+        row = Store.search([("itm_id", "=", self.snapshot.itm_id), ("sto_id", "=", 7001)])
+        self.assertTrue(row.active)
+        self.assertEqual(row.itm_qty, 30)
+
+    def test_branch_query_uses_bounded_fetches(self):
+        cursor = MagicMock()
+        cursor.description = [("itm_id",), ("itm_code",), ("sto_id",), ("itm_qty",)]
+        cursor.fetchmany.side_effect = [[(123, "P123", 1, 2)], [(124, "P124", 1, 3)], []]
+        batches = list(self.snapshot._execute_eplus_stock_store_query(cursor, "SELECT stock WHERE sto_id = ?", (1,)))
+        self.assertEqual([batch[0]["itm_qty"] for batch in batches], [2.0, 3.0])
+        cursor.execute.assert_called_once_with("SELECT stock WHERE sto_id = ?", (1,))
+        cursor.fetchall.assert_not_called()
+        self.assertEqual(cursor.fetchmany.call_count, 3)
+
+    def branch_connection(self):
+        connection = MagicMock()
+        cursor = connection.__enter__.return_value.cursor.return_value.__enter__.return_value
+        cursor.fetchall.return_value = [(7001,), (7002,)]
+        return connection, cursor
+
+    def test_branch_queries_are_scoped_and_use_odbc(self):
+        connection, cursor = self.branch_connection()
+        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection) as connect, patch.object(
+            type(self.snapshot), "_execute_eplus_stock_store_query", return_value=iter([]),
+        ) as query:
+            list(self.snapshot._fetch_eplus_stock_store_rows())
+        self.assertEqual(connect.call_args.kwargs["param_str"], "?")
+        self.assertTrue(connect.call_args.kwargs["propagate_error"])
+        self.assertEqual([call.args[2] for call in query.call_args_list], [(7001,), (7002,)])
+        for call in query.call_args_list:
+            self.assertIn("WHERE ics.sto_id = ?", call.args[1])
+
+    def test_branch_timeout_does_not_retry_metadata_query(self):
+        connection, cursor = self.branch_connection()
+        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection), patch.object(
+            type(self.snapshot), "_execute_eplus_stock_store_query", side_effect=RuntimeError("HYT00 timeout"),
+        ) as query:
+            with self.assertRaisesRegex(UserError, "previous snapshot has been kept"):
+                list(self.snapshot._fetch_eplus_stock_store_rows())
+        self.assertEqual(query.call_count, 1)
+
+    def test_branch_missing_columns_use_basic_query(self):
+        connection, cursor = self.branch_connection()
+        cursor.fetchall.return_value = [(7001,)]
+        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection), patch.object(
+            type(self.snapshot), "_execute_eplus_stock_store_query",
+            side_effect=[RuntimeError("42S22 invalid column"), iter([[self.branch_row(7001, 7)]])],
+        ) as query:
+            rows = list(self.snapshot._fetch_eplus_stock_store_rows())
+        self.assertEqual(rows[0][0]["itm_qty"], 7)
+        self.assertEqual(query.call_count, 2)
+        self.assertNotIn("LEFT JOIN Store", query.call_args.args[1])
+        self.assertEqual(query.call_args.args[2], (7001,))
+
+    def test_branch_partial_read_does_not_retry_with_mixed_snapshot(self):
+        connection, cursor = self.branch_connection()
+
+        def failing_query(cursor, query, parameters):
+            yield [self.branch_row(7001, 7)]
+            raise RuntimeError("source disconnected")
+
+        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection), patch.object(
+            type(self.snapshot), "_execute_eplus_stock_store_query", side_effect=failing_query,
+        ) as query:
+            with self.assertRaisesRegex(UserError, "previous snapshot has been kept"):
+                list(self.snapshot._fetch_eplus_stock_store_rows())
+        self.assertEqual(query.call_count, 1)
 
     def test_cancel_releases_reserved_availability(self):
         order = self.order()
