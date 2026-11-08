@@ -76,7 +76,8 @@ class SalesCache(models.Model):
             source_ids = set()
             for batch in item['batches']:
                 if (not isinstance(batch, dict) or type(batch.get('source_id')) is not int or batch['source_id'] <= 0 or batch['source_id'] in source_ids
-                        or type(batch.get('qty')) is not int or batch['qty'] < 0
+                        or not isinstance(batch.get('qty'), (int, float)) or isinstance(batch['qty'], bool)
+                        or not math.isfinite(batch['qty']) or batch['qty'] < 0
                         or not all(isinstance(batch.get(k), (int, float)) and math.isfinite(batch[k]) and batch[k] >= 0 for k in ('price', 'cost'))):
                     raise ValidationError(_('Invalid central stock snapshot.'))
                 source_ids.add(batch['source_id'])

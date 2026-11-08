@@ -7,7 +7,6 @@
  'category': 'Sales',
  'depends': ['ab_sales',
              'ab_sales_inventory',
-             'ab_inventory',
              'ab_sales_contract',
              'ab_sales_promo',
              'ab_hr',

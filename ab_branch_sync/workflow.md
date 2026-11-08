@@ -6,6 +6,10 @@ Install ab_central_sync on central and ab_branch_sync on branches. Bills remain
 in the branch for POS and cashier operations. Central owns the inventory ledger
 and records the corresponding sale/return. Callcenter still calls ab_branch_api
 on the branch. Cashier payments and accounting remain branch operations.
+The branch does not install ab_inventory, ab_stock_integration, purchase receipt,
+opening-balance or purchase-accounting modules. Staff enter all stock receipts,
+opening balances and adjustments in central. Branch sales use the central snapshot
+and durable local reservations; an unenrolled native store cannot post a sale.
 
 ## Connection and stock
 
@@ -83,24 +87,23 @@ balances rather than subtracting client-side quantities. Repeated confirmations
 cannot deduct again, other stores are untouched, and draft quantities/prices and
 cashier/payment processing remain unchanged.
 
-## Product units for new sales
+## Product units and inventory basis
 
-New synchronized sales use only ab_product_uom and its category reference unit
-(factor 1). The stock factor is the selected product unit's factor. There is no
-legacy packaging count or separate stock-mapping multiplier. T500 BOX factor 1
-therefore posts quantity 1 for a one-BOX sale. New central allocations store
-stock_uom_id pointing to ab_product_uom; their legacy uom_id is empty. Central
-batch selling prices/costs are expressed through the product default UoM factor.
-Whole reference quantities remain required by the integer inventory ledger.
+Product, purchase, audit, and sales units use `ab_product_uom` within the
+product's category. The active reference unit has factor 1. Inventory movements,
+central snapshots, and branch reservations are measured in that reference unit,
+with up to eight decimal places. A purchase receipt or POS sale converts its
+selected unit through the canonical factor. Central source prices and costs are
+converted from the source's purchase unit to the reference unit before sale
+price matching. T500 BOX has factor 1, so one BOX adds or deducts one reference
+unit. New central allocations record that reference unit in `uom_id` and
+`stock_uom_id`.
 
-Existing bills, allocations, movements, quantities and stored conversion factors
-are not rewritten or adjusted. Historical returns retain their original bill's
-stored quantity basis. This change covers synchronized sales inventory; legacy
-purchase/receipt screens outside these modules are not refactored here.
-
-A fresh snapshot carrying stock_basis=product_uom_reference is required before
-using the new conversion. Existing cache batches cannot silently be interpreted
-in the new basis. After a successful download, normal offline fallback applies.
+The retired `ab_uom` and `ab_uom_type` models are no longer used. The backed-up
+experimental T500 ledger and old bill stock evidence were normalized once to
+preserve 21 BOX in central stock. Cashier payments and monetary totals were not
+changed. A fresh snapshot with `stock_basis=product_uom_reference` is required
+before selling from the cache; normal offline fallback then applies.
 
 ## Delivery and central posting
 
