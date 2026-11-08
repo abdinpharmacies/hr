@@ -3,7 +3,7 @@ These should not be passive-mirrored from branches. Keep them report-owned or sy
 reference data. Branch facts should reference them by ID/code/serial.
 
 - ab_store, ab_store_ip, ab_replica_db
-- ab_product, ab_product_card, ab_product_barcode, ab_product_uom, ab_product_uom_category, ab_uom, ab_uom_type
+- ab_product, ab_product_card, ab_product_barcode, ab_product_uom, ab_product_uom_category
 - ab_product_company, ab_product_origin, ab_product_group, ab_product_tag, ab_scientific_group, ab_usage_causes,
   ab_usage_manner
 - ab_customer, ab_customer_contact, ab_customer_contact_way
