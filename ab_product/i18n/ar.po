@@ -1,0 +1,18 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ab_product\n"
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: ab_product
+#: code:addons/ab_product/models/ab_product_card.py:0
+msgid "All products on a card must have the same unit category."
+msgstr "يجب أن يكون لجميع المنتجات في البطاقة فئة وحدة القياس نفسها."
+
+#. module: ab_product
+#: code:addons/ab_product/models/ab_product_uom.py:0
+msgid "Select active units from the same product unit category."
+msgstr "اختر وحدات نشطة من فئة وحدة قياس المنتج نفسها."

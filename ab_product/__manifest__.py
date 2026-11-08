@@ -18,7 +18,6 @@
              'views/ab_scientific_group.xml',
              'views/ab_usage_causes.xml',
              'views/ab_usage_manner.xml',
-             'views/ab_uom.xml',
              'views/ab_product_uom.xml',
              ],
     'assets': {

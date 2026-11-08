@@ -47,16 +47,8 @@ class AbdinProductCard(models.Model):
 
     @api.model
     def _check_same_unit_type(self, product_ids):
-        u_l = len({product.unit_l_id.type_id for product in product_ids}) > 1 and "Large"
-        u_m = len({product.unit_m_id.type_id for product in product_ids}) > 1 and "Medium"
-        u_s = len({product.unit_s_id.type_id for product in product_ids}) > 1 and "Small"
-
-        # if u is True (Large, Medium, Small) then unit_size for all sub_products is not the same
-        not_same_type = [u for u in [u_l, u_m, u_s] if u]
-
-        if not_same_type:
-            raise ValidationError(_("All products must have the same Unit Type.\n"
-                                    f"Error in {not_same_type} Unit(s)"))
+        if len(product_ids.mapped('uom_category_id')) > 1:
+            raise ValidationError(_("All products on a card must have the same unit category."))
 
     @api.model
     def _search_display_name(self, operator, value):

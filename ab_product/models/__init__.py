@@ -9,7 +9,6 @@ from . import ab_product_barcode
 from . import ab_product_barcode_temp
 from . import ab_product_management_field_rule
 from . import ab_product
-from . import ab_uom
 from . import ab_product_uom
 from . import ab_product_template
 from . import ab_usage_manner
