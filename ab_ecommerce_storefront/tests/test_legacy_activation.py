@@ -587,6 +587,13 @@ class TestLegacyActivationHTTP(HttpCase):
             """
             (async () => {
                 const button = document.querySelector('button[name="action_review_issues"]');
+                const download = document.querySelector('button[name="action_download_review"]');
+                if (!download || !download.textContent.includes('تنزيل مراجعة العملاء CSV')) {
+                    throw new Error('The translated review download button is missing');
+                }
+                if (!document.querySelector('[name="eligible_percentage"]')) {
+                    throw new Error('The eligibility percentage is missing');
+                }
                 if (!button.textContent.includes('مراجعة جميع المشكلات')) {
                     throw new Error('Review button is not translated');
                 }
