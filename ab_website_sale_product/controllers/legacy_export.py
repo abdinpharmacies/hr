@@ -24,11 +24,12 @@ class LegacyCodeExport(http.Controller):
         return self._download(batch_id, review=True)
 
     def _download(self, batch_id, review):
-        development = request.env['ir.config_parameter'].sudo().get_param('ab_website_sale_product.development', 'False') == 'True'
-        hostname = urlparse(request.httprequest.host_url).hostname
-        local = development and self._local_address(hostname) and self._local_address(request.httprequest.remote_addr)
-        if not request.httprequest.is_secure and not local:
-            raise Forbidden()
+        if not review:
+            development = request.env['ir.config_parameter'].sudo().get_param('ab_website_sale_product.development', 'False') == 'True'
+            hostname = urlparse(request.httprequest.host_url).hostname
+            local = development and self._local_address(hostname) and self._local_address(request.httprequest.remote_addr)
+            if not request.httprequest.is_secure and not local:
+                raise Forbidden()
         batch = request.env['ab_ecommerce_legacy_batch'].browse(batch_id).exists()
         if not batch:
             raise NotFound()
