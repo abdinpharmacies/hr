@@ -1,5 +1,22 @@
 Current changes before commit:
 
+- Capture canonical unit factors in purchase accounting snapshots without changing amounts.
+
+Files changed:
+
+- ab_purchase_accounting/changelog.d
+- ab_purchase_accounting/models/review.py
+
+Current changes before commit:
+
+- Capture canonical unit factors in purchase accounting snapshots without changing amounts.
+
+Files changed:
+
+- ab_purchase_accounting/models/review.py
+
+Current changes before commit:
+
 - Depend on the shared stock integration for company ownership and current source snapshots.
 - Serialize receipt/return finalization with cashier stock posting while preserving existing purchase and tax calculations.
 - Treat the current purchase-notice workflow as physical supplier returns without requiring the removed notice-effect field.
