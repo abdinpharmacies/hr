@@ -28,12 +28,10 @@ cash-balance writes are forbidden. System administrators may cancel pending
 native invoices, restoring only their deducted source quantities without creating
 payment or refund effects. Cash counts are supplied by the optional cashier addon.
 
-Configure the product's sales unit category, default selling unit and legacy
-smallest inventory unit. Set Sales Unit for One Stock Unit to the sales unit
-equivalent to that smallest inventory unit, or use Stock Conversion Sales Unit
-with its exact number of smallest stock units. Fractional selling quantities must
-convert exactly to positive whole stock units. Units in a category used by
-submitted native sales cannot change their factors or categories.
+Configure the product's `ab_product_uom` category and default selling unit.
+The category reference unit is the stock basis. Fractional reference quantities
+are supported to eight decimal places. Units used by submitted native sales
+cannot change their factors or categories.
 
 Both Arabic catalogs accompany English source strings. Tests and synthetic
 fixtures are kept under repository `scripts/`, outside runtime addon packages.

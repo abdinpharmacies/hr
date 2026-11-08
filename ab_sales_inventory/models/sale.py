@@ -399,9 +399,9 @@ class NativeSale(models.Model):
 class NativeSaleLine(models.Model):
     _inherit = 'ab_sales_line'
 
-    native_stock_qty = fields.Float(string='Deducted Stock Quantity', readonly=True, copy=False, digits=(18, 6))
-    native_requested_stock_qty = fields.Float(string='Requested Stock Quantity', readonly=True, copy=False, digits=(18, 6))
-    native_shortage_qty = fields.Float(string='Stock Shortage Quantity', readonly=True, copy=False, digits=(18, 6))
+    native_stock_qty = fields.Float(string='Deducted Stock Quantity', readonly=True, copy=False, digits=(24, 8))
+    native_requested_stock_qty = fields.Float(string='Requested Stock Quantity', readonly=True, copy=False, digits=(24, 8))
+    native_shortage_qty = fields.Float(string='Stock Shortage Quantity', readonly=True, copy=False, digits=(24, 8))
     native_unit_factor = fields.Float(string='Posted Unit Factor', readonly=True, copy=False, digits=(18, 8))
     native_operation_key = fields.Char(string='Stock Operation Key', readonly=True, copy=False, index=True)
     native_allocations = fields.Json(string='Posted Stock Allocations', readonly=True, copy=False)

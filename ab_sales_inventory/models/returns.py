@@ -211,7 +211,7 @@ class NativeReturnLine(models.Model):
 
     native_origin_line_id = fields.Many2one('ab_sales_line', string='Original Native Sale Line',
                                            readonly=True, copy=False, ondelete='restrict', index=True)
-    native_stock_qty = fields.Float(string='Returned Stock Quantity', readonly=True, copy=False, digits=(18, 6))
+    native_stock_qty = fields.Float(string='Returned Stock Quantity', readonly=True, copy=False, digits=(24, 8))
     _native_original_unique = models.Constraint('UNIQUE(header_id, native_origin_line_id)',
         'Each native original line can occur only once per return.')
 

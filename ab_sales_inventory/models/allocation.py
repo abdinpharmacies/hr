@@ -16,12 +16,12 @@ class SalesStockAllocation(models.Model):
     original_id = fields.Many2one('ab_sales_stock_allocation', readonly=True, ondelete='restrict', index=True)
     store_id = fields.Many2one('ab_store', required=True, readonly=True, ondelete='restrict', index=True)
     source_id = fields.Many2one('ab_product_source', required=True, readonly=True, ondelete='restrict')
-    uom_id = fields.Many2one('ab_uom', required=True, readonly=True, ondelete='restrict')
+    uom_id = fields.Many2one('ab_product_uom', required=True, readonly=True, ondelete='restrict')
     sale_uom_id = fields.Many2one('ab_product_uom', readonly=True, ondelete='restrict')
     sale_qty = fields.Float(readonly=True, digits=(18, 8))
     unit_factor = fields.Float(readonly=True, digits=(18, 8))
-    qty = fields.Integer(required=True, readonly=True)
-    qty_smallest = fields.Integer(readonly=True)
+    qty = fields.Float(required=True, readonly=True, digits=(24, 8))
+    qty_smallest = fields.Float(readonly=True, digits=(24, 8))
     unit_price = fields.Float(readonly=True, digits=(18, 6))
     source_unit_price = fields.Float(readonly=True, digits=(18, 6))
     unit_cost = fields.Float(readonly=True, digits=(18, 6))
@@ -61,16 +61,15 @@ class SalesStockAllocation(models.Model):
         for source in sources:
             if source.product_id != product or (source.exp_date and source.exp_date < today):
                 continue
-            small = Decimal(str(product.unit_s_id.unit_no or 0))
-            medium = Decimal(str(product.unit_m_id.unit_no or 0))
-            size = source.uom_id.unit_size
-            factor = small if size == 'large' else small / medium if size == 'medium' and medium else Decimal(1) if size == 'small' else Decimal(0)
+            if source.uom_id.category_id != product.uom_category_id:
+                raise ValidationError(_('The stock source has invalid unit or price values.'))
+            factor = Decimal(str(source.uom_id.factor))
             if factor <= 0 or not all(math.isfinite(value) for value in (source.price, source.unit_cost)):
                 raise ValidationError(_('The stock source has invalid unit or price values.'))
             rows.append({
                 'source_id': source.id,
                 'source_identity': source.source_identity,
-                'qty': int(balances[source.id]),
+                'qty': balances[source.id],
                 'price': source.price / float(factor),
                 'cost': source.unit_cost / float(factor),
                 'expiry': source.exp_date,
@@ -90,7 +89,7 @@ class SalesStockAllocation(models.Model):
                               'allocations': [], 'shortage': 0})
                 continue
             qty_smallest = line.product_id._to_stock_quantity(line.qty, line.uom_id)
-            factor = Decimal(qty_smallest) / Decimal(str(line.qty))
+            factor = line.product_id._stock_unit_factor(line.uom_id)
             target_price = self._price_key(Decimal(str(line.sell_price)) / factor)
             if line.product_id.id not in rows_by_product:
                 rows = self._source_rows(sale.store_id, line.product_id)
@@ -143,7 +142,7 @@ class SalesStockAllocation(models.Model):
 
     @api.model
     def _stock_unit_values(self, product):
-        return {'uom_id': product.unit_s_id.id}
+        return {'uom_id': product._stock_reference_unit().id}
 
     @api.model
     def _stock_context_unit_id(self, product):
@@ -275,9 +274,9 @@ class SalesStockShortage(models.Model):
     sold_qty = fields.Float(required=True, readonly=True, digits=(18, 8))
     deducted_qty = fields.Float(required=True, readonly=True, digits=(18, 8))
     shortage_qty = fields.Float(required=True, readonly=True, digits=(18, 8))
-    sold_qty_smallest = fields.Integer(required=True, readonly=True)
-    deducted_qty_smallest = fields.Integer(required=True, readonly=True)
-    shortage_qty_smallest = fields.Integer(required=True, readonly=True)
+    sold_qty_smallest = fields.Float(required=True, readonly=True, digits=(24, 8))
+    deducted_qty_smallest = fields.Float(required=True, readonly=True, digits=(24, 8))
+    shortage_qty_smallest = fields.Float(required=True, readonly=True, digits=(24, 8))
     unit_price = fields.Float(required=True, readonly=True, digits=(18, 6))
     reason = fields.Selection([
         ('not_transferred', 'Not transferred yet from main store'),
@@ -340,8 +339,8 @@ class SalesStockReversal(models.Model):
     sale_id = fields.Many2one(related='allocation_id.sale_line_id.header_id', store=True, readonly=True)
     store_id = fields.Many2one('ab_store', required=True, readonly=True, ondelete='restrict', index=True)
     source_id = fields.Many2one('ab_product_source', required=True, readonly=True, ondelete='restrict')
-    uom_id = fields.Many2one('ab_uom', required=True, readonly=True, ondelete='restrict')
-    qty = fields.Integer(required=True, readonly=True)
+    uom_id = fields.Many2one('ab_product_uom', required=True, readonly=True, ondelete='restrict')
+    qty = fields.Float(required=True, readonly=True, digits=(24, 8))
     original_movement_id = fields.Many2one('ab_inventory', required=True, readonly=True, ondelete='restrict')
     inventory_movement_id = fields.Many2one('ab_inventory', readonly=True, ondelete='restrict')
     reversed_by_id = fields.Many2one('res.users', required=True, readonly=True)

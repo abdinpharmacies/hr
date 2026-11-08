@@ -1,5 +1,28 @@
 Current changes before commit:
 
+- Allocate sales and returns in fractional reference units with canonical unit pricing.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/returns.py
+- ab_sales_inventory/models/sale.py
+
+Current changes before commit:
+
+- Allocate sales and returns in fractional reference units with canonical unit pricing.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/returns.py
+- ab_sales_inventory/models/sale.py
+
+Current changes before commit:
+
 - Extract native approval evidence and POS balance/stock lookup methods so central synchronization can reuse approval and pricing logic with JSON cache evidence.
 - Keep the default native allocation and inventory behavior in the existing implementation.
 
