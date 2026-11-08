@@ -119,11 +119,7 @@ class EplusInventorySyncJob(models.Model):
         if not location:
             raise UserError(_("The selected warehouse has no stock location."))
 
-        groups = Snapshot._read_group(
-            [("active", "=", True), ("product_id", "!=", False)],
-            groupby=["product_id"],
-            aggregates=["itm_qty:sum"],
-        )
+        groups = Snapshot._get_inventory_sync_stock_groups()
         if not groups:
             raise UserError(_("No matched Eplus stock rows are available to sync."))
 

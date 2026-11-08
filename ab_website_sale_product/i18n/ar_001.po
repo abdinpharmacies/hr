@@ -4557,3 +4557,13 @@ msgstr "دون تغيير"
 #: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "updated"
 msgstr "تم التحديث"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid ""
+"Could not refresh Eplus branch stock. The connection or source query failed."
+" The previous snapshot has been kept. Please try again or contact support."
+msgstr ""
+"تعذّر تحديث مخزون فروع Eplus بسبب فشل الاتصال أو الاستعلام من المصدر. تم "
+"الاحتفاظ بآخر صورة ناجحة للمخزون. حاول مرة أخرى أو تواصل مع الدعم."

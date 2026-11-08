@@ -15,8 +15,8 @@ EPLUS_STOCK_SQL = """
         ics.itm_id,
         ic.itm_code,
         SUM(ics.itm_qty) AS itm_qty
-    FROM Item_Class_Store ics WITH (NOLOCK)
-    JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = ics.itm_id
+    FROM Item_Class_Store ics
+    JOIN Item_Catalog ic ON ic.itm_id = ics.itm_id
     GROUP BY ics.itm_id, ic.itm_code
 """
 
@@ -29,9 +29,10 @@ EPLUS_STOCK_STORE_SQL = """
         s.sto_name_ar,
         s.sto_name_en,
         SUM(ics.itm_qty) AS itm_qty
-    FROM Item_Class_Store ics WITH (NOLOCK)
-    JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = ics.itm_id
-    LEFT JOIN Store s WITH (NOLOCK) ON s.sto_id = ics.sto_id
+    FROM Item_Class_Store ics
+    JOIN Item_Catalog ic ON ic.itm_id = ics.itm_id
+    LEFT JOIN Store s ON s.sto_id = ics.sto_id
+    WHERE ics.sto_id = ?
     GROUP BY ics.itm_id, ic.itm_code, ics.sto_id, s.sto_code, s.sto_name_ar, s.sto_name_en
 """
 
@@ -41,8 +42,9 @@ EPLUS_STOCK_STORE_BASIC_SQL = """
         ic.itm_code,
         ics.sto_id,
         SUM(ics.itm_qty) AS itm_qty
-    FROM Item_Class_Store ics WITH (NOLOCK)
-    JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = ics.itm_id
+    FROM Item_Class_Store ics
+    JOIN Item_Catalog ic ON ic.itm_id = ics.itm_id
+    WHERE ics.sto_id = ?
     GROUP BY ics.itm_id, ic.itm_code, ics.sto_id
 """
 
@@ -234,17 +236,39 @@ class EplusStockSnapshot(models.Model):
 
     @api.model
     def _refresh_branch_stock_from_eplus(self):
-        store_rows = self._fetch_eplus_stock_store_rows() or []
-        itm_ids = [row["itm_id"] for row in store_rows]
-        itm_codes = [row["itm_code"] for row in store_rows if row["itm_code"]]
-        products_by_serial = self._get_products_by_eplus_serial(itm_ids)
-        products_by_code = self._get_products_by_code(itm_codes)
-        return self.env["ab_eplus_stock_snapshot_store"].sudo()._refresh_from_eplus_rows(
-            store_rows,
-            products_by_serial=products_by_serial,
-            products_by_code=products_by_code,
-            sync_date=fields.Datetime.now(),
-        )
+        Store = self.env["ab_eplus_stock_snapshot_store"].sudo()
+        sync_date = fields.Datetime.now()
+        result = {"total": 0, "matched": 0, "unmatched": 0, "stale": 0}
+        with self.env.cr.savepoint():
+            while records := Store.search([("active", "=", True)], limit=1000):
+                records.write({"active": False, "last_sync_date": sync_date})
+                self.env.invalidate_all()
+            for rows in self._fetch_eplus_stock_store_rows():
+                batch = Store._refresh_from_eplus_rows(
+                    rows,
+                    products_by_serial=self._get_products_by_eplus_serial([row["itm_id"] for row in rows]),
+                    products_by_code=self._get_products_by_code([row["itm_code"] for row in rows if row["itm_code"]]),
+                    sync_date=sync_date,
+                    archive_stale=False,
+                )
+                for key in ("total", "matched", "unmatched"):
+                    result[key] += batch[key]
+                self.env.invalidate_all()
+            result["stale"] = Store.with_context(active_test=False).search_count([
+                ("active", "=", False), ("last_sync_date", "=", sync_date),
+            ])
+        return result
+
+    @api.model
+    def _get_inventory_sync_stock_groups(self):
+        quantities = {}
+        for product, active, quantity in self.with_context(active_test=False)._read_group(
+            [("product_id", "!=", False)],
+            groupby=["product_id", "active"],
+            aggregates=["itm_qty:sum"],
+        ):
+            quantities[product] = quantities.get(product, 0.0) + ((quantity or 0.0) if active else 0.0)
+        return list(quantities.items())
 
     def _sync_to_odoo_inventory(self):
         warehouse = self._get_inventory_sync_warehouse()
@@ -380,7 +404,7 @@ class EplusStockSnapshot(models.Model):
 
     @api.model
     def _fetch_eplus_stock_rows(self):
-        with self.connect_eplus(charset="CP1256") as conn:
+        with self.connect_eplus(charset="CP1256", propagate_error=True) as conn:
             with conn.cursor() as cursor:
                 cursor.execute(EPLUS_STOCK_SQL)
                 columns = [column[0] for column in (cursor.description or [])]
@@ -389,25 +413,38 @@ class EplusStockSnapshot(models.Model):
     @api.model
     def _fetch_eplus_stock_store_rows(self):
         try:
-            return self._execute_eplus_stock_store_query(EPLUS_STOCK_STORE_SQL)
-        except Exception:
-            _logger.warning(
-                "Eplus branch stock query with Store metadata failed; retrying with sto_id only.",
-                exc_info=True,
-            )
-            return self._execute_eplus_stock_store_query(EPLUS_STOCK_STORE_BASIC_SQL)
+            with self.connect_eplus(param_str="?", charset="CP1256", propagate_error=True) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("SELECT sto_id FROM Store ORDER BY sto_id")
+                    store_ids = [row[0] for row in cursor.fetchall()]
+                    for store_id in store_ids:
+                        started = False
+                        try:
+                            for rows in self._execute_eplus_stock_store_query(
+                                cursor, EPLUS_STOCK_STORE_SQL, (store_id,),
+                            ):
+                                started = True
+                                yield rows
+                        except Exception as error:
+                            if started or "42S22" not in str(error):
+                                raise
+                            _logger.warning("Eplus branch metadata columns unavailable; loading stock without names.")
+                            yield from self._execute_eplus_stock_store_query(
+                                cursor, EPLUS_STOCK_STORE_BASIC_SQL, (store_id,),
+                            )
+        except Exception as error:
+            _logger.exception("Eplus branch stock refresh failed")
+            raise UserError(self.env._(
+                "Could not refresh Eplus branch stock. The connection or source query failed. "
+                "The previous snapshot has been kept. Please try again or contact support."
+            )) from error
 
     @api.model
-    def _execute_eplus_stock_store_query(self, sql):
-        with self.connect_eplus(charset="CP1256") as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(sql)
-                columns = [column[0] for column in (cursor.description or [])]
-                rows = cursor.fetchall() or []
-                return [
-                    self._normalize_eplus_store_row(row, columns=columns)
-                    for row in rows
-                ]
+    def _execute_eplus_stock_store_query(self, cursor, sql, parameters):
+        cursor.execute(sql, parameters)
+        columns = [column[0] for column in (cursor.description or [])]
+        while rows := cursor.fetchmany(1000):
+            yield [self._normalize_eplus_store_row(row, columns=columns) for row in rows]
 
     @api.model
     def _normalize_eplus_row(self, row, columns=None):
@@ -533,7 +570,7 @@ class EplusStockSnapshotStore(models.Model):
         return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_branch_stock_from_eplus()
 
     @api.model
-    def _refresh_from_eplus_rows(self, rows, products_by_serial=None, products_by_code=None, sync_date=None):
+    def _refresh_from_eplus_rows(self, rows, products_by_serial=None, products_by_code=None, sync_date=None, archive_stale=True):
         rows = rows or []
         now = sync_date or fields.Datetime.now()
         products_by_serial = products_by_serial or {}
@@ -594,7 +631,7 @@ class EplusStockSnapshotStore(models.Model):
         stale_domain = [("active", "=", True)]
         if touched_ids:
             stale_domain.append(("id", "not in", touched_ids))
-        stale_records = self.search(stale_domain)
+        stale_records = self.search(stale_domain) if archive_stale else self.browse()
         if stale_records:
             stale_records.write({"active": False, "last_sync_date": now})
 
