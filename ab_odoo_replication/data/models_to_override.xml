@@ -36,11 +36,13 @@
     <record id="override_ab_product_card" model="ab_odoo_replication_override">
         <field name="model_name">ab_product_card</field>
     </record>
-    <record id="override_ab_uom_type" model="ab_odoo_replication_override">
-        <field name="model_name">ab_uom_type</field>
+    <delete id="override_ab_uom_type" model="ab_odoo_replication_override"/>
+    <delete id="override_ab_uom" model="ab_odoo_replication_override"/>
+    <record id="override_ab_product_uom_category" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product_uom_category</field>
     </record>
-    <record id="override_ab_uom" model="ab_odoo_replication_override">
-        <field name="model_name">ab_uom</field>
+    <record id="override_ab_product_uom" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product_uom</field>
     </record>
     <record id="override_ab_product" model="ab_odoo_replication_override">
         <field name="model_name">ab_product</field>
