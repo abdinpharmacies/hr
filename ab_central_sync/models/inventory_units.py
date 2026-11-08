@@ -14,7 +14,8 @@ class Allocation(models.Model):
 
     @api.model
     def _stock_unit_values(self, product):
-        return {'uom_id': False, 'stock_uom_id': product._stock_reference_unit().id}
+        reference_id = product._stock_reference_unit().id
+        return {'uom_id': reference_id, 'stock_uom_id': reference_id}
 
     @api.model
     def _source_rows(self, store, product):
@@ -25,10 +26,9 @@ class Allocation(models.Model):
         if any(not math.isfinite(source.price) or not math.isfinite(source.unit_cost) for source in sources):
             raise ValidationError(_('The stock source has invalid unit or price values.'))
         today = fields.Date.context_today(self)
-        factor = float(product._stock_unit_factor(product.uom_id))
         return [{'source_id': source.id, 'source_identity': source.source_identity,
-                 'qty': int(balances[source.id]), 'price': source.price / factor,
-                 'cost': source.unit_cost / factor, 'expiry': source.exp_date}
+                 'qty': balances[source.id], 'price': source.price / float(product._stock_unit_factor(source.uom_id)),
+                 'cost': source.unit_cost / float(product._stock_unit_factor(source.uom_id)), 'expiry': source.exp_date}
                 for source in sources if source.product_id == product and (not source.exp_date or source.exp_date >= today)]
 
 
@@ -36,13 +36,13 @@ class InventoryProcess(models.AbstractModel):
     _inherit = 'ab_inventory_process'
 
     @api.model
-    def _smallest_unit_qty(self, rec, qty, sign):
+    def _reference_unit_qty(self, rec, qty, sign):
         allocation = rec.allocation_id if rec._name == 'ab_sales_stock_reversal' else rec
         if allocation._name == 'ab_sales_stock_allocation' and allocation.stock_uom_id:
             if isinstance(sign, bool) or sign not in (-1, 1):
                 raise ValidationError(_('Inventory direction must be +1 or -1.'))
             return sign * allocation.sale_line_id.product_id._validate_stock_quantity(qty)
-        return super()._smallest_unit_qty(rec, qty, sign)
+        return super()._reference_unit_qty(rec, qty, sign)
 
 
 class Reversal(models.Model):
