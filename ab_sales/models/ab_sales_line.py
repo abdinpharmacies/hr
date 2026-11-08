@@ -368,20 +368,6 @@ class AbdinSalesLines(models.Model):
             [('eplus_serial', '=', eplus_serial)], limit=1
         ).id
 
-    # @api.depends('product_id')
-    # def _compute_uom_id_domain(self):
-    #     for rec in self:
-    #         domain = rec._get_uom_id_domain()
-    #         rec.uom_id_domain = json.dumps(domain)
-    #
-    # def _get_uom_id_domain(self):
-    #     uom_list = [self.product_id.unit_l_id.id]
-    #     if self.product_id.unit_m_id.unit_no > 1:
-    #         uom_list.append(self.product_id.unit_m_id.id)
-    #     if self.product_id.unit_s_id.unit_no > 1:
-    #         uom_list.append(self.product_id.unit_s_id.id)
-    #     return [('id', 'in', uom_list)]
-
     # ---------------------- Inventory recompute ---------------------- #
     def _recompute_inventory_json(self, crx=None):
         store_eplus_serial = self.header_id.store_id.eplus_serial
