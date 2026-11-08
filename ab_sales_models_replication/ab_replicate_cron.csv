@@ -17,8 +17,6 @@ model.replicate_model('ab_customer')
 
 "
 5,ab_odoo_replication_4_product,ab_odoo_replication,2026-03-17 13:35:21,1,Hours,TRUE,"# Group (4)
-model.replicate_model('ab_uom_type')
-model.replicate_model('ab_uom')
 
 model.replicate_model('ab_product_uom_category')
 model.replicate_model('ab_product_uom')
@@ -29,8 +27,6 @@ model.replicate_model('ab_product_barcode', limit=10000,
 
 "
 5,ab_odoo_replication_4_product__all,ab_odoo_replication,2026-03-18 01:00:21,1,Days,TRUE,"# Group (4)
-model.replicate_model('ab_uom_type')
-model.replicate_model('ab_uom')
 
 model.replicate_model('ab_product_uom_category')
 model.replicate_model('ab_product_uom')
