@@ -1,11 +1,20 @@
 Current changes before commit:
 
-- Open Movement Schedule without a default Saved filter so pending and saved movements are both visible.
+- Store fractional reference-unit movements and lock canonical unit definitions.
 
 Files changed:
 
+- ab_inventory/INTEGRATION.md
+- ab_inventory/README.md
 - ab_inventory/changelog.d
-- ab_inventory/views/ab_inventory_movements.xml
+- ab_inventory/i18n/ar.po
+- ab_inventory/i18n/ar_001.po
+- ab_inventory/models/__init__.py
+- ab_inventory/models/ab_inventory.py
+- ab_inventory/models/ab_inventory_process.py
+- ab_inventory/models/ab_product.py
+- ab_inventory/models/ab_product_uom.py
+- ab_inventory/models/ab_uom.py
 
 commit 063998a08a6b6229331d583049bccd79c54b5c75
 Author: yahyazakaria22 <yahyazakaria.soskty@gmail.com>

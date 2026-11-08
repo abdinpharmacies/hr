@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
@@ -13,12 +15,12 @@ class AbInventory(models.Model):
                                 required=True, index=True, ondelete='restrict')
     product_id = fields.Many2one('ab_product', string='Item', related='source_id.product_id',
                                  store=True, index=True)
-    qty = fields.Integer(string='Quantity Change', required=True)
-    incoming_qty = fields.Integer(string='Incoming', compute='_compute_direction_quantities')
-    outgoing_qty = fields.Integer(string='Outgoing', compute='_compute_direction_quantities')
-    closing_balance = fields.Integer(
+    qty = fields.Float(string='Quantity Change', required=True, digits=(24, 8))
+    incoming_qty = fields.Float(string='Incoming', compute='_compute_direction_quantities', digits=(24, 8))
+    outgoing_qty = fields.Float(string='Outgoing', compute='_compute_direction_quantities', digits=(24, 8))
+    closing_balance = fields.Float(
         string='Closing Balance', compute='_compute_closing_balance', store=False,
-        copy=False,
+        copy=False, digits=(24, 8),
     )
     status = fields.Selection([('pending', 'Pending'), ('saved', 'Saved')], string='Status',
                               default='pending', required=True, readonly=True, copy=False, index=True)
@@ -96,12 +98,16 @@ class AbInventory(models.Model):
     def _check_quantity(self):
         for rec in self:
             if not rec.qty:
-                raise ValidationError(_("Quantity change must be a non-zero integer in the smallest unit."))
+                raise ValidationError(_("Quantity change must be a non-zero reference-unit amount."))
 
     @api.model
     def _validate_quantity_value(self, value):
-        if isinstance(value, bool) or not isinstance(value, int) or not value:
-            raise ValidationError(_("Quantity change must be a non-zero integer in the smallest unit."))
+        try:
+            quantity = Decimal(str(value))
+        except (InvalidOperation, ValueError, TypeError):
+            quantity = Decimal(0)
+        if isinstance(value, bool) or not quantity.is_finite() or not quantity or quantity.as_tuple().exponent < -8:
+            raise ValidationError(_("Quantity change must be a finite non-zero reference-unit amount with at most eight decimal places."))
 
     @api.model_create_multi
     def create(self, vals_list):

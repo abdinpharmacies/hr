@@ -111,29 +111,29 @@ class InventoryProcess(models.AbstractModel):
                 if row[1]:
                     locked_uoms.add(row[1])
         for product_id in sorted(locked_products):
-            self.env.cr.execute(
-                'SELECT unit_l_id, unit_m_id, unit_s_id FROM ab_product '
-                'WHERE id = %s FOR UPDATE', (product_id,),
-            )
+            self.env.cr.execute('SELECT uom_category_id FROM ab_product WHERE id = %s FOR UPDATE',
+                                (product_id,))
             row = self.env.cr.fetchone()
-            if row:
-                locked_uoms.update(uom_id for uom_id in row if uom_id)
+            if row and row[0]:
+                self.env.cr.execute('SELECT id FROM ab_product_uom WHERE category_id = %s ORDER BY id FOR UPDATE',
+                                    (row[0],))
+                locked_uoms.update(unit_id for (unit_id,) in self.env.cr.fetchall())
         for uom_id in sorted(locked_uoms):
-            self.env.cr.execute('SELECT id FROM ab_uom WHERE id = %s FOR UPDATE',
+            self.env.cr.execute('SELECT id FROM ab_product_uom WHERE id = %s FOR UPDATE',
                                 (uom_id,))
         # A transaction that held either lock may have changed these values.
         self.env['ab_product_source'].browse(source_ids).invalidate_recordset(
             ['product_id', 'uom_id'],
         )
         self.env['ab_product'].browse(sorted(locked_products)).invalidate_recordset(
-            ['unit_s_id', 'unit_m_id', 'unit_l_id'],
+            ['uom_category_id', 'uom_id', 'uom_pur_id'],
         )
-        self.env['ab_uom'].browse(sorted(locked_uoms)).invalidate_recordset(
-            ['unit_no', 'unit_size', 'type_id'],
+        self.env['ab_product_uom'].browse(sorted(locked_uoms)).invalidate_recordset(
+            ['factor', 'category_id', 'active'],
         )
 
     @api.model
-    def _smallest_unit_qty(self, rec, qty, sign):
+    def _reference_unit_qty(self, rec, qty, sign):
         if isinstance(sign, bool) or sign not in (-1, 1):
             raise ValidationError(_("Inventory direction must be +1 or -1."))
         try:
@@ -143,31 +143,28 @@ class InventoryProcess(models.AbstractModel):
         if not amount.is_finite() or amount <= 0:
             raise ValidationError(_("Inventory quantity must be positive."))
         product = rec.source_id.product_id
-        unit_size = rec.uom_id.unit_size
-        if not product or not unit_size:
+        unit = rec.uom_id
+        if not product or not unit:
             raise ValidationError(_("The source item and unit are required for inventory."))
-        if unit_size == 'large':
-            numerator = Decimal(str(product.unit_s_id.unit_no or 0))
-            denominator = Decimal(1)
-        elif unit_size == 'medium':
-            numerator = Decimal(str(product.unit_s_id.unit_no or 0))
-            denominator = Decimal(str(product.unit_m_id.unit_no or 0))
-        elif unit_size == 'small':
-            numerator = denominator = Decimal(1)
-        else:
-            numerator = denominator = Decimal(0)
-        if not numerator or not denominator:
-            raise ValidationError(_("The item unit conversion is not configured."))
-        converted = (amount * numerator) / denominator
-        if converted != converted.to_integral_value():
-            raise ValidationError(_("Quantity cannot be represented exactly in the smallest unit."))
-        return sign * int(converted)
+        reference = product.uom_category_id.uom_ids.filtered(
+            lambda item: item.active and item.uom_type == 'reference' and item.factor == 1)
+        if len(reference) != 1:
+            raise ValidationError(_("The product requires one active reference unit with factor 1."))
+        if unit.category_id != product.uom_category_id or not unit.active:
+            raise ValidationError(_("Select an active unit from the product unit category."))
+        factor = Decimal(str(unit.factor))
+        if not factor.is_finite() or factor <= 0:
+            raise ValidationError(_("Unit conversion factors must be positive and finite."))
+        converted = amount * factor
+        if converted.as_tuple().exponent < -8:
+            raise ValidationError(_("Inventory quantity exceeds eight decimal places in the reference unit."))
+        return sign * float(converted)
 
     @api.model
     def check_operation(self, operation, *, old=None, new=None):
         """Check one proposed stock effect inside the caller's transaction.
 
-        old/new are dictionaries with store_id, source_id, signed smallest-unit
+        old/new are dictionaries with store_id, source_id, signed reference-unit
         qty, and status. The ledger's create/post guards remain authoritative.
         """
         if operation not in ('create', 'write', 'unlink'):
@@ -239,7 +236,7 @@ class InventoryProcess(models.AbstractModel):
             self._lock_unit_definitions(
                 [rec.source_id.id], uom_ids=[rec.uom_id.id] if rec.uom_id else [],
             )
-            movement_qty = self._smallest_unit_qty(rec, qty, sign)
+            movement_qty = self._reference_unit_qty(rec, qty, sign)
             values = {
                 'store_id': store.id,
                 'source_id': rec.source_id.id,

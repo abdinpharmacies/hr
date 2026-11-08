@@ -15,7 +15,7 @@ they do not inherit it.
 
 Each `ab_inventory` record belongs to one store and one product source (batch).
 The stored `qty` is a **non-zero signed integer in the product's
-smallest unit**. Positive means incoming stock; negative means outgoing stock.
+reference unit**. Positive means incoming stock; negative means outgoing stock.
 `incoming_qty` and `outgoing_qty` are read-only display values:
 
 | Movement | `model_ref` example | `qty` |
@@ -71,8 +71,8 @@ Use `inventory_write()` on `ab_inventory_process` from trusted addon Python
 code. The business line must be saved and have `source_id` (linked to a
 product) and `uom_id`. The caller supplies its workflow's stock quantity;
 the inventory service does not read or require a `bonus` field. Inventory
-converts the positive input quantity to the item's smallest unit **exactly**;
-it rejects a fractional smallest-unit result instead of rounding it.
+converts the positive input quantity to the item's reference unit **exactly**;
+it rejects a fractional reference-unit result instead of rounding it.
 `sign=1` is incoming
 and `sign=-1` is outgoing. The default status is `saved`; pass
 `status='pending'` explicitly for observed inbound stock:
@@ -122,7 +122,7 @@ an inventory movement that already exists. Pass `new` for the proposed effect:
 effect = {
     'store_id': store.id,
     'source_id': source.id,
-    'qty': -3,              # signed quantity in the smallest unit
+    'qty': -3,              # signed quantity in the reference unit
     'status': 'pending',    # or 'saved'
 }
 process = self.env['ab_inventory_process']
@@ -169,7 +169,7 @@ batch_quantities = process.get_source_balances(store.id, product_id=product.id)
 ```
 
 These are the two read methods, not four separate APIs. `get_balance()`
-returns one integer in the smallest unit; pass `source_id=source.id` instead
+returns one integer in the reference unit; pass `source_id=source.id` instead
 of `product_id` when only one batch's balance is needed. It returns `0` for
 a depleted or absent source. `get_source_balances()` returns
 `{source_id: quantity}` and omits zero-balance sources by default. For an audit
@@ -211,7 +211,7 @@ line yet; see the [proposed workflow](README.md#recommended-future-module-expiri
   for both stores, and a failure must roll back both effects.
 - For a batch change inside one store, likewise submit a negative and a
   positive line together, with separate source-record IDs. Both quantities
-  must use the smallest unit.
+  must use the reference unit.
 
 ## Reports and UI
 

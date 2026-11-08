@@ -16,7 +16,7 @@ does not read E-Plus or perform accounting entries.
 | --- | --- |
 | `models/ab_inventory.py` | Movement fields, source identity, immutable saved records, and guarded create/write/delete. |
 | `models/ab_inventory_process.py` | The `ab_inventory_process` service: convert quantity, create/update a movement, save it under a store lock, and read balances. |
-| `models/ab_product.py`, `models/ab_product_source.py`, `models/ab_uom.py` | Prevent changes to product/source unit definitions and referenced unit values while pending or saved movements exist. |
+| `models/ab_product.py`, `models/ab_product_source.py`, `models/ab_product_uom.py` | Prevent changes to product/source unit definitions and referenced unit values while pending or saved movements exist. |
 | `models/res_users.py` | Current administrator-managed store assignments (`inventory_store_ids`). |
 | `report/` | Current stock balance and dated period reports. |
 | `security/` | Inventory roles, ACLs, and store-scoped record rules. |
@@ -26,7 +26,7 @@ The movement is the audit record. Other addons call the process service; they
 must not set a product's computed stock fields or write a saved movement's
 quantity or `closing_balance` directly.
 The service also provides `check_operation()` for a business module to check a
-proposed create, write, or unlink using signed smallest-unit stock effects.
+proposed create, write, or unlink using signed reference-unit stock effects.
 See [INTEGRATION.md](INTEGRATION.md#check-a-proposed-operation) for the call
 contract. The ledger's own write and posting checks remain authoritative.
 Product and source unit definitions, including referenced unit conversion
@@ -40,7 +40,7 @@ new product/source/unit definition.
 | --- | --- |
 | `store_id` | Physical store whose stock changes. Every write and balance read requires a valid store. |
 | `source_id` | Product source/batch. `product_id` is derived from this source. |
-| `qty` | Non-zero signed integer in the product's smallest unit: positive is incoming, negative is outgoing. |
+| `qty` | Non-zero signed quantity in the product UoM category reference unit: positive is incoming, negative is outgoing. |
 | `incoming_qty`, `outgoing_qty` | Read-only positive display amounts derived from `qty`; they are not separate stock inputs. |
 | `status='pending'` | Incoming stock is excluded until saved. Outgoing stock reduces current availability while pending. |
 | `status='saved'` | Final stock effect. The movement cannot be edited or deleted. |
@@ -80,9 +80,8 @@ with no linked record are unaffected.
 
 The business line must already exist and have a `source_id` and `uom_id`.
 Pass a **positive** quantity in the line's unit; use `sign=1` for a receipt
-or `sign=-1` for an issue. The service converts exactly to the smallest unit
-and rejects an invalid factor or fractional smallest-unit result. It does
-not round stock quantities. It never reads a `bonus` field: each business
+or `sign=-1` for an issue. The service converts to the product category reference unit with up to
+eight decimal places and rejects invalid factors. It does not round stock quantities. It never reads a `bonus` field: each business
 module decides the quantity to post. For example, a normal line may pass
 `line.qty`, while `ab_purchase` intentionally passes
 `purchase_line.qty + purchase_line.bonus`::
@@ -113,7 +112,7 @@ document. Do not commit between lines or call the process through `sudo()`.
     product_qty = process.get_balance(store.id, product_id=product.id)
     batch_quantities = process.get_source_balances(store.id, product_id=product.id)
 
-These are two methods. `get_balance()` returns one smallest-unit integer;
+These are two methods. `get_balance()` returns one reference-unit quantity;
 pass `source_id=source.id` instead of `product_id` to read one batch. A
 depleted or absent source returns `0`. `get_source_balances()` returns
 `{source_id: qty_small}` and hides zero-balance sources by default. Pass
@@ -139,7 +138,7 @@ The current lookup works as follows:
    Store access is checked before all branch movements are aggregated.
 
 For example, if a store has two sources for an item, with net saved quantities
-of `4` and `0`, its item balance is `4` smallest units.
+of `4` and `0`, its item balance is `4` reference units.
 
 Creating a pending outgoing movement reserves its quantity under a store lock.
 Posting checks physical stock and remaining pending holds under that same
@@ -167,7 +166,7 @@ alone is a snapshot. Pending inbound does not count as available stock.
 
 For holds that expire when a screen is abandoned, add a separate reservation
 table and service. A reservation should identify its store, product, selected
-source, owner draft line or client token, quantity in the smallest unit,
+source, owner draft line or client token, quantity in the reference unit,
 expiry, and state. A single atomic operation must lock the relevant stock
 key, expire stale holds, check `on hand - other active holds`, and create or
 resize the caller's hold. Repeating the same draft-line request must update

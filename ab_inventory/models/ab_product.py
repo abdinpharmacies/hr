@@ -6,7 +6,7 @@ class AbProduct(models.Model):
     _inherit = 'ab_product'
 
     def write(self, vals):
-        if {'unit_s_id', 'unit_m_id', 'unit_l_id'} & vals.keys():
+        if {'uom_category_id', 'uom_id', 'uom_pur_id'} & vals.keys():
             for product_id in sorted(self.ids):
                 self.env.cr.execute(
                     'SELECT id FROM ab_product WHERE id = %s FOR UPDATE',
