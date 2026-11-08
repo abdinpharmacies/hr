@@ -32,10 +32,10 @@ class OdooReplicationRun(models.AbstractModel):
         self.replicate_model('ab_usage_manner')
 
         # Group (4)
-        self.replicate_model('ab_uom_type')
-        self.replicate_model('ab_uom')
 
         # Group (5)
+        self.replicate_model('ab_product_uom_category')
+        self.replicate_model('ab_product_uom')
         self.replicate_model('ab_product_card')
         self.replicate_model('ab_product')
         self.replicate_model('ab_product_barcode', limit=10000,

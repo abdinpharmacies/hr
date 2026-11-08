@@ -309,8 +309,8 @@ class TestReplicationOverride(TransactionCase):
             'ab_usage_causes',
             'ab_usage_manner',
             'ab_product_card',
-            'ab_uom_type',
-            'ab_uom',
+            'ab_product_uom_category',
+            'ab_product_uom',
             'ab_product',
             'ab_promo_program',
         }
