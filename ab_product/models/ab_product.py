@@ -28,9 +28,9 @@ class AbdinProduct(models.Model):
                                column2='tag_id')
     barcode_ids = fields.Many2many(comodel_name='ab_product_barcode', relation='ab_product_barcode_rel',
                                    column1='product_id', column2='barcode_id')
-    unit_l_id = fields.Many2one('ab_uom', domain=[('unit_size', '=', 'large')], required=False)
-    unit_m_id = fields.Many2one('ab_uom', domain=[('unit_size', '=', 'medium')], required=False)
-    unit_s_id = fields.Many2one('ab_uom', domain=[('unit_size', '=', 'small')], required=False)
+    unit_l_id = fields.Many2one('ab_product_uom', compute='_compute_unit_positions')
+    unit_m_id = fields.Many2one('ab_product_uom', compute='_compute_unit_positions')
+    unit_s_id = fields.Many2one('ab_product_uom', compute='_compute_unit_positions')
     uom_category_id = fields.Many2one('ab_product_uom_category', string='UoM Category')
 
     uom_id = fields.Many2one(
@@ -44,7 +44,7 @@ class AbdinProduct(models.Model):
         string='Default UoM In Purchase',
         domain="[('category_id', '=', uom_category_id)]",
     )
-    uom_ids = fields.Many2many('ab_uom', compute='_compute_uom_ids')
+    uom_ids = fields.Many2many('ab_product_uom', compute='_compute_uom_ids')
     allow_sale = fields.Boolean(default=True)
     allow_purchase = fields.Boolean(default=True)
     active = fields.Boolean(default=True)
@@ -138,77 +138,18 @@ class AbdinProduct(models.Model):
             return domain
         return [(0, '=', 1)]
 
-    @api.depends('unit_l_id', 'unit_m_id', 'unit_s_id')
+    @api.depends('uom_category_id', 'uom_category_id.uom_ids')
     def _compute_uom_ids(self):
-        for rec in self:
-            rec.uom_ids = self.env['ab_uom'].sudo().search([('id', 'in', [
-                rec.unit_l_id.id,
-                rec.unit_m_id.id,
-                rec.unit_s_id.id,
-            ])])
+        for product in self:
+            product.uom_ids = product.uom_category_id.uom_ids.filtered('active')
 
-    def qty_from_small(self, qty, unit_size):
-        """
-         :param unit_size: 'large', 'medium' or 'small'
-         :param qty: absolute final inventory quantity
-         :return: convert from small qty to other units.
-         """
-        if not (self and qty and unit_size):
-            return 0
-
-        self.ensure_one()
-        unit_s_no = self.unit_s_id.unit_no
-        unit_m_no = self.unit_m_id.unit_no
-        if not (qty / unit_m_no).is_integer():
-            raise ValidationError(_("CONVERTING FROM SMALL ERROR: SMALL QTY INCONSISTENT WITH MEDIUM QTY, "
-                                    "Product ID: %d" % self.id))
-
-        if unit_size == 'large':
-            return qty / unit_s_no
-        elif unit_size == 'medium':
-            return qty * unit_m_no / unit_s_no
-        else:  # 'small'
-            return qty
-
-    def qty_to_small(self, qty, unit_size):
-        """
-         :param unit_size: 'large', 'medium' or 'small'
-         :param qty: absolute final inventory quantity
-         :return: convert qty from other units to small.
-         """
-        if not (self and qty and unit_size):
-            return 0
-
-        self.ensure_one()
-        unit_s_no = self.unit_s_id.unit_no
-        unit_m_no = self.unit_m_id.unit_no
-        # Consider Medium Unit
-        if abs(int((qty * unit_m_no)) - qty * unit_m_no) > 0.1:
-            raise ValidationError(_("CONVERTING TO SMALL ERROR: SMALL QTY INCONSISTENT WITH MEDIUM QTY, "
-                                    "Product ID: %d" % self.id))
-
-        if unit_size == 'large':
-            qty_in_small = qty * unit_s_no
-        elif unit_size == 'medium':
-            qty_in_small = (qty * unit_s_no) / unit_m_no
-        else:
-            qty_in_small = qty
-
-        # @todo FIX this
-        qty_in_small = round(qty_in_small)
-
-        return qty_in_small
-
-    def btn_edit_product_main_data(self):
-        self.ensure_one()
-        return {
-            'view_mode': 'form',
-            'res_model': 'ab_product_card',
-            'type': 'ir.actions.act_window',
-            'target': 'new',
-            'res_id': self.product_card_id.id,
-            'views': [[False, 'form']]
-        }
+    @api.depends('uom_category_id', 'uom_category_id.uom_ids.factor')
+    def _compute_unit_positions(self):
+        for product in self:
+            units = product.uom_category_id.uom_ids.filtered('active').sorted('factor', reverse=True)
+            product.unit_l_id = units[:1]
+            product.unit_s_id = units[-1:] if units else False
+            product.unit_m_id = units[1:2] if len(units) > 2 else False
 
     @api.model
     def _search_display_name(self, operator, value):

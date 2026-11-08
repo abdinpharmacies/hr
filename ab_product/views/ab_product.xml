@@ -17,9 +17,6 @@
                     <field name="location" optional="show"/>
                     <field name="is_priced" optional="show"/>
                     <field name="uom_id" optional="hide"/>
-                    <!--                    <field name="unit_l_id" string="Large Unit" optional="hide"/>-->
-                    <!--                    <field name="unit_m_id" string="Medium Unit" context="{'default_unit_size':'medium'}" optional="hide"/>-->
-                    <!--                    <field name="unit_s_id" string="Small Unit" context="{'default_unit_size':'small'}" optional="hide"/>-->
                     <field name="allow_sale" widget="boolean_toggle" optional="hide"/>
                     <field name="allow_purchase" widget="boolean_toggle" optional="hide"/>
                     <field name="tag_ids" widget="many2many_tags" optional="hide"/>
@@ -46,12 +43,7 @@
                             <field name="default_cost"/>
                             <field name="default_reference_cost"/>
                         </group>
-                        <button name="btn_edit_product_main_data" type="object" icon="fa-edit"
-                                class="btn-primary"/>
                         <group string="Product Details">
-                            <!--                            <field name="unit_l_id" string="Large Unit"/>-->
-                            <!--                            <field name="unit_m_id" string="Medium Unit" context="{'default_unit_size':'medium'}"/>-->
-                            <!--                            <field name="unit_s_id" string="Small Unit" context="{'default_unit_size':'small'}"/>-->
 
                             <field name="u_s_num"/>
                             <field name="u_s_name"/>

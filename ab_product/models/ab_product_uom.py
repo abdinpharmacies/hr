@@ -30,6 +30,8 @@ class AbProductUom(models.Model):
 
     def convert_qty(self, qty, to_uom):
         self.ensure_one()
-        if not qty or not to_uom or self.category_id != to_uom.category_id:
-            return 0.0
-        return (qty * self.factor) / (to_uom.factor or 1.0)
+        to_uom.ensure_one()
+        if (not self.active or not to_uom.active or not self.category_id or self.category_id != to_uom.category_id
+                or self.factor <= 0 or to_uom.factor <= 0):
+            raise ValidationError(_("Select active units from the same product unit category."))
+        return qty * self.factor / to_uom.factor

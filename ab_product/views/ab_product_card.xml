@@ -86,11 +86,9 @@
                                 <field name="product_ids">
                                     <list editable="bottom">
                                         <field name="id"/>
-                                        <field name="unit_l_id" string="Large Unit"/>
-                                        <field name="unit_m_id" string="Medium Unit"
-                                               context="{'default_unit_size':'medium'}"/>
-                                        <field name="unit_s_id" string="Small Unit"
-                                               context="{'default_unit_size':'small'}"/>
+                                        <field name="uom_category_id"/>
+                                        <field name="uom_id"/>
+                                        <field name="uom_pur_id"/>
                                         <field name="allow_sale" widget="boolean_toggle"/>
                                         <field name="allow_purchase" widget="boolean_toggle"/>
                                         <field name="tag_ids" widget="many2many_tags"/>

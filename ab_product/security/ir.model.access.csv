@@ -1,8 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_ab_product_origin_user,access_ab_product_origin_user,model_ab_product_origin,base.group_user,1,0,0,0
 access_ab_usage_causes_user,access_ab_usage_causes_user,model_ab_usage_causes,base.group_user,1,0,0,0
-access_ab_uom_type_user,access_ab_uom_type_user,model_ab_uom_type,base.group_user,1,0,0,0
-access_ab_uom_user,access_ab_uom_user,model_ab_uom,base.group_user,1,0,0,0
 access_ab_product_card_user,access_ab_product_card_user,model_ab_product_card,base.group_user,1,0,0,0
 access_ab_scientific_group_user,access_ab_scientific_group_user,model_ab_scientific_group,base.group_user,1,0,0,0
 access_ab_product_tag_user,access_ab_product_tag_user,model_ab_product_tag,base.group_user,1,0,0,0
