@@ -39,7 +39,7 @@ class AbdinPurchaseDetails(models.Model):
 
     @api.onchange('product_id')
     def _onchange_product(self):
-        self.uom_id = self.product_id.unit_l_id.id
+        self.uom_id = (self.product_id.uom_pur_id or self.product_id.uom_id).id
 
     @api.depends('unit_taxes_value', 'bonus', 'qty')
     def _compute_line_taxes_value(self):

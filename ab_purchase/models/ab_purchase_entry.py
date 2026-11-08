@@ -44,7 +44,7 @@ class PurchaseEntry(models.Model):
                 domain &= fields.Domain('name', 'ilike', query) | fields.Domain('code', 'ilike', query)
             return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code,
                      'price': rec.default_price, 'purchase_price': rec.default_cost,
-                     'uom_id': rec.unit_l_id.id,
+                     'uom_id': (rec.uom_pur_id or rec.uom_id).id,
                      'units': [{'id': unit.id, 'name': unit.display_name} for unit in rec.uom_ids]}
                     for rec in self.env['ab_product'].search(domain, limit=15)]
         if kind == 'supplier':

@@ -139,13 +139,6 @@ class PurchaseNoticeLine(models.Model):
             balance = self.env['ab_inventory_process'].get_balance(
                 store.id, source_id=rec.source_id.id,
             )
-            unit_size = rec.uom_id.unit_size
-            smallest_per_large = rec.product_id.unit_s_id.unit_no or 0
-            if unit_size == 'large':
-                rec.available_qty = balance / smallest_per_large if smallest_per_large else 0
-            elif unit_size == 'medium':
-                medium_per_large = rec.product_id.unit_m_id.unit_no or 0
-                rec.available_qty = (balance * medium_per_large / smallest_per_large
-                                     if smallest_per_large else 0)
-            else:
-                rec.available_qty = balance
+            factor = (rec.uom_id.factor if rec.uom_id and rec.uom_id.active
+                      and rec.uom_id.category_id == rec.product_id.uom_category_id else 0)
+            rec.available_qty = balance / float(factor) if factor else 0
