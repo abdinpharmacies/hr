@@ -3373,6 +3373,12 @@ msgstr "خدمة العملاء"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_legacy_customer__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_carousel_slide__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_payment_transaction__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
@@ -3522,6 +3528,12 @@ msgstr "كيف يمكننا مساعدتك؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_legacy_customer__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_carousel_slide__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_payment_transaction__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__id
 msgid "ID"
 msgstr "المعرّف"
