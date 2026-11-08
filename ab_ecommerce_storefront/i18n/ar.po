@@ -13817,3 +13817,62 @@ msgstr "ترجمة SEO الحالية تحتاج إلى مراجعة يدوية"
 #~ msgstr ""
 #~ "حذف الصنف يلغي حجزه على الموقع. يتم التحقق النهائي من توافر المخزون عند "
 #~ "إتمام الطلب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_signup_otp.py:0
+msgid "A new verification code has been queued for delivery."
+msgstr "تم طلب إرسال رمز تحقق جديد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid ""
+"Enter the 6-digit code sent to your email to complete your first sign-in."
+msgstr ""
+"أدخل الرمز المكوّن من 6 أرقام المرسل إلى بريدك الإلكتروني لإتمام تسجيل "
+"الدخول لأول مرة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid ""
+"Enter the 6-digit code sent to your linked Telegram account to complete your"
+" first sign-in."
+msgstr ""
+"أدخل الرمز المكوّن من 6 أرقام المرسل إلى حسابك المرتبط على تليجرام لإتمام "
+"تسجيل الدخول لأول مرة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_signup_otp_pending
+msgid "First Sign-in Verification Required"
+msgstr "التحقق مطلوب عند أول تسجيل دخول"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__signup_otp
+msgid "First sign-in verification"
+msgstr "التحقق عند أول تسجيل دخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid "Verification code"
+msgstr "رمز التحقق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid "Verify and sign in"
+msgstr "تأكيد الرمز وتسجيل الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid "Verify your account"
+msgstr "تحقق من حسابك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid ""
+"Your account stays locked until you enter the code. Codes expire shortly and"
+" can only be used once."
+msgstr ""
+"لن تتمكن من الدخول إلى حسابك حتى تُدخل الرمز. تنتهي صلاحية الرمز بعد وقت "
+"قصير، ويُستخدم مرة واحدة فقط."

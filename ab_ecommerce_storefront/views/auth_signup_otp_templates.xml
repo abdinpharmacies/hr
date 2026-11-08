@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="auth_signup_otp" name="First sign-in verification">
+        <t t-call="website.login_layout">
+            <div class="ab-auth-form">
+                <div class="ab-auth-form-head"><h2>Verify your account</h2></div>
+                <p>Enter the 6-digit code sent to your linked Telegram account to complete your first sign-in.</p>
+                <p>Your account stays locked until you enter the code. Codes expire shortly and can only be used once.</p>
+                <p t-if="error" id="ab_signup_otp_error" class="alert alert-danger" role="alert" t-out="error"/>
+                <p t-if="message" class="alert alert-success" role="status" t-out="message"/>
+                <form action="/ab_storefront/auth/signup-otp" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="ab-auth-field">
+                        <label for="ab_signup_otp_code">Verification code</label>
+                        <div class="ab-auth-input">
+                            <input id="ab_signup_otp_code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required="required" autofocus="autofocus" dir="ltr" t-att-aria-describedby="'ab_signup_otp_error' if error else None"/>
+                        </div>
+                    </div>
+                    <button type="submit" name="action" value="verify" class="btn btn-primary ab-auth-primary">Verify and sign in</button>
+                </form>
+                <form action="/ab_storefront/auth/signup-otp" method="post" class="mt-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" name="action" value="resend" class="btn ab-auth-secondary">Resend code</button>
+                    <button type="submit" name="action" value="cancel" class="btn btn-link">Cancel and return to sign in</button>
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>

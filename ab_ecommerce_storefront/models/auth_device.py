@@ -63,7 +63,7 @@ class AuthDeviceService(models.AbstractModel):
         return Device.browse()
 
     def _remember_browser(self, user, name):
-        if not user._ab_device_protected():
+        if not user._ab_device_protected() or user._ab_needs_signup_otp():
             raise AccessDenied()
         self._device_lock(user)
         token = secrets.token_urlsafe(32)
@@ -93,7 +93,7 @@ class AuthDeviceService(models.AbstractModel):
             self.env["ab_storefront_auth_recovery_code"].sudo().search(domain & fields.Domain("used_at", "=", False)).write({"used_at": now})
 
     def _generate_recovery_codes(self, user):
-        if not user._ab_device_protected():
+        if not user._ab_device_protected() or user._ab_needs_signup_otp():
             raise AccessDenied()
         self._device_lock(user)
         Code = self.env["ab_storefront_auth_recovery_code"].sudo()
@@ -119,7 +119,7 @@ class AuthDeviceService(models.AbstractModel):
         return bool(bucket and bucket.expires_at > now)
 
     def _new_device_login(self, user, browser, ip, name):
-        if not user._ab_device_protected():
+        if not user._ab_device_protected() or user._ab_needs_signup_otp():
             raise AccessDenied()
         if not self._rate_allow("device-login-attempt-ip", ip, 30, 300):
             return False
@@ -154,6 +154,8 @@ class AuthDeviceService(models.AbstractModel):
         return challenge if challenge and challenge.user_id == user else challenge.browse()
 
     def _complete_device_login(self, user, token, browser, recovery_code=None):
+        if user._ab_needs_signup_otp():
+            return False
         challenge = self._device_challenge(user, token, browser)
         if not challenge or challenge.decision == "rejected":
             return False

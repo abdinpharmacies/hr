@@ -66,6 +66,7 @@
         "views/portal.xml",
         "views/auth_security_templates.xml",
         "views/auth_device_templates.xml",
+        "views/auth_signup_otp_templates.xml",
         "views/sale_order_report.xml",
         "views/prescription_order_templates.xml",
         "views/empty_states.xml",

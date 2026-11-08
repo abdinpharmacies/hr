@@ -222,6 +222,8 @@ class StorefrontAuthSecurity(http.Controller):
                     request.session.pop("ab_auth_signup_name", None)
                     from .auth_device import StorefrontAuthDevice
                     device = StorefrontAuthDevice()
+                    if user._ab_needs_signup_otp():
+                        return request.redirect(user._mfa_url(), 303)
                     if request.session.get("pre_uid") == user.id:
                         return device._finish(user, remember=post.get("remember") == "1")
                     device._mark_verified(user)

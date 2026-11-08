@@ -13170,3 +13170,56 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
 msgid "Existing SEO translation needs manual review"
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_signup_otp.py:0
+msgid "A new verification code has been queued for delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid ""
+"Enter the 6-digit code sent to your email to complete your first sign-in."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid ""
+"Enter the 6-digit code sent to your linked Telegram account to complete your"
+" first sign-in."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_signup_otp_pending
+msgid "First Sign-in Verification Required"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__signup_otp
+msgid "First sign-in verification"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid "Verification code"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid "Verify and sign in"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid "Verify your account"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_otp
+msgid ""
+"Your account stays locked until you enter the code. Codes expire shortly and"
+" can only be used once."
+msgstr ""

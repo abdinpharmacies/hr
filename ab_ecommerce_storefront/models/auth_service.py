@@ -217,7 +217,7 @@ class AuthService(models.AbstractModel):
             raise ValidationError(_("Complete Telegram phone verification first."))
         self._lock("identity:phone:" + challenge.value)
         self._assert_available_identity(None, "phone", challenge.value)
-        values = dict(values, login=challenge.value, phone=challenge.value, email=False)
+        values = dict(values, login=challenge.value, phone=challenge.value, email=False, ab_signup_otp_pending=True)
         user = self.env["res.users"].sudo().with_context(no_reset_password=True)._signup_create_user(values)
         user.write({"email": False})
         self._set_identity(user, "phone", challenge.value)
