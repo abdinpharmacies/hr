@@ -1,4 +1,16 @@
 .ab-auth-page {
+    .o_caps_lock_warning_text.text-danger {
+        display: inline-block;
+        margin-top: .5rem;
+        padding: .4rem .65rem;
+        color: #805500 !important;
+        background: #fff3d6;
+        border: 1px solid #e9c874;
+        border-radius: .5rem;
+        font-size: var(--ab-font-size-080);
+        font-weight: var(--ab-font-weight-semi-bold);
+    }
+
     .ab-auth-input {
         > svg {
             order: 2;
