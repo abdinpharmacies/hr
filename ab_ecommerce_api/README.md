@@ -38,8 +38,8 @@ invalidate the session. Tokens are stored as SHA-256 hashes and must be kept in
 device secure storage. Each customer can have at most 20 active device sessions
 per website; issuing another session revokes the least recently used sessions.
 
-When password login returns `verification_required`, approve the existing
-Telegram device challenge and call `/auth/verify-device`. Other MFA schemes and
+When password login returns `verification_required` with `challenge_token`,
+approve the existing Telegram device challenge and call `/auth/verify-device`. Other MFA schemes and
 Google sign-in use the browser flow:
 
 1. Generate a random PKCE verifier of 43–128 URL-safe characters on the device.
@@ -51,6 +51,15 @@ Google sign-in use the browser flow:
 6. Poll `/auth/browser/token` every 10 seconds with `flow_token` and the original
    `code_verifier`. It returns `authorization_pending` until approved, then the
    token pair. The flow expires in five minutes and can be redeemed only once.
+
+New phone registrations return `verification_required: true`,
+`verification_type: "signup_otp"`, and `verification_url: "/web/login"` without
+access or refresh tokens. Open this path on the storefront origin, sign in with
+the new credentials, and complete the first-sign-in OTP there. Then retry API
+login. OTP submission is currently a website flow. Pending phone accounts cannot
+receive bearer credentials through login, registration or device approval. Email
+registration and login issue credentials without this OTP step; email confirmation
+remains separate and does not block access.
 
 Email registration respects Odoo's signup setting. Phone registration reuses
 Telegram phone verification. Recovery preserves the existing channel queues,

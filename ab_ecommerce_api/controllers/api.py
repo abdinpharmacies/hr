@@ -31,6 +31,8 @@ class EcommerceApi(http.Controller):
         return request.env["ab_storefront_auth_service"]
 
     def _tokens(self, user, device=""):
+        if user._ab_needs_signup_otp():
+            return {"verification_required": True, "verification_url": "/web/login", "verification_type": "signup_otp"}
         session, tokens = request.env["ab_ecommerce_api_session"]._issue(user, request.website, device)
         tokens["user"] = {"id": user.id, "name": user.name}
         return tokens
@@ -195,6 +197,8 @@ class EcommerceApi(http.Controller):
             {"interactive": True, "REMOTE_ADDR": request.httprequest.remote_addr})
         user = request.env["res.users"].sudo().browse(info["uid"])
         request.env["ab_ecommerce_api_session"]._assert_customer(user, request.website)
+        if user._ab_needs_signup_otp():
+            return self._tokens(user)
         if user._mfa_url():
             if user._mfa_url() != "/ab_storefront/auth/device":
                 raise ApiError("mfa_required", 403)

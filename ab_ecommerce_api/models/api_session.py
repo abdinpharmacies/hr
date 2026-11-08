@@ -72,6 +72,8 @@ class EcommerceApiSession(models.Model):
     @api.model
     def _issue(self, user, website, device_name=""):
         self._assert_customer(user, website)
+        if user._ab_needs_signup_otp():
+            raise AccessDenied()
         service = self.env["ab_storefront_auth_service"]
         service._lock(f"api-sessions:{website.id}:{user.id}")
         excess_sessions = self.sudo().search([
