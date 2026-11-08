@@ -21,6 +21,7 @@ class OdooConnectionSingleton:
     _user = None
     _db_name = None
     _password_param = None
+    _server_version_info = None
     _checking = False
 
     # must pass env ot OdooConnectionSingleton(env) (__new__ is replacement for __init__)
@@ -49,10 +50,16 @@ class OdooConnectionSingleton:
     def _setup_connection_params(self, env):
         """Set up connection parameters only once."""
         conf_mo = env['ir.config_parameter'].sudo()
-        self._srv = conf_mo.get_param('server_address')
-        self._user = conf_mo.get_param('server_user')
-        self._db_name = conf_mo.get_param('server_db')
-        self._password_param = self._decrypt_password(conf_mo.get_param('server_password'))
+        self._srv = conf_mo.get_param('server_address', "")
+        self._user = conf_mo.get_param('server_user', "")
+        self._db_name = conf_mo.get_param('server_db', "")
+        self._password_param = self._decrypt_password(conf_mo.get_param('server_password', ""))
+        sync_secret = config.get('sync_secret', "")
+
+        self._headers = [
+            ("x-sync-key", sync_secret),
+        ]
+        self._server_version_info = None
 
         # Initialize connection
         self.connect_to_server()
@@ -66,9 +73,9 @@ class OdooConnectionSingleton:
 
     def connect_to_server(self):
         try:
-            common = client.ServerProxy(f"{self._srv}/xmlrpc/2/common")
+            common = client.ServerProxy(f"{self._srv}/xmlrpc/2/common", headers=self._headers)
             uid = common.authenticate(self._db_name, self._user, self._password_param, {})
-            conn = client.ServerProxy(f"{self._srv}/xmlrpc/2/object", allow_none=True)
+            conn = client.ServerProxy(f"{self._srv}/xmlrpc/2/object", allow_none=True, headers=self._headers)
 
             if uid:
                 self._conn = conn
@@ -127,6 +134,28 @@ class OdooConnectionSingleton:
                 raise UserError(_("Reconnection attempt failed."))
 
         return self._conn, self._uid, self._db, self._password
+
+    def get_server_version_info(self):
+        """Return and cache version metadata from the remote Odoo server."""
+        if self._server_version_info is None:
+            try:
+                common = client.ServerProxy(
+                    f"{self._srv}/xmlrpc/2/common",
+                    headers=self._headers,
+                )
+                version_info = common.version()
+            except Exception as error:
+                raise UserError(_(
+                    "Could not determine the remote Odoo server version."
+                )) from error
+
+            if not isinstance(version_info, dict):
+                raise UserError(_(
+                    "The remote Odoo server returned invalid version information."
+                ))
+            self._server_version_info = version_info
+
+        return self._server_version_info
 
     def execute_kw(self, model_name, method, params, kwargs=None):
         """
