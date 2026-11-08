@@ -1391,6 +1391,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__company_id
 msgid "Company"
 msgstr ""
 
@@ -1528,6 +1529,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__create_uid
 msgid "Created by"
 msgstr ""
 
@@ -1544,6 +1546,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__create_date
 msgid "Created on"
 msgstr ""
 
@@ -1743,6 +1746,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__display_name
 msgid "Display Name"
 msgstr ""
 
@@ -2316,6 +2320,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__id
 msgid "ID"
 msgstr ""
 
@@ -2470,6 +2475,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__write_uid
 msgid "Last Updated by"
 msgstr ""
 
@@ -2488,6 +2494,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__write_date
 msgid "Last Updated on"
 msgstr ""
 
@@ -2770,6 +2777,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__offer_id
 msgid "Offer"
 msgstr ""
 
@@ -2847,6 +2855,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__order_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__order_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__order_id
 msgid "Order"
 msgstr ""
 
@@ -2947,6 +2956,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__partner_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__partner_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__partner_id
 msgid "Partner"
 msgstr ""
 
@@ -13283,4 +13293,65 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
 msgid "Your account is already linked. Welcome back!"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__once_per_customer
+msgid ""
+"Allow this offer on only one confirmed order per customer, including their "
+"delivery addresses. Cancelling the order does not restore eligibility."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order_line__ab_storefront_price_offer_id
+msgid "Applied Storefront Price Offer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Applied offers are managed automatically."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__once_per_customer
+msgid "Once per Customer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Sign in with an eligible customer account to use this offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_offer_use
+msgid "Storefront Offer Use"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_offer_use_offer_customer_unique
+msgid "This customer has already used this offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"This customer has already used this offer. Update the cart before "
+"continuing."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"This offer has already been used. Archive it to preserve customer usage "
+"history."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer is referenced by an order. Archive it instead."
 msgstr ""

@@ -1,5 +1,7 @@
 from math import isfinite
 
+from psycopg2 import IntegrityError
+
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 from odoo.http import request
@@ -14,6 +16,10 @@ class StorefrontOffer(models.Model):
 
     name = fields.Char(required=True, translate=True, tracking=True)
     active = fields.Boolean(default=True, tracking=True)
+    once_per_customer = fields.Boolean(
+        string="Once per Customer", tracking=True,
+        help="Allow this offer on only one confirmed order per customer, including their delivery addresses. Cancelling the order does not restore eligibility.",
+    )
     sequence = fields.Integer(default=10)
     website_id = fields.Many2one(
         "website", required=True, ondelete="restrict", tracking=True,
@@ -211,7 +217,66 @@ class StorefrontOffer(models.Model):
             "use_odoo_promotion", "program_id",
         }:
             self._sync_offer_rules()
+        if vals.get("once_per_customer"):
+            self._remember_confirmed_offer_uses()
         return result
+
+    def _remember_confirmed_offer_uses(self):
+        self.check_access("write")
+        for offer in self.sudo():
+            programs = offer.with_context(active_test=False).generated_program_ids
+            if offer.use_odoo_promotion:
+                programs |= offer.program_id
+            lines = self.env["sale.order.line"].sudo().search(
+                fields.Domain("order_id.website_id", "=", offer.website_id.id)
+                & fields.Domain("company_id", "=", offer.company_id.id)
+                & fields.Domain("order_id.state", "=", "sale")
+                & (
+                    fields.Domain("ab_storefront_price_offer_id", "=", offer.id)
+                    | fields.Domain("reward_id.program_id", "in", programs.ids)
+                ),
+            )
+            uses = self.env["ab_storefront_offer_use"].sudo()
+            partners = set(uses.search([("offer_id", "=", offer.id)]).partner_id.ids)
+            for order in lines.order_id.sorted(lambda order: (order.date_order, order.id)):
+                partner = order.partner_id.commercial_partner_id
+                if partner.id in partners:
+                    continue
+                try:
+                    with self.env.cr.savepoint():
+                        uses.create({"offer_id": offer.id, "partner_id": partner.id, "order_id": order.id})
+                except IntegrityError as error:
+                    if error.diag.constraint_name != "ab_storefront_offer_use_offer_customer_unique":
+                        raise
+                partners.add(partner.id)
+
+    def unlink(self):
+        self.check_access("unlink")
+        if self.env["ab_storefront_offer_use"].sudo().search_count([("offer_id", "in", self.ids)]):
+            raise ValidationError(_("This offer has already been used. Archive it to preserve customer usage history."))
+        if self.env["sale.order.line"].sudo().search_count([
+            ("ab_storefront_price_offer_id", "in", self.ids),
+        ]):
+            raise ValidationError(_("This offer is referenced by an order. Archive it instead."))
+        programs = self.sudo().with_context(active_test=False).generated_program_ids
+        programs.write({"active": False, "ab_storefront_offer_id": False})
+        self.sudo().price_rule_ids.unlink()
+        return super().unlink()
+
+    @api.model
+    def _unavailable_for_customer(self, website, partner, order=None):
+        offers = self.sudo().with_context(active_test=False).search([
+            ("website_id", "=", website.id), ("company_id", "=", website.company_id.id),
+            ("once_per_customer", "=", True),
+        ])
+        if not partner or partner == website.user_id.partner_id:
+            return offers
+        uses = self.env["ab_storefront_offer_use"].sudo().search([
+            ("offer_id", "in", offers.ids),
+            ("partner_id", "=", partner.commercial_partner_id.id),
+            ("order_id", "!=", order.id if order else False),
+        ])
+        return uses.offer_id
 
     def _sync_offer_rules(self):
         self.check_access("write")
@@ -270,6 +335,96 @@ class LoyaltyProgram(models.Model):
     ab_storefront_offer_id = fields.Many2one("ab_storefront_offer", copy=False, ondelete="restrict")
 
 
+class StorefrontOfferUse(models.Model):
+    _name = "ab_storefront_offer_use"
+    _description = "Storefront Offer Use"
+    _check_company_auto = True
+
+    offer_id = fields.Many2one("ab_storefront_offer", required=True, ondelete="restrict", index=True)
+    partner_id = fields.Many2one("res.partner", required=True, ondelete="restrict", index=True)
+    order_id = fields.Many2one("sale.order", required=True, ondelete="restrict", check_company=True)
+    company_id = fields.Many2one(related="offer_id.company_id", store=True)
+
+    _offer_customer_unique = models.Constraint(
+        "UNIQUE(offer_id, partner_id)",
+        "This customer has already used this offer.",
+    )
+
+
+class SaleOrder(models.Model):
+    _inherit = "sale.order"
+
+    def _ab_applied_storefront_offers(self):
+        self.ensure_one()
+        offers = self.order_line.ab_storefront_price_offer_id.sudo()
+        programs = self.order_line.filtered("is_reward_line").reward_id.program_id
+        if programs:
+            offers |= self.env["ab_storefront_offer"].sudo().with_context(active_test=False).search([
+                "|", ("generated_program_ids", "in", programs.ids),
+                "&", ("use_odoo_promotion", "=", True), ("program_id", "in", programs.ids),
+            ])
+        return offers
+
+    def _ab_check_offer_eligibility(self):
+        for order in self:
+            order.check_access("write")
+            offers = order._ab_applied_storefront_offers().filtered("once_per_customer")
+            if not offers:
+                continue
+            if (
+                not order.website_id or not order.partner_id
+                or order.partner_id == order.website_id.user_id.partner_id
+                or any(offer.website_id != order.website_id or offer.company_id != order.company_id for offer in offers)
+            ):
+                raise ValidationError(_("Sign in with an eligible customer account to use this offer."))
+            if self.env["ab_storefront_offer_use"].sudo().search_count([
+                ("offer_id", "in", offers.ids),
+                ("partner_id", "=", order.partner_id.commercial_partner_id.id),
+                ("order_id", "!=", order.id),
+            ]):
+                raise ValidationError(_("This customer has already used this offer. Update the cart before continuing."))
+
+    def _get_program_domain(self):
+        domain = fields.Domain(super()._get_program_domain())
+        if self.website_id:
+            excluded = self.env["ab_storefront_offer"]._unavailable_for_customer(
+                self.website_id, self.partner_id, self,
+            )
+            programs = excluded.with_context(active_test=False).generated_program_ids | excluded.filtered("use_odoo_promotion").program_id
+            domain &= fields.Domain("id", "not in", programs.ids)
+        return domain
+
+    def _check_cart_is_ready_to_be_paid(self):
+        self._ab_check_offer_eligibility()
+        return super()._check_cart_is_ready_to_be_paid()
+
+    def action_confirm(self):
+        self._ab_check_offer_eligibility()
+        result = super().action_confirm()
+        for order in self.filtered(lambda current: current.state == "sale"):
+            for offer in order._ab_applied_storefront_offers():
+                uses = self.env["ab_storefront_offer_use"].sudo()
+                existing = uses.search([
+                    ("offer_id", "=", offer.id),
+                    ("partner_id", "=", order.partner_id.commercial_partner_id.id),
+                ])
+                if existing and (not offer.once_per_customer or existing.order_id == order):
+                    continue
+                try:
+                    with self.env.cr.savepoint():
+                        uses.create({
+                            "offer_id": offer.id,
+                            "partner_id": order.partner_id.commercial_partner_id.id,
+                            "order_id": order.id,
+                        })
+                except IntegrityError as error:
+                    if error.diag.constraint_name != "ab_storefront_offer_use_offer_customer_unique":
+                        raise
+                    if offer.once_per_customer:
+                        raise ValidationError(_("This customer has already used this offer. Update the cart before continuing.")) from error
+        return result
+
+
 class ProductPricelist(models.Model):
     _inherit = "product.pricelist"
 
@@ -282,13 +437,23 @@ class ProductPricelist(models.Model):
         website_id = kwargs.get("ab_storefront_website_id")
         if website_id is None:
             website_id = request.website.id if request and getattr(request, "website", False) else False
-        return domain & (
+        domain &= (
             fields.Domain("ab_storefront_offer_id", "=", False)
             | fields.Domain("ab_storefront_offer_id", "any!", [
                 ("active", "=", True), ("offer_type", "=", "price"),
                 ("use_odoo_promotion", "=", False), ("website_id", "=", website_id),
             ])
         )
+        website = self.env["website"].browse(website_id)
+        if website:
+            partner = kwargs.get("ab_storefront_partner")
+            if partner is None:
+                partner = self.env.user.partner_id
+            excluded = self.env["ab_storefront_offer"]._unavailable_for_customer(
+                website, partner, kwargs.get("ab_storefront_order"),
+            )
+            domain &= fields.Domain("ab_storefront_offer_id", "not in", excluded.ids)
+        return domain
 
 
 class ProductPricelistItem(models.Model):
@@ -311,8 +476,40 @@ class ProductPricelistItem(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    ab_storefront_price_offer_id = fields.Many2one(
+        "ab_storefront_offer", string="Applied Storefront Price Offer",
+        compute="_compute_ab_storefront_price_offer", store=True,
+        copy=False, ondelete="restrict", check_company=True,
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if any("ab_storefront_price_offer_id" in vals for vals in vals_list):
+            raise AccessError(_("Applied offers are managed automatically."))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if "ab_storefront_price_offer_id" in vals:
+            raise AccessError(_("Applied offers are managed automatically."))
+        return super().write(vals)
+
+    def copy_data(self, default=None):
+        values_list = super().copy_data(default)
+        for line, values in zip(self, values_list):
+            if line.ab_storefront_price_offer_id.sudo().once_per_customer:
+                for name in ("price_unit", "technical_price_unit", "discount"):
+                    values.pop(name, None)
+        return values_list
+
+    @api.depends("price_unit", "discount", "product_id")
+    def _compute_ab_storefront_price_offer(self):
+        for line in self:
+            line.ab_storefront_price_offer_id = line.pricelist_item_id.sudo().ab_storefront_offer_id
+
     def _get_pricelist_kwargs(self):
         return {
             **super()._get_pricelist_kwargs(),
             "ab_storefront_website_id": self.order_id.website_id.id,
+            "ab_storefront_partner": self.order_id.partner_id,
+            "ab_storefront_order": self.order_id,
         }

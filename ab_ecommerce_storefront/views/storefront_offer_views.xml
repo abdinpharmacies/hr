@@ -11,6 +11,7 @@
                 <field name="offer_type" widget="badge"/>
                 <field name="website_id"/>
                 <field name="use_odoo_promotion"/>
+                <field name="once_per_customer" optional="show"/>
                 <field name="date_from" optional="show"/>
                 <field name="date_to" optional="show"/>
                 <field name="active" widget="boolean_toggle"/>
@@ -40,6 +41,7 @@
                         </group>
                         <group>
                             <field name="use_odoo_promotion"/>
+                            <field name="once_per_customer"/>
                             <field name="program_id" invisible="not use_odoo_promotion" required="use_odoo_promotion" options="{'no_create': True}"/>
                             <field name="date_from" invisible="use_odoo_promotion"/>
                             <field name="date_to" invisible="use_odoo_promotion"/>
@@ -92,8 +94,8 @@
     </record>
     <menuitem id="menu_abdin_management_offers" name="Offers"
               parent="menu_abdin_management_root" sequence="35"
-              groups="sales_team.group_sale_manager,base.group_system,ab_ecommerce_storefront.group_call_center"/>
+              groups="sales_team.group_sale_manager,website.group_website_designer,base.group_system,ab_ecommerce_storefront.group_call_center"/>
     <menuitem id="menu_storefront_offers" name="Storefront Offers"
               parent="menu_abdin_management_offers" action="storefront_offer_action" sequence="10"
-              groups="sales_team.group_sale_manager,base.group_system,ab_ecommerce_storefront.group_call_center"/>
+              groups="sales_team.group_sale_manager,website.group_website_designer,base.group_system,ab_ecommerce_storefront.group_call_center"/>
 </odoo>

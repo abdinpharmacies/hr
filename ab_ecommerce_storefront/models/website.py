@@ -516,7 +516,9 @@ class Website(models.Model):
                         ("pricelist_ids", "in", [pricelist.id]),
                 ],
             ])
-        return domain
+        excluded = self.env["ab_storefront_offer"]._unavailable_for_customer(self, self.env.user.partner_id)
+        programs = excluded.with_context(active_test=False).generated_program_ids | excluded.filtered("use_odoo_promotion").program_id
+        return Domain(domain) & Domain("id", "not in", programs.ids)
 
     def _ab_storefront_coupon_candidate_domain(self):
         self.ensure_one()
