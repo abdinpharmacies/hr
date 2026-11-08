@@ -10,13 +10,10 @@ accounting snapshots also retain the database name. Opening receipts retain thei
 source document and store. Company checks apply before inventory helper reads,
 and changing assigned stores invalidates cached access rules.
 
-Native sales need an explicit product mapping: **Sales Unit for One Stock Unit**
-is the sales UoM equivalent to one smallest legacy inventory unit. Quantities must
-convert exactly to positive whole smallest units. Alternatively, set Stock Conversion Sales Unit and its exact integer number of
-smallest stock units. This supports BOX mappings without rounded fractional UoM
-factors. Configure one mapping method only, before inventory activity; posted
-stock freezes the mapping. Mapping edits require both Inventory Manager/System
-Administrator authorization and existing product write access.
+Native sales use each product's `ab_product_uom` category. One active reference
+unit has factor 1; purchase and sale quantities convert through their canonical
+unit factors. The inventory ledger accepts up to eight decimal places in the
+reference unit. Unit definitions cannot change after related stock activity.
 
 Posting locks the store and advances a private local revision record so concurrent
 transactions cannot consume a stale stock snapshot. Replicated branch master

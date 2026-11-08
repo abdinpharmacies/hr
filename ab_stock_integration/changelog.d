@@ -1,5 +1,30 @@
 Current changes before commit:
 
+- Remove manual stock unit mapping and use the product UoM category reference unit.
+
+Files changed:
+
+- ab_stock_integration/README.md
+- ab_stock_integration/changelog.d
+- ab_stock_integration/i18n/ar.po
+- ab_stock_integration/i18n/ar_001.po
+- ab_stock_integration/models/product.py
+- ab_stock_integration/models/source.py
+- ab_stock_integration/views/integration.xml
+
+Current changes before commit:
+
+- Remove manual stock unit mapping and use the product UoM category reference unit.
+
+Files changed:
+
+- ab_stock_integration/README.md
+- ab_stock_integration/models/product.py
+- ab_stock_integration/models/source.py
+- ab_stock_integration/views/integration.xml
+
+Current changes before commit:
+
 - Allow the native sales workflow to use explicit branch scope across active companies while preserving normal company checks for every other inventory operation.
 
 Files changed:

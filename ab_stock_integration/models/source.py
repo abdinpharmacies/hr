@@ -41,8 +41,9 @@ class Source(models.Model):
 
     def _get_conversion_basis(self):
         self.ensure_one()
-        return {'small': self.product_id.unit_s_id.unit_no,
-                'medium': self.product_id.unit_m_id.unit_no}
+        reference = self.product_id._stock_reference_unit()
+        return {'reference_unit_id': reference.id, 'reference_unit': reference.display_name,
+                'source_factor': self.product_id._stock_unit_factor(self.uom_id)}
 
     def _get_posting_snapshot(self):
         self.ensure_one()

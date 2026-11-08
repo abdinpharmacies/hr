@@ -236,3 +236,27 @@ msgstr "تغير المخزون أثناء تنفيذ عملية أخرى. أع�
 #: code:addons/ab_stock_integration/models/inventory.py:0
 msgid "Stock locks are maintained by inventory operations."
 msgstr "تتم إدارة أقفال المخزون من خلال عمليات المخزون."
+
+#. module: ab_stock_integration
+#: code:addons/ab_stock_integration/models/product.py:0
+msgid "Stock quantities must be positive reference-unit amounts."
+msgstr "يجب أن تكون كميات المخزون موجبة بالوحدة المرجعية."
+
+#. module: ab_stock_integration
+#: code:addons/ab_stock_integration/models/product.py:0
+msgid ""
+"Stock quantities must be positive reference-unit amounts with at most eight "
+"decimal places."
+msgstr ""
+"يجب أن تكون كميات المخزون موجبة بالوحدة المرجعية وبحد أقصى ثماني منازل "
+"عشرية."
+
+#. module: ab_stock_integration
+#: code:addons/ab_stock_integration/models/product.py:0
+msgid "Select an active unit from the product unit category."
+msgstr "اختر وحدة نشطة من فئة وحدات المنتج."
+
+#. module: ab_stock_integration
+#: code:addons/ab_stock_integration/models/product.py:0
+msgid "The product requires one active reference unit with factor 1."
+msgstr "يتطلب المنتج وحدة مرجعية نشطة واحدة بمعامل 1."
