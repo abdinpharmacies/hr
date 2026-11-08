@@ -29,10 +29,10 @@
         <section class="ab-order-track-card" aria-labelledby="abOrderTrackTitle">
             <div class="ab-order-track-head">
                 <div>
-                    <span>Order status</span>
+                    <span t-if="tracking_record._name != 'sale.order'">Order status</span>
                     <h2 id="abOrderTrackTitle">Order progress</h2>
                 </div>
-                <strong t-if="sale_order" t-out="sale_order._ab_storefront_payment_label()"/>
+                <strong t-if="sale_order and tracking_record._name != 'sale.order'" t-out="sale_order._ab_storefront_payment_label()"/>
             </div>
             <ol class="ab-order-track-steps">
                 <li t-foreach="tracking_steps" t-as="step"
@@ -278,27 +278,38 @@
                         <div class="ab-order-status-copy">
                             <span class="ab-order-eyebrow">Track your pharmacy order</span>
                             <h1>
-                                <span>Your order</span>
+                                <span>Order reference</span>
                                 <strong t-out="sale_order.ab_prescription_order_ids[:1].ab_public_reference or sale_order.ab_public_reference or '—'"/>
                             </h1>
-                            <p t-if="current_step" t-out="current_step['description']"/>
-                            <p t-else="">We received your order details. We will contact you soon.</p>
+                            <div class="ab-order-current-status">
+                                <span t-attf-class="ab-order-status-icon is-#{current_step and current_step['state'] or 'current'}" aria-hidden="true">
+                                    <svg t-if="current_step and current_step['state'] == 'exception'" viewBox="0 0 24 24" focusable="false">
+                                        <path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/>
+                                    </svg>
+                                    <svg t-else="" viewBox="0 0 24 24" focusable="false">
+                                        <path d="m5 12 4 4L19 6"/>
+                                    </svg>
+                                </span>
+                                <div>
+                                    <span>Current status</span>
+                                    <h2 t-if="current_step" t-out="current_step['label']"/>
+                                    <h2 t-else="">Order received</h2>
+                                    <p t-if="current_step" t-out="current_step['description']"/>
+                                    <p t-else="">We received your order details. We will contact you soon.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="ab-order-status-card">
-                            <span t-attf-class="ab-order-status-icon is-#{current_step and current_step['state'] or 'current'}" aria-hidden="true">
-                                <svg t-if="current_step and current_step['state'] == 'exception'" viewBox="0 0 24 24" focusable="false">
-                                    <path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/>
-                                </svg>
-                                <svg t-else="" viewBox="0 0 24 24" focusable="false">
-                                    <path d="m5 12 4 4L19 6"/>
-                                </svg>
-                            </span>
-                            <span>Current status</span>
-                            <h2 t-if="current_step" t-out="current_step['label']"/>
-                            <h2 t-else="">Order received</h2>
-                            <strong t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
-                            <small t-out="sale_order._ab_storefront_payment_label()"/>
-                        </div>
+                        <dl class="ab-order-hero-facts">
+                            <div>
+                                <dt>Total</dt>
+                                <dd t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
+                            </div>
+                            <div>
+                                <dt>Payment method</dt>
+                                <dd t-if="current_tx and current_tx.provider_id" t-out="current_tx.provider_id.name"/>
+                                <dd t-else="" t-out="sale_order._ab_storefront_payment_label()"/>
+                            </div>
+                        </dl>
                     </header>
 
                     <t t-call="ab_ecommerce_storefront.order_tracking_timeline"/>
@@ -311,7 +322,6 @@
                             <div class="ab-order-address-content">
                                 <header class="ab-order-section-head">
                                     <h2 id="abOrderAddressTitle">Delivery address</h2>
-                                    <span t-translation="off">DELIVERY DESTINATION</span>
                                 </header>
                                 <div class="ab-order-address-body"
                                      t-field="sale_order.partner_shipping_id"
@@ -326,37 +336,9 @@
 
                         <aside class="ab-order-summary-panel" aria-labelledby="abOrderSummaryTitle">
                             <header class="ab-order-summary-head">
-                                <h2 id="abOrderSummaryTitle">Order summary</h2>
-                                <span t-translation="off">ORDER SUMMARY</span>
+                                <h2 id="abOrderSummaryTitle">Order details</h2>
                             </header>
-
-                            <div class="ab-order-summary-panel-section ab-order-total-section" aria-labelledby="abOrderTotalTitle">
-                                <header class="ab-order-section-head">
-                                    <h3 id="abOrderTotalTitle">Total</h3>
-                                    <span t-translation="off">ORDER TOTAL</span>
-                                </header>
-                                <strong class="ab-order-summary-total" t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
-                            </div>
-
-                            <div class="ab-order-summary-panel-section ab-order-payment-card" aria-labelledby="abOrderPaymentTitle">
-                                <span class="ab-order-mini-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
-                                </span>
-                                <div>
-                                    <header class="ab-order-section-head">
-                                        <h3 id="abOrderPaymentTitle">Payment method</h3>
-                                        <span t-translation="off">PAYMENT METHOD</span>
-                                    </header>
-                                    <strong t-if="current_tx and current_tx.provider_id" t-out="current_tx.provider_id.name"/>
-                                    <strong t-else="" t-out="sale_order._ab_storefront_payment_label()"/>
-                                </div>
-                            </div>
-
-                            <div class="ab-order-summary-panel-section ab-order-info-card" aria-labelledby="abOrderInfoTitle">
-                                <header class="ab-order-section-head">
-                                    <h3 id="abOrderInfoTitle">Details</h3>
-                                    <span t-translation="off">ORDER DETAILS</span>
-                                </header>
+                            <div class="ab-order-summary-panel-section ab-order-info-card">
                                 <dl>
                                     <div>
                                         <dt>Order date</dt>
