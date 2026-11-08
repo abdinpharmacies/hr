@@ -48,7 +48,7 @@ class AuditObservation(models.Model):
     counter_id = fields.Many2one('res.users', required=True)
     observed_at = fields.Datetime(required=True, default=fields.Datetime.now)
     quantity = fields.Float(required=True, digits=(16, 6))
-    uom_id = fields.Many2one('ab_uom', required=True, ondelete='restrict')
+    uom_id = fields.Many2one('ab_product_uom', required=True, ondelete='restrict')
     exp_date = fields.Date()
     no_expiry = fields.Boolean()
     selling_price = fields.Float(digits=(16, 3))

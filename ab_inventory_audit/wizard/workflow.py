@@ -59,10 +59,10 @@ class AuditWizard(models.TransientModel):
     category_id = fields.Many2one('ab_product_group')
     source_id = fields.Many2one('ab_product_source', groups=FINANCIAL)
     audit_source_id = fields.Many2one('ab_inventory_audit_source', groups=FINANCIAL)
-    allocation_qty = fields.Integer()
+    allocation_qty = fields.Float(digits=(24, 8), )
     exp_date = fields.Date()
     no_expiry = fields.Boolean()
-    uom_id = fields.Many2one('ab_uom')
+    uom_id = fields.Many2one('ab_product_uom')
     purchase_price = fields.Float(digits=(16, 3), groups=FINANCIAL)
     cost_supplied = fields.Boolean(groups=FINANCIAL)
     selling_price = fields.Float(digits=(16, 3))
@@ -215,7 +215,7 @@ class AuditWizard(models.TransientModel):
             raise AccessError(_('Only assigned team members may record stock observations.'))
         quantity = decimal(self.observed_qty)
         if quantity <= 0 or quantity * factor != (quantity * factor).to_integral_value():
-            raise ValidationError(_('Record a positive quantity with an exact smallest-unit conversion.'))
+            raise ValidationError(_('Record a positive quantity in the reference unit.'))
         self.env['ab_inventory_audit_observation']._new({
             'audit_id': audit.id, 'product_id': self.product_id.id, 'counter_id': self.env.uid,
             'quantity': self.observed_qty, 'uom_id': self.uom_id.id, 'exp_date': self.exp_date,

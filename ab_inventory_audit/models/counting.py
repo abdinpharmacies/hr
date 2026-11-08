@@ -35,9 +35,9 @@ class AuditLine(models.Model):
     latest_attempt_id = fields.Many2one('ab_inventory_audit_count', compute='_compute_latest_attempt')
     physical_quantity = fields.Char(compute='_compute_latest_attempt')
     accepted_count_id = fields.Many2one('ab_inventory_audit_count', ondelete='restrict')
-    reference_qty = fields.Integer()
-    counted_qty = fields.Integer()
-    discrepancy = fields.Integer()
+    reference_qty = fields.Float(digits=(24, 8), )
+    counted_qty = fields.Float(digits=(24, 8), )
+    discrepancy = fields.Float(digits=(24, 8), )
     review_reason = fields.Text()
     exclusion_reason = fields.Text()
     allocation_unresolved = fields.Boolean()
@@ -45,9 +45,9 @@ class AuditLine(models.Model):
     allocation_resolution = fields.Text()
     source_ids = fields.One2many('ab_inventory_audit_source', 'line_id', groups=FINANCIAL)
     count_ids = fields.One2many('ab_inventory_audit_count', 'line_id')
-    posted_qty = fields.Integer(compute='_compute_stock')
-    reserved_qty = fields.Integer(compute='_compute_stock')
-    available_qty = fields.Integer(compute='_compute_stock')
+    posted_qty = fields.Float(digits=(24, 8), compute='_compute_stock')
+    reserved_qty = fields.Float(digits=(24, 8), compute='_compute_stock')
+    available_qty = fields.Float(digits=(24, 8), compute='_compute_stock')
     _key_unique = models.Constraint('UNIQUE(audit_id, group_key)', 'This count group already exists.')
 
     def _compute_barcodes(self):
@@ -121,8 +121,7 @@ class AuditLine(models.Model):
         return {'sources': {str(key): {name: value for name, value in item.items() if name != 'reserved'}
                             for key, item in sources.items()},
                 'moves': data.get('moves', []),
-                'units': [product.unit_l_id.id, product.unit_m_id.id, product.unit_s_id.id,
-                          product.unit_m_id.unit_no, product.unit_s_id.unit_no]}
+                'units': [[unit.id, unit.factor] for unit in product.uom_ids.sorted('id')]}
 
     def _start(self, method='manual', batch=None, ledger=None):
         self._authorize_count()
@@ -259,8 +258,8 @@ class AuditCount(models.Model):
     large_qty = fields.Float(digits=(16, 6))
     medium_qty = fields.Float(digits=(16, 6))
     small_qty = fields.Float(digits=(16, 6))
-    quantity = fields.Integer()
-    reference_qty = fields.Integer()
+    quantity = fields.Float(digits=(24, 8), )
+    reference_qty = fields.Float(digits=(24, 8), )
     boundary = fields.Json(groups=FINANCIAL)
     notes = fields.Text()
     reason = fields.Text()
@@ -323,8 +322,8 @@ class AuditSource(models.Model):
 
     line_id = fields.Many2one('ab_inventory_audit_line', required=True, index=True, ondelete='restrict')
     source_id = fields.Many2one('ab_product_source', ondelete='restrict')
-    reference_qty = fields.Integer()
-    allocation_qty = fields.Integer()
+    reference_qty = fields.Float(digits=(24, 8), )
+    allocation_qty = fields.Float(digits=(24, 8), )
     allocation_reason = fields.Text()
     valuation_snapshot = fields.Json(groups=FINANCIAL)
     preview_cost = fields.Float(compute='_compute_preview', digits=(24, 10), groups=FINANCIAL)
@@ -333,7 +332,7 @@ class AuditSource(models.Model):
     frozen_value = fields.Float(digits=(16, 2), groups=FINANCIAL)
     zero_cost_reason = fields.Text(groups=FINANCIAL)
     new_source_approved = fields.Boolean(groups=FINANCIAL)
-    uom_id = fields.Many2one('ab_uom', groups=FINANCIAL)
+    uom_id = fields.Many2one('ab_product_uom', groups=FINANCIAL)
     purchase_price = fields.Float(digits=(16, 3), groups=FINANCIAL)
     cost_supplied = fields.Boolean(groups=FINANCIAL)
     selling_price = fields.Float(digits=(16, 3), groups=FINANCIAL)
@@ -406,10 +405,10 @@ class AuditAdjustment(models.Model):
 
     audit_source_id = fields.Many2one('ab_inventory_audit_source', required=True, ondelete='restrict')
     source_id = fields.Many2one('ab_product_source', required=True, ondelete='restrict')
-    uom_id = fields.Many2one('ab_uom', required=True, ondelete='restrict')
-    qty = fields.Integer(required=True)
+    uom_id = fields.Many2one('ab_product_uom', required=True, ondelete='restrict')
+    qty = fields.Float(digits=(24, 8), required=True)
     frozen_cost = fields.Float(digits=(24, 10), groups=FINANCIAL)
     value = fields.Float(digits=(16, 2), groups=FINANCIAL)
-    balance_before = fields.Integer()
+    balance_before = fields.Float(digits=(24, 8), )
     movement_id = fields.Many2one('ab_inventory', ondelete='restrict')
     _source_unique = models.Constraint('UNIQUE(audit_source_id)', 'This source adjustment has already been posted.')

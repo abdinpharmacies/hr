@@ -398,7 +398,7 @@ class Audit(models.Model):
                 actual_source = source.source_id or source._create_surplus_source()
                 adjustment = self.env['ab_inventory_audit_adjustment']._new({
                     'audit_id': self.id, 'audit_source_id': source.id, 'source_id': actual_source.id,
-                    'uom_id': actual_source.product_id.unit_s_id.id, 'qty': source.allocation_qty,
+                    'uom_id': actual_source.product_id._stock_reference_unit().id, 'qty': source.allocation_qty,
                     'frozen_cost': source.frozen_cost, 'value': source.frozen_value,
                     'balance_before': posted.get(actual_source.id, 0)})
                 movement = self.env['ab_inventory_process'].sudo().inventory_write(

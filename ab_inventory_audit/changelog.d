@@ -1,4 +1,33 @@
 Current changes before commit:
+
+- Count and value stock in canonical reference units, including fractional quantities.
+
+Files changed:
+
+- ab_inventory_audit/README.md
+- ab_inventory_audit/changelog.d
+- ab_inventory_audit/i18n/ar.po
+- ab_inventory_audit/i18n/ar_001.po
+- ab_inventory_audit/models/audit.py
+- ab_inventory_audit/models/common.py
+- ab_inventory_audit/models/counting.py
+- ab_inventory_audit/models/coverage.py
+- ab_inventory_audit/wizard/workflow.py
+
+Current changes before commit:
+
+- Count and value stock in canonical reference units, including fractional quantities.
+
+Files changed:
+
+- ab_inventory_audit/README.md
+- ab_inventory_audit/models/audit.py
+- ab_inventory_audit/models/common.py
+- ab_inventory_audit/models/counting.py
+- ab_inventory_audit/models/coverage.py
+- ab_inventory_audit/wizard/workflow.py
+
+Current changes before commit:
 - Omit the hidden active default from audit form saves so Save and Prepare and Open respect the server create allowlist.
 - Keep Correction Of editable only before the first save, matching its creation-only server contract.
 - Verify browser creation for managers/administrators, English and both Arabic locales, corrective drafts, security and archive restrictions; pass 43 core, 21 regression and six focused tests plus 72 view checks on a disposable database. Document the verified XML developer reload and targeted-update paths.

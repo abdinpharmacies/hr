@@ -30,11 +30,10 @@ def money(value):
 def unit_factor(product, uom):
     if not uom or uom not in product.uom_ids:
         raise ValidationError(_('Select a configured product unit.'))
-    small = decimal(product.unit_s_id.unit_no)
-    medium = decimal(product.unit_m_id.unit_no)
-    if small <= 0 or (uom.unit_size == 'medium' and medium <= 0):
+    factor = decimal(uom.factor)
+    if factor <= 0:
         raise ValidationError(_('Configure valid unit conversions.'))
-    return {'large': small, 'medium': small / (medium or 1), 'small': Decimal(1)}[uom.unit_size]
+    return factor
 
 
 def count_quantity(product, large=0, medium=0, small=0):
@@ -46,21 +45,24 @@ def count_quantity(product, large=0, medium=0, small=0):
             raise ValidationError(_('Count quantities must be nonnegative.'))
         if amount:
             total += amount * unit_factor(product, uom)
-    if total != total.to_integral_value() or total > 2147483647:
-        raise ValidationError(_('Quantity must convert exactly to whole smallest units.'))
-    return int(total)
+    if total.as_tuple().exponent < -8:
+        raise ValidationError(_('Quantity exceeds eight decimal places in the reference unit.'))
+    return float(total)
 
 
 def allocate(quantity, weights):
     total = sum(weights.values())
     if not total:
         raise ValidationError(_('Select a source explicitly for a zero-reference surplus.'))
-    raw = {key: Decimal(abs(quantity)) * value / total for key, value in weights.items()}
-    result = {key: int(value) for key, value in raw.items()}
-    remainder = abs(quantity) - sum(result.values())
-    for key in sorted(raw, key=lambda key: (-(raw[key] - result[key]), key))[:remainder]:
-        result[key] += 1
-    return {key: value * (-1 if quantity < 0 else 1) for key, value in result.items()}
+    ordered = sorted(weights)
+    result = {}
+    remaining = decimal(abs(quantity))
+    for key in ordered[:-1]:
+        share = (decimal(abs(quantity)) * decimal(weights[key]) / decimal(total)).quantize(Decimal('0.00000001'))
+        result[key] = share
+        remaining -= share
+    result[ordered[-1]] = remaining
+    return {key: float(value * (-1 if quantity < 0 else 1)) for key, value in result.items()}
 
 
 class AuditChild(models.AbstractModel):

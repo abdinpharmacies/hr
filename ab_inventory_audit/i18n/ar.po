@@ -2935,3 +2935,13 @@ msgstr "إصدار الملف"
 #: code:addons/ab_inventory_audit/report/audit_report.py:0
 msgid "Yes"
 msgstr "نعم"
+
+#. module: ab_inventory_audit
+#: code:addons/ab_inventory_audit/models:0
+msgid "Quantity exceeds eight decimal places in the reference unit."
+msgstr "تتجاوز الكمية ثماني منازل عشرية في الوحدة المرجعية."
+
+#. module: ab_inventory_audit
+#: code:addons/ab_inventory_audit/models:0
+msgid "Record a positive quantity in the reference unit."
+msgstr "سجل كمية موجبة بالوحدة المرجعية."
