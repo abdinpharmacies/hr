@@ -1,5 +1,22 @@
 Current changes before commit:
 
+- Restrict replication overrides to canonical product unit fields.
+
+Files changed:
+
+- ab_stock_replication/changelog.d
+- ab_stock_replication/security/mapping_permissions.xml
+
+Current changes before commit:
+
+- Restrict replication overrides to canonical product unit fields.
+
+Files changed:
+
+- ab_stock_replication/security/mapping_permissions.xml
+
+Current changes before commit:
+
 - Add module-owned replication exceptions for the three stock unit mapping fields.
 - Preserve underlying product ACLs and restrictions on prices and other master fields.
 - Keep remote synchronization activation outside this permission bridge.

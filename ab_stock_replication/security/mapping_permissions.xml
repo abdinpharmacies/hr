@@ -2,11 +2,11 @@
     <record id="stock_mapping_inventory_manager" model="ab_odoo_replication_override_write_rule">
         <field name="override_id" ref="ab_odoo_replication.override_ab_product"/>
         <field name="group_id" ref="ab_inventory.group_inventory_manager"/>
-        <field name="field_ids" eval="[(6, 0, [ref('ab_stock_integration.field_ab_product__stock_sales_unit_id'), ref('ab_stock_integration.field_ab_product__stock_sales_reference_unit_id'), ref('ab_stock_integration.field_ab_product__stock_units_per_reference_unit')])]"/>
+        <field name="field_ids" eval="[(6, 0, [ref('ab_product.field_ab_product__uom_category_id'), ref('ab_product.field_ab_product__uom_id'), ref('ab_product.field_ab_product__uom_pur_id')])]"/>
     </record>
     <record id="stock_mapping_system" model="ab_odoo_replication_override_write_rule">
         <field name="override_id" ref="ab_odoo_replication.override_ab_product"/>
         <field name="group_id" ref="base.group_system"/>
-        <field name="field_ids" eval="[(6, 0, [ref('ab_stock_integration.field_ab_product__stock_sales_unit_id'), ref('ab_stock_integration.field_ab_product__stock_sales_reference_unit_id'), ref('ab_stock_integration.field_ab_product__stock_units_per_reference_unit')])]"/>
+        <field name="field_ids" eval="[(6, 0, [ref('ab_product.field_ab_product__uom_category_id'), ref('ab_product.field_ab_product__uom_id'), ref('ab_product.field_ab_product__uom_pur_id')])]"/>
     </record>
 </odoo>
