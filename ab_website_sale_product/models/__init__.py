@@ -11,3 +11,6 @@ from . import website_product_sync_job
 from . import product_classification
 from . import shop_need
 from . import classification_force
+from . import legacy_customer
+from . import legacy_activation_batch
+from . import legacy_import_issue

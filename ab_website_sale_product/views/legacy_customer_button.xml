@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="eplus_stock_legacy_customer_button" model="ir.ui.view">
+        <field name="name">ab.eplus.stock.snapshot.legacy.customers</field>
+        <field name="model">ab_eplus_stock_snapshot</field>
+        <field name="inherit_id" ref="ab_eplus_stock_snapshot_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_start_full_inventory_sync']" position="after">
+                <button name="%(action_activation_batches)d" type="action"
+                        string="Legacy Customer Codes" class="btn-primary" display="always"
+                        groups="website.group_website_designer,base.group_system"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_legacy_import_issue_list" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_import_issue.list</field>
+        <field name="model">ab_ecommerce_legacy_import_issue</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false" default_order="source_row,column_number,id" decoration-danger="severity == 'error'" decoration-warning="severity == 'corrected'" decoration-muted="severity == 'info'">
+                <field name="source_row"/>
+                <field name="line_start"/>
+                <field name="line_end" optional="hide"/>
+                <field name="column_number" optional="hide"/>
+                <field name="column_name"/>
+                <field name="source_reference" optional="hide"/>
+                <field name="import_status" widget="badge"/>
+                <field name="severity" widget="badge" optional="hide"/>
+                <field name="original_value"/>
+                <field name="normalized_value" optional="show"/>
+                <field name="issue_code"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_legacy_import_issue_form" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_import_issue.form</field>
+        <field name="model">ab_ecommerce_legacy_import_issue</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="batch_id"/>
+                            <field name="source_row"/>
+                            <field name="line_start"/>
+                            <field name="line_end"/>
+                            <field name="column_number"/>
+                            <field name="column_name"/>
+                            <field name="source_reference"/>
+                        </group>
+                        <group>
+                            <field name="import_status" widget="badge"/>
+                            <field name="severity" widget="badge"/>
+                            <field name="issue_code"/>
+                            <field name="original_value"/>
+                            <field name="normalized_value"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_legacy_import_issue_search" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_import_issue.search</field>
+        <field name="model">ab_ecommerce_legacy_import_issue</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="column_name"/>
+                <field name="source_row"/>
+                <field name="source_reference"/>
+                <field name="issue_code"/>
+                <filter name="errors" string="Errors" domain="[('severity', '=', 'error')]"/>
+                <filter name="corrected" string="Safe Corrections" domain="[('severity', '=', 'corrected')]"/>
+                <filter name="excluded" string="Excluded Records" domain="[('import_status', '=', 'excluded')]"/>
+                <filter name="blocked" string="File Needs Correction" domain="[('import_status', '=', 'blocked')]"/>
+                <group>
+                    <filter name="by_column" string="Column" context="{'group_by': 'column_name'}"/>
+                    <filter name="by_reason" string="Problem / Reason" context="{'group_by': 'issue_code'}"/>
+                    <filter name="by_status" string="Import Status" context="{'group_by': 'import_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_legacy_import_issues" model="ir.actions.act_window">
+        <field name="name">Customer Import Review</field>
+        <field name="res_model">ab_ecommerce_legacy_import_issue</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legacy_import_issue_search"/>
+    </record>
+    <record id="view_batch_list" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_batch.list</field>
+        <field name="model">ab_ecommerce_legacy_batch</field>
+        <field name="arch" type="xml">
+            <list delete="false">
+                <field name="name"/>
+                <field name="website_id"/>
+                <field name="owner_id"/>
+                <field name="accepted_count"/>
+                <field name="eligible_count"/>
+                <field name="eligible_percentage"/>
+                <field name="created_count"/>
+                <field name="expires_at"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_batch_form" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_batch.form</field>
+        <field name="model">ab_ecommerce_legacy_batch</field>
+        <field name="arch" type="xml">
+            <form delete="false">
+                <header>
+                    <button name="action_preview" type="object" string="Preview Customers" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_review_issues" type="object" string="Review All Issues" invisible="not issue_count"/>
+                    <button name="action_recheck" type="object" string="Recheck and Apply Safe Corrections" invisible="state not in ('ready', 'review')"/>
+                    <button name="action_download_review" type="object" string="Download Customer Review CSV" invisible="state not in ('ready', 'review') or review_version != 2"/>
+                    <button name="action_reset_preview" type="object" string="Replace File / Review Again" invisible="state not in ('ready', 'review')"/>
+                    <button name="action_generate_codes" type="object" string="Create Customer Codes" class="oe_highlight" invisible="state not in ('ready', 'processing') or review_version != 2"/>
+                    <button name="action_download" type="object" string="Download SMS File" class="oe_highlight" invisible="state != 'done'"/>
+                    <button name="action_cancel" type="object" string="Cancel and Invalidate Unused Codes" invisible="state == 'cancelled'" confirm="Unused codes in this batch will stop working. Continue?"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="has_blocking_issues" invisible="True"/>
+                    <field name="review_version" invisible="True"/>
+                    <div class="alert alert-warning" role="alert" invisible="state not in ('ready', 'review') or review_version == 2">
+                        Recheck this saved preview to apply the current corrections and eligibility rules.
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not has_blocking_issues">
+                        The file cannot be safely processed because its headers, record boundaries, or scan limits need attention. Download the review and correct the reported issues before creating codes.
+                    </div>
+                    <div class="alert alert-info" role="status">
+                        Preview applies safe corrections and isolates invalid records. Download the review CSV with eligible customers first, original columns, corrected values, and reasons. Create codes separately when ready; no SMS or loyalty points are sent here.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" readonly="state != 'draft'"/>
+                            <field name="website_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                            <field name="source_namespace" readonly="state != 'draft'"/>
+                            <field name="source_filename" invisible="True"/>
+                            <field name="source_file" filename="source_filename" readonly="state != 'draft'" invisible="state in ('done', 'cancelled')"/>
+                            <field name="source_encoding" readonly="state != 'draft'"/>
+                            <field name="expires_at" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="owner_id"/>
+                            <field name="total_rows"/>
+                            <field name="eligible_count"/>
+                            <field name="eligible_percentage"/>
+                            <field name="existing_count"/>
+                            <field name="issue_count"/>
+                            <field name="corrected_count"/>
+                            <field name="accepted_count"/>
+                            <field name="rejected_count"/>
+                            <field name="inactive_count"/>
+                            <field name="created_count"/>
+                            <field name="skipped_count"/>
+                            <field name="export_count"/>
+                            <field name="last_export_at"/>
+                        </group>
+                    </group>
+                    <p>Eligible percentage = eligible customers for new codes divided by all scanned records, including inactive and excluded records. File-level notes are not customers. This is eligibility for activation, not verified returning-customer status.</p>
+                    <div class="alert alert-warning" role="note" invisible="state == 'draft'">
+                        Duplicate or invalid mobile numbers are excluded. Existing customer references or phone numbers are skipped. Keep the downloaded SMS file private and preserve leading zeros in activation codes.
+                    </div>
+                    <notebook invisible="state == 'draft'">
+                        <page string="Column Validation">
+                            <p>Each entry identifies one column issue. A record can have several issues. Clean records are included in the counts without filling this table. Record 0 describes the file or its headers. Values are displayed up to 1,000 characters; the uploaded file is retained until processing finishes.</p>
+                            <field name="issue_ids" readonly="True" context="{'list_view_ref': 'ab_website_sale_product.view_legacy_import_issue_list', 'form_view_ref': 'ab_website_sale_product.view_legacy_import_issue_form'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_activation_batches" model="ir.actions.act_window">
+        <field name="name">Legacy Customer Codes</field>
+        <field name="res_model">ab_ecommerce_legacy_batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

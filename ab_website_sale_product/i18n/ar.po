@@ -269,6 +269,7 @@ msgstr "الإجراءات"
 #. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__active
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__active
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__active
 msgid "Active"
 msgstr "نشط"
 
@@ -353,6 +354,11 @@ msgstr "الأكواد"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -372,6 +378,11 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -422,6 +433,11 @@ msgstr "لا يستطيع خادم Odoo قراءة المجلد: %s"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_public_category__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_tag__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -590,6 +606,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_public_category__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_tag__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__id
 msgid "ID"
 msgstr "المعرف"
 
@@ -651,6 +672,11 @@ msgstr "آخر تحديث"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -670,6 +696,11 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -853,6 +884,7 @@ msgstr "إجراءات سريعة"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__ready
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__ready
 msgid "Ready"
 msgstr "جاهز"
 
@@ -1047,6 +1079,8 @@ msgstr "عرض على الموقع"
 #: model:ir.model,name:ab_website_sale_product.model_website
 #: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__website_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__website_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__website_id
 msgid "Website"
 msgstr "الموقع الإلكتروني"
 
@@ -1220,14 +1254,22 @@ msgstr "تحديث مخزون الفروع"
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
-msgid "Eplus branch stock refreshed: %(total)s rows, %(matched)s matched, %(unmatched)s unmatched."
-msgstr "تم تحديث مخزون إي بلس حسب الفروع: %(total)s صف، %(matched)s مطابق، %(unmatched)s غير مطابق."
+msgid ""
+"Eplus branch stock refreshed: %(total)s rows, %(matched)s matched, "
+"%(unmatched)s unmatched."
+msgstr ""
+"تم تحديث مخزون إي بلس حسب الفروع: %(total)s صف، %(matched)s مطابق، "
+"%(unmatched)s غير مطابق."
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
-msgid "Prepared %(total)s product(s). %(unchanged)s already matched, %(pending)s pending, %(skipped)s skipped."
-msgstr "تم تجهيز %(total)s منتج: %(unchanged)s مطابق بالفعل، %(pending)s قيد التنفيذ، %(skipped)s متخطى."
+msgid ""
+"Prepared %(total)s product(s). %(unchanged)s already matched, %(pending)s "
+"pending, %(skipped)s skipped."
+msgstr ""
+"تم تجهيز %(total)s منتج: %(unchanged)s مطابق بالفعل، %(pending)s قيد "
+"التنفيذ، %(skipped)s متخطى."
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
@@ -1329,6 +1371,7 @@ msgstr "غير صالح"
 #. module: ab_website_sale_product
 #. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__error
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__severity__error
 msgid "Error"
 msgstr "خطأ"
 
@@ -1379,6 +1422,7 @@ msgstr "الصور المحدثة"
 
 #. module: ab_website_sale_product
 #: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
 msgid "Errors"
 msgstr "الأخطاء"
 
@@ -1445,8 +1489,8 @@ msgstr "يمكن للمسؤولين فقط مزامنة صور المنتجات.
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
 msgid ""
 "%(replacement_count)s matched image(s) belong to products that already have "
-"images. Do you want to replace them? %(new_count)s new image(s) can be added "
-"without replacing existing images."
+"images. Do you want to replace them? %(new_count)s new image(s) can be added"
+" without replacing existing images."
 msgstr ""
 "توجد %(replacement_count)s صورة مطابقة لمنتجات لديها صور بالفعل. هل تريد "
 "استبدالها؟ يمكن إضافة %(new_count)s صورة جديدة دون استبدال الصور الحالية."
@@ -1746,6 +1790,7 @@ msgstr "تم التخطي"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__attempts
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__attempts
 msgid "Attempts"
 msgstr "المحاولات"
 
@@ -1785,13 +1830,22 @@ msgid "Website Sync Pending"
 msgstr "بانتظار مزامنة الموقع"
 
 #. module: ab_website_sale_product
-msgid "Checkpoints are limited to 250 products. Larger selections continue across multiple checkpoints."
-msgstr "تقتصر نقاط الحفظ على 250 منتجًا. وتستمر الاختيارات الأكبر عبر نقاط حفظ متعددة."
+msgid ""
+"Checkpoints are limited to 250 products. Larger selections continue across "
+"multiple checkpoints."
+msgstr ""
+"تقتصر نقاط الحفظ على 250 منتجًا. وتستمر الاختيارات الأكبر عبر نقاط حفظ "
+"متعددة."
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,help:ab_website_sale_product.field_ab_website_product_sync_job__batch_size_option
-msgid "Number of products processed by Process Next Batch. Internal chunks are limited to 250 products; background processing commits after each chunk."
-msgstr "عدد المنتجات التي تتم معالجتها عند الضغط على معالجة الدفعة التالية. تقتصر الأجزاء الداخلية على 250 منتجًا، وتحفظ المعالجة في الخلفية التغييرات بعد كل جزء."
+msgid ""
+"Number of products processed by Process Next Batch. Internal chunks are "
+"limited to 250 products; background processing commits after each chunk."
+msgstr ""
+"عدد المنتجات التي تتم معالجتها عند الضغط على معالجة الدفعة التالية. تقتصر "
+"الأجزاء الداخلية على 250 منتجًا، وتحفظ المعالجة في الخلفية التغييرات بعد كل "
+"جزء."
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_image_applied_checksum
@@ -1846,8 +1900,12 @@ msgstr "لم يعد لدى طالب المزامنة في الخلفية صلا�
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
-msgid "The dedicated Website Product Sync worker is offline. Start the module worker service and try again."
-msgstr "عامل مزامنة منتجات الموقع المخصص غير متصل. شغّل خدمة عامل الوحدة ثم حاول مرة أخرى."
+msgid ""
+"The dedicated Website Product Sync worker is offline. Start the module "
+"worker service and try again."
+msgstr ""
+"عامل مزامنة منتجات الموقع المخصص غير متصل. شغّل خدمة عامل الوحدة ثم حاول مرة"
+" أخرى."
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__already_synced_count
@@ -1883,6 +1941,7 @@ msgstr "منتجات ناقصة على الموقع"
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__needs_review
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__needs_review
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__review
 msgid "Needs Review"
 msgstr "منتجات تحتاج مراجعة"
 
@@ -1916,8 +1975,12 @@ msgstr "قوالب منتجات مزامنة الموقع"
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 #, python-format
-msgid "%(ready)s already synchronized; %(remaining)s product(s) need creation or review."
-msgstr "%(ready)s منتجًا متزامن بالفعل؛ و%(remaining)s منتجًا يحتاج إلى إنشاء أو مراجعة."
+msgid ""
+"%(ready)s already synchronized; %(remaining)s product(s) need creation or "
+"review."
+msgstr ""
+"%(ready)s منتجًا متزامن بالفعل؛ و%(remaining)s منتجًا يحتاج إلى إنشاء أو "
+"مراجعة."
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -2164,6 +2227,11 @@ msgstr "البرد والجهاز التنفسي"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__company_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__company_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__company_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__company_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__company_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -2171,6 +2239,7 @@ msgstr "الشركة"
 #. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__completed
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__done
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__done
 msgid "Completed"
 msgstr "مكتمل"
 
@@ -2267,6 +2336,7 @@ msgstr "التطهير"
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__draft
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__draft
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__draft
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__draft
 msgid "Draft"
 msgstr "مسودة"
 
@@ -2304,6 +2374,8 @@ msgstr "الأدلة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__expires_at
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__expires_at
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__expires_at
 msgid "Expires At"
 msgstr "تاريخ انتهاء الصلاحية"
 
@@ -2608,6 +2680,8 @@ msgstr "الأظافر"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -2703,6 +2777,7 @@ msgstr "وقت الإيقاف المؤقت"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__payload
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__payload
 msgid "Payload"
 msgstr "البيانات"
 
@@ -2772,6 +2847,7 @@ msgstr "الفئة الأساسية"
 #. module: ab_website_sale_product
 #. odoo-javascript
 #: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__processed
 msgid "Processed"
 msgstr "تمت المعالجة"
 
@@ -2787,6 +2863,7 @@ msgstr "المنتجات المعالجة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__processing
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__processing
 msgid "Processing"
 msgstr "قيد المعالجة"
 
@@ -3086,6 +3163,7 @@ msgstr "وقت البدء"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__state
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__state
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__state
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__state
 msgid "State"
 msgstr "الحالة"
 
@@ -4135,6 +4213,7 @@ msgstr "توجد مزامنة أخرى لمخزون Eplus قيد التشغيل 
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__cancelled
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__cancelled
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__cancelled
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__cancelled
 msgid "Cancelled"
 msgstr "ملغي"
 
@@ -4145,6 +4224,7 @@ msgstr "فحص ملف الصورة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__created_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__created_count
 msgid "Created Count"
 msgstr "عدد السجلات المنشأة"
 
@@ -4387,6 +4467,7 @@ msgstr "حدّد صفًا أو أكثر من مخزون Eplus للمزامنة �
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__skipped_count
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__skipped_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__skipped_count
 msgid "Skipped Count"
 msgstr "عدد المتخطى"
 
@@ -4559,6 +4640,795 @@ msgid "updated"
 msgstr "تم التحديث"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__accepted_count
+msgid "Accepted Count"
+msgstr "عدد العملاء المقبولين"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_ecommerce_legacy_export
+msgid "Activation Export Audit"
+msgstr "سجل تنزيل ملفات التفعيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_ecommerce_legacy_chunk
+msgid "Activation Processing Chunk"
+msgstr "جزء معالجة التفعيل"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/services/legacy_activation.py:0
+msgid "Activation codes are temporarily unavailable."
+msgstr "أكواد التفعيل غير متاحة مؤقتًا."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Activation processing fields cannot be changed directly."
+msgstr "لا يمكن تعديل حقول معالجة التفعيل مباشرةً."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_customer.py:0
+msgid "Archive legacy customers instead of deleting them."
+msgstr "يجب أرشفة العملاء القدامى بدلًا من حذفهم."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__batch_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__batch_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__batch_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__batch_id
+msgid "Batch"
+msgstr "الدفعة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Cancel activation batches instead of deleting them."
+msgstr "يجب إلغاء دفعات التفعيل بدلًا من حذفها."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Cancel and Invalidate Unused Codes"
+msgstr "إلغاء الدفعة وإبطال الأكواد غير المستخدمة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Choose an expiry in the future, no more than 90 days away."
+msgstr "اختر تاريخ انتهاء في المستقبل خلال 90 يومًا كحد أقصى."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__chunk_ids
+msgid "Chunk"
+msgstr "أجزاء المعالجة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__claimed_at
+msgid "Claimed At"
+msgstr "تاريخ التفعيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__claimed_user_id
+msgid "Claimed User"
+msgstr "المستخدم الذي فعّل الكود"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__code_hash
+msgid "Code Hash"
+msgstr "بصمة الكود"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Create Customer Codes"
+msgstr "إنشاء أكواد العملاء"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/legacy_process_batch.js:0
+msgid "Creating customer codes. Keep this page open."
+msgstr "جارٍ إنشاء أكواد العملاء. اترك هذه الصفحة مفتوحة."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Download SMS File"
+msgstr "تنزيل ملف رسائل SMS"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Duplicate or invalid mobile numbers are excluded. Existing customer "
+"references or phone numbers are skipped. Keep the downloaded SMS file "
+"private and preserve leading zeros in activation codes."
+msgstr ""
+"تُستبعد أرقام المحمول المكررة أو غير الصحيحة، ويتم تخطي مراجع العملاء "
+"وأرقامهم المسجلة مسبقًا. احفظ ملف الرسائل بسرية وحافظ على الأصفار في بداية "
+"أكواد التفعيل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_chunk__encrypted_export
+msgid "Encrypted Export"
+msgstr "ملف التصدير المشفر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__export_count
+msgid "Export Count"
+msgstr "عدد مرات التنزيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__exported_at
+msgid "Exported At"
+msgstr "تاريخ التنزيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__inactive_count
+msgid "Inactive Count"
+msgstr "عدد العملاء غير النشطين"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid ""
+"Invalid CSV structure near line %s. Correct the export before importing."
+msgstr "بنية ملف CSV غير صحيحة قرب السطر %s. صحح ملف التصدير قبل استيراده."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__last_export_at
+msgid "Last Export At"
+msgstr "آخر تنزيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_ecommerce_legacy_customer
+msgid "Legacy Customer"
+msgstr "عميل قديم"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_ecommerce_legacy_batch
+msgid "Legacy Customer Activation Batch"
+msgstr "دفعة تفعيل العملاء القدامى"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_activation_batches
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.eplus_stock_legacy_customer_button
+msgid "Legacy Customer Codes"
+msgstr "أكواد العملاء القدامى"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Legacy customer activation"
+msgstr "تفعيل العملاء القدامى"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "No unique active customers with valid mobile numbers were found."
+msgstr "لم يتم العثور على عملاء نشطين غير مكررين بأرقام محمول صحيحة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Only Website editors and designers can manage activation batches."
+msgstr "إدارة دفعات التفعيل متاحة فقط لمحرري الموقع ومصمميه."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Only completed, unexpired batches can be exported."
+msgstr "يمكن تنزيل الدفعات المكتملة التي لم تنتهِ صلاحيتها فقط."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__owner_id
+msgid "Owner"
+msgstr "المسؤول"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__partner_id
+msgid "Partner"
+msgstr "جهة الاتصال"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__phone
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/services/legacy_activation.py:0
+msgid "Please enter a valid phone number."
+msgstr "يرجى إدخال رقم هاتف صحيح."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Prepare the customer preview before creating codes."
+msgstr "اعرض معاينة العملاء قبل إنشاء الأكواد."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Preview Customers"
+msgstr "معاينة العملاء"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/legacy_process_batch.js:0
+msgid "Processed %(processed)s of %(total)s customers."
+msgstr "تمت معالجة %(processed)s من أصل %(total)s عميل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__rejected_count
+msgid "Rejected Count"
+msgstr "عدد الصفوف المستبعدة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__source_digest
+msgid "Source Digest"
+msgstr "بصمة ملف المصدر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__source_file
+msgid "Source File"
+msgstr "ملف العملاء"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__source_filename
+msgid "Source Filename"
+msgstr "اسم ملف المصدر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__source_key
+msgid "Source Key"
+msgstr "مرجع العميل بالمصدر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__source_namespace
+msgid "Source Namespace"
+msgstr "معرّف مصدر البيانات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__source_store
+msgid "Source Store"
+msgstr "فرع المصدر"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid ""
+"The CSV could not be read safely. Re-export it as UTF-8 CSV with correctly "
+"quoted fields."
+msgstr ""
+"تعذرت قراءة ملف CSV بأمان. أعد تصديره بترميز UTF-8 مع وضع علامات الاقتباس "
+"حول الحقول بشكل صحيح."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "The CSV file must not exceed 90 MB."
+msgstr "يجب ألا يتجاوز حجم ملف CSV ‏90 ميجابايت."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "The CSV must not exceed 600,000 rows."
+msgstr "يجب ألا يتجاوز ملف CSV ‏600,000 صف."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid ""
+"The CSV needs mobile_phone and a source_id, eplus_serial, code or id column."
+msgstr ""
+"يجب أن يتضمن ملف CSV عمود mobile_phone وعمودًا من source_id أو eplus_serial "
+"أو code أو id."
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_ecommerce_legacy_customer_partner_unique
+msgid "This account is already linked to a legacy customer."
+msgstr "هذا الحساب مرتبط بالفعل بعميل قديم."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "This batch cannot be processed."
+msgstr "لا يمكن معالجة هذه الدفعة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "This batch has already been prepared."
+msgstr "تم تجهيز هذه الدفعة بالفعل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_ecommerce_legacy_customer_phone_unique
+msgid "This phone is already assigned to a legacy customer."
+msgstr "هذا الرقم مرتبط بالفعل بعميل قديم."
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_ecommerce_legacy_customer_source_unique
+msgid "This source customer has already been imported."
+msgstr "تم استيراد هذا العميل من المصدر بالفعل."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Unused codes in this batch will stop working. Continue?"
+msgstr "ستُبطل الأكواد غير المستخدمة في هذه الدفعة. هل تريد المتابعة؟"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Upload UTF-8 CSV containing mobile_phone and a stable customer reference. "
+"Codes are for activation once and are sent by your external SMS provider. No"
+" messages or loyalty points are created here."
+msgstr ""
+"ارفع ملف CSV بترميز UTF-8 يحتوي على mobile_phone ومرجع ثابت لكل عميل. "
+"الأكواد مخصصة للتفعيل مرة واحدة، وتتولى شركة الرسائل الخارجية إرسالها. لا "
+"يتم إرسال رسائل أو إنشاء نقاط ولاء هنا."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Upload a customer CSV file first."
+msgstr "ارفع ملف العملاء بصيغة CSV أولًا."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Use letters, numbers, underscores or hyphens for the source namespace."
+msgstr ""
+"استخدم حروفًا إنجليزية أو أرقامًا أو شرطات سفلية أو شرطات في معرّف مصدر "
+"البيانات."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid ""
+"You can manage only your own activation batches in your allowed companies."
+msgstr "يمكنك إدارة دفعات التفعيل الخاصة بك فقط ضمن الشركات المسموح لك بها."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid ""
+"Your Abdin Pharmacies activation code is %s. Use it once on our website. Do "
+"not share it."
+msgstr ""
+"كود تفعيلك لدى صيدليات عابدين هو %s. استخدمه مرة واحدة على موقعنا ولا تشاركه"
+" مع أي شخص."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__record_limit
+msgid ""
+"A record exceeds 131,072 characters or 32 physical lines. The remaining file"
+" was not scanned."
+msgstr ""
+"يتجاوز السجل 131,072 حرفًا أو 32 سطرًا في الملف. لم يتم فحص بقية الملف."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__missing_header
+msgid "A required column is missing."
+msgstr "يوجد عمود مطلوب غير موجود في الملف."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__existing
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Already Exists"
+msgstr "موجود بالفعل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__source_encoding__auto
+msgid "Automatic (UTF-8 / UTF-16 BOM)"
+msgstr "تلقائي (UTF-8 / UTF-16 BOM)"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__column_name
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
+msgid "Column"
+msgstr "العمود"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__column_number
+msgid "Column Number"
+msgstr "رقم العمود"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Column Validation"
+msgstr "التحقق من الأعمدة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__severity__corrected
+msgid "Corrected"
+msgstr "تم التصحيح"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_legacy_import_issues
+msgid "Customer Import Review"
+msgstr "مراجعة استيراد العملاء"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_ecommerce_legacy_import_issue
+msgid "Customer Import Validation Issue"
+msgstr "مشكلة تحقق في استيراد العملاء"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__source_reference
+msgid "Customer Reference"
+msgstr "مرجع العميل"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Each entry identifies one column issue. A record can have several issues. "
+"Clean records are included in the counts without filling this table. Record "
+"0 describes the file or its headers. Values are displayed up to 1,000 "
+"characters; the uploaded file is retained until processing finishes."
+msgstr ""
+"يوضح كل بند مشكلة في عمود واحد، وقد يحتوي السجل على عدة مشكلات. تظهر السجلات"
+" السليمة ضمن الأعداد دون إضافتها لهذا الجدول. يشير السجل 0 إلى الملف أو "
+"أسماء أعمدته. تُعرض القيم حتى 1,000 حرف، ويُحتفظ بالملف المرفوع حتى انتهاء "
+"المعالجة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__excluded
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Excluded"
+msgstr "مستبعد"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
+msgid "Excluded Records"
+msgstr "السجلات المستبعدة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__trailing_empty_columns
+msgid "Extra empty columns at the end of the record were ignored."
+msgstr "تم تجاهل الأعمدة الفارغة الإضافية في نهاية السجل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__source_encoding
+msgid "File Encoding"
+msgstr "ترميز الملف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__has_blocking_issues
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__blocked
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "File Needs Correction"
+msgstr "الملف يحتاج إلى تصحيح"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__line_start
+msgid "First File Line"
+msgstr "أول سطر في الملف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__import_status
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
+msgid "Import Status"
+msgstr "حالة الاستيراد"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__imported
+msgid "Imported"
+msgstr "تم الاستيراد"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__inactive
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Inactive"
+msgstr "غير نشط"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__info
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__severity__info
+msgid "Information"
+msgstr "معلومة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__issue_ids
+msgid "Issue"
+msgstr "المشكلة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__line_end
+msgid "Last File Line"
+msgstr "آخر سطر في الملف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__trimmed
+msgid "Leading and trailing spaces were removed."
+msgstr "تم حذف المسافات في بداية القيمة ونهايتها."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__missing_reference
+msgid "No stable customer reference was provided."
+msgstr "لم يتم تقديم مرجع ثابت للعميل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__normalized_value
+msgid "Normalized Value"
+msgstr "القيمة بعد التنسيق"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Only unprocessed batches can be reviewed again."
+msgstr "يمكن إعادة مراجعة الدفعات التي لم تبدأ معالجتها فقط."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__original_value
+msgid "Original Value"
+msgstr "القيمة الأصلية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__issue_code
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
+msgid "Problem / Reason"
+msgstr "المشكلة / السبب"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__quoting
+msgid ""
+"Quotation marks are not closed or escaped correctly. Record boundaries are "
+"uncertain; correct the export before importing."
+msgstr ""
+"علامات الاقتباس غير مغلقة أو لم تُكتب بطريقة صحيحة. حدود السجلات غير مؤكدة؛ "
+"صحّح ملف التصدير قبل الاستيراد."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__import_status__ready
+msgid "Ready with Corrections"
+msgstr "جاهز بعد التصحيح"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__total_rows
+msgid "Records Scanned"
+msgstr "السجلات التي تم فحصها"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Replace File / Review Again"
+msgstr "استبدال الملف / إعادة المراجعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Review All Issues"
+msgstr "مراجعة جميع المشكلات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__corrected_count
+msgid "Rows with Safe Corrections"
+msgstr "السجلات ذات التصحيحات الآمنة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_import_issue_search
+msgid "Safe Corrections"
+msgstr "التصحيحات الآمنة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__severity
+msgid "Severity"
+msgstr "نوع المشكلة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__source_row
+msgid "Source Record"
+msgstr "رقم السجل في المصدر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__header_normalized
+msgid "Spaces and letter case in the column name were normalized."
+msgstr "تم تنسيق المسافات وحالة الأحرف في اسم العمود."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__duplicate_header
+msgid "The column name is empty or appears more than once."
+msgstr "اسم العمود فارغ أو مكرر أكثر من مرة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__inactive
+msgid "The customer is inactive and will not be imported."
+msgstr "العميل غير نشط ولن يتم استيراده."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__name_shortened
+msgid "The customer name was shortened to 200 characters."
+msgstr "تم اختصار اسم العميل إلى 200 حرف."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__name_fallback
+msgid "The empty customer name was replaced with the stable reference."
+msgstr "تم استخدام المرجع الثابت بدلًا من اسم العميل الفارغ."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__blank_row
+msgid "The empty record was skipped."
+msgstr "تم تخطي السجل الفارغ."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__file_blocked
+msgid ""
+"The file contains ambiguous record boundaries or header errors. Review the "
+"issues and upload a corrected file before creating codes."
+msgstr ""
+"يحتوي الملف على حدود سجلات غير واضحة أو أخطاء في أسماء الأعمدة. راجع "
+"المشكلات وارفع ملفًا مصححًا قبل إنشاء الأكواد."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__delimiter_detected
+msgid "The file delimiter was detected automatically."
+msgstr "تم التعرف على فاصل الأعمدة في الملف تلقائيًا."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__row_limit
+msgid "The file exceeds 600,000 records. The remaining file was not scanned."
+msgstr "يتجاوز الملف 600,000 سجل. لم يتم فحص بقية الملف."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"The file has ambiguous records or header errors. Review the column-level "
+"reasons and upload a corrected file before creating codes. No customers have"
+" been imported from this preview."
+msgstr ""
+"يحتوي الملف على سجلات غير واضحة أو أخطاء في أسماء الأعمدة. راجع أسباب "
+"المشكلات لكل عمود وارفع ملفًا مصححًا قبل إنشاء الأكواد. لم يتم استيراد أي "
+"عملاء من هذه المعاينة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__empty_file
+msgid "The file is empty."
+msgstr "الملف فارغ."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__invalid_header
+msgid ""
+"The header cannot be read. Use one header row and a supported delimiter."
+msgstr ""
+"تعذرت قراءة أسماء الأعمدة. استخدم سطرًا واحدًا لأسماء الأعمدة وفاصلًا "
+"مدعومًا."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__phone_normalized
+msgid ""
+"The mobile format was normalized, preserving its digits and restoring an "
+"unambiguous leading zero when needed."
+msgstr ""
+"تم تنسيق رقم المحمول مع الحفاظ على أرقامه وإعادة الصفر الأول عند الحاجة إذا "
+"كانت القيمة واضحة دون التباس."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__missing_phone
+msgid "The mobile number is empty."
+msgstr "رقم المحمول فارغ."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__scientific_phone
+msgid ""
+"The mobile number is in scientific notation. Re-export it as text to "
+"preserve its digits."
+msgstr "رقم المحمول مكتوب بالصيغة العلمية. أعد تصديره كنص للحفاظ على أرقامه."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__column_count
+msgid ""
+"The number of values does not match the header. Original Value shows the "
+"actual count; Normalized Value shows the expected count."
+msgstr ""
+"عدد القيم لا يطابق عدد الأعمدة. تعرض القيمة الأصلية العدد الفعلي، وتعرض "
+"القيمة بعد التنسيق العدد المتوقع."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__invalid_reference
+msgid ""
+"The reference must contain 1–80 letters, digits, underscores or hyphens."
+msgstr "يجب أن يتكون المرجع من 1 إلى 80 حرفًا أو رقمًا أو شرطة سفلية أو شرطة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__store_limit
+msgid "The store reference exceeds 80 characters."
+msgstr "مرجع الفرع يتجاوز 80 حرفًا."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__file_unreadable
+msgid "The uploaded file could not be opened. Upload it again."
+msgstr "تعذر فتح الملف المرفوع. ارفعه مرة أخرى."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__control_character
+msgid "The value contains an unsupported control character."
+msgstr "تحتوي القيمة على حرف تحكم غير مدعوم."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__field_limit
+msgid "The value exceeds the maximum of 4,096 characters."
+msgstr "تتجاوز القيمة الحد الأقصى وهو 4,096 حرفًا."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__invalid_phone
+msgid "The value is not a valid Egyptian mobile number."
+msgstr "القيمة ليست رقم محمول مصريًا صحيحًا."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__unused_column
+msgid ""
+"This column is not used for customer activation; its source data is "
+"unchanged."
+msgstr "هذا العمود غير مستخدم في تفعيل العملاء؛ بياناته في المصدر لم تتغير."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__existing_reference
+msgid ""
+"This customer reference already exists on the selected website and will be "
+"skipped."
+msgstr "مرجع العميل موجود بالفعل في الموقع المحدد وسيتم تخطيه."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__existing_phone
+msgid ""
+"This mobile number already exists on the selected website and will be "
+"skipped."
+msgstr "رقم المحمول موجود بالفعل في الموقع المحدد وسيتم تخطيه."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__duplicate_phone
+msgid ""
+"This mobile number appears more than once among active records. All "
+"occurrences are excluded."
+msgstr ""
+"رقم المحمول مكرر بين السجلات النشطة. يتم استبعاد جميع السجلات التي تحتوي "
+"عليه."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__duplicate_reference
+msgid ""
+"This reference appears more than once among active records. All occurrences "
+"are excluded."
+msgstr ""
+"المرجع مكرر بين السجلات النشطة. يتم استبعاد جميع السجلات التي تحتوي عليه."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__encoding
+msgid ""
+"This value contains bytes that cannot be decoded using the selected "
+"encoding."
+msgstr "تحتوي هذه القيمة على بيانات لا يمكن قراءتها بالترميز المحدد."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__invalid_active
+msgid "Use t/true/1/yes or f/false/0/no for the active flag."
+msgstr "استخدم t/true/1/yes للنشط، أو f/false/0/no لغير النشط."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__issue_count
+msgid "Validation Issues"
+msgstr "مشكلات التحقق"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__source_encoding__cp1256
+msgid "Windows Arabic (CP1256)"
+msgstr "ترميز ويندوز العربي (CP1256)"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__state__review
+msgid "Review Required"
+msgstr "تحتاج إلى مراجعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Upload the customer CSV, then preview it to review issues by column before "
+"creating codes. No messages or loyalty points are created here."
+msgstr ""
+"ارفع ملف CSV للعملاء، ثم عاينه لمراجعة المشكلات حسب العمود قبل إنشاء "
+"الأكواد. لا يتم إرسال رسائل أو إنشاء نقاط ولاء هنا."
+
+#. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
 msgid ""
@@ -4567,3 +5437,191 @@ msgid ""
 msgstr ""
 "تعذّر تحديث مخزون فروع Eplus بسبب فشل الاتصال أو الاستعلام من المصدر. تم "
 "الاحتفاظ بآخر صورة ناجحة للمخزون. حاول مرة أخرى أو تواصل مع الدعم."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__eligible_count
+msgid "Eligible for New Codes"
+msgstr "الصالحون لإنشاء أكواد جديدة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__eligible_percentage
+msgid "Eligible Percentage"
+msgstr "نسبة الصالحين (%)"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__existing_count
+msgid "Existing Customers"
+msgstr "عملاء موجودون بالفعل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__review_version
+msgid "Review Version"
+msgstr "إصدار المراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Preview the file again before downloading the customer review."
+msgstr "أعد معاينة الملف قبل تنزيل مراجعة العملاء."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "The source file changed. Preview it again before downloading."
+msgstr "تغير الملف الأصلي. أعد معاينته قبل التنزيل."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Eligible"
+msgstr "صالح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Eligible after correction"
+msgstr "صالح بعد التصحيح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "File information"
+msgstr "معلومات الملف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: status"
+msgstr "المراجعة: الحالة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: problem / correction"
+msgstr "المراجعة: المشكلة / التصحيح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: issue codes"
+msgstr "المراجعة: رموز الأسباب"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: corrected mobile"
+msgstr "المراجعة: رقم المحمول المصحح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: corrected name"
+msgstr "المراجعة: الاسم المصحح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: customer reference"
+msgstr "المراجعة: مرجع العميل"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: source record"
+msgstr "المراجعة: رقم السجل الأصلي"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: first file line"
+msgstr "المراجعة: أول سطر بالملف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: last file line"
+msgstr "المراجعة: آخر سطر بالملف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Review: original malformed record"
+msgstr "المراجعة: النص الأصلي للسجل التالف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__quoting
+msgid ""
+"Malformed quotation marks: this record is excluded without guessing its "
+"customer data."
+msgstr "علامات اقتباس غير صحيحة: تم استبعاد السجل دون تخمين بيانات العميل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__record_boundary
+msgid ""
+"This record follows broken quoting and has no reliable customer boundary. It"
+" is excluded for manual review."
+msgstr ""
+"يأتي هذا السجل بعد اقتباس تالف ولا يمكن تحديد بداية بيانات العميل بثقة. تم "
+"استبعاده للمراجعة اليدوية."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_import_issue__issue_code__duplicate_phone
+msgid ""
+"This mobile number is shared by active records or appears in a damaged "
+"record. All candidates using it are excluded."
+msgstr ""
+"رقم المحمول مشترك بين سجلات نشطة أو يظهر في سجل تالف. تم استبعاد جميع "
+"المرشحين الذين يستخدمونه."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Recheck and Apply Safe Corrections"
+msgstr "إعادة الفحص وتطبيق التصحيحات المؤكدة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Download Customer Review CSV"
+msgstr "تنزيل مراجعة العملاء CSV"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Recheck this saved preview to apply the current corrections and eligibility "
+"rules."
+msgstr ""
+"أعد فحص هذه المعاينة المحفوظة لتطبيق التصحيحات وقواعد الصلاحية الحالية."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"The file cannot be safely processed because its headers, record boundaries, "
+"or scan limits need attention. Download the review and correct the reported "
+"issues before creating codes."
+msgstr ""
+"لا يمكن معالجة الملف بأمان بسبب مشكلة في العناوين أو حدود السجلات أو حدود "
+"الفحص. نزّل المراجعة وصحح المشكلات الموضحة قبل إنشاء الأكواد."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Preview applies safe corrections and isolates invalid records. Download the "
+"review CSV with eligible customers first, original columns, corrected "
+"values, and reasons. Create codes separately when ready; no SMS or loyalty "
+"points are sent here."
+msgstr ""
+"تطبق المعاينة التصحيحات المؤكدة وتعزل السجلات غير الصالحة. نزّل مراجعة CSV "
+"لعرض العملاء الصالحين أولًا مع الأعمدة الأصلية والقيم المصححة والأسباب. أنشئ"
+" الأكواد بشكل منفصل عندما تكون جاهزًا؛ لا تُرسل رسائل SMS ولا تُضاف نقاط "
+"ولاء هنا."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid ""
+"Eligible percentage = eligible customers for new codes divided by all "
+"scanned records, including inactive and excluded records. File-level notes "
+"are not customers. This is eligibility for activation, not verified "
+"returning-customer status."
+msgstr ""
+"نسبة الصالحين = العملاء الصالحون لأكواد جديدة مقسومًا على جميع السجلات "
+"المفحوصة، بما فيها غير النشطة والمستبعدة. ملاحظات الملف لا تُحسب كعملاء. هذه"
+" صلاحية للتفعيل وليست إثباتًا لحالة العميل القديم."

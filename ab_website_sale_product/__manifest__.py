@@ -9,6 +9,7 @@
     "data": [
         "security/ir.model.access.csv",
         "security/classification_rules.xml",
+        "security/legacy_customer_rules.xml",
         "data/shop_needs.xml",
         "data/classification_taxonomy.xml",
         "data/classification_queue.xml",
@@ -21,7 +22,9 @@
         "views/eplus_inventory_sync_job_views.xml",
         "views/sync_progress_views.xml",
         "views/eplus_stock_snapshot_store_views.xml",
+        "views/legacy_customer_views.xml",
         "views/eplus_stock_snapshot_views.xml",
+        "views/legacy_customer_button.xml",
         "views/ab_product_views.xml",
         "views/product_template_views.xml",
         "views/website_sale_menus.xml",
@@ -32,6 +35,7 @@
     "assets": {
         "web.assets_backend": [
             "ab_website_sale_product/static/src/js/website_sync_form.js",
+            "ab_website_sale_product/static/src/js/legacy_process_batch.js",
             "ab_website_sale_product/static/src/js/product_classification.js",
             "ab_website_sale_product/static/src/xml/product_classification.xml",
             "ab_website_sale_product/static/src/scss/product_classification.scss",
@@ -42,6 +46,7 @@
         ],
     },
     "post_init_hook": "post_init_hook",
+    "external_dependencies": {"python": ["cryptography"]},
     "installable": True,
     "application": False,
 }
