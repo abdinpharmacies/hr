@@ -147,7 +147,7 @@
                         </group>
                     </group>
                     <p>Eligible percentage = eligible customers for new codes divided by all scanned records, including inactive and excluded records. File-level notes are not customers. This is eligibility for activation, not verified returning-customer status.</p>
-                    <div class="alert alert-warning" role="note" invisible="state == 'draft'">
+                    <div class="alert alert-warning" role="status" invisible="state == 'draft'">
                         Duplicate or invalid mobile numbers are excluded. Existing customer references or phone numbers are skipped. Keep the downloaded SMS file private and preserve leading zeros in activation codes.
                     </div>
                     <notebook invisible="state == 'draft'">
