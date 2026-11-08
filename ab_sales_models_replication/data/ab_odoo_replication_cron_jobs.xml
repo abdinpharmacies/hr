@@ -102,8 +102,6 @@ model.replicate_model('ab_hr_job_occupied')
             <field name="model_id" ref="ab_odoo_replication.model_ab_odoo_replication"/>
             <field name="state">code</field>
             <field name="code">
-model.replicate_model('ab_uom_type')
-model.replicate_model('ab_uom')
 
 model.replicate_model('ab_product_uom_category')
 model.replicate_model('ab_product_uom')
@@ -124,8 +122,6 @@ model.replicate_model('ab_product_barcode', limit=10000,
             <field name="model_id" ref="ab_odoo_replication.model_ab_odoo_replication"/>
             <field name="state">code</field>
             <field name="code">
-model.replicate_model('ab_uom_type', replicate_all=True)
-model.replicate_model('ab_uom', replicate_all=True)
 
 model.replicate_model('ab_product_uom_category', replicate_all=True)
 model.replicate_model('ab_product_uom', replicate_all=True)
