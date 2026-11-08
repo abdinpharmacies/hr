@@ -9,8 +9,6 @@ later report/master-data update should fill the remaining fields.
 - ab_product_card
 - ab_product_uom
 - ab_product_uom_category
-- ab_uom
-- ab_uom_type
 - ab_product_company
 - ab_product_origin
 - ab_product_group
