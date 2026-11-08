@@ -82,7 +82,7 @@
                                         <field name="qty" string="Quantity" width="75px"/>
                                         <field name="product_uom_ids" invisible="1"/>
                                         <field name="uom_id" domain="[('id','in',product_uom_ids)]"
-                                               context="{'uom_only_type': 1}"
+
                                                options="{&quot;always_reload&quot;: True}" string="Unit" width="65px"/>
                                         <field name="price" string="Price" width="75px"/>
                                         <field name="purchase_price"/>
@@ -128,7 +128,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_purchase_ob_header</field>
             <field name="domain">[('purpose', '=', 'opening')]</field>
-            <field name="context">{'uom_only_type': 1, 'default_purpose': 'opening'}</field>
+            <field name="context">{'default_purpose': 'opening'}</field>
             <field name="view_mode">list,form</field>
         </record>
         <menuitem id="ab_purchase_ob_header_menu" name="Opening Balance" parent="ab_product_source.menu_root"
@@ -139,7 +139,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_purchase_ob_header</field>
             <field name="domain">[('purpose', '=', 'non_purchase_receipt')]</field>
-            <field name="context">{'uom_only_type': 1, 'default_purpose': 'non_purchase_receipt'}</field>
+            <field name="context">{'default_purpose': 'non_purchase_receipt'}</field>
             <field name="view_mode">list,form</field>
         </record>
         <menuitem id="ab_purchase_ob_non_purchase_receipt_menu"
