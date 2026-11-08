@@ -1,43 +1,5 @@
-from odoo import SUPERUSER_ID, api, fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
-
-
-class NativeSalesInventoryProcess(models.AbstractModel):
-    _inherit = 'ab_inventory_process'
-
-    @api.model
-    def _native_manager_scope(self):
-        return (self.env.context.get('ab_sales_branch_scope')
-                and self.env.user.has_group('ab_sales.group_ab_sales_manager'))
-
-    @api.model
-    def _check_store(self, store_id):
-        if self._native_manager_scope():
-            store = self.env['ab_store'].browse(int(store_id)).exists()
-            if not store:
-                raise ValidationError(_('Select a valid store.'))
-            return store
-        return super()._check_store(store_id)
-
-    @api.model
-    def get_balance(self, store_id, product_id=None, source_id=None, before=None):
-        if self._native_manager_scope():
-            elevated = self.with_user(SUPERUSER_ID)
-            return super(NativeSalesInventoryProcess, elevated).get_balance(
-                store_id, product_id=product_id, source_id=source_id, before=before)
-        return super().get_balance(store_id, product_id=product_id, source_id=source_id, before=before)
-
-    @api.model
-    def _source_balances(self, store_id, product_id=None, before=None,
-                         source_ids=None, include_zero=True, include_pending_outgoing=False):
-        if self._native_manager_scope():
-            elevated = self.with_user(SUPERUSER_ID)
-            return super(NativeSalesInventoryProcess, elevated)._source_balances(
-                store_id, product_id=product_id, before=before, source_ids=source_ids,
-                include_zero=include_zero, include_pending_outgoing=include_pending_outgoing)
-        return super()._source_balances(
-            store_id, product_id=product_id, before=before, source_ids=source_ids,
-            include_zero=include_zero, include_pending_outgoing=include_pending_outgoing)
 
 
 class NativeSalesBackend(models.Model):
@@ -74,8 +36,9 @@ class NativeSalesBackend(models.Model):
         if is_system or is_sales_manager:
             store = self.env['ab_store'].browse(int(store_id)).exists()
         else:
-            store = self.env['ab_inventory_process'].with_context(
-                ab_sales_branch_scope=True)._check_store(int(store_id))
+            store = self.env['ab_store'].browse(int(store_id)).exists()
+            if store not in user.inventory_store_ids:
+                raise AccessError(_('This store is unavailable for native sales.'))
         if not store or not store.allow_sale:
             raise AccessError(_('This store is unavailable for native sales.'))
         return store

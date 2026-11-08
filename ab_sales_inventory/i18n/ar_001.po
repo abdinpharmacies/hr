@@ -1399,3 +1399,66 @@ msgstr "بند المبيعات"
 
 #~ msgid "The stock unit mapping changed after bill submission."
 #~ msgstr "تغير ربط وحدة المخزون بعد تقديم الفاتورة."
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_product
+msgid "Abdin Product"
+msgstr "صنف عابدين"
+
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_res_users__inventory_store_ids
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.view_users_form_inventory_stores
+msgid "Inventory Stores"
+msgstr "متاجر المخزون"
+
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid "Only administrators can assign inventory stores."
+msgstr "يمكن للمسؤولين فقط تعيين متاجر المخزون."
+
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid "Select an active unit from the product unit category."
+msgstr "اختر وحدة نشطة من فئة وحدات المنتج."
+
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid ""
+"Stock quantities must be positive reference-unit amounts with at most eight "
+"decimal places."
+msgstr ""
+"يجب أن تكون كميات المخزون موجبة بالوحدة المرجعية وبحد أقصى ثماني منازل "
+"عشرية."
+
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid "Stock quantities must be positive reference-unit amounts."
+msgstr "يجب أن تكون كميات المخزون موجبة بالوحدة المرجعية."
+
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid "The product requires one active reference unit with factor 1."
+msgstr "يتطلب المنتج وحدة مرجعية نشطة واحدة بمعامل 1."
+
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid "Unit conversion factors must be positive and finite."
+msgstr "يجب أن تكون معاملات تحويل الوحدات موجبة ومحدودة."
+
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_res_users
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/stock_support.py:0
+msgid "Only administrators can assign a store company."
+msgstr "يمكن لمسؤولي النظام فقط تعيين شركة المخزن."

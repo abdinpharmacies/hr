@@ -5,11 +5,12 @@
     'category': 'AbdinSupplyChain',
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
-    'depends': ['ab_stock_integration', 'ab_sales', 'ab_inventory', 'ab_hr'],
+    'depends': ['ab_sales', 'ab_product_source', 'ab_hr'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
         'security/ir.model.access.csv',
+        'views/res_users_stores.xml',
         'views/native_sales.xml',
         'views/native_cancel_wizard.xml',
     ],

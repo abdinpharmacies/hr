@@ -171,16 +171,7 @@ class NativeSalesPOS(models.TransientModel):
 
     @api.model
     def _native_product_balances(self, store, products):
-        source_balances = self.env['ab_inventory_process'].with_context(
-            ab_sales_branch_scope=True).get_source_balances(store.id)
-        sources = self.env['ab_product_source'].sudo().browse([source_id for source_id, qty in source_balances.items() if qty > 0])
-        today = fields.Date.context_today(self)
-        requested = set(products.ids)
-        balances = {}
-        for source in sources:
-            if source.product_id.id in requested and (not source.exp_date or source.exp_date >= today):
-                balances[source.product_id.id] = balances.get(source.product_id.id, 0) + source_balances[source.id]
-        return balances
+        raise AccessError(_('This store is unavailable for native sales.'))
 
     @api.model
     def _native_stocked_products(self, store_id):

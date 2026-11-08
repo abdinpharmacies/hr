@@ -189,9 +189,6 @@ class NativeSale(models.Model):
                 raise ValidationError(_('The pending native invoice has incomplete stock allocations.'))
             if allocated + shortage != snapshot.get('stock_qty'):
                 raise ValidationError(_('The pending native invoice stock approval does not match its sold quantity.'))
-            if any(not rec.inventory_movement_id or rec.inventory_movement_id.status != 'saved'
-                   or rec.store_id != self.store_id for rec in allocations):
-                raise ValidationError(_('The pending native invoice has incomplete inventory movements.'))
         return True
 
     def action_submit(self, request_token=None):
@@ -399,9 +396,9 @@ class NativeSale(models.Model):
 class NativeSaleLine(models.Model):
     _inherit = 'ab_sales_line'
 
-    native_stock_qty = fields.Float(string='Deducted Stock Quantity', readonly=True, copy=False, digits=(18, 6))
-    native_requested_stock_qty = fields.Float(string='Requested Stock Quantity', readonly=True, copy=False, digits=(18, 6))
-    native_shortage_qty = fields.Float(string='Stock Shortage Quantity', readonly=True, copy=False, digits=(18, 6))
+    native_stock_qty = fields.Float(string='Deducted Stock Quantity', readonly=True, copy=False, digits=(24, 8))
+    native_requested_stock_qty = fields.Float(string='Requested Stock Quantity', readonly=True, copy=False, digits=(24, 8))
+    native_shortage_qty = fields.Float(string='Stock Shortage Quantity', readonly=True, copy=False, digits=(24, 8))
     native_unit_factor = fields.Float(string='Posted Unit Factor', readonly=True, copy=False, digits=(18, 8))
     native_operation_key = fields.Char(string='Stock Operation Key', readonly=True, copy=False, index=True)
     native_allocations = fields.Json(string='Posted Stock Allocations', readonly=True, copy=False)

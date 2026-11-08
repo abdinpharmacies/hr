@@ -16,16 +16,15 @@ class SalesStockAllocation(models.Model):
     original_id = fields.Many2one('ab_sales_stock_allocation', readonly=True, ondelete='restrict', index=True)
     store_id = fields.Many2one('ab_store', required=True, readonly=True, ondelete='restrict', index=True)
     source_id = fields.Many2one('ab_product_source', required=True, readonly=True, ondelete='restrict')
-    uom_id = fields.Many2one('ab_uom', required=True, readonly=True, ondelete='restrict')
+    uom_id = fields.Many2one('ab_product_uom', required=True, readonly=True, ondelete='restrict')
     sale_uom_id = fields.Many2one('ab_product_uom', readonly=True, ondelete='restrict')
     sale_qty = fields.Float(readonly=True, digits=(18, 8))
     unit_factor = fields.Float(readonly=True, digits=(18, 8))
-    qty = fields.Integer(required=True, readonly=True)
-    qty_smallest = fields.Integer(readonly=True)
+    qty = fields.Float(required=True, readonly=True, digits=(24, 8))
+    qty_smallest = fields.Float(readonly=True, digits=(24, 8))
     unit_price = fields.Float(readonly=True, digits=(18, 6))
     source_unit_price = fields.Float(readonly=True, digits=(18, 6))
     unit_cost = fields.Float(readonly=True, digits=(18, 6))
-    inventory_movement_id = fields.Many2one('ab_inventory', readonly=True, ondelete='restrict')
     _operation_unique = models.Constraint('UNIQUE(operation_key)', 'Stock allocation operation keys must be unique.')
 
     @api.model_create_multi
@@ -50,32 +49,7 @@ class SalesStockAllocation(models.Model):
 
     @api.model
     def _source_rows(self, store, product):
-        self = self.with_context(ab_sales_branch_scope=True)
-        self.env['ab_sales_backend']._check_store(store.id)
-        product.ensure_one()
-        product.check_access('read')
-        balances = self.env['ab_inventory_process'].get_source_balances(store.id, product_id=product.id)
-        sources = self.env['ab_product_source'].sudo().browse([sid for sid, qty in balances.items() if qty > 0])
-        rows = []
-        today = fields.Date.context_today(self)
-        for source in sources:
-            if source.product_id != product or (source.exp_date and source.exp_date < today):
-                continue
-            small = Decimal(str(product.unit_s_id.unit_no or 0))
-            medium = Decimal(str(product.unit_m_id.unit_no or 0))
-            size = source.uom_id.unit_size
-            factor = small if size == 'large' else small / medium if size == 'medium' and medium else Decimal(1) if size == 'small' else Decimal(0)
-            if factor <= 0 or not all(math.isfinite(value) for value in (source.price, source.unit_cost)):
-                raise ValidationError(_('The stock source has invalid unit or price values.'))
-            rows.append({
-                'source_id': source.id,
-                'source_identity': source.source_identity,
-                'qty': int(balances[source.id]),
-                'price': source.price / float(factor),
-                'cost': source.unit_cost / float(factor),
-                'expiry': source.exp_date,
-            })
-        return rows
+        raise AccessError(_('This store is unavailable for native sales.'))
 
     @api.model
     def _build_sale_plan(self, sale):
@@ -90,7 +64,7 @@ class SalesStockAllocation(models.Model):
                               'allocations': [], 'shortage': 0})
                 continue
             qty_smallest = line.product_id._to_stock_quantity(line.qty, line.uom_id)
-            factor = Decimal(qty_smallest) / Decimal(str(line.qty))
+            factor = line.product_id._stock_unit_factor(line.uom_id)
             target_price = self._price_key(Decimal(str(line.sell_price)) / factor)
             if line.product_id.id not in rows_by_product:
                 rows = self._source_rows(sale.store_id, line.product_id)
@@ -143,7 +117,7 @@ class SalesStockAllocation(models.Model):
 
     @api.model
     def _stock_unit_values(self, product):
-        return {'uom_id': product.unit_s_id.id}
+        return {'uom_id': product._stock_reference_unit().id}
 
     @api.model
     def _stock_context_unit_id(self, product):
@@ -152,39 +126,7 @@ class SalesStockAllocation(models.Model):
 
     @api.model
     def _post_sale_plan(self, sale, plans):
-        created = self.browse()
-        Shortage = self.env['ab_sales_stock_shortage']
-        for plan in plans:
-            line = plan['line']
-            if plan['service']:
-                line._set_native_stock_snapshot(plan, [])
-                continue
-            line_allocations = self.browse()
-            for row in plan['allocations']:
-                allocation = super(SalesStockAllocation, self.sudo()).create({
-                    'operation_key': 'sale:%s:source:%s' % (line.id, row['source_id']),
-                    'sale_line_id': line.id,
-                    'store_id': sale.store_id.id,
-                    'source_id': row['source_id'],
-                    **self._stock_unit_values(line.product_id),
-                    'sale_uom_id': line.uom_id.id,
-                    'sale_qty': row['take'] / plan['factor'],
-                    'unit_factor': plan['factor'],
-                    'qty': row['take'],
-                    'qty_smallest': row['take'],
-                    'unit_price': line.sell_price,
-                    'source_unit_price': row['price'],
-                    'unit_cost': row['cost'],
-                })
-                movement = self.env['ab_inventory_process'].inventory_write(
-                    allocation, row['take'], sale.store_id.id, sign=-1, status='saved')
-                super(SalesStockAllocation, allocation).write({'inventory_movement_id': movement.id})
-                line_allocations |= allocation.with_env(self.env)
-                created |= allocation.with_env(self.env)
-            if plan['shortage']:
-                Shortage._create_from_plan(sale, plan)
-            line._set_native_stock_snapshot(plan, line_allocations._snapshot())
-        return created
+        raise AccessError(_('This store is unavailable for native sales.'))
 
     def _snapshot(self):
         return [{
@@ -197,67 +139,11 @@ class SalesStockAllocation(models.Model):
             'unit_price': rec.unit_price,
             'source_unit_price': rec.source_unit_price,
             'unit_cost': rec.unit_cost,
-            'inventory_movement_id': rec.inventory_movement_id.id,
         } for rec in self]
 
     @api.model
     def _post_return(self, line, qty):
-        self = self.with_context(ab_sales_branch_scope=True)
-        line.ensure_one()
-        line.check_access('read')
-        header = line.header_id
-        store = self.env['ab_sales_backend']._check_store(header.store_id.id, cashier=True)
-        self.env['ab_sales_backend']._check_employee_session(store, 'allow_cashier_screen')
-        original = line.native_origin_line_id
-        if (header.status != 'pending' or original.header_id != header.native_origin_id
-                or not original.header_id.native_posted or original.header_id.store_id != store):
-            raise ValidationError(_('A stock return must reference its posted original bill.'))
-        qty = original.product_id._validate_stock_quantity(qty)
-        store._lock_stock_scope()
-        existing = self.sudo().search(fields.Domain('return_line_id', '=', line.id))
-        if existing:
-            if sum(rec.qty_smallest or rec.qty for rec in existing) != qty:
-                raise ValidationError(_('The return already has different stock allocations.'))
-            return
-        allocations = self.sudo().search(fields.Domain([
-            ('sale_line_id', '=', original.id), ('return_line_id', '=', False),
-        ]))
-        returned = self.sudo().search(fields.Domain('original_id', 'in', allocations.ids))
-        totals = {}
-        for returned_allocation in returned:
-            totals[returned_allocation.original_id.id] = totals.get(returned_allocation.original_id.id, 0) + (
-                returned_allocation.qty_smallest or returned_allocation.qty)
-        if qty > sum((rec.qty_smallest or rec.qty) - totals.get(rec.id, 0) for rec in allocations):
-            raise ValidationError(_('The return exceeds the original stock allocations.'))
-        remaining = qty
-        for original_allocation in allocations:
-            original_qty = original_allocation.qty_smallest or original_allocation.qty
-            take = min(remaining, original_qty - totals.get(original_allocation.id, 0))
-            if take <= 0:
-                continue
-            allocation = super(SalesStockAllocation, self.sudo()).create({
-                'operation_key': 'return:%s:allocation:%s' % (line.id, original_allocation.id),
-                'sale_line_id': original.id,
-                'return_line_id': line.id,
-                'original_id': original_allocation.id,
-                'store_id': store.id,
-                'source_id': original_allocation.source_id.id,
-                **self._stock_unit_values(original.product_id),
-                'sale_uom_id': original_allocation.sale_uom_id.id or original.uom_id.id,
-                'sale_qty': take / (original_allocation.unit_factor or original.native_unit_factor),
-                'unit_factor': original_allocation.unit_factor or original.native_unit_factor,
-                'qty': take,
-                'qty_smallest': take,
-                'unit_price': original_allocation.unit_price,
-                'source_unit_price': original_allocation.source_unit_price,
-                'unit_cost': original_allocation.unit_cost,
-            })
-            movement = self.env['ab_inventory_process'].inventory_write(
-                allocation, take, store.id, sign=1, status='saved')
-            super(SalesStockAllocation, allocation).write({'inventory_movement_id': movement.id})
-            remaining -= take
-            if not remaining:
-                break
+        raise AccessError(_('This store is unavailable for native sales.'))
 
 
 class SalesStockShortage(models.Model):
@@ -275,9 +161,9 @@ class SalesStockShortage(models.Model):
     sold_qty = fields.Float(required=True, readonly=True, digits=(18, 8))
     deducted_qty = fields.Float(required=True, readonly=True, digits=(18, 8))
     shortage_qty = fields.Float(required=True, readonly=True, digits=(18, 8))
-    sold_qty_smallest = fields.Integer(required=True, readonly=True)
-    deducted_qty_smallest = fields.Integer(required=True, readonly=True)
-    shortage_qty_smallest = fields.Integer(required=True, readonly=True)
+    sold_qty_smallest = fields.Float(required=True, readonly=True, digits=(24, 8))
+    deducted_qty_smallest = fields.Float(required=True, readonly=True, digits=(24, 8))
+    shortage_qty_smallest = fields.Float(required=True, readonly=True, digits=(24, 8))
     unit_price = fields.Float(required=True, readonly=True, digits=(18, 6))
     reason = fields.Selection([
         ('not_transferred', 'Not transferred yet from main store'),
@@ -340,10 +226,8 @@ class SalesStockReversal(models.Model):
     sale_id = fields.Many2one(related='allocation_id.sale_line_id.header_id', store=True, readonly=True)
     store_id = fields.Many2one('ab_store', required=True, readonly=True, ondelete='restrict', index=True)
     source_id = fields.Many2one('ab_product_source', required=True, readonly=True, ondelete='restrict')
-    uom_id = fields.Many2one('ab_uom', required=True, readonly=True, ondelete='restrict')
-    qty = fields.Integer(required=True, readonly=True)
-    original_movement_id = fields.Many2one('ab_inventory', required=True, readonly=True, ondelete='restrict')
-    inventory_movement_id = fields.Many2one('ab_inventory', readonly=True, ondelete='restrict')
+    uom_id = fields.Many2one('ab_product_uom', required=True, readonly=True, ondelete='restrict')
+    qty = fields.Float(required=True, readonly=True, digits=(24, 8))
     reversed_by_id = fields.Many2one('res.users', required=True, readonly=True)
     reversed_at = fields.Datetime(required=True, readonly=True)
     _allocation_unique = models.Constraint('UNIQUE(allocation_id)', 'Each stock allocation can be reversed only once.')
@@ -360,32 +244,4 @@ class SalesStockReversal(models.Model):
 
     @api.model
     def _reverse_allocation(self, allocation):
-        existing = self.sudo().search([('allocation_id', '=', allocation.id)], limit=1)
-        if existing:
-            return existing
-        reversal = super(SalesStockReversal, self.sudo()).create({
-            'allocation_id': allocation.id,
-            'store_id': allocation.store_id.id,
-            'source_id': allocation.source_id.id,
-            'uom_id': allocation.uom_id.id,
-            'qty': allocation.qty_smallest or allocation.qty,
-            'original_movement_id': allocation.inventory_movement_id.id,
-            'reversed_by_id': self.env.uid,
-            'reversed_at': fields.Datetime.now(),
-        })
-        movement = self.env['ab_inventory_process'].inventory_write(
-            reversal, reversal.qty, reversal.store_id.id, sign=1, status='saved')
-        super(SalesStockReversal, reversal).write({'inventory_movement_id': movement.id})
-        return reversal
-
-
-class InventoryMovement(models.Model):
-    _inherit = 'ab_inventory'
-
-    model_ref = fields.Selection(selection_add=[
-        ('ab_sales_stock_allocation', 'Sales Stock Allocation'),
-        ('ab_sales_stock_reversal', 'Sales Stock Reversal'),
-    ], ondelete={
-        'ab_sales_stock_allocation': 'set default',
-        'ab_sales_stock_reversal': 'set default',
-    })
+        raise AccessError(_('This store is unavailable for native sales.'))

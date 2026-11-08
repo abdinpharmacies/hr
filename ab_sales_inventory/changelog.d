@@ -1,3 +1,64 @@
+Current changes before commit (branch ledger removal):
+
+- Keep branch store assignments, stock-scope locking, and product-UoM conversion available without installing the inventory ledger.
+- Require central snapshots for native stock reads and approvals; remove branch movement fields and local movement posting paths.
+- Preserve the pending fractional reference-unit sale and return changes.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/__manifest__.py
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/i18n/ar.po
+- ab_sales_inventory/i18n/ar_001.po
+- ab_sales_inventory/models/__init__.py
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/backend.py
+- ab_sales_inventory/models/pos.py
+- ab_sales_inventory/models/returns.py
+- ab_sales_inventory/models/sale.py
+- ab_sales_inventory/models/stock_support.py
+- ab_sales_inventory/security/security_groups.xml
+- ab_sales_inventory/views/res_users_stores.xml
+
+Recent relevant commit:
+
+- Commit: 3d19a4af
+- Author: Hossam Elsheikh
+- Date: 2026-11-05
+- Original subject: refactor(ab_sales_inventory): expose product-UoM hooks for stock allocations
+- User-facing change: native sales allocation uses product unit hooks.
+
+Files changed:
+
+- ab_sales_inventory/__manifest__.py
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/sale.py
+
+Current changes before commit:
+
+- Allocate sales and returns in fractional reference units with canonical unit pricing.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/returns.py
+- ab_sales_inventory/models/sale.py
+
+Current changes before commit:
+
+- Allocate sales and returns in fractional reference units with canonical unit pricing.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/returns.py
+- ab_sales_inventory/models/sale.py
+
 Current changes before commit:
 
 - Extract native approval evidence and POS balance/stock lookup methods so central synchronization can reuse approval and pricing logic with JSON cache evidence.
