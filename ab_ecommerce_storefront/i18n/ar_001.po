@@ -1892,6 +1892,7 @@ msgstr "ميجابايت."
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
 msgid "Mobile number"
 msgstr "رقم الموبايل"
 
@@ -3367,6 +3368,7 @@ msgstr "خدمة العملاء"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_legacy_customer__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -3514,6 +3516,7 @@ msgstr "كيف يمكننا مساعدتك؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_legacy_customer__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -13876,3 +13879,69 @@ msgid ""
 msgstr ""
 "لن تتمكن من الدخول إلى حسابك حتى تُدخل الرمز. تنتهي صلاحية الرمز بعد وقت "
 "قصير، ويُستخدم مرة واحدة فقط."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_welcome
+msgid "<span>Have an SMS activation code?</span>"
+msgstr "<span>معك كود تفعيل وصلك برسالة SMS؟</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_welcome
+msgid ""
+"<strong>Welcome back, our valued returning customer!</strong> <span>Thank "
+"you for staying with Abdin Pharmacies.</span>"
+msgstr ""
+"<strong>أهلًا برجوعك، عميلنا العزيز!</strong> <span>شكرًا لاستمرارك مع "
+"صيدليات عابدين.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid "Activate membership"
+msgstr "تفعيل العضوية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_welcome
+msgid "Activate your returning-customer membership"
+msgstr "تفعيل عضويتك كعميل قديم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid ""
+"Enter your mobile number and the activation code received by SMS. Each code "
+"can be used once."
+msgstr ""
+"أدخل رقم محمولك وكود التفعيل الذي وصلك برسالة SMS. يُستخدم كل كود مرة واحدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid ""
+"If your number has changed or the code is unavailable, contact customer "
+"support."
+msgstr "إذا تغير رقمك أو لم يكن الكود متاحًا، تواصل مع خدمة العملاء."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_ecommerce_legacy_customer
+msgid "Legacy Customer"
+msgstr "عميل قديم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid "SMS activation code"
+msgstr "كود التفعيل المرسل برسالة SMS"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/legacy_activation.py:0
+msgid ""
+"The phone number or activation code is invalid, expired or unavailable. "
+"Please contact customer support."
+msgstr ""
+"رقم المحمول أو كود التفعيل غير صحيح أو منتهي الصلاحية أو غير متاح. يرجى "
+"التواصل مع خدمة العملاء."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid "Your account is already linked. Welcome back!"
+msgstr "حسابك مرتبط بالفعل. أهلًا برجوعك!"

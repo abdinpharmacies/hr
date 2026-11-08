@@ -13223,3 +13223,64 @@ msgid ""
 "Your account stays locked until you enter the code. Codes expire shortly and"
 " can only be used once."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_welcome
+msgid "<span>Have an SMS activation code?</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_welcome
+msgid ""
+"<strong>Welcome back, our valued returning customer!</strong> <span>Thank "
+"you for staying with Abdin Pharmacies.</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid "Activate membership"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_legacy_welcome
+msgid "Activate your returning-customer membership"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid ""
+"Enter your mobile number and the activation code received by SMS. Each code "
+"can be used once."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid ""
+"If your number has changed or the code is unavailable, contact customer "
+"support."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_ecommerce_legacy_customer
+msgid "Legacy Customer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid "SMS activation code"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/legacy_activation.py:0
+msgid ""
+"The phone number or activation code is invalid, expired or unavailable. "
+"Please contact customer support."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_activation
+msgid "Your account is already linked. Welcome back!"
+msgstr ""

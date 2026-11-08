@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_legacy_welcome" inherit_id="website.layout" name="Legacy customer welcome">
+        <xpath expr="//main" position="before">
+            <t t-if="not request.env.user._is_public() and request.env.user._is_portal()">
+                <t t-set="legacy_status" t-value="request.env['ab_ecommerce_legacy_customer']._portal_status(request.env.user, request.website)"/>
+                <div t-if="legacy_status['linked']" class="container py-2 ab-legacy-welcome">
+                    <div class="alert alert-success mb-0" role="status"><strong>Welcome back, our valued returning customer!</strong> <span>Thank you for staying with Abdin Pharmacies.</span></div>
+                </div>
+                <div t-elif="legacy_status['eligible']" class="container py-2 ab-legacy-activation-prompt">
+                    <div class="alert alert-info mb-0"><span>Have an SMS activation code?</span> <a href="/my/legacy-activation" class="alert-link">Activate your returning-customer membership</a></div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <template id="portal_legacy_link" inherit_id="portal.portal_my_home" name="Returning customer activation link">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <a href="/my/legacy-activation" class="btn btn-outline-primary my-3">Activate your returning-customer membership</a>
+        </xpath>
+    </template>
+    <template id="portal_activation" name="Activate returning-customer membership">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4 ab-legacy-activation">
+                <div class="row justify-content-center"><div class="col-12 col-md-8 col-lg-6">
+                    <h1>Activate your returning-customer membership</h1>
+                    <div t-if="linked" class="alert alert-success" role="status">Your account is already linked. Welcome back!</div>
+                    <t t-else="">
+                        <p>Enter your mobile number and the activation code received by SMS. Each code can be used once.</p>
+                        <p t-if="error" id="legacy_error" class="alert alert-danger" role="alert" t-out="error"/>
+                        <form action="/my/legacy-activation" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="mb-3"><label for="legacy_phone" class="form-label">Mobile number</label><input id="legacy_phone" name="phone" type="tel" dir="ltr" autocomplete="tel" required="required" maxlength="30" class="form-control"/></div>
+                            <div class="mb-3"><label for="legacy_code" class="form-label">SMS activation code</label><input id="legacy_code" name="code" type="text" inputmode="numeric" dir="ltr" autocomplete="one-time-code" pattern="[0-9 -]{12,16}" maxlength="16" required="required" class="form-control" t-att-aria-describedby="'legacy_error' if error else None"/></div>
+                            <button type="submit" class="btn btn-primary">Activate membership</button>
+                        </form>
+                        <p class="mt-3">If your number has changed or the code is unavailable, contact customer support.</p>
+                    </t>
+                </div></div>
+            </div>
+        </t>
+    </template>
+</odoo>
