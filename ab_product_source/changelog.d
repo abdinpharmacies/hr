@@ -1,23 +1,11 @@
 Current changes before commit:
 
-- Replace the Odoo 15 tree view and action mode with the Odoo 19 list view type.
-- Replace legacy `name_get` behavior with an Odoo 19 computed display name.
-- Update product-source name search to the Odoo 19 signature and compose its filters with `fields.Domain`.
-- Preserve existing price, cost, tax, expiry, and unit-conversion behavior.
-- Preserve existing English source strings; no user-facing text required translation updates.
+- Convert source prices and costs through canonical product UoM factors.
 
 Files changed:
 
 - ab_product_source/changelog.d
 - ab_product_source/models/ab_product_source.py
-- ab_product_source/views/ab_product_source.xml
-
-Validation:
-
-- All module XML files parse successfully.
-- Legacy Odoo 15 view/API scans pass.
-- `git diff --check` passes.
-- Python compilation and an Odoo database upgrade remain pending because a working Python/Odoo runtime is unavailable in this shell.
 
 commit 4786f546e25101fcf835b0d15e032b177343258e
 Author: emadco88 <emadco88@gmail.com>

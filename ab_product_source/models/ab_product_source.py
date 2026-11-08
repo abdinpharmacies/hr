@@ -85,22 +85,14 @@ class AbdinProductsSource(models.Model):
 
             rec.unit_taxes_value = taxes_on_purchase + taxes_on_total
 
-    def convert_price(self, unit_size):
-        unit_no = {'large': self.product_id.unit_l_id.unit_no,
-                   'medium': self.product_id.unit_m_id.unit_no,
-                   'small': self.product_id.unit_s_id.unit_no}
-        large_unit_price = self.price * unit_no.get(self.uom_id.unit_size, 1)
-        if unit_no.get(unit_size, 1):
-            return large_unit_price / unit_no.get(unit_size, 1)
-        else:
+    def convert_price(self, to_unit):
+        self.ensure_one()
+        if not self.uom_id or not to_unit or self.uom_id.category_id != to_unit.category_id:
             return 0.0
+        return self.price * to_unit.factor / self.uom_id.factor
 
-    def convert_cost(self, unit_size):
-        unit_no = {'large': 1,
-                   'medium': self.product_id.unit_m_id.unit_no,
-                   'small': self.product_id.unit_s_id.unit_no}
-        large_unit_cost = self.unit_cost * unit_no.get(self.uom_id.unit_size, 1)
-        if unit_no.get(unit_size, 1):
-            return large_unit_cost / unit_no.get(unit_size, 1)
-        else:
+    def convert_cost(self, to_unit):
+        self.ensure_one()
+        if not self.uom_id or not to_unit or self.uom_id.category_id != to_unit.category_id:
             return 0.0
+        return self.unit_cost * to_unit.factor / self.uom_id.factor
