@@ -1,5 +1,7 @@
 # CRM messaging integration
 
+SQLite storage, consistent backups and the optional WhatsApp Chatter bridge are documented in [SQLITE.md](SQLITE.md). PostgreSQL remains supported for compatibility and controlled migration.
+
 For the callcenter Telegram polling pilot, use [DEVELOPMENT.md](DEVELOPMENT.md). It documents the versioned controller, masked local setup, literal-loopback HTTP exception and supervised receiver. The webhook instructions below are an alternative deployment mode; polling needs no public hostname or tunnel.
 
 New Odoo 19 addons `ab_crm_messaging`, `ab_crm_whatsapp`, and `ab_crm_telegram` extend `ab_crm_core`. This service does not import the earlier gateway or OMS adapters and has no OMS submission worker. Everything ships disabled. Public webhook registration and real provider sends require explicit activation authorization.
@@ -82,7 +84,7 @@ Telegram private contact updates now retain the sender and contact user IDs sepa
 
 `python -m app.telegram_setup ACCOUNT` verifies the configured bot identity and inspects webhook status without registering or removing a webhook. The same helper accepts `--webhook-url HTTPS_URL --activate` only after explicit operator activation approval, verifies identity first, and preserves pending updates. It reads the existing protected `CRM_MESSAGING_CONFIG`; it does not create another credential directory or send customer messages. Provider HTTP errors are sanitized.
 
-For the upcoming WhatsApp workspace, the chosen owner is `ab_whatsapp_api`. Do not enable this gateway's WhatsApp sender for the same account. See `docs/sales-operations-whatsapp-next-plan.md` in the repository.
+Canonical WhatsApp history remains owned by `ab_whatsapp_api`. The optional `ab_crm_whatsapp_workspace` bridge queues both entry points only for explicitly migrated accounts. See [SQLite migration and WhatsApp integration](SQLITE.md); production cutover and webhook activation remain separate.
 
 ## Odoo-managed Telegram token
 
@@ -96,3 +98,21 @@ The independent worker downloads incoming Telegram media after the message and p
 Install the operating system `ffmpeg` package on the worker host before enabling audio/voice sending. The worker uses `ffprobe` to verify actual duration and `ffmpeg` to convert recordings to Ogg/Opus. Missing tools or invalid recordings produce a definitive local rejection before provider submission. The web recorder never sends automatically.
 
 Outgoing Telegram requires both the Odoo account's **Outgoing Sending Enabled** and the gateway's `sending_enabled`. **Automatic Contact Request** is a separate, default-off Odoo account option. Receiving remains independent of these outbound controls. Keep all outbound switches off until the separately approved pilot.
+
+The embedded Chatter composer can queue outgoing MP4 video through Telegram `sendVideo`. This shares the existing bounded video validation with WhatsApp: up to 16 MB, H.264 video and optional AAC audio. The worker's FFmpeg package (`ffprobe`) is required for video validation as well as audio processing. Invalid or unsupported video fails locally before submission. Location menu entries insert an ordinary map link into the draft; there is no new gateway location operation.
+
+## Telegram branch venues
+
+Gateway 1.3.0 accepts optional outgoing `location` containing only `latitude`,
+`longitude`, `name` and `address`. It sends one native Telegram `sendVenue`
+request, preserving reply parameters and the existing durable receipt/retry
+workflow. Location content cannot be combined with media, reactions, contact
+buttons or templates. WhatsApp location sending is rejected.
+
+`accounts.<code>.location_enabled` defaults to `false`. Upgrade Odoo consumers
+(`ab_crm_messaging` 19.0.1.6.0 and `ab_crm_sales_workspace` 19.0.1.13.0) first,
+then deploy the gateway. During a separately authorized rollout, enable this
+flag and the matching Odoo account's **Telegram Branch Locations Enabled**.
+Existing global/account sending gates remain required. Until both sides are
+ready, keep location sending disabled. No webhook setup is required by this
+feature. See `docs/telegram-branch-location-validation.md` in the repository root.
