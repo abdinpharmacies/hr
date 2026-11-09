@@ -4660,6 +4660,11 @@ msgid "Enter the details needed to reach your address."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Email <small class=\"ab-storefront-optional-label\">Optional</small>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
 msgid "Enter the order reference and the mobile number used at checkout."
 msgstr ""

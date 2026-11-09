@@ -1809,6 +1809,11 @@ msgid "Email"
 msgstr "البريد الإلكتروني"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Email <small class=\"ab-storefront-optional-label\">Optional</small>"
+msgstr "البريد الإلكتروني <small class=\"ab-storefront-optional-label\">اختياري</small>"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.coupon_form_abdin_skin
 msgid "Enter discount code"
 msgstr "أدخل كود الخصم"

@@ -525,7 +525,9 @@
         </xpath>
         <xpath expr="//div[@id='div_email']" position="replace">
             <div id="div_email" class="col-lg-6 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label label-optional" for="o_email">Email</label>
+                <label class="col-form-label label-optional" for="o_email">
+                    Email <small class="ab-storefront-optional-label">Optional</small>
+                </label>
                 <input
                     id="o_email"
                     type="email"

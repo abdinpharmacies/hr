@@ -18470,6 +18470,13 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
             font-weight: var(--ab-font-weight-bold);
             line-height: var(--ab-line-height-130);
 
+            .ab-storefront-optional-label {
+                margin-inline-start: .35rem;
+                color: $ab-muted;
+                font-size: var(--ab-font-size-070);
+                font-weight: var(--ab-font-weight-regular);
+            }
+
             &:not(.label-optional)::after {
                 content: " *";
                 color: $ab-green;
