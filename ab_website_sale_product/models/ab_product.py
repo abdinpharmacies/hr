@@ -220,7 +220,7 @@ class AbProduct(models.Model):
     website_sale_available = fields.Boolean(
         string="Available on Website",
         default=True,
-        help="When enabled, sync publishes the linked eCommerce product if this product is active and allowed for sale.",
+        help="Only Add Many By Codes can publish a product. Disabling this option unpublishes a linked product during sync.",
     )
     website_product_tmpl_id = fields.Many2one(
         "product.template",
@@ -493,7 +493,7 @@ class AbProduct(models.Model):
         lines = str(html_escape(text)).splitlines() or [""]
         return "<p>%s</p>" % "<br/>".join(lines)
 
-    def _prepare_website_product_template_vals(self, sync_cache=None):
+    def _prepare_website_product_template_vals(self, sync_cache=None, publish_requested=False):
         self.ensure_one()
         ProductTemplate = self.env["product.template"]
         public_categories = self._get_or_create_website_public_categories(sync_cache=sync_cache)
@@ -501,7 +501,6 @@ class AbProduct(models.Model):
         name = self.name or self.product_card_name or self.code or _("Unnamed Product")
         description = self.description or False
         sale_ok = bool(self.active and self.allow_sale)
-        is_published = bool(sale_ok and self.website_sale_available)
 
         vals = {
             "ab_product_id": self.id,
@@ -520,9 +519,10 @@ class AbProduct(models.Model):
             "description": self._ab_text_to_html(description),
             "description_ecommerce": self._ab_text_to_html(description),
             "website_description": self._ab_text_to_html(description),
-            "is_published": is_published,
             "product_tag_ids": [fields.Command.set(product_tags.ids)],
         }
+        if publish_requested or not sale_ok or not self.website_sale_available:
+            vals["is_published"] = bool(publish_requested and sale_ok and self.website_sale_available)
         if public_categories:
             vals["public_categ_ids"] = [fields.Command.set(public_categories.ids)]
         if "invoice_policy" in ProductTemplate._fields:
@@ -591,15 +591,17 @@ class AbProduct(models.Model):
             "languages": languages, "tags_by_name": by_name,
         }
 
-    def _sync_website_products(self, outcomes=None):
+    def _sync_website_products(self, outcomes=None, create_missing=False, publish_requested=False):
         self._lock_website_sync()
         template_ids = []
         for offset in range(0, len(self), WEBSITE_SYNC_CHUNK_SIZE):
-            templates = self[offset:offset + WEBSITE_SYNC_CHUNK_SIZE]._sync_website_product_batch(outcomes=outcomes)
+            templates = self[offset:offset + WEBSITE_SYNC_CHUNK_SIZE]._sync_website_product_batch(
+                outcomes=outcomes, create_missing=create_missing, publish_requested=publish_requested,
+            )
             template_ids.extend(templates.ids)
         return self.env["product.template"].sudo().with_context(active_test=False).browse(template_ids)
 
-    def _sync_website_product_batch(self, outcomes=None):
+    def _sync_website_product_batch(self, outcomes=None, create_missing=False, publish_requested=False):
         products = self.sudo()
         ProductTemplate = self.env["product.template"].sudo().with_context(active_test=False)
         existing = ProductTemplate.search(fields.Domain("ab_product_id", "in", products.ids))
@@ -612,7 +614,12 @@ class AbProduct(models.Model):
         statuses = {}
         for product in products:
             template = by_product.get(product.id)
-            vals = product._prepare_website_product_template_vals(sync_cache=sync_cache)
+            if not template and not create_missing:
+                statuses[product.id] = "skipped"
+                continue
+            vals = product._prepare_website_product_template_vals(
+                sync_cache=sync_cache, publish_requested=publish_requested,
+            )
             if template:
                 changes = website_sync_changed_values(template, vals)
                 if vals.get("active") and not template.product_variant_ids:
@@ -629,6 +636,7 @@ class AbProduct(models.Model):
                 statuses[product.id] = "updated" if changes else "unchanged"
             else:
                 vals.update(product._prepare_initial_website_stock_display_vals())
+                vals.setdefault("is_published", False)
                 missing_products.append(product.id)
                 missing_values.append(vals)
         if missing_values:
@@ -636,7 +644,7 @@ class AbProduct(models.Model):
             for product_id, template in zip(missing_products, created):
                 by_product[product_id] = template
                 statuses[product_id] = "created"
-        templates = ProductTemplate.browse([by_product[product.id].id for product in products])
+        templates = ProductTemplate.browse([by_product[product.id].id for product in products if product.id in by_product])
         without_image = templates.with_context(bin_size=True).filtered(lambda template: not template.image_1920)
         if without_image:
             placeholder = products._get_website_placeholder_image()
@@ -652,6 +660,8 @@ class AbProduct(models.Model):
                     if statuses[template.ab_product_id.id] == "unchanged":
                         statuses[template.ab_product_id.id] = "updated"
         for product in products:
+            if product.id not in by_product:
+                continue
             template = by_product[product.id]
             variant = template.product_variant_id or template.with_context(active_test=False).product_variant_ids[:1]
             if variant:

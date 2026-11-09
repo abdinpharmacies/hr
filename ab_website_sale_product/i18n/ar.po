@@ -1120,6 +1120,15 @@ msgstr ""
 "المنتج نشطاً ومسموحاً به للبيع."
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product__website_sale_available
+msgid ""
+"Only Add Many By Codes can publish a product. Disabling this option "
+"unpublishes a linked product during sync."
+msgstr ""
+"زر إضافة عدة منتجات بالأكواد وحده يمكنه نشر المنتج. يؤدي تعطيل هذا الخيار "
+"إلى إلغاء نشر المنتج المرتبط أثناء المزامنة."
+
+#. module: ab_website_sale_product
 #. odoo-javascript
 #: code:addons/ab_website_sale_product/static/src/xml/stock_availability.xml:0
 msgid "You already added all the available product in your cart"

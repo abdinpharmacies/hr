@@ -199,9 +199,7 @@ class WebsiteProductSyncJob(models.Model):
     @api.model
     def _full_sync_product_domain(self):
         return fields.Domain([
-            ("active", "=", True),
-            ("allow_sale", "=", True),
-            ("website_sale_available", "=", True),
+            ("website_sync_template_ids", "!=", False),
         ])
 
     def _prepare_full_sync(self):
@@ -307,8 +305,7 @@ class WebsiteProductSyncJob(models.Model):
         linked = self.env["product.template"].sudo().with_context(active_test=False).search(
             fields.Domain("ab_product_id", "in", products.ids),
         ).ab_product_id
-        eligible = products.filtered(lambda p: p.active and p.allow_sale and p.website_sale_available)
-        selected = products & (linked | eligible)
+        selected = products & linked
         (products - selected).write({"website_sync_pending": False})
         if not selected:
             return self.browse()
@@ -485,11 +482,9 @@ class WebsiteProductSyncJob(models.Model):
         started = time.monotonic()
         queries = self.env.cr.sql_log_count
         products = pending_lines.ab_product_id.sudo()
-        eligible = products.filtered(lambda p: p.active and p.allow_sale and p.website_sale_available)
-        if self.sync_mode == "delta":
-            eligible |= self.env["product.template"].sudo().with_context(active_test=False).search(
-                fields.Domain("ab_product_id", "in", products.ids),
-            ).ab_product_id
+        eligible = self.env["product.template"].sudo().with_context(active_test=False).search(
+            fields.Domain("ab_product_id", "in", products.ids),
+        ).ab_product_id & products
         results = self._sync_products_with_recovery(eligible)
         state_ids = {state: [] for state in ("created", "updated", "unchanged", "skipped", "failed")}
         attempts_by_state = {}

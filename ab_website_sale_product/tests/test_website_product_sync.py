@@ -32,10 +32,48 @@ class TestWebsiteProductSync(TransactionCase):
         job._add_product_lines(products)
         return job
 
+    def test_only_add_many_by_codes_creates_and_publishes(self):
+        product = self.product('SYNC-CODES-ONLY')
+        self.assertFalse(product._sync_website_products())
+        self.assertFalse(product.website_product_tmpl_id)
+        wizard = self.env['ab.website.sale.add.many.by.codes.wizard'].create({
+            'codes_text': product.code,
+        })
+        wizard.action_sync_codes()
+        template = product.website_product_tmpl_id
+        self.assertTrue(template)
+        self.assertTrue(template.is_published)
+        template.is_published = False
+        product.default_price = 42.0
+        product._sync_website_products()
+        self.assertEqual(template.list_price, 42.0)
+        self.assertFalse(template.is_published)
+        wizard.action_sync_codes()
+        self.assertTrue(template.is_published)
+
+    def test_background_sync_skips_unlinked_product(self):
+        product = self.product('SYNC-BACKGROUND-UNLINKED')
+        self.assertFalse(self.Product.search(
+            self.Job._full_sync_product_domain() & fields.Domain('id', '=', product.id),
+        ))
+        job = self.job(product)
+        job._process_next_batch()
+        self.assertFalse(product.website_product_tmpl_id)
+        self.assertEqual(job.skipped_count, 1)
+
+    def test_add_many_by_codes_skips_ineligible_product(self):
+        product = self.product('SYNC-CODES-INACTIVE')
+        product.active = False
+        wizard = self.env['ab.website.sale.add.many.by.codes.wizard'].create({
+            'codes_text': product.code,
+        })
+        wizard.action_sync_codes()
+        self.assertFalse(product.with_context(active_test=False).website_product_tmpl_id)
+
     def test_create_update_and_noop(self):
         products = self.product('SYNC-A') | self.product('SYNC-B')
         outcomes = {}
-        templates = products._sync_website_products(outcomes=outcomes)
+        templates = products._sync_website_products(outcomes=outcomes, create_missing=True, publish_requested=True)
         self.assertEqual(len(templates), 2)
         self.assertEqual(set(outcomes.values()), {'created'})
         self.assertTrue(all(templates.mapped('is_published')))
@@ -53,28 +91,28 @@ class TestWebsiteProductSync(TransactionCase):
             return original(records, values)
 
         with patch.object(Template, 'write', count_write):
-            products._sync_website_products(outcomes=outcomes)
+            products._sync_website_products(outcomes=outcomes, create_missing=True, publish_requested=True)
         self.assertEqual(writes, [])
         self.assertEqual(set(outcomes.values()), {'unchanged'})
         products.write({'default_price': 30.0})
-        products._sync_website_products(outcomes=outcomes)
+        products._sync_website_products(outcomes=outcomes, create_missing=True, publish_requested=True)
         self.assertEqual(set(outcomes.values()), {'updated'})
         self.assertEqual(set(templates.mapped('list_price')), {30.0})
 
     def test_category_translation_and_tag_changes(self):
         product = self.product()
-        template = product._sync_website_products()
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
         category = template.public_categ_ids
         self.assertEqual(category.with_context(lang=False).name, 'Body Care')
         if self.env['res.lang'].search([('code', '=', 'ar_001')]):
             self.assertNotEqual(category.with_context(lang='ar_001').name, category.with_context(lang='en_US').name)
         self.tag.write({'priority': 9})
         self.assertTrue(product.website_sync_pending)
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         self.assertEqual(template.product_tag_ids.sequence, 9)
         self.assertEqual(template.public_categ_ids, category)
         product.write({'tag_ids': [Command.clear()]})
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         self.assertFalse(template.product_tag_ids)
 
     def test_invalid_taxonomy_binding_does_not_create_categories(self):
@@ -82,29 +120,29 @@ class TestWebsiteProductSync(TransactionCase):
         existing = Category.search([('name', '=', 'Body Care')])
         existing.write({'name': 'Archived Test Category Name'})
         products = self.product('SYNC-A') | self.product('SYNC-B')
-        templates = products._sync_website_products()
+        templates = products._sync_website_products(create_missing=True, publish_requested=True)
         self.assertFalse(templates.public_categ_ids)
         self.assertFalse(Category.search([('name', '=', 'Body Care')]))
 
     def test_dirty_card_ancestor_barcode_and_membership(self):
         product = self.product()
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         ancestor = self.env['ab_product_group'].create({'name': 'Beauty'})
         self.group.parent_id = ancestor
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         ancestor.name = 'Medicine'
         self.env.flush_all()
         self.assertTrue(product.website_sync_pending)
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         product.product_card_id.description = 'Updated delegated description'
         self.assertTrue(product.website_sync_pending)
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         barcode = self.env['ab_product_barcode'].create({'name': '99880011'})
         product.barcode_ids = barcode
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         barcode.name = '99880012'
         self.assertTrue(product.website_sync_pending)
-        template = product._sync_website_products()
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
         self.assertEqual(template.product_variant_id.barcode, '99880012')
         product.groups_ids = False
         self.assertTrue(product.website_sync_pending)
@@ -112,24 +150,27 @@ class TestWebsiteProductSync(TransactionCase):
     def test_database_failure_isolated_and_retry(self):
         good = self.product('SYNC-GOOD')
         bad = self.product('SYNC-BAD')
+        (good | bad)._sync_website_products(create_missing=True, publish_requested=True)
+        good.default_price = 31.0
+        bad.default_price = 32.0
         job = self.job(good | bad)
         original = type(self.Product)._prepare_website_product_template_vals
 
-        def fail_one(product, sync_cache=None):
+        def fail_one(product, sync_cache=None, publish_requested=False):
             if product == bad:
                 product.env.cr.execute('SELECT 1 / 0')
-            return original(product, sync_cache=sync_cache)
+            return original(product, sync_cache=sync_cache, publish_requested=publish_requested)
 
         with patch.object(type(self.Product), '_prepare_website_product_template_vals', fail_one):
             job._process_next_batch()
-        self.assertEqual(job.created_count, 1)
+        self.assertEqual(job.updated_count, 1)
         self.assertEqual(job.failed_count, 1)
         self.assertEqual(job.state, 'failed')
         failed = job.line_ids.filtered(lambda line: line.state == 'failed')
         self.assertTrue(failed.message)
         job.action_retry_failed()
         job._process_next_batch()
-        self.assertEqual(job.created_count, 2)
+        self.assertEqual(job.updated_count, 2)
         self.assertEqual(job.failed_count, 0)
         self.assertEqual(job.state, 'done')
         self.assertEqual(failed.attempts, 2)
@@ -139,7 +180,7 @@ class TestWebsiteProductSync(TransactionCase):
         barcode = self.env['ab_product_barcode'].create({'name': '99887766'})
         products = self.product('SYNC-A') | self.product('SYNC-B')
         products.barcode_ids = barcode
-        templates = products._sync_website_products()
+        templates = products._sync_website_products(create_missing=True, publish_requested=True)
         self.assertEqual(len(templates), 2)
         self.assertEqual(len(templates.product_variant_id.filtered(lambda p: p.barcode == barcode.name)), 1)
         self.env.cr.execute('SELECT 1')
@@ -147,6 +188,7 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_serialization_failure_propagates(self):
         product = self.product()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         job = self.job(product)
         with patch.object(type(self.Product), '_sync_website_products', side_effect=SerializationFailure):
             with self.assertRaises(SerializationFailure):
@@ -155,6 +197,7 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_duplicate_execution_and_resume(self):
         products = self.product('SYNC-A') | self.product('SYNC-B')
+        products._sync_website_products(create_missing=True, publish_requested=True)
         job = self.job(products)
         with patch.object(type(job), '_get_batch_size', return_value=1):
             self.assertTrue(job._process_next_batch())
@@ -312,13 +355,15 @@ class TestWebsiteProductSync(TransactionCase):
         with self.assertRaises(AccessError):
             job.with_user(user).action_process_to_completion()
 
-    def test_background_checkpoint_creates_real_products(self):
+    def test_background_checkpoint_updates_linked_products(self):
         products = self.product('SYNC-BG-A') | self.product('SYNC-BG-B')
+        products._sync_website_products(create_missing=True, publish_requested=True)
+        products.write({'default_price': 31.0})
         job = self.job(products)
         with patch.object(type(job), '_background_worker_online', return_value=True):
             job.action_process_to_completion()
         self.assertEqual(job._process_background_checkpoint(), 2)
-        self.assertEqual(job.created_count, 2)
+        self.assertEqual(job.updated_count, 2)
         self.assertEqual(job.state, 'done')
         self.assertFalse(job.background_requested)
         self.assertEqual(len(job.line_ids.product_template_id), 2)
@@ -335,7 +380,7 @@ class TestWebsiteProductSync(TransactionCase):
         clean = self.product('SYNC-CLEAN')
         changed = self.product('SYNC-CHANGED')
         missing = self.product('SYNC-MISSING')
-        (clean | changed)._sync_website_products()
+        (clean | changed)._sync_website_products(create_missing=True, publish_requested=True)
         changed.default_price = 29.0
         self.env.flush_all()
         job = self.Job.create({})
@@ -354,7 +399,7 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_remaining_preview_all_clean_stays_complete(self):
         products = self.product('SYNC-CLEAN-A') | self.product('SYNC-CLEAN-B')
-        products._sync_website_products()
+        products._sync_website_products(create_missing=True, publish_requested=True)
         job = self.Job.create({})
         with patch.object(type(job), '_full_sync_product_domain', return_value=fields.Domain('id', 'in', products.ids)), \
              patch.object(type(self.Product), '_sync_website_products') as sync:
@@ -368,6 +413,8 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_cancelled_all_resumes_same_job_without_repeating_success(self):
         products = self.product('SYNC-A') | self.product('SYNC-B')
+        products._sync_website_products(create_missing=True, publish_requested=True)
+        products.write({'default_price': 31.0})
         job = self.job(products)
         job._process_next_batch(limit=1)
         first = job.line_ids[:1]
@@ -377,7 +424,7 @@ class TestWebsiteProductSync(TransactionCase):
         self.assertEqual(job.processed_count, 1)
         self.assertEqual(job.state, 'running')
         job._process_background_checkpoint()
-        self.assertEqual(job.created_count, 2)
+        self.assertEqual(job.updated_count, 2)
         self.assertEqual(job.processed_count, 2)
         self.assertEqual(first.attempts, 1)
         self.assertEqual(job.state, 'done')
@@ -385,7 +432,7 @@ class TestWebsiteProductSync(TransactionCase):
     def test_old_full_queue_skips_clean_products_before_sync(self):
         clean = self.product('SYNC-CLEAN')
         missing = self.product('SYNC-MISSING')
-        clean._sync_website_products()
+        clean._sync_website_products(create_missing=True, publish_requested=True)
         job = self.job(clean | missing)
         job.action_start_full_sync()
         self.assertEqual(job.processed_count, 1)
@@ -405,12 +452,12 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_destination_changes_require_review(self):
         product = self.product()
-        template = product._sync_website_products()
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
         self.env.flush_all()
         self.assertFalse(product.website_sync_pending)
         template.list_price = 100.0
         self.assertTrue(product.website_sync_pending)
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True, publish_requested=True)
         self.env.flush_all()
         self.assertFalse(product.website_sync_pending)
         self.assertEqual(template.list_price, product.default_price)
@@ -435,7 +482,7 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_delta_handles_unpublishing(self):
         product = self.product()
-        template = product._sync_website_products()
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
         product.website_sale_available = False
         job = self.job(product)
         job.sync_mode = 'delta'
@@ -445,15 +492,15 @@ class TestWebsiteProductSync(TransactionCase):
 
     def test_archived_template_reused(self):
         product = self.product()
-        template = product._sync_website_products()
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
         template.active = False
-        synced = product._sync_website_products()
+        synced = product._sync_website_products(create_missing=True, publish_requested=True)
         self.assertEqual(synced.id, template.id)
         self.assertTrue(synced.active)
 
     def test_delta_queue_selects_only_dirty(self):
         products = self.product('SYNC-A') | self.product('SYNC-B')
-        products._sync_website_products()
+        products._sync_website_products(create_missing=True, publish_requested=True)
         products[0].default_price = 31.0
         original = type(self.Product).search
 

@@ -5151,6 +5151,13 @@ msgid ""
 msgstr ""
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product__website_sale_available
+msgid ""
+"Only Add Many By Codes can publish a product. Disabling this option "
+"unpublishes a linked product during sync."
+msgstr ""
+
+#. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__source_encoding__cp1256
 msgid "Windows Arabic (CP1256)"
 msgstr ""

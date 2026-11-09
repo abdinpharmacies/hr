@@ -53,13 +53,17 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
 
         products = self.env["ab_product"].sudo().with_context(active_test=False).search([
             ("code", "in", unique_codes),
+            ("active", "=", True),
             ("allow_sale", "=", True),
+            ("website_sale_available", "=", True),
         ])
         products_by_code = {product.code: product for product in products if product.code}
         missing_codes = [code for code in unique_codes if code not in products_by_code]
         matched_products = self.env["ab_product"].browse([product.id for product in products_by_code.values()])
 
-        synced_templates = matched_products._sync_website_products() if matched_products else self.env["product.template"]
+        synced_templates = matched_products._sync_website_products(
+            create_missing=True, publish_requested=True,
+        ) if matched_products else self.env["product.template"]
         message = _(
             "Synced %(matched)s product(s) to eCommerce. Missing codes: %(missing)s."
         ) % {
