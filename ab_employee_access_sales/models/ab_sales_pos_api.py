@@ -14,10 +14,7 @@ class AbSalesPosApi(models.TransientModel):
         if not profile:
             raise UserError(_("Employee POS profile is missing."))
         target_store_id = store_id or session.store_id.id
-        store = session_api._require_connectable_store(target_store_id, profile=profile)
-        if session.store_id != store:
-            session.write({"store_id": store.id})
-        session.mark_activity()
+        session_api._require_connectable_store(target_store_id, profile=profile)
         return session
 
     @api.model
@@ -113,11 +110,8 @@ class AbSalesPosApi(models.TransientModel):
         profile = session._get_pos_profile()
         if not profile:
             raise UserError(_("Employee POS profile is missing."))
-        target_store = session_api._require_connectable_store(store_id, profile=profile)
-        if session.store_id != target_store:
-            session.write({"store_id": target_store.id})
+        session_api._require_connectable_store(store_id, profile=profile)
 
-        session.mark_activity()
         return session
 
     @api.model
@@ -185,6 +179,7 @@ class AbSalesPosApi(models.TransientModel):
                 session.employee_id,
                 profile=profile,
                 session=session,
+                operation_store=self.env["ab_store"].browse(int(header_payload["store_id"])),
                 status="error",
                 details={"message": str(exc)},
             )
@@ -196,6 +191,7 @@ class AbSalesPosApi(models.TransientModel):
                 session.employee_id,
                 profile=profile,
                 session=session,
+                operation_store=self.env["ab_store"].browse(int(header_payload["store_id"])),
                 status="success",
                 details={
                     "result_type": "remote_callcenter",
@@ -219,6 +215,7 @@ class AbSalesPosApi(models.TransientModel):
                 session.employee_id,
                 profile=profile,
                 session=session,
+                operation_store=self.env["ab_store"].browse(int(header_payload["store_id"])),
                 status="success",
                 header=header,
                 details={"result_type": result.get("type") if isinstance(result, dict) else ""},

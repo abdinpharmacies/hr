@@ -205,6 +205,7 @@ class AbSalesHrPosApi(models.TransientModel):
             manager_employee=False,
             header=False,
             details=None,
+            operation_store=False,
     ):
         employee = employee.sudo().exists()[:1]
         if not employee:
@@ -238,6 +239,8 @@ class AbSalesHrPosApi(models.TransientModel):
             values["manager_employee_id"] = manager_employee.id
         if header:
             values["header_id"] = header.id
+        store = operation_store or (header.store_id if header else False) or session.store_id
+        values["store_id"] = store.id if store else False
         return self.env["ab_employee_access_sales_operation_log"].sudo().create(values)
 
     @api.model
@@ -415,16 +418,23 @@ class AbSalesHrPosApi(models.TransientModel):
     def heartbeat(self, session_token):
         session = self._get_session(session_token, states=["active"])
         self._require_connectable_store(session.store_id.id, profile=session._get_pos_profile())
-        session.mark_activity()
         return session.payload()
 
     @api.model
     def log_operation(self, session_token, operation_type, status="success", details=None, header_id=False):
         session = self._get_session(session_token, states=["active", "locked"])
         header = self.env["ab_sales_header"].sudo().browse(int(header_id or 0)).exists() if header_id else False
+        operation_store = False
+        requested_store = details.get("store_id") if isinstance(details, dict) else False
+        if requested_store:
+            operation_store = self._require_connectable_store(requested_store, profile=session._get_pos_profile())
+        elif header:
+            header.check_access("read")
+            operation_store = self._require_connectable_store(header.store_id.id, profile=session._get_pos_profile())
         self._log_operation(
             operation_type,
             session.employee_id,
+            operation_store=operation_store,
             profile=session._get_pos_profile(),
             session=session,
             status=status,

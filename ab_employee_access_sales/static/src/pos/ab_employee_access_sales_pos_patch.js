@@ -433,10 +433,13 @@ if (PosAction) {
             }
             this._abSalesHrHeartbeatTimer = setInterval(() => {
                 const token = this._abSalesHrSessionToken();
-                if (!token || this.state.abSalesHr.session.state !== "active") {
+                if (!token || this.state.abSalesHr.session.state !== "active" || this._abSalesHrHeartbeatPending) {
                     return;
                 }
+                this._abSalesHrHeartbeatPending = true;
                 this.orm.call("ab_employee_access_sales_pos_api", "heartbeat", [], {session_token: token}).catch(() => {
+                }).finally(() => {
+                    this._abSalesHrHeartbeatPending = false;
                 });
             }, 60000);
         },

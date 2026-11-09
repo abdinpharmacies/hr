@@ -32,12 +32,7 @@ class AbSalesReturnUiApi(models.TransientModel):
         if not store:
             raise UserError(_("Sales return store is missing."))
 
-        target_store = session_api._require_connectable_store(store.id, profile=profile)
-
-        if session.store_id != target_store:
-            session.write({"store_id": target_store.id})
-
-        session.mark_activity()
+        session_api._require_connectable_store(store.id, profile=profile)
         return session
 
     @api.model

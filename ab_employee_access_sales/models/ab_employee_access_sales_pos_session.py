@@ -66,16 +66,6 @@ class AbSalesHrPosSession(models.Model):
             prepared.append(values)
         return super().create(prepared)
 
-    def mark_activity(self):
-        now = fields.Datetime.now()
-        self.write({
-            "last_activity_at": now,
-            "locked_at": False,
-            "state": "active",
-        })
-        self.mapped("shift_id").write({"last_activity_at": now})
-        return True
-
     def lock_session(self):
         now = fields.Datetime.now()
         active_sessions = self.filtered(lambda session: session.state == "active")

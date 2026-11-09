@@ -105,3 +105,25 @@ CA bundle. There is no automatic fallback after a TLS error and no redirect foll
 HTTP is unencrypted; unchecked HTTPS does not authenticate the server certificate.
 Pairing, Bearer authentication, database/store scope and initial stock readiness
 remain mandatory in both modes. This changes only branch-to-central transport.
+
+## Read-only POS checks (2026-11-08)
+
+Product search, promotion checks, product/line balance refreshes, submission
+validation, return validation, and the 60-second heartbeat validate the employee
+session without writing session or shift activity. Validation checks the requested
+branch without changing the session's selected branch. Deliberate UI branch
+switches use `change_store`; login, PIN unlock, lock, and logout retain their
+explicit lifecycle writes. `last_activity_at` therefore describes lifecycle
+activity rather than browsing or heartbeat freshness.
+
+Sale audit entries receive the validated operation branch explicitly. Return-open
+logs validate the branch supplied in operation details. Business-header branches
+take precedence over the session branch when no explicit operation branch exists.
+
+Interactive balances and branch prices are returned from validated API snapshots
+without persisting inventory-cache rows or taking branch cache-writer locks.
+Selected product details use the live default price; background checks do not
+change an existing line's chosen selling price. Search filters and all-store
+totals continue reading the scheduled inventory cache. Reopening a screen may
+initially show its older snapshot until a live refresh finishes. Offline refreshes
+retain saved values with their original timestamps and an unavailable status.
