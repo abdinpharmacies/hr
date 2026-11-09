@@ -302,7 +302,7 @@
                         <dl class="ab-order-hero-facts">
                             <div>
                                 <dt>Total</dt>
-                                <dd t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
+                                <dd><span t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/></dd>
                             </div>
                             <div>
                                 <dt>Payment method</dt>
