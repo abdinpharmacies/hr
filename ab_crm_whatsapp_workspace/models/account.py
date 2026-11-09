@@ -9,6 +9,7 @@ class Account(models.Model):
     whatsapp_webhook_enabled = fields.Boolean(
         string='Signed WhatsApp Reception', copy=False
     )
+    whatsapp_extended_enabled = fields.Boolean(string='Validated WhatsApp Media and Reactions', copy=False)
     whatsapp_template_ids = fields.Many2many(
         'ab.whatsapp.template',
         'ab_crm_whatsapp_account_template_rel',
@@ -42,7 +43,7 @@ class Account(models.Model):
     def create(self, values_list):
         if any(
             set(values)
-            & {'whatsapp_migrated', 'whatsapp_template_ids', 'whatsapp_webhook_enabled'}
+            & {'whatsapp_migrated', 'whatsapp_template_ids', 'whatsapp_webhook_enabled', 'whatsapp_extended_enabled'}
             for values in values_list
         ):
             self._check_whatsapp_manager()
@@ -61,6 +62,7 @@ class Account(models.Model):
             'whatsapp_migrated',
             'whatsapp_template_ids',
             'whatsapp_webhook_enabled',
+            'whatsapp_extended_enabled',
         }:
             self._check_whatsapp_manager()
             self._authorize()
@@ -93,6 +95,8 @@ class Account(models.Model):
     def _eligible_message(self, message):
         if self.provider != 'whatsapp':
             return super()._eligible_message(message)
+        if (message.media_ids or message.reaction) and not self.whatsapp_extended_enabled:
+            raise UserError(_('WhatsApp media and reactions require pilot validation.'))
         if message.whatsapp_template_id:
             code, reason = self._queue_eligibility(message.conversation_id)
             if code:
@@ -131,6 +135,8 @@ class Account(models.Model):
 
     def _whatsapp_conversation(self, destination):
         self.ensure_one()
+        self._authorize('read')
+        self.env['ab.whatsapp.service']._normalize_wa_id(destination)
         conversation = (
             self.env['ab_crm_conversation']
             .with_context(active_test=False)
@@ -152,16 +158,18 @@ class Account(models.Model):
                 ],
                 limit=1,
             )
-            conversation = self.env['ab_crm_conversation'].create(
-                {
-                    'name': destination,
-                    'external_key': destination,
-                    'channel_id': self.channel_id.id,
-                    'branch_id': self.branch_id.id,
-                    'company_id': self.company_id.id,
-                    'customer_id': identity.customer_id.id,
-                }
-            )
+            from .common import bridge_mutation
+            with bridge_mutation():
+                conversation = self.env['ab_crm_conversation'].create(
+                    {
+                        'name': destination,
+                        'external_key': destination,
+                        'channel_id': self.channel_id.id,
+                        'branch_id': self.branch_id.id,
+                        'company_id': self.company_id.id,
+                        'customer_id': identity.customer_id.id,
+                    }
+                )
         return conversation
 
     def action_link_whatsapp_history(self, limit=200, after_id=0):
@@ -187,6 +195,7 @@ class Account(models.Model):
             .search(
                 [
                     ('phone_number_id', '=', self.provider_account),
+                    ('id', '>', after_id),
                     ('crm_message_id', '=', False),
                     ('is_deleted', '=', False),
                 ],
@@ -194,7 +203,9 @@ class Account(models.Model):
                 limit=limit,
             )
         )
-        linked = 0
+        linked = []
+        skipped = []
+        conflicting = []
         for record in rows:
             if (
                 record.meta_message_id
@@ -209,15 +220,62 @@ class Account(models.Model):
                 )
                 > 1
             ):
+                conflicting.append(record.id)
                 continue
             if record.wa_id and record.wa_id.isascii() and record.wa_id.isdecimal():
                 record._project_history(self)
-                linked += 1
+                linked.append(record.id)
+            else:
+                skipped.append(record.id)
         return {
-            'linked': linked,
+            'linked': len(linked),
+            'linked_ids': linked,
+            'skipped_ids': skipped,
+            'conflicting_ids': conflicting,
+            'has_more': len(rows) == limit,
             'examined': len(rows),
             'next_after_id': rows[-1:].id or after_id,
         }
+
+    @api.model
+    def action_prepare_whatsapp_pilot(self):
+        if not self.env.user.has_group('base.group_system'):
+            raise AccessError(_('Only system administrators can prepare the WhatsApp pilot.'))
+        telegram = self.search([('code', '=', 'tg-callcenter'), ('provider', '=', 'telegram')], limit=1)
+        telegram._authorize('read')
+        if not telegram or telegram.company_id != self.env.company:
+            raise UserError(_('Prepare the Telegram intake mapping first.'))
+        settings = self.env['ab.whatsapp.service']._settings()
+        phone = self.env['ab.whatsapp.service']._validate_phone_number_id(settings['default_phone_number_id'])
+        if self.env['ab.whatsapp.service']._config_value('whatsapp_api_version') != 'v26.0':
+            raise UserError(_('WhatsApp requires the validated Graph API version v26.0.'))
+        telegram.lock_for_update()
+        service = self.env.ref('ab_crm_whatsapp_workspace.user_whatsapp_gateway')
+        existing = self.with_context(active_test=False).search([
+            '|', ('code', '=', 'wa-callcenter'), '&', ('provider', '=', 'whatsapp'), ('provider_account', '=', phone),
+        ])
+        if existing:
+            existing._authorize('read')
+            if len(existing) != 1 or existing.code != 'wa-callcenter' or existing.provider_account != phone or existing.branch_id != telegram.branch_id or existing.company_id != telegram.company_id or existing.provider != 'whatsapp' or existing.service_user_id != service:
+                raise UserError(_('Review the existing WhatsApp account mapping.'))
+            return {'account_id': existing.id, 'created': False}
+        if service.active:
+            raise UserError(_('Review the existing WhatsApp account mapping.'))
+        service.write({'company_ids': [fields.Command.set(telegram.company_id.ids)], 'company_id': telegram.company_id.id})
+        telegram.branch_id.write({'user_ids': [fields.Command.link(service.id)]})
+        channel = self.env['ab_crm_channel'].create({
+            'name': 'WhatsApp', 'code': 'wa-callcenter', 'provider': 'whatsapp',
+            'branch_id': telegram.branch_id.id, 'company_id': telegram.company_id.id,
+        })
+        account = self.create({
+            'name': 'WhatsApp', 'code': 'wa-callcenter', 'provider': 'whatsapp',
+            'provider_account': phone, 'channel_id': channel.id,
+            'branch_id': telegram.branch_id.id, 'company_id': telegram.company_id.id,
+            'service_user_id': service.id, 'legacy_worker_disabled': True,
+            'whatsapp_migrated': True, 'whatsapp_webhook_enabled': False,
+            'whatsapp_extended_enabled': False, 'enabled': False, 'outgoing_enabled': False,
+        })
+        return {'account_id': account.id, 'created': True}
 
     def action_link_whatsapp_history_batch(self):
         self.action_link_whatsapp_history()

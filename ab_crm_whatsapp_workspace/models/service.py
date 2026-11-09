@@ -4,11 +4,34 @@ import binascii
 from odoo import api, models, _
 from odoo.exceptions import AccessError, UserError
 
+from odoo.addons.ab_crm_sales_workspace.models.saved_reply import template_language
+
 from .common import _DASHBOARD
 
 
 class Service(models.Model):
     _inherit = 'ab.whatsapp.service'
+
+    def _settings(self):
+        values = super()._settings()
+        version = self._config_value('whatsapp_api_version', 'v26.0')
+        if version != 'v26.0':
+            raise UserError(_('WhatsApp requires the validated Graph API version v26.0.'))
+        return dict(values, api_version=version)
+
+    def _normalize_wa_id(self, value):
+        if not isinstance(value, str) or not value.isascii() or not value.isdecimal():
+            raise UserError(_('Unsupported WhatsApp identity requires review.'))
+        return value
+
+    def _validate_phone_number_id(self, phone_number_id, recipient_wa_id=None):
+        self._normalize_wa_id(phone_number_id)
+        return super()._validate_phone_number_id(phone_number_id, recipient_wa_id)
+
+    def _post_graph_json(self, url, payload, headers):
+        if url.rstrip('/').endswith('/messages'):
+            raise AccessError(_('Use the durable gateway for WhatsApp sending.'))
+        return super()._post_graph_json(url, payload, headers)
 
     def _queue_account(self, to, phone_number_id):
         self._ensure_system_access()
@@ -51,6 +74,8 @@ class Service(models.Model):
             account._authorize('read')
             if not destination or not destination.isascii():
                 raise UserError(_('Recipient WhatsApp number is required.'))
+        if not account:
+            raise UserError(_('Configure WhatsApp queue ownership before sending.'))
         return account, destination
 
     def _queue_message(
@@ -247,8 +272,10 @@ class Service(models.Model):
             return [
                 self._serialize_template(template)
                 for template in accounts.whatsapp_template_ids
+                if template_language(template.language) == template_language(self.env.user.lang)
             ]
-        return super().api_list_templates()
+        return [row for row in super().api_list_templates()
+                if template_language(row['language']) == template_language(self.env.user.lang)]
 
     def _serialize_contact(self, contact, latest_message=None):
         if latest_message is None:
@@ -320,26 +347,7 @@ class Service(models.Model):
         return super().api_mark_incoming_read(wa_id, limit)
 
     def process_webhook_payload(self, payload):
-        phones = [
-            str(change.get('value', {}).get('metadata', {}).get('phone_number_id', ''))
-            for entry in (payload or {}).get('entry', [])
-            for change in entry.get('changes', [])
-        ]
-        if (
-            self.env['ab_crm_messaging_account']
-            .sudo()
-            .with_context(active_test=False)
-            .search_count(
-                [
-                    ('provider_account', 'in', phones),
-                    ('whatsapp_migrated', '=', True),
-                ]
-            )
-        ):
-            raise AccessError(
-                _('Use the signed gateway webhook for migrated WhatsApp accounts.')
-            )
-        return super().process_webhook_payload(payload)
+        raise AccessError(_('Use the signed gateway webhook for WhatsApp reception.'))
 
     def get_message_media_content(self, message_id):
         self._ensure_system_access()

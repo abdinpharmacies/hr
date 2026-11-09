@@ -3,6 +3,8 @@ from datetime import timedelta
 from odoo import fields, models, _
 from odoo.exceptions import AccessError, UserError
 
+from odoo.addons.ab_crm_sales_workspace.models.saved_reply import template_language
+
 from .common import _DASHBOARD, bridge_mutation
 from .media import validate_whatsapp_attachment
 
@@ -104,7 +106,7 @@ class Conversation(models.Model):
         if self.channel_id.provider == 'whatsapp':
             try:
                 self._whatsapp_reference(message.provider_reference, reaction=True)
-                allowed = not send_reason
+                allowed = not send_reason and self.messaging_account_id.whatsapp_extended_enabled
             except (AccessError, UserError):
                 allowed = False
             result['react']['enabled'] = allowed
@@ -117,8 +119,8 @@ class Conversation(models.Model):
             account = self.messaging_account_id
             enabled = bool(account.whatsapp_migrated)
             result['capabilities'].update(
-                media=enabled,
-                reactions=enabled,
+                media=enabled and account.whatsapp_extended_enabled,
+                reactions=enabled and account.whatsapp_extended_enabled,
                 customer_read=account.whatsapp_webhook_enabled,
                 customer_delivered=account.whatsapp_webhook_enabled,
             )
@@ -152,6 +154,7 @@ class Conversation(models.Model):
             }
             for t in account.whatsapp_template_ids
             if (t.status or '').upper() == 'APPROVED'
+            and template_language(t.language) == template_language(self.env.user.lang)
         ]
 
     def action_whatsapp_template(self, template_id, parameters=None):

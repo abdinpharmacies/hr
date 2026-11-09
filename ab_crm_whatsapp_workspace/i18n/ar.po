@@ -440,3 +440,67 @@ msgstr "البحث في القوالب"
 #: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__crm_location_snapshot
 msgid "Location Snapshot"
 msgstr "لقطة الموقع"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Use the signed gateway webhook for WhatsApp reception."
+msgstr "استخدم رابط استقبال البوابة الموقّع لاستقبال رسائل واتساب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "WhatsApp requires the validated Graph API version v26.0."
+msgstr "يتطلب واتساب الإصدار v26.0 المعتمد من واجهة Graph API."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Unsupported WhatsApp identity requires review."
+msgstr "تتطلب هوية واتساب غير المدعومة المراجعة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Use the durable gateway for WhatsApp sending."
+msgstr "استخدم البوابة ذات التخزين الدائم لإرسال رسائل واتساب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Configure WhatsApp queue ownership before sending."
+msgstr "اضبط إدارة قائمة انتظار واتساب قبل الإرسال."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_extended_enabled
+msgid "Validated WhatsApp Media and Reactions"
+msgstr "وسائط وتفاعلات واتساب المعتمدة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "WhatsApp media and reactions require pilot validation."
+msgstr "تتطلب وسائط وتفاعلات واتساب التحقق في التشغيل التجريبي."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Only system administrators can prepare the WhatsApp pilot."
+msgstr "يمكن لمسؤولي النظام فقط تجهيز التشغيل التجريبي لواتساب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Prepare the Telegram intake mapping first."
+msgstr "جهّز ربط فرع استقبال تيليجرام أولاً."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Review the existing WhatsApp account mapping."
+msgstr "راجع ربط حساب واتساب الحالي."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:res.users,name:ab_crm_whatsapp_workspace.user_whatsapp_gateway
+msgid "WhatsApp Gateway Service"
+msgstr "خدمة بوابة واتساب"

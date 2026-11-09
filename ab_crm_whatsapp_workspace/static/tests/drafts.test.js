@@ -68,3 +68,35 @@ test("approved templates select first, render parameters and only queue complete
     await contains("button:contains(Queue template)").click();
     expect(calls.at(-1)).toEqual(["action_whatsapp_template", {parameters: ["Customer"]}]);
 });
+
+test("customer inbox restores the selected stream without changing message destinations", () => {
+    const item = {id: 2, group_key: "shared", streams: [{id: 1}, {id: 2}]};
+    const workspace = {employeeId: 8, selectedStreams: new Map(), state: {detail: {id: 1}, reply: "Telegram", attachments: [], replyTo: null}, drafts: new Map()};
+    SalesWorkspace.prototype.rememberDraft.call(workspace);
+    expect(SalesWorkspace.prototype.preferredStream.call(workspace, item)).toBe(2);
+    workspace.preferredStream = SalesWorkspace.prototype.preferredStream;
+    workspace.select = id => id;
+    expect(SalesWorkspace.prototype.selectCustomer.call(workspace, item)).toBe(2);
+    expect(workspace.drafts.get(1).reply).toBe("Telegram");
+    expect(workspace.drafts.has(2)).toBe(false);
+});
+
+for (const direction of ["ltr", "rtl"]) {
+    test(`one customer row exposes two independent streams in ${direction}`, async () => {
+        class GroupedHarness extends WhatsAppHarness {
+            setup() {
+                super.setup();
+                this.direction = direction;
+                this.state.inbox = [{id: 2, group_key: "shared", name: "Customer", channels: ["telegram", "whatsapp"], unread: 3,
+                    streams: [{id: 1, provider: "telegram"}, {id: 2, provider: "whatsapp"}]}];
+                this.state.detail.streams = [{id: 1, provider: "telegram", label: "Telegram", unread: 1}, {id: 2, provider: "whatsapp", label: "WhatsApp", unread: 2}];
+            }
+        }
+        await mountWithCleanup(GroupedHarness);
+        expect(".ab_conversation").toHaveCount(1);
+        expect(".ab_channel_button").toHaveCount(2);
+        expect(".ab_channel_button .badge").toHaveCount(2);
+        expect(".ab_conversation .badge").toHaveText("3");
+        expect(".ab_conversation.selected").toHaveCount(1);
+    });
+}

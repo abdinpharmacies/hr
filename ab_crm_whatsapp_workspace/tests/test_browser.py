@@ -43,3 +43,18 @@ class TestWhatsAppBrowser(HttpCase):
             success_signal='[HOOT] Test suite succeeded',
             error_checker=unit_test_error_checker,
         )
+
+    def test_legacy_webhooks_are_gone(self):
+        self.assertEqual(self.url_open('/ab_whatsapp_api/webhook?hub.mode=subscribe&hub.challenge=test').status_code, 410)
+        self.assertEqual(self.url_open('/ab_whatsapp_api/webhook', data='{}', headers={'Content-Type': 'application/json'}).status_code, 410)
+
+    @no_retry
+    def test_mobile_channel_composition(self):
+        value = 0
+        for char in '@ab_crm_whatsapp_workspace':
+            value = ((value << 5) - value + ord(char)) & 0xFFFFFFFF
+        self.browser_js(
+            f'/web/tests?headless&loglevel=2&preset=mobile&timeout=15000&id={value:08x}',
+            '', '', login='admin', timeout=180,
+            success_signal='[HOOT] Test suite succeeded', error_checker=unit_test_error_checker,
+        )

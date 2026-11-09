@@ -99,6 +99,8 @@ class WhatsAppMessage(models.Model):
                     'conversation_id': conversation.id,
                     'branch_id': account.branch_id.id,
                     'company_id': account.company_id.id,
+                    'historical': True,
+                    'original_timestamp': timestamp or self.create_date,
                     'direction': 'in' if self.direction == 'incoming' else 'out',
                     'body': self.text_content or self.media_filename or _('Attachment'),
                     'delivery_state': (
@@ -122,15 +124,6 @@ class WhatsAppMessage(models.Model):
                     'crm_timestamp': timestamp or self.create_date,
                 }
             )
-            if (
-                self.direction == 'incoming'
-                and timestamp
-                and (
-                    not conversation.messaging_last_inbound
-                    or timestamp > conversation.messaging_last_inbound
-                )
-            ):
-                conversation.write({'messaging_last_inbound': timestamp})
         return message
 
 

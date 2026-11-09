@@ -1,0 +1,10 @@
+<odoo noupdate="1">
+    <record id="user_whatsapp_gateway" model="res.users">
+        <field name="name">WhatsApp Gateway Service</field>
+        <field name="login">crm-whatsapp-gateway</field>
+        <field name="active" eval="False"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="company_ids" eval="[(6, 0, [ref('base.main_company')])]"/>
+        <field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('ab_crm_messaging.group_service')])]"/>
+    </record>
+</odoo>
