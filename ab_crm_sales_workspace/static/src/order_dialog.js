@@ -1,5 +1,8 @@
 import {Component, onMounted, onWillUnmount, useRef, useState, useExternalListener} from "@odoo/owl";
+import {useService} from "@web/core/utils/hooks";
+import {LocationDialog} from "./composer";
 import {Dialog} from "@web/core/dialog/dialog";
+import {LocationCard} from "./location";
 import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {useHotkey} from "@web/core/hotkeys/hotkey_hook";
 import {localization} from "@web/core/l10n/localization";
@@ -12,9 +15,10 @@ class OrderFrame extends Dialog {
 
 export class OrderDialog extends Component {
     static template = "ab_crm_sales_workspace.OrderDialog";
-    static components = {OrderFrame, ABMany2one};
-    static props = {order: Object, orders: Array, cachedDrafts: Object, call: Function, context: Object, onSaved: Function, close: Function};
+    static components = {OrderFrame, ABMany2one, LocationCard};
+    static props = {location: {type: [Object, {value: null}], optional: true}, order: Object, orders: Array, cachedDrafts: Object, call: Function, context: Object, onSaved: Function, close: Function};
     setup() {
+        this.dialog = useService("dialog");
         this.title = _t("Channel order");
         this.direction = localization.direction;
         this.state = useState({order: structuredClone(this.props.order), products: [], query: "", category: "all", minimum: "", maximum: "", busy: false, error: "", closing: false, branch: false, reprice: false, history: false, reason: ""});
@@ -30,6 +34,7 @@ export class OrderDialog extends Component {
         if (cached) { this.state.order = JSON.parse(JSON.stringify(cached.order)); this.state.reprice = cached.reprice; }
         onMounted(() => this.searchRef.el?.focus());
         onWillUnmount(() => {
+            this.destroyed = true;
             clearTimeout(this.quantityTimer);
             if (!this.discarded) this.rememberDraft();
             for (const draft of this.choices) this.props.cachedDrafts.delete(draft.id);
@@ -41,8 +46,21 @@ export class OrderDialog extends Component {
             if (event.key === "F2") { event.preventDefault(); this.searchRef.el?.focus(); }
         });
         this.saved = cached?.saved || JSON.stringify(this.state.order);
+        if (this.props.location && this.editable) {
+            this.state.order.delivery_location = JSON.parse(JSON.stringify(this.props.location));
+            this.state.order.delivery_location_message_id = this.props.location.message_id;
+        }
         this.nextLine = Math.min(-1, ...this.state.order.lines.map(line => line.id - 1));
         useHotkey("control+s", () => this.save(), {bypassEditableProtection: true});
+    }
+    shareBranch() {
+        const id = this.state.order.id;
+        const version = this.branchPickerVersion || 0;
+        this.dialog.add(LocationDialog, {
+            call: this.props.call, conversationId: this.state.order.conversation_id,
+            storeId: this.state.order.store_id || undefined,
+            valid: () => !this.destroyed && this.state.order.id === id && (this.branchPickerVersion || 0) === version,
+        });
     }
     get draftChoices() { return this.choices; }
     rememberDraft() {
@@ -55,6 +73,7 @@ export class OrderDialog extends Component {
     }
     async switchDraft(id) {
         if (id === this.state.order.id || this.state.busy) return;
+        this.branchPickerVersion = (this.branchPickerVersion || 0) + 1;
         this.rememberDraft();
         await this.run(async () => {
             const cached = this.pendingDrafts.get(id);
@@ -182,7 +201,7 @@ export class OrderDialog extends Component {
         const success = await this.run(async () => {
             const order = this.state.order;
             const result = await this.props.call("ab_crm_channel_order", "action_save_draft", [[order.id]], {
-                values: {store_id: order.store_id || false, delivery_address: order.delivery_address || "", delivery_notes: order.delivery_notes || "", confirmation: order.confirmation || ""},
+                values: {delivery_location_message_id: order.delivery_location_message_id || false, store_id: order.store_id || false, delivery_address: order.delivery_address || "", delivery_notes: order.delivery_notes || "", confirmation: order.confirmation || ""},
                 lines: order.lines.map(line => ({id: line.id > 0 ? line.id : false, product_id: line.product_id, quantity: Number(line.quantity), price: Number(line.price), uom_id: line.uom_id})),
                 edit_version: order.edit_version, reprice: this.state.reprice, accept,
             });
@@ -208,7 +227,7 @@ export class OrderDialog extends Component {
         });
     }
     channelLabel() { return {telegram: _t("Telegram"), whatsapp: _t("WhatsApp"), website: _t("Website")}[this.state.order.provider] || this.state.order.provider; }
-    auditLabel(action) { return {created: _t("Created"), line_added: _t("Line added"), line_changed: _t("Line changed"), branch_changed: _t("Fulfillment branch"), accepted: _t("Accepted"), reopened: _t("Reopened"), closed: _t("Closed"), cancelled: _t("Cancelled")}[action] || action; }
+    auditLabel(action) { return {delivery_location_changed: _t("Delivery location changed"), created: _t("Created"), line_added: _t("Line added"), line_changed: _t("Line changed"), branch_changed: _t("Fulfillment branch"), accepted: _t("Accepted"), reopened: _t("Reopened"), closed: _t("Closed"), cancelled: _t("Cancelled")}[action] || action; }
     balanceLabel(product) {
         return {unavailable: _t("Balance unavailable"), stale: _t("Stale balance"), cached: _t("Cached balance")}[product.balance_state];
     }

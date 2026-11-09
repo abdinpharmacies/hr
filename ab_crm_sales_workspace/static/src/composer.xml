@@ -1,0 +1,26 @@
+<templates xml:space="preserve">
+    <t t-name="ab_crm_sales_workspace.LocationDialog">
+        <Dialog title="title" size="'md'">
+            <div class="ab_branch_picker">
+                <p t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+                <fieldset t-att-disabled="state.busy">
+                    <label class="d-block">Content language<select class="form-select" t-model="state.language" t-on-change="languageChanged"><option value="en_US">English</option><option value="ar">Arabic</option><option value="ar_001">Arabic (Standard)</option></select></label>
+                    <label class="d-block mt-2">Search branches<input class="form-control" t-model="state.query" t-on-input="search" placeholder="Name, region, address or store code"/></label>
+                    <div class="ab_branch_results d-flex flex-column gap-1 my-2" style="max-height: 220px; overflow-y: auto;">
+                        <button t-foreach="state.rows" t-as="row" t-key="row.id" class="btn btn-light text-start" t-att-aria-pressed="state.preview?.id === row.id ? 'true' : 'false'" t-on-click="() => this.preview(row.id)"><bdi t-esc="row.name"/> · <bdi t-esc="row.region"/> · <bdi t-esc="row.store_code"/></button>
+                        <p t-if="!state.rows.length">No reviewed branches available.</p>
+                    </div>
+                    <t t-if="state.preview">
+                        <p t-if="state.preview.fallback" class="alert alert-warning">Some text is unavailable in the selected language. The preview shows the fallback that will be sent.</p>
+                        <LocationCard location="state.preview" provider="'telegram'"/>
+                        <label class="form-check my-2"><input type="checkbox" class="form-check-input" t-model="state.includeDetails"/><span class="form-check-label">Send branch details</span></label>
+                        <pre t-if="state.includeDetails" class="ab_branch_details" dir="auto" t-esc="state.preview.details"/>
+                        <p t-if="state.preview.public_phones"><span>Verified public phones</span>: <bdi dir="ltr" t-esc="state.preview.public_phones"/></p>
+                        <p t-if="state.preview.hotline"><span>Shared hotline</span>: <bdi dir="ltr" t-esc="state.preview.hotline"/></p>
+                    </t>
+                </fieldset>
+            </div>
+            <t t-set-slot="footer"><button class="btn btn-primary" t-att-disabled="state.busy || !state.preview" t-on-click="send">Send location</button><button class="btn btn-secondary" t-on-click="props.close" t-att-disabled="state.busy">Cancel</button></t>
+        </Dialog>
+    </t>
+</templates>

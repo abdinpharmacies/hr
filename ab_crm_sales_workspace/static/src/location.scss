@@ -1,0 +1,24 @@
+.ab_location_card {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    min-width: 0;
+    max-width: 100%;
+    padding: .75rem;
+    border: 1px solid #32a0dc;
+    border-inline-start-width: 4px;
+    border-radius: .75rem;
+    overflow-wrap: anywhere;
+    &.channel-whatsapp { border-color: #128c7e; }
+    p { margin: 0; }
+    time { font-size: .8rem; }
+    .ab_location_coordinates { unicode-bidi: isolate; }
+    .ab_location_actions { display: flex; flex-wrap: wrap; gap: .4rem; }
+    :is(a, button):focus-visible { outline: 3px solid #1b6ba2; outline-offset: 2px; }
+}
+
+.ab_branch_picker .ab_branch_details {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: inherit;
+}

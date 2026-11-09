@@ -1,20 +1,24 @@
 /** @odoo-module **/
 
-import {Component, onMounted, onWillStart, onWillUnmount, onWillPatch, onPatched, useRef, useState} from "@odoo/owl";
+import {Component, onMounted, onWillStart, onWillUnmount, onWillPatch, onPatched, useRef, useState, useExternalListener} from "@odoo/owl";
 import {registry} from "@web/core/registry";
+import {LocationDialog} from "./composer";
 import {SavedReplies} from "./templates";
 import {ChatterContacts} from "./contacts";
 import {OrderDialog} from "./order_dialog";
+import {LocationCard, DeliveryLocationPicker} from "./location";
 import {ChatterLoginDialog} from "./login";
 import {useBus} from "@web/core/utils/hooks";
 import {useService} from "@web/core/utils/hooks";
 import {_t} from "@web/core/l10n/translation";
 import {user} from "@web/core/user";
+import {MessageQuote, MessagePreview, MessageActions, MessageMedia, messageDate, compactUpdateTime, visibleMessageId, mediaBlob} from "./message";
 import {localization} from "@web/core/l10n/localization";
 
 export class SalesWorkspace extends Component {
     static template = "ab_crm_sales_workspace.Workspace";
     static props = ["*"];
+    static components = {MessageQuote, MessageActions, MessageMedia, LocationCard};
 
     setup() {
         this.orm = useService("orm");
@@ -28,6 +32,8 @@ export class SalesWorkspace extends Component {
         this.loginClose = null;
         useBus(this.env.bus, "AB_CHATTER_SESSION", ({detail}) => {
             if (!detail) {
+                this.navigationVersion++;
+                if (this.previewClose) this.previewClose();
                 this.stopRecording(true);
                 this.rememberDraft();
                 if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls});
@@ -38,6 +44,13 @@ export class SalesWorkspace extends Component {
                 this.state.contacts = [];
                 this.state.contact = null;
                 this.state.detail = null;
+                this.clearSearch();
+                this.state.searchOpen = false;
+                this.state.firstUnread = false;
+                this.state.historyContext = false;
+                this.state.emoji = false;
+                this.state.attachmentMenu = false;
+                this.emojiCaret = null;
                 this.state.order = null;
                 this.drafts = new Map();
                 this.orderDrafts = new Map();
@@ -46,7 +59,20 @@ export class SalesWorkspace extends Component {
         });
         this.messagesRef = useRef("messages");
         this.filesRef = useRef("files");
+        this.attachToggleRef = useRef("attachToggle");
         this.replyRef = useRef("reply");
+        this.searchInputRef = useRef("searchInput");
+        this.searchToggleRef = useRef("searchToggle");
+        useExternalListener(document, "pointerdown", event => {
+            if (!event.target.closest(".ab_attachment_control")) this.state.attachmentMenu = false;
+            if (!event.target.closest(".ab_emoji_panel, .ab_emoji_toggle")) this.state.emoji = false;
+            if (this.state.searchOpen && !event.target.closest(".ab_message_search, .ab_search_field, .ab_search_toggle")) this.closeSearch(false);
+        });
+        useExternalListener(document, "keydown", event => {
+            if (event.key === "Escape" && this.state.attachmentMenu) { this.state.attachmentMenu = false; this.attachToggleRef.el?.focus(); }
+            if (event.key === "Escape" && this.state.searchOpen) this.closeSearch();
+            if (event.key === "Escape" && this.state.emoji) { this.state.emoji = false; this.replyRef.el?.focus(); }
+        });
         this.sendLabel = _t("Send message");
         this.mediaUrls = new Set();
         this.drafts = new Map();
@@ -63,18 +89,28 @@ export class SalesWorkspace extends Component {
             if (element && this.resetScroll) {
                 element.scrollTop = element.scrollHeight;
                 this.resetScroll = false;
+                this.preservedSearchScroll = null;
+            } else if (element && this.preservedSearchScroll != null) {
+                element.scrollTop = this.preservedSearchScroll;
+                this.preservedSearchScroll = null;
             } else if (element && this.scrollState) {
-                element.scrollTop = this.scrollState.bottom && !this.prepending ? element.scrollHeight : this.scrollState.top + (this.prepending ? element.scrollHeight - this.scrollState.height : 0);
+                element.scrollTop = this.scrollState.bottom && !this.prepending && !this.state.historyContext ? element.scrollHeight : this.scrollState.top + (this.prepending ? element.scrollHeight - this.scrollState.height : 0);
                 this.prepending = false;
             }
+            this.focusPendingQuote();
+            this.restoreComposerCaret();
+            if (this.focusSearch && this.searchInputRef.el) { this.searchInputRef.el.focus({preventScroll: true}); this.focusSearch = false; }
+            this.updateScroll();
         });
         this.direction = localization.direction;
         this.state = useState({inbox: [], contacts: [], contact: null, detail: null, order: null, reply: "", phone: "",
-            showSearch: false, inboxQuery: "", inboxHasMore: false, candidates: [], customer: "", confirmed: false, query: "", products: [], reason: "",
-            preparing: 0, attachments: [], replyTo: null, recording: false, emoji: false, messageQuery: "", searchResults: null, previews: {}, error: "", busy: false, token: "", employee: "", loggedIn: false});
+             inboxQuery: "", inboxHasMore: false, candidates: [], customer: "", confirmed: false, query: "", products: [], reason: "",
+            firstUnread: false, away: false, historyContext: false, searchOpen: false, searchQuery: "", searchResults: [], searchOlder: false, searchBusy: false, searchSubmitted: false, searchError: "", preparing: 0, attachments: [], replyTo: null, recording: false, attachmentMenu: false, emoji: false, error: "", busy: false, token: "", employee: "", loggedIn: false});
         this.destroyed = false;
         this.refreshing = false;
         this.navigationVersion = 0;
+        this.acknowledged = new Map();
+        this.readTimer = setInterval(() => this.acknowledgeVisible(), 1000);
         this.focusHandler = (item, token) => this.focusAlert(item, token);
         onMounted(() => {
             if (!this.isOrders) this.chatterSession.focusHandler = this.focusHandler;
@@ -103,9 +139,10 @@ export class SalesWorkspace extends Component {
                 }
             }, 5000);
         });
-        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); if (this.orderClose) this.orderClose(); });
+        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); if (this.orderClose) this.orderClose(); });
     }
 
+    get emojis() { return ["😀", "😂", "😍", "👍", "🙏", "🔥", "✅", "🎉", "❤️", "😢", "😮", "👏"]; }
     context() { return {ab_chatter_session_token: this.state.token}; }
     call(model, method, args = [], kwargs = {}) {
         return this.orm.call(model, method, args, {...kwargs, context: this.context()});
@@ -173,7 +210,13 @@ export class SalesWorkspace extends Component {
             if (!this.state.detail && !this.state.contact && this.state.inbox.length) {
                 this.resetScroll = true;
                 const selected = this.props.action?.context?.chatter_conversation_id || this.state.inbox[0].id;
-                this.state.detail = await this.call("ab_crm_conversation", "workspace_detail", [[selected]], {mark_read: !this.isOrders});
+                const initial = await this.call("ab_crm_conversation", "workspace_detail", [[selected]], {});
+                if (this.destroyed || navigationVersion !== this.navigationVersion) return;
+                this.state.detail = initial;
+                this.state.firstUnread = initial.first_unread_message_id;
+                this.state.historyContext = false;
+                this.clearSearch();
+                this.state.searchOpen = false;
                 const draft = this.drafts.get(selected);
                 this.state.reply = draft?.reply || "";
                 this.state.attachments = draft?.attachments || [];
@@ -182,13 +225,22 @@ export class SalesWorkspace extends Component {
             const id = this.state.detail?.id;
             if (id) {
                 const current = this.state.detail;
-                const detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {after_id: current.messages.at(-1)?.id || false, mark_read: !this.isOrders && !this.orderClose && document.visibilityState === 'visible'});
+                const detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {after_id: current.messages.at(-1)?.id || false});
                 if (!this.destroyed && navigationVersion === this.navigationVersion && this.state.detail?.id === id) {
                     const messages = new Map(current.messages.map(message => [message.id, message]));
                     for (const message of detail.messages) messages.set(message.id, message);
-                    const latest = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {mark_read: !this.isOrders && !this.orderClose && document.visibilityState === "visible"});
+                    const latest = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {});
                     for (const message of latest.messages) {
                         if (messages.has(message.id)) messages.set(message.id, message);
+                    }
+                    if (current.last_update_at !== latest.last_update_at) {
+                        const recent = new Set(latest.messages.map(message => message.id));
+                        const older = current.messages.filter(message => !recent.has(message.id)).map(message => message.id);
+                        for (let offset = 0; offset < older.length; offset += 50) {
+                            if (this.destroyed || navigationVersion !== this.navigationVersion || this.state.detail?.id !== id) return;
+                            const updated = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {message_ids: older.slice(offset, offset + 50)});
+                            for (const message of updated.messages) messages.set(message.id, message);
+                        }
                     }
                     if (!this.destroyed && navigationVersion === this.navigationVersion && this.state.detail?.id === id) {
                         this.state.detail = {...detail, has_older: current.has_older, messages: [...messages.values()].sort((a, b) => a.id - b.id)};
@@ -203,22 +255,31 @@ export class SalesWorkspace extends Component {
     rememberDraft() {
         if (this.state.detail) this.drafts.set(this.state.detail.id, {reply: this.state.reply, attachments: [...this.state.attachments], replyTo: this.state.replyTo});
     }
-    async select(id) {
-        this.navigationVersion++;
+    async select(id, channel = false) {
+        if (this.state.busy) return;
+        const version = ++this.navigationVersion;
         await this.run(async () => {
             this.stopRecording(true);
             this.rememberDraft();
             this.resetScroll = true;
             this.state.contact = null;
-            this.state.detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {mark_read: !this.isOrders});
+            const source = this.state.detail?.id;
+            const detail = await this.call("ab_crm_conversation", channel ? "workspace_channel" : "workspace_detail", channel ? [[source], id] : [[id]]);
+            if (this.destroyed || version !== this.navigationVersion) return;
+            if (this.previewClose) this.previewClose();
+            this.state.detail = detail;
+            this.state.firstUnread = detail.first_unread_message_id;
+            this.state.historyContext = false;
+            this.clearSearch();
+            this.state.searchOpen = false;
+            this.state.attachmentMenu = false;
+            this.state.emoji = false;
             this.state.phone = this.state.detail.phone;
             this.state.order = this.drafts.get(id)?.order || null;
             this.state.reason = this.drafts.get(id)?.reason || "";
             this.state.candidates = this.state.detail.candidates || [];
             this.state.attachments = this.drafts.get(id)?.attachments || [];
             this.state.replyTo = this.drafts.get(id)?.replyTo || null;
-            this.state.searchResults = null;
-            this.state.messageQuery = "";
             this.state.customer = "";
             this.state.confirmed = false;
             this.state.products = [];
@@ -247,14 +308,17 @@ export class SalesWorkspace extends Component {
         });
     }
     olderMessages() {
+        if (this.state.busy) return;
+        const version = ++this.navigationVersion;
         return this.run(async () => {
             const detail = await this.call("ab_crm_conversation", "workspace_detail", [[this.state.detail.id]], {before_id: this.state.detail.messages[0]?.id});
+            if (this.destroyed || version !== this.navigationVersion || this.state.detail?.id !== detail.id) return;
             this.prepending = true;
             this.state.detail = {...this.state.detail, has_older: detail.has_older, messages: [...detail.messages, ...this.state.detail.messages]};
         });
     }
-    channelLabel(provider) { return {telegram: _t("Telegram"), whatsapp: _t("WhatsApp"), website: _t("Website")}[provider] || provider; }
-    icon(provider) { return {telegram: "fa-telegram", whatsapp: "fa-whatsapp", website: "fa-globe"}[provider] || "fa-phone"; }
+    channelLabel(provider) { return {telegram: _t("Telegram"), whatsapp: _t("WhatsApp"), website: _t("Website"), application: _t("Application")}[provider] || provider; }
+    icon(provider) { return {telegram: "fa-telegram", whatsapp: "fa-whatsapp", website: "fa-globe", application: "fa-mobile"}[provider] || "fa-phone"; }
     stateLabel(value) {
         return {draft: _t("Draft"), accepted: _t("Accepted"), closed: _t("Closed"), cancelled: _t("Cancelled"),
             queued: _t("Queued"), leased: _t("Queued"), received: _t("Queued"), delivered: _t("Delivered"), read: _t("Read"), review: _t("Delivery review"), sent: _t("Sent"), approved: _t("Approved"), unknown: _t("Sending / review"), failed: _t("Failed")}[value] || value;
@@ -263,14 +327,24 @@ export class SalesWorkspace extends Component {
     messageStateLabel(value) {
         return {waiting: _t("Waiting to send"), sending: _t("Sending…"), sent: _t("Sent"), delivered: _t("Delivered"), read: _t("Read"), failed: _t("Not sent"), retrying: _t("Retrying…"), retry_failed: _t("Retry failed"), uncertain: _t("Couldn’t confirm sending"), received: _t("Received")}[value] || "";
     }
-    statusIcon(status) {
-        return {waiting: "fa-clock-o", sending: "fa-spinner fa-spin", sent: "fa-check", delivered: "fa-check", read: "fa-check", failed: "fa-exclamation-circle", retry_failed: "fa-exclamation-circle", retrying: "fa-spinner fa-spin", uncertain: "fa-exclamation-triangle"}[status] || "";
-    }
+    retryLabel(message) { return message.retry_operation_id ? _t("Retry sending") : message.explanation || this.messageStateLabel(message.status); }
+    compactTime(value) { return compactUpdateTime(value); }
+    get composerHint() { return this.state.reply.trim() || this.state.attachments.length || this.state.preparing || this.state.recording ? this.sendDisabledReason : ""; }
     retry(message) {
+        if (!message.retry_operation_id) return;
         return this.run(async () => {
             await this.call("ab_crm_messaging_operation", "action_retry", [[message.retry_operation_id]]);
+            await this.refreshMessage(message.target_message_id || message.id);
             await this.refresh();
         });
+    }
+    async refreshMessage(id) {
+        const version = this.navigationVersion;
+        const conversation = this.state.detail.id;
+        const detail = await this.call("ab_crm_conversation", "workspace_detail", [[conversation]], {before_id: id + 1});
+        if (this.destroyed || version !== this.navigationVersion || this.state.detail?.id !== conversation) return;
+        const updated = new Map(detail.messages.map(message => [message.id, message]));
+        this.state.detail.messages = this.state.detail.messages.map(message => updated.get(message.id) || message);
     }
     async refreshContacts() {
         const result = await this.call("ab_crm_chatter_api", "contact_search", [], {token: this.state.token, query: this.state.inboxQuery});
@@ -290,15 +364,17 @@ export class SalesWorkspace extends Component {
         this.state.detail = null; this.state.contact = result.contact;
     }
     async focusAlert(item, token) {
-        this.navigationVersion++;
+        const version = ++this.navigationVersion;
         if (token !== this.state.token || !this.state.loggedIn) throw new Error(_t("Sign in to Sales Chatter with your employee and PIN."));
         const detail = await this.call("ab_crm_conversation", "workspace_focus", [[item.conversation_id], item.latest_message_id]);
-        if (this.destroyed || token !== this.state.token) return;
+        if (this.destroyed || token !== this.state.token || version !== this.navigationVersion) return;
         if (this.orderClose) this.orderClose();
         this.stopRecording(true); this.rememberDraft();
         this.state.contact = null;
-        this.state.searchResults = null; this.state.messageQuery = ""; this.state.showSearch = false;
         this.state.detail = detail;
+        this.state.firstUnread = detail.first_unread_message_id;
+        this.state.historyContext = true;
+        this.clearSearch();
         const draft = this.drafts.get(detail.id);
         this.state.reply = draft?.reply || ""; this.state.attachments = draft?.attachments || []; this.state.replyTo = draft?.replyTo || null;
         this.resetScroll = false;
@@ -306,6 +382,7 @@ export class SalesWorkspace extends Component {
         const target = this.messagesRef.el?.querySelector(`[data-message-id="${item.latest_message_id}"]`);
         if (!target || this.destroyed) throw new Error(_t("Couldn’t open the conversation. Try again."));
         await Promise.all([...this.messagesRef.el.querySelectorAll("img")].map(img => img.decode().catch(() => {})));
+        if (this.destroyed || version !== this.navigationVersion || token !== this.state.token) return;
         target.scrollIntoView({block: "center"});
         this.messagesRef.el.querySelectorAll(".ab_message_focus").forEach(element => element.classList.remove("ab_message_focus"));
         target.classList.add("ab_message_focus");
@@ -349,8 +426,17 @@ export class SalesWorkspace extends Component {
         const start = input?.selectionStart ?? this.state.reply.length;
         const end = input?.selectionEnd ?? start;
         this.state.reply = this.state.reply.slice(0, start) + emoji + this.state.reply.slice(end);
+        this.emojiCaret = {position: start + emoji.length, text: this.state.reply, conversation: this.state.detail?.id};
         this.state.emoji = false;
-        input?.focus();
+    }
+    restoreComposerCaret() {
+        const caret = this.emojiCaret;
+        if (!caret) return;
+        this.emojiCaret = null;
+        const input = this.replyRef.el;
+        if (!input?.isConnected || caret.text !== this.state.reply || caret.conversation !== this.state.detail?.id) return;
+        input.focus({preventScroll: true});
+        input.setSelectionRange(caret.position, caret.position);
     }
     clearAttachments() {
         for (const attachment of this.state.attachments) { URL.revokeObjectURL(attachment.url); this.mediaUrls.delete(attachment.url); }
@@ -361,6 +447,44 @@ export class SalesWorkspace extends Component {
         URL.revokeObjectURL(attachment.url);
         this.mediaUrls.delete(attachment.url);
     }
+    openAttachments() {
+        if (this.state.detail?.owned && !this.state.busy && !this.state.recording && !this.state.preparing) this.state.attachmentMenu = true;
+    }
+    toggleAttachments(event) {
+        this.state.attachmentMenu = event.detail === 0 ? !this.state.attachmentMenu : true;
+    }
+    leaveAttachments(event) {
+        if (!event.currentTarget.contains(document.activeElement)) this.state.attachmentMenu = false;
+    }
+    leaveAttachmentFocus(event) {
+        if (!event.currentTarget.contains(event.relatedTarget)) this.state.attachmentMenu = false;
+    }
+    chooseAttachment(category) {
+        const input = this.filesRef.el;
+        this.fileConversationId = this.state.detail.id;
+        input.accept = {
+            media: "image/jpeg,image/png,image/webp,video/mp4",
+            document: this.state.detail.provider === "whatsapp" ? ".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx" : ".pdf,.doc,.docx",
+            music: this.state.detail.provider === "whatsapp" ? "audio/mpeg,audio/mp4,audio/ogg" : "audio/mpeg,audio/mp4",
+        }[category];
+        this.state.attachmentMenu = false;
+        input.click();
+    }
+    attachmentTemplates() { this.state.attachmentMenu = false; this.templates(); }
+    location() {
+        this.state.attachmentMenu = false;
+        const conversation = this.state.detail.id;
+        const version = this.navigationVersion;
+        const orders = this.state.detail.orders.filter(order => order.store_id);
+        const storeIds = [...new Set(orders.map(order => order.store_id))];
+        this.dialog.add(LocationDialog, {
+            call: this.call.bind(this), conversationId: conversation,
+            storeId: storeIds.length === 1 ? storeIds[0] : undefined,
+            valid: () => !this.destroyed && this.state.detail?.id === conversation && this.navigationVersion === version && this.state.detail.owned,
+            sent: () => { if (!this.destroyed && this.state.detail?.id === conversation && this.navigationVersion === version) this.refresh(); },
+        }, {onClose: () => { if (!this.destroyed && this.state.detail?.id === conversation && this.navigationVersion === version) this.attachToggleRef?.el?.focus(); }});
+    }
+
     async attachFiles(files, kind = false, duration = 0) {
         const conversationId = this.state.detail?.id;
         this.state.preparing++;
@@ -368,23 +492,29 @@ export class SalesWorkspace extends Component {
         for (const file of files) {
             const mime = file.type.split(";")[0];
             const image = mime.startsWith("image/");
-            if (this.state.attachments.length >= 4 || file.size > (image ? 10 : 20) * 1024 * 1024) {
-                this.state.error = _t("Attach up to four files, 20 MB per file and 10 MB per image.");
+            const video = mime === "video/mp4";
+            const limit = image ? (this.state.detail.provider === "whatsapp" ? 5 : 10) : video || (this.state.detail.provider === "whatsapp" && mime.startsWith("audio/")) ? 16 : 20;
+            if (this.state.attachments.length >= 4 || file.size > limit * 1024 * 1024) {
+                this.state.error = _t("Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; other files: 20 MB (WhatsApp audio: 16 MB).");
                 return;
             }
             const data = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(",")[1]); reader.onerror = reject; reader.readAsDataURL(file); });
             if (this.destroyed || this.state.detail?.id !== conversationId || !this.state.detail?.owned) return;
             if (this.state.attachments.length >= 4) {
-                this.state.error = _t("Attach up to four files, 20 MB per file and 10 MB per image.");
+                this.state.error = _t("Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; other files: 20 MB (WhatsApp audio: 16 MB).");
                 return;
             }
             const url = URL.createObjectURL(file);
             this.mediaUrls.add(url);
-            this.state.attachments.push({name: file.name, mimetype: mime, size: file.size, duration, kind: kind || (image ? "image" : mime.startsWith("audio/") ? "audio" : "document"), data, url});
+            this.state.attachments.push({name: file.name, mimetype: mime, size: file.size, duration, kind: kind || (image ? "image" : video ? "video" : mime.startsWith("audio/") ? "audio" : "document"), data, url});
         }
         } finally { this.state.preparing--; }
     }
-    async filesChanged(event) { await this.attachFiles(event.target.files); event.target.value = ""; }
+    async filesChanged(event) {
+        if (!this.fileConversationId || this.fileConversationId === this.state.detail?.id) await this.attachFiles(event.target.files);
+        event.target.value = "";
+        this.fileConversationId = null;
+    }
     async paste(event) {
         const files = [...event.clipboardData.items].filter(item => item.kind === "file").map(item => item.getAsFile());
         if (files.length) { event.preventDefault(); await this.attachFiles(files); }
@@ -432,32 +562,178 @@ export class SalesWorkspace extends Component {
     }
     templates() { this.dialog.add(SavedReplies, {call: this.call.bind(this), conversation: this.state.detail, insert: text => { this.state.reply = text; }}); }
     async preview(media, download = false) {
+        const version = this.navigationVersion;
         await this.run(async () => {
-            const result = await this.call("ab_crm_message_media", "download", [[media.id]]);
-            const raw = Uint8Array.from(atob(result.data), character => character.charCodeAt(0));
-            const url = URL.createObjectURL(new Blob([raw], {type: result.mimetype}));
-            this.mediaUrls.add(url);
-            if (download || media.kind === "document") { const link = document.createElement("a"); link.href = url; link.download = result.name; link.click(); }
-            else this.state.previews[media.id] = url;
+            try {
+                const result = await this.call("ab_crm_message_media", "download", [[media.id]]);
+                if (this.destroyed || version !== this.navigationVersion) return;
+                const url = URL.createObjectURL(mediaBlob(result));
+                if (download) {
+                    try {
+                        const link = document.createElement("a");
+                        link.href = url; link.download = result.name; link.click();
+                    } finally { setTimeout(() => URL.revokeObjectURL(url), 1000); }
+                } else {
+                    try {
+                        this.previewClose = this.dialog.add(MessagePreview, {url, media, provider: this.state.detail?.provider || "telegram"}, {onClose: () => { this.previewClose = null; }});
+                    } catch (error) { URL.revokeObjectURL(url); throw error; }
+                }
+            } catch (error) { throw new Error(download ? _t("Couldn’t download the attachment. Try again.") : _t("Couldn’t preview the attachment. Try again.")); }
         });
     }
-    copy(message) { return navigator.clipboard.writeText(message.body); }
-    react(message) { return this.conversationAction("action_reply", ["", [], message.id, "👍"]); }
-    searchMessages() {
+    async copy(message) {
+        try { await navigator.clipboard.writeText(message.body || ""); }
+        catch { this.state.error = _t("Couldn’t copy the message. Check clipboard permissions."); }
+    }
+    react(message, reaction) {
+        if (!message.actions.react.enabled || !message.actions.reactions.includes(reaction)) return;
         return this.run(async () => {
-            if (!this.state.messageQuery.trim()) { this.state.searchResults = null; return; }
-            const detail = await this.call("ab_crm_conversation", "workspace_detail", [[this.state.detail.id]], {query: this.state.messageQuery});
-            this.state.searchResults = detail.messages;
+            await this.call("ab_crm_conversation", "action_reply", [[this.state.detail.id], "", [], message.id, reaction]);
+            await this.refreshMessage(message.id);
+            await this.refresh();
         });
     }
+    reply(message) {
+        if (!message.actions.reply.enabled) return;
+        this.state.replyTo = {available: true, id: message.id, author: message.author,
+            body: (message.body || message.media[0]?.name || _t("Attachment")).slice(0, 160),
+            thumbnail: message.media.find(media => media.kind === "image" && media.state === "ready") || false};
+        this.replyRef.el?.focus();
+    }
+    async openQuote(quote) {
+        if (this.state.busy || !quote.available) return;
+        const id = this.state.detail.id;
+        const version = ++this.navigationVersion;
+        await this.run(async () => {
+            let result;
+            try { result = await this.call("ab_crm_conversation", "workspace_reply", [[id], quote.id]); }
+            catch { if (!this.destroyed && version === this.navigationVersion) quote.available = false; return; }
+            if (this.destroyed || version !== this.navigationVersion || this.state.detail?.id !== id) return;
+            if (!result.available) { quote.available = false; return; }
+            this.pendingQuoteFocus = {id: quote.id, version};
+            if (!this.state.detail.messages.some(message => message.id === quote.id)) {
+                this.state.historyContext = true;
+                this.state.detail.messages = result.messages;
+                this.state.detail.has_older = result.has_older;
+            }
+            this.resetScroll = false;
+        });
+    }
+    focusPendingQuote() {
+        const focus = this.pendingQuoteFocus;
+        if (!focus) return;
+        if (this.destroyed || focus.version !== this.navigationVersion) { this.pendingQuoteFocus = null; return; }
+        const target = this.messagesRef.el?.querySelector(`[data-message-id="${focus.id}"]`);
+        if (!target) return;
+        this.messagesRef.el.querySelectorAll(".ab_message_focus").forEach(element => element.classList.remove("ab_message_focus"));
+        target.scrollIntoView({block: "center"});
+        target.classList.add("ab_message_focus");
+        target.focus({preventScroll: true});
+        this.pendingQuoteFocus = null;
+    }
+    updateScroll() {
+        const element = this.messagesRef.el;
+        if (element) this.state.away = element.scrollHeight - element.scrollTop - element.clientHeight > 40;
+    }
+    async jumpLatest() {
+        if (this.state.busy) return;
+        const id = this.state.detail.id;
+        const version = ++this.navigationVersion;
+        await this.run(async () => {
+            const detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]]);
+            if (this.destroyed || version !== this.navigationVersion || this.state.detail?.id !== id) return;
+            this.resetScroll = true;
+            this.state.historyContext = false;
+            this.state.detail = detail;
+        });
+    }
+    jumpUnread() { if (this.state.firstUnread) return this.openQuote({id: this.state.firstUnread, available: true}); }
+    toggleSearch() {
+        if (this.state.searchOpen) return this.closeSearch();
+        this.state.searchOpen = true;
+        this.focusSearch = true;
+    }
+    closeSearch(restoreFocus = true) {
+        this.state.searchOpen = false;
+        this.focusSearch = false;
+        if (restoreFocus) this.searchToggleRef?.el?.focus({preventScroll: true});
+    }
+    async openSearchResult(result) {
+        if (this.state.busy) return;
+        const conversationId = this.state.detail.id;
+        await this.openQuote({id: result.id, available: true});
+        if (this.state.detail?.id === conversationId) this.closeSearch(false);
+    }
+    clearSearch() {
+        this.preservedSearchScroll = this.messagesRef?.el?.scrollTop;
+        this.searchVersion = (this.searchVersion || 0) + 1;
+        Object.assign(this.state, {searchQuery: "", searchResults: [], searchOlder: false, searchBusy: false, searchSubmitted: false, searchError: ""});
+    }
+    searchInput(event) {
+        this.clearSearch();
+        this.state.searchQuery = event.target.value;
+    }
+    async searchMessages(older = false) {
+        const query = this.state.searchQuery.trim();
+        if (!query || this.state.searchBusy) return;
+        const id = this.state.detail.id;
+        const version = this.navigationVersion;
+        const request = this.searchVersion = (this.searchVersion || 0) + 1;
+        this.state.searchBusy = true;
+        this.state.searchError = "";
+        try {
+            const detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {query, before_id: older ? this.state.searchResults.at(-1)?.id : false});
+            if (this.destroyed || version !== this.navigationVersion || request !== this.searchVersion || this.state.detail?.id !== id) return;
+            const results = [...detail.messages].reverse();
+            this.state.searchResults = older ? [...this.state.searchResults, ...results] : results;
+            this.state.searchOlder = detail.has_older;
+            this.state.searchSubmitted = true;
+        } catch (error) {
+            if (request === this.searchVersion && version === this.navigationVersion) this.state.searchError = error.data?.message || error.message;
+        } finally { if (request === this.searchVersion) this.state.searchBusy = false; }
+    }
+    async acknowledgeVisible() {
+        if (this.destroyed || this.isOrders || !this.state.loggedIn || this.state.searchOpen || this.state.busy || this.refreshing || this.reading || this.chatterSession.focusHandler !== this.focusHandler) return;
+        const id = this.state.detail?.id;
+        const messageId = visibleMessageId(this.messagesRef.el);
+        const key = `${this.state.token}:${id}`;
+        if (!id || !messageId || messageId <= (this.acknowledged.get(key) || 0)) return;
+        this.reading = true;
+        try {
+            await this.call("ab_crm_conversation", "workspace_acknowledge", [[id], messageId]);
+            this.acknowledged.set(key, messageId);
+        } catch { }
+        finally { this.reading = false; }
+    }
+    time(value) { return messageDate(value)?.toLocaleString({hour: "2-digit", minute: "2-digit"}) || ""; }
+    fullTime(value) { return messageDate(value)?.toLocaleString({dateStyle: "full", timeStyle: "short"}) || ""; }
+    day(value) { return messageDate(value)?.toLocaleString({dateStyle: "long"}) || ""; }
+    newDay(index) { return !index || this.day(this.state.detail.messages[index - 1].timestamp) !== this.day(this.state.detail.messages[index].timestamp); }
     auditLabel(action) {
         return {created: _t("Created"), line_added: _t("Line added"), line_changed: _t("Line changed"),
             accepted: _t("Accepted"), reopened: _t("Reopened"), closed: _t("Closed"), cancelled: _t("Cancelled")}[action] || action;
     }
-    async loadOrder(id) {
+    async loadOrder(id, location = null) {
         this.stopRecording(true);
         const order = await this.call("ab_crm_channel_order", "workspace_data", [[id]]);
-        this.orderClose = this.dialog.add(OrderDialog, {order, orders: [...this.state.detail.orders.filter(row => row.id !== order.id), {id: order.id, name: order.name, state: order.state, revision: order.revision}].sort((a, b) => b.id - a.id), cachedDrafts: this.orderDrafts, call: this.call.bind(this), context: this.context(), onSaved: () => this.refresh()}, {onClose: () => { this.orderClose = null; }});
+        this.orderClose = this.dialog.add(OrderDialog, {order, location, orders: [...this.state.detail.orders.filter(row => row.id !== order.id), {id: order.id, name: order.name, state: order.state, revision: order.revision}].sort((a, b) => b.id - a.id), cachedDrafts: this.orderDrafts, call: this.call.bind(this), context: this.context(), onSaved: () => this.refresh()}, {onClose: () => { this.orderClose = null; }});
+    }
+    useLocation(message) {
+        return this.run(async () => {
+            const conversationId = this.state.detail.id;
+            const orders = await this.call("ab_crm_conversation", "workspace_location_orders", [[conversationId], message.id]);
+            const select = async id => {
+                if (this.state.detail?.id !== conversationId) throw new Error(_t("Return to the location's conversation first."));
+                await this.loadOrder(id, message.location);
+            };
+            if (orders.length === 1) return select(orders[0].id);
+            this.dialog.add(DeliveryLocationPicker, {orders, select, newOrder: async () => {
+                if (this.state.detail?.id !== conversationId) throw new Error(_t("Return to the location's conversation first."));
+                const id = await this.call("ab_crm_conversation", "action_new_order", [[conversationId]]);
+                await select(id);
+                await this.refresh();
+            }});
+        });
     }
     selectOrder(id) { return this.run(() => this.loadOrder(id)); }
     async newOrder() {

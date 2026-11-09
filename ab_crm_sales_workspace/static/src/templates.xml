@@ -1,3 +1,27 @@
 <templates xml:space="preserve">
-<t t-name="ab_crm_sales_workspace.SavedReplies"><Dialog title="title" size="'lg'"><p>Saved replies are inserted into the composer. Review them and explicitly send.</p><div t-if="state.error" class="alert alert-danger" t-esc="state.error"/><fieldset t-att-disabled="state.busy"><label>Saved reply<select class="form-select" t-model="state.selected" t-on-change="select"><option value="">New saved reply</option><option t-foreach="state.items" t-as="item" t-key="item.id" t-att-value="item.id" t-esc="item.name"/></select></label><div t-if="state.can_manage"><label>Name<input class="form-control" t-model="state.name"/></label><label>Message template<textarea class="form-control" t-model="state.body" placeholder="Use {{customer}} and {{phone}} placeholders"/></label><button class="btn btn-outline-primary" t-on-click="() => this.save()">Save template</button><button t-if="state.selected" class="btn btn-outline-danger" t-on-click="() => this.save(false)">Archive template</button></div><label t-foreach="placeholders" t-as="key" t-key="key"><t t-esc="key"/><input class="form-control" t-model="state.variables[key]"/></label><h4>Preview</h4><p class="text-break" t-esc="preview"/></fieldset><t t-set-slot="footer"><button class="btn btn-primary" t-on-click="insert" t-att-disabled="state.busy || !preview.trim() || placeholders.some(key => !state.variables[key])">Insert into composer</button><button class="btn btn-light" t-on-click="refresh" t-att-disabled="state.busy">Refresh</button><button class="btn btn-light" t-on-click="props.close">Close</button></t></Dialog></t>
+    <t t-name="ab_crm_sales_workspace.SavedReplies">
+        <Dialog title="title" size="'lg'" contentClass="'ab_template_dialog channel-' + theme" requestClose.bind="close">
+            <p>Saved replies are inserted into the composer. Review them and explicitly send.</p>
+            <p t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+            <p t-if="state.busy" role="status">Loading templates…</p>
+            <fieldset class="ab_template_layout" t-att-disabled="state.busy">
+                <section class="ab_template_list" aria-label="Saved replies">
+                    <label class="d-block">Search templates<input class="form-control" type="search" t-model="state.query"/></label>
+                    <button t-if="state.can_manage" class="btn ab_template_primary my-2" t-on-click="() => this.select(false)">New saved reply</button>
+                    <p t-if="!filteredItems.length" role="status">No templates found.</p>
+                    <button t-foreach="filteredItems" t-as="item" t-key="item.id" class="ab_template_item" t-att-class="{'active': state.selected === item.id}" t-att-aria-pressed="state.selected === item.id ? 'true' : 'false'" t-on-click="() => this.select(item.id)"><strong dir="auto" t-esc="item.name"/><span dir="auto" t-esc="item.body"/></button>
+                </section>
+                <section class="ab_template_editor">
+                    <t t-if="state.can_manage"><label class="d-block">Name<input class="form-control" dir="auto" t-model="state.name"/></label><label class="d-block">Message template<textarea class="form-control" dir="auto" rows="5" t-model="state.body" maxlength="4096" placeholder="Use {{customer}} and {{phone}} placeholders"/></label>
+                        <div class="d-flex gap-2 my-2"><button class="btn ab_template_primary" t-on-click="() => this.save()" t-att-disabled="!state.name.trim() || !state.body.trim()">Save template</button><button t-if="state.selected" class="btn btn-outline-danger" t-on-click="() => this.save(false)">Archive template</button></div>
+                    </t>
+                    <h4 t-else="" dir="auto" t-esc="state.name"/>
+                    <label t-foreach="placeholders" t-as="key" t-key="key" class="d-block"><t t-esc="key"/><input class="form-control" dir="auto" t-model="state.variables[key]" required="required"/></label>
+                    <h4 class="mt-3">Preview</h4><p class="ab_template_preview" dir="auto" t-esc="preview"/>
+                    <p t-if="missingValues" role="status">Complete all required parameters.</p>
+                </section>
+            </fieldset>
+            <t t-set-slot="footer"><button class="btn ab_template_primary" t-on-click="insert" t-att-disabled="state.busy || !preview.trim() || missingValues">Insert into composer</button><button class="btn btn-light" t-on-click="refresh" t-att-disabled="state.busy">Refresh</button><button class="btn btn-light" t-on-click="close">Close</button></t>
+        </Dialog>
+    </t>
 </templates>

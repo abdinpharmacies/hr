@@ -1,0 +1,31 @@
+<odoo>
+
+    <record id="branch_location_list" model="ir.ui.view">
+        <field name="name">ab_crm_branch_location.list</field><field name="model">ab_crm_branch_location</field>
+        <field name="arch" type="xml">
+            <list delete="0"><field name="directory_key"/><field name="name"/><field name="region"/><field name="store_id"/><field name="company_id"/><field name="active"/><field name="reviewed_at"/><field name="revision"/></list></field>
+    </record>
+    <record id="branch_location_form" model="ir.ui.view">
+        <field name="name">ab_crm_branch_location.form</field><field name="model">ab_crm_branch_location</field>
+        <field name="arch" type="xml">
+            <form delete="0"><header><button name="action_review" type="object" string="Review and activate" class="btn-primary" invisible="active"/></header><sheet>
+            <div class="alert alert-info" role="status">Confirm the store mapping, coordinates, public contacts and source before activation. Editing content requires a new review.</div>
+            <group><group><field name="directory_key" readonly="id"/><field name="company_id" readonly="id"/><field name="store_id" readonly="id"/><field name="region"/><field name="active" readonly="1"/></group><group><field name="name"/><field name="name_ar"/><field name="address"/><field name="address_ar"/></group></group>
+            <group><group><field name="latitude"/><field name="longitude"/><field name="public_phones"/><field name="phones_verified"/><field name="hotline"/></group><group><field name="source"/><field name="review_note"/><field name="reviewed_by"/><field name="reviewed_at"/><field name="revision"/></group></group><field name="history"/>
+        </sheet></form></field>
+    </record>
+    <record id="branch_location_search" model="ir.ui.view"><field name="name">ab_crm_branch_location.search</field><field name="model">ab_crm_branch_location</field><field name="arch" type="xml">
+            <search><field name="name"/><field name="region"/><field name="store_id"/><filter name="inactive" string="Archived / awaiting review" domain="[('active', '=', False)]"/></search></field></record>
+    <record id="action_branch_locations" model="ir.actions.act_window"><field name="name">Branch Locations</field><field name="res_model">ab_crm_branch_location</field><field name="view_mode">list,form</field><field name="context">{'active_test': False}</field></record>
+    <record id="branch_location_import_form" model="ir.ui.view"><field name="name">ab_crm_branch_location_import.form</field><field name="model">ab_crm_branch_location_import</field><field name="arch" type="xml">
+            <form string="Review Branch CSV Import"><group><field name="file"/><field name="report"/><field name="preview_digest" invisible="1"/></group><footer><button name="action_preview" type="object" string="Validate CSV" class="btn-primary"/><button name="action_apply" type="object" string="Import inactive profiles" invisible="not preview_digest"/><button string="Cancel" special="cancel"/></footer></form></field></record>
+    <record id="action_branch_location_import" model="ir.actions.act_window"><field name="name">Import Branch Locations</field><field name="res_model">ab_crm_branch_location_import</field><field name="view_mode">form</field><field name="target">new</field></record>
+    <menuitem id="menu_branch_locations" name="Branch Locations" parent="ab_crm_core.menu_root" action="action_branch_locations" groups="ab_crm_core.group_manager,base.group_system"/>
+    <menuitem id="menu_branch_location_import" name="Import Branch Locations" parent="ab_crm_core.menu_root" action="action_branch_location_import" groups="ab_crm_core.group_manager,base.group_system"/>
+    <record id="branch_location_account_form" model="ir.ui.view"><field name="name">ab_crm_messaging_account.branch.location</field><field name="model">ab_crm_messaging_account</field><field name="inherit_id" ref="ab_crm_messaging.view_account_form"/><field name="arch" type="xml">
+            <field name="outgoing_enabled" position="after"><field name="branch_location_enabled" groups="ab_crm_core.group_manager,base.group_system" invisible="provider != 'telegram'"/></field></field></record>
+    <record id="branch_location_crm_form" model="ir.ui.view"><field name="name">ab_crm_conversation.branch.location</field><field name="model">ab_crm_conversation</field><field name="inherit_id" ref="ab_crm_core.view_ab_crm_conversation_form"/><field name="arch" type="xml">
+            <sheet position="inside"><widget name="ab_branch_share" groups="ab_crm_sales_workspace.group_agent"/></sheet></field></record>
+    <record id="branch_location_oms_form" model="ir.ui.view"><field name="name">ab_oms_request.branch.location</field><field name="model">ab_oms_request</field><field name="inherit_id" ref="ab_oms_core.view_ab_oms_request_form"/><field name="arch" type="xml">
+            <sheet position="inside"><widget name="ab_branch_share" groups="ab_crm_sales_workspace.group_agent" invisible="not conversation_id"/></sheet></field></record>
+</odoo>

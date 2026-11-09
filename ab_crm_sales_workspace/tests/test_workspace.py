@@ -1,3 +1,6 @@
+from datetime import timedelta
+from unittest.mock import patch
+
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
@@ -415,7 +418,8 @@ class TestWorkspace(TransactionCase):
         self.assertEqual(
             next(row for row in before if row['id'] == conversation.id)['unread'], 2
         )
-        conversation.workspace_detail()
+        detail = conversation.workspace_detail()
+        conversation.workspace_acknowledge(detail['messages'][-1]['id'])
         after = conversation.workspace_inbox()
         self.assertEqual(
             next(row for row in after if row['id'] == conversation.id)['unread'], 0
@@ -475,6 +479,8 @@ class TestWorkspace(TransactionCase):
             ]
         )
         self.assertEqual(conversation.workspace_inbox(query='does-not-exist'), [])
+        self.assertEqual(conversation.workspace_inbox()[0]['unread'], 55)
+        conversation.workspace_acknowledge(detail['messages'][-1]['id'])
         self.assertEqual(conversation.workspace_inbox()[0]['unread'], 0)
         self.assertEqual(conversation.workspace_inbox(before_id=conversation.id), [])
         with self.assertRaises(AccessError):
@@ -538,6 +544,60 @@ class TestWorkspace(TransactionCase):
         self.chatter_api.logout(token)
         with self.assertRaises(AccessError):
             self.chatter_api._session(token)
+
+    def test_session_activity_fresh_and_stale(self):
+        now = fields.Datetime.now()
+        session_model = type(self.session)
+        self.session.last_activity_at = now
+        with patch.object(session_model, 'try_lock_for_update') as lock:
+            self.assertEqual(
+                self.chatter_api._session(self.session_token), self.session
+            )
+            lock.assert_not_called()
+        self.assertEqual(self.session.last_activity_at, now)
+        self.session.last_activity_at = now - timedelta(minutes=2)
+        self.chatter_api._session(self.session_token)
+        self.assertGreaterEqual(self.session.last_activity_at, now)
+
+    def test_session_activity_rechecks_timestamp_after_lock(self):
+        now = fields.Datetime.now()
+        stale = now - timedelta(minutes=2)
+        self.session.last_activity_at = stale
+        session_model = type(self.session)
+        original_lock = session_model.try_lock_for_update
+        original_write = session_model.write
+
+        def refresh_activity(session, **kwargs):
+            locked = original_lock(session, **kwargs)
+            locked.last_activity_at = now
+            locked.flush_recordset(['last_activity_at'])
+            self.env.cache.set(locked, locked._fields['last_activity_at'], stale)
+            return locked
+
+        with patch.object(session_model, 'try_lock_for_update', refresh_activity):
+            with patch.object(
+                session_model, 'write', autospec=True, side_effect=original_write
+            ) as write:
+                self.chatter_api._session(self.session_token)
+                self.assertEqual(write.call_count, 1)
+        self.assertEqual(self.session.last_activity_at, now)
+
+    def test_session_expiry_and_company_are_checked_before_activity(self):
+        self.session.last_activity_at = fields.Datetime.now() - timedelta(minutes=2)
+        self.session.expires_at = fields.Datetime.now() - timedelta(seconds=1)
+        with patch.object(type(self.session), 'try_lock_for_update') as lock:
+            with self.assertRaises(AccessError):
+                self.chatter_api._session(self.session_token)
+            lock.assert_not_called()
+        self.session.expires_at = fields.Datetime.now() + timedelta(hours=1)
+        foreign_company = self.env['res.company'].create(
+            {'name': 'Session Foreign Company'}
+        )
+        self.staff.company_ids = [fields.Command.link(foreign_company.id)]
+        with patch.object(type(self.session), 'try_lock_for_update') as lock:
+            with self.assertRaises(AccessError):
+                self.chatter_api.with_company(foreign_company)._session(self.session_token)
+            lock.assert_not_called()
 
     def test_chatter_login_throttle_and_role_recheck(self):
         for unused in range(5):
@@ -909,7 +969,8 @@ class TestWorkspace(TransactionCase):
                 [('conversation_id', '=', conversation.id)]
             )
         )
-        conversation.workspace_detail()
+        detail = conversation.workspace_detail()
+        conversation.workspace_acknowledge(detail['messages'][-1]['id'])
         self.assertTrue(
             self.env['ab_crm_workspace_read'].search(
                 [('conversation_id', '=', conversation.id)]
@@ -1486,3 +1547,698 @@ class TestWorkspace(TransactionCase):
         candidates = self.chatter_api.contact_search(self.session_token, phone='+201012345678')
         self.assertIn(contact.id, [row['id'] for row in candidates['contacts']])
         self.assertEqual(contact.phone, '010 1234 5678')
+
+    def test_explicit_read_is_monotonic_scoped_and_fetch_is_pure(self):
+        conversation = self.conversation()
+        first = conversation.message_ids[-1].id
+        self.receive('read-second')
+        last = conversation.message_ids[-1].id
+        conversation.workspace_detail(mark_read=True)
+        conversation.workspace_focus(first)
+        conversation.workspace_reply(first)
+        self.assertEqual(conversation.workspace_inbox()[0]['unread'], 2)
+        conversation.workspace_acknowledge(last)
+        conversation.workspace_acknowledge(first)
+        self.assertEqual(conversation.workspace_inbox()[0]['unread'], 0)
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).workspace_acknowledge(last)
+        with self.assertRaises(AccessError):
+            conversation.workspace_acknowledge(False)
+        with self.assertRaises(AccessError):
+            conversation.with_context(ab_chatter_session_token='forged').workspace_acknowledge(last)
+
+    def test_channels_require_customer_identity_and_scope(self):
+        conversation = self.conversation()
+        customer = self.env['ab_crm_customer'].create({
+            'name': 'Same phone, different identity', 'phone': conversation.customer_id.phone,
+            'branch_id': self.branch.id,
+        })
+        channel = self.env['ab_crm_channel'].create({
+            'name': 'Second WhatsApp', 'code': 'second-wa', 'provider': 'whatsapp',
+            'branch_id': self.branch.id,
+        })
+        other = self.env['ab_crm_conversation'].create({
+            'channel_id': channel.id, 'branch_id': self.branch.id,
+            'name': 'Second conversation', 'external_key': 'second', 'customer_id': customer.id,
+        })
+        self.assertNotIn(other.id, [r['id'] for r in conversation.workspace_detail()['streams']])
+        with self.assertRaises(AccessError):
+            conversation.workspace_channel(other.id)
+        with self.assertRaises(AccessError):
+            conversation.workspace_acknowledge(other.message_ids[:1].id or 0)
+        self.assertEqual(conversation.workspace_channel(conversation.id)['id'], conversation.id)
+        self.assertIn('Workspace Bot', conversation.workspace_detail()['streams'][0]['label'])
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).workspace_channel(conversation.id)
+
+    def test_quote_resolution_outside_page_and_actions(self):
+        conversation = self.conversation()
+        original = conversation.message_ids[-1]
+        for index in range(55):
+            self.receive('quote-%s' % index)
+        message_id = conversation.action_reply('A quoted answer', reply_id=original.id)
+        detail = conversation.workspace_detail()
+        reply = next(m for m in detail['messages'] if m['id'] == message_id)
+        self.assertNotIn(original.id, [m['id'] for m in detail['messages']])
+        self.assertEqual(reply['quote']['id'], original.id)
+        self.assertEqual(conversation.workspace_reply(message_id)['focus_message_id'], message_id)
+        self.assertEqual(conversation.workspace_reply(original.id)['focus_message_id'], original.id)
+        self.assertFalse(conversation.workspace_reply(0)['available'])
+        self.assertFalse(reply['actions']['edit']['enabled'])
+        self.assertFalse(reply['actions']['delete']['enabled'])
+        self.assertFalse(reply['actions']['reply']['enabled'])
+        self.assertEqual(reply['actions']['reactions'], ['👍', '❤', '👎'])
+        self.assertEqual(detail['last_incoming_at'], '2026-01-01 12:00:00')
+        self.assertNotIn('updated_at', detail)
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).workspace_reply(original.id)
+
+    def test_reactions_stay_on_target_and_replace_previous_badge(self):
+        conversation = self.conversation()
+        target = conversation.message_ids[0]
+        first = conversation.action_reply('', reply_id=target.id, reaction='👍')
+        latest = conversation.action_reply('', reply_id=target.id, reaction='❤')
+        detail = conversation.workspace_detail()
+        self.assertEqual([row['id'] for row in detail['messages']], [target.id])
+        self.assertEqual(detail['messages'][0]['reactions'][0]['id'], latest)
+        self.assertEqual(detail['messages'][0]['reactions'][0]['reaction'], '❤')
+        self.assertFalse(detail['has_older'])
+        inbox = conversation.workspace_inbox()
+        self.assertEqual(next(row for row in inbox if row['id'] == conversation.id)['preview'], target.body)
+        self.assertTrue(self.env['ab_crm_message'].browse(first).exists())
+        self.assertTrue(detail['last_update_at'])
+        self.assertFalse(conversation.workspace_detail(after_id=target.id)['messages'])
+        operation = self.env['ab_crm_message'].browse(latest).messaging_operation_ids
+        operation._change({'state': 'failed', 'retryable': True, 'error_code': 'unavailable'})
+        reaction = conversation.workspace_detail()['messages'][0]['reactions'][0]
+        self.assertEqual(reaction['retry_operation_id'], operation.id)
+        operation.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token).action_retry()
+        self.assertEqual(conversation.workspace_detail()['messages'][0]['reactions'][0]['id'], latest)
+        self.assertEqual(len(self.env['ab_crm_message'].browse(latest).messaging_operation_ids), 1)
+
+    def test_incoming_reaction_removal_is_not_a_reply(self):
+        conversation = self.conversation()
+        target = conversation.message_ids[0]
+        gateway = self.env['ab_crm_messaging_api'].with_user(self.service)
+        for number, emoji in enumerate(('👍', ''), 1):
+            gateway.receive_event('workspace-bot', '900000234', {
+                'id': 'reaction:%s' % number, 'sender': '12345',
+                'body': 'Reaction: ' + (emoji or 'removed'),
+                'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
+                'source_digest': str(number) * 64, 'reaction': emoji,
+                'reply_reference': target.provider_reference,
+            })
+            detail = conversation.workspace_detail()
+            self.assertEqual([row['id'] for row in detail['messages']], [target.id])
+            self.assertEqual([r['reaction'] for r in detail['messages'][0]['reactions']], [emoji] if emoji else [])
+
+    def test_uncaptioned_media_hides_placeholder_and_retries_in_place(self):
+        import base64
+        conversation = self.conversation()
+        message_id = conversation.action_reply('', attachments=[{
+            'name': 'report.pdf', 'kind': 'document', 'mimetype': 'application/pdf',
+            'size': 9, 'data': base64.b64encode(b'%PDF-test').decode(),
+        }])
+        message = self.env['ab_crm_message'].browse(message_id)
+        operation = message.messaging_operation_ids
+        row = next(row for row in conversation.workspace_detail()['messages'] if row['id'] == message_id)
+        self.assertEqual(row['body'], '')
+        self.assertEqual(row['media'][0]['name'], 'report.pdf')
+        operation._change({'state': 'failed', 'error_code': 'unavailable', 'retryable': True})
+        operation.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token).action_retry()
+        self.assertEqual(operation.message_id.id, message_id)
+        self.assertEqual(len(message.messaging_operation_ids), 1)
+        self.assertEqual(operation.attempt, 2)
+
+    def test_template_save_selection_update_archive_and_no_send(self):
+        conversation = self.conversation()
+        self.staff.group_ids += self.env.ref('ab_crm_core.group_manager')
+        before = conversation.message_ids.ids
+        result = conversation.save_template('Greeting', 'Hello {{customer}}')
+        selected = result['selected_id']
+        self.assertTrue(selected)
+        result = conversation.save_template('Greeting edited', 'Updated', template_id=selected)
+        self.assertEqual(result['selected_id'], selected)
+        self.assertEqual([row['id'] for row in result['items']], [selected])
+        self.assertEqual(result['items'][0]['body'], 'Updated')
+        result = conversation.save_template('Greeting edited', 'Updated', template_id=selected, active=False)
+        self.assertFalse(result['selected_id'])
+        self.assertFalse(result['items'])
+        self.assertFalse(self.env['ab_crm_saved_reply'].browse(selected).active)
+        self.assertEqual(conversation.message_ids.ids, before)
+
+    def test_detail_unread_is_employee_scoped_and_fetches_do_not_acknowledge(self):
+        conversation = self.conversation()
+        first = conversation.message_ids.id
+        last = self.receive(event_id='second')['message_id']
+        detail = conversation.workspace_detail(query='Contact')
+        self.assertEqual(detail['first_unread_message_id'], first)
+        self.assertEqual(detail['unread_count'], 2)
+        conversation.workspace_reply(first)
+        conversation.workspace_detail(before_id=last, mark_read=True)
+        self.assertEqual(conversation.workspace_detail()['unread_count'], 2)
+        conversation.workspace_acknowledge(first)
+        detail = conversation.workspace_detail()
+        self.assertEqual(detail['first_unread_message_id'], last)
+        self.assertEqual(detail['unread_count'], 1)
+        other_employee = self.env['ab_hr_employee'].create({
+            'name': 'Unread Employee', 'barcode': 'UNREAD2', 'user_id': self.staff.id,
+        })
+        profile = self.profile.copy({'employee_id': other_employee.id, 'pos_pin': '1234'})
+        token = self.chatter_api.employee_login(profile.id, '1234', 'unread-device')['token']
+        other = conversation.with_context(ab_chatter_session_token=token).workspace_detail()
+        self.assertEqual(other['first_unread_message_id'], first)
+        self.assertEqual(other['unread_count'], 2)
+        with self.assertRaises(AccessError):
+            conversation.with_context(ab_chatter_session_token='forged').workspace_detail()
+
+    def test_search_pagination_only_counts_visible_matches(self):
+        conversation = self.conversation()
+        for number in range(55):
+            conversation.action_reply('Search needle' if number % 2 else 'Other body')
+        result = conversation.workspace_detail(query='Search needle')
+        self.assertEqual(len(result['messages']), 27)
+        self.assertFalse(result['has_older'])
+        self.assertTrue(all('Search needle' in row['body'] for row in result['messages']))
+        for number in range(30):
+            conversation.action_reply('Search needle')
+        result = conversation.workspace_detail(query='Search needle')
+        self.assertEqual(len(result['messages']), 50)
+        self.assertTrue(result['has_older'])
+        older = conversation.workspace_detail(query='Search needle', before_id=result['messages'][0]['id'])
+        self.assertEqual(len(older['messages']), 7)
+        self.assertFalse(older['has_older'])
+        self.assertFalse(conversation.workspace_detail(query='missing term')['has_older'])
+
+    def test_video_reply_validated_private_and_queued(self):
+        import base64
+
+        conversation = self.conversation()
+        conversation.action_claim()
+        raw = b'\x00\x00\x00\x0cftypisom'
+        attachment = {
+            'kind': 'video', 'name': 'clip.mp4', 'mimetype': 'video/mp4',
+            'size': len(raw), 'data': base64.b64encode(raw).decode(),
+        }
+        message_id = conversation.action_reply('Video', attachments=[attachment])
+        message = self.env['ab_crm_message'].browse(message_id)
+        self.assertEqual(message.messaging_operation_ids.content['media'][0]['kind'], 'video')
+        self.assertTrue(conversation._workspace_media(message.media_ids)['can_preview'])
+        with self.assertRaises(AccessError):
+            message.media_ids.with_user(self.other).download()
+        for change in (
+            {'size': 17 * 1024 * 1024}, {'duration': float('nan')},
+            {'mimetype': 'video/webm'}, {'kind': 'document'},
+            {'data': base64.b64encode(b'invalid file').decode()},
+        ):
+            with self.assertRaises(ValidationError):
+                conversation.action_reply('Video', attachments=[dict(attachment, **change)])
+
+    def location_message(self, event_id='location-1', sender='12345', **location):
+        event = {
+            'id': event_id, 'sender': sender, 'body': 'Location',
+            'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
+            'source_digest': 'c' * 64,
+            'location': dict(latitude=0, longitude=0, **location),
+        }
+        result = self.env['ab_crm_messaging_api'].with_user(self.service).receive_event(
+            'workspace-bot', '900000234', event,
+        )
+        return self.env['ab_crm_message'].browse(result['message_id'])
+
+    def test_location_ingestion_snapshot_and_search(self):
+        conversation = self.conversation()
+        conversation.action_claim()
+        message = self.location_message(name='Customer place', address='Street', is_live_snapshot=True)
+        self.assertEqual(message.location_snapshot['latitude'], 0)
+        self.assertEqual(message.location_snapshot['timestamp'], '2026-01-01 12:00:00')
+        self.assertIn('Customer place', message.body)
+        self.assertEqual(message, self.location_message(name='Customer place', address='Street', is_live_snapshot=True))
+        with self.assertRaises(ValidationError):
+            self.location_message(name='Conflict')
+        detail = conversation.workspace_detail(query='Customer place')
+        self.assertEqual(detail['messages'][0]['location']['message_id'], message.id)
+        self.assertEqual(conversation._workspace_quote(message)['location']['latitude'], 0)
+        self.assertEqual(conversation.workspace_location_orders(message.id), [])
+        for actor in (self.staff, self.service, self.env.user):
+            with self.assertRaises(AccessError):
+                message.with_user(actor).write({'location_snapshot': {'latitude': 90}})
+            with self.assertRaises(AccessError):
+                message.with_user(actor).copy({'location_snapshot': message.location_snapshot})
+        with self.assertRaises(AccessError):
+            self.env['ab_crm_message'].with_context(default_location_snapshot=message.location_snapshot).create({
+                'body': 'Forged', 'conversation_id': conversation.id, 'branch_id': self.branch.id,
+            })
+
+    def test_delivery_location_selection_removal_versions_and_audit(self):
+        order = self.order()
+        original = (order.delivery_address, order.delivery_notes, order.customer_id.address)
+        message = self.location_message(name='First point')
+        other = self.location_message('location-2', name='Second point')
+        def save(source=None):
+            values = {} if source is None else {'delivery_location_message_id': source}
+            lines = [{k: row[k] for k in ('id', 'product_id', 'uom_id', 'quantity', 'price')}
+                     for row in order._snapshot()['lines']]
+            return order.action_save_draft(values, lines, order.edit_version)
+        choices = order.conversation_id.workspace_location_orders(message.id)
+        self.assertEqual([row['id'] for row in choices], [order.id])
+        second = order.conversation_id.action_new_order()
+        self.assertEqual(len(order.conversation_id.workspace_location_orders(message.id)), 2)
+        old_version = order.edit_version
+        data = save(message.id)
+        self.assertEqual(data['delivery_location']['latitude'], 0)
+        self.assertEqual(data['delivery_location_message_id'], message.id)
+        save()
+        self.assertEqual(order.delivery_location_message_id, message)
+        with self.assertRaises(UserError):
+            order.action_save_draft({'delivery_location_message_id': False}, [], old_version)
+        save(other.id)
+        audit = order.audit_ids.filtered(lambda row: row.action == 'delivery_location_changed')[-1]
+        self.assertEqual(audit.values['old']['message_id'], message.id)
+        self.assertEqual(audit.values['new']['message_id'], other.id)
+        self.assertEqual(audit.actor_id, self.staff)
+        self.assertEqual(audit.sudo().employee_id, self.employee)
+        self.assertTrue(audit.at)
+        save(False)
+        self.assertFalse(order.delivery_location_message_id)
+        save(message.id)
+        order.action_accept()
+        accepted = order.audit_ids.filtered(lambda row: row.action == 'accepted')[-1].values
+        self.assertEqual(accepted['delivery_location']['message_id'], message.id)
+        with self.assertRaises(UserError):
+            save(False)
+        order.action_close()
+        with self.assertRaises(UserError):
+            save(other.id)
+        order.action_reopen('Customer corrected location')
+        save(other.id)
+        self.assertEqual(accepted['delivery_location']['message_id'], message.id)
+        self.assertEqual((order.delivery_address, order.delivery_notes, order.customer_id.address), original)
+        self.assertTrue(second)
+
+    def test_delivery_location_denied_rpc_and_foreign_sources(self):
+        order = self.order()
+        message = self.location_message()
+        foreign = self.location_message('foreign-location', sender='98765')
+        text = self.env['ab_crm_message'].browse(self.receive()['message_id'])
+        for source in (foreign.id, text.id):
+            with self.assertRaises(AccessError):
+                order.action_save_draft({'delivery_location_message_id': source}, [], order.edit_version)
+        for source in (True, 0, -1, '1', {'latitude': 0}, None):
+            with self.assertRaises(ValidationError):
+                order.action_save_draft({'delivery_location_message_id': source}, [], order.edit_version)
+        with self.assertRaises(AccessError):
+            order.write({'delivery_location_message_id': message.id})
+        with self.assertRaises(AccessError):
+            order.copy({'delivery_location_message_id': message.id})
+        with self.assertRaises(AccessError):
+            order.action_save_draft({'delivery_location': {'latitude': 0}}, [], order.edit_version)
+        with self.assertRaises(AccessError):
+            order.with_context(ab_chatter_session_token=False).action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
+        with self.assertRaises(AccessError):
+            order.with_user(self.other).action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
+        with self.assertRaises(AccessError):
+            order.conversation_id.workspace_location_orders(foreign.id)
+
+    def test_delivery_location_cross_branch_and_company(self):
+        order = self.order()
+        company = self.env['res.company'].create({'name': 'Location Foreign Company', 'country_id': self.env.ref('base.eg').id})
+        self.service.company_ids |= company
+        for index, scope in enumerate((self.env.company, company)):
+            branch = self.env['ab_crm_branch'].with_company(scope).create({
+                'name': 'Location Foreign Branch', 'code': f'location-foreign-{index}',
+                'replica_id': self.replica.id, 'company_id': scope.id,
+                'user_ids': [fields.Command.set(self.service.ids)],
+            })
+            channel = self.env['ab_crm_channel'].with_company(scope).create({
+                'name': 'Foreign Telegram', 'code': f'location-channel-{index}',
+                'provider': 'telegram', 'branch_id': branch.id, 'company_id': scope.id,
+            })
+            account = self.env['ab_crm_messaging_account'].with_company(scope).create({
+                'name': 'Foreign Location Bot', 'code': f'location-bot-{index}',
+                'provider': 'telegram', 'provider_account': f'900009{index}',
+                'channel_id': channel.id, 'branch_id': branch.id, 'company_id': scope.id,
+                'service_user_id': self.service.id, 'legacy_worker_disabled': True, 'enabled': True,
+            })
+            result = self.env['ab_crm_messaging_api'].with_user(self.service).with_company(scope).receive_event(
+                account.code, account.provider_account, {
+                    'id': 'foreign-location', 'sender': '12345', 'body': 'Location',
+                    'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
+                    'source_digest': 'e' * 64, 'location': {'latitude': 0, 'longitude': 0},
+                },
+            )
+            with self.assertRaises(AccessError):
+                order.action_save_draft({'delivery_location_message_id': result['message_id']}, [], order.edit_version)
+            with self.assertRaises(AccessError):
+                order.conversation_id.workspace_location_orders(result['message_id'])
+
+    def branch_profile(self, **values):
+        return self.env['ab_crm_branch_location'].create(dict({
+            'directory_key': 'test-branch', 'company_id': self.env.company.id,
+            'store_id': self.store.id, 'name': 'Public Branch', 'address': 'Public Street',
+            'region': 'Test Region', 'latitude': 0, 'longitude': 180, 'source': 'Reviewed test source',
+            'hotline': '19036',
+        }, **values))
+
+    def test_branch_review_scope_revision_and_archive(self):
+        profile = self.branch_profile()
+        conversation = self.conversation()
+        self.assertEqual(conversation.workspace_branch_directory(), [])
+        with self.assertRaises(AccessError):
+            profile.with_user(self.staff).read(['name'])
+        with self.assertRaises(AccessError):
+            profile.with_user(self.staff).action_review()
+        with self.assertRaises(AccessError):
+            profile.write({'active': True})
+        profile.action_review()
+        preview = conversation.workspace_branch_preview(profile.id, 'ar')
+        self.assertTrue(preview['fallback'])
+        self.assertEqual(preview['hotline'], '19036')
+        self.assertFalse(preview['public_phones'])
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).workspace_branch_directory()
+        with self.assertRaises(AccessError):
+            conversation.with_context(ab_chatter_session_token='bad').workspace_branch_directory()
+        profile.write({'address': 'Updated Street'})
+        self.assertFalse(profile.active)
+        self.assertGreater(profile.revision, preview['revision'])
+        with self.assertRaises(UserError):
+            profile.unlink()
+        with self.assertRaises(UserError):
+            profile.write({'store_id': self.foreign_store.id})
+
+    def test_branch_location_idempotency_snapshot_and_receipt(self):
+        from uuid import uuid4
+        profile = self.branch_profile()
+        profile.action_review()
+        self.account.branch_location_enabled = True
+        conversation = self.conversation()
+        token = str(uuid4())
+        args = [profile.id, profile.revision, 'en_US', token]
+        message_id = conversation.action_send_branch_location(*args)
+        self.assertEqual(conversation.action_send_branch_location(*args), message_id)
+        message = self.env['ab_crm_message'].browse(message_id)
+        self.assertEqual(message.location_snapshot['longitude'], 180)
+        operation = message.messaging_operation_ids
+        frozen = dict(operation.content)
+        profile.write({'address': 'Later address'})
+        self.assertEqual(conversation.action_send_branch_location(*args), message_id)
+        self.assertEqual(operation.content, frozen)
+        with self.assertRaises(ValidationError):
+            conversation.action_send_branch_details(*args)
+        with self.assertRaises(AccessError):
+            message.write({'branch_share_snapshot': {}})
+        with self.assertRaises(AccessError):
+            message._internal_write({'provider_reference': 'spoof'})
+        with self.assertRaises(AccessError):
+            operation._change({'content': {}})
+        api = self.env['ab_crm_messaging_api'].with_user(self.service)
+        lease = api.lease_outgoing(self.account.code, self.account.provider_account)
+        self.assertEqual(lease['location']['address'], 'Public Street')
+        api.acknowledge_receipt(self.account.code, self.account.provider_account, lease['token'], lease['attempt'], lease['lease'], 'branch-receipt')
+        self.assertTrue(api.authorize_send(self.account.code, self.account.provider_account, lease['token'], lease['attempt'], 'branch-receipt'))
+        api.report_delivery(self.account.code, self.account.provider_account, lease['token'], lease['attempt'], 'branch-receipt', 'accepted', '456')
+        self.assertEqual(message.provider_reference, '456')
+        self.assertEqual(message.location_snapshot['address'], 'Public Street')
+
+    def test_branch_stale_gate_public_store_and_details(self):
+        from uuid import uuid4
+        profile = self.branch_profile(public_phones='01012345678; 0212345678')
+        with self.assertRaises(ValidationError):
+            profile.action_review()
+        profile.write({'phones_verified': True})
+        profile.action_review()
+        conversation = self.conversation()
+        with self.assertRaises(UserError):
+            conversation.action_send_branch_location(profile.id, profile.revision, 'en_US', str(uuid4()))
+        message_id = conversation.action_send_branch_details(profile.id, profile.revision, 'en_US', str(uuid4()))
+        message = self.env['ab_crm_message'].browse(message_id)
+        self.assertIn('01012345678', message.body)
+        self.assertIn('Shared hotline: 19036', message.body)
+        self.assertNotIn('location', message.messaging_operation_ids.content)
+        revision = profile.revision
+        profile.write({'review_note': 'Re-reviewed'})
+        profile.action_review()
+        with self.assertRaises(ValidationError):
+            conversation.action_send_branch_details(profile.id, revision, 'en_US', str(uuid4()))
+        foreign = self.branch_profile(directory_key='foreign', store_id=self.foreign_store.id)
+        foreign.action_review()
+        self.assertEqual(conversation.workspace_branch_preview(foreign.id)['id'], foreign.id)
+        self.assertTrue(conversation.action_send_branch_details(foreign.id, foreign.revision, 'en_US', str(uuid4())))
+        with self.assertRaises(AccessError):
+            self.account.with_user(self.staff).write({'branch_location_enabled': True})
+
+    def test_public_branch_sharing_preserves_fulfillment_scope(self):
+        from uuid import uuid4
+
+        order = self.order()
+        conversation = order.conversation_id
+        self.foreign_store.allow_sale = False
+        public = self.branch_profile(store_id=self.foreign_store.id)
+        public.action_review()
+        self.account.branch_location_enabled = True
+        before_order = order.read(['store_id', 'edit_version', 'delivery_location_message_id'])
+        before_stores = conversation._workspace_scope()[1]
+        self.assertNotIn(self.foreign_store, before_stores)
+        self.assertEqual(conversation.workspace_branch_preview(public.id)['store_code'], self.foreign_store.code)
+        message_id = conversation.action_send_branch_location(public.id, public.revision, 'en_US', str(uuid4()))
+        message = self.env['ab_crm_message'].browse(message_id)
+        self.assertEqual(message.messaging_operation_ids.content['location']['address'], public.address)
+        self.assertEqual(order.read(['store_id', 'edit_version', 'delivery_location_message_id']), before_order)
+        self.assertEqual(conversation._workspace_scope()[1], before_stores)
+        with self.assertRaises(AccessError):
+            order.write({'store_id': self.foreign_store.id})
+        self.foreign_store.active = False
+        self.assertEqual(conversation.workspace_branch_directory(), [])
+        with self.assertRaises(AccessError):
+            conversation.workspace_branch_preview(public.id)
+        self.foreign_store.active = True
+        company = self.env['res.company'].create({'name': 'Public Directory Other Company'})
+        other = self.env['ab_crm_branch_location'].with_company(company).create({
+            'directory_key': 'other-company', 'company_id': company.id,
+            'store_id': self.foreign_store.id, 'name': 'Other Company Branch',
+            'address': 'Other Address', 'region': 'Other Region',
+            'latitude': 1, 'longitude': 1, 'source': 'Test source',
+        })
+        other.action_review()
+        self.assertEqual([row['id'] for row in conversation.workspace_branch_directory()], public.ids)
+        with self.assertRaises(AccessError):
+            conversation.workspace_branch_preview(other.id)
+        with self.assertRaises(AccessError):
+            conversation.action_send_branch_location(other.id, other.revision, 'en_US', str(uuid4()))
+
+    def test_storefront_import_lists_all_public_locations(self):
+        import base64
+        import csv
+        import io
+        from pathlib import Path
+
+        source = Path(__file__).resolve().parents[1] / 'resources' / 'branch_locations_staging.csv'
+        with source.open() as stream:
+            rows = list(csv.DictReader(stream))
+        self.assertEqual(len(rows), 42)
+        stores = self.env['ab_store'].create([
+            {'name': row['name'], 'code': row['directory_key'], 'allow_sale': False}
+            for row in rows
+        ])
+        for row in rows:
+            row.update(company=self.env.company.name, store_code=row['directory_key'])
+        stream = io.StringIO()
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+        wizard = self.env['ab_crm_branch_location_import'].create({
+            'file': base64.b64encode(stream.getvalue().encode()),
+        })
+        wizard.action_preview()
+        self.assertTrue(wizard.preview_digest, wizard.report)
+        wizard.action_apply()
+        profiles = self.env['ab_crm_branch_location'].with_context(active_test=False).search([
+            ('store_id', 'in', stores.ids), ('company_id', '=', self.env.company.id),
+        ])
+        self.assertEqual(len(profiles), 42)
+        conversation = self.conversation()
+        self.assertEqual(conversation.workspace_branch_directory(), [])
+        profiles.action_review()
+        expected = {row['store_code']: row for row in rows}
+        for language in ('en_US', 'ar', 'ar_001'):
+            directory = conversation.workspace_branch_directory(language=language)
+            self.assertEqual(len(directory), 42)
+            for preview in directory:
+                row = expected[preview['store_code']]
+                self.assertEqual(preview['name'], row['name_ar' if language.startswith('ar') else 'name'])
+                self.assertEqual(preview['address'], row['address_ar' if language.startswith('ar') else 'address'])
+                self.assertEqual(preview['hotline'], '19036')
+                self.assertFalse(preview['public_phones'])
+        for query in (rows[0]['name_ar'], rows[0]['address'], rows[0]['store_code']):
+            result = conversation.workspace_branch_directory(query=query)
+            self.assertEqual([item['store_code'] for item in result], [rows[0]['store_code']])
+
+    def test_branch_import_validation_and_inactive_apply(self):
+        import base64
+        header = 'company,store_code,directory_key,name,address,region,latitude,longitude,source,public_phones,hotline\n'
+        row = f'{self.env.company.name},workspace,csv-branch,CSV Branch,CSV Address,Region,-90,180,Reviewed source,01012345678,19036\n'
+        wizard = self.env['ab_crm_branch_location_import'].create({'file': base64.b64encode((header + row).encode())})
+        wizard.action_preview()
+        self.assertTrue(wizard.preview_digest)
+        wizard.action_apply()
+        profile = self.env['ab_crm_branch_location'].with_context(active_test=False).search([('directory_key', '=', 'csv-branch')])
+        self.assertEqual(profile.public_phones, '01012345678')
+        self.assertFalse(profile.active)
+        self.assertFalse(profile.phones_verified)
+        with self.assertRaises(ValidationError):
+            wizard.action_apply()
+        for bad in (row + row, row.replace(',-90,', ',nan,'), row.replace(',workspace,', ',missing,'), row.replace(',CSV Address,', ',,')):
+            wizard.file = base64.b64encode((header + bad).encode())
+            wizard.action_preview()
+            self.assertFalse(wizard.preview_digest)
+            with self.assertRaises(ValidationError):
+                wizard.action_apply()
+        self.env['ab_store'].create({'name': 'Ambiguous store', 'code': 'workspace'})
+        wizard.file = base64.b64encode((header + row).encode())
+        wizard.action_preview()
+        self.assertFalse(wizard.preview_digest)
+
+    def test_branch_invalid_coordinates_and_direct_spoof(self):
+        for latitude, longitude in [(91, 0), (0, -181), (float('inf'), 0), (0, float('nan'))]:
+            with self.assertRaises(ValidationError), self.env.cr.savepoint():
+                self.branch_profile(latitude=latitude, longitude=longitude)
+        conversation = self.conversation()
+        with self.assertRaises(AccessError):
+            self.env['ab_crm_message'].with_user(self.staff).with_context(ab_chatter_session_token=self.session_token).create({
+                'conversation_id': conversation.id, 'branch_id': self.branch.id,
+                'body': 'Spoof', 'direction': 'out', 'branch_share_snapshot': {'latitude': 1},
+            })
+
+
+    def test_branch_assignment_company_and_service_denial(self):
+        profile = self.branch_profile()
+        profile.action_review()
+        conversation = self.conversation()
+        conversation.sudo()._internal_write({'assigned_id': self.other.id})
+        with self.assertRaises(AccessError):
+            conversation.workspace_branch_directory()
+        company = self.env['res.company'].create({'name': 'Branch Other Company'})
+        foreign = self.env['ab_crm_branch_location'].with_company(company).create({
+            'directory_key': 'company-branch', 'company_id': company.id,
+            'store_id': self.store.id, 'name': 'Foreign company', 'address': 'Street',
+            'region': 'Region', 'latitude': 0, 'longitude': 0, 'source': 'Test',
+        })
+        foreign.action_review()
+        admin = self.env.ref('base.user_admin')
+        with self.assertRaises(AccessError):
+            foreign.with_user(admin).with_context(allowed_company_ids=self.env.company.ids).read(['name'])
+        with self.assertRaises(AccessError):
+            profile.with_user(self.service).read(['name'])
+
+    def test_branch_retry_uses_snapshot_and_uncertain_requires_review(self):
+        from uuid import uuid4
+        profile = self.branch_profile()
+        profile.action_review()
+        self.account.branch_location_enabled = True
+        conversation = self.conversation()
+        message_id = conversation.action_send_branch_location(profile.id, profile.revision, 'en_US', str(uuid4()))
+        operation = self.env['ab_crm_message'].browse(message_id).messaging_operation_ids
+        snapshot = dict(operation.content)
+        api = self.env['ab_crm_messaging_api'].with_user(self.service)
+        lease = api.lease_outgoing(self.account.code, self.account.provider_account)
+        api.acknowledge_receipt(self.account.code, self.account.provider_account, lease['token'], 1, lease['lease'], 'receipt-1')
+        self.account.branch_location_enabled = False
+        self.assertFalse(api.authorize_send(self.account.code, self.account.provider_account, lease['token'], 1, 'receipt-1'))
+        self.account.branch_location_enabled = True
+        api.report_delivery(self.account.code, self.account.provider_account, lease['token'], 1, 'receipt-1', 'failed', '', 'unavailable')
+        profile.write({'latitude': 20, 'address': 'New address'})
+        operation.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token).action_retry()
+        retry = api.lease_outgoing(self.account.code, self.account.provider_account)
+        self.assertEqual(retry['attempt'], 2)
+        self.assertEqual(retry['location'], snapshot['location'])
+        api.acknowledge_receipt(self.account.code, self.account.provider_account, retry['token'], 2, retry['lease'], 'receipt-2')
+        api.report_delivery(self.account.code, self.account.provider_account, retry['token'], 2, 'receipt-2', 'review', '', 'ambiguous')
+        with self.assertRaises(UserError):
+            operation.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token).action_retry()
+        with self.assertRaises(ValidationError):
+            self.env['ab_crm_messaging_operation'].create({'account_id': self.account.id, 'content': {'location': snapshot['location'], 'media': [{}]}})
+
+    def test_branch_views_load_from_source_in_xml_development_mode(self):
+        from pathlib import Path
+        from lxml import etree
+        from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
+
+        path = Path(__file__).resolve().parents[1] / 'views' / 'branch_location.xml'
+        records = etree.parse(str(path)).xpath('//record[@model="ir.ui.view"]')
+        self.assertEqual(len(records), 7)
+        for record in records:
+            xmlid = f"ab_crm_sales_workspace.{record.get('id')}"
+            with self.subTest(xmlid=xmlid):
+                source = get_view_arch_from_file(str(path), xmlid)
+                self.assertIsNotNone(etree.fromstring(source))
+                view = self.env.ref(xmlid)
+                self.assertIsNotNone(view.with_context(read_arch_from_file=True)._get_combined_arch())
+
+    def test_branch_share_defaults_location_with_optional_atomic_details(self):
+        from uuid import uuid4
+        from unittest.mock import patch
+
+        profile = self.branch_profile()
+        profile.action_review()
+        self.account.branch_location_enabled = True
+        conversation = self.conversation()
+        location_only = conversation.action_share_branch(profile.id, profile.revision, 'en_US', str(uuid4()))
+        self.assertTrue(location_only['location_id'])
+        self.assertFalse(location_only['details_id'])
+        token = str(uuid4())
+        both = conversation.action_share_branch(profile.id, profile.revision, 'en_US', token, True)
+        self.assertTrue(both['location_id'])
+        self.assertTrue(both['details_id'])
+        self.assertNotEqual(both['location_id'], both['details_id'])
+        location = self.env['ab_crm_message'].browse(both['location_id'])
+        details = self.env['ab_crm_message'].browse(both['details_id'])
+        self.assertTrue(location.location_snapshot)
+        self.assertFalse(details.location_snapshot)
+        self.assertIn('19036', details.body)
+        self.assertEqual(conversation.action_share_branch(profile.id, profile.revision, 'en_US', token, True), both)
+        with self.assertRaises(ValidationError):
+            conversation.action_share_branch(profile.id, profile.revision, 'en_US', token, False)
+        count = len(conversation.message_ids)
+        original = type(conversation)._send_branch
+        def fail_details(record, profile_id, revision, language, token, kind, include_details=None):
+            if kind == 'details':
+                raise ValidationError('Simulated details failure')
+            return original(record, profile_id, revision, language, token, kind, include_details)
+        with patch.object(type(conversation), '_send_branch', fail_details), self.assertRaises(ValidationError):
+            conversation.action_share_branch(profile.id, profile.revision, 'en_US', str(uuid4()), True)
+        self.assertEqual(len(conversation.message_ids), count)
+
+    def test_edited_location_changes_chat_without_changing_selected_delivery(self):
+        order = self.order()
+        api = self.env['ab_crm_messaging_api'].with_user(self.service)
+        original = api.receive_event('workspace-bot', '900000234', {
+            'id': '12345:99', 'sender': '12345', 'body': 'Location',
+            'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
+            'source_digest': 'c' * 64, 'location': {'latitude': 1, 'longitude': 2},
+        })
+        message = self.env['ab_crm_message'].browse(original['message_id'])
+        order.action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
+        frozen = order._snapshot()['delivery_location']
+        version = order.edit_version
+        api.receive_event('workspace-bot', '900000234', {
+            'id': 'edit:100', 'sender': '12345', 'body': 'Location',
+            'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
+            'source_digest': 'd' * 64, 'location': {'latitude': 3, 'longitude': 4},
+            'edit': {'reference': '99', 'sequence': 100, 'date': '2026-01-01 12:01:00'},
+        })
+        self.assertEqual(order._snapshot()['delivery_location'], frozen)
+        self.assertEqual(order.edit_version, version)
+        detail = order.conversation_id.workspace_detail(message_ids=[message.id])
+        self.assertEqual(detail['messages'][0]['location']['latitude'], 3)
+        self.assertEqual(detail['messages'][0]['edited_at'], '2026-01-01 12:01:00')
+        self.assertEqual(detail['messages'][0]['timestamp'], '2026-01-01 12:00:00')
+        self.assertEqual(order.conversation_id._workspace_quote(message)['location']['latitude'], 3)
+        order.action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
+        self.assertEqual(order._snapshot()['delivery_location']['latitude'], 3)
+        with self.assertRaises(AccessError):
+            order.write({'delivery_location_snapshot': {}})
+        with self.assertRaises(ValidationError):
+            order.conversation_id.workspace_detail(message_ids=[True])
+        with self.assertRaises(ValidationError):
+            order.conversation_id.workspace_detail(message_ids=[message.id] * 51)

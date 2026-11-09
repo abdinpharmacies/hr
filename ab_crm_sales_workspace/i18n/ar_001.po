@@ -933,6 +933,7 @@ msgstr "هوية تيليجرام هذه مرتبطة بالفعل بجهة ات
 
 #. module: ab_crm_sales_workspace
 #. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
 #: code:addons/ab_crm_sales_workspace/models/workspace.py:0
 msgid "This conversation is already assigned."
 msgstr "هذه المحادثة مسندة بالفعل إلى موظف."
@@ -1159,9 +1160,9 @@ msgstr "رسالة إدارة علاقات العملاء"
 
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
-#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
-#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
 #: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_telegram_setup
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -2561,3 +2562,838 @@ msgstr "رمز الخطأ"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_operation__provider_reference
 msgid "Provider Reference"
 msgstr "مرجع مزوّد الخدمة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Application"
+msgstr "التطبيق"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Couldn’t copy the message. Check clipboard permissions."
+msgstr "تعذر نسخ الرسالة. تحقق من أذونات الحافظة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Couldn’t download the attachment. Try again."
+msgstr "تعذر تنزيل المرفق. حاول مرة أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Couldn’t preview the attachment. Try again."
+msgstr "تعذرت معاينة المرفق. حاول مرة أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Deleting sent messages is not supported by this channel."
+msgstr "هذه القناة لا تدعم حذف الرسائل المرسلة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Editing sent messages is not supported by this channel."
+msgstr "هذه القناة لا تدعم تعديل الرسائل المرسلة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Last incoming message"
+msgstr "آخر رسالة واردة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Latest outgoing"
+msgstr "آخر رسالة صادرة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Message actions"
+msgstr "إجراءات الرسالة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/message.xml:0
+msgid "Original message unavailable"
+msgstr "الرسالة الأصلية غير متاحة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/message.xml:0
+msgid "Quoted image"
+msgstr "الصورة المقتبسة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Select an authorized customer conversation."
+msgstr "اختر محادثة عميل مصرحًا لك بالوصول إليها."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "This message has no provider reference."
+msgstr "لا يوجد مرجع لهذه الرسالة لدى مزود الخدمة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "You"
+msgstr "أنت"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message__chatter_event_ids
+msgid "Messaging Events"
+msgstr "أحداث المراسلة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Retry sending"
+msgstr "إعادة محاولة الإرسال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Clear"
+msgstr "مسح"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Complete all required parameters."
+msgstr "أكمل جميع المعلمات المطلوبة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.js:0
+msgid "Discard"
+msgstr "تجاهل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.js:0
+msgid "Discard your unsaved template changes?"
+msgstr "هل تريد تجاهل تغييرات القالب غير المحفوظة؟"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "First unread"
+msgstr "أول رسالة غير مقروءة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/message.xml:0
+msgid "Image unavailable"
+msgstr "الصورة غير متاحة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Jump to latest"
+msgstr "الانتقال إلى الأحدث"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.js:0
+msgid "Keep editing"
+msgstr "متابعة التحرير"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/message.xml:0
+msgid "Loading image…"
+msgstr "جارٍ تحميل الصورة…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Loading templates…"
+msgstr "جارٍ تحميل القوالب…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "No matching messages."
+msgstr "لا توجد رسائل مطابقة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "No templates found."
+msgstr "لم يتم العثور على قوالب."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Older results"
+msgstr "نتائج أقدم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Saved replies"
+msgstr "الردود المحفوظة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Search messages"
+msgstr "البحث في الرسائل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+msgid "Search templates"
+msgstr "البحث في القوالب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Searching…"
+msgstr "جارٍ البحث…"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Unread messages"
+msgstr "رسائل غير مقروءة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/templates.js:0
+msgid "Unsaved changes"
+msgstr "تغييرات غير محفوظة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Write a message..."
+msgstr "اكتب رسالة..."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Attachments"
+msgstr "المرفقات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Photo/video"
+msgstr "صورة/فيديو"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Location"
+msgstr "الموقع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Document"
+msgstr "مستند"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Music"
+msgstr "موسيقى"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Message exceeds 4096 characters."
+msgstr "تتجاوز الرسالة 4096 حرفًا."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid ""
+"Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; "
+"other files: 20 MB (WhatsApp audio: 16 MB)."
+msgstr ""
+"يمكن إرفاق أربعة ملفات بحد أقصى. الصور: 10 ميجابايت (واتساب: 5 ميجابايت)؛ "
+"الفيديو: 16 ميجابايت؛ الملفات الأخرى: 20 ميجابايت (صوت واتساب: 16 ميجابايت)."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
+msgid "Enter a valid latitude (-90 to 90) and longitude (-180 to 180)."
+msgstr ""
+"أدخل خط عرض صالحًا (من ‎-90 إلى 90) وخط طول صالحًا (من ‎-180 إلى 180)."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Insert a map link into your message. Review it before sending."
+msgstr "أدرج رابط الموقع في رسالتك وراجعه قبل الإرسال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Latitude"
+msgstr "خط العرض"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Longitude"
+msgstr "خط الطول"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/media.py:0
+msgid "Message history is immutable."
+msgstr "سجل الرسائل غير قابل للتعديل."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields.selection,name:ab_crm_sales_workspace.selection__ab_crm_message_media__kind__video
+msgid "Video"
+msgstr "فيديو"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+msgid "Select an incoming location from this conversation."
+msgstr "اختر موقعًا واردًا من هذه المحادثة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Invalid delivery location source."
+msgstr "مصدر موقع التوصيل غير صالح."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__delivery_location_message_id
+msgid "Delivery Location Message"
+msgstr "رسالة موقع التوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+msgid "Location snapshot"
+msgstr "لقطة الموقع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+msgid "Open in Maps"
+msgstr "فتح في الخرائط"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+msgid "Copy location"
+msgstr "نسخ الموقع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+msgid "Use for delivery"
+msgstr "استخدام للتوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.js:0
+msgid "Location link copied."
+msgstr "تم نسخ رابط الموقع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.js:0
+msgid "Could not copy the location. Use Open in Maps to copy the link."
+msgstr "تعذر نسخ الموقع. استخدم فتح في الخرائط لنسخ الرابط."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+msgid "Choose a draft order. Save the order to confirm the location."
+msgstr "اختر طلبًا مسودة. احفظ الطلب لتأكيد الموقع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/location.xml:0
+msgid "No editable draft orders. Create a new order to stage this location."
+msgstr ""
+"لا توجد طلبات مسودة قابلة للتعديل. أنشئ طلبًا جديدًا لإضافة هذا الموقع قبل "
+"الحفظ."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+msgid "Return to the location's conversation first."
+msgstr "عد إلى محادثة الموقع أولًا."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Remove delivery location"
+msgstr "إزالة موقع التوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+msgid "Delivery location changed"
+msgstr "تم تغيير موقع التوصيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "A send token cannot be reused for different content."
+msgstr "لا يمكن إعادة استخدام رمز الإرسال لمحتوى مختلف."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Arabic"
+msgstr "العربية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Arabic (Standard)"
+msgstr "العربية الفصحى"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__address_ar
+msgid "Arabic Address"
+msgstr "العنوان بالعربية"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__name_ar
+msgid "Arabic Name"
+msgstr "الاسم بالعربية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Archive branch profiles instead of deleting them."
+msgstr "أرشف ملفات الفروع بدلًا من حذفها."
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.branch_location_search
+msgid "Archived / awaiting review"
+msgstr "مؤرشف / بانتظار المراجعة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.actions.act_window,name:ab_crm_sales_workspace.action_branch_locations
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_branch_locations
+msgid "Branch Locations"
+msgstr "مواقع الفروع"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message__branch_share_snapshot
+msgid "Branch Share Snapshot"
+msgstr "لقطة مشاركة الفرع"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message__branch_share_token
+msgid "Branch Share Token"
+msgstr "رمز مشاركة الفرع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Branch configuration requires a manager."
+msgstr "يتطلب إعداد الفروع صلاحيات مدير."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Branch mapping is immutable. Archive the profile instead."
+msgstr "لا يمكن تغيير ربط الفرع. أرشف الملف بدلًا من ذلك."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Branch sharing evidence is immutable."
+msgstr "لا يمكن تغيير سجل مشاركة الفرع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Branch sharing is available only in Telegram."
+msgstr "مشاركة الفروع متاحة في تيليجرام فقط."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Choose Arabic or English."
+msgstr "اختر العربية أو الإنجليزية."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
+msgid "Choose branch"
+msgstr "اختر الفرع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Company or store code is missing or ambiguous."
+msgstr "الشركة أو رمز المخزن مفقود أو غير محدد بشكل فريد."
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.branch_location_form
+msgid ""
+"Confirm the store mapping, coordinates, public contacts and source before "
+"activation. Editing content requires a new review."
+msgstr ""
+"تحقق من ربط المخزن والإحداثيات وبيانات الاتصال العامة والمصدر قبل التفعيل. "
+"يتطلب تعديل المحتوى مراجعة جديدة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Conflicting existing branch mapping."
+msgstr "يوجد تعارض في ربط الفرع الحالي."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Content language"
+msgstr "لغة المحتوى"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Coordinates are required."
+msgstr "الإحداثيات مطلوبة."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__directory_key
+msgid "Directory Key"
+msgstr "معرّف الدليل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Duplicate directory key, store mapping or coordinates."
+msgstr "يوجد تكرار في معرّف الدليل أو ربط المخزن أو الإحداثيات."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "English"
+msgstr "الإنجليزية"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__address
+msgid "English Address"
+msgstr "العنوان بالإنجليزية"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__name
+msgid "English Name"
+msgstr "الاسم بالإنجليزية"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location_import__file
+msgid "File"
+msgstr "الملف"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.actions.act_window,name:ab_crm_sales_workspace.action_branch_location_import
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_branch_location_import
+msgid "Import Branch Locations"
+msgstr "استيراد مواقع الفروع"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.branch_location_import_form
+msgid "Import inactive profiles"
+msgstr "استيراد ملفات غير مفعلة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Invalid CSV. Use the branch import template, with at most 500 rows."
+msgstr "ملف CSV غير صالح. استخدم قالب استيراد الفروع بحد أقصى 500 صف."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Invalid branch preview."
+msgstr "معاينة الفرع غير صالحة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Invalid branch profile or company."
+msgstr "ملف الفرع أو الشركة غير صالح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Invalid branch search."
+msgstr "بحث الفروع غير صالح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Invalid branch send token."
+msgstr "رمز إرسال الفرع غير صالح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Invalid shared hotline."
+msgstr "رقم الخط الساخن المشترك غير صالح."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message_media__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Missing required fields."
+msgstr "بعض الحقول المطلوبة مفقودة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Name, region, address or store code"
+msgstr "الاسم أو المنطقة أو العنوان أو رمز المخزن"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "No reviewed branches available."
+msgstr "لا توجد فروع تمت مراجعتها متاحة."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_branch_location_store_unique
+msgid "Only one branch profile per company and store is allowed."
+msgstr "يُسمح بملف فرع واحد فقط لكل شركة ومخزن."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location_import__preview_digest
+msgid "Preview Digest"
+msgstr "بصمة المعاينة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_message_media
+msgid "Private Message Media"
+msgstr "وسائط الرسائل الخاصة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_branch_location
+msgid "Public Branch Location"
+msgstr "موقع الفرع العام"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__phones_verified
+msgid "Public Phones Verified"
+msgstr "تم التحقق من أرقام الهواتف العامة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__region
+msgid "Region"
+msgstr "المنطقة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location_import__report
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_branch_location_import
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.branch_location_import_form
+msgid "Review Branch CSV Import"
+msgstr "مراجعة استيراد الفروع من CSV"
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.branch_location_form
+msgid "Review and activate"
+msgstr "مراجعة وتفعيل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid ""
+"Review the branch profile and verify its public phones before activation."
+msgstr "راجع ملف الفرع وتحقق من أرقام هواتفه العامة قبل التفعيل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Review the branch profile before activation."
+msgstr "راجع ملف الفرع قبل التفعيل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Row %(row)s: %(error)s"
+msgstr "الصف %(row)s: %(error)s"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Search branches"
+msgstr "بحث الفروع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Select an authorized reviewed branch."
+msgstr "اختر فرعًا مسموحًا تمت مراجعته."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Send branch details"
+msgstr "إرسال تفاصيل الفرع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Send location"
+msgstr "إرسال الموقع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Share"
+msgstr "مشاركة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/branch_widget.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Share branch"
+msgstr "مشاركة الفرع"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__hotline
+msgid "Shared Hotline"
+msgstr "الخط الساخن المشترك"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Shared hotline"
+msgstr "الخط الساخن المشترك"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid ""
+"Some text is unavailable in the selected language. The preview shows the "
+"fallback that will be sent."
+msgstr ""
+"بعض النصوص غير متاحة باللغة المحددة. تعرض المعاينة النص البديل الذي سيتم "
+"إرساله."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__store_id
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_messaging_account__branch_location_enabled
+msgid "Telegram Branch Locations Enabled"
+msgstr "إرسال مواقع الفروع عبر تيليجرام مفعل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Telegram branch location sending is not enabled."
+msgstr "إرسال مواقع الفروع عبر تيليجرام غير مفعل."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_branch_location_key_unique
+msgid "The directory key must be unique per company."
+msgstr "يجب أن يكون معرّف الدليل فريدًا لكل شركة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
+msgid "This branch picker has expired. Open it again from the conversation."
+msgstr "انتهت صلاحية نافذة اختيار الفرع. افتحها مجددًا من المحادثة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "This branch preview is stale. Preview it again."
+msgstr "معاينة الفرع قديمة. اعرض المعاينة مجددًا."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_message_share_unique
+msgid "This branch share was already queued."
+msgstr "تمت إضافة مشاركة الفرع هذه إلى قائمة الإرسال بالفعل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid ""
+"Use semicolon-separated public phone numbers; keep the hotline separate."
+msgstr ""
+"افصل أرقام الهواتف العامة بفاصلة منقوطة؛ وأدخل الخط الساخن بشكل منفصل."
+
+#. module: ab_crm_sales_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.branch_location_import_form
+msgid "Validate CSV"
+msgstr "التحقق من CSV"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid "Validate the CSV again before importing."
+msgstr "تحقق من ملف CSV مجددًا قبل الاستيراد."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/branch_location.py:0
+msgid ""
+"Validated %(count)s rows. Import creates inactive profiles requiring review."
+msgstr ""
+"تم التحقق من %(count)s صفوف. ينشئ الاستيراد ملفات غير مفعلة تتطلب المراجعة."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_branch_location__public_phones
+msgid "Verified Public Phones"
+msgstr "أرقام الهواتف العامة المتحقق منها"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+msgid "Verified public phones"
+msgstr "أرقام الهواتف العامة المتحقق منها"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/branch_widget.js:0
+msgid "Select a conversation before sharing a branch."
+msgstr "اختر محادثة قبل مشاركة الفرع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Edited"
+msgstr "تم التعديل"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__delivery_location_snapshot
+msgid "Delivery Location Snapshot"
+msgstr "لقطة موقع التوصيل"

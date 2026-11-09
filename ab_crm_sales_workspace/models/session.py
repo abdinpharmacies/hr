@@ -107,8 +107,13 @@ class ChatterAPI(models.AbstractModel):
         )
         if not session or not self._eligible(session.profile_id):
             raise AccessError(_('Your chatter session expired. Sign in again.'))
-        if session.last_activity_at < fields.Datetime.now() - timedelta(minutes=1):
-            session.write({'last_activity_at': fields.Datetime.now()})
+        activity_cutoff = fields.Datetime.now() - timedelta(minutes=1)
+        if session.last_activity_at < activity_cutoff:
+            locked_session = session.try_lock_for_update(allow_referencing=True)
+            if locked_session:
+                locked_session.invalidate_recordset(['last_activity_at'])
+                if locked_session.last_activity_at < activity_cutoff:
+                    locked_session.write({'last_activity_at': fields.Datetime.now()})
         return session
 
     def _payload(self, session):

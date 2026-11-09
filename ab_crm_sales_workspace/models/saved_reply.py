@@ -59,7 +59,7 @@ class Conversation(models.Model):
                 raise AccessError(_('The selected company or branch is not allowed.'))
             template.write(values)
         else:
-            self.env['ab_crm_saved_reply'].create(
+            template = self.env['ab_crm_saved_reply'].create(
                 dict(values, branch_id=self.branch_id.id, company_id=self.company_id.id)
             )
-        return self.workspace_templates()
+        return dict(self.workspace_templates(), selected_id=template.id if active else False)

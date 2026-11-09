@@ -5,7 +5,7 @@ import phonenumbers
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.addons.ab_crm_core.models.core import _INTERNAL
-from odoo.addons.ab_crm_messaging.models.media import validate_media
+from .media import validate_workspace_attachment
 
 _WORKSPACE = ContextVar('ab_crm_workspace', default=False)
 
@@ -133,6 +133,10 @@ class Customer(models.Model):
 
 class Message(models.Model):
     _inherit = 'ab_crm_message'
+
+    chatter_event_ids = fields.One2many(
+        'ab_crm_messaging_event', 'message_id', string='Messaging Events', readonly=True
+    )
 
     def _display_status(self):
         self.ensure_one()
@@ -509,6 +513,12 @@ class Conversation(models.Model):
             return 'provider_restriction', str(error)
         return False, False
 
+    def _valid_reply_reaction(self, reaction):
+        return reaction in ('👍', '❤', '👎')
+
+    def _validate_reply_attachment(self, attachment):
+        return validate_workspace_attachment(attachment, self.env._)
+
     def action_reply(self, body, attachments=None, reply_id=False, reaction=False):
         self._owned()
         code, reason = self._reply_eligibility()
@@ -519,7 +529,7 @@ class Conversation(models.Model):
         if (
             not isinstance(attachments, list)
             or len(attachments) > 4
-            or (reaction and (attachments or reaction not in ('👍', '❤', '👎')))
+            or (reaction and (attachments or not self._valid_reply_reaction(reaction)))
         ):
             raise ValidationError(_('Invalid media.'))
         reply = (
@@ -527,6 +537,8 @@ class Conversation(models.Model):
             if reply_id
             else self.env['ab_crm_message']
         )
+        if reply_id and not reply:
+            raise AccessError(_('Select a message from this conversation.'))
         if reply:
             reply.check_access('read')
             if reply.conversation_id != self or not reply.provider_reference:
@@ -534,7 +546,7 @@ class Conversation(models.Model):
         if reaction and not reply:
             raise ValidationError(_('Select a message from this conversation.'))
         for attachment in attachments:
-            validate_media(attachment, attachment.get('data'), translate=self.env._)
+            self._validate_reply_attachment(attachment)
         if attachments and len(body or '') > 1024:
             raise ValidationError(_('Media captions must not exceed 1024 characters.'))
         ids = []
@@ -785,6 +797,108 @@ class Conversation(models.Model):
             }
         )
 
+    def _workspace_streams(self):
+        self.ensure_one()
+        self._workspace_scope()
+        candidates = self.search([
+            ('customer_id', '=', self.customer_id.id),
+            ('company_id', '=', self.company_id.id),
+            ('branch_id', '=', self.branch_id.id),
+            ('channel_id.active', '=', True),
+        ], limit=100) if self.customer_id else self
+        result = self.browse()
+        for conversation in candidates:
+            if conversation.channel_id.provider not in ('whatsapp', 'telegram', 'website', 'application'):
+                continue
+            if not conversation.messaging_account_id:
+                continue
+            try:
+                conversation._workspace_scope()
+            except (AccessError, UserError):
+                continue
+            result |= conversation
+        return result
+
+    def workspace_channel(self, conversation_id):
+        self.ensure_one()
+        destination = self._workspace_streams().filtered(lambda r: r.id == conversation_id)
+        if not destination:
+            raise AccessError(_('Select an authorized customer conversation.'))
+        return destination.workspace_detail()
+
+    def _workspace_media(self, media):
+        return {
+            'id': media.id, 'name': media.name, 'kind': media.kind,
+            'state': media.state, 'mimetype': media.mimetype, 'size': media.size,
+            'can_preview': media.state == 'ready' and (
+                media.mimetype in ('image/jpeg', 'image/png', 'image/webp', 'application/pdf')
+                or media.mimetype.startswith(('audio/', 'video/'))
+            ),
+        }
+
+    def _workspace_quote(self, message):
+        media = message._current_media()
+        image = media.filtered(lambda a: a.kind == 'image' and a.state == 'ready')[:1]
+        body = message.body
+        if media and body in ('Attachment', _('Attachment')):
+            body = ''
+        return {
+            'available': True, 'id': message.id,
+            'author': _('You') if message.direction == 'out' else self._customer_display_name(),
+            'body': (body or ', '.join(media.mapped('name')) or _('Attachment'))[:160],
+            'thumbnail': self._workspace_media(image) if image else False,
+            'location': message._location_data(),
+        }
+
+    def _workspace_actions(self, message, send_reason):
+        reason = send_reason or ('' if message.provider_reference else _('This message has no provider reference.'))
+        supported = self.channel_id.provider == 'telegram'
+        return {
+            'reply': {'enabled': not reason, 'reason': reason},
+            'react': {'enabled': not reason and supported, 'reason': reason},
+            'reactions': ['👍', '❤', '👎'] if supported else [],
+            'edit': {'enabled': False, 'reason': _('Editing sent messages is not supported by this channel.')},
+            'delete': {'enabled': False, 'reason': _('Deleting sent messages is not supported by this channel.')},
+        }
+
+    def workspace_reply(self, message_id):
+        self.ensure_one()
+        self._workspace_scope()
+        message = self.env['ab_crm_message'].search([
+            ('id', '=', message_id), ('conversation_id', '=', self.id),
+        ], limit=1)
+        if not message:
+            return {'available': False}
+        detail = self.workspace_detail(before_id=message.id + 1)
+        return {'available': True, 'focus_message_id': message.id,
+                'messages': detail['messages'], 'has_older': detail['has_older']}
+
+    def workspace_acknowledge(self, message_id):
+        self.ensure_one()
+        session, stores = self._workspace_scope()
+        if type(message_id) is not int:
+            raise AccessError(_('Invalid read position.'))
+        message = self.env['ab_crm_message'].search([
+            ('id', '=', message_id), ('conversation_id', '=', self.id),
+        ], limit=1)
+        if not message:
+            raise AccessError(_('Invalid read position.'))
+        self.lock_for_update()
+        self.write({})
+        positions = self.env['ab_crm_workspace_read'].sudo()
+        position = positions.search([
+            ('conversation_id', '=', self.id), ('user_id', '=', self.env.uid),
+            ('employee_id', '=', session.employee_id.id),
+        ], limit=1)
+        if not position:
+            positions.create({
+                'conversation_id': self.id, 'user_id': self.env.uid,
+                'employee_id': session.employee_id.id, 'last_message_id': message.id,
+            })
+        elif message.id > position.last_message_id.id:
+            position.write({'last_message_id': message.id})
+        return True
+
     def workspace_focus(self, message_id):
         self.ensure_one()
         self._workspace_scope()
@@ -795,6 +909,21 @@ class Conversation(models.Model):
         result = self.workspace_detail(before_id=message.id + 1)
         result['focus_message_id'] = message.id
         return result
+
+    def workspace_location_orders(self, message_id):
+        self.ensure_one()
+        session, stores = self._owned()
+        message = self.env['ab_crm_message'].browse(message_id).exists()
+        message.check_access('read')
+        if (len(message) != 1 or message.conversation_id != self
+                or message.direction != 'in' or not message._location_data()
+                or message.company_id != self.company_id or message.branch_id != self.branch_id):
+            raise AccessError(_('Select an incoming location from this conversation.'))
+        return [
+            {'id': order.id, 'name': order.display_name}
+            for order in self.order_ids
+            if order.state == 'draft' and (not order.store_id or order.store_id in stores)
+        ]
 
     def action_new_order(self):
         self._owned()
@@ -844,7 +973,11 @@ class Conversation(models.Model):
         seen = {r.conversation_id.id: r.last_message_id.id for r in positions}
         result = []
         for record in conversations:
-            messages = record.message_ids.filtered(lambda m: m.direction == 'in')
+            timeline = record.message_ids.filtered_domain([
+                ('reaction', '=', False),
+                ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
+            ])
+            messages = timeline.filtered(lambda m: m.direction == 'in')
             channels = {record.channel_id.provider} if messages else set()
             if record.customer_id:
                 contacted = self.search(
@@ -861,7 +994,7 @@ class Conversation(models.Model):
                     'name': record._customer_display_name(),
                     'provider': record.channel_id.provider,
                     'channels': sorted(channels),
-                    'preview': record.message_ids.sorted('id')[-1:].body or '',
+                    'preview': timeline.sorted('id')[-1:].body or '',
                     'unread': len(
                         messages.filtered(lambda m: m.id > seen.get(record.id, 0))
                     ),
@@ -870,14 +1003,23 @@ class Conversation(models.Model):
         return result
 
     def workspace_detail(
-        self, before_id=False, after_id=False, query='', mark_read=True
+        self, before_id=False, after_id=False, query='', mark_read=False, message_ids=None
     ):
         self.ensure_one()
         session, stores = self._workspace_scope()
         send_code, send_reason = self._reply_eligibility()
-        domain = [('conversation_id', '=', self.id)]
+        visible_domain = [
+            ('conversation_id', '=', self.id), ('reaction', '=', False),
+            ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
+        ]
+        domain = list(visible_domain)
         if query:
             domain.append(('body', 'ilike', str(query)[:200]))
+        search_domain = list(domain)
+        if message_ids is not None:
+            if not isinstance(message_ids, list) or len(message_ids) > 50 or any(type(value) is not int or value <= 0 for value in message_ids):
+                raise ValidationError(_('Invalid conversation search.'))
+            domain.append(('id', 'in', message_ids))
         if before_id:
             domain.append(('id', '<', int(before_id)))
         if after_id:
@@ -888,62 +1030,49 @@ class Conversation(models.Model):
             .sorted('id')
         )
         events = self.env['ab_crm_messaging_event'].search(
-            [('message_id', 'in', messages.ids)]
+            [('message_id', 'in', messages.ids), ('edit_payload', '=', False)]
         )
         timestamps = {event.message_id.id: event.provider_timestamp for event in events}
         has_older = bool(
             messages
             and self.env['ab_crm_message'].search_count(
-                [('conversation_id', '=', self.id), ('id', '<', messages[0].id)],
+                search_domain + [('id', '<', messages[0].id)],
                 limit=1,
             )
         )
-        streams = (
-            self.search(
-                [
-                    ('customer_id', '=', self.customer_id.id),
-                    ('message_ids.direction', '=', 'in'),
-                ]
-            )
-            if self.customer_id
-            else self
-        )
-        streams = streams.filtered(
-            lambda record: any(m.direction == 'in' for m in record.message_ids)
-        )
-        position = (
-            self.env['ab_crm_workspace_read']
-            .sudo()
-            .search(
-                [
-                    ('conversation_id', '=', self.id),
-                    ('employee_id', '=', session.employee_id.id),
-                    ('user_id', '=', self.env.uid),
-                ],
-                limit=1,
-            )
-        )
-        if position and mark_read and not query:
-            if messages and messages[-1].id > position.last_message_id.id:
-                position.lock_for_update()
-                position.invalidate_recordset()
-                position.write(
-                    {
-                        'last_message_id': messages[-1].id,
-                        'read_at': fields.Datetime.now(),
-                    }
-                )
-        elif not position and messages and mark_read and not query:
-            self.lock_for_update()
-            self.write({})
-            self.env['ab_crm_workspace_read'].sudo().create(
-                {
-                    'conversation_id': self.id,
-                    'last_message_id': messages[-1:].id,
-                    'employee_id': session.employee_id.id,
-                    'read_at': fields.Datetime.now(),
-                }
-            )
+        position = self.env['ab_crm_workspace_read'].sudo().search([
+            ('conversation_id', '=', self.id), ('user_id', '=', self.env.uid),
+            ('employee_id', '=', session.employee_id.id),
+        ], limit=1)
+        unread_domain = visible_domain + [
+            ('direction', '=', 'in'), ('id', '>', position.last_message_id.id or 0),
+        ]
+        first_unread = self.env['ab_crm_message'].search(unread_domain, order='id', limit=1)
+        unread_count = self.env['ab_crm_message'].search_count(unread_domain)
+        streams = self._workspace_streams()
+        references = list(set(messages.mapped('reply_reference')) - {False, ''})
+        originals = self.env['ab_crm_message'].search([
+            ('conversation_id', '=', self.id),
+            ('provider_reference', 'in', references), ('reaction', '=', False),
+            ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
+        ], limit=50) if references else self.env['ab_crm_message']
+        quotes = {m.provider_reference: self._workspace_quote(m) for m in originals}
+        reaction_groups = self.env['ab_crm_message']._read_group([
+            ('conversation_id', '=', self.id),
+            ('reply_reference', 'in', list(set(messages.mapped('provider_reference')) - {False, ''})),
+            '|', ('reaction', '!=', False),
+            ('chatter_event_ids.event_key', '=like', 'reaction:%'),
+        ], ['reply_reference', 'direction'], ['id:max'])
+        reactions = self.env['ab_crm_message'].browse([row[2] for row in reaction_groups])
+        updated = self.env['ab_crm_message'].search([
+            ('conversation_id', '=', self.id),
+        ], order='write_date desc, id desc', limit=1)
+        incoming = self.env['ab_crm_message'].search([
+            ('conversation_id', '=', self.id), ('direction', '=', 'in'),
+        ], order='id desc', limit=1)
+        outgoing = self.env['ab_crm_message'].search([
+            ('conversation_id', '=', self.id), ('direction', '=', 'out'),
+        ], order='id desc', limit=1)
         return {
             'id': self.id,
             'candidates': [],
@@ -960,10 +1089,16 @@ class Conversation(models.Model):
                 'customer_delivered': self.channel_id.provider == 'whatsapp'
                 and self.messaging_account_id._status_allowed('delivered'),
             },
-            'updated_at': fields.Datetime.to_string(fields.Datetime.now()),
+            'last_update_at': fields.Datetime.to_string(updated.write_date),
+            'last_incoming_at': fields.Datetime.to_string(self.messaging_last_inbound or incoming.create_date),
+            'latest_outgoing_status': outgoing._display_status()['status'] if outgoing else '',
             'has_older': has_older,
+            'first_unread_message_id': first_unread.id or False,
+            'unread_count': unread_count,
             'streams': [
-                {'id': r.id, 'provider': r.channel_id.provider} for r in streams
+                {'id': r.id, 'provider': r.channel_id.provider,
+                 'label': ' · '.join(filter(None, [r.channel_id.name, r.messaging_account_id.name]))}
+                for r in streams
             ],
             'name': self._customer_display_name(),
             'phone': self.customer_id.chatter_phone
@@ -976,20 +1111,27 @@ class Conversation(models.Model):
             'messages': [
                 {
                     'id': m.id,
-                    'body': m.body,
+                    'body': '' if m._current_media() and m.body in ('Attachment', _('Attachment')) else m.body,
+                    'edited_at': (m.provider_edit_content or {}).get('date', False),
                     'direction': m.direction,
+                    'location': m._location_data(),
                     **m._display_status(),
                     'timestamp': fields.Datetime.to_string(
                         timestamps.get(m.id) or m.create_date
                     ),
                     'phone': m.telegram_phone or '',
                     'owned': m.telegram_contact_owned,
-                    'can_reply': bool(m.provider_reference),
+                    'author': _('You') if m.direction == 'out' else self._customer_display_name(),
+                    'can_reply': bool(m.provider_reference) and not send_code,
+                    'actions': self._workspace_actions(m, send_reason),
+                    'quote': quotes.get(m.reply_reference, {'available': False}) if m.reply_reference else False,
+                    'reactions': [{'id': r.id, 'target_message_id': m.id, 'reaction': r.reaction, **r._display_status()}
+                                  for r in reactions if r.reaction and m.provider_reference and r.reply_reference == m.provider_reference],
                     'is_reply': bool(m.reply_reference),
                     'reaction': m.reaction or '',
                     'media': [
-                        {'id': a.id, 'name': a.name, 'kind': a.kind, 'state': a.state}
-                        for a in m.media_ids
+                        self._workspace_media(a)
+                        for a in m._current_media()
                     ],
                 }
                 for m in messages
@@ -1000,6 +1142,7 @@ class Conversation(models.Model):
                     'name': o.display_name,
                     'state': o.state,
                     'revision': o.revision,
+                    'store_id': o.store_id.id,
                 }
                 for o in self.order_ids
             ],

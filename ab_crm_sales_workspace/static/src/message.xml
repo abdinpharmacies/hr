@@ -1,0 +1,56 @@
+<templates xml:space="preserve">
+    <t t-name="ab_crm_sales_workspace.MessageQuote">
+        <div class="ab_message_quote">
+            <button class="ab_quote_content" t-on-click="props.open" t-att-disabled="!props.quote.available">
+                <img t-if="state.url" t-att-src="state.url" alt="Quoted image"/>
+                <t t-if="props.quote.available"><strong><bdi t-esc="props.quote.author"/></strong><span dir="auto" t-esc="props.quote.body"/></t>
+                <span t-else="">Original message unavailable</span>
+            </button>
+            <button t-if="props.cancel" class="btn btn-sm" t-on-click="props.cancel" aria-label="Cancel reply"><i class="fa fa-times"/></button>
+        </div>
+    </t>
+    <t t-name="ab_crm_sales_workspace.MessagePreview">
+        <Dialog title="props.media.name" size="'lg'" contentClass="'ab_chatter_preview_dialog channel-' + theme" bodyClass="'ab_preview_body'">
+            <div class="ab_chatter_media_viewer" t-att-data-kind="props.media.kind">
+                <img t-if="props.media.kind === 'image'" t-att-src="props.url" t-att-alt="props.media.name"/>
+                <audio t-elif="props.media.mimetype.startsWith('audio/')" t-att-src="props.url" controls="controls"/>
+                <video t-elif="props.media.mimetype.startsWith('video/')" t-att-src="props.url" controls="controls"/>
+                <iframe t-else="" t-att-src="props.url" t-att-title="props.media.name"/>
+            </div>
+            <t t-set-slot="footer"><a class="btn ab_preview_download" t-att-href="props.url" t-att-download="props.media.name"><i class="fa fa-download me-2"/>Download</a><button class="btn btn-light" t-on-click="props.close">Close</button></t>
+        </Dialog>
+    </t>
+    <t t-name="ab_crm_sales_workspace.MessageActions">
+        <div t-ref="root" class="ab_message_actions">
+            <button class="ab_message_menu btn" aria-label="Message actions" aria-haspopup="menu" t-att-aria-expanded="state.open ? 'true' : 'false'" t-on-click="toggle"><i class="fa fa-angle-down"/></button>
+            <div t-if="state.open" t-ref="menu" class="ab_chatter_message_menu ab_context_menu" role="menu" tabindex="-1" aria-label="Message actions" t-on-keydown="keydown">
+                <button role="menuitem" t-att-disabled="props.busy || !props.message.actions.reply.enabled" t-att-title="props.message.actions.reply.reason" t-on-click="() => this.choose('reply', props.message)">Reply</button>
+                <small t-if="!props.message.actions.reply.enabled" t-esc="props.message.actions.reply.reason"/>
+                <t t-if="props.message.actions.reactions.length">
+                    <button role="menuitem" t-att-disabled="props.busy || !props.message.actions.react.enabled" t-att-title="props.message.actions.react.reason" t-att-aria-expanded="state.reactions ? 'true' : 'false'" t-on-click="() => state.reactions = !state.reactions">React</button>
+                    <small t-if="!props.message.actions.react.enabled" t-esc="props.message.actions.react.reason"/>
+                    <div t-if="state.reactions" class="ab_reaction_choices"><button t-foreach="props.message.actions.reactions" t-as="reaction" t-key="reaction" role="menuitem" t-att-aria-label="reaction" t-on-click="() => this.choose('react', props.message, reaction)" t-esc="reaction"/></div>
+                </t>
+                <button role="menuitem" t-att-disabled="!props.message.body" t-on-click="() => this.choose('copy', props.message)">Copy</button>
+                <t t-foreach="props.message.media" t-as="media" t-key="media.id">
+                    <button t-if="media.can_preview" role="menuitem" t-att-disabled="props.busy" t-on-click="() => this.choose('preview', media)">Preview <t t-esc="media.name"/></button>
+                    <button role="menuitem" t-att-disabled="props.busy || media.state !== 'ready'" t-on-click="() => this.choose('preview', media, true)">Download <t t-esc="media.name"/></button>
+                    <small t-if="media.state === 'pending'">Pending download</small><small t-if="media.state === 'failed'">Download failed</small>
+                </t>
+                <button t-if="props.message.retry_operation_id" role="menuitem" t-att-disabled="props.busy" t-on-click="() => this.choose('retry', props.message)">Retry sending</button>
+            </div>
+        </div>
+    </t>
+    <t t-name="ab_crm_sales_workspace.MessageMedia">
+        <div class="ab_message_media ab_file_card" t-ref="media">
+            <div t-if="props.media.kind === 'image'" class="ab_thumbnail">
+                <img t-if="state.url &amp;&amp; !state.failed" t-att-src="state.url" t-att-alt="props.media.name" loading="lazy" t-on-error="() => state.failed = true"/>
+                <span t-if="state.loading" role="status">Loading image…</span><span t-elif="state.failed" role="status">Image unavailable</span>
+                <i t-elif="!state.url" class="fa fa-picture-o"/>
+            </div>
+            <i t-else="" class="fa" t-att-class="props.media.kind === 'document' ? 'fa-file-o' : props.media.kind === 'video' ? 'fa-film' : 'fa-volume-up'"/>
+            <div class="ab_file_description"><bdi t-esc="props.media.name"/><small t-if="size" t-esc="size"/><span t-if="props.media.state === 'pending'">Pending download</span><span t-if="props.media.state === 'failed'">Download failed</span></div>
+            <div class="ab_file_actions"><button t-if="props.media.can_preview" class="btn btn-sm btn-light" t-on-click="() => props.preview(props.media)">Preview</button><button class="btn btn-sm btn-light" t-att-disabled="props.media.state !== 'ready'" t-on-click="() => props.preview(props.media, true)">Download</button></div>
+        </div>
+    </t>
+</templates>

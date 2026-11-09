@@ -1,0 +1,45 @@
+key,language,name,body
+welcome,EN,EN | 01 Welcome,Hello! Welcome to Abdin Pharmacies. How can we help you today?
+welcome,AR,AR | 01 الترحيب,أهلاً بحضرتك في صيدليات عابدين. نقدر نساعدك إزاي النهارده؟
+product,EN,EN | 02 Product name or photo,Please send the product name or a clear photo of the packaging so we can check the exact item for you.
+product,AR,AR | 02 اسم المنتج أو صورته,من فضلك ابعت لنا اسم المنتج أو صورة واضحة للعبوة علشان نراجع لحضرتك الصنف المطلوب بالضبط.
+medicine_pack,EN,EN | 03 Medicine details,"Please send the medicine name, strength, dosage form and pack size as shown on the package or prescription so we can check the correct item."
+medicine_pack,AR,AR | 03 بيانات الدواء,من فضلك ابعت اسم الدواء والتركيز والشكل الدوائي وحجم العبوة، زي ما هو مكتوب على العبوة أو الروشتة، علشان نراجع الصنف الصحيح.
+quantity,EN,EN | 04 Requested quantity,How many packs or pieces would you like us to check for your order?
+quantity,AR,AR | 04 الكمية المطلوبة,حضرتك محتاج كام عبوة أو قطعة علشان نراجع الكمية المطلوبة؟
+checking,EN,EN | 05 Checking availability,"One moment, please. We are checking the current price and availability at Abdin Pharmacies for you."
+checking,AR,AR | 05 مراجعة التوفر والسعر,لحظة من فضلك، بنراجع لحضرتك توفر الصنف والسعر الحالي في صيدليات عابدين.
+unavailable,EN,EN | 06 Currently unavailable,The requested item is currently unavailable at this branch. Would you like us to check another Abdin Pharmacies branch? Any medicine alternative needs to be reviewed by the pharmacist first.
+unavailable,AR,AR | 06 الصنف غير متوفر حالياً,الصنف المطلوب غير متوفر حالياً في الفرع. تحب نراجع توفره في فرع تاني من صيدليات عابدين؟ وأي بديل للدواء لازم يراجعه الصيدلي الأول.
+prescription,EN,EN | 07 Prescription photo,"If a prescription is needed for this medicine, please send a clear photo so the pharmacist can review the medicine name, strength and quantity."
+prescription,AR,AR | 07 صورة الروشتة,لو صرف الدواء محتاج روشتة، من فضلك ابعت صورة واضحة علشان الصيدلي يراجع اسم الدواء والتركيز والكمية.
+pharmacist,EN,EN | 08 Pharmacist handoff,I will refer your enquiry to an Abdin Pharmacies pharmacist. Please share your question about the medicine or how to use it.
+pharmacist,AR,AR | 08 التحويل للصيدلي,هحوّل استفسار حضرتك لصيدلي صيدليات عابدين. من فضلك وضّح سؤالك عن الدواء أو طريقة استخدامه.
+delivery_area,EN,EN | 09 Delivery area,Please send your area or neighbourhood so we can check whether delivery is available and confirm the delivery fee.
+delivery_area,AR,AR | 09 منطقة التوصيل,من فضلك ابعت لنا المنطقة أو الحي علشان نراجع إمكانية التوصيل ونأكد لحضرتك رسومه.
+address,EN,EN | 10 Delivery address,"Please send the delivery address: area, street, building number, floor, apartment and a nearby landmark. You can also share a map location to help us find the address."
+address,AR,AR | 10 عنوان التوصيل,من فضلك ابعت عنوان التوصيل: المنطقة، الشارع، رقم العمارة، الدور، الشقة وأقرب علامة مميزة. وممكن تبعت الموقع على الخريطة لتسهيل الوصول.
+contact,EN,EN | 11 Contact details,Please send the recipient’s name and a mobile number so the Abdin Pharmacies team can coordinate your order.
+contact,AR,AR | 11 بيانات التواصل,من فضلك ابعت اسم المستلم ورقم الموبايل علشان فريق صيدليات عابدين يقدر يتواصل مع حضرتك بخصوص الطلب.
+pickup,EN,EN | 12 Delivery or pickup,"Would you prefer delivery or collection from an Abdin Pharmacies branch? For collection, please tell us your preferred branch or area so we can check availability."
+pickup,AR,AR | 12 توصيل أم استلام من الفرع,حضرتك تفضل التوصيل ولا الاستلام من فرع صيدليات عابدين؟ لو الاستلام من الفرع، حدّد لنا الفرع أو المنطقة المناسبة علشان نراجع التوفر.
+order_review,EN,EN | 13 Review the order,Please review your Abdin Pharmacies order: {{order_summary}}. Are the items and quantities correct?
+order_review,AR,AR | 13 مراجعة الطلب,من فضلك راجع طلب حضرتك من صيدليات عابدين: {{order_summary}}. هل الأصناف والكميات صحيحة؟
+total,EN,EN | 14 Order total,"Your order total is {{total_with_currency}}, including a delivery fee of {{delivery_fee_with_currency}}. Would you like us to confirm the order?"
+total,AR,AR | 14 إجمالي الطلب,إجمالي طلب حضرتك {{total_with_currency}}، شامل رسوم توصيل {{delivery_fee_with_currency}}. نأكد الطلب لحضرتك؟
+delivery_time,EN,EN | 15 Delivery estimate,The estimated delivery time for your order is {{delivery_estimate}}. This is an estimate; we will let you know if it changes.
+delivery_time,AR,AR | 15 الوقت المتوقع للتوصيل,الوقت المتوقع لتوصيل طلب حضرتك هو {{delivery_estimate}}. ده وقت تقديري، وهنبلغ حضرتك لو حصل أي تغيير.
+confirmed,EN,EN | 16 Order confirmed,Your order with Abdin Pharmacies is confirmed. Order reference: {{order_reference}}. Thank you for choosing us!
+confirmed,AR,AR | 16 تأكيد الطلب,تم تأكيد طلب حضرتك من صيدليات عابدين. رقم الطلب: {{order_reference}}. شكراً لثقتك فينا!
+cosmetics,EN,EN | 17 Cosmetics details,"Please send the brand, product name, size and shade name or number. A clear photo will help us check the exact beauty product you want."
+cosmetics,AR,AR | 17 بيانات مستحضر التجميل,من فضلك ابعت الماركة واسم المنتج والحجم واسم أو رقم الدرجة. صورة واضحة هتساعدنا نراجع مستحضر التجميل المطلوب بالضبط.
+preferences,EN,EN | 18 Beauty product preferences,"Which skincare, haircare or beauty product would you like us to check? Please share the brand, size and any ingredient or fragrance preferences."
+preferences,AR,AR | 18 تفضيلات منتجات العناية,حضرتك محتاج نراجع إيه من منتجات العناية بالبشرة أو الشعر أو التجميل؟ ابعت لنا الماركة والحجم وأي تفضيلات بخصوص المكونات أو العطر.
+packaging,EN,EN | 19 Packaging and expiry enquiry,Please send the product name and pack size. We will check the packaging details and expiry date with the Abdin Pharmacies branch before confirming them to you.
+packaging,AR,AR | 19 الاستفسار عن العبوة والصلاحية,من فضلك ابعت اسم المنتج وحجم العبوة. هنراجع بيانات العبوة وتاريخ الصلاحية مع فرع صيدليات عابدين ونأكدهم لحضرتك.
+change_order,EN,EN | 20 Change or cancel an order,Please send your order reference and the change or cancellation you would like to request. We will check the order status with the branch and confirm what is still possible.
+change_order,AR,AR | 20 تعديل الطلب أو إلغاؤه,من فضلك ابعت رقم الطلب والتعديل أو الإلغاء المطلوب. هنراجع حالة الطلب مع الفرع ونأكد لحضرتك إمكانية التنفيذ.
+order_issue,EN,EN | 21 Order issue or return enquiry,"We are sorry for the inconvenience. Please send your order reference, product name and details of the issue. A clear photo may help us review it with the branch under Abdin Pharmacies’ applicable policy."
+order_issue,AR,AR | 21 مشكلة في الطلب أو استفسار عن الإرجاع,بنعتذر لحضرتك عن الإزعاج. من فضلك ابعت رقم الطلب واسم المنتج وتفاصيل المشكلة، وصورة واضحة لو هتساعد في توضيحها. هنراجع الموضوع مع الفرع وفقاً لسياسة صيدليات عابدين.
+thanks,EN,EN | 22 Thank you,Thank you for contacting Abdin Pharmacies. We are happy to help if you need anything else with a product or order.
+thanks,AR,AR | 22 الشكر والختام,شكراً لتواصلك مع صيدليات عابدين. لو حضرتك محتاج أي مساعدة تانية بخصوص منتج أو طلب، إحنا في خدمتك.

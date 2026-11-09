@@ -25,7 +25,12 @@ class Order(models.Model):
     )
     customer_id = fields.Many2one('ab_crm_customer', ondelete='restrict', readonly=True)
     customer_name = fields.Char(readonly=True)
+    delivery_location_message_id = fields.Many2one(
+        'ab_crm_message', readonly=True, copy=False, ondelete='restrict',
+        string='Delivery Location Message',
+    )
     delivery_address = fields.Text()
+    delivery_location_snapshot = fields.Json(readonly=True, copy=False)
     edit_version = fields.Integer(default=1, readonly=True)
     phone = fields.Char(readonly=True)
     store_id = fields.Many2one(
@@ -199,6 +204,8 @@ class Order(models.Model):
             'confirmation': self.confirmation,
             'delivery_notes': self.delivery_notes,
             'delivery_address': self.delivery_address,
+            'delivery_location_message_id': self.delivery_location_message_id.id or False,
+            'delivery_location': self.delivery_location_snapshot or (self.delivery_location_message_id._location_data(original=True) if self.delivery_location_message_id else False),
             'lines': [
                 {
                     'id': line.id,
@@ -487,8 +494,21 @@ class Order(models.Model):
             'delivery_address',
             'delivery_notes',
             'confirmation',
+            'delivery_location_message_id',
         }:
             raise AccessError(_('Order evidence is managed by workflow actions.'))
+        if 'delivery_location_message_id' in values:
+            source_id = values['delivery_location_message_id']
+            if source_id is not False and (type(source_id) is not int or source_id <= 0):
+                raise ValidationError(_('Invalid delivery location source.'))
+            if source_id is not False:
+                source = self.env['ab_crm_message'].browse(source_id).exists()
+                source.check_access('read')
+                if (len(source) != 1 or not source._location_data() or source.direction != 'in'
+                        or source.conversation_id != self.conversation_id
+                        or source.branch_id != self.branch_id or source.company_id != self.company_id):
+                    raise AccessError(_('Select an incoming location from this conversation.'))
+            values = dict(values, delivery_location_snapshot=source._location_data() if source_id else False)
         if not isinstance(lines, list) or len(lines) > 200:
             raise ValidationError(_('Invalid order lines.'))
         store_id = values.get('store_id', self.store_id.id)
@@ -500,6 +520,8 @@ class Order(models.Model):
             raise UserError(_('Select a fulfillment branch first.'))
         with self.env.cr.savepoint():
             old_store = self.store_id.id
+            old_location = self.delivery_location_message_id
+            old_location_data = self._snapshot()['delivery_location']
             self._change(dict(values, edit_version=self.edit_version + 1))
             kept = self.env['ab_crm_channel_order_line']
             seen = set()
@@ -555,6 +577,11 @@ class Order(models.Model):
                 kept |= line
             (self.line_ids.filtered('active') - kept).write({'active': False})
             kept._validate_values()
+            if old_location != self.delivery_location_message_id or old_location_data != self._snapshot()['delivery_location']:
+                self._audit('delivery_location_changed', {
+                    'old': old_location_data,
+                    'new': self._snapshot()['delivery_location'],
+                })
             if branch_changed:
                 self._audit('branch_changed', {'old': old_store, 'new': store.id})
             self._refresh_customer()
