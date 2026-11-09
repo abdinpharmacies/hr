@@ -566,7 +566,7 @@
     <field name="arch" type="xml">
       <xpath expr="//sheet" position="inside">
         <group string="Supplier Claim Preparation">
-          <field name="supplier_claim_secretarial_sla_days"/>
+          <field name="supplier_claim_secretarial_sla_days" readonly="True"/>
         </group>
       </xpath>
     </field>

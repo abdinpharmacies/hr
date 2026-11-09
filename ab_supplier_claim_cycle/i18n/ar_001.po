@@ -689,7 +689,7 @@ msgstr "شيك"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_classification__non_tax_payment
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document_replacement__new_tax_classification__non_tax_payment
 msgid "Non-tax Payment"
-msgstr "سداد غير خاضع للضريبة"
+msgstr "غير ضريبي"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__not_required

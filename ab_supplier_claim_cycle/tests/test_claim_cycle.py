@@ -529,6 +529,16 @@ class TestSupplierClaimCycle(TransactionCase):
                 'mail.mail_activity_data_todo', summary='Not allowed', user_id=self.users['reviewer'].id)
 
 
+    def test_unsaved_claim_does_not_create_history_without_claim_id(self):
+        history = self.env['ab_supplier_claim_cycle.history']
+        history_count = history.search_count([])
+        unsaved_claim = self.Claim.new({'secretarial_notes': 'Unsaved form note'})
+
+        unsaved_claim._log('claim_updated', reason='Unsaved form change')
+        unsaved_claim._record_secretarial_notes()
+
+        self.assertEqual(history.search_count([]), history_count)
+
     def test_secretarial_and_admin_field_upload_and_workflow_logs(self):
         for role in ('user', 'admin'):
             actor = self.users[role]
@@ -927,6 +937,18 @@ class TestSupplierClaimCycle(TransactionCase):
 
     def test_calendar_sla_holiday_and_snapshot(self):
         calendar = self.env.company.resource_calendar_id
+        sla_field = self.env['res.company']._fields['supplier_claim_secretarial_sla_days']
+        self.assertFalse(sla_field.store)
+        self.assertTrue(sla_field.readonly)
+        self.assertEqual(self.env.company.supplier_claim_secretarial_sla_days, 2)
+        self.env.cr.execute("""
+            SELECT 1
+              FROM information_schema.columns
+             WHERE table_schema = 'public'
+               AND table_name = 'res_company'
+               AND column_name = 'supplier_claim_secretarial_sla_days'
+        """)
+        self.assertFalse(self.env.cr.fetchone())
         self.env['resource.calendar.leaves'].create({'name': 'Test holiday', 'calendar_id': calendar.id,
             'date_from': datetime(2026, 11, 2, 0), 'date_to': datetime(2026, 11, 2, 23, 59, 59)})
         claim = self.claim('cash', 'non_tax_payment')
@@ -935,7 +957,6 @@ class TestSupplierClaimCycle(TransactionCase):
             self.decide(claim, 'supplier_accounts')
         due = claim.preparation_due_date
         self.assertEqual(due.date().isoformat(), '2026-11-04')
-        self.env.company.supplier_claim_secretarial_sla_days = 5
         self.assertEqual(claim.preparation_due_date, due)
         with patch.object(fields.Datetime, 'now', return_value=due + timedelta(days=1)):
             claim.invalidate_recordset(['preparation_overdue'])

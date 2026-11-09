@@ -28,10 +28,11 @@ Claim amounts use Float with two-decimal precision and centralized decimal round
 
 ## Preparation and evidence
 
-Set `supplier_claim_secretarial_sla_days` on the company form (default 2).
-The deadline counts working dates after preparation starts, excluding calendar
-holidays. Configure the company calendar before use. Changing the setting does not
-recalculate existing deadlines.
+Secretarial payment preparation has a fixed SLA of two working days. The compatibility
+field `supplier_claim_secretarial_sla_days` is computed and non-stored, so it does not
+require a `res_company` database column. The deadline counts working dates after
+preparation starts, excluding calendar holidays. Configure the company calendar before
+use. Existing preparation deadlines remain unchanged.
 
 Supplier Accounts owns supplier cheque evidence; Tax owns tax evidence; Secretarial
 owns payment requests; Bank Accounts owns optional bank documents. Preparation

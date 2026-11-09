@@ -676,13 +676,19 @@ class SupplierClaimCycle(models.Model):
         }
 
     def _log(self, event, from_state=None, department=False, decision=False, reason=False, followup_date=False):
-        self.env['ab_supplier_claim_cycle.history']._append([
-            claim._history_values(event, from_state, department, decision, reason, followup_date) for claim in self])
+        persisted_claims = self.filtered(
+            lambda claim: isinstance(claim.id, int) and claim.id > 0)
+        if persisted_claims:
+            self.env['ab_supplier_claim_cycle.history']._append([
+                claim._history_values(event, from_state, department, decision, reason, followup_date)
+                for claim in persisted_claims])
 
     def _record_secretarial_notes(self):
+        persisted_claims = self.filtered(
+            lambda claim: isinstance(claim.id, int) and claim.id > 0)
         self.env['ab_supplier_claim_cycle.history']._append([
             claim._history_values('secretarial_note', department='secretarial', reason=claim.secretarial_notes.strip())
-            for claim in self if (claim.secretarial_notes or '').strip()])
+            for claim in persisted_claims if (claim.secretarial_notes or '').strip()])
 
     def _financial_reset_values(self):
         self.ensure_one()
@@ -720,7 +726,7 @@ class SupplierClaimCycle(models.Model):
         if not calendar:
             raise ValidationError(_('Configure the company working calendar.'))
         started = fields.Datetime.now()
-        due = calendar.plan_days(self.company_id.supplier_claim_secretarial_sla_days,
+        due = calendar.plan_days(self.company_id._get_supplier_claim_secretarial_sla_days(),
                                  started + timedelta(days=1), compute_leaves=True)
         if not due:
             raise ValidationError(_('The working calendar has no preparation deadline.'))

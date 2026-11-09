@@ -1,6 +1,6 @@
 {
     'name': 'Supplier Claim Cycle',
-    'version': '19.0.5.2.0',
+    'version': '19.0.5.3.0',
     'description': 'Supplier claims with parallel reviews, governed payment preparation, and immutable document history.',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',

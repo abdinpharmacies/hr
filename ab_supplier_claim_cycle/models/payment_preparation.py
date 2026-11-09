@@ -1,6 +1,9 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError
 from markupsafe import Markup
+
+
+SECRETARIAL_PREPARATION_SLA_DAYS = 2
 
 
 class SupplierClaimDocument(models.Model):
@@ -56,16 +59,16 @@ class SupplierClaimDocument(models.Model):
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    supplier_claim_secretarial_sla_days = fields.Integer(default=2, required=True)
-
-    @api.constrains('supplier_claim_secretarial_sla_days')
-    def _check_claim_sla(self):
-        if any(company.supplier_claim_secretarial_sla_days <= 0 for company in self):
-            raise ValidationError(_('The preparation SLA must be a positive number of working days.'))
-
-
-class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
-
     supplier_claim_secretarial_sla_days = fields.Integer(
-        related='company_id.supplier_claim_secretarial_sla_days', readonly=False)
+        compute='_compute_supplier_claim_secretarial_sla_days',
+        store=False,
+        readonly=True,
+    )
+
+    def _compute_supplier_claim_secretarial_sla_days(self):
+        for company in self:
+            company.supplier_claim_secretarial_sla_days = SECRETARIAL_PREPARATION_SLA_DAYS
+
+    @api.model
+    def _get_supplier_claim_secretarial_sla_days(self):
+        return SECRETARIAL_PREPARATION_SLA_DAYS
