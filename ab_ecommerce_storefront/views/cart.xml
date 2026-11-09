@@ -733,6 +733,7 @@
         <xpath expr="//div[contains(@t-attf-class, 'o_cart_total')]" position="attributes">
             <attribute name="t-attf-class" add="ab-storefront-cart-total" separator=" "/>
         </xpath>
+        <xpath expr="//tr[@name='o_order_total_taxes']" position="replace"/>
     </template>
 
     <template id="coupon_form_abdin_skin" inherit_id="website_sale.coupon_form" name="Abdin Coupon Form Skin">

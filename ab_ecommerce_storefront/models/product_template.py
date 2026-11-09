@@ -59,6 +59,16 @@ def _storefront_image_flags(records, image_fields):
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    @api.model
+    def _apply_taxes_to_price(
+        self, price, currency, product_taxes, taxes, product_or_template, website=None,
+    ):
+        if website:
+            return price
+        return super()._apply_taxes_to_price(
+            price, currency, product_taxes, taxes, product_or_template, website=website,
+        )
+
     ab_storefront_has_real_image = fields.Boolean(
         string="Has Storefront Image",
         compute="_compute_ab_storefront_has_real_image",

@@ -7,3 +7,4 @@ from . import test_checkout_reservation
 from . import test_signup_otp
 from . import test_legacy_activation
 from . import test_storefront_offers
+from . import test_storefront_tax_free

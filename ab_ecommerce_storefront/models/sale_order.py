@@ -1,6 +1,6 @@
 import secrets
 
-from odoo import api, fields, models
+from odoo import Command, api, fields, models
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import format_amount, format_datetime, formatLang
 from odoo.tools.urls import urljoin
@@ -147,6 +147,30 @@ class SaleOrder(models.Model):
             if not vals.get("ab_public_reference"):
                 vals["ab_public_reference"] = self._ab_storefront_new_public_reference()
         return super().create(vals_list)
+
+    def _prepare_delivery_line_vals(self, carrier, price_unit):
+        values = super()._prepare_delivery_line_vals(carrier, price_unit)
+        if self.website_id:
+            values["tax_ids"] = [(5, 0, 0)]
+        return values
+
+    def _ab_clear_draft_website_taxes(self):
+        orders = self.filtered(
+            lambda order: order.website_id
+            and order.website_id.company_id == order.company_id
+            and order.company_id in self.env.companies
+            and order.state in ("draft", "sent")
+        )
+        taxed_lines = orders.order_line.filtered("tax_ids")
+        if taxed_lines:
+            taxed_lines.write({"tax_ids": [Command.clear()]})
+
+    def web_read(self, specification):
+        if "tax_totals" in specification and not self.env.cr.readonly:
+            self.check_access("read")
+            if self.has_access("write"):
+                self._ab_clear_draft_website_taxes()
+        return super().web_read(specification)
 
     def _ab_storefront_display_reference(self):
         self.ensure_one()

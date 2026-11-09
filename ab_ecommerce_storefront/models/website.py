@@ -3,7 +3,7 @@ from math import ceil, floor
 from markupsafe import Markup
 from werkzeug.urls import url_encode
 
-from odoo import _, _lt, fields, models
+from odoo import Command, _, _lt, fields, models
 from odoo.exceptions import ValidationError
 from odoo.fields import Domain
 from odoo.http import request
@@ -108,6 +108,14 @@ _HEADER_NEED_MENU = (
 
 class Website(models.Model):
     _inherit = "website"
+
+    def _get_and_cache_current_cart(self):
+        cart = super()._get_and_cache_current_cart()
+        if cart and not request.env.cr.readonly:
+            taxed_lines = cart.order_line.filtered("tax_ids")
+            if taxed_lines:
+                taxed_lines.write({"tax_ids": [Command.clear()]})
+        return cart
 
     def _control_third_party_trackers_in_html(self, html):
         return Markup(html or "")
