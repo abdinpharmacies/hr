@@ -493,23 +493,7 @@
                     <span>Checkout details</span>
                     <h4>Complete your order</h4>
                 </div>
-                <div
-                    t-if="website.account_on_checkout != 'disabled'"
-                    class="o_address_signin ab-storefront-address-signin-row"
-                >
-                    <span>Already have an account?</span>
-                    <a
-                        role="button"
-                        href="/web/login?redirect=/shop/checkout"
-                        class="btn btn-primary ms-2"
-                    >
-                        Sign in
-                    </a>
-                </div>
             </header>
-        </xpath>
-        <xpath expr="//div[hasclass('o_address_signin')]/a[hasclass('btn-primary')]" position="attributes">
-            <attribute name="class" add="ab-storefront-address-signin" separator=" "/>
         </xpath>
     </template>
 
@@ -527,7 +511,7 @@
         </xpath>
         <xpath expr="//div[@id='div_name']" position="replace">
             <div id="div_name" class="col-12 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label" for="o_name">Full name</label>
+                <label class="col-form-label" for="o_name">Name</label>
                 <input
                     id="o_name"
                     type="text"
@@ -535,7 +519,7 @@
                     t-att-value="partner_sudo.name"
                     class="form-control"
                     autocomplete="name"
-                    placeholder="Enter your full name"
+                    placeholder="Enter your name"
                 />
             </div>
         </xpath>
@@ -673,8 +657,9 @@
     <template id="address_navigation_button_abdin_skin" inherit_id="website_sale.navigation_buttons" name="Abdin Checkout Address Navigation Button Skin">
         <xpath expr="//a[@name='website_sale_main_button']/span[@t-field='next_website_checkout_step.main_button_label']" position="replace">
             <span>
-                <t t-if="request.httprequest.path == '/shop/address'">Confirm Address</t>
-                <t t-elif="request.httprequest.path == '/shop/checkout'">Continue to payment</t>
+                <t t-if="request.httprequest.path == '/shop/cart'">Confirm Order</t>
+                <t t-elif="request.httprequest.path == '/shop/address'">Confirm Address</t>
+                <t t-elif="request.httprequest.path == '/shop/checkout'">Continue checkout</t>
                 <t t-else="" t-out="next_website_checkout_step.main_button_label"/>
             </span>
         </xpath>

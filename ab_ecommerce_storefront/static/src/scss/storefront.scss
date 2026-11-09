@@ -18393,16 +18393,6 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
         align-items: center;
     }
 
-    .ab-storefront-address-signin-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-end;
-        gap: .55rem;
-        color: $ab-muted;
-        font-size: var(--ab-font-size-082);
-    }
-
     .ab-storefront-address-form {
         > .row {
             gap: 0;
@@ -18548,7 +18538,6 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
         }
     }
 
-    .ab-storefront-address-signin,
     a[name="website_sale_main_button"] {
         color: #fff7ef;
 
@@ -18571,10 +18560,6 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
         .ab-storefront-address-form-head-guest {
             display: grid;
             grid-template-columns: minmax(0, 1fr);
-        }
-
-        .ab-storefront-address-signin-row {
-            justify-content: flex-start;
         }
 
         .ab-storefront-checkout-field {

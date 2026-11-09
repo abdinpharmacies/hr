@@ -902,7 +902,7 @@
                                 <p t-elif="tx.state_message and is_failed" class="ab-payment-provider-message" t-out="tx.state_message"/>
 
                                 <section class="ab-payment-summary-card" aria-labelledby="ab_payment_summary_title">
-                                    <h2 id="ab_payment_summary_title">Payment details</h2>
+                                    <h2 id="ab_payment_summary_title">Order details</h2>
                                     <dl>
                                         <div>
                                             <dt>

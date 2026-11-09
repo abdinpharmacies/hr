@@ -1701,6 +1701,11 @@ msgid "Confirm Address"
 msgstr "تأكيد العنوان"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
+msgid "Confirm Order"
+msgstr "تأكيد الأوردر"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -2096,6 +2101,11 @@ msgstr "تابع التصفح"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
 msgid "Continue to payment"
 msgstr "المتابعة إلى الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
+msgid "Continue checkout"
+msgstr "المتابعة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_navigation_actions_abdin_skin
@@ -4384,6 +4394,7 @@ msgstr "العرض صالح حتى"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_shell_abdin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Order details"
 msgstr "تفاصيل الطلب"
 
@@ -4663,6 +4674,7 @@ msgstr "حالة التوصيل للميل الأخير غير مهيأة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 msgid "Name"
 msgstr "الاسم"
 
@@ -7732,6 +7744,7 @@ msgstr "أنشئ حسابًا لحفظ بياناتك ومتابعة طلبات�
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 msgid "Enter your name"
 msgstr "أدخل اسمك"
 
