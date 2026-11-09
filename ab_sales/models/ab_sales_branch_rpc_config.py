@@ -217,8 +217,6 @@ class AbSalesBranchRpcConfig(models.Model):
             'submit_sale': ('db_serial', 'token', 'payload'),
             'get_return_invoice': ('db_serial', 'invoice', 'token', 'selections'),
             'submit_return': ('db_serial', 'invoice', 'token', 'lines', 'notes', 'employee_ref'),
-            'get_native_return_invoice': ('db_serial', 'invoice', 'token', 'selections', 'employee_ref'),
-            'submit_native_return': ('db_serial', 'invoice', 'token', 'lines', 'notes', 'employee_ref'),
             'get_operation_status': ('db_serial', 'token'),
             'reconcile_operation': ('db_serial', 'token'),
         }
@@ -237,9 +235,9 @@ class AbSalesBranchRpcConfig(models.Model):
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         values['store_eplus_serial'] = selected_serial
         if method in ('search_bills', 'get_bill_details', 'update_bill_notes',
-                      'render_bill_print', 'get_return_invoice', 'submit_return', 'get_native_return_invoice', 'submit_native_return'):
+                      'render_bill_print', 'get_return_invoice', 'submit_return'):
             self._require_callcenter_bill_scope()
-        writes = ('submit_sale', 'submit_return', 'submit_native_return', 'create_customer')
+        writes = ('submit_sale', 'submit_return', 'create_customer')
         status_values = {'db_serial': self.db_serial, 'store_eplus_serial': selected_serial,
                          'token': values.get('token')}
         if method == 'submit_sale':
@@ -254,7 +252,7 @@ class AbSalesBranchRpcConfig(models.Model):
         try:
             result = self._json_call(model_name, method, values)
         except UserError as original_error:
-            if method in ('submit_sale', 'submit_return', 'submit_native_return'):
+            if method in ('submit_sale', 'submit_return'):
                 try:
                     status = self._json_call('ab_branch_api', 'reconcile_operation', status_values)
                     self._validate_identity(status)

@@ -30,9 +30,6 @@
                 <field name="local_bill_storage" invisible="1"/>
                 <field name="branch_submission_started" invisible="1"/>
                 <field name="branch_header_id" invisible="1"/>
-                <field name="branch_sync_state" invisible="not branch_sync_token"/>
-                <field name="branch_sync_message" invisible="not branch_sync_message"/>
-                <field name="branch_sync_token" invisible="1"/>
                 <button name="action_retry_branch_submission" type="object" string="Retry Submission"
                         class="btn-primary" invisible="not local_bill_storage or status not in ('prepending', 'unknown', 'rejected') or not pos_client_token"/>
             </xpath>

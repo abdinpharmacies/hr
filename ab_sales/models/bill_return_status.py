@@ -15,7 +15,7 @@ class BillReturnStatus(models.Model):
         linked = self.filtered(lambda bill: bill.store_id and bill.eplus_serial)
         returned = set()
         if linked:
-            domain = (fields.Domain('branch_native_origin_id', '=', False) & fields.Domain('status', '=', 'saved')
+            domain = (fields.Domain('status', '=', 'saved')
                       & fields.Domain('store_id', 'in', linked.store_id.ids)
                       & fields.Domain('origin_header_id', 'in', linked.mapped('eplus_serial')))
             groups = self.env['ab_sales_return_header'].with_context(active_test=False)._read_group(

@@ -42,10 +42,6 @@ class LocalSales(models.Model):
                               ondelete={'unknown': 'set default', 'rejected': 'set default'})
     branch_submission_payload = fields.Json(string='Branch Submission Payload', readonly=True, copy=False,
                                            groups='base.group_system')
-    branch_sync_token = fields.Char(string='Synchronization Token', readonly=True, copy=False)
-    branch_sync_state = fields.Char(string='Central Posting State', readonly=True, copy=False)
-    branch_sync_message = fields.Char(string='Central Posting Message', readonly=True, copy=False)
-    branch_native_invoice_id = fields.Integer(string='Native Branch Invoice', readonly=True, copy=False)
     branch_header_id = fields.Integer(string='Branch Bill ID', readonly=True, copy=False)
     branch_request_revision = fields.Integer(string='Request Revision', default=1, readonly=True, copy=False)
     branch_replacement_token = fields.Char(string='Replacement Draft Token', readonly=True, copy=False,
@@ -73,7 +69,7 @@ class LocalSales(models.Model):
             return
         self.check_access('write')
         names = ['status', 'pos_client_token', 'store_id', 'branch_submission_started',
-                 'branch_submission_payload', 'branch_request_revision', 'eplus_serial', 'branch_sync_token', 'branch_sync_state', 'branch_sync_message', 'branch_native_invoice_id', 'branch_header_id',
+                 'branch_submission_payload', 'branch_request_revision', 'eplus_serial', 'branch_header_id',
                  'branch_correction', 'branch_submission_history', 'branch_replacement_token', 'branch_rejection_editable']
         self.flush_recordset(names)
         try:
@@ -105,7 +101,7 @@ class LocalSales(models.Model):
         if not self._branch_internal():
             for vals in vals_list:
                 if (vals.get('status', 'prepending') != 'prepending' or any(vals.get(name) for name in
-                        ('eplus_serial', 'branch_sync_token', 'branch_sync_state', 'branch_sync_message', 'branch_native_invoice_id', 'branch_header_id', 'branch_submission_started', 'branch_submission_payload',
+                        ('eplus_serial', 'branch_header_id', 'branch_submission_started', 'branch_submission_payload',
                          'branch_correction', 'branch_submission_history', 'branch_replacement_token', 'branch_rejection_editable'))
                         or vals.get('branch_request_revision', 1) != 1):
                     raise UserError(_('Callcenter bills must start in PrePending status.'))
@@ -115,7 +111,7 @@ class LocalSales(models.Model):
         if not self._branch_internal():
             self._lock_branch_bill()
             protected = {'status', 'eplus_serial', 'branch_submission_payload', 'branch_submission_started',
-                         'branch_sync_token', 'branch_sync_state', 'branch_sync_message', 'branch_native_invoice_id', 'branch_header_id', 'branch_request_revision', 'push_state', 'push_message',
+                         'branch_header_id', 'branch_request_revision', 'push_state', 'push_message',
                          'branch_correction', 'branch_submission_history', 'branch_replacement_token', 'branch_rejection_editable'}
             for record in self:
                 if any(record[name] != value for name, value in vals.items() if name in protected):
@@ -159,9 +155,6 @@ class LocalSales(models.Model):
                 'branch_header_id': self.branch_header_id, 'remote_header_id': self.branch_header_id,
                 'token': self.pos_client_token, 'request_revision': self.branch_request_revision,
                 'status': self.status, 'eplus_serial': self.eplus_serial,
-                'inventory_backend': 'central' if self.branch_native_invoice_id else 'legacy',
-                'native_invoice_id': self.branch_native_invoice_id,
-                'sync_token': self.branch_sync_token, 'sync_state': self.branch_sync_state, 'sync_message': self.branch_sync_message,
                 'message': self.push_message or '', 'submission_attempted': self.branch_submission_started, 'can_edit': not self.branch_submission_started and self.status == 'prepending',
                 'can_retry': self.status in ('unknown', 'rejected') and not self.sudo().branch_replacement_token,
                 'replacement_token': self.sudo().branch_replacement_token or False,
@@ -179,12 +172,7 @@ class LocalSales(models.Model):
                 or type(response.get('eplus_serial')) is not int or response['eplus_serial'] < 0):
             raise UserError(_('The branch returned invalid invoice status.'))
         status, remote_id, serial = response['status'], response['branch_header_id'], response['eplus_serial']
-        native = response.get('inventory_backend') == 'central'
-        native_id = response.get('native_invoice_id', 0)
-        if (native and (type(native_id) is not int or native_id != remote_id or serial != 0)
-                or self.branch_native_invoice_id and (not native or native_id != self.branch_native_invoice_id)):
-            raise UserError(_('The branch returned invalid invoice status.'))
-        if ((status in ('pending', 'saved') and (remote_id <= 0 or (serial <= 0 and not native)))
+        if ((status in ('pending', 'saved') and (remote_id <= 0 or serial <= 0))
                 or (status in ('unknown', 'rejected') and serial != 0)
                 or (self.branch_header_id and remote_id != self.branch_header_id)
                 or (self.eplus_serial and serial != self.eplus_serial)
@@ -192,10 +180,6 @@ class LocalSales(models.Model):
                 or (self.status == 'saved' and status != 'saved')):
             raise UserError(_('The branch returned invalid invoice status.'))
         self.sudo()._write_branch_state({'branch_header_id': remote_id, 'eplus_serial': serial,
-            'branch_native_invoice_id': native_id if native else 0,
-            'branch_sync_token': response.get('sync_token') or False,
-            'branch_sync_state': response.get('sync_state') or False,
-            'branch_sync_message': response.get('sync_message') or False,
             'branch_rejection_editable': status == 'rejected' and response.get('can_edit') is True,
             'status': status, 'push_state': 'success' if status in ('pending', 'saved') else 'error',
             'push_message': str(response.get('message') or '')})
