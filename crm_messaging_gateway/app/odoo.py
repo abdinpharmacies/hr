@@ -3,6 +3,8 @@ from uuid import uuid4
 
 import httpx
 
+from .observability import latency
+
 
 class OdooUnavailable(RuntimeError):
     pass
@@ -14,6 +16,10 @@ class Odoo:
         self.client = client
 
     def call(self, method, code, **values):
+        with latency('odoo_http'):
+            return self._call(method, code, **values)
+
+    def _call(self, method, code, **values):
         account = self.config.accounts[code]
         correlation = str(uuid4())
         payload = dict(
@@ -27,7 +33,8 @@ class Odoo:
                 response = self.client.post(
                     self.config.odoo_url.rstrip('/') + path + method,
                     headers={
-                        'Authorization': 'Bearer ' + self.config.odoo_key.get_secret_value(),
+                        'Authorization': 'Bearer '
+                        + self.config.odoo_key.get_secret_value(),
                         'X-Odoo-Database': self.config.odoo_database,
                     },
                     json=(
@@ -42,7 +49,7 @@ class Odoo:
                 raise OdooUnavailable('Odoo temporarily unavailable')
             if response.status_code != 409 or attempt == attempts - 1:
                 break
-            time.sleep(0.2 * (2 ** attempt))
+            time.sleep(0.2 * (2**attempt))
         if response.status_code != 200:
             raise RuntimeError('Odoo request failed')
         data = response.json()

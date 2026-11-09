@@ -44,7 +44,11 @@ def process_identity(pid):
 
 def running(state):
     identity = process_identity(state['pid'])
-    return state.get('boot') == boot_identity() and identity is not None and identity == state['identity']
+    return (
+        state.get('boot') == boot_identity()
+        and identity is not None
+        and identity == state['identity']
+    )
 
 
 def read_state():
@@ -66,7 +70,9 @@ def preflight():
             raise ValueError('Configuration is not private')
         config = Settings.model_validate(json.loads(CONFIG.read_text()))
     except (OSError, ValueError, TypeError):
-        raise StartupBlocked('A valid protected configuration with mode 0600 is required.') from None
+        raise StartupBlocked(
+            'A valid protected configuration with mode 0600 is required.'
+        ) from None
     if (
         config.odoo_url != 'http://127.0.0.1:4092'
         or config.odoo_database != 'callcenter'
@@ -84,7 +90,9 @@ def preflight():
         or account.token_source != 'odoo'
         or account.reception != 'polling'
     ):
-        raise StartupBlocked('Reception must be explicitly enabled in the protected configuration first.')
+        raise StartupBlocked(
+            'Reception must be explicitly enabled in the protected configuration first.'
+        )
     with httpx.Client(timeout=20, follow_redirects=False) as client:
         response = client.post(
             config.odoo_url + '/json/2/ab_crm_messaging_account/search_read',
@@ -94,42 +102,68 @@ def preflight():
             },
             json={
                 'domain': [['code', '=', ACCOUNT]],
-                'fields': ['provider_account', 'enabled', 'legacy_worker_disabled', 'active'],
+                'fields': [
+                    'provider_account',
+                    'enabled',
+                    'legacy_worker_disabled',
+                    'active',
+                ],
                 'limit': 2,
             },
         )
         if response.status_code >= 500 or response.status_code == 429:
             raise StartupUnavailable('Odoo is temporarily unavailable.')
         if response.status_code != 200:
-            raise StartupBlocked('Odoo account authentication failed; check the service API key and permissions.')
+            raise StartupBlocked(
+                'Odoo account authentication failed; check the service API key and permissions.'
+            )
         rows = response.json()
         if (
             len(rows) != 1
             or rows[0]['provider_account'] != account.provider_account
-            or not all(rows[0][key] for key in ('enabled', 'legacy_worker_disabled', 'active'))
+            or not all(
+                rows[0][key] for key in ('enabled', 'legacy_worker_disabled', 'active')
+            )
         ):
-            raise StartupBlocked('The Odoo account must be explicitly enabled after checking the previous worker is inactive.')
+            raise StartupBlocked(
+                'The Odoo account must be explicitly enabled after checking the previous worker is inactive.'
+            )
         load_odoo_tokens(config, Odoo(config, client))
         identity = configure(client, account)
-        if identity['webhook_present'] or identity['username'].lower() != 'abdin_callcenter_bot':
+        if (
+            identity['webhook_present']
+            or identity['username'].lower() != 'abdin_callcenter_bot'
+        ):
             raise StartupBlocked('Bot identity or webhook ownership prevents polling.')
     store = Store(config.database_url.get_secret_value())
     with store.connect() as conn:
-        row = conn.execute('SELECT current_database() AS db,current_user AS role').fetchone()
-        if row != {'db': 'crm_messaging_callcenter', 'role': 'crm_messaging_callcenter'}:
-            raise StartupBlocked('Expected the dedicated queue database and role.')
-        if not conn.execute('SELECT version FROM messaging_schema WHERE version=1').fetchone():
+        if not config.database_url.get_secret_value().startswith('sqlite:'):
+            row = conn.execute(
+                'SELECT current_database() AS db,current_user AS role'
+            ).fetchone()
+            if row != {
+                'db': 'crm_messaging_callcenter',
+                'role': 'crm_messaging_callcenter',
+            }:
+                raise StartupBlocked('Expected the dedicated queue database and role.')
+        if not conn.execute(
+            'SELECT version FROM messaging_schema WHERE version=1'
+        ).fetchone():
             raise StartupBlocked('Queue migration is required.')
     try:
         with store.receiver(account.provider_account):
             pass
     except Conflict:
-        raise StartupBlocked('Another receiver owns this bot; operator review is required.') from None
+        raise StartupBlocked(
+            'Another receiver owns this bot; operator review is required.'
+        ) from None
     try:
         with socket.socket() as listener:
             listener.bind(('127.0.0.1', 5088))
     except OSError:
-        raise StartupBlocked('Port 5088 is unavailable; no existing process was stopped.') from None
+        raise StartupBlocked(
+            'Port 5088 is unavailable; no existing process was stopped.'
+        ) from None
 
 
 def supervise():
@@ -146,7 +180,20 @@ def supervise():
     signal.signal(signal.SIGTERM, stop_requested)
     signal.signal(signal.SIGINT, stop_requested)
     commands = {
-        'api': ['-m', 'uvicorn', 'app.main:create_app', '--factory', '--host', '127.0.0.1', '--port', '5088', '--workers', '1', '--no-access-log', '--no-proxy-headers'],
+        'api': [
+            '-m',
+            'uvicorn',
+            'app.main:create_app',
+            '--factory',
+            '--host',
+            '127.0.0.1',
+            '--port',
+            '5088',
+            '--workers',
+            '1',
+            '--no-access-log',
+            '--no-proxy-headers',
+        ],
         'receiver': ['-m', 'app.receiver', ACCOUNT],
         'worker': ['-m', 'app.worker'],
     }
@@ -157,30 +204,46 @@ def supervise():
             log = (RUNTIME / f'{name}.log').open('ab')
             logs.append(log)
             processes[name] = subprocess.Popen(
-                [str(PYTHON), *arguments], cwd=ROOT, stdout=log,
-                stderr=subprocess.STDOUT, start_new_session=True,
+                [str(PYTHON), *arguments],
+                cwd=ROOT,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
             )
         state = process_state(os.getpid())
-        state['children'] = {name: process_state(child.pid) for name, child in processes.items()}
+        state['children'] = {
+            name: process_state(child.pid) for name, child in processes.items()
+        }
         STATE.write_text(json.dumps(state))
         deadline = time.monotonic() + 30
         healthy = False
         with httpx.Client(timeout=1, follow_redirects=False, trust_env=False) as client:
             while not stopping:
                 if processes['receiver'].poll() == 75:
-                    raise StartupUnavailable('Receiver initialization is temporarily unavailable; all task-owned services are stopping.')
+                    raise StartupUnavailable(
+                        'Receiver initialization is temporarily unavailable; all task-owned services are stopping.'
+                    )
                 if processes['receiver'].poll() is not None:
-                    raise StartupBlocked('Receiver exited. All task-owned services are stopping; review private logs before restarting.')
+                    raise StartupBlocked(
+                        'Receiver exited. All task-owned services are stopping; review private logs before restarting.'
+                    )
                 if any(child.poll() is not None for child in processes.values()):
-                    raise StartupUnavailable('An API or worker process exited. All task-owned services are stopping.')
+                    raise StartupUnavailable(
+                        'An API or worker process exited. All task-owned services are stopping.'
+                    )
                 if not healthy:
                     try:
                         response = client.get('http://127.0.0.1:5088/health')
-                        healthy = response.status_code == 200 and response.json() == {'status': 'ok'}
+                        healthy = response.status_code == 200 and response.json() == {
+                            'status': 'ok'
+                        }
                     except (httpx.HTTPError, ValueError):
                         pass
                     if healthy:
-                        print('FastAPI, one receiver and one worker started. Sending is disabled. Ctrl+C stops all three.', flush=True)
+                        print(
+                            'FastAPI, one receiver and one worker started. Sending is disabled. Ctrl+C stops all three.',
+                            flush=True,
+                        )
                     elif time.monotonic() >= deadline:
                         raise StartupUnavailable('FastAPI health check timed out.')
                 time.sleep(0.5)
@@ -202,7 +265,9 @@ def supervise():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['start', 'serve', 'check', 'status', 'stop'])
+    parser.add_argument(
+        'command', choices=['start', 'serve', 'check', 'status', 'stop']
+    )
     args = parser.parse_args()
     os.umask(0o077)
     os.environ['CRM_MESSAGING_CONFIG'] = str(CONFIG)
@@ -215,7 +280,17 @@ def main():
             print('Launcher is not running.')
             return
         if args.command == 'status':
-            print(json.dumps({'supervisor': state['pid'], 'services': {name: running(child) for name, child in state['children'].items()}}))
+            print(
+                json.dumps(
+                    {
+                        'supervisor': state['pid'],
+                        'services': {
+                            name: running(child)
+                            for name, child in state['children'].items()
+                        },
+                    }
+                )
+            )
             return
         descriptor = os.pidfd_open(state['pid'])
         try:
@@ -253,5 +328,8 @@ if __name__ == '__main__':
         print(str(error), file=sys.stderr)
         raise SystemExit(75) from None
     except Exception:
-        print('A gateway dependency is unavailable. Check the private configuration and service logs.', file=sys.stderr)
+        print(
+            'A gateway dependency is unavailable. Check the private configuration and service logs.',
+            file=sys.stderr,
+        )
         raise SystemExit(75) from None

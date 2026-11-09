@@ -1,10 +1,12 @@
 import argparse
+from datetime import datetime, timezone
 import logging
 import time
 
 import httpx
 
 from .config import settings
+from .observability import logger
 from .providers import normalize
 from .storage import Store, Conflict
 from .telegram_setup import configure
@@ -34,7 +36,7 @@ class Receiver:
                 'offset': offset,
                 'timeout': 30,
                 'limit': 100,
-                'allowed_updates': ['message', 'message_reaction'],
+                'allowed_updates': ['message', 'edited_message', 'message_reaction'],
             },
         )
         if response.status_code in (401, 403, 409):
@@ -54,9 +56,20 @@ class Receiver:
                 raise ReceiverStopped('Invalid polling sequence')
             events.extend(normalize(self.account, update))
             offset = update_id + 1
-        if updates:
-            self.store.persist_poll(
-                conn, self.code, self.account.provider_account, events, offset
+        self.store.persist_poll(
+            conn, self.code, self.account.provider_account, events, offset
+        )
+        timestamps = [
+            (payload.get('edit') or {}).get('date', payload['timestamp'])
+            for key, kind, payload in events if kind == 'incoming'
+        ]
+        if timestamps:
+            latest = datetime.strptime(max(timestamps), '%Y-%m-%d %H:%M:%S').replace(
+                tzinfo=timezone.utc
+            )
+            logger.info(
+                'polling_lag_seconds=%.3f',
+                max(0, datetime.now(timezone.utc).timestamp() - latest.timestamp()),
             )
         return len(updates)
 
@@ -92,7 +105,10 @@ def main():
     try:
         config = settings()
     except RuntimeError:
-        parser.exit(75, 'Receiver credentials unavailable during startup; retry initialization.\n')
+        parser.exit(
+            75,
+            'Receiver credentials unavailable during startup; retry initialization.\n',
+        )
     if args.account not in config.accounts:
         parser.error('Unknown account')
     logging.basicConfig(level=logging.WARNING)

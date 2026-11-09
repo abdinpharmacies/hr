@@ -1,10 +1,12 @@
 import hashlib
 import hmac
 import json
+import logging
+import math
 from datetime import datetime, timezone
 
 import httpx
-from .media import telegram_media, supported, prepare
+from .media import attachment_diagnostic, telegram_media, supported, prepare, prepare_whatsapp, prepare_video
 
 
 def verify_signature(account, raw, headers):
@@ -54,6 +56,31 @@ def incoming(message_id, sender, body, date, unsupported, source):
     }
 
 
+def provider_location(value, *, name=None, address=None, live=False):
+    if not isinstance(value, dict):
+        return None
+    latitude, longitude = value.get('latitude'), value.get('longitude')
+    if any(type(number) not in (int, float) or abs(number) > bound
+           or not math.isfinite(number)
+           for number, bound in ((latitude, 90), (longitude, 180))):
+        return None
+    name = value.get('name', '') if name is None else name
+    address = value.get('address', '') if address is None else address
+    if not isinstance(name, str) or not isinstance(address, str):
+        return None
+    return {'latitude': latitude, 'longitude': longitude,
+            'name': name[:256], 'address': address[:1024],
+            'is_live_snapshot': bool(live)}
+
+
+def location_text(location):
+    return '\n'.join(filter(None, [
+        'Location snapshot' if location['is_live_snapshot'] else 'Location',
+        location['name'], location['address'],
+        f"{location['latitude']}, {location['longitude']}",
+    ]))
+
+
 def normalize(account, payload):
     if not isinstance(payload, dict):
         raise ValueError('Invalid webhook')
@@ -80,7 +107,8 @@ def normalize(account, payload):
             event['reaction'] = ' '.join(emojis)[:64]
             event['reply_reference'] = identifier(reaction['message_id'])
             return [(update_id, 'incoming', event)]
-        message = payload.get('message', {})
+        edited = 'edited_message' in payload
+        message = payload.get('edited_message' if edited else 'message', {})
         if message.get('chat', {}).get('type') != 'private':
             return [
                 (
@@ -97,16 +125,28 @@ def normalize(account, payload):
         sender = identifier(message['chat']['id'])
         if not sender.isdecimal():
             raise ValueError('Invalid private chat')
+        if edited and identifier(message.get('from', {}).get('id')) != sender:
+            raise ValueError('Edited message sender mismatch')
         contact = message.get('contact')
         media = telegram_media(message)
         if media and not supported(media):
             media = None
-        unsupported = 'text' not in message and contact is None and media is None
+        venue = message.get('venue')
+        location = (
+            provider_location(venue.get('location'), name=venue.get('title', ''),
+                              address=venue.get('address', ''))
+            if isinstance(venue, dict) else provider_location(
+                message.get('location'),
+                live=bool((message.get('location') or {}).get('live_period'))
+                if isinstance(message.get('location'), dict) else False,
+            )
+        )
+        unsupported = 'text' not in message and contact is None and media is None and location is None
         event = incoming(
-            sender + ':' + identifier(message['message_id']),
+            'edit:' + update_id if edited else sender + ':' + identifier(message['message_id']),
             sender,
             (
-                'Contact shared'
+                location_text(location) if location else 'Contact shared'
                 if contact is not None
                 else message.get(
                     'text', message.get('caption') or ('Attachment' if media else '')
@@ -116,6 +156,17 @@ def normalize(account, payload):
             unsupported,
             message,
         )
+        if edited:
+            event['edit'] = {
+                'reference': identifier(message['message_id']),
+                'date': timestamp(message['edit_date']),
+                'sequence': int(update_id),
+            }
+            if event['edit']['date'] < event['timestamp']:
+                raise ValueError('Invalid edit timestamp')
+        if unsupported:
+            logging.warning('Unsupported Telegram attachment source=%s metadata=%s',
+                            event['source_digest'], json.dumps(attachment_diagnostic(message), sort_keys=True))
         profile = message.get('from', {})
         event['profile'] = {
             'name': ' '.join(
@@ -123,6 +174,8 @@ def normalize(account, payload):
             ).strip()[:256],
             'username': str(profile.get('username', ''))[:256],
         }
+        if location:
+            event['location'] = location
         if media:
             event['media'] = media
         if message.get('reply_to_message'):
@@ -154,15 +207,18 @@ def normalize(account, payload):
             if str(value['metadata']['phone_number_id']) != account.provider_account:
                 raise ValueError('Provider account mismatch')
             for message in value.get('messages', []):
-                unsupported = message.get('type') != 'text'
+                location = provider_location(message.get('location')) if message.get('type') == 'location' else None
+                unsupported = message.get('type') != 'text' and location is None
                 event = incoming(
                     message['id'],
                     message['from'],
-                    '' if unsupported else message['text']['body'],
+                    location_text(location) if location else '' if unsupported else message['text']['body'],
                     message['timestamp'],
                     unsupported,
                     message,
                 )
+                if location:
+                    event['location'] = location
                 events.append(('message:' + event['id'], 'incoming', event))
             for status in value.get('statuses', []):
                 state = {
@@ -201,6 +257,18 @@ def normalize(account, payload):
 
 
 def send(client, account, operation):
+    venue = operation.get('location')
+    if 'location' in operation:
+        valid = provider_location(venue)
+        if (
+            account.provider != 'telegram' or not account.location_enabled
+            or not valid or not isinstance(venue, dict)
+            or set(venue) != {'latitude', 'longitude', 'name', 'address'}
+            or not valid['name'].strip() or not valid['address'].strip()
+            or len(venue['name']) > 256 or len(venue['address']) > 1024
+            or any(operation.get(key) for key in ('media', 'reaction', 'template', 'contact_button'))
+        ):
+            return {'status': 'failed', 'reference': '', 'error': 'rejected'}
     if operation.get('expires_at'):
         deadline = datetime.strptime(
             operation['expires_at'], '%Y-%m-%d %H:%M:%S'
@@ -216,6 +284,61 @@ def send(client, account, operation):
             'type': 'text',
             'text': {'body': operation['body'], 'preview_url': False},
         }
+        if operation.get('template'):
+            payload.pop('text')
+            payload.update(type='template', template=operation['template'])
+        elif operation.get('reaction'):
+            payload.pop('text')
+            payload.update(
+                type='reaction',
+                reaction={
+                    'message_id': operation['reply_reference'],
+                    'emoji': operation['reaction'],
+                },
+            )
+        elif operation.get('media'):
+            media = operation['media'][0]
+            try:
+                filename, raw, mime = prepare_whatsapp(media)
+                kind = 'audio' if media['kind'] == 'voice' else media['kind']
+                limit = (
+                    (5 if kind == 'image' else 16 if kind in ('audio', 'video') else 20)
+                    * 1024
+                    * 1024
+                )
+                if (
+                    len(raw) > limit
+                    or (kind == 'image' and mime not in ('image/jpeg', 'image/png'))
+                    or mime in ('audio/webm', 'video/webm')
+                ):
+                    raise ValueError('Unsupported WhatsApp media')
+            except Exception:
+                return {'status': 'failed', 'reference': '', 'error': 'media'}
+            try:
+                upload = client.post(
+                    url.rsplit('/', 1)[0] + '/media',
+                    headers=headers,
+                    data={'messaging_product': 'whatsapp', 'type': mime},
+                    files={'file': (filename, raw, mime)},
+                )
+                if upload.status_code >= 500 or upload.status_code == 429:
+                    return {'status': 'failed', 'reference': '', 'error': 'unavailable'}
+                if upload.status_code != 200:
+                    return {'status': 'failed', 'reference': '', 'error': 'media'}
+                media_id = identifier(upload.json()['id'])
+            except httpx.HTTPError:
+                return {'status': 'failed', 'reference': '', 'error': 'unavailable'}
+            except (ValueError, KeyError, TypeError):
+                return {'status': 'failed', 'reference': '', 'error': 'media'}
+            payload.pop('text')
+            payload.update(type=kind)
+            payload[kind] = {'id': media_id}
+            if kind in ('image', 'document', 'video'):
+                payload[kind]['caption'] = operation['body']
+            if kind == 'document':
+                payload[kind]['filename'] = filename
+        if operation.get('reply_reference') and not operation.get('reaction'):
+            payload['context'] = {'message_id': operation['reply_reference']}
     else:
         url = (
             'https://api.telegram.org/bot'
@@ -242,7 +365,16 @@ def send(client, account, operation):
             payload['reply_parameters'] = {
                 'message_id': int(operation['reply_reference'])
             }
-        if operation.get('reaction'):
+        if venue:
+            url = url.rsplit('/', 1)[0] + '/sendVenue'
+            payload = {
+                'chat_id': operation['destination'],
+                'latitude': venue['latitude'], 'longitude': venue['longitude'],
+                'title': venue['name'], 'address': venue['address'],
+            }
+            if operation.get('reply_reference'):
+                payload['reply_parameters'] = {'message_id': int(operation['reply_reference'])}
+        elif operation.get('reaction'):
             url = url.rsplit('/', 1)[0] + '/setMessageReaction'
             payload = {
                 'chat_id': operation['destination'],
@@ -256,9 +388,10 @@ def send(client, account, operation):
                 'document': ('sendDocument', 'document'),
                 'audio': ('sendAudio', 'audio'),
                 'voice': ('sendVoice', 'voice'),
+                'video': ('sendVideo', 'video'),
             }[media['kind']]
             try:
-                files = {field: prepare(media)}
+                files = {field: prepare_video(media) if media['kind'] == 'video' else prepare(media)}
             except Exception:
                 return {'status': 'failed', 'reference': '', 'error': 'media'}
             url = url.rsplit('/', 1)[0] + '/' + method

@@ -1,9 +1,13 @@
 [Unit]
 Description=CRM Telegram polling receiver
-After=network-online.target postgresql.service
+After=network-online.target
 Wants=network-online.target
 
 [Service]
+UMask=0077
+StateDirectory=crm-messaging
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/crm-messaging
 Type=simple
 User=crm-messaging
 WorkingDirectory=/opt/crm-messaging

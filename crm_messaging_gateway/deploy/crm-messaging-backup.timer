@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly CRM SQLite backup
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=60
+Unit=crm-messaging-backup.service
+
+[Install]
+WantedBy=timers.target

@@ -62,28 +62,46 @@ def test_concurrent_workers_lease_once(store):
 
 
 def test_odoo_outage_preserves_queue_and_fences_stale_claims(store):
-    store.ingest('tg', [('first', 'incoming', {'sender': '1'}), ('second', 'incoming', {'sender': '1'})])
+    store.ingest(
+        'tg',
+        [
+            ('first', 'incoming', {'sender': '1'}),
+            ('second', 'incoming', {'sender': '1'}),
+        ],
+    )
     first = store.claim_incoming()
     store.defer_incoming(first)
     assert store.claim_incoming() is None
     with store.connect() as conn:
-        conn.execute("UPDATE incoming_event SET available_at=now() WHERE id=%s", (first['id'],))
+        conn.execute(
+            "UPDATE incoming_event SET available_at=now() WHERE id=%s", (first['id'],)
+        )
     second = store.claim_incoming()
     assert first['id'] == second['id'] and first['attempts'] == second['attempts']
     assert first['lease_until'] != second['lease_until']
     store.finish_incoming(first, True)
     store.defer_incoming(first)
     with store.connect() as conn:
-        assert conn.execute('SELECT state FROM incoming_event WHERE id=%s', (second['id'],)).fetchone()['state'] == 'processing'
+        assert (
+            conn.execute(
+                'SELECT state FROM incoming_event WHERE id=%s', (second['id'],)
+            ).fetchone()['state']
+            == 'processing'
+        )
     store.defer_incoming(second)
     for unused in range(9):
         with store.connect() as conn:
-            conn.execute("UPDATE incoming_event SET available_at=now() WHERE id=%s", (first['id'],))
+            conn.execute(
+                "UPDATE incoming_event SET available_at=now() WHERE id=%s",
+                (first['id'],),
+            )
         current = store.claim_incoming()
         assert current['id'] == first['id'] and current['attempts'] == 1
         store.defer_incoming(current)
     with store.connect() as conn:
-        row = conn.execute('SELECT state,attempts FROM incoming_event WHERE id=%s', (first['id'],)).fetchone()
+        row = conn.execute(
+            'SELECT state,attempts FROM incoming_event WHERE id=%s', (first['id'],)
+        ).fetchone()
         assert row == {'state': 'pending', 'attempts': 0}
 
 
@@ -168,14 +186,23 @@ def test_poll_offset_atomicity_and_receiver_exclusion(store):
         store.persist_poll(conn, 'tg', '123', event(), 2)
         assert store.polling_offset(conn, '123') == 2
         with pytest.raises(Conflict):
-            store.persist_poll(conn, 'tg', '123', [('event1', 'incoming', {'body': 'conflict'})], 3)
+            store.persist_poll(
+                conn, 'tg', '123', [('event1', 'incoming', {'body': 'conflict'})], 3
+            )
         assert store.polling_offset(conn, '123') == 2
     with store.receiver('123') as conn:
         assert store.polling_offset(conn, '123') == 2
 
 
 def test_incoming_order_blocks_delayed_and_reviewed_conversation_only(store):
-    store.ingest('tg', [('first', 'incoming', {'sender': '1'}), ('second', 'incoming', {'sender': '1'}), ('other', 'incoming', {'sender': '2'})])
+    store.ingest(
+        'tg',
+        [
+            ('first', 'incoming', {'sender': '1'}),
+            ('second', 'incoming', {'sender': '1'}),
+            ('other', 'incoming', {'sender': '2'}),
+        ],
+    )
     first = store.claim_incoming()
     assert first['event_key'] == 'first'
     assert store.claim_incoming()['event_key'] == 'other'
@@ -192,7 +219,9 @@ def test_incoming_order_blocks_delayed_and_reviewed_conversation_only(store):
 def test_uncertain_send_blocks_later_same_destination(store):
     first = store.persist_outgoing('tg', payload())
     second = store.persist_outgoing('tg', dict(payload(), token='second'))
-    other = store.persist_outgoing('tg', dict(payload(), token='other', destination='456'))
+    other = store.persist_outgoing(
+        'tg', dict(payload(), token='other', destination='456')
+    )
     for row in [first, second, other]:
         store.mark_ready(row)
     row = store.claim_outgoing(['tg'])
@@ -200,3 +229,29 @@ def test_uncertain_send_blocks_later_same_destination(store):
     store.reported(store.reports()[0])
     assert store.claim_outgoing(['tg'])['token'] == 'other'
     assert store.claim_outgoing(['tg']) is None
+
+
+def test_postgres_to_sqlite_preserves_queue_evidence(store, tmp_path):
+    from app.queue_transfer import export_queue, import_queue
+
+    store.ingest('tg', event())
+    store.mark_ready(store.persist_outgoing('tg', payload()))
+    store.claim_outgoing(['tg'])
+    with store.receiver('123') as conn:
+        store.persist_poll(conn, 'tg', '123', event(), 25)
+    with store.connect() as conn:
+        event_id = conn.execute('SELECT id FROM incoming_event').fetchone()['id']
+        conn.execute(
+            'INSERT INTO operator_audit(event_id,actor,note) VALUES (%s,%s,%s)',
+            (event_id, 'operator', 'Migration validation'),
+        )
+    path = tmp_path / 'queue.jsonl'
+    expected = export_queue(store, path, quiesced=True)
+    target = Store('sqlite://' + str(tmp_path / 'import.db'))
+    assert import_queue(target, path) == expected
+    with target.connect() as conn:
+        assert (
+            conn.execute('SELECT state FROM outgoing_operation').fetchone()['state']
+            == 'sending'
+        )
+    assert target.claim_outgoing(['tg']) is None

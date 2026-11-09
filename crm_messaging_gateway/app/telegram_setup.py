@@ -73,7 +73,7 @@ def configure(client, account, webhook_url=None, polling=False, expected_webhook
                 json={
                     'url': webhook_url,
                     'secret_token': account.webhook_secret.get_secret_value(),
-                    'allowed_updates': ['message', 'message_reaction'],
+                    'allowed_updates': ['message', 'edited_message', 'message_reaction'],
                     'drop_pending_updates': False,
                 },
             )

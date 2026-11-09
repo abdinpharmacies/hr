@@ -1,9 +1,12 @@
 [Unit]
 Description=CRM messaging durable worker
-After=network-online.target postgresql.service
+After=network-online.target
 Wants=network-online.target
 
 [Service]
+StateDirectory=crm-messaging
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/crm-messaging
 Type=simple
 User=crm-messaging
 Group=crm-messaging

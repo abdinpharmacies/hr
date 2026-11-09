@@ -5,6 +5,7 @@ from fastapi.responses import PlainTextResponse
 from starlette.concurrency import run_in_threadpool
 
 from .config import settings
+from .observability import latency
 from .providers import normalize, verify_signature
 from .storage import Conflict, Store
 
@@ -13,6 +14,11 @@ def create_app(config=None, store=None):
     config = config or settings(load_provider_tokens=False)
     store = store or Store(config.database_url.get_secret_value())
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
+    @app.middleware('http')
+    async def measure_request(request, call_next):
+        with latency('gateway_http'):
+            return await call_next(request)
 
     def account_for(provider, code):
         account = config.accounts.get(code)
@@ -41,6 +47,8 @@ def create_app(config=None, store=None):
         import hmac
 
         account = account_for('whatsapp', code)
+        if account.reception != 'webhook':
+            raise HTTPException(409, 'Webhook reception is disabled')
         query = request.query_params
         if query.get('hub.mode') != 'subscribe' or not hmac.compare_digest(
             query.get('hub.verify_token', '').encode(),

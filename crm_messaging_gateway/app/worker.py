@@ -6,6 +6,7 @@ import httpx
 
 from .config import settings, load_odoo_tokens
 from .providers import send
+from .observability import latency
 from .media import download
 from .storage import Store
 
@@ -20,14 +21,24 @@ class Worker:
             return
         success = False
         try:
+            if row['kind'] == 'incoming' and row['payload'].get('edit'):
+                try:
+                    capabilities = self.odoo.call('get_capabilities', row['account'])
+                except (RuntimeError, OdooUnavailable):
+                    capabilities = {}
+                if not isinstance(capabilities, dict) or not capabilities.get('message_edits'):
+                    self.store.defer_incoming(row)
+                    return
             method = 'receive_event' if row['kind'] == 'incoming' else 'receive_status'
             values = (
                 {'event': row['payload']}
                 if row['kind'] == 'incoming'
                 else row['payload']
             )
-            self.odoo.call(method, row['account'], **values)
-            if row['kind'] == 'incoming' and row['payload'].get('media'):
+            result = self.odoo.call(method, row['account'], **values)
+            if row['kind'] == 'incoming' and row['payload'].get('media') and not (
+                isinstance(result, dict) and result.get('media_required') is False
+            ):
                 account = self.config.accounts[row['account']]
                 if account.token is None:
                     load_odoo_tokens(self.config, self.odoo)
@@ -54,15 +65,21 @@ class Worker:
                 else:
                     try:
                         self.odoo.call(
-                            'receive_media', row['account'], event_id=row['payload']['id'],
-                            data=data, failed='',
+                            'receive_media',
+                            row['account'],
+                            event_id=row['payload']['id'],
+                            data=data,
+                            failed='',
                         )
                     except OdooUnavailable:
                         raise
                     except RuntimeError:
                         self.odoo.call(
-                            'receive_media', row['account'], event_id=row['payload']['id'],
-                            data='', failed='invalid',
+                            'receive_media',
+                            row['account'],
+                            event_id=row['payload']['id'],
+                            data='',
+                            failed='invalid',
                         )
             success = True
         except OdooUnavailable:
@@ -124,12 +141,29 @@ class Worker:
                 )
             except Exception:
                 allowed = False
+            if isinstance(allowed, dict):
+                if (
+                    allowed.get('allowed') is False
+                    and allowed.get('terminal') is True
+                    and allowed.get('error') in ('window', 'rejected')
+                ):
+                    self.store.outcome(
+                        row,
+                        {
+                            'status': 'failed',
+                            'reference': '',
+                            'error': allowed['error'],
+                        },
+                    )
+                    return
+                allowed = False
             if not allowed:
                 self.store.defer_send(row)
                 return
-            outcome = send(
-                self.client, self.config.accounts[row['account']], row['payload']
-            )
+            with latency('provider_dispatch'):
+                outcome = send(
+                    self.client, self.config.accounts[row['account']], row['payload']
+                )
             self.store.outcome(row, outcome)
 
     def report(self):

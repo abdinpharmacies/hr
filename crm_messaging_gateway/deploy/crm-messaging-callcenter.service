@@ -4,6 +4,9 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
+StateDirectory=crm-messaging-callcenter
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/crm-messaging-callcenter
 Type=simple
 User=abdin_04
 Group=abdin_04

@@ -1,0 +1,19 @@
+[Unit]
+Description=Consistent CRM SQLite backup
+
+[Service]
+Type=oneshot
+User=crm-messaging
+Group=crm-messaging
+WorkingDirectory=/opt/crm-messaging
+Environment=CRM_MESSAGING_CONFIG=/etc/crm-messaging/config.json
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/crm-messaging/venv/bin/python -m app.backup
+StateDirectory=crm-messaging
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/crm-messaging
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only

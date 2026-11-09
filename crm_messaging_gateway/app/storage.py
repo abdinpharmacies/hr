@@ -14,6 +14,13 @@ class Conflict(Exception):
 
 
 class Store:
+    def __new__(cls, database_url):
+        if database_url.startswith('sqlite:'):
+            from .sqlite_storage import SQLiteStore
+
+            return SQLiteStore(database_url)
+        return super().__new__(cls)
+
     def __init__(self, database_url):
         self.database_url = database_url
 

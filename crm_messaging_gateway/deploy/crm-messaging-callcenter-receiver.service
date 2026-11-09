@@ -1,10 +1,13 @@
 [Unit]
 Description=Callcenter Telegram polling receiver
 Wants=network-online.target
-After=network-online.target postgresql.service
+After=network-online.target
 StartLimitIntervalSec=0
 
 [Service]
+StateDirectory=crm-messaging-callcenter
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/crm-messaging-callcenter
 Type=simple
 User=abdin_04
 Group=abdin_04

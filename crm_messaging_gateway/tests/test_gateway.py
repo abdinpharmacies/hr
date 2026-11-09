@@ -33,6 +33,7 @@ def whatsapp():
         token='test-only',
         webhook_secret='test-secret-123456',
         verify_token='test-verify',
+        reception='webhook',
         enabled=True,
     )
 
@@ -707,9 +708,23 @@ def test_reaction_normalization_and_worker_media_persistence_order():
 
 def test_invalid_voice_is_rejected_before_provider_submission():
     import base64
+
     client = Mock()
     raw = b'not a recording'
-    operation = {'body': 'Recording', 'destination': '12345', 'media': [{'kind': 'voice', 'name': 'test.webm', 'mimetype': 'audio/webm', 'size': len(raw), 'duration': 1, 'data': base64.b64encode(raw).decode()}]}
+    operation = {
+        'body': 'Recording',
+        'destination': '12345',
+        'media': [
+            {
+                'kind': 'voice',
+                'name': 'test.webm',
+                'mimetype': 'audio/webm',
+                'size': len(raw),
+                'duration': 1,
+                'data': base64.b64encode(raw).decode(),
+            }
+        ],
+    }
     result = send(client, telegram(), operation)
     assert result == {'status': 'failed', 'reference': '', 'error': 'media'}
     client.post.assert_not_called()
@@ -717,13 +732,236 @@ def test_invalid_voice_is_rejected_before_provider_submission():
 
 def test_rejected_download_content_is_shown_as_failed():
     store, odoo = Mock(), Mock()
-    store.claim_incoming.return_value = {'id': 1, 'account': 'tg', 'kind': 'incoming', 'payload': {'id': '12345:1', 'media': {'kind': 'document', 'file_id': 'pdf', 'name': 'test.pdf', 'mimetype': 'application/pdf', 'size': 7, 'duration': 0}}}
+    store.claim_incoming.return_value = {
+        'id': 1,
+        'account': 'tg',
+        'kind': 'incoming',
+        'payload': {
+            'id': '12345:1',
+            'media': {
+                'kind': 'document',
+                'file_id': 'pdf',
+                'name': 'test.pdf',
+                'mimetype': 'application/pdf',
+                'size': 7,
+                'duration': 0,
+            },
+        },
+    }
     odoo.call.side_effect = [True, RuntimeError('Rejected content'), True]
+
     def respond(request):
         if request.url.path.endswith('/getFile'):
-            return httpx.Response(200, json={'ok': True, 'result': {'file_path': 'documents/test.pdf'}})
+            return httpx.Response(
+                200, json={'ok': True, 'result': {'file_path': 'documents/test.pdf'}}
+            )
         return httpx.Response(200, content=b'invalid')
+
     with httpx.Client(transport=httpx.MockTransport(respond)) as client:
         Worker(config(), store, odoo, client).ingest()
     assert odoo.call.call_args.kwargs['failed'] == 'invalid'
-    store.finish_incoming.assert_called_once_with(store.claim_incoming.return_value, True)
+    store.finish_incoming.assert_called_once_with(
+        store.claim_incoming.return_value, True
+    )
+
+
+def test_outgoing_only_whatsapp_rejects_webhooks():
+    account = Account(
+        provider='whatsapp', provider_account='456', token='test-only', enabled=True
+    )
+    assert account.reception == 'disabled'
+    cfg = config()
+    cfg.accounts['wa'] = account
+    store = Mock()
+    client = TestClient(create_app(cfg, store))
+    assert client.get('/webhooks/whatsapp/wa').status_code == 409
+    assert client.post('/webhooks/whatsapp/wa', json={}).status_code == 409
+    store.ingest.assert_not_called()
+
+
+def test_sqlite_configuration_requires_encrypted_storage(tmp_path):
+    values = config().model_dump()
+    values['database_url'] = 'sqlite://' + str(tmp_path / 'queue.db')
+    with pytest.raises(ValueError, match='Encrypted'):
+        Settings(**values)
+    assert (
+        Settings(**dict(values, encrypted_storage_confirmed=True))
+        .database_url.get_secret_value()
+        .startswith('sqlite:')
+    )
+
+
+@pytest.mark.parametrize(
+    'content,expected',
+    [
+        ({'template': {'name': 'welcome', 'language': {'code': 'en_US'}}}, 'template'),
+        ({'reaction': '👍', 'reply_reference': 'wamid-target'}, 'reaction'),
+        ({'reply_reference': 'wamid-target'}, 'text'),
+    ],
+)
+def test_whatsapp_content_payload(content, expected):
+    captured = []
+
+    def handler(request):
+        captured.append(json.loads(request.content))
+        return httpx.Response(200, json={'messages': [{'id': 'wamid-result'}]})
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        outcome = send(
+            client, whatsapp(), {'destination': '1234', 'body': 'Hello', **content}
+        )
+    assert outcome['status'] == 'accepted'
+    assert captured[0]['type'] == expected
+    if expected == 'text':
+        assert captured[0]['context']['message_id'] == 'wamid-target'
+
+
+def test_whatsapp_media_upload_and_ambiguous_send():
+    import base64
+
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        if request.url.path.endswith('/media'):
+            return httpx.Response(200, json={'id': 'media-1'})
+        payload = json.loads(request.content)
+        assert payload['document']['id'] == 'media-1'
+        raise httpx.ReadTimeout('Lost response', request=request)
+
+    raw = b'%PDF-test'
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        outcome = send(
+            client,
+            whatsapp(),
+            {
+                'destination': '1234',
+                'body': 'File',
+                'media': [
+                    {
+                        'kind': 'document',
+                        'name': 'test.pdf',
+                        'size': len(raw),
+                        'duration': 0,
+                        'mimetype': 'application/pdf',
+                        'data': base64.b64encode(raw).decode(),
+                    }
+                ],
+            },
+        )
+    assert len(requests) == 2
+    assert outcome == {'status': 'review', 'reference': '', 'error': 'ambiguous'}
+
+
+def test_dispatch_terminal_authorization_never_contacts_provider():
+    cfg, store, odoo, client = config(), Mock(), Mock(), Mock()
+    store.claim_outgoing.return_value = {
+        'id': 1,
+        'account': 'wa',
+        'token': 'x',
+        'attempt': 1,
+        'receipt': 'r',
+        'sends': 1,
+    }
+    odoo.call.return_value = {'allowed': False, 'terminal': True, 'error': 'rejected'}
+    Worker(cfg, store, odoo, client).dispatch()
+    client.post.assert_not_called()
+    assert store.outcome.call_args.args[1]['error'] == 'rejected'
+
+
+def test_whatsapp_text_document_payload():
+    import base64
+
+    captured = []
+
+    def handler(request):
+        if request.url.path.endswith('/media'):
+            return httpx.Response(200, json={'id': 'uploaded'})
+        captured.append(json.loads(request.content))
+        return httpx.Response(200, json={'messages': [{'id': 'sent-document'}]})
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        result = send(
+            client,
+            whatsapp(),
+            {
+                'destination': '1234',
+                'body': 'Notes',
+                'media': [
+                    {
+                        'kind': 'document',
+                        'mimetype': 'text/plain',
+                        'name': 'notes.txt',
+                        'size': 5,
+                        'duration': 0,
+                        'data': base64.b64encode(b'notes').decode(),
+                    }
+                ],
+            },
+        )
+    assert result['status'] == 'accepted'
+    assert captured[0]['document'] == {
+        'id': 'uploaded',
+        'caption': 'Notes',
+        'filename': 'notes.txt',
+    }
+
+
+def test_whatsapp_video_codec_validation(monkeypatch):
+    import base64
+    from types import SimpleNamespace
+    from app.media import prepare_whatsapp
+
+    metadata = {
+        'kind': 'video',
+        'mimetype': 'video/mp4',
+        'name': 'clip.mp4',
+        'size': 12,
+        'data': base64.b64encode(b'\x00\x00\x00\x0cftypisom').decode(),
+    }
+    monkeypatch.setattr(
+        'app.media.subprocess.run',
+        lambda *a, **k: SimpleNamespace(
+            stdout=json.dumps(
+                {'streams': [{'codec_type': 'video', 'codec_name': 'h264'}]}
+            )
+        ),
+    )
+    assert prepare_whatsapp(metadata)[2] == 'video/mp4'
+    monkeypatch.setattr(
+        'app.media.subprocess.run',
+        lambda *a, **k: SimpleNamespace(
+            stdout=json.dumps(
+                {'streams': [{'codec_type': 'video', 'codec_name': 'hevc'}]}
+            )
+        ),
+    )
+    with pytest.raises(ValueError, match='codecs'):
+        prepare_whatsapp(metadata)
+
+
+def test_telegram_video_sends_private_upload_and_preserves_reply(monkeypatch):
+    import base64
+    from types import SimpleNamespace
+
+    monkeypatch.setattr('app.media.subprocess.run', lambda *a, **k: SimpleNamespace(
+        stdout=json.dumps({'streams': [{'codec_type': 'video', 'codec_name': 'h264'}]})
+    ))
+    metadata = {'kind': 'video', 'mimetype': 'video/mp4', 'name': 'clip.mp4',
+                'size': 12, 'data': base64.b64encode(b'\x00\x00\x00\x0cftypisom').decode()}
+    requests = []
+    def handler(request):
+        requests.append(request)
+        return httpx.Response(200, json={'ok': True, 'result': {'message_id': 123}})
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    operation = {'destination': '1234', 'body': 'Caption', 'reply_reference': '7', 'media': [metadata]}
+    result = send(client, telegram(), operation)
+    assert result['status'] == 'accepted'
+    assert requests[0].url.path.endswith('/sendVideo')
+    assert b'name="video"; filename="clip.mp4"' in requests[0].content
+    assert b'{"message_id": 7}' in requests[0].content
+    assert b'Caption' in requests[0].content
+    for change in ({'size': 17 * 1024 * 1024}, {'mimetype': 'video/webm'}, {'data': 'invalid'}):
+        operation['media'] = [dict(metadata, **change)]
+        assert send(client, telegram(), operation)['error'] == 'media'
+    assert len(requests) == 1

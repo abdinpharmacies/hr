@@ -13,15 +13,33 @@ class Account(BaseModel):
     provider_account: str = Field(pattern=r'^[0-9]+$')
     token: SecretStr | None = None
     token_source: Literal['config', 'odoo'] = 'config'
-    webhook_secret: SecretStr
+    webhook_secret: SecretStr | None = None
     verify_token: SecretStr | None = None
     graph_version: str = Field(default='v26.0', pattern=r'^v[0-9]+\.0$')
     enabled: bool = False
-    reception: Literal['webhook', 'polling'] = 'webhook'
+    location_enabled: bool = False
+    reception: Literal['webhook', 'polling', 'disabled'] = 'webhook'
+
+    @model_validator(mode='before')
+    @classmethod
+    def reception_default(cls, values):
+        if (
+            isinstance(values, dict)
+            and values.get('provider') == 'whatsapp'
+            and 'reception' not in values
+        ):
+            values = dict(values, reception='disabled')
+        return values
 
     @model_validator(mode='after')
     def credentials(self):
-        if len(self.webhook_secret.get_secret_value()) < 16 or (
+        if (
+            self.reception == 'webhook'
+            and (
+                not self.webhook_secret
+                or len(self.webhook_secret.get_secret_value()) < 16
+            )
+        ) or (
             self.token_source == 'config'
             and (not self.token or not self.token.get_secret_value())
         ):
@@ -34,7 +52,11 @@ class Account(BaseModel):
             )
         if self.provider != 'telegram' and self.reception == 'polling':
             raise ValueError('Polling is available only for Telegram')
-        if self.provider == 'whatsapp' and not self.verify_token:
+        if (
+            self.provider == 'whatsapp'
+            and self.reception == 'webhook'
+            and not self.verify_token
+        ):
             raise ValueError('WhatsApp verification token is required')
         if (
             self.provider == 'telegram'
@@ -52,6 +74,7 @@ class Settings(BaseModel):
     odoo_database: str
     odoo_key: SecretStr
     accounts: dict[str, Account]
+    encrypted_storage_confirmed: bool = False
     sending_enabled: bool = False
     allow_loopback_http: bool = False
     odoo_transport: Literal['json2', 'controller_v1'] = 'json2'
@@ -77,7 +100,19 @@ class Settings(BaseModel):
         ):
             raise ValueError('An HTTPS Odoo origin is required')
         db = urlsplit(self.database_url.get_secret_value())
-        if (
+        if db.scheme == 'sqlite':
+            if not self.encrypted_storage_confirmed:
+                raise ValueError(
+                    'Encrypted deployment storage must be confirmed for SQLite'
+                )
+            if (
+                db.netloc
+                or not db.path.startswith('/')
+                or db.path in ('/', '/:memory:')
+                or db.fragment
+            ):
+                raise ValueError('An absolute local SQLite database path is required')
+        elif (
             db.scheme != 'postgresql'
             or not db.path.strip('/')
             or unquote(db.path.strip('/')) == self.odoo_database
@@ -102,7 +137,9 @@ def settings(*, load_provider_tokens=True):
     except (ValueError, TypeError):
         raise RuntimeError('Invalid protected gateway configuration') from None
 
-    if load_provider_tokens and any(account.token_source == 'odoo' for account in config.accounts.values()):
+    if load_provider_tokens and any(
+        account.token_source == 'odoo' for account in config.accounts.values()
+    ):
         import logging
         import httpx
         from .odoo import Odoo

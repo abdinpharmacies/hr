@@ -9,13 +9,37 @@ from .storage import Store
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'command', choices=('migrate', 'status', 'review', 'retry-incoming')
+        'command',
+        choices=(
+            'migrate',
+            'status',
+            'review',
+            'retry-incoming',
+            'export',
+            'import',
+            'backup',
+        ),
     )
     parser.add_argument('--event-id', type=int)
     parser.add_argument('--note')
+    parser.add_argument('--file')
+    parser.add_argument('--quiesced', action='store_true')
     args = parser.parse_args()
-    store = Store(settings().database_url.get_secret_value())
-    if args.command == 'migrate':
+    store = Store(settings(load_provider_tokens=False).database_url.get_secret_value())
+    sqlite = store.database_url.startswith('sqlite:')
+    if args.command in ('export', 'import', 'backup'):
+        from .queue_transfer import export_queue, import_queue, backup_queue
+
+        if not args.file:
+            parser.error('--file is required')
+        if args.command == 'export':
+            result = export_queue(store, args.file, quiesced=args.quiesced)
+        elif args.command == 'import':
+            result = import_queue(store, args.file)
+        else:
+            result = backup_queue(store, args.file)
+        print(json.dumps(result))
+    elif args.command == 'migrate':
         store.migrate()
     elif args.command == 'status':
         with store.connect() as conn:
@@ -26,10 +50,40 @@ def main():
                 'SELECT account,state,count(*) AS count FROM outgoing_operation GROUP BY account,state ORDER BY account,state'
             ).fetchall()
             polling = conn.execute(
-                'SELECT provider_account,next_offset,updated_at::text FROM telegram_polling ORDER BY provider_account'
+                'SELECT provider_account,next_offset,updated_at FROM telegram_polling ORDER BY provider_account'
             ).fetchall()
+            metrics = {}
+            if sqlite:
+                import shutil
+                import time
+
+                for table in ('incoming_event', 'outgoing_operation'):
+                    row = conn.execute(
+                        f"SELECT MIN(created_at) AS oldest FROM {table} WHERE state NOT IN ('done','ignored')"
+                    ).fetchone()
+                    metrics[table + '_oldest_seconds'] = (
+                        max(0, time.time() - row['oldest']) if row['oldest'] else 0
+                    )
+                metrics['disk_free_bytes'] = shutil.disk_usage(store.path.parent).free
+                metrics['database_bytes'] = store.path.stat().st_size
+                wal = store.path.with_name(store.path.name + '-wal')
+                metrics['wal_bytes'] = wal.stat().st_size if wal.exists() else 0
+                metrics['polling_heartbeat_age_seconds'] = [
+                    max(0, time.time() - r['updated_at']) for r in polling
+                ]
+                metrics['uncertain'] = conn.execute(
+                    "SELECT count(*) AS count FROM outgoing_operation WHERE outcome->>'status'='review'"
+                ).fetchone()['count']
         print(
-            json.dumps({'incoming': incoming, 'outgoing': outgoing, 'polling': polling})
+            json.dumps(
+                {
+                    'incoming': incoming,
+                    'outgoing': outgoing,
+                    'polling': polling,
+                    'metrics': metrics,
+                },
+                default=str,
+            )
         )
     elif args.command == 'review':
         with store.connect() as conn:
@@ -41,17 +95,18 @@ def main():
             ).fetchall()
         print(json.dumps({'incoming': rows, 'outgoing': outgoing}))
     else:
+        placeholder = '?' if sqlite else '%s'
         if not args.event_id or not args.note or len(args.note) > 2000:
             parser.error('A reviewed event ID and note are required')
         with store.connect() as conn:
             row = conn.execute(
-                "UPDATE incoming_event SET state='pending',attempts=0,available_at=now() WHERE id=%s AND state='review' RETURNING id",
+                f"UPDATE incoming_event SET state='pending',attempts=0,available_at=now() WHERE id={placeholder} AND state='review' RETURNING id",
                 (args.event_id,),
             ).fetchone()
             if not row:
                 parser.error('Event is not awaiting review')
             conn.execute(
-                'INSERT INTO operator_audit(event_id,actor,note) VALUES (%s,%s,%s)',
+                f'INSERT INTO operator_audit(event_id,actor,note) VALUES ({placeholder},{placeholder},{placeholder})',
                 (args.event_id, getpass.getuser(), args.note),
             )
 

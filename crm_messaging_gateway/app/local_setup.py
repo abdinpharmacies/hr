@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--username', required=True)
     parser.add_argument('--bootstrap', type=Path)
     parser.add_argument('--from-odoo', action='store_true')
+    parser.add_argument('--encrypted-storage-confirmed', action='store_true')
     args = parser.parse_args()
     if not sys.stdin.isatty():
         parser.error('Run setup in a local terminal with masked input')
@@ -45,13 +46,14 @@ def main():
         'Dedicated Odoo service API key (hidden): '
     )
     dsn = bootstrap.get('database_url') or getpass.getpass(
-        'Separate gateway PostgreSQL DSN (hidden): '
+        'Gateway SQLite URL or separate PostgreSQL DSN (hidden): '
     )
     account_code = (
         bootstrap.get('account_code') or input('Odoo messaging account code: ').strip()
     )
     values = {
         'database_url': dsn,
+        'encrypted_storage_confirmed': args.encrypted_storage_confirmed,
         'odoo_url': 'http://127.0.0.1:4092',
         'odoo_database': 'callcenter',
         'odoo_key': key,
