@@ -2,11 +2,53 @@
 
 ## Current changes before commit:
 
-- Let administrators choose an image folder or ZIP file from their device, with upload progress and a visible file count.
-- Offer only device folder and ZIP file sources, make scanning the first action, and show synchronization after a preview.
-- Load the upload widget's Arabic text through Odoo's frontend translation catalog.
-- Remove the redundant Configuration heading and divider from image sync, and tighten spacing around the picker.
-- Preserve the existing image matching, replacement confirmation, and report while checking upload paths and limits.
+- None.
+
+## Recent commits
+
+Commit: `e078deb7`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/FIX: center product card quantities in Firefox`
+
+- Center product card quantity values in Firefox in Arabic and English layouts.
+
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/homepage.xml`
+
+Commit: `5d1d9601`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/IMP: localize Egyptian governorates across address forms`
+
+- Show Egyptian governorates in Arabic on checkout, portal, and prescription forms and in the location picker.
+- Preserve English names and state IDs while using the active page language for refreshed address options.
+
+Files changed:
+
+- `ab_ecommerce_storefront/controllers/portal.py`
+- `ab_ecommerce_storefront/controllers/shop.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/res_country_state.py`
+- `ab_ecommerce_storefront/models/res_partner.py`
+- `ab_ecommerce_storefront/static/src/js/current_location.js`
+- `ab_ecommerce_storefront/views/cart.xml`
+- `ab_ecommerce_storefront/views/layout.xml`
+- `ab_ecommerce_storefront/views/portal.xml`
+- `ab_ecommerce_storefront/views/prescription_order_templates.xml`
+
+Commit: `fa0353ef`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/IMP: upload product images from device`
+
+- Choose an image folder or ZIP file from the device, preview image matches, and synchronize after review.
+- Translate the upload flow and remove the redundant Configuration heading.
 
 Files changed:
 
@@ -26,7 +68,67 @@ Files changed:
 - `ab_ecommerce_storefront/tests/test_image_sync_upload.py`
 - `ab_ecommerce_storefront/views/image_sync_wizard_views.xml`
 
-## Recent commits
+Commit: `4bf39702`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/IMP: mark checkout email as optional`
+
+- Show a small Optional label beside the checkout email field in English and Arabic.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/cart.xml`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `5535c659`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/FIX: stop calculating taxes on website orders`
+
+- Use product prices without added taxes on storefront listings and checkout orders while preserving backend sales taxes.
+- Clear taxes on draft website carts when opened and remove the tax line from checkout totals.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/product_template.py`
+- `ab_ecommerce_storefront/models/sale_order.py`
+- `ab_ecommerce_storefront/models/sale_order_line.py`
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/tests/__init__.py`
+- `ab_ecommerce_storefront/tests/test_storefront_tax_free.py`
+- `ab_ecommerce_storefront/views/cart.xml`
+
+Commit: `3f8f3920`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/FIX: render order preview total in supported element`
+
+- Fix the sales order preview error when displaying its monetary total.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/portal.xml`
+
+Commit: `aa150ead`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/IMP: clarify checkout labels and guest details`
+
+- Clarify cart and checkout labels, remove the guest sign-in prompt, and shorten the name field.
+- Translate the new labels in both Arabic catalogs.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/cart.xml`
+- `ab_ecommerce_storefront/views/portal.xml`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
 
 Commit: `075948bec2f1db6a7a77d672a2d933dec5ea216c`
 Author: Mohamed Fawzy
