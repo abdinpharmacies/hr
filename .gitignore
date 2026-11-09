@@ -3,3 +3,8 @@ __pycache__/
 /setup-backups/
 /tests/
 /codex_config/tests/
+
+/codex_config/config.toml
+/codex_config/profiles/odoo/config.toml
+/opencode_config/profiles/*/cli.json
+/opencode_config/profiles/*/service.json
