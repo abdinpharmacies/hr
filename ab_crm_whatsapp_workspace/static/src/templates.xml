@@ -1,0 +1,29 @@
+<templates xml:space="preserve">
+    <t t-name="ab_crm_whatsapp_workspace.Composer" t-inherit="ab_crm_sales_workspace.Workspace" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('ab_attachment_menu')]" position="inside">
+            <button t-if="state.detail.whatsapp_templates" class="btn btn-light" t-on-click="() => { state.attachmentMenu = false; this.whatsappTemplates(); }" t-att-disabled="state.busy">Approved WhatsApp templates</button>
+        </xpath>
+        <xpath expr="//div[hasclass('ab_composer')]/fieldset" position="attributes">
+            <attribute name="t-att-disabled">!state.detail.owned || state.busy || !['telegram', 'whatsapp'].includes(state.detail.provider)</attribute>
+        </xpath>
+    </t>
+    <t t-name="ab_crm_whatsapp_workspace.Templates">
+        <Dialog title="title" size="'lg'" contentClass="'ab_template_dialog channel-whatsapp'">
+            <p t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+            <p t-if="state.busy" role="status">Loading templates…</p>
+            <fieldset class="ab_template_layout" t-att-disabled="state.busy">
+                <section class="ab_template_list" aria-label="Approved WhatsApp templates">
+                    <label class="d-block">Search templates<input class="form-control" type="search" t-model="state.query"/></label>
+                    <p t-if="!filteredItems.length" role="status">No templates found.</p>
+                    <button t-foreach="filteredItems" t-as="item" t-key="item.id" class="ab_template_item" t-att-class="{'active': state.selected === item.id}" t-att-aria-pressed="state.selected === item.id ? 'true' : 'false'" t-on-click="() => this.select(item.id)"><strong dir="auto" t-esc="item.name"/><span dir="ltr" t-esc="item.language"/></button>
+                </section>
+                <section class="ab_template_editor">
+                    <label t-foreach="selected?.parameters || []" t-as="index" t-key="index" class="d-block">Parameter <t t-esc="index"/><input class="form-control" dir="auto" t-model="state.values[index]" maxlength="1024" required="required"/></label>
+                    <h4>Preview</h4><p class="ab_template_preview" dir="auto" t-esc="preview"/>
+                    <p t-if="selected &amp;&amp; missingValues" role="status">Complete all required parameters.</p>
+                </section>
+            </fieldset>
+            <t t-set-slot="footer"><button class="btn ab_template_primary" t-on-click="send" t-att-disabled="state.busy || missingValues">Queue template</button><button class="btn btn-secondary" t-on-click="props.close">Close</button></t>
+        </Dialog>
+    </t>
+</templates>

@@ -1,0 +1,442 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_crm_whatsapp_workspace
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-08 07:25+0000\n"
+"PO-Revision-Date: 2026-11-08 07:25+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_whatsapp_contact
+msgid "AB WhatsApp Contact"
+msgstr "جهة اتصال واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_whatsapp_message
+msgid "AB WhatsApp Message"
+msgstr "رسالة واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_whatsapp_service
+msgid "AB WhatsApp Service"
+msgstr "خدمة واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_whatsapp_template
+msgid "AB WhatsApp Template"
+msgstr "قالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/dashboard.js:0
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.js:0
+msgid "Accepted"
+msgstr "مقبولة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Approved WhatsApp template"
+msgstr "قالب واتساب معتمد"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.js:0
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Approved WhatsApp templates"
+msgstr "قوالب واتساب المعتمدة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/workspace.py:0
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_template_ids
+msgid "Authorized WhatsApp Templates"
+msgstr "قوالب واتساب المصرح بها"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_crm_conversation
+msgid "CRM Conversation"
+msgstr "محادثة إدارة العملاء"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_crm_message
+msgid "CRM Message"
+msgstr "رسالة إدارة العملاء"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Configure authorized templates on the messaging account."
+msgstr "اضبط القوالب المصرح بها من حساب المراسلة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+msgid "Conflicting WhatsApp history requires review."
+msgstr "يوجد تعارض في سجل واتساب يستلزم المراجعة."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__crm_account_id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_template__crm_account_ids
+msgid "Crm Account"
+msgstr "حساب إدارة العملاء"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__crm_message_id
+msgid "Crm Message"
+msgstr "رسالة إدارة العملاء"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__crm_timestamp
+msgid "Crm Timestamp"
+msgstr "وقت سجل إدارة العملاء"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message_media__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_operation__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_contact__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_service__display_name
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_template__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/dashboard.js:0
+msgid "Failed"
+msgstr "فشلت"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+msgid "Historical WhatsApp messages cannot be sent again."
+msgstr "لا يمكن إعادة إرسال رسائل واتساب التاريخية."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message_media__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_api__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_operation__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_contact__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_service__id
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_template__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/media.py:0
+msgid "Integrated WhatsApp history is immutable."
+msgstr "لا يمكن تعديل سجل واتساب المرتبط."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Invalid media content or size."
+msgstr "محتوى المرفق أو حجمه غير صالح."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message_media__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_crm_whatsapp_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_whatsapp_workspace.view_account_whatsapp
+msgid "Link WhatsApp History"
+msgstr "ربط سجل واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/dashboard.js:0
+msgid "Message queued."
+msgstr "أُضيفت الرسالة إلى قائمة الانتظار."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_crm_messaging_account
+msgid "Messaging Account"
+msgstr "حساب المراسلة"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_crm_messaging_api
+msgid "Messaging Gateway API"
+msgstr "واجهة بوابة المراسلة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Migrate the WhatsApp account before enabling signed reception."
+msgstr "انقل حساب واتساب إلى قائمة الانتظار قبل تفعيل الاستقبال الموقّع."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Only CRM managers can configure WhatsApp queue ownership."
+msgstr "يمكن لمديري إدارة العملاء فقط ضبط إرسال واتساب عبر قائمة الانتظار."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_crm_messaging_operation
+msgid "Outgoing Messaging Operation"
+msgstr "عملية مراسلة صادرة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Parameter"
+msgstr "قيمة المتغير"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model,name:ab_crm_whatsapp_workspace.model_ab_crm_message_media
+msgid "Private Message Media"
+msgstr "مرفقات الرسائل الخاصة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+msgid "Provide one nonempty value for each template parameter."
+msgstr "أدخل قيمة غير فارغة لكل متغير في القالب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid ""
+"Queue ownership cannot be reversed without reconciling messaging history."
+msgstr "لا يمكن التراجع عن استخدام قائمة الانتظار دون مطابقة سجل المراسلات."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Queue template"
+msgstr "إضافة القالب إلى قائمة الإرسال"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/dashboard.js:0
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.js:0
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_template__raw_payload
+msgid "Raw Payload"
+msgstr "بيانات الطلب الأصلية"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Recipient WhatsApp number is required."
+msgstr "رقم واتساب للمستلم مطلوب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Select a migrated WhatsApp account and a batch of at most 500 records."
+msgstr "اختر حساب واتساب منقولاً إلى قائمة الانتظار ودفعة لا تتجاوز 500 سجل."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Select a template"
+msgstr "اختر قالباً"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/workspace.py:0
+msgid "Select an approved template authorized for this WhatsApp account."
+msgstr "اختر قالباً معتمداً ومصرحاً به لحساب واتساب هذا."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/workspace.py:0
+msgid "Select an eligible WhatsApp message from this conversation."
+msgstr "اختر رسالة واتساب صالحة لهذا الإجراء من هذه المحادثة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Select an explicit WhatsApp sender account."
+msgstr "حدد حساب إرسال واتساب صراحةً."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_webhook_enabled
+msgid "Signed WhatsApp Reception"
+msgstr "استقبال واتساب الموقّع"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+msgid "Signed WhatsApp reception is disabled."
+msgstr "استقبال واتساب الموقّع غير مفعّل."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/dashboard.js:0
+msgid "Template queued."
+msgstr "أُضيف القالب إلى قائمة الانتظار."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+msgid "The approved WhatsApp content is no longer eligible."
+msgstr "لم يعد محتوى واتساب المعتمد صالحاً للإرسال."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+msgid "The original sender no longer has permission."
+msgstr "لم تعد لدى المرسل الأصلي صلاحية الإرسال."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "This attachment type or size is not supported by WhatsApp."
+msgstr "نوع المرفق أو حجمه غير مدعوم في واتساب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/dashboard.js:0
+msgid "Uncertain"
+msgstr "غير مؤكدة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+msgid "Use the durable gateway for this WhatsApp account."
+msgstr "استخدم بوابة المراسلة الدائمة لحساب واتساب هذا."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/service.py:0
+msgid "Use the signed gateway webhook for migrated WhatsApp accounts."
+msgstr ""
+"استخدم إشعارات البوابة الموقّعة لحسابات واتساب المنقولة إلى قائمة الانتظار."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields.selection,name:ab_crm_whatsapp_workspace.selection__ab_crm_message_media__kind__video
+msgid "Video"
+msgstr "فيديو"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_migrated
+msgid "WhatsApp Queue Ownership"
+msgstr "إرسال واتساب عبر قائمة الانتظار"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+msgid ""
+"WhatsApp history and its projection must use the same account and "
+"destination."
+msgstr "يجب أن يستخدم سجل واتساب والرسالة المرتبطة به الحساب والوجهة نفسيهما."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.constraint,message:ab_crm_whatsapp_workspace.constraint_ab_whatsapp_message_crm_projection_unique
+msgid "WhatsApp history must have one CRM projection."
+msgstr "يجب ربط سجل واتساب برسالة واحدة في إدارة العملاء."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid ""
+"WhatsApp queue ownership requires a WhatsApp account with direct sending "
+"disabled."
+msgstr ""
+"يتطلب إرسال واتساب عبر قائمة الانتظار حساب واتساب مع تعطيل الإرسال المباشر."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/workspace.py:0
+msgid "WhatsApp queue sending is disabled for this account."
+msgstr "إرسال واتساب عبر قائمة الانتظار غير مفعّل لهذا الحساب."
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__whatsapp_history_ids
+msgid "Whatsapp History"
+msgstr "سجل واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__whatsapp_session_id
+msgid "Whatsapp Session"
+msgstr "جلسة واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__whatsapp_template_id
+msgid "Whatsapp Template"
+msgstr "قالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__whatsapp_template_params
+msgid "Whatsapp Template Params"
+msgstr "متغيرات قالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/history.py:0
+msgid "unknown"
+msgstr "غير معروف"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Complete all required parameters."
+msgstr "أكمل جميع المعلمات المطلوبة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Loading templates…"
+msgstr "جارٍ تحميل القوالب…"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "No templates found."
+msgstr "لم يتم العثور على قوالب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "Search templates"
+msgstr "البحث في القوالب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_message__crm_location_snapshot
+msgid "Location Snapshot"
+msgstr "لقطة الموقع"

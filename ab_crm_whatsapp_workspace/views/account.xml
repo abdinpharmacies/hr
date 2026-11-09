@@ -1,0 +1,15 @@
+<odoo>
+    <record id="view_account_whatsapp" model="ir.ui.view">
+        <field name="name">messaging.account.whatsapp.workspace</field>
+        <field name="model">ab_crm_messaging_account</field>
+        <field name="inherit_id" ref="ab_crm_messaging.view_account_form"/>
+        <field name="arch" type="xml">
+            <field name="legacy_worker_disabled" position="after">
+                <field name="whatsapp_migrated" invisible="provider != 'whatsapp'" readonly="whatsapp_migrated"/>
+                <field name="whatsapp_webhook_enabled" invisible="provider != 'whatsapp'"/>
+                <field name="whatsapp_template_ids" widget="many2many_tags" invisible="provider != 'whatsapp'"/>
+                <button name="action_link_whatsapp_history_batch" type="object" string="Link WhatsApp History" invisible="not whatsapp_migrated"/>
+            </field>
+        </field>
+    </record>
+</odoo>
