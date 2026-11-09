@@ -693,8 +693,10 @@ msgid "Best sellers"
 msgstr "الأكثر مبيعًا"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "View all"
 msgstr "عرض الكل"
 
@@ -2143,6 +2145,7 @@ msgstr "الحالية"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_list
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Customer"
 msgstr "العميل"
 
@@ -2680,9 +2683,11 @@ msgid "Start Review"
 msgstr "بدء المراجعة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Status"
 msgstr "الحالة"
 
@@ -2956,6 +2961,7 @@ msgstr "الرئيسية"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__order_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__order_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__order_id
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Order"
 msgstr "الطلب"
 
@@ -3086,6 +3092,7 @@ msgstr "المبلغ المدفوع"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_payment_status
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Payment"
 msgstr "الدفع"
 
@@ -3232,8 +3239,10 @@ msgid "Order Number"
 msgstr "رقم الطلب"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Order Date"
 msgstr "تاريخ الطلب"
 
@@ -3352,8 +3361,10 @@ msgid "Tax"
 msgstr "الضريبة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Amount"
 msgstr "المبلغ"
 
@@ -4534,7 +4545,9 @@ msgid "Call Center order workspace"
 msgstr "مساحة عمل طلبات مركز الاتصال"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
 msgid "Cancelled Orders"
 msgstr "الطلبات الملغاة"
 
@@ -4695,7 +4708,9 @@ msgid "Needs attention"
 msgstr "يحتاج متابعة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
 msgid "New Orders"
 msgstr "طلبات جديدة"
 
@@ -8015,12 +8030,16 @@ msgid "<span>Your activity</span>"
 msgstr "<span>نشاطك</span>"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "Recent orders"
 msgstr "أحدث الطلبات"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
 msgid "View all orders"
 msgstr "عرض كل الطلبات"
 
@@ -14546,3 +14565,193 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "The ZIP contains duplicate image paths."
 msgstr "يحتوي ملف ZIP على مسارات صور مكررة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+#: model:ir.actions.client,name:ab_ecommerce_storefront.action_order_overview
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_order_overview
+msgid "Order Overview"
+msgstr "نظرة عامة على الطلبات"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "eCommerce operations"
+msgstr "عمليات المتجر الإلكتروني"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Refresh overview"
+msgstr "تحديث النظرة العامة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "ORDER WORKSPACE"
+msgstr "مساحة عمل الطلبات"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Manage every order at a glance."
+msgstr "تابع جميع الطلبات بنظرة واحدة."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "See what needs attention, then open the orders behind each number."
+msgstr "اعرف ما يحتاج إلى متابعة وافتح الطلبات المرتبطة بكل رقم."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "LIVE STATUS"
+msgstr "الحالة الحالية"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Orders at a glance"
+msgstr "الطلبات بنظرة واحدة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "We could not load the order overview."
+msgstr "تعذر تحميل النظرة العامة على الطلبات."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Try again"
+msgstr "إعادة المحاولة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "View orders"
+msgstr "عرض الطلبات"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Abandoned Carts"
+msgstr "السلات المتروكة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Review carts awaiting recovery"
+msgstr "راجع السلات التي تنتظر المتابعة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "View carts"
+msgstr "عرض السلات"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "RECENT ACTIVITY"
+msgstr "أحدث النشاطات"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "No recent orders yet."
+msgstr "لا توجد طلبات حديثة بعد."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Loading orders..."
+msgstr "جارٍ تحميل الطلبات..."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/order_overview.xml:0
+msgid "Open order"
+msgstr "فتح الطلب"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
+msgid "Open order %s"
+msgstr "فتح الطلب %s"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
+msgid "Unpaid Orders"
+msgstr "طلبات غير مدفوعة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
+msgid "In Processing"
+msgstr "قيد التجهيز"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
+msgid "Assigned Orders"
+msgstr "طلبات مسندة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
+msgid "Delivered Today"
+msgstr "تم توصيلها اليوم"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/order_overview.js:0
+msgid "Could not load the order overview."
+msgstr "تعذر تحميل النظرة العامة على الطلبات."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/order_overview.py:0
+msgid "You cannot access the order overview."
+msgstr "ليس لديك صلاحية الوصول إلى النظرة العامة على الطلبات."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/order_overview.py:0
+msgid "You cannot access this order group."
+msgstr "ليس لديك صلاحية الوصول إلى مجموعة الطلبات هذه."
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/order_overview.py:0
+msgid "You cannot access this order."
+msgstr "ليس لديك صلاحية الوصول إلى هذا الطلب."

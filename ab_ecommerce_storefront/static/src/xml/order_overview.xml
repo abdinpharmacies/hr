@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_storefront.OrderOverview">
+        <main class="ab-order-overview" t-att-dir="direction" t-att-aria-busy="state.loading">
+            <header class="ab-order-overview__topbar">
+                <div class="ab-order-overview__brand">
+                    <span class="ab-order-overview__brand-mark" aria-hidden="true"><i class="fa fa-shopping-bag"/></span>
+                    <div><strong>Order Overview</strong><small>eCommerce operations</small></div>
+                </div>
+                <button type="button" class="ab-order-overview__refresh" t-on-click="loadOverview" t-att-disabled="state.loading" aria-label="Refresh overview" title="Refresh overview">
+                    <i class="fa fa-refresh" aria-hidden="true"/>
+                </button>
+            </header>
+
+            <div class="ab-order-overview__scroll">
+                <section class="ab-order-overview__hero">
+                    <div class="ab-order-overview__hero-copy">
+                        <span class="ab-order-overview__eyebrow">ORDER WORKSPACE</span>
+                        <h1>Manage every order at a glance.</h1>
+                        <p>See what needs attention, then open the orders behind each number.</p>
+                        <button type="button" class="ab-order-overview__button ab-order-overview__button--light" t-on-click="() => this.openBucket('all')">
+                            View all orders <i class="fa fa-arrow-right" aria-hidden="true"/>
+                        </button>
+                    </div>
+                    <div class="ab-order-overview__hero-art" aria-hidden="true">
+                        <span class="ab-order-overview__art-card ab-order-overview__art-card--back"/>
+                        <span class="ab-order-overview__art-card ab-order-overview__art-card--front"><i class="fa fa-clipboard"/></span>
+                    </div>
+                </section>
+
+                <div class="ab-order-overview__content">
+                    <section aria-labelledby="ab-order-overview-summary">
+                        <div class="ab-order-overview__section-heading">
+                            <div><span class="ab-order-overview__eyebrow">LIVE STATUS</span><h2 id="ab-order-overview-summary">Orders at a glance</h2></div>
+                        </div>
+                        <div t-if="state.error" class="ab-order-overview__empty" role="alert">
+                            <p>We could not load the order overview.</p>
+                            <button type="button" class="ab-order-overview__button ab-order-overview__button--primary" t-on-click="loadOverview">Try again</button>
+                        </div>
+                        <div t-else="" class="ab-order-overview__grid">
+                            <button t-foreach="cards" t-as="card" t-key="card.key" type="button" class="ab-order-overview__metric" t-att-class="'ab-order-overview__metric--' + card.tone" t-on-click="() => this.openBucket(card.key)" t-att-disabled="state.loading">
+                                <span class="ab-order-overview__metric-icon" aria-hidden="true"><i t-att-class="card.icon"/></span>
+                                <span class="ab-order-overview__metric-count" t-esc="state.loading ? '—' : (state.counts[card.key] || 0)"/>
+                                <span class="ab-order-overview__metric-label" t-esc="card.label"/>
+                                <span class="ab-order-overview__metric-link">View orders <i class="fa fa-arrow-right" aria-hidden="true"/></span>
+                            </button>
+                        </div>
+                        <button type="button" class="ab-order-overview__carts" t-on-click="() => this.openBucket('abandoned')" t-att-disabled="state.loading">
+                            <span class="ab-order-overview__carts-icon" aria-hidden="true"><i class="fa fa-shopping-basket"/></span>
+                            <span class="ab-order-overview__carts-copy"><strong>Abandoned Carts</strong><small>Review carts awaiting recovery</small></span>
+                            <span class="ab-order-overview__carts-count" t-esc="state.loading ? '—' : (state.counts.abandoned || 0)"/>
+                            <span class="ab-order-overview__carts-link">View carts <i class="fa fa-arrow-right" aria-hidden="true"/></span>
+                        </button>
+                    </section>
+
+                    <section class="ab-order-overview__recent" aria-labelledby="ab-order-overview-recent">
+                        <div class="ab-order-overview__section-heading">
+                            <div><span class="ab-order-overview__eyebrow">RECENT ACTIVITY</span><h2 id="ab-order-overview-recent">Recent orders</h2></div>
+                            <button type="button" class="ab-order-overview__all" t-on-click="() => this.openBucket('all')">View all <i class="fa fa-arrow-right" aria-hidden="true"/></button>
+                        </div>
+                        <div class="ab-order-overview__table-wrap">
+                            <table class="ab-order-overview__table">
+                                <thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Status</th><th scope="col">Payment</th><th scope="col">Amount</th><th scope="col">Order Date</th><th scope="col"><span class="visually-hidden">Open order</span></th></tr></thead>
+                                <tbody>
+                                    <tr t-foreach="state.recent" t-as="order" t-key="order.id" class="ab-order-overview__order-row" role="link" tabindex="0" t-att-aria-label="openOrderLabel(order.name)" t-on-click="() => this.openOrder(order.id)" t-on-keydown="(event) => this.onOrderKeydown(event, order.id)">
+                                        <td class="ab-order-overview__order-name" t-esc="order.name"/>
+                                        <td t-esc="order.customer"/>
+                                        <td><span class="ab-order-overview__status" t-att-class="'ab-order-overview__status--' + order.status_code" t-esc="order.status"/></td>
+                                        <td t-esc="order.payment"/>
+                                        <td class="ab-order-overview__amount" t-esc="order.amount"/>
+                                        <td t-esc="order.date"/>
+                                        <td><span class="ab-order-overview__open" aria-hidden="true"><i class="fa fa-arrow-right"/></span></td>
+                                    </tr>
+                                    <tr t-if="!state.loading &amp;&amp; !state.recent.length"><td colspan="7" class="ab-order-overview__no-orders">No recent orders yet.</td></tr>
+                                    <tr t-if="state.loading"><td colspan="7" class="ab-order-overview__no-orders">Loading orders...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </t>
+</templates>

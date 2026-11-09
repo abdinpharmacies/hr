@@ -15,6 +15,7 @@ from . import mail_compose_message
 from . import account_move_send
 from . import account_move
 from . import sale_order
+from . import order_overview
 from . import sale_order_line
 from . import payment_transaction
 from . import prescription_order

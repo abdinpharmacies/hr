@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_order_overview" model="ir.actions.client">
+        <field name="name">Order Overview</field>
+        <field name="tag">ab_ecommerce_storefront.order_overview</field>
+        <field name="path">ecommerce-order-overview</field>
+    </record>
+
+    <menuitem id="menu_order_overview"
+              name="Order Overview"
+              parent="website_sale.menu_orders"
+              action="action_order_overview"
+              sequence="0"
+              groups="sales_team.group_sale_salesman"/>
+</odoo>

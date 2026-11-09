@@ -42,6 +42,7 @@
         "views/auth_settings.xml",
         "views/prescription_order_views.xml",
         "views/call_center_order_views.xml",
+        "views/order_overview_views.xml",
         "views/layout.xml",
         "views/contact_message_views.xml",
         "views/business_partnership_views.xml",
@@ -83,6 +84,9 @@
             "ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js",
             "ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml",
             "ab_ecommerce_storefront/static/src/scss/call_center_order_workspace.scss",
+            "ab_ecommerce_storefront/static/src/js/order_overview.js",
+            "ab_ecommerce_storefront/static/src/xml/order_overview.xml",
+            "ab_ecommerce_storefront/static/src/scss/order_overview.scss",
         ],
         "web.assets_frontend": [
             "ab_ecommerce_storefront/static/src/js/navigation_performance.js",
