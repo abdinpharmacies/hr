@@ -1,6 +1,6 @@
 {
     'name': 'CRM Messaging',
-    'version': '19.0.1.7.0',
+    'version': '19.0.1.8.0',
     'license': 'LGPL-3',
     'category': 'Customer Operations',
     'author': 'Abdin Pharmacies',

@@ -80,7 +80,8 @@ class Account(models.Model):
                 not user.has_group('ab_crm_messaging.group_service')
                 or user.has_group('ab_crm_core.group_user')
                 or user.has_group('base.group_system')
-                or user not in record.branch_id.user_ids
+                or user not in record.branch_id.with_context(active_test=False).user_ids
+                or (record.enabled and not user.active)
                 or record.company_id not in user.company_ids
             ):
                 raise ValidationError(
@@ -112,6 +113,9 @@ class Account(models.Model):
         if conversation.channel_id != self.channel_id or not conversation.external_key:
             return 'invalid_destination', _('Invalid messaging destination.')
         return False, False
+
+    def _valid_incoming_identity(self, value):
+        return self.provider in ('telegram', 'whatsapp') and value.isascii() and value.isdecimal()
 
     def _eligible(self, conversation, body):
         code, reason = self._queue_eligibility(conversation)
@@ -197,6 +201,24 @@ class Conversation(models.Model):
 
 class Message(models.Model):
     _inherit = 'ab_crm_message'
+
+    historical = fields.Boolean(string='Historical Unverified Import', readonly=True, copy=False, index=True)
+    original_timestamp = fields.Datetime(string='Original Timestamp', readonly=True, copy=False)
+
+    timeline_at = fields.Datetime(string='Timeline Timestamp', compute='_compute_timeline_at', store=True, index=True)
+
+    @api.depends('original_timestamp', 'create_date')
+    def _compute_timeline_at(self):
+        for record in self:
+            record.timeline_at = record.original_timestamp or record.create_date
+
+    @api.model_create_multi
+    def create(self, values_list):
+        if not _INTERNAL.get() and any(
+            {'historical', 'original_timestamp', 'timeline_at'} & values.keys() for values in values_list
+        ):
+            raise AccessError(_('Message delivery evidence is managed by the gateway.'))
+        return super().create(values_list)
 
     messaging_operation_ids = fields.One2many(
         'ab_crm_messaging_operation', 'message_id', readonly=True
@@ -533,8 +555,7 @@ class MessagingAPI(models.AbstractModel):
             or len(event['body']) > 20000
             or not isinstance(event['source_digest'], str)
             or not re.fullmatch(r'[0-9a-f]{64}', event['source_digest'])
-            or not event['sender'].isascii()
-            or not event['sender'].isdecimal()
+            or not account._valid_incoming_identity(event['sender'])
             or type(event['unsupported']) is not bool
             or not (event['body'] or event['unsupported'])
         ):
@@ -636,6 +657,7 @@ class MessagingAPI(models.AbstractModel):
                         body=body,
                         location_snapshot=location or False,
                         direction='in',
+                        original_timestamp=timestamp,
                         delivery_state='sent',
                         approved_by=False,
                         approved_at=False,

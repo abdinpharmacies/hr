@@ -119,6 +119,7 @@ msgid "CRM Message"
 msgstr "رسالة إدارة علاقات العملاء"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__channel_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__channel_id
@@ -187,6 +188,7 @@ msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__delivered
 msgid "Delivered"
@@ -257,6 +259,7 @@ msgid "Expires At"
 msgstr "وقت انتهاء الصلاحية"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__failed
 msgid "Failed"
@@ -459,6 +462,7 @@ msgid "Messaging is disabled for this account."
 msgstr "المراسلة معطلة لهذا الحساب."
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__name
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__name
@@ -557,12 +561,14 @@ msgid "Provider temporarily unavailable"
 msgstr "مزود الخدمة غير متاح مؤقتًا"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__queued
 msgid "Queued"
 msgstr "في قائمة الانتظار"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__read
 msgid "Read"
@@ -727,6 +733,7 @@ msgid "Document"
 msgstr "مستند"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__failed
 msgid "Download failed"
@@ -821,6 +828,7 @@ msgid "Outgoing Sending Enabled"
 msgstr "تفعيل الإرسال"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__pending
 msgid "Pending download"
@@ -848,6 +856,7 @@ msgid "Reaction"
 msgstr "تفاعل"
 
 #. module: ab_crm_messaging
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__state__ready
 msgid "Ready"
@@ -928,3 +937,17 @@ msgstr "سجل تعديلات مزود الخدمة"
 #: code:addons/ab_crm_messaging/models/edits.py:0
 msgid "Message delivery evidence is managed by the gateway."
 msgstr "تدير البوابة بيانات تسليم الرسائل."
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__historical
+msgid "Historical Unverified Import"
+msgstr "استيراد تاريخي غير موثّق"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__original_timestamp
+msgid "Original Timestamp"
+msgstr "التوقيت الأصلي"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__timeline_at
+msgid "Timeline Timestamp"
+msgstr "توقيت سجل المحادثة"
