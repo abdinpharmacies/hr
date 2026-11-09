@@ -1,0 +1,18 @@
+@startuml
+title Shop domain class model
+class Customer
+class Order {
+  +id: UUID
+  +status: OrderStatus
+  +submit()
+}
+class OrderLine {
+  +quantity: int
+}
+class Product {
+  +sku: String
+}
+Customer "1" -- "0..*" Order : places
+Order "1" *-- "1..*" OrderLine : contains
+OrderLine "0..*" --> "1" Product : refers to
+@enduml

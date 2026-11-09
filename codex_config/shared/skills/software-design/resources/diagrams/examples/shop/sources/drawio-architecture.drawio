@@ -1,0 +1,21 @@
+<mxfile host="app.diagrams.net" version="24.7.17">
+  <diagram id="shop-architecture" name="Shop architecture">
+    <mxGraphModel dx="900" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="650" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="customer" value="Customer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1"><mxGeometry x="40" y="220" width="50" height="90" as="geometry" /></mxCell>
+        <mxCell id="web" value="Web App&#xa;React" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="150" y="230" width="130" height="60" as="geometry" /></mxCell>
+        <mxCell id="api" value="Order API&#xa;ASP.NET Core" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="350" y="230" width="145" height="60" as="geometry" /></mxCell>
+        <mxCell id="db" value="Order DB&#xa;PostgreSQL" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;" vertex="1" parent="1"><mxGeometry x="590" y="110" width="130" height="80" as="geometry" /></mxCell>
+        <mxCell id="queue" value="Message Queue&#xa;RabbitMQ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="590" y="300" width="145" height="60" as="geometry" /></mxCell>
+        <mxCell id="worker" value="Email Worker&#xa;.NET Worker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="830" y="300" width="145" height="60" as="geometry" /></mxCell>
+        <mxCell id="e1" value="HTTPS" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="customer" target="web"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="JSON / HTTPS" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="web" target="api"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" value="SQL / TLS" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="api" target="db"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="AMQP publish" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="api" target="queue"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" value="AMQP consume" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="queue" target="worker"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

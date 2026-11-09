@@ -29,3 +29,7 @@ Trace effective groups -> ACLs -> record rules -> field groups -> Python -> UI.
 Apply the security review rules in the main session. Report findings by severity,
 file/line or symbol, actor, reproducible path, impact and smallest fix. Separate
 missing evidence/tests from confirmed defects. Review does not authorize DB writes.
+
+## Deployed-client evidence
+
+When a security question depends on shipped web assets or observed portal/web-client behavior, use the separate `reverse-engineer-anything` skill through [REA evidence handoff](references/rea-evidence.md). Keep ordinary ACL/record-rule/source reviews on the workflow above. Browser visibility is evidence about the client, not proof of server authorization.

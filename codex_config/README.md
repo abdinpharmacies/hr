@@ -120,7 +120,7 @@ python3 tests/verify_odoo.py --source /opt/odoo19/custom-addons-ecommerce/AGENTS
 3. Native skill discovery follows symlinks under `~/.agents/skills`. Shared
    skills are enabled in the marked base-config block, including plain `codex`.
    Profile-specific managed skills remain disabled in the base config.
-   A profile enables its own skills, explicitly reused skills from `include_skills`, and the five shared skills
+   A profile enables its own skills, explicitly reused skills from `include_skills`, and the nine shared skills
    using `[[skills.config]]` with canonical `SKILL.md` paths. Skill metadata is
    discovered initially; full skill bodies load on demand. There is no per-launch
    file copying or link switching.
@@ -167,8 +167,9 @@ There are no shared custom subagents in the current sources. Plain Codex receive
 no custom subagents from this package; Flutter, Jaspr, React and Node specialists remain
 profile-specific. Built-in agents and independently configured agents are separate.
 
-The shared skills are `find-skills`, `git-commit`, `git-interactive-rebase`,
-`trello-workflow`, and `writing-guidelines`. They are available in plain Codex and
+The shared skills are `extend-ai-workflow`, `find-skills`, `git-commit`,
+`git-interactive-rebase`, `software-design`, `supabase`,
+`supabase-postgres-best-practices`, `trello-workflow`, and `tube-scholar`. They are available in plain Codex and
 all five profiles. Add general-purpose skills under `shared/skills/<name>/SKILL.md`,
 then rerun the installer to refresh the managed paths. Start a fresh session
 after changing the base skill configuration. This does not enable another

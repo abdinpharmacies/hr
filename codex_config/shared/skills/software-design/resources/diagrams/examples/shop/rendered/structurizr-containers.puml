@@ -1,0 +1,64 @@
+@startuml
+title <size:24>Container View: Shop</size>
+
+set separator none
+left to right direction
+skinparam ranksep 60
+skinparam nodesep 30
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element
+  .Element-RWxlbWVudA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+  }
+  // Shop
+  .Boundary-U2hvcA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+rectangle "==Customer\n<size:16>[Person]</size>" <<Element-RWxlbWVudA==>> as Customer
+
+rectangle "Shop\n<size:16>[Software System]</size>" <<Boundary-U2hvcA==>> {
+  rectangle "==Web App\n<size:16>[Container: React]</size>\n\nCustomer storefront" <<Element-RWxlbWVudA==>> as Shop.WebApp
+  rectangle "==Order API\n<size:16>[Container: ASP.NET Core]</size>\n\nAccepts and tracks orders" <<Element-RWxlbWVudA==>> as Shop.OrderAPI
+  rectangle "==Order DB\n<size:16>[Container: PostgreSQL]</size>\n\nStores orders" <<Element-RWxlbWVudA==>> as Shop.OrderDB
+  rectangle "==Message Queue\n<size:16>[Container: RabbitMQ]</size>\n\nDelivers domain events" <<Element-RWxlbWVudA==>> as Shop.MessageQueue
+  rectangle "==Email Worker\n<size:16>[Container: .NET Worker]</size>\n\nSends order email" <<Element-RWxlbWVudA==>> as Shop.EmailWorker
+}
+
+Shop.WebApp --> Shop.OrderAPI <<Relationship-UmVsYXRpb25zaGlw>> : "Creates orders\n<size:16>[HTTPS/JSON]</size>"
+Shop.OrderAPI --> Shop.OrderDB <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and writes\n<size:16>[SQL/TLS]</size>"
+Shop.OrderAPI --> Shop.MessageQueue <<Relationship-UmVsYXRpb25zaGlw>> : "Publishes OrderPlaced\n<size:16>[AMQP]</size>"
+Shop.MessageQueue --> Shop.EmailWorker <<Relationship-UmVsYXRpb25zaGlw>> : "Delivers events\n<size:16>[AMQP]</size>"
+Customer --> Shop.WebApp <<Relationship-UmVsYXRpb25zaGlw>> : "Browses and orders\n<size:16>[HTTPS]</size>"
+
+@enduml

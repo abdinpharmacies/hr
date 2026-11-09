@@ -1,0 +1,5 @@
+# REA evidence routing
+
+Use `reverse-engineer-anything` for shipped Owl/JavaScript assets, captured web-client or portal behavior, and differences between deployed asset versions. `odoo-security-review` owns authorization conclusions: trace the observation through controller/public method, normal-user ORM access, ACLs, record rules, field groups, and company/branch boundaries. Hidden controls and client request contents do not prove server enforcement. Continue source reviews without REA; use it only to resolve an artifact/runtime evidence gap.
+
+Keep REA as a separate supporting skill and load its references on demand. Its MCP registration is disabled pending the reviewed runtime installation; skill availability does not install tools. Use actual tool schemas and record artifact/version identity, coverage, limitations, and the distinction between static observations and executed checks. Preserve the agreed target scope; a discovered endpoint is not automatically authorized for active testing.

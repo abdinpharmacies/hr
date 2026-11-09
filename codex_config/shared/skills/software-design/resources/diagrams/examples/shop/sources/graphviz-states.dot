@@ -1,0 +1,13 @@
+digraph order_states {
+  rankdir=LR;
+  node [shape=ellipse];
+  Start [shape=point];
+  Pending; Paid; Fulfilment; Shipped; Delivered; Cancelled; Refunded;
+  Start -> Pending;
+  Pending -> Paid [label="payment accepted"];
+  Pending -> Cancelled [label="timeout / cancel"];
+  Paid -> Fulfilment [label="reserve stock"];
+  Fulfilment -> Shipped [label="carrier pickup"];
+  Shipped -> Delivered [label="delivery confirmed"];
+  Paid -> Refunded [label="refund approved"];
+}

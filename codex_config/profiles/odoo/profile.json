@@ -4,13 +4,14 @@
   "config_overrides": "profiles/odoo/config-overrides.toml",
   "instructions": [
     "profiles/odoo/instructions/odoo-core.md",
-    "profiles/odoo/instructions/odoo-review-rules.md"
+    "profiles/odoo/instructions/odoo-review-rules.md",
+    "profiles/odoo/instructions/rea-evidence.md"
+  ],
+  "include_skills": [
+    "profiles/flutter/skills/apple-design"
   ],
   "retired_skills": [
     "odoo-module-workflow"
   ],
-  "agents": [],
-  "include_skills": [
-    "profiles/flutter/skills/ui-ux-pro-max"
-  ]
+  "agents": []
 }

@@ -1,0 +1,6 @@
+#separator:tab
+#html:true
+#tags column:3
+#deck:Caching test (AR)
+يعني إيه Cache؟	تخزين سريع للداتا السخنة.	basics
+يعني إيه Eviction؟	مسح عناصر لما الـ Cache يتملي.	basics

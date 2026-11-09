@@ -1,0 +1,21 @@
+# Laboratory (local testing only, not part of the skill)
+laboratory/
+
+# Environment files (may contain credentials or local overrides)
+.env
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local tool configuration (MCP servers, Claude settings, Serena state)
+.mcp.json
+.claude/
+.serena/

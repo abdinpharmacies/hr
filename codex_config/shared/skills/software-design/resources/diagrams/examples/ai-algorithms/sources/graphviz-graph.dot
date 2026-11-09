@@ -1,0 +1,21 @@
+digraph GraphStructure {
+  rankdir=LR;
+  graph [bgcolor="transparent", nodesep="0.45", ranksep="0.7"];
+  node [shape=circle, style=filled, fillcolor="#e8f1ff", color="#4f81bd", fontname="Arial", fontsize=11];
+  edge [color="#666666", fontname="Arial", fontsize=9];
+
+  A [label="A"];
+  B [label="B"];
+  C [label="C"];
+  D [label="D"];
+  E [label="E"];
+  F [label="F"];
+
+  A -> B [label="4"];
+  A -> C [label="2"];
+  B -> D [label="5"];
+  C -> B [label="1"];
+  C -> E [label="7"];
+  D -> F [label="3"];
+  E -> F [label="2"];
+}

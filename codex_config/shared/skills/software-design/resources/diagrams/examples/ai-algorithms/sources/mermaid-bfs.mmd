@@ -1,0 +1,17 @@
+flowchart TB
+    start([Start at A]) --> enqueue["1. Queue = A<br/>Visited = {A}"]
+    enqueue --> pop["2. Pop next vertex"]
+    pop --> inspect{"Unvisited neighbors?"}
+    inspect -- Yes --> mark["3. Mark neighbor visited"]
+    mark --> push["4. Push neighbor into queue"]
+    push --> inspect
+    inspect -- No --> more{"Queue empty?"}
+    more -- No --> pop
+    more -- Yes --> done([Traversal complete])
+
+    classDef state fill:#e8f1ff,stroke:#4f81bd,color:#17365d
+    classDef decision fill:#fff2cc,stroke:#bf9000,color:#5b4500
+    classDef action fill:#e2f0d9,stroke:#70ad47,color:#274e13
+    class start,done state
+    class inspect,more decision
+    class enqueue,pop,mark,push action

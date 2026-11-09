@@ -1,0 +1,12 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.000 --> 00:00:04.000 align:start position:0%
+today<00:00:00.500><c> we</c><00:00:01.000><c> talk</c><00:00:01.500><c> about</c><00:00:02.000><c> caching</c>
+
+00:00:30.000 --> 00:00:34.000 align:start position:0%
+a<00:00:30.400><c> cache</c><00:00:30.800><c> keeps</c><00:00:31.200><c> hot</c><00:00:31.600><c> data</c><00:00:32.000><c> close</c>
+
+00:01:30.000 --> 00:01:34.000 align:start position:0%
+when<00:01:30.400><c> the</c><00:01:30.800><c> cache</c><00:01:31.200><c> is</c><00:01:31.600><c> full</c><00:01:32.000><c> we</c><00:01:32.400><c> evict</c>

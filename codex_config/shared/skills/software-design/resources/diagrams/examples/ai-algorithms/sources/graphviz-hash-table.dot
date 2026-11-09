@@ -1,0 +1,19 @@
+digraph HashTable {
+  rankdir=LR;
+  graph [bgcolor="transparent", nodesep="0.4", ranksep="0.65"];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, color="#4f81bd"];
+  edge [color="#666666", fontname="Arial", fontsize=9];
+
+  hash [label="hash(key)", shape=diamond, style="filled", fillcolor="#fff2cc", color="#bf9000"];
+  table [label="{<b0> 0 | <b1> 1 | <b2> 2 | <b3> 3 | <b4> 4}", shape=record, fillcolor="#e8f1ff"];
+  entry0 [label="(cat, 12)", fillcolor="#e2f0d9", color="#70ad47"];
+  entry1 [label="(dog, 7)", fillcolor="#e2f0d9", color="#70ad47"];
+  entry2 [label="(owl, 19)", fillcolor="#e2f0d9", color="#70ad47"];
+  lookup [label="lookup(\"cat\")", shape=ellipse, fillcolor="#fce4d6", color="#c55a11"];
+
+  lookup -> hash [label="key"];
+  hash -> table [label="index"];
+  table:b0 -> entry0 [label="bucket"];
+  table:b1 -> entry1 [label="bucket"];
+  table:b2 -> entry2 [label="bucket"];
+}

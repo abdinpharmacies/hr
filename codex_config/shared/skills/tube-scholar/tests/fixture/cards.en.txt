@@ -1,0 +1,6 @@
+#separator:tab
+#html:true
+#tags column:3
+#deck:Caching test (EN)
+What is a cache?	Fast storage for hot data.	basics
+What is eviction?	Removing entries when the cache is full.	basics

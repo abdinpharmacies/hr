@@ -1,0 +1,16 @@
+@startuml
+title Shop deployment view
+node "Cloud region" {
+  node "Kubernetes cluster" {
+    artifact "Web App" as web
+    artifact "Order API" as api
+    artifact "Email Worker" as worker
+  }
+  database "PostgreSQL" as db
+  queue "Managed Message Queue" as queue
+}
+web --> api : HTTPS
+api --> db : SQL/TLS
+api --> queue : publish / AMQP
+queue --> worker : consume / AMQP
+@enduml

@@ -1,0 +1,12 @@
+sequenceDiagram
+    actor Customer
+    participant Web as Web App
+    participant API as Order API
+    participant Queue as Message Queue
+    participant Worker as Email Worker
+    Customer->>Web: Place order
+    Web->>API: POST /orders
+    API->>Queue: Publish OrderPlaced
+    API-->>Web: 201 Created
+    Queue-->>Worker: OrderPlaced
+    Worker-->>Customer: Send confirmation

@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible problem with the skill, scripts, examples, or renderers.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- software-diagrams:bug-report -->
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the incorrect result or failure.
+      placeholder: Tell us what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: List the smallest set of steps and commands that reproduces the problem.
+      placeholder: |
+        1. Run ...
+        2. Open ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include OS, Node.js, Java, renderer versions, and the repository revision.
+      placeholder: Windows 11, Node.js 22, Java 17, commit ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or source
+      description: Paste relevant logs or a minimal diagram source. Remove secrets first.
+      render: text

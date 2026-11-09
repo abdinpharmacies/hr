@@ -1,0 +1,33 @@
+@startuml
+title ResNet residual block
+left to right direction
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+component "Input x" as input
+component "Conv 3×3" as conv1
+component "BatchNorm" as bn1
+component "ReLU" as relu1
+component "Conv 3×3" as conv2
+component "BatchNorm" as bn2
+component "Add" as add
+component "ReLU" as relu2
+component "Output y" as output
+
+input --> conv1 : feature map
+conv1 --> bn1
+bn1 --> relu1
+relu1 --> conv2
+conv2 --> bn2
+bn2 --> add : F(x)
+input --> add : identity shortcut
+add --> relu2
+relu2 --> output
+
+note right of add
+  y = ReLU(F(x) + x)
+  If dimensions differ,
+  use a 1×1 projection
+  on the shortcut path.
+end note
+@enduml

@@ -1,0 +1,21 @@
+digraph Stack {
+  rankdir=TB;
+  graph [bgcolor="transparent", nodesep="0.35", ranksep="0.35"];
+  node [shape=box, style="rounded,filled", fillcolor="#e2f0d9", color="#70ad47", fontname="Arial", fontsize=11, width=1.5];
+  edge [color="#666666", fontname="Arial", fontsize=9];
+
+  top [label="TOP", shape=plaintext, fontcolor="#c55a11"];
+  item3 [label="42"];
+  item2 [label="17"];
+  item1 [label="8"];
+  bottom [label="BOTTOM", shape=plaintext, fontcolor="#666666"];
+  push [label="push(x)", shape=ellipse, fillcolor="#fff2cc", color="#bf9000"];
+  pop [label="pop()", shape=ellipse, fillcolor="#fce4d6", color="#c55a11"];
+
+  push -> top [label="insert"];
+  top -> item3 [label="peek"];
+  item3 -> item2;
+  item2 -> item1;
+  item1 -> bottom;
+  top -> pop [label="remove", style=dashed, constraint=false];
+}

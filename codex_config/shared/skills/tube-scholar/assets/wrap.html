@@ -1,0 +1,101 @@
+<div class="wrap" dir="%%DIR%%" lang="%%LANG%%" data-lang="%%LANG%%"%%HIDDEN%%>
+  <header class="top">
+    <canvas id="net" class="net" aria-hidden="true"></canvas>
+    <div class="eyebrow"><span class="pill">STUDY GUIDE</span><span>%%CATEGORY%%</span><span>·</span><span>%%EDITION%%</span></div>
+    <div class="hero">
+      <div>
+        <a class="thumb" href="%%VIDEO_URL%%" target="_blank" rel="noopener" aria-label="%%T_play%%">
+          <img src="%%IMG_THUMB%%" alt="%%T_thumb_alt%%">
+          <span class="play"><i></i></span>
+          <span class="dur">%%DURATION%%</span>
+        </a>
+        <div class="stats">%%STATS%%</div>
+        <div class="asof">%%T_asof%%</div>
+      </div>
+      <div>
+        %%ORIG%%
+        <h1>%%H1%% <em>%%H1_EM%%</em></h1>
+        <p class="sub">%%SUB%%</p>
+        <div class="facts">%%FACTS%%</div>
+        <div class="channel">
+          <div class="banner"%%BANNER_STYLE%%></div>
+          <img class="av" src="%%IMG_AVATAR%%" alt="%%CHANNEL%%">
+          <div class="who">
+            <div class="nm" dir="ltr">%%CHANNEL%%%%VERIFIED%%</div>
+            <div class="meta" dir="ltr">%%HANDLE%%</div>
+            <div class="role">%%ROLE%%</div>
+          </div>
+          <div class="acts">
+            <a class="lnk yt" href="%%VIDEO_URL%%" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>%%T_watch%%</a>
+            <a class="lnk" href="%%CHANNEL_URL%%" target="_blank" rel="noopener">%%T_channel%%</a>
+          </div>
+        </div>
+        <div class="tags" dir="ltr">%%TAGS%%</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="rail" aria-label="%%T_sections%%">
+    <details open id="navd"><summary>%%T_sections%%</summary>
+      <div class="srch"><input id="q-search" type="search" placeholder="%%T_search%%" aria-label="%%T_search%%" autocomplete="off"><div class="srch-res" id="srchres" hidden></div></div>
+      <div class="rail-h">%%T_in_guide%%</div>
+      <ol>%%NAV%%</ol>
+      <div class="rail-card rail-prog">
+        <div class="rp-top"><b>%%T_progress%%</b><span id="donec" class="donec">0 / 0</span></div>
+        <div class="bar"><i id="doneb"></i></div>
+        <button class="qbtn" type="button" aria-pressed="false"><span class="sw" aria-hidden="true"></span>%%T_quick%%</button>
+      </div>
+      <div class="rail-card">%%T_how%%</div>
+    </details>
+  </nav>
+
+  <main>
+    <div class="quick-note" role="status">%%T_quick_note%%</div>
+    <div class="lead-note">
+      <span class="ic" aria-hidden="true">i</span>
+      <div><p>%%T_lead1%%</p><p>%%T_lead2%%</p></div>
+    </div>
+
+    %%TLDR%%
+
+    %%CHAPTERS_SECTION%%
+
+    %%BODY%%
+
+    %%RESOURCES_SECTION%%
+
+    <section class="sec lv-ref cards-sec" id="cards">
+      <header class="sh"><span class="sn" aria-hidden="true">✦</span><div class="st">
+        <span class="lvl"><span class="dot"></span>%%T_cards_lvl%%</span>
+        <h2>%%T_cards_h%%</h2>
+        <div class="sm"><span>%%T_cards_sm%%</span></div>
+      </div></header>
+      <div class="filters" id="filters" role="group" aria-label="%%T_filter%%"></div>
+      <div class="filters lfilters" id="lfilters" role="group" aria-label="%%T_filter%%"></div>
+      <div class="deck">
+        <button class="card" id="card" type="button" aria-live="polite">
+          <span class="side"><b id="side"></b><span id="ctag"></span></span>
+          <span class="q" id="q"></span>
+          <span class="a" id="a" hidden></span>
+          <span class="hint" id="hint"></span>
+        </button>
+      </div>
+      <div class="ctl">
+        <button class="btn" id="prev" type="button">%%T_prev%%</button>
+        <button class="btn pri" id="next" type="button">%%T_next%%</button>
+        <button class="btn know" id="know" type="button" disabled>%%T_know%%</button>
+        <button class="btn again" id="again" type="button" disabled>%%T_again%%</button>
+        <button class="btn" id="shuf" type="button">%%T_shuffle%%</button>
+        <span class="count" id="count"></span>
+      </div>
+      <div class="bar"><i id="cbar"></i></div>
+      <p class="known" id="known"></p>
+      <p class="anki">%%T_anki%%</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <img src="%%IMG_AVATAR%%" alt="">
+    <div>%%FOOTER%%</div>
+  </footer>
+</div>

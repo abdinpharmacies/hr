@@ -1,0 +1,47 @@
+{
+  "name": "software-diagrams",
+  "version": "0.1.0",
+  "description": "Portable skill and reproducible toolchain for creating, rendering, validating, embedding, and redrawing software diagrams in Figma/FigJam",
+  "main": "index.js",
+  "scripts": {
+    "render": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-all.ps1",
+    "render:unix": "bash scripts/render-all.sh",
+    "render:wasm": "node scripts/render-wasm.mjs",
+    "validate:manifest": "node scripts/validate-manifest.mjs"
+  },
+  "keywords": [
+    "agent-skill",
+    "software-diagrams",
+    "architecture-diagrams",
+    "software-architecture",
+    "uml",
+    "c4-model",
+    "mermaid",
+    "plantuml",
+    "structurizr",
+    "d2",
+    "graphviz",
+    "drawio",
+    "figma",
+    "figjam",
+    "diagram-redrawing",
+    "sequence-diagram",
+    "component-diagram",
+    "deployment-diagram",
+    "dependency-graph",
+    "architecture-as-code",
+    "diagrams-as-code"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@hpcc-js/wasm-graphviz": "^1.29.2",
+    "@terrastruct/d2": "^0.1.33",
+    "drawio-headless": "^0.4.2",
+    "@mermaid-js/mermaid-cli": "^12.0.0"
+  },
+  "overrides": {
+    "katex": "0.18.2"
+  }
+}

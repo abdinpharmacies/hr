@@ -1,0 +1,12 @@
+direction: right
+start: Cart submitted { shape: oval }
+validate: Validate cart
+payment: Authorize payment
+stock: Reserve stock
+created: Order created { shape: oval }
+reject: Reject checkout { shape: oval }
+start -> validate -> payment
+payment -> stock: approved
+payment -> reject: declined
+stock -> created: available
+stock -> reject: unavailable

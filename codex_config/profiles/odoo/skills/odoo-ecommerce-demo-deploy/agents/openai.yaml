@@ -1,0 +1,4 @@
+interface:
+  display_name: "Odoo Ecommerce Demo Deploy"
+  short_description: "Deploy the Odoo ecommerce demo safely"
+  default_prompt: "Use $odoo-ecommerce-demo-deploy to deploy the approved ecommerce demo changes."

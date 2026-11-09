@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Paid: payment accepted
+    Pending --> Cancelled: timeout / cancel
+    Paid --> Fulfilment: reserve stock
+    Fulfilment --> Shipped: carrier pickup
+    Shipped --> Delivered: delivery confirmed
+    Paid --> Refunded: refund approved
+    Cancelled --> [*]
+    Delivered --> [*]
+    Refunded --> [*]

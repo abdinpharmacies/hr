@@ -1,0 +1,38 @@
+direction: right
+
+client: Application
+gateway: API gateway {
+  shape: hexagon
+}
+router: MoE router {
+  shape: diamond
+}
+
+experts: Expert pool {
+  direction: down
+  expert1: Expert 1
+  expert2: Expert 2
+  expert3: Expert 3
+  expert4: Expert 4
+}
+
+shared: Shared expert
+merge: Combine expert outputs
+head: Decoder output
+cache: KV cache {
+  shape: cylinder
+}
+
+client -> gateway: prompt
+gateway -> router: tokenized request
+router -> experts.expert1: top-k route
+router -> experts.expert2: top-k route
+router -> experts.expert3: top-k route
+experts.expert1 -> merge
+experts.expert2 -> merge
+experts.expert3 -> merge
+router -> shared: shared path
+shared -> merge
+merge -> head: next-token logits
+head -> cache: update state
+cache -> head: reuse past keys/values

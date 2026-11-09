@@ -1,0 +1,14 @@
+{
+  "page_title": "Caching Test Guide",
+  "langs": ["ar", "en"],
+  "h1": {"ar": "دليل الـ Caching:", "en": "Caching:"},
+  "h1_em": {"ar": "في 10 دقايق", "en": "in 10 minutes"},
+  "sub": {"ar": "دليل تجريبي للاختبارات.", "en": "A synthetic guide used by the test suite."},
+  "speaker_role": {"ar": "متحدث تجريبي", "en": "A test speaker"},
+  "resources": [{"url": "https://example.com/caching", "title": "Caching notes", "kicker": {"ar": "مرجع", "en": "REFERENCE"}, "note": {"ar": "رابط تجريبي.", "en": "A test link."}}],
+  "socials": [{"label": "YouTube", "url": "https://www.youtube.com/@example"}],
+  "card_tags": {"ar": {"basics": "الأساسيات"}, "en": {"basics": "Basics"}},
+  "card_levels": {"basics": "basic"},
+  "chapter_map": {"Cache Basics": "1"},
+  "tags": ["Caching", "SystemDesign"]
+}

@@ -1,0 +1,24 @@
+flowchart LR
+    tokens[Input tokens] --> embed[Token embedding]
+    positions[Position encoding] --> add((+))
+    embed --> add
+    add --> norm1[Layer norm]
+    norm1 --> qkv[Linear projections<br/>Q / K / V]
+    qkv --> heads[Multi-head self-attention]
+    heads --> attn[Attention output]
+    attn --> add2((+))
+    norm1 --> add2
+    add2 --> norm2[Layer norm]
+    norm2 --> ffn[Feed-forward network<br/>Linear → GELU → Linear]
+    ffn --> add3((+))
+    add2 --> add3
+    add3 --> block[Transformer block output]
+
+    classDef input fill:#e8f1ff,stroke:#4f81bd,color:#17365d
+    classDef compute fill:#fff2cc,stroke:#bf9000,color:#5b4500
+    classDef norm fill:#e2f0d9,stroke:#70ad47,color:#274e13
+    classDef residual fill:#fce4d6,stroke:#c55a11,color:#7f2704
+    class tokens,positions input
+    class embed,qkv,heads,attn,ffn,block compute
+    class norm1,norm2 norm
+    class add,add2,add3 residual

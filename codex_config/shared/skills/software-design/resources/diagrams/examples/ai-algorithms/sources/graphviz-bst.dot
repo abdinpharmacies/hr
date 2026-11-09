@@ -1,0 +1,25 @@
+digraph BinarySearchTree {
+  rankdir=TB;
+  graph [bgcolor="transparent", nodesep="0.4", ranksep="0.55"];
+  node [shape=circle, style=filled, fillcolor="#e8f1ff", color="#4f81bd", fontname="Arial", fontsize=11];
+  edge [color="#666666", fontname="Arial", fontsize=9];
+
+  n8 [label="8"];
+  n3 [label="3"];
+  n10 [label="10"];
+  n1 [label="1"];
+  n6 [label="6"];
+  n14 [label="14"];
+  n4 [label="4"];
+  n7 [label="7"];
+  n13 [label="13"];
+
+  n8 -> n3 [label="<"];
+  n8 -> n10 [label=">"];
+  n3 -> n1 [label="<"];
+  n3 -> n6 [label=">"];
+  n10 -> n14 [label=">"];
+  n6 -> n4 [label="<"];
+  n6 -> n7 [label=">"];
+  n14 -> n13 [label="<"];
+}

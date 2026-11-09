@@ -1,0 +1,34 @@
+name: Feature request
+description: Suggest an improvement to the skill, workflow, renderer support, or examples.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- software-diagrams:feature-request -->
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What problem would this feature solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the workflow or behavior you would like to see.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any workaround or alternative you have tried.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add examples, screenshots, links, or related issues.

@@ -1,0 +1,25 @@
+digraph TransformerBlock {
+  rankdir=LR;
+  graph [bgcolor="transparent", pad="0.2", nodesep="0.35", ranksep="0.6"];
+  node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, color="#4f81bd", fillcolor="#e8f1ff"];
+  edge [fontname="Arial", fontsize=9, color="#666666"];
+
+  input [label="Token + position\nembeddings"];
+  norm1 [label="LayerNorm", fillcolor="#e2f0d9", color="#70ad47"];
+  attn [label="Multi-head\nself-attention", fillcolor="#fff2cc", color="#bf9000"];
+  add1 [label="Residual add", shape=circle, width=0.8, fillcolor="#fce4d6", color="#c55a11"];
+  norm2 [label="LayerNorm", fillcolor="#e2f0d9", color="#70ad47"];
+  ffn [label="Feed-forward\nnetwork", fillcolor="#fff2cc", color="#bf9000"];
+  add2 [label="Residual add", shape=circle, width=0.8, fillcolor="#fce4d6", color="#c55a11"];
+  output [label="Block output"];
+
+  input -> norm1;
+  norm1 -> attn [label="Q, K, V"];
+  attn -> add1 [label="F(x)"];
+  input -> add1 [label="skip"];
+  add1 -> norm2;
+  norm2 -> ffn;
+  ffn -> add2 [label="G(x)"];
+  add1 -> add2 [label="skip"];
+  add2 -> output;
+}

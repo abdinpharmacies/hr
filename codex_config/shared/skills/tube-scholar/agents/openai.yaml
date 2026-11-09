@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tube Scholar"
+  short_description: "YouTube transcripts and bilingual study guides"
+  default_prompt: "Use $tube-scholar to turn this YouTube video into a bilingual study guide."

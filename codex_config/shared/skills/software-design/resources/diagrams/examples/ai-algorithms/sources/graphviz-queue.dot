@@ -1,0 +1,21 @@
+digraph Queue {
+  rankdir=LR;
+  graph [bgcolor="transparent", nodesep="0.45", ranksep="0.7"];
+  node [shape=box, style="rounded,filled", fillcolor="#e8f1ff", color="#4f81bd", fontname="Arial", fontsize=11, width=1.2];
+  edge [color="#666666", fontname="Arial", fontsize=9];
+
+  dequeue [label="dequeue()", shape=ellipse, fillcolor="#fce4d6", color="#c55a11"];
+  front [label="FRONT", shape=plaintext, fontcolor="#c55a11"];
+  a [label="A"];
+  b [label="B"];
+  c [label="C"];
+  rear [label="REAR", shape=plaintext, fontcolor="#70ad47"];
+  enqueue [label="enqueue(x)", shape=ellipse, fillcolor="#e2f0d9", color="#70ad47"];
+
+  dequeue -> front [label="remove", style=dashed];
+  front -> a;
+  a -> b;
+  b -> c;
+  c -> rear;
+  rear -> enqueue [label="append", style=dashed];
+}

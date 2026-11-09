@@ -44,6 +44,8 @@ def adapt(text):
 
 
 def import_skill(src, dst):
+    if src.resolve() == dst.resolve():
+        return
     shutil.copytree(src, dst, dirs_exist_ok=True)
     meta, body = split_frontmatter((src / 'SKILL.md').read_text())
     if not meta.get('name') or not meta.get('description'):

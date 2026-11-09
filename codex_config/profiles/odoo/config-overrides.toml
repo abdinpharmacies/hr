@@ -7,3 +7,16 @@ trust_level = "trusted"
 
 [notice.model_migrations]
 "gpt-5.5" = "gpt-6.1-sol"
+
+[mcp_servers.postgres-mcp]
+command = "npx"
+args = ["-y", "@microsoft/postgres-mcp@0.2.0", "run", "--no-telemetry"]
+env = { POSTGRES_MCP_DISABLE_CWD_ACCESS = "1", POSTGRES_MCP_QUERY_TIMEOUT_MS = "540000" }
+enabled = false
+default_tools_approval_mode = "prompt"
+
+[mcp_servers.rea]
+command = "npx"
+args = ["--no-install", "rea-agents@6.8.0", "mcp"]
+enabled = false
+startup_timeout_sec = 120

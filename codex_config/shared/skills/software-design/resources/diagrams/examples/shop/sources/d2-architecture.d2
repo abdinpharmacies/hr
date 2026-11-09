@@ -1,0 +1,12 @@
+direction: right
+customer: Customer { shape: person }
+web: Web App
+api: Order API
+db: Order DB { shape: cylinder }
+queue: Message Queue { shape: queue }
+worker: Email Worker
+customer -> web: HTTPS
+web -> api: JSON
+api -> db: SQL
+api -> queue: publish
+queue -> worker: consume

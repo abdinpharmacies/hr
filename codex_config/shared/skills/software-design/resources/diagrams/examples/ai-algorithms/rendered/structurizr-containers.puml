@@ -1,0 +1,66 @@
+@startuml
+title <size:24>Container View: LLM platform</size>
+
+set separator none
+left to right direction
+skinparam ranksep 60
+skinparam nodesep 30
+hide stereotype
+
+<style>
+  root {
+    BackgroundColor: #ffffff;
+    FontColor: #444444;
+  }
+  // Element
+  .Element-RWxlbWVudA== {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+    MaximumWidth: 450;
+  }
+  // Relationship
+  .Relationship-UmVsYXRpb25zaGlw {
+    LineThickness: 2;
+    LineStyle: 10-10;
+    LineColor: #444444;
+    FontColor: #444444;
+    FontSize: 24;
+  }
+  // LLM platform
+  .Boundary-TExNIHBsYXRmb3Jt {
+    BackgroundColor: #ffffff;
+    LineColor: #444444;
+    LineStyle: 0;
+    LineThickness: 2;
+    FontColor: #444444;
+    FontSize: 24;
+    HorizontalAlignment: center;
+    Shadowing: 0;
+  }
+</style>
+
+rectangle "==Application user\n<size:16>[Person]</size>" <<Element-RWxlbWVudA==>> as Applicationuser
+
+rectangle "LLM platform\n<size:16>[Software System]</size>" <<Boundary-TExNIHBsYXRmb3Jt>> {
+  rectangle "==API gateway\n<size:16>[Container: Go]</size>\n\nAuthentication, rate limits, request shaping" <<Element-RWxlbWVudA==>> as LLMplatform.APIgateway
+  rectangle "==Model router\n<size:16>[Container: Python]</size>\n\nSelects a model and routes requests" <<Element-RWxlbWVudA==>> as LLMplatform.Modelrouter
+  rectangle "==Inference workers\n<size:16>[Container: CUDA / PyTorch]</size>\n\nRuns decoder-only Transformer inference" <<Element-RWxlbWVudA==>> as LLMplatform.Inferenceworkers
+  rectangle "==KV cache\n<size:16>[Container: Redis]</size>\n\nStores attention keys and values for active sessions" <<Element-RWxlbWVudA==>> as LLMplatform.KVcache
+  rectangle "==Model weights\n<size:16>[Container: Object storage]</size>\n\nVersioned checkpoint and tokenizer artifacts" <<Element-RWxlbWVudA==>> as LLMplatform.Modelweights
+  rectangle "==Telemetry\n<size:16>[Container: OpenTelemetry]</size>\n\nLatency, token usage and quality signals" <<Element-RWxlbWVudA==>> as LLMplatform.Telemetry
+}
+
+LLMplatform.APIgateway --> LLMplatform.Modelrouter <<Relationship-UmVsYXRpb25zaGlw>> : "Authorizes and forwards\n<size:16>[gRPC]</size>"
+LLMplatform.Modelrouter --> LLMplatform.Inferenceworkers <<Relationship-UmVsYXRpb25zaGlw>> : "Dispatches generation\n<size:16>[gRPC]</size>"
+LLMplatform.Inferenceworkers --> LLMplatform.KVcache <<Relationship-UmVsYXRpb25zaGlw>> : "Reads and writes KV state\n<size:16>[Redis protocol]</size>"
+LLMplatform.Inferenceworkers --> LLMplatform.Modelweights <<Relationship-UmVsYXRpb25zaGlw>> : "Loads model artifacts\n<size:16>[HTTPS]</size>"
+LLMplatform.Inferenceworkers --> LLMplatform.Telemetry <<Relationship-UmVsYXRpb25zaGlw>> : "Emits metrics\n<size:16>[OTLP]</size>"
+Applicationuser --> LLMplatform.APIgateway <<Relationship-UmVsYXRpb25zaGlw>> : "Sends prompts\n<size:16>[HTTPS/JSON]</size>"
+
+@enduml

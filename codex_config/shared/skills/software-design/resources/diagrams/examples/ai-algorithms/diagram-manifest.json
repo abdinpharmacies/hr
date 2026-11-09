@@ -1,0 +1,113 @@
+{
+  "profile": "tracked-source",
+  "diagrams": [
+    {
+      "id": "transformer-flow",
+      "purpose": "Explain a Transformer block data flow",
+      "source": "sources/mermaid-transformer.mmd",
+      "renderer": "mermaid",
+      "outputs": ["rendered/mermaid-transformer.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "bfs-flow",
+      "purpose": "Explain breadth-first search control flow",
+      "source": "sources/mermaid-bfs.mmd",
+      "renderer": "mermaid",
+      "outputs": ["rendered/mermaid-bfs.png"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "resnet-block",
+      "purpose": "Explain a ResNet residual block",
+      "source": "sources/plantuml-resnet.puml",
+      "renderer": "plantuml",
+      "outputs": ["rendered/plantuml-resnet.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "llm-serving",
+      "purpose": "Show LLM serving context and containers",
+      "source": "sources/structurizr-llm-serving.dsl",
+      "renderer": "structurizr",
+      "outputs": ["rendered/structurizr-context.svg", "rendered/structurizr-containers.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "moe-inference",
+      "purpose": "Show a generic mixture-of-experts inference flow",
+      "source": "sources/d2-moe-inference.d2",
+      "renderer": "d2",
+      "outputs": ["rendered/d2-moe-inference.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "transformer-dependencies",
+      "purpose": "Show Transformer residual dependencies",
+      "source": "sources/graphviz-transformer.dot",
+      "renderer": "graphviz",
+      "outputs": ["rendered/graphviz-transformer.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "binary-search-tree",
+      "purpose": "Show a binary search tree",
+      "source": "sources/graphviz-bst.dot",
+      "renderer": "graphviz",
+      "outputs": ["rendered/graphviz-bst.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "weighted-graph",
+      "purpose": "Show a weighted directed graph",
+      "source": "sources/graphviz-graph.dot",
+      "renderer": "graphviz",
+      "outputs": ["rendered/graphviz-graph.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "stack",
+      "purpose": "Show LIFO stack operations",
+      "source": "sources/graphviz-stack.dot",
+      "renderer": "graphviz",
+      "outputs": ["rendered/graphviz-stack.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "queue",
+      "purpose": "Show FIFO queue operations",
+      "source": "sources/graphviz-queue.dot",
+      "renderer": "graphviz",
+      "outputs": ["rendered/graphviz-queue.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "hash-table",
+      "purpose": "Show hash lookup and buckets",
+      "source": "sources/graphviz-hash-table.dot",
+      "renderer": "graphviz",
+      "outputs": ["rendered/graphviz-hash-table.svg"],
+      "documents": ["README.md"],
+      "publication": "both"
+    },
+    {
+      "id": "transformer-editable",
+      "purpose": "Provide an editable Transformer teaching view",
+      "source": "sources/drawio-transformer.drawio",
+      "renderer": "drawio",
+      "outputs": ["rendered/drawio-transformer.png"],
+      "documents": ["README.md"],
+      "publication": "both"
+    }
+  ]
+}

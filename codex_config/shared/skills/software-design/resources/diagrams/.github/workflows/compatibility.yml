@@ -1,0 +1,64 @@
+name: Cross-platform render
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    name: render (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: macos-latest
+          - os: windows-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install pinned renderers (Unix)
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: bash scripts/bootstrap.sh
+
+      - name: Install pinned renderers (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: pwsh -NoProfile -File scripts/bootstrap.ps1
+
+      - name: Render example gallery (Unix)
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: npm run render:unix
+
+      - name: Render example gallery (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: npm run render

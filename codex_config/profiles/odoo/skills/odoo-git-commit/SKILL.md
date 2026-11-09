@@ -1,6 +1,6 @@
 ---
 name: odoo-git-commit
-description: Create clean, atomic Conventional Commits for Odoo projects. Inspect the working tree and diffs, identify logical changes by Odoo module and feature area, split mixed changes when practical, stage only the intended changes, validate the staged diff, and create one focused commit per logical change.
+description: Create atomic Odoo commits using module/TAG subjects and Odoo-specific change categories. Inspect the working tree and diffs, identify logical changes by Odoo module and feature area, split mixed changes when practical, stage only the intended changes, validate the staged diff, and create one focused commit per logical change.
 ---
 
 # Odoo Git Commit Skill
@@ -9,9 +9,29 @@ Create clean, atomic, reviewable Git commits for Odoo projects.
 
 The primary rule is:
 
-> **One commit = one logical change.**
+> **One commit = one logical change in one Odoo module.**
+
+Never combine files from two Odoo modules in one commit, even when the changes support the same feature. Use separate commits in dependency order. Multiple independent changes within one module also require separate commits.
 
 Do not group unrelated Odoo modules, features, bug fixes, documentation, formatting, or tests into one commit merely because they were changed at the same time.
+
+---
+
+## Execution Mode
+
+Before staging, committing, or pushing, determine whether the user wants **push to remote**, **local commits only**, or **audit only**. Honor an explicit choice in the current request or an established choice for the same ongoing task; do not ask again unless the user changes it. Do not carry authorization from a completed task into a new task.
+
+If the mode is unspecified, ask one question in the user's language:
+
+> تحب أعمل الكوميتات وأرفعها على الريموت، ولا أحتفظ بيها لوكال، ولا أعمل Audit فقط من غير كوميتات؟
+
+Wait for the answer before changing files, the index, commit history, or remotes. Read-only inspection may continue while waiting. A generic request to "commit" or "start" does not choose between these modes, and silence is not a choice.
+
+- **Push to remote:** Create and validate the requested atomic commits, then push them to the intended remote and branch. Verify the outgoing commits and destination first; clarify any ambiguous destination or unrelated outgoing commits before pushing. Report whether the push succeeded.
+- **Local commits only:** Create and validate the requested atomic commits, keep them local, and do not push.
+- **Audit only:** Inspect Git state and diffs, report findings, and propose module-specific commit groups and subjects. Do not edit files, stage or unstage changes, create commits, or push. Label proposed subjects as proposals, not created commits.
+
+The staging and commit instructions below apply only to the two commit modes. An explicit mode authorizes its stated actions without another routine confirmation; it does not authorize history rewriting or unrelated changes.
 
 ---
 
@@ -20,216 +40,105 @@ Do not group unrelated Odoo modules, features, bug fixes, documentation, formatt
 For Odoo module changes, use:
 
 ```text
-<module>/<type>: <description>
+<module>/<TAG>: <description>
 ```
 
 Examples:
 
 ```text
-ab_ecommerce_storefront/feat: add return policy page
-ab_ecommerce_storefront/fix: limit purchase options to supported units
-ab_website_sale_product/feat: run website product sync in background
-ab_website_sale_product/fix: preserve manually edited website images
-ab_website_seo_optimization/feat: add catalog-aware SEO enrichment workflow
+ab_ecommerce_storefront/IMP: add return policy page
+ab_ecommerce_storefront/FIX: limit purchase options to supported units
+ab_website_sale_product/IMP: run website product sync in background
+ab_website_sale_product/FIX: preserve manually edited website images
+ab_website_seo_optimization/IMP: add catalog-aware SEO enrichment workflow
 ```
 
 For repository-wide changes that do not belong to one Odoo module, use:
 
 ```text
-<type>: <description>
+<TAG>: <description>
 ```
 
 Examples:
 
 ```text
-build: update project dependencies
-ci: add automated module validation
-docs: update development guide
+CHORE: update project dependencies
+CI: add automated module validation
+DOCS: update development guide
 ```
 
-Do NOT use the Conventional Commit parentheses format:
-
-```text
-feat(module): description
-```
-
-Use the Odoo repository convention:
-
-```text
-module/feat: description
-```
+Use the module-first format selected by the user, not Conventional Commit parentheses or Odoo's upstream tag-first format. Keep the description lowercase and imperative.
 
 ---
 
-# Commit Types
+# Commit Tags
 
-Use exactly one type.
+Use one uppercase tag. These categories are based on the [official Odoo 19 Git guidelines](https://github.com/odoo/documentation/blob/19.0/content/contributing/development/git_guidelines.rst), checked on 2026-10-13.
 
-## `feat`
+Upstream uses `[TAG] module: description` and supports explanatory bodies. This skill intentionally keeps the user's `module/TAG: description`, one-line messages, and strict one-module boundary. The generic image cheatsheet is background reference, not the authoritative tag list for this Odoo skill.
 
-Use when adding or changing user-visible, business, API, workflow, or functional behavior.
+## Official Odoo categories
+
+| Tag | Purpose |
+| --- | --- |
+| `FIX` | Correct defective behavior. |
+| `REF` | Restructure an existing implementation. |
+| `ADD` | Introduce a new module. |
+| `REM` | Remove obsolete code, views, or other resources. |
+| `REV` | Undo an earlier commit. |
+| `MOV` | Relocate or rename files or code. |
+| `REL` | Record a release. |
+| `IMP` | Extend or improve existing functionality. |
+| `MERGE` | Identify an actual merge commit. |
+| `CLA` | Record contributor-license signing. |
+| `I18N` | Update translations. |
+| `PERF` | Improve runtime performance. |
+| `CLN` | Clean up code. |
+| `LINT` | Apply lint corrections. |
+
+## Local project extensions
+
+These tags preserve useful project distinctions; they are not listed in the official Odoo 19 tag list above.
+
+| Tag | Purpose |
+| --- | --- |
+| `DOCS` | Add or update documentation. |
+| `TEST` | Add or change tests as the primary task. |
+| `BUILD` | Change build tooling, packaging, or dependency installation. |
+| `CI` | Change continuous integration workflows. |
+| `CHORE` | Perform routine maintenance, including routine dependency version updates. |
+
+## Selection rules for custom addons
+
+- Use `ADD` only for a new addon. A new field, wizard, report, controller, or workflow within an existing addon normally uses `IMP`; correcting broken behavior uses `FIX`.
+- UI and UX improvements use `IMP`, UI bugs use `FIX`, and formatting or lint passes use `LINT`. Do not generate `ux`, `style`, or `feat` tags for new commits.
+- Use `REF` for structural changes that preserve intended behavior, `CLN` for smaller cleanup, and `PERF` for a targeted performance change supported by evidence. Removing resources as the primary task uses `REM`.
+- Keep pure moves in `MOV` commits and behavior changes in subsequent commits. Odoo XML IDs and model names remain stable unless their rename is explicitly required by the task.
+- Use `I18N` for translation-only work. English strings and both Arabic catalogs needed for a feature or fix stay with that `IMP` or `FIX` commit; do not split files that are required for the same logical change.
+- Keep required imports, manifest entries, assets, ACLs, views, and directly related tests with their feature. Several file types do not imply several logical changes.
+- Independent documentation and tests use `DOCS` and `TEST`. Documentation or regression tests directly supporting a feature may remain with it.
+- Use `CHORE` for routine dependency updates, `BUILD` for changes to installation or packaging, and `FIX` when the dependency update resolves a specific defect.
+- `REV`, `REL`, `MERGE`, and `CLA` classify work already requested; they do not authorize reverting, releasing, merging, signing agreements, or publishing. Never use `MERGE` to bundle unrelated changes.
+- `REM` concerns source resources, not physical deletion of protected business records. Preserve the project's archival and data-integrity rules.
 
 Examples:
 
 ```text
-ab_ecommerce_storefront/feat: add return policy page
-ab_ecommerce_storefront/feat: build category menu from published catalog
-ab_website_sale_product/feat: run website product sync in background
+ab_queue_monitor/ADD: introduce job monitoring dashboard
+ab_sales/IMP: add order review workflow
+ab_sales/FIX: preserve branch access during order review
+ab_sales/I18N: translate order review messages into Arabic
+ab_sales/REF: extract order review validation
+ab_sales/PERF: batch order review lookups
+ab_sales/CLN: simplify redundant review conditions
+ab_sales/LINT: normalize review model formatting
+ab_sales/MOV: relocate review helpers
+ab_sales/REM: remove unused review template
+ab_sales/TEST: cover unauthorized order review
+ab_sales/DOCS: document order review workflow
 ```
 
----
-
-## `fix`
-
-Use when correcting existing incorrect behavior, bugs, regressions, validation problems, or broken workflows.
-
-Examples:
-
-```text
-ab_ecommerce_storefront/fix: limit purchase options to supported units
-ab_website_sale_product/fix: preserve manually edited website images
-ab_website_sale_product/fix: enforce E-Plus stock limits in cart
-```
-
----
-
-## `docs`
-
-Use only for documentation changes.
-
-Examples:
-
-```text
-ab_ecommerce_storefront/docs: update storefront commit history
-ab_website_sale_product/docs: record website sync commits
-docs: update development guide
-```
-
-Documentation changes should normally be separated from functional implementation changes unless they are inseparable and intentionally part of the same logical change.
-
----
-
-## `test`
-
-Use when the primary purpose is adding, removing, or modifying tests.
-
-Examples:
-
-```text
-ab_website_sale_product/test: add website sync regression coverage
-ab_sales/test: cover order cancellation workflow
-```
-
-Tests that are tightly coupled to a feature or bug fix may remain in the same commit when they directly validate that change.
-
-Do not automatically create a separate test commit when the test is part of the implementation of the same logical change.
-
----
-
-## `perf`
-
-Use when measurable performance improvement is the primary purpose.
-
-Examples:
-
-```text
-ab_website_sale_product/perf: optimize website product sync batching
-ab_ecommerce_storefront/perf: reduce storefront catalog queries
-```
-
-Do not use `perf` merely because a refactor might be faster.
-
----
-
-## `refactor`
-
-Use when restructuring code without intentionally changing behavior.
-
-Examples:
-
-```text
-ab_website_sale_product/refactor: extract sync batch processing
-ab_ecommerce_storefront/refactor: extract account validation helpers
-```
-
-If behavior changes, use `feat` or `fix` instead.
-
----
-
-## `style`
-
-Use only for formatting or code-style changes with no functional behavior change.
-
-Examples:
-
-```text
-ab_ecommerce_storefront/style: format storefront templates
-```
-
-Do not use `style` for visual/UI behavior changes.
-
-A CSS change that intentionally changes the website appearance is usually `feat` or `fix`, not `style`.
-
----
-
-## `build`
-
-Use for build-system, dependency, packaging, generated build configuration, or environment/build tooling changes.
-
-Examples:
-
-```text
-build: update Python dependencies
-build: update frontend asset configuration
-```
-
----
-
-## `ci`
-
-Use for continuous integration and automated pipeline changes.
-
-Examples:
-
-```text
-ci: add Odoo module validation pipeline
-ci: run module tests on pull requests
-```
-
----
-
-## `chore`
-
-Use only for repository maintenance that does not fit a more specific category.
-
-Do not use `chore` as a generic fallback.
-
-Prefer:
-
-```text
-build
-ci
-docs
-test
-refactor
-perf
-```
-
-when one of those accurately describes the change.
-
----
-
-## `revert`
-
-Use when the purpose of the commit is explicitly to revert an earlier commit.
-
-Example:
-
-```text
-ab_website_sale_product/revert: revert background sync processing
-```
-
-Do not use `revert` for an ordinary bug fix that happens to undo previous behavior.
+Historical lowercase commit subjects remain unchanged when quoting history or recording changelogs. This naming convention applies to new commits; it does not authorize rewriting existing history.
 
 ---
 
@@ -304,16 +213,16 @@ README
 Do NOT create:
 
 ```text
-feat: update ecommerce project
+IMP: update ecommerce project
 ```
 
 Instead, separate the changes:
 
 ```text
-ab_ecommerce_storefront/fix: align account password mask in RTL layout
-ab_website_sale_product/perf: optimize website product sync
-ab_website_seo_optimization/feat: add catalog-aware SEO enrichment workflow
-docs: update project documentation
+ab_ecommerce_storefront/FIX: align account password mask in RTL layout
+ab_website_sale_product/PERF: optimize website product sync
+ab_website_seo_optimization/IMP: add catalog-aware SEO enrichment workflow
+DOCS: update project documentation
 ```
 
 The exact messages must be derived from the actual staged diff.
@@ -491,7 +400,7 @@ When a commit changes Odoo behavior, inspect the repository for relevant tests.
 If tests are part of the same logical change, keep them with the implementation:
 
 ```text
-ab_website_sale_product/fix: preserve manually edited website images
+ab_website_sale_product/FIX: preserve manually edited website images
 ```
 
 may contain:
@@ -506,7 +415,7 @@ in the same commit.
 If tests are independent or represent a separate test-only change, use:
 
 ```text
-ab_website_sale_product/test: add website image preservation coverage
+ab_website_sale_product/TEST: add website image preservation coverage
 ```
 
 Do not invent test commands.
@@ -531,25 +440,25 @@ The description must:
 Prefer:
 
 ```text
-ab_ecommerce_storefront/feat: add return policy page
+ab_ecommerce_storefront/IMP: add return policy page
 ```
 
 Avoid:
 
 ```text
-ab_ecommerce_storefront/feat: Added a new return policy page.
+ab_ecommerce_storefront/IMP: Added a new return policy page.
 ```
 
 Avoid:
 
 ```text
-ab_ecommerce_storefront/chore: changes
+ab_ecommerce_storefront/CHORE: changes
 ```
 
 Avoid:
 
 ```text
-ab_ecommerce_storefront/feat: modify several files for improvements
+ab_ecommerce_storefront/IMP: modify several files for improvements
 ```
 
 ---
@@ -579,7 +488,7 @@ one logical change
         ↓
 correct module
         ↓
-correct type
+correct tag
         ↓
 accurate description
 ```
@@ -599,7 +508,7 @@ For each logical change:
 2. Stage only its files/hunks
 3. Inspect git diff --cached
 4. Determine module
-5. Determine commit type
+5. Determine commit tag
 6. Generate one-line subject
 7. Commit
 8. Verify the commit
@@ -715,10 +624,11 @@ verify:
 [ ] staged diff is intentional
 [ ] staged diff contains one logical change
 [ ] correct Odoo module is identified
-[ ] correct commit type is selected
+[ ] staged module changes belong to exactly one Odoo module
+[ ] correct official Odoo tag or documented local extension is selected
 [ ] subject matches the staged diff
 [ ] subject is one line
-[ ] subject starts with lowercase
+[ ] tag is uppercase and description starts with lowercase
 [ ] subject has no trailing period
 [ ] no unrelated files are staged
 [ ] no secrets are staged
@@ -736,7 +646,7 @@ Never create a commit body or footer.
 
 # Output Contract
 
-When the user asks to create commits:
+Resolve the execution mode first. For audit only, report findings and proposed commit groups and subjects without changing Git state. For either commit mode:
 
 1. Inspect Git state.
 2. Inspect unstaged and staged diffs.
@@ -745,13 +655,14 @@ When the user asks to create commits:
 5. Stage only the intended change.
 6. Inspect the staged diff.
 7. Determine the Odoo module.
-8. Determine the commit type.
+8. Determine the commit tag.
 9. Create exactly one atomic commit.
 10. Repeat for remaining logical changes when requested.
 11. Verify the resulting Git state.
-12. Report the exact commit subject(s) that were created.
+12. Push only in push-to-remote mode, after verifying the destination and outgoing commits.
+13. Report the exact commit subject(s) that were created and whether they remain local or were pushed.
 
-Do not claim a commit was created unless `git commit` actually succeeded.
+Do not claim a commit was created unless `git commit` actually succeeded. Do not claim commits were pushed unless the push succeeded.
 
 ---
 
@@ -775,15 +686,15 @@ README.md
 If the changes represent three independent logical changes, create:
 
 ```text
-ab_ecommerce_storefront/fix: align account password mask in RTL layout
-ab_ecommerce_storefront/feat: add return policy page
-ab_website_sale_product/feat: run website product sync in background
+ab_ecommerce_storefront/FIX: align account password mask in RTL layout
+ab_ecommerce_storefront/IMP: add return policy page
+ab_website_sale_product/IMP: run website product sync in background
 ```
 
 and handle the README separately:
 
 ```text
-docs: update project documentation
+DOCS: update project documentation
 ```
 
 Do not combine them into one commit.

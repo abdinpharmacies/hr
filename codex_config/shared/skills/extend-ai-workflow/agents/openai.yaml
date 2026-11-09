@@ -1,0 +1,4 @@
+interface:
+  display_name: "Extend AI Workflow"
+  short_description: "Add and integrate workflow components safely"
+  default_prompt: "Use $extend-ai-workflow to add and fully integrate a component into ai_workflow."

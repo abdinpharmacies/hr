@@ -1,0 +1,5 @@
+{"id": "TESTVIDEO01", "title": "Caching in 10 Minutes (test fixture)", "channel": "Example Channel", "channel_url": "https://www.youtube.com/@example",
+ "uploader_id": "@example", "channel_follower_count": 1200, "channel_is_verified": false, "upload_date": "20260101", "duration_string": "10:00",
+ "view_count": 4321, "like_count": 210, "comment_count": 12, "categories": ["Education"], "tags": ["caching", "system design"],
+ "chapters": [{"start_time": 0, "title": "Intro"}, {"start_time": 30, "title": "Cache Basics"}, {"start_time": 90, "title": "Eviction"}],
+ "description": "A synthetic video used only by the test suite.", "language": "en"}

@@ -1,0 +1,11 @@
+digraph shop_dependencies {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+  Web -> OrderAPI [label="HTTPS"];
+  OrderAPI -> OrderDB [label="SQL"];
+  OrderAPI -> Queue [label="AMQP publish"];
+  Queue -> EmailWorker [label="AMQP consume"];
+  EmailWorker -> MailProvider [label="HTTPS"];
+  OrderDB [shape=cylinder];
+  Queue [shape=component];
+}

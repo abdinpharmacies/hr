@@ -4,7 +4,9 @@ Verified with [Odoo 19 translations](https://www.odoo.com/documentation/19.0/dev
 [CLI](https://www.odoo.com/documentation/19.0/developer/reference/cli.html) and local
 `i18n export --help` on 2026-09-24.
 
-First run the targeted module upgrade from the validation skill on an authorized
+Determine the task-scoped owning modules as described in [the skill](../SKILL.md).
+Proceed with required translations without a separate approval question when the
+scope is clear. Run the targeted module upgrade from the validation skill on an authorized
 development DB, using correct addons paths and alternate ports. Export a fresh POT:
 
 ```bash

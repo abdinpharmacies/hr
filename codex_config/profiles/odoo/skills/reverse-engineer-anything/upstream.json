@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/morluto/rea",
+  "package_version": "6.8.0",
+  "skill_version": "49",
+  "files": {
+    "SKILL.md": "8d766911b3d3c6ced4d8928643d1d6d3826686aedcae56fe56a865b869398110",
+    "references/android-applications.md": "24ecaa1798eb4f28591884a7deb68df31e90313865515a23e3b466403f1abc39",
+    "references/connection-and-recovery.md": "4754441e63e4252a0b230cf5aa12b78c0716463905305059bb7dea6713ba0bfc",
+    "references/environments.md": "83e041f0a5243172af69eaadf62da0699617add3ff1d46b294e4bba7ece9d95f",
+    "references/evidence-workflows.md": "f44b68acc6ebaa60c1f5d0670e4f9ff7212d351a0ecc6e6ca77ce38b9177ea57",
+    "references/javascript-applications.md": "619cfd15ffdf466452cc32002ae357fefec59d5dcad4c9dfc27630138f0f719d",
+    "references/native-and-artifacts.md": "cf394568ae91e9017d63056adb8872fb1df9e2f6bbe544a95d0fd9f064b06dd5",
+    "references/runtime-observation.md": "852bd1e25e9f83f0e8c7d4f8441a043e2b2a7d5e39f729bf22ac77259a0207bd"
+  }
+}
