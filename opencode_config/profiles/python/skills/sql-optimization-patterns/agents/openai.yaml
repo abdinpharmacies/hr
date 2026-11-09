@@ -1,0 +1,25 @@
+interface:
+  display_name: "SQL Optimization Patterns"
+  short_description: "Safe SQL diagnosis, EXPLAIN analysis, index and rewrite recommendations, and database health or security reviews for PostgreSQL, MySQL, and MariaDB."
+  default_prompt: "Use $sql-optimization-patterns to diagnose this SQL issue and propose the safest fix."
+
+policy:
+  allow_implicit_invocation: true
+
+# Uncomment and configure if your environment uses Google's MCP Toolbox for
+# Databases or another MCP database server as the SQL execution layer.
+# The skill works without it — any SQL interface is sufficient.
+#
+# dependencies:
+#   tools:
+#     - type: "mcp"
+#       value: "toolbox-database"
+#       description: "Google MCP Toolbox for Databases — SQL execution interface"
+#       transport: "streamable_http"
+#       url: "https://your-toolbox-endpoint.run.app"
+#
+# Uncomment to add icons for the Codex UI:
+#
+#   icon_small: "./assets/icon-small.svg"
+#   icon_large: "./assets/icon-large.png"
+#   brand_color: "#336791"

@@ -25,7 +25,6 @@
       "git-commit": "allow",
       "git-interactive-rebase": "allow",
       "trello-workflow": "allow",
-      "writing-guidelines": "allow",
       "flutter-*": "allow",
       "dart-*": "allow",
       "bloc-signals": "allow",
@@ -35,7 +34,12 @@
       "signals-lint": "allow",
       "signals-migration-6-to-7": "allow",
       "signals-preact-dart": "allow",
-      "kaisel": "allow"
+      "kaisel": "allow",
+      "software-design": "allow",
+      "extend-ai-workflow": "allow",
+      "supabase": "allow",
+      "supabase-postgres-best-practices": "allow",
+      "tube-scholar": "allow"
     }
   }
 }

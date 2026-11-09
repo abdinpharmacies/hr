@@ -13,8 +13,12 @@
       "git-commit": "allow",
       "git-interactive-rebase": "allow",
       "trello-workflow": "allow",
-      "writing-guidelines": "allow",
-      "node-service-workflow": "allow"
+      "node-service-workflow": "allow",
+      "software-design": "allow",
+      "extend-ai-workflow": "allow",
+      "supabase": "allow",
+      "supabase-postgres-best-practices": "allow",
+      "tube-scholar": "allow"
     }
   }
 }

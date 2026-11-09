@@ -4,12 +4,16 @@
   "permission": {
     "skill": {
       "*": "deny",
+      "software-design": "allow",
       "customize-opencode": "allow",
+      "extend-ai-workflow": "allow",
       "find-skills": "allow",
       "git-commit": "allow",
       "git-interactive-rebase": "allow",
-      "trello-workflow": "allow",
-      "writing-guidelines": "allow"
+      "supabase": "allow",
+      "supabase-postgres-best-practices": "allow",
+      "tube-scholar": "allow",
+      "trello-workflow": "allow"
     }
   }
 }

@@ -14,7 +14,6 @@
       "git-commit": "allow",
       "git-interactive-rebase": "allow",
       "trello-workflow": "allow",
-      "writing-guidelines": "allow",
       "jaspr-content-models": "allow",
       "jaspr-convert-html": "allow",
       "jaspr-fundamentals": "allow",
@@ -35,7 +34,12 @@
       "dart-write-documentation": "allow",
       "bloc-signals": "allow",
       "signals-dart": "allow",
-      "signals-preact-dart": "allow"
+      "signals-preact-dart": "allow",
+      "software-design": "allow",
+      "extend-ai-workflow": "allow",
+      "supabase": "allow",
+      "supabase-postgres-best-practices": "allow",
+      "tube-scholar": "allow"
     }
   },
   "skills": {

@@ -22,10 +22,14 @@
       "git-commit": "allow",
       "git-interactive-rebase": "allow",
       "trello-workflow": "allow",
-      "writing-guidelines": "allow",
       "react-best-practices": "allow",
       "react-view-transitions": "allow",
-      "composition-patterns": "allow"
+      "composition-patterns": "allow",
+      "software-design": "allow",
+      "extend-ai-workflow": "allow",
+      "supabase": "allow",
+      "supabase-postgres-best-practices": "allow",
+      "tube-scholar": "allow"
     }
   }
 }
