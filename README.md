@@ -1,8 +1,50 @@
 # AI Workflow
 
 Codex and OpenCode CLI profiles for Flutter, React, Node and Odoo. Run the root
-`setup.py` from this checkout. Its current location is `/home/abdin_02/ai_workflow`;
-another machine can keep the complete directory anywhere, including paths with spaces.
+`setup.py` from this checkout; another machine can keep the complete directory
+anywhere, including paths with spaces.
+
+## This branch
+
+`ai_agents_workflow` selectively imports Odoo and shared Codex/OpenCode resources
+from `/home/abdin_02/ai_workflow`, local `main` commit
+`4915569b4861ca0b0ce840581ddfcf307b4839e9`. Existing Flutter, Jaspr, React and Node
+profile sources stay at their previous versions, apart from shared-skill permissions
+and the `apple-design` dependency required by Odoo. No Offensive or WordPress
+profile is added.
+
+The imported sources are `codex_config/shared`, `codex_config/profiles/odoo`,
+`opencode_config/profiles/python`, the OpenCode general policy and skills, and the
+common installers and launchers. Odoo includes 16 local skills, nine shared skills
+and `apple-design` (26 enabled skills). `apple-design` retains its upstream
+`codex_config/profiles/flutter/skills/apple-design` location. This branch keeps
+`reverse-engineer-anything` under `codex_config/profiles/odoo/skills` so it needs no
+Offensive profile; its runtime link is
+`~/.agents/skills/ai-workflow-odoo-reverse-engineer-anything`.
+
+Preview or install this branch's Odoo and shared resources explicitly:
+
+```bash
+python3 -B setup.py --profile odoo --skip-cli-install
+python3 -B setup.py --profile odoo --skip-cli-install --apply
+```
+
+The preview shows the complete write/link set. These commands regenerate Odoo,
+register shared and Odoo skills, and update the general OpenCode skill policy.
+They do not install packages. Existing runtime links owned by another checkout
+cause a conflict; review those before switching installations.
+The repository synchronization itself does not activate this checkout globally.
+
+For future selective synchronization, fetch the local source and use
+`git restore --source=<commit> --staged --worktree -- <paths>`. `git restore`
+has no `--track` option. Preserve this branch's dependency routing and profile
+registry when importing common scripts. Generated base/Odoo TOML is untracked
+and recreated by setup.
+
+The Odoo update includes the development pattern library, deployment/domain
+cutover guidance, Odoo commit conventions, UI/UX references and PostgreSQL
+analysis skills. The imported Postgres and REA MCP registrations remain disabled;
+setup does not install or authenticate either server.
 
 ## Requirements
 
@@ -72,8 +114,9 @@ and your machine's policy. WSL is optional and uses the Linux route instead.
 ## What gets installed
 
 Missing tools use the official npm packages `@openai/codex@latest` and
-`opencode-ai@1`. Codex must be >= 0.134.0. OpenCode stays on the 1.x family used
-by these profiles; OpenCode 2 requires a separate migration. Official npm
+`@opencode/cli@2`. Codex must be >= 0.134.0. Setup accepts OpenCode 1.x and 2.x;
+the imported profile launchers target OpenCode 2 and start a standalone server
+for profile-specific configuration. Official npm
 installation references: [OpenAI](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex)
 and [OpenCode](https://opencode.ai/docs/).
 
@@ -132,6 +175,8 @@ invocation and restores its previous value in PowerShell. Plain `codex` and
 `opencode` remain available. Start fresh sessions after changing profiles or
 instructions; these launchers do not switch existing desktop/IDE conversations.
 Codex Odoo and OpenCode Python/Odoo have separate rules and skill sets.
+The OpenCode 2 launchers use `--standalone` for profile sessions. Inspect the
+selected profile with `opencode-odoo api config.get`.
 
 ## Rules and skills
 
@@ -158,9 +203,12 @@ Profile rules are assembled into `developer_instructions`. `/status` can show
 profile developer instructions or skills. Project `AGENTS.md` files still load
 independently. Prose guidance differs from command-approval `.rules` files.
 
-Shared skills (`find-skills`, `git-commit`, `git-interactive-rebase`,
-`trello-workflow`, `writing-guidelines`) are enabled in plain Codex and every
-profile. Domain skills remain profile-specific. Flutter, Jaspr, React and Node have
+The nine shared skills (`extend-ai-workflow`, `find-skills`, `git-commit`,
+`git-interactive-rebase`, `software-design`, `supabase`,
+`supabase-postgres-best-practices`, `trello-workflow`, `tube-scholar`) are enabled
+in plain Codex and every profile. `software-design` replaces the retired
+`writing-guidelines`, `c4-diagrams` and `software-diagrams` skills.
+Domain skills remain profile-specific. Flutter, Jaspr, React and Node have
 specialist agents; Odoo uses conditional review instructions in the main session.
 
 `dart-flutter@dart-flutter` is enabled only for Flutter. Unlisted plugins keep
@@ -195,7 +243,7 @@ The target is under `${XDG_CONFIG_HOME:-~/.config}/opencode`: existing
 strict JSON; JSONC comments/trailing commas cause a preflight refusal rather than
 silently losing comments. Backups go under `setup-backups/`.
 
-Plain `opencode` allows only the five shared workflow skills and the built-in
+Plain `opencode` allows the nine shared workflow skills and the built-in
 `customize-opencode`. Other skills default to `deny`. Flutter allows its Dart/Flutter
 skills, React its three active local skills, Node `node-service-workflow`, and
 Python/Odoo its Odoo skills. The profiles include the shared allowlist too.
@@ -219,12 +267,13 @@ and [configuration merging](https://opencode.ai/docs/config/#precedence-order).
 ## Update and relocate
 
 ```bash
-python3 setup.py --skip-cli-install --apply
+python3 setup.py --profile odoo --skip-cli-install --apply
+python3 setup.py --profile all --skip-cli-install --apply
 python3 setup.py --upgrade
 python3 setup.py --upgrade --apply
 ```
 
-Use `--codex-version 0.159.3 --opencode-version 1.18.32` to select exact releases.
+Use `--codex-version 0.159.3 --opencode-version 2.0.5` to select exact releases.
 These flags affect packages being installed; add `--upgrade` to replace a detected
 CLI. The private-prefix copy takes precedence without uninstalling other copies.
 Windows commands also need `--powershell-profile "$PROFILE"`.
@@ -244,7 +293,7 @@ type codex-odoo opencode-odoo
 codex-odoo --version
 opencode-odoo --version
 codex --profile odoo debug prompt-input
-opencode-odoo debug config
+opencode-odoo api config.get
 ```
 
 An unchanged preview has empty `write`, `symlink`, `remove_owned_links` and
@@ -257,7 +306,11 @@ If shortcuts are missing, reload the selected startup file in the correct shell.
 Install Node LTS and reopen the terminal when npm is missing. Use `--upgrade` for
 an outdated Codex. Reconcile reported function/link conflicts before rerunning.
 
-Regression checks, using temporary homes and no model requests:
+The full upstream regression suite belongs to the matching upstream checkout.
+This branch retains older non-Odoo profiles and ignores the local `tests/`
+directories, so do not use an old local suite as an exact inventory assertion
+for the imported resources. Run applicable upstream setup tests against a copy
+of this branch with temporary homes and no model requests. Upstream entrypoints:
 
 ```bash
 python3 -B -m unittest discover -s tests -v
