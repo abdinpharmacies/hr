@@ -1577,10 +1577,15 @@ class TestWorkspace(TransactionCase):
             'name': 'Second WhatsApp', 'code': 'second-wa', 'provider': 'whatsapp',
             'branch_id': self.branch.id,
         })
-        other = self.env['ab_crm_conversation'].create({
-            'channel_id': channel.id, 'branch_id': self.branch.id,
-            'name': 'Second conversation', 'external_key': 'second', 'customer_id': customer.id,
-        })
+        from ..models.workspace import _WORKSPACE
+        flag = _WORKSPACE.set(True)
+        try:
+            other = self.env['ab_crm_conversation'].create({
+                'channel_id': channel.id, 'branch_id': self.branch.id,
+                'name': 'Second conversation', 'external_key': 'second', 'customer_id': customer.id,
+            })
+        finally:
+            _WORKSPACE.reset(flag)
         self.assertNotIn(other.id, [r['id'] for r in conversation.workspace_detail()['streams']])
         with self.assertRaises(AccessError):
             conversation.workspace_channel(other.id)
@@ -2242,3 +2247,34 @@ class TestWorkspace(TransactionCase):
             order.conversation_id.workspace_detail(message_ids=[True])
         with self.assertRaises(ValidationError):
             order.conversation_id.workspace_detail(message_ids=[message.id] * 51)
+
+    def test_template_picker_uses_preference_language_and_legacy_tags(self):
+        conversation = self.conversation()
+        self.staff.group_ids += self.env.ref('ab_crm_core.group_manager')
+        replies = self.env['ab_crm_saved_reply'].create([
+            {'name': 'EN | Greeting', 'body': 'Hello', 'branch_id': self.branch.id},
+            {'name': 'AR | Greeting', 'body': 'Arabic greeting fixture', 'branch_id': self.branch.id},
+        ])
+        replies.write({'language_code': False})
+        self.staff.lang = 'en_US'
+        self.assertEqual([row['id'] for row in conversation.workspace_templates()['items']], replies[:1].ids)
+        languages = self.env['res.lang'].with_context(active_test=False)
+        arabic = languages.search([('code', '=', 'ar_001')], limit=1)
+        arabic.active = True
+        generic = languages.search([('code', '=', 'ar')], limit=1)
+        if not generic:
+            generic = arabic.copy({'name': 'Arabic test', 'code': 'ar', 'iso_code': 'ar', 'url_code': 'ar-test'})
+        generic.active = True
+        for language in ('ar_001', 'ar'):
+            self.staff.lang = language
+            self.assertEqual([row['id'] for row in conversation.with_context(lang='en_US').workspace_templates()['items']], replies[1:].ids)
+        result = conversation.save_template('Custom greeting', 'Arabic custom fixture')
+        created = self.env['ab_crm_saved_reply'].browse(result['selected_id'])
+        self.assertEqual(created.language_code, 'ar')
+        self.assertIn(created.id, [row['id'] for row in result['items']])
+        conversation.save_template('Renamed legacy greeting', 'Updated', template_id=replies[1].id)
+        self.assertEqual(replies[1].language_code, 'ar')
+        self.staff.lang = 'en_US'
+        self.assertEqual([row['id'] for row in conversation.workspace_templates()['items']], replies[:1].ids)
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).workspace_templates()

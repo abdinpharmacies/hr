@@ -1,36 +1,51 @@
-import {Component, onWillStart, onWillUnmount, useState} from "@odoo/owl";
+import {Component, onWillUnmount, useState} from "@odoo/owl";
+import {AutoComplete} from "@web/core/autocomplete/autocomplete";
 import {Dialog} from "@web/core/dialog/dialog";
-import {user} from "@web/core/user";
 import {_t} from "@web/core/l10n/translation";
 import {LocationCard} from "./location";
 
 export class LocationDialog extends Component {
     static template = "ab_crm_sales_workspace.LocationDialog";
-    static components = {Dialog, LocationCard};
+    static components = {Dialog, LocationCard, AutoComplete};
     static props = {close: Function, call: Function, conversationId: Number, valid: Function, storeId: {type: Number, optional: true}, sent: {type: Function, optional: true}};
     setup() {
         this.title = _t("Choose branch");
-        this.state = useState({query: "", language: ["ar", "ar_001"].includes(user.context.lang) ? user.context.lang : "en_US", rows: [], preview: null, busy: false, error: "", includeDetails: false});
+        this.state = useState({query: "", preview: null, busy: false, error: "", includeDetails: false});
+        this.searchId = `ab-branch-search-${crypto.randomUUID()}`;
+        this.searchPlaceholder = _t("Name, region, address or store code");
+        this.sources = [{placeholder: _t("Searching…"), options: query => this.search(query)}];
         this.sequence = 0;
         this.tokens = {location: crypto.randomUUID(), details: crypto.randomUUID()};
-        onWillStart(async () => {
-            await this.search();
-            const selected = this.state.rows.find(row => row.store_id === this.props.storeId);
-            if (selected) await this.preview(selected.id);
-        });
         onWillUnmount(() => { this.destroyed = true; this.sequence++; });
     }
     check() {
         if (this.destroyed || !this.props.valid()) throw new Error(_t("This branch picker has expired. Open it again from the conversation."));
     }
-    async search() {
-        const sequence = ++this.sequence;
+    searchInput(event) {
+        this.sequence++;
+        this.state.query = event.target.value;
         this.state.preview = null;
+        this.state.error = "";
+    }
+    async search(query) {
+        const sequence = ++this.sequence;
+        if (!query.trim()) return [];
         try {
             this.check();
-            const rows = await this.props.call("ab_crm_conversation", "workspace_branch_directory", [[this.props.conversationId], this.state.query, this.state.language]);
-            if (sequence === this.sequence && !this.destroyed) this.state.rows = rows;
-        } catch (error) { this.state.error = error.data?.message || error.message; }
+            const rows = await this.props.call("ab_crm_conversation", "workspace_branch_directory", [[this.props.conversationId], query, "ar_001"]);
+            if (sequence !== this.sequence || this.destroyed) return [];
+            return rows.length ? rows.map(row => ({
+                label: [row.name, row.region, row.store_code].filter(Boolean).join(" · "),
+                onSelect: () => {
+                    if (sequence !== this.sequence || this.destroyed) return;
+                    this.state.query = row.name;
+                    this.preview(row.id);
+                },
+            })) : [{label: _t("No reviewed branches available.")}];
+        } catch (error) {
+            if (sequence === this.sequence && !this.destroyed) this.state.error = error.data?.message || error.message;
+            return [];
+        }
     }
     async preview(id) {
         const sequence = ++this.sequence;
@@ -38,16 +53,13 @@ export class LocationDialog extends Component {
         this.state.error = "";
         try {
             this.check();
-            const preview = await this.props.call("ab_crm_conversation", "workspace_branch_preview", [[this.props.conversationId], id, this.state.language]);
+            const preview = await this.props.call("ab_crm_conversation", "workspace_branch_preview", [[this.props.conversationId], id, "ar_001"]);
             if (sequence !== this.sequence || this.destroyed) return;
             this.state.preview = preview;
             this.tokens = {location: crypto.randomUUID(), details: crypto.randomUUID()};
-        } catch (error) { this.state.error = error.data?.message || error.message; }
-    }
-    async languageChanged() {
-        const id = this.state.preview?.id;
-        await this.search();
-        if (id) await this.preview(id);
+        } catch (error) {
+            if (sequence === this.sequence && !this.destroyed) this.state.error = error.data?.message || error.message;
+        }
     }
     async send() {
         if (this.state.busy || !this.state.preview) return;

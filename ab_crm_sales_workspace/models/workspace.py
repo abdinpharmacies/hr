@@ -869,7 +869,7 @@ class Conversation(models.Model):
         ], limit=1)
         if not message:
             return {'available': False}
-        detail = self.workspace_detail(before_id=message.id + 1)
+        detail = self.workspace_detail(through_id=message.id)
         return {'available': True, 'focus_message_id': message.id,
                 'messages': detail['messages'], 'has_older': detail['has_older']}
 
@@ -906,7 +906,7 @@ class Conversation(models.Model):
         message.check_access('read')
         if not message or message.conversation_id != self or message.direction != 'in':
             raise AccessError(_('Select a message from this conversation.'))
-        result = self.workspace_detail(before_id=message.id + 1)
+        result = self.workspace_detail(through_id=message.id)
         result['focus_message_id'] = message.id
         return result
 
@@ -930,8 +930,7 @@ class Conversation(models.Model):
         order = self.env['ab_crm_channel_order'].create({'conversation_id': self.id})
         return order.id
 
-    @api.model
-    def workspace_inbox(self, query='', before_id=False):
+    def _workspace_inbox_domain(self, query):
         session = self._workspace_actor()
         branches = self.env['ab_crm_chatter_api']._directory_branches(session)
         domain = [
@@ -956,9 +955,19 @@ class Conversation(models.Model):
                 ('customer_id.chatter_phone', 'ilike', query),
                 ('customer_id.phone', 'ilike', query),
             ]
+        return domain
+
+    @api.model
+    def workspace_inbox(self, query='', before_id=False):
+        session = self._workspace_actor()
+        domain = self._workspace_inbox_domain(query)
         if before_id:
             domain.append(('id', '<', int(before_id)))
         conversations = self.search(domain, limit=50, order='id desc')
+        return conversations._workspace_inbox_rows(session)
+
+    def _workspace_inbox_rows(self, session):
+        conversations = self
         positions = (
             self.env['ab_crm_workspace_read']
             .sudo()
@@ -977,16 +986,8 @@ class Conversation(models.Model):
                 ('reaction', '=', False),
                 ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
             ])
-            messages = timeline.filtered(lambda m: m.direction == 'in')
+            messages = timeline.filtered(lambda m: m.direction == 'in' and not m.historical)
             channels = {record.channel_id.provider} if messages else set()
-            if record.customer_id:
-                contacted = self.search(
-                    [
-                        ('customer_id', '=', record.customer_id.id),
-                        ('message_ids.direction', '=', 'in'),
-                    ]
-                )
-                channels.update(contacted.channel_id.mapped('provider'))
             result.append(
                 {
                     'id': record.id,
@@ -994,7 +995,7 @@ class Conversation(models.Model):
                     'name': record._customer_display_name(),
                     'provider': record.channel_id.provider,
                     'channels': sorted(channels),
-                    'preview': timeline.sorted('id')[-1:].body or '',
+                    'preview': timeline.sorted(lambda m: (m.timeline_at, m.id))[-1:].body or '',
                     'unread': len(
                         messages.filtered(lambda m: m.id > seen.get(record.id, 0))
                     ),
@@ -1003,7 +1004,7 @@ class Conversation(models.Model):
         return result
 
     def workspace_detail(
-        self, before_id=False, after_id=False, query='', mark_read=False, message_ids=None
+        self, before_id=False, after_id=False, query='', mark_read=False, message_ids=None, through_id=False
     ):
         self.ensure_one()
         session, stores = self._workspace_scope()
@@ -1020,14 +1021,21 @@ class Conversation(models.Model):
             if not isinstance(message_ids, list) or len(message_ids) > 50 or any(type(value) is not int or value <= 0 for value in message_ids):
                 raise ValidationError(_('Invalid conversation search.'))
             domain.append(('id', 'in', message_ids))
-        if before_id:
-            domain.append(('id', '<', int(before_id)))
+        if before_id or through_id:
+            anchor = self.env['ab_crm_message'].search([
+                ('id', '=', int(through_id or before_id)), ('conversation_id', '=', self.id),
+            ], limit=1)
+            if anchor:
+                domain += ['|', ('timeline_at', '<', anchor.timeline_at), '&',
+                           ('timeline_at', '=', anchor.timeline_at), ('id', '<=' if through_id else '<', anchor.id)]
+            else:
+                domain.append(('id', '<', int(before_id)))
         if after_id:
             domain.append(('id', '>', int(after_id)))
         messages = (
             self.env['ab_crm_message']
-            .search(domain, limit=50, order='id asc' if after_id else 'id desc')
-            .sorted('id')
+            .search(domain, limit=50, order='id asc' if after_id else 'timeline_at desc, id desc')
+            .sorted(lambda m: (m.timeline_at, m.id))
         )
         events = self.env['ab_crm_messaging_event'].search(
             [('message_id', 'in', messages.ids), ('edit_payload', '=', False)]
@@ -1036,7 +1044,8 @@ class Conversation(models.Model):
         has_older = bool(
             messages
             and self.env['ab_crm_message'].search_count(
-                search_domain + [('id', '<', messages[0].id)],
+                search_domain + ['|', ('timeline_at', '<', messages[0].timeline_at), '&',
+                                 ('timeline_at', '=', messages[0].timeline_at), ('id', '<', messages[0].id)],
                 limit=1,
             )
         )
@@ -1045,11 +1054,12 @@ class Conversation(models.Model):
             ('employee_id', '=', session.employee_id.id),
         ], limit=1)
         unread_domain = visible_domain + [
-            ('direction', '=', 'in'), ('id', '>', position.last_message_id.id or 0),
+            ('direction', '=', 'in'), ('historical', '=', False), ('id', '>', position.last_message_id.id or 0),
         ]
         first_unread = self.env['ab_crm_message'].search(unread_domain, order='id', limit=1)
         unread_count = self.env['ab_crm_message'].search_count(unread_domain)
         streams = self._workspace_streams()
+        stream_unread = {row['id']: row['unread'] for row in streams._workspace_inbox_rows(session)}
         references = list(set(messages.mapped('reply_reference')) - {False, ''})
         originals = self.env['ab_crm_message'].search([
             ('conversation_id', '=', self.id),
@@ -1068,13 +1078,17 @@ class Conversation(models.Model):
             ('conversation_id', '=', self.id),
         ], order='write_date desc, id desc', limit=1)
         incoming = self.env['ab_crm_message'].search([
-            ('conversation_id', '=', self.id), ('direction', '=', 'in'),
+            ('conversation_id', '=', self.id), ('direction', '=', 'in'), ('historical', '=', False),
         ], order='id desc', limit=1)
         outgoing = self.env['ab_crm_message'].search([
             ('conversation_id', '=', self.id), ('direction', '=', 'out'),
         ], order='id desc', limit=1)
+        message_cursor = max(messages.ids, default=after_id) if after_id else self.env['ab_crm_message'].search([
+            ('conversation_id', '=', self.id),
+        ], order='id desc', limit=1).id
         return {
             'id': self.id,
+            'message_cursor': message_cursor,
             'candidates': [],
             'can_send': not send_code,
             'send_reason_code': send_code or '',
@@ -1096,7 +1110,7 @@ class Conversation(models.Model):
             'first_unread_message_id': first_unread.id or False,
             'unread_count': unread_count,
             'streams': [
-                {'id': r.id, 'provider': r.channel_id.provider,
+                {'id': r.id, 'provider': r.channel_id.provider, 'unread': stream_unread.get(r.id, 0),
                  'label': ' · '.join(filter(None, [r.channel_id.name, r.messaging_account_id.name]))}
                 for r in streams
             ],
@@ -1111,13 +1125,14 @@ class Conversation(models.Model):
             'messages': [
                 {
                     'id': m.id,
+                    'historical': m.historical,
                     'body': '' if m._current_media() and m.body in ('Attachment', _('Attachment')) else m.body,
                     'edited_at': (m.provider_edit_content or {}).get('date', False),
                     'direction': m.direction,
                     'location': m._location_data(),
                     **m._display_status(),
                     'timestamp': fields.Datetime.to_string(
-                        timestamps.get(m.id) or m.create_date
+                        m.original_timestamp or timestamps.get(m.id) or m.create_date
                     ),
                     'phone': m.telegram_phone or '',
                     'owned': m.telegram_contact_owned,
@@ -1142,9 +1157,11 @@ class Conversation(models.Model):
                     'name': o.display_name,
                     'state': o.state,
                     'revision': o.revision,
+                    'conversation_id': o.conversation_id.id,
+                    'provider': o.conversation_id.channel_id.provider,
                     'store_id': o.store_id.id,
                 }
-                for o in self.order_ids
+                for o in self._workspace_orders(streams, stores)
             ],
         }
 

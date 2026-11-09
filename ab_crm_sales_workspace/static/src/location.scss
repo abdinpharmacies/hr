@@ -22,3 +22,34 @@
     overflow-wrap: anywhere;
     font-family: inherit;
 }
+
+.ab_branch_picker {
+    .ab_branch_search_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: .5rem 1rem;
+        margin-bottom: .5rem;
+    }
+    .ab_branch_details_toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        font-size: .875rem;
+        cursor: pointer;
+        input { margin: 0; }
+    }
+    .ab_branch_search {
+        margin-bottom: 1rem;
+        .o-autocomplete--input {
+            padding: .6rem .75rem;
+            border: 1px solid var(--border-color, #ced4da);
+            border-radius: .375rem;
+        }
+        .o-autocomplete--dropdown-menu {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+    }
+}

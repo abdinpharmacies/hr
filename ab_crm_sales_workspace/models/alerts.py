@@ -79,6 +79,7 @@ class ChatterAPI(models.AbstractModel):
             [
                 ('conversation_id', 'in', page.ids),
                 ('direction', '=', 'in'),
+                ('historical', '=', False),
             ],
             order='id',
         )

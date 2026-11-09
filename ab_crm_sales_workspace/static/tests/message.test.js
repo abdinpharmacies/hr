@@ -1,8 +1,8 @@
 import {expect, test, getFixture} from "@odoo/hoot";
 import {animationFrame} from "@odoo/hoot-mock";
 import {defineMailModels} from "@mail/../tests/mail_test_helpers";
-import {useState, useRef} from "@odoo/owl";
-import {mountWithCleanup, patchWithCleanup, contains, makeMockEnv} from "@web/../tests/web_test_helpers";
+import {useState, useRef, xml} from "@odoo/owl";
+import {mountWithCleanup, patchWithCleanup, contains, makeMockEnv, mockService} from "@web/../tests/web_test_helpers";
 import {MainComponentsContainer} from "@web/core/main_components_container";
 import {user} from "@web/core/user";
 import {SalesWorkspace} from "@ab_crm_sales_workspace/workspace";
@@ -231,3 +231,43 @@ test("retry warning changes on keyboard focus and channel colors remain scoped",
     await animationFrame();
     expect(getComputedStyle(chat).getPropertyValue("--ab-channel").trim()).toBe("#239b68");
 });
+
+for (const direction of ["ltr", "rtl"]) {
+    test(`conversation opens at latest after mount and delayed navigation in ${direction}`, async () => {
+        mockService("ab_chatter_session", {current: {token: "test"}, workspaceDrafts: new Map()});
+        let resolveDetail;
+        const detail = id => ({id, phone: "", owned: true, messages: Array.from({length: 50}, (_, index) => ({id: id * 100 + index})), has_older: true});
+        class ScrollHarness extends SalesWorkspace {
+            static template = xml`<div t-att-dir="direction"><span t-esc="state.busy"/><div t-ref="messages" style="height: 120px; overflow-y: auto" t-on-scroll="updateScroll"><div t-foreach="state.detail?.messages || []" t-as="message" t-key="message.id" t-att-data-message-id="message.id" style="height: 40px" t-esc="message.id"/></div></div>`;
+            setup() { super.setup(); this.direction = direction; }
+            async call(model, method, args, kwargs = {}) {
+                if (method === "bootstrap") return {session: {employee_id: 1, employee: "Agent"}};
+                if (method === "workspace_customer_inbox") return {items: [{id: 1, group_key: "test", streams: [{id: 1}]}], has_more: false};
+                if (method === "contact_search") return {contacts: []};
+                if (method === "workspace_detail" && args[0][0] === 1) return {...detail(1), messages: kwargs.after_id ? [] : detail(1).messages};
+                if (["workspace_detail", "workspace_channel"].includes(method)) return new Promise(resolve => { resolveDetail = resolve; });
+            }
+        }
+        const workspace = await mountWithCleanup(ScrollHarness);
+        const element = workspace.messagesRef.el;
+        const atLatest = () => Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop) < 2;
+        expect(element.scrollHeight > element.clientHeight).toBe(true);
+        expect(atLatest()).toBe(true);
+        for (const [id, channel] of [[2, false], [3, true]]) {
+            element.scrollTop = 0;
+            workspace.updateScroll();
+            const pending = workspace.select(id, channel);
+            await animationFrame();
+            expect(element.scrollTop).toBe(0);
+            resolveDetail(detail(id));
+            await pending;
+            await animationFrame();
+            expect(workspace.state.detail.id).toBe(id);
+            expect(atLatest()).toBe(true);
+            element.scrollTop = 80;
+            workspace.state.reply = "Draft";
+            await animationFrame();
+            expect(element.scrollTop).toBe(80);
+        }
+    });
+}

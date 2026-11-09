@@ -1950,6 +1950,7 @@ msgid "Send message"
 msgstr "إرسال رسالة"
 
 #. module: ab_crm_sales_workspace
+#. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.conversation_identity_review
 msgid "Staff read history"
@@ -2757,6 +2758,7 @@ msgstr "البحث في القوالب"
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
 msgid "Searching…"
 msgstr "جارٍ البحث…"
 
@@ -3165,13 +3167,13 @@ msgstr "بعض الحقول المطلوبة مفقودة."
 
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
-#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
 msgid "Name, region, address or store code"
 msgstr "الاسم أو المنطقة أو العنوان أو رمز المخزن"
 
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
-#: code:addons/ab_crm_sales_workspace/static/src/composer.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/composer.js:0
 msgid "No reviewed branches available."
 msgstr "لا توجد فروع تمت مراجعتها متاحة."
 
@@ -3397,3 +3399,48 @@ msgstr "تم التعديل"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__delivery_location_snapshot
 msgid "Delivery Location Snapshot"
 msgstr "لقطة موقع التوصيل"
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__customer_group_key
+msgid "Customer Group Key"
+msgstr "مفتاح مجموعة العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Use reviewed customer linking for this identity."
+msgstr "استخدم ربط العميل بعد المراجعة لهذه الهوية."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Only CRM managers can review customer links."
+msgstr "يمكن لمديري علاقات العملاء فقط مراجعة روابط العملاء."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Enter a customer link review reason."
+msgstr "أدخل سبب مراجعة ربط العميل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "The customer link changed. Preview it again."
+msgstr "تغيّر رابط العميل. اعرض المعاينة مرة أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Explicitly resolve the conflicting customer link."
+msgstr "أكّد صراحةً تسوية التعارض في ربط العميل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Historical import · unverified"
+msgstr "استيراد تاريخي · غير موثّق"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__language_code
+msgid "Language"
+msgstr "اللغة"

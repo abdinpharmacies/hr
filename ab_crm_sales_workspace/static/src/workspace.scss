@@ -250,7 +250,7 @@
     .ab_search_toggle { justify-self: end; width: 38px; height: 38px; padding: 0; border-radius: 50%; color: var(--ab-channel); background: transparent; font-size: 18px; }
     .ab_search_toggle:hover, .ab_search_toggle[aria-expanded='true'] { background: var(--ab-channel-soft); }
     .ab_search_toggle:focus-visible { outline: 2px solid var(--ab-channel); outline-offset: 2px; }
-    .ab_chat_timeline { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; isolation: isolate; }
+    .ab_chat_timeline { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
     .ab_jump_latest_container { position: absolute; inset-inline: 0; bottom: 16px; display: flex; justify-content: center; background: transparent; pointer-events: none; z-index: 2; }
     .ab_unread_divider { text-align: center; color: var(--ab-channel); border-block-end: 1px solid var(--ab-channel); font-weight: 600; }
     .ab_jump_latest { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; border: 1px solid #0000000d; border-radius: 50%; color: var(--ab-channel); background: white; box-shadow: 0 3px 12px #0003; font-size: 21px; pointer-events: auto; }

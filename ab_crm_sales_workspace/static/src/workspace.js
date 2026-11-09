@@ -36,7 +36,7 @@ export class SalesWorkspace extends Component {
                 if (this.previewClose) this.previewClose();
                 this.stopRecording(true);
                 this.rememberDraft();
-                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls});
+                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams});
                 if (this.orderClose) this.orderClose();
                 this.state.token = "";
                 this.state.loggedIn = false;
@@ -84,7 +84,7 @@ export class SalesWorkspace extends Component {
             const element = this.messagesRef.el;
             if (element) this.scrollState = {top: element.scrollTop, height: element.scrollHeight, bottom: element.scrollHeight - element.scrollTop - element.clientHeight < 40};
         });
-        onPatched(() => {
+        const restoreScroll = () => {
             const element = this.messagesRef.el;
             if (element && this.resetScroll) {
                 element.scrollTop = element.scrollHeight;
@@ -101,7 +101,9 @@ export class SalesWorkspace extends Component {
             this.restoreComposerCaret();
             if (this.focusSearch && this.searchInputRef.el) { this.searchInputRef.el.focus({preventScroll: true}); this.focusSearch = false; }
             this.updateScroll();
-        });
+        };
+        onMounted(restoreScroll);
+        onPatched(restoreScroll);
         this.direction = localization.direction;
         this.state = useState({inbox: [], contacts: [], contact: null, detail: null, order: null, reply: "", phone: "",
              inboxQuery: "", inboxHasMore: false, candidates: [], customer: "", confirmed: false, query: "", products: [], reason: "",
@@ -139,7 +141,7 @@ export class SalesWorkspace extends Component {
                 }
             }, 5000);
         });
-        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); if (this.orderClose) this.orderClose(); });
+        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); if (this.orderClose) this.orderClose(); });
     }
 
     get emojis() { return ["😀", "😂", "😍", "👍", "🙏", "🔥", "✅", "🎉", "❤️", "😢", "😮", "👏"]; }
@@ -185,6 +187,7 @@ export class SalesWorkspace extends Component {
         this.employeeId = employeeId;
         const preserved = this.employeeDrafts.get(`${user.activeCompany.id}:${employeeId}`);
         this.drafts = preserved?.messages || new Map();
+        this.selectedStreams = preserved?.streams || new Map();
         this.orderDrafts = preserved?.orders || new Map();
         this.mediaUrls = preserved?.mediaUrls || new Set();
     }
@@ -200,18 +203,16 @@ export class SalesWorkspace extends Component {
         this.refreshing = true;
         const navigationVersion = this.navigationVersion;
         try {
-            const inbox = await this.call("ab_crm_conversation", "workspace_inbox", [], {query: this.state.inboxQuery});
+            const inbox = await this.loadCustomerInbox();
             if (this.destroyed || navigationVersion !== this.navigationVersion) return;
-            if (!this.state.inbox.length) this.state.inboxHasMore = inbox.length === 50;
-            const rows = new Map(this.state.inbox.map(row => [row.id, row]));
-            for (const row of inbox) rows.set(row.id, row);
-            this.state.inbox = [...rows.values()].sort((a, b) => b.id - a.id);
+            this.state.inbox = inbox.items;
+            this.state.inboxHasMore = inbox.has_more;
             await this.refreshContacts();
             if (!this.state.detail && !this.state.contact && this.state.inbox.length) {
-                this.resetScroll = true;
-                const selected = this.props.action?.context?.chatter_conversation_id || this.state.inbox[0].id;
+                const selected = this.props.action?.context?.chatter_conversation_id || this.preferredStream(this.state.inbox[0]);
                 const initial = await this.call("ab_crm_conversation", "workspace_detail", [[selected]], {});
                 if (this.destroyed || navigationVersion !== this.navigationVersion) return;
+                this.resetScroll = true;
                 this.state.detail = initial;
                 this.state.firstUnread = initial.first_unread_message_id;
                 this.state.historyContext = false;
@@ -225,7 +226,7 @@ export class SalesWorkspace extends Component {
             const id = this.state.detail?.id;
             if (id) {
                 const current = this.state.detail;
-                const detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {after_id: current.messages.at(-1)?.id || false});
+                const detail = await this.call("ab_crm_conversation", "workspace_detail", [[id]], {after_id: current.message_cursor || Math.max(0, ...current.messages.map(message => message.id)) || false});
                 if (!this.destroyed && navigationVersion === this.navigationVersion && this.state.detail?.id === id) {
                     const messages = new Map(current.messages.map(message => [message.id, message]));
                     for (const message of detail.messages) messages.set(message.id, message);
@@ -243,7 +244,7 @@ export class SalesWorkspace extends Component {
                         }
                     }
                     if (!this.destroyed && navigationVersion === this.navigationVersion && this.state.detail?.id === id) {
-                        this.state.detail = {...detail, has_older: current.has_older, messages: [...messages.values()].sort((a, b) => a.id - b.id)};
+                        this.state.detail = {...detail, has_older: current.has_older, messages: [...messages.values()].sort((a, b) => (a.timestamp || "").localeCompare(b.timestamp || "") || a.id - b.id)};
                         if (!detail.owned) this.stopRecording(true);
                         if (detail.candidates?.length) this.state.candidates = detail.candidates;
                         if (!this.state.phone && detail.phone) this.state.phone = detail.phone;
@@ -261,13 +262,16 @@ export class SalesWorkspace extends Component {
         await this.run(async () => {
             this.stopRecording(true);
             this.rememberDraft();
-            this.resetScroll = true;
             this.state.contact = null;
             const source = this.state.detail?.id;
             const detail = await this.call("ab_crm_conversation", channel ? "workspace_channel" : "workspace_detail", channel ? [[source], id] : [[id]]);
             if (this.destroyed || version !== this.navigationVersion) return;
             if (this.previewClose) this.previewClose();
+            this.resetScroll = true;
             this.state.detail = detail;
+            this.selectedStreams ||= new Map();
+            const group = this.state.inbox?.find(item => item.streams?.some(stream => stream.id === id));
+            if (group) this.selectedStreams.set(`${user.activeCompany.id}:${this.employeeId}:${group.group_key}`, id);
             this.state.firstUnread = detail.first_unread_message_id;
             this.state.historyContext = false;
             this.clearSearch();
@@ -290,21 +294,40 @@ export class SalesWorkspace extends Component {
         if (orders === this.isOrders) return;
         this.stopRecording(true);
         this.rememberDraft();
-        this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls});
+        this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams});
         this.action.doAction(orders ? "ab_crm_sales_workspace.action_orders" : "ab_crm_sales_workspace.action_workspace", {additionalContext: {chatter_conversation_id: this.state.detail?.id || false}});
+    }
+    preferredStream(item) {
+        const key = `${user.activeCompany.id}:${this.employeeId}:${item.group_key}`;
+        const selected = this.selectedStreams?.get(key);
+        return item.streams?.some(stream => stream.id === selected) ? selected : item.id;
+    }
+    selectCustomer(item) { return this.select(this.preferredStream(item)); }
+    async loadCustomerInbox(pages = this.inboxPages || 1) {
+        const items = [];
+        let result;
+        for (let page = 0; page < pages; page++) {
+            result = await this.call("ab_crm_conversation", "workspace_customer_inbox", [], {query: this.state.inboxQuery, offset: page * 50});
+            items.push(...result.items);
+            if (!result.has_more) break;
+        }
+        return {items, has_more: result.has_more};
     }
     searchInbox() {
         return this.run(async () => {
-            this.state.inbox = await this.call("ab_crm_conversation", "workspace_inbox", [], {query: this.state.inboxQuery});
-            this.state.inboxHasMore = this.state.inbox.length === 50;
+            this.inboxPages = 1;
+            const result = await this.loadCustomerInbox();
+            this.state.inbox = result.items;
+            this.state.inboxHasMore = result.has_more;
             await this.refreshContacts();
         });
     }
     olderConversations() {
         return this.run(async () => {
-            const rows = await this.call("ab_crm_conversation", "workspace_inbox", [], {query: this.state.inboxQuery, before_id: this.state.inbox.at(-1)?.id});
-            this.state.inbox.push(...rows);
-            this.state.inboxHasMore = rows.length === 50;
+            this.inboxPages = (this.inboxPages || 1) + 1;
+            const result = await this.loadCustomerInbox();
+            this.state.inbox = result.items;
+            this.state.inboxHasMore = result.has_more;
         });
     }
     olderMessages() {
@@ -341,7 +364,7 @@ export class SalesWorkspace extends Component {
     async refreshMessage(id) {
         const version = this.navigationVersion;
         const conversation = this.state.detail.id;
-        const detail = await this.call("ab_crm_conversation", "workspace_detail", [[conversation]], {before_id: id + 1});
+        const detail = await this.call("ab_crm_conversation", "workspace_detail", [[conversation]], {message_ids: [id]});
         if (this.destroyed || version !== this.navigationVersion || this.state.detail?.id !== conversation) return;
         const updated = new Map(detail.messages.map(message => [message.id, message]));
         this.state.detail.messages = this.state.detail.messages.map(message => updated.get(message.id) || message);
