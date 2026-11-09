@@ -18,6 +18,7 @@
         "data/server_actions.xml",
         "data/ir_cron.xml",
         "views/add_many_by_codes_views.xml",
+        "views/legacy_publication_import_views.xml",
         "views/website_product_sync_job_views.xml",
         "views/eplus_inventory_sync_job_views.xml",
         "views/sync_progress_views.xml",

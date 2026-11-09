@@ -5158,6 +5158,13 @@ msgid ""
 msgstr ""
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product__website_sale_available
+msgid ""
+"Publish through Add Many By Codes or Match Old Website Publication. "
+"Disabling this option unpublishes a linked product during sync."
+msgstr ""
+
+#. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__source_encoding__cp1256
 msgid "Windows Arabic (CP1256)"
 msgstr ""
@@ -5344,4 +5351,279 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "updated"
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_legacy_publication_import__state__done
+msgid "Applied"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_publication_import_form
+msgid "Apply Publication Match"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_publication_import_form
+msgid "Close"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Every published old website product must have a code."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__source_filename
+msgid "File Name"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_legacy_publication_import
+msgid "Legacy Website Publication Import"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_legacy_publication_import
+#: model:ir.ui.menu,name:ab_website_sale_product.menu_legacy_publication_import
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_list_view_legacy_publication_import
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_publication_import_form
+msgid "Match Old Website Publication"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Multiple Abdin products have the same code. Resolve duplicates first."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid ""
+"Multiple new website products have the same code. Resolve duplicates first."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__source_file
+msgid "Old Website Export"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Only system administrators can reconcile website publication."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_publication_import_form
+msgid "Preview Matches"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Preview this publication export again before applying it."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__create_count
+msgid "Products to Add"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__publish_count
+msgid "Products to Publish"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__unpublish_count
+msgid "Products to Unpublish"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Publication changed since preview. Preview the export again."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Published new website products without a code need review first."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Published old website codes missing on the new website: %s"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Published old website codes not eligible on the new website: %s"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__published_count
+msgid "Published on Old Website"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_legacy_publication_import__state__review
+msgid "Ready to Apply"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Some matching products belong to another website or company."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The old website publication export contains an invalid product."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The old website publication export contains duplicate IDs or codes."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The old website publication export is incomplete or invalid."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The publication export must not exceed 20 MB."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The selected website is outside your allowed companies."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "This publication import has already been applied."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Upload a valid publication export JSON file."
+msgstr ""
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "A CSV product without a code could not be matched uniquely: %s"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The CSV export contains a malformed row."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The CSV export contains a product without a name or code."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The CSV export contains a product without a name."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The CSV export contains duplicate product codes."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The CSV export contains duplicate product names without codes."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "The CSV export must include Name and Internal Reference columns."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "Upload a valid publication export JSON or CSV file."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_publication_import_form
+msgid ""
+"Upload the CSV exported from the old product list with the Published filter,"
+" then preview all publication changes."
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__missing_count
+msgid "Codes Missing in New Catalog"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "No export products match eligible new website products."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__ineligible_count
+msgid "Products Not Eligible for Publication"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_publication_import_form
+msgid ""
+"Products missing from the new catalog or not eligible for sale will not be "
+"published."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__skipped_code_sample
+msgid "Skipped Code Examples"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__published_count
+msgid "Unique Products to Match"
 msgstr ""

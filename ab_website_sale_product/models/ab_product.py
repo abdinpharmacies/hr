@@ -220,7 +220,7 @@ class AbProduct(models.Model):
     website_sale_available = fields.Boolean(
         string="Available on Website",
         default=True,
-        help="Only Add Many By Codes can publish a product. Disabling this option unpublishes a linked product during sync.",
+        help="Publish through Add Many By Codes or Match Old Website Publication. Disabling this option unpublishes a linked product during sync.",
     )
     website_product_tmpl_id = fields.Many2one(
         "product.template",

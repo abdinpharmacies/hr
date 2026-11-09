@@ -66,12 +66,16 @@ The existing `cron_sync_website_products(limit=1000)` now queues a bounded dirty
 selection. Its scheduled action keeps its existing activation state and interval;
 this change does not silently enable it. The console also has “Sync Changed
 Products”. Each invocation examines at most the requested limit, capped at 5,000.
-Dirty products that are ineligible and have no website template are acknowledged
-without creating templates. Repeated scheduled invocations drain the backlog.
+Dirty products without a linked website template are acknowledged without creating
+templates. The Add Many By Codes button is the only module workflow that creates
+`product.template` records and publishes eligible products. Repeated scheduled
+invocations drain the backlog of linked products.
 
-Delta jobs also update already-linked products that become inactive, unavailable
-or unsaleable, using the same values as an explicit individual sync. Full sync
-retains its original active/saleable/website-available selection.
+Delta and full jobs update already-linked products only. They preserve existing
+publication for eligible products, including products manually unpublished in
+Odoo. If an already-linked product becomes inactive, unavailable, or unsaleable,
+sync unpublishes it. The Add Many By Codes button can publish it again when it
+becomes eligible.
 
 The flag also tracks synchronized template/variant fields, category/tag metadata
 and destination image changes. After changing classifier code or language
@@ -359,3 +363,23 @@ The initial performance work was tested without deployment. The subsequent
 2026-09-28 asynchronous-worker change was explicitly approved for activation:
 ecom19 was backed up and upgraded, its web server restarted, and the dedicated
 worker enabled. Global cron remains disabled. No Git commit was made.
+
+# Match legacy website publication
+
+Export the old `product.template` list with the Published filter and include
+the Name and Internal Reference columns. The original Odoo CSV export is
+accepted. Rows that only continue categories or tags are ignored. Products
+without an Internal Reference are matched by an exact, unique Abdin product
+name; ambiguous or missing matches stop the import. Alternatively, run
+`scripts/export_legacy_published_products.js` in the browser console while
+signed in to `https://abdinpharmacies.com` to download a JSON export. Neither
+export method modifies the old website.
+
+On the new site's Abdin products list, select **Match Old Website Publication**.
+Upload the CSV or JSON file, select **Preview Matches**, review the counts,
+then select **Apply Publication Match**. The action creates and publishes missing
+eligible linked products, publishes matching templates, and unpublishes every
+template in the selected website scope absent from the eligible file matches.
+The preview reports codes missing from the new catalog and products that cannot
+be published due to their current sale or availability state. Ambiguous name
+matches stop the import. Only system administrators can use it.
