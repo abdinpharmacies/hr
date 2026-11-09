@@ -2,6 +2,7 @@ from decimal import Decimal, InvalidOperation
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+from odoo.tools import config
 
 
 class AbInventory(models.Model):
@@ -11,6 +12,7 @@ class AbInventory(models.Model):
     _order = 'saved_at desc, id desc'
 
     store_id = fields.Many2one('ab_store', string='Store', required=True, index=True, ondelete='restrict')
+    db_serial = fields.Integer(string='DB Serial', readonly=True, copy=False)
     source_id = fields.Many2one('ab_product_source', string='Batch / Source',
                                 required=True, index=True, ondelete='restrict')
     product_id = fields.Many2one('ab_product', string='Item', related='source_id.product_id',
@@ -111,6 +113,8 @@ class AbInventory(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        serial = int(config.get('db_serial', 0) or 0)
+        vals_list = [dict(vals, db_serial=serial) for vals in vals_list]
         identities = []
         store_ids = set()
         source_ids = set()
@@ -175,6 +179,8 @@ class AbInventory(models.Model):
                 raise ValidationError(_("Pending outgoing stock exceeds available quantity in this store or batch."))
 
     def write(self, vals):
+        if 'db_serial' in vals:
+            raise ValidationError(_("DB Serial cannot be changed after creation."))
         if 'incoming_qty' in vals or 'outgoing_qty' in vals:
             raise ValidationError(_("Use a signed quantity change instead of incoming or outgoing fields."))
         if 'qty' in vals:

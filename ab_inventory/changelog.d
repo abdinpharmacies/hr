@@ -1,5 +1,23 @@
 Current changes before commit:
 
+- Show DB Serial beside Store in the Movement Schedule table.
+- Capture the configured database serial for new movements and prevent later changes through ORM calls; retain zero for existing movements.
+- Translate the column label and validation message into Arabic.
+
+Files changed:
+
+- ab_inventory/changelog.d
+- ab_inventory/models/ab_inventory.py
+- ab_inventory/views/ab_inventory_movements.xml
+- ab_inventory/i18n/ar.po
+- ab_inventory/i18n/ar_001.po
+
+commit 2635e17870fc0afc45f464ab17f9c1ca0fb035e3
+Author: hossam elsheikh
+Date: 2026-11-08T11:20:03+02:00
+
+    refactor(ab_inventory): use product reference units for stock ledger
+
 - Store fractional reference-unit movements and lock canonical unit definitions.
 
 Files changed:
@@ -14,7 +32,7 @@ Files changed:
 - ab_inventory/models/ab_inventory_process.py
 - ab_inventory/models/ab_product.py
 - ab_inventory/models/ab_product_uom.py
-- ab_inventory/models/ab_uom.py
+- ab_inventory/models/ab_product_uom.py
 
 commit 063998a08a6b6229331d583049bccd79c54b5c75
 Author: yahyazakaria22 <yahyazakaria.soskty@gmail.com>

@@ -776,3 +776,14 @@ msgstr "اختر وحدة نشطة من فئة وحدات المنتج."
 #: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "The product requires one active reference unit with factor 1."
 msgstr "يتطلب المنتج وحدة مرجعية نشطة واحدة بمعامل 1."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__db_serial
+msgid "DB Serial"
+msgstr "الرقم التسلسلي لقاعدة البيانات"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "DB Serial cannot be changed after creation."
+msgstr "لا يمكن تغيير الرقم التسلسلي لقاعدة البيانات بعد الإنشاء."
