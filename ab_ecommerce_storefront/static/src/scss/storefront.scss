@@ -3790,12 +3790,17 @@ html[dir="rtl"] .ab-storefront-testimonial-controls svg {
         }
 
         input {
+            display: block;
+            box-sizing: border-box;
             appearance: textfield;
+            -moz-appearance: textfield;
             border-inline: 1px solid $ab-border;
             font-size: var(--ab-font-size-076);
             font-weight: var(--ab-font-weight-bold);
             position: relative;
             z-index: 1;
+            padding-inline: 0 !important;
+            text-align: center !important;
             transform: translateX(0);
             will-change: transform;
 
