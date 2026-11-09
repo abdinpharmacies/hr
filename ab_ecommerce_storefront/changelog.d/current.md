@@ -6,6 +6,42 @@
 
 ## Recent commits
 
+Commit: `bf8ab5c0`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/IMP: add bilingual order overview`
+
+- Add an order overview with six operational cards, an abandoned-cart link, and a recent-orders table.
+- Match the eCommerce Editor's blue/violet theme and support Arabic RTL without changing the Editor module.
+- Scope counts and drilldowns to accessible website orders and companies, with direct method access checks.
+- Translate the page in both Arabic catalogs using Odoo 19 POT code references and frontend markers.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/models/__init__.py`, `ab_ecommerce_storefront/models/order_overview.py`
+- `ab_ecommerce_storefront/views/order_overview_views.xml`
+- `ab_ecommerce_storefront/static/src/js/order_overview.js`, `ab_ecommerce_storefront/static/src/xml/order_overview.xml`, `ab_ecommerce_storefront/static/src/scss/order_overview.scss`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`, `ab_ecommerce_storefront/i18n/ar.po`, `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Validation:
+
+- Odoo's `PoFileReader` parsed both Arabic catalogs after correcting eleven reused code references in each file.
+- Targeted `ab_ecommerce_storefront` upgrade on `ecom19` completed with exit status 0 using alternate ports 5069/5072; no upgrade errors appeared in `/tmp/ab_order_overview_upgrade.log`.
+- The upgraded action and menu show `Order Overview` in `en_US` and `نظرة عامة على الطلبات` in `ar_001`; the running service responded on port 4092.
+- A fresh Odoo 19 POT export verified 38 overview terms. After a targeted upgrade and graceful worker reload, the live `/web/webclient/translations` endpoint returned Arabic values for the overview heading, cards, links, and table labels.
+
+Commit: `e1c5c126`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/DOCS: record recent storefront changes`
+
+- Record recent storefront changes in the module changelog.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
 Commit: `e078deb7`
 Author: Mohamed Fawzy
 Date: 2026-11-09
