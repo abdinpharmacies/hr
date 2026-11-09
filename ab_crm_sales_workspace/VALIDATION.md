@@ -1,3 +1,106 @@
+# Header search and RTL/LTR Chatter review — 2026-11-08
+
+Source delivery: `ab_crm_sales_workspace` **19.0.1.11.1**, optional `ab_crm_whatsapp_workspace` **19.0.1.1.2**. No live upgrade, user-process restart or customer/provider messages.
+
+- Header/search interaction checks passed in **en_US, ar, ar_001**, at **1440×1000** and **390×844**. Channels are centered; search is at the outer edge. The expanding input opens toward the left in LTR and mirrors in RTL, without changing header/timeline geometry. Typing performs no search; Enter submits once. Clicking the native × clears query/results without a request and preserves the draft. Escape restores focus; outside click dismisses. Search guidance is translated and no redundant form buttons remain.
+- Full Chatter review passed in all three locales at **desktop 1440×1000, tablet 900×900 and phone 390×844**: composer control placement and text direction, stable LTR phone prefixes, centered circular jump-to-latest, keyboard message menus within viewport, reply quotes, all 12 emoji choices and dismissal/focus, attachment-menu placement, translated controls, responsive template columns/stacking, template text/parameter direction, and drafts across channel switches. No horizontal overflow or browser page errors. These are browser viewport checks, not physical-device certification.
+- Visual review found and fixed two defects: contact text showing around the narrow expanded search field, and English text/phone parameters inheriting RTL in the template editor. Final English and Arabic screenshots were inspected after both corrections.
+- Targeted isolated module upgrade and browser regression: **35 HOOT tests / 183 assertions**, with zero failures/errors. The final run includes both addons and the new presentation changes. Evidence: `/tmp/chatter-header-search/final-browser-tests.log`.
+- Full UI used synthetic `crm_chatter_bubbles_20261107`; regressions used `crm_whatsapp_sqlite_test_20261108`. Scripts/results/screenshots: `/tmp/chatter-header-search/ui_browser.mjs`, `ui-results.txt`, `full_review.mjs`, `full-review-results.txt`, and locale/viewport PNGs in the same directory.
+- Existing English/Arabic strings were reused. Both catalogs per addon pass `msgfmt --check-format`; XML/manifests and whitespace checks pass. Runtime review packages exclude tests, test assets and caches.
+- Validation used alternate ports **5069/5072** and **5085/5086**, zero workers/cron threads. Temporary processes were stopped and their ports released. The live 4092 process remained PID **595945**.
+
+---
+
+# Abdin Pharmacies saved replies — 2026-11-08
+
+Reviewed and updated **44 active saved replies (22 Arabic/English pairs)** for **صيدليات عابدين / Abdin Pharmacies** in the existing callcenter intake branch. The CSV resource matches the saved records. This authorized content-only update used Odoo ORM and did not upgrade modules, restart Odoo or send customer messages.
+
+- Preserved existing record IDs/XML IDs, names, active flags, branch/company scope and required placeholders. All bilingual parameter pairs match; all bodies fit the 4096-character limit.
+- Preserved the three archived legacy replies. Message, operation and saved-reply record counts did not change.
+- Fresh-transaction readback verified all 44 bodies and access for the three existing authorized agents.
+- Replaced generic store branding; reviewed all wording for consistent polite Egyptian Arabic and concise English. Medicine-use/alternative questions remain pharmacist handoffs, with no new medical claims, fixed commercial promises or invented policies.
+- Evidence and original content: `/tmp/abdin-template-review/`, including `update-result.json`, `before-records.json`, `verify.log` and the read/write verification scripts. No addon runtime code or translation catalog changed; these are explicit bilingual saved-message bodies.
+
+---
+
+# Embedded composer and search guidance — 2026-11-08
+
+Source review delivery: `ab_crm_sales_workspace` 19.0.1.11.0 and `ab_crm_whatsapp_workspace` 19.0.1.1.1, plus the bounded Telegram video gateway extension required by the new attachment menu. No live database upgrade, gateway deployment, provider send or user-process restart was performed.
+
+- Isolated targeted upgrade/regression on `crm_whatsapp_sqlite_test_20261108`: **80 Odoo tests, 0 failures/errors**, including **34 HOOT tests / 180 assertions**. After the final file-picker navigation guard, focused validation passed **2 Odoo tests** including **35 HOOT tests / 183 assertions**. Logs: `/tmp/chatter-composer-validation/odoo-tests.log` and `final-tests.log`.
+- Gateway: **46 passed, 1 skipped** in `/tmp/chatter-composer-validation/gateway-tests.txt`. The skipped existing real audio-conversion test requires FFmpeg/ffprobe, absent on this host. Video codec and upload tests use mocked probe/provider responses; no real provider delivery or real codec conversion is claimed. Worker FFmpeg/ffprobe and the matching gateway update remain deployment prerequisites.
+- Full browser UI on synthetic `crm_chatter_bubbles_20261107`: English, `ar`, `ar_001`, 1440×1000 and 390×844. Verified controls inside the message box, mirrored positions, centered translated composer placeholder, translated search placeholder without an external label, hover/click/keyboard/Escape/outside attachment menu behavior, file categories, location insertion preserving the draft without sending, and no horizontal overflow or page errors. Script/screenshots: `/tmp/chatter-composer-validation/ui_browser.mjs`, `*-composer.png`, `*-search.png`. Desktop English and mobile Arabic screenshots were visually reviewed.
+- Location accepts bounded numeric coordinates and inserts a map URL into the composer. It is an ordinary text draft, not a native provider location object. Stale dialog/file-picker completion cannot populate another conversation. MP4 video is capped at 16 MB; access, private download, declared type/content, oversized payloads and queue snapshots were tested.
+- POT exported from the isolated upgraded DB; both Arabic catalogs contain the new extracted terms and pass `msgfmt --check-format`. Python/XML/manifests and whitespace checks passed. All **227 protected file hashes** in `ab_sales`, `ab_whatsapp_api`, `ab_branch_api` and the task-start `ab_crm_messaging` tree remain unchanged. Previous unrelated changes are preserved.
+- Temporary servers used **5069/5072** and **5085/5086**, workers=0 and max-cron-threads=0. Temporary processes were stopped; the live 4092 process remained PID **574948**.
+- Runtime packages are in `/tmp/chatter-composer-validation/`, excluding Python/browser tests, test assets and caches. The task-only patch and starting source snapshots are retained there. The previously installed 44 bilingual pharmacy/cosmetics saved replies were not rewritten.
+
+---
+
+# Floating controls and bilingual saved replies — 2026-11-08 (19.0.1.10.1)
+
+- Targeted isolated workspace upgrade plus existing browser regression: **32 HOOT tests / 173 assertions**, all passed; enclosing HttpCase: 1 test, zero failures/errors. Database `crm_whatsapp_sqlite_test_20261108`, ports 5069/5072, workers/cron disabled, stop-after-init. Evidence: `/tmp/chatter-floating-validation/browser.log`.
+- Full synthetic UI checked at 1440×1000 and 390×844 in `en_US`, `ar` and `ar_001`. Search icon center matches header center; opening/searching does not alter header height, timeline position/height or composer position. Search is absolutely positioned, focuses its input and dismisses with Escape/outside click. Latest control has equal width/height, 50% radius, a transparent outer container, centered placement and working navigation. Drafts remain intact, no horizontal overflow or page errors. Script/screenshots: `/tmp/chatter-floating-validation/ui_browser.mjs` and the six locale/viewport screenshot pairs in that directory. Uses only `crm_chatter_bubbles_20261107` synthetic fixtures.
+- User-authorized data addition: **44 saved replies (22 EN + 22 AR)** in the existing `callcenter` branch `telegram-callcenter-intake`, using permission-checked ORM and module-owned XML IDs. Three existing saved replies at write time remain unchanged. Message and sending-operation counts were unchanged by the import. All new records were read back and verified; all 3 existing authorized branch users checked can read all 44. Evidence: `template-install.json`, `template-install.log`, `template-verify.log` in the same directory. No provider messages sent.
+- Reused existing translated UI strings; both Arabic catalogs pass gettext checks. Catalog language pairs have matching required placeholders. XML/JavaScript syntax and whitespace checks pass. Protected addons and the optional WhatsApp addon are unchanged from this task's baseline.
+- Runtime archive excludes development tests, test assets and caches. Source UI remains for review; only the explicitly requested saved-reply data was added to `callcenter`. No live addon upgrade or live process restart. Temporary server cleanup and port checks are recorded in the evidence directory.
+
+---
+
+# Chatter UI improvements — 2026-11-08 (19.0.1.10.0 / WhatsApp 19.0.1.1.0)
+
+Implemented for review; no live upgrade, restart, activation or provider send.
+
+- Final targeted upgrade and regressions on `crm_whatsapp_sqlite_test_20261108`: **79 tests, zero failures/errors, no skips**, including the browser HttpCase. The HOOT run contains **32 browser tests and 173 assertions**, all passed. Log: `/tmp/chatter-ui-validation/final-regressions.log`.
+- Backend coverage includes template creation/update selection and archival without sends, employee-specific unread boundaries, read-only fetch/search/context operations, query-aware pagination, existing direct ORM/RPC permission checks, company/branch isolation, private media and immutable retry identity.
+- Browser coverage includes first-template selection, searchable lists, repeated Save, refresh, dirty archival, Discard/Keep editing (including dialog close), read-only permissions, loading failures, required parameters, insertion without sends, explicit WhatsApp queueing, all twelve emoji selections/carets, native-menu exceptions, pointer/keyboard/chevron entry points, focus restoration, RTL/viewport bounds, search pagination and stale responses, draft preservation, private-thumbnail loading and URL cleanup including delayed responses after unmount.
+- Full synthetic UI workflow passed at 1440×1000 and 390×844, with English, `ar` and `ar_001`: unread navigation, search pages of 50 plus 10 older matches, highlighted context, unchanged drafts and search-clear scroll position, emoji dismissal/caret, menus, template guards, stacked mobile templates and no page errors or horizontal overflow. Script and screenshots: `/tmp/chatter-ui-validation/ui_browser.mjs`, `templates-en.png`, `menu-en.png`, `search-ar.png`, `search-ar_001.png`, `templates-mobile-ar.png`, `templates-mobile-ar_001.png`, `chatter-mobile-ar.png`, `chatter-mobile-ar_001.png` in that directory.
+- Full UI validation uses the existing synthetic `crm_chatter_bubbles_20261107` database and private fixture credentials. A test-only generic `ar` language record was added there to exercise that catalog alongside installed `ar_001`; session context was refreshed before rendering each language. Runtime translation delivery for both addons also passed separately on the regression DB. Both catalogs per addon pass `msgfmt --check-format`; existing translations are preserved.
+- Python/XML parsing, JavaScript syntax, manifest paths/dependencies and whitespace checks pass. All **202 protected-addon file hashes** (`ab_sales`, `ab_whatsapp_api`, `ab_branch_api`) match the task-start snapshot. Existing unrelated work remains outside this task's edits.
+- Runtime archives exclude Python/browser tests, test asset declarations and caches: `/tmp/chatter-ui-validation/ab_crm_sales_workspace-19.0.1.10.0.tar.gz` and `/tmp/chatter-ui-validation/ab_crm_whatsapp_workspace-19.0.1.1.0.tar.gz`. The task-only patch and initial source snapshots are retained in the same evidence directory.
+- Final tests used free alternate ports **5085/5086**; synthetic UI used **5069/5072**, with zero workers/cron threads. Temporary servers were stopped and all four ports released. The live Odoo PID on 4092 remained **470878** throughout.
+
+Earlier iterations caught and corrected a Sass `min()` compatibility issue, missing confirmation cancel callback, unsupported Owl expression, search-clear geometry and post-render caret timing. Final passing evidence above supersedes those exploratory logs. Tests use synthetic data and mocked provider operations; no live delivery or deployment is claimed. The deferred configuration, provisioning, worker/webhook, website/application chat and queue-migration work remains deferred.
+
+---
+
+# Message bubbles and navigation — 2026-11-07
+
+Implemented in `ab_crm_sales_workspace` 19.0.1.8.0. This entry covers the current source change; historical deployment statements below do not apply to it. No live callcenter upgrade, user-process restart, real provider send, gateway protocol change or external database access was performed.
+
+## Results
+
+| Check | Actual result / evidence |
+| --- | --- |
+| Clean install with optional WhatsApp adapter | `crm_chatter_bubbles_fresh_20261107`, 58 workspace methods, zero failures/errors; `/tmp/chatter_bubbles_final_install.log` |
+| Targeted workspace upgrade with optional WhatsApp adapter | `crm_chatter_bubbles_clean_20261107`, 58 workspace methods, zero failures/errors; `/tmp/chatter_bubbles_final_upgrade.log` |
+| Messaging regressions in their own database | `crm_chatter_receipts_20261107`, 23 methods, zero failures/errors, including WhatsApp window and out-of-order receipt handling; `/tmp/chatter_bubbles_messaging.log` |
+| Focused Odoo HOOT tests | 11 tests / 29 assertions passed; `/tmp/chatter_bubbles_hoot_final.log` |
+| Browser navigation and layout | Channel/account highlight, draft retention, disabled Edit/Delete, dropdown Escape, quote navigation without history/draft loss, English/Arabic and 390px layout; zero JavaScript errors; `/tmp/chatter_bubbles_browser.mjs`, `/tmp/chatter_bubbles_ui_final.log` |
+| Browser media | Image/audio/PDF viewer controls, ready document download, pending download guard, image quote thumbnail and supported reaction picker; zero JavaScript errors; `/tmp/chatter_media_browser.mjs` |
+| Translation | Odoo POT `/tmp/chatter_bubbles.pot`: all 361 exported terms covered in both catalogs, including 14 new terms, no missing/empty/fuzzy terms; both `msgfmt --check-format` checks passed. Runtime Arabic header and RTL rendering verified. |
+| Static checks | Python/XML parsing, JS syntax, manifest paths/dependencies/metadata, test-only asset registration and `git diff --check` passed. |
+| Packaging | `/tmp/sales-chatter-messages-19.0.1.8.0.tar.gz`; runtime-only artifact excludes Python/frontend tests, caches and test asset registration. Source retains all development tests. |
+
+Screenshots: `/tmp/chatter-bubbles-en.png`, `/tmp/chatter-bubbles-ar.png`, `/tmp/chatter-bubbles-mobile-ar.png`, `/tmp/chatter-bubbles-media.png`.
+
+The HOOT suite checks every outgoing receipt presentation, absence of incoming ticks, timezone/date rollover, dropdown keyboard dismissal/focus, invisible/obscured read suppression, separate drafts/attachments, stale navigation, reaction eligibility, clipboard/download failure feedback, unavailable quotes and preview URL cleanup. Python tests cover server-side destination/session authorization, same-phone/different-customer denial, non-mutating fetch/focus/history, monotonic acknowledgements and originals outside the current page.
+
+## Reproduction and validation limits
+
+Interpreter `/opt/odoo19/venv19/bin/python`, server `/opt/odoo19/server/odoo-bin`, addons `/opt/odoo19/server/addons,/opt/odoo19/worktrees/callcenter19`. Private isolated config `/tmp/chatter_bubbles.conf`. All jobs explicitly used `--workers=0 --max-cron-threads=0`, HTTP/gevent 5069/5072 or 5073/5074; installs/upgrades used `--stop-after-init`. Database names and filters were explicitly selected. The browser fixture database is `crm_chatter_bubbles_20261107`.
+
+Install: `-i ab_crm_sales_workspace,ab_crm_whatsapp --test-tags /ab_crm_sales_workspace`. Upgrade: `-u ab_crm_sales_workspace --test-tags /ab_crm_sales_workspace`. Messaging-only database: `-i ab_crm_telegram,ab_crm_whatsapp --test-tags /ab_crm_messaging`.
+
+HOOT runs at `/web/tests?debug=assets&headless&loglevel=2&preset=desktop&filter=ab_crm_sales_workspace&timeout=15000`. The existing POS patches access `ab_sales.pos` before it is registered under HOOT’s dependency ordering. For this isolated test run only, database `ir.asset` exclusions in `web.assets_unit_tests_setup` removed `ab_sales/static/src/pos/zz*patch.js` and `ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js`. No shared source or production bundle was changed. These exclusions are needed to reproduce the focused suite until the unrelated POS test-loading issue is fixed.
+
+Early runs found a missing name in a new test fixture, a Sass mixed-unit expression and test-harness setup/visibility issues; these were corrected before the passing results above. Running the messaging suite in a workspace-installed database fails its existing account fixture because it lacks the workspace-required intake mapping. Its final passing run used the separate messaging-only database. Synthetic notification dismissal was synchronized before media interactions. Test counts above are method counts, excluding Odoo setup/teardown statistics.
+
+The UI does not activate WhatsApp, Website or Application sending. Website/Application tabs require a real installed account integration and authorized existing conversation. Telegram remains limited to Sent; WhatsApp Delivered/Read continue to depend on provider evidence, separate from employee reading, following the [WhatsApp receipt definitions](https://faq.whatsapp.com/665923838265756/). No real-provider pilot or production-scale performance benchmark was performed. Browser audio/PDF checks verify viewer selection and controls with synthetic media; they are not codec compatibility certification.
+
+---
+
 # First-release implementation validation — 2026-11-05
 
 This section supersedes earlier claims about claiming conversations, transient notification cursors and visible provider evidence. Earlier evidence below is retained as history.
@@ -268,3 +371,13 @@ Activation requires an explicitly selected existing intake replica/default store
 The initial UI shows the latest 100 conversations and 200 messages per selected stream. All historical records remain stored. Tests do not establish production-load performance. The gateway test tooling emits a Starlette/HTTPX deprecation warning; runtime provider requests are unaffected.
 
 WhatsApp source review and the subsequent integration plan are in `docs/sales-operations-whatsapp-next-plan.md`. `ab_whatsapp_api` remains unchanged and unactivated by this task.
+
+## 2026-11-08 compact Chatter (19.0.1.9.0)
+
+- Targeted upgrade and workspace/WhatsApp bridge regressions: **76 tests passed**, zero failures/errors, on isolated `crm_whatsapp_sqlite_test_20261108` using this checkout. Log: `/tmp/chatter-compact-validation/final-regressions.log`.
+- Final focused browser run: **20 tests, 63 assertions passed**. Covers compact timezone/date formatting, icon-only channels, removed helper lines, warning/retry controls, preserved message DOM identity, older-message refresh, channel preview styling/download, native keyboard-focus styling and existing RTL/draft behavior. Log: `/tmp/chatter-compact-validation/browser-final.log`.
+- Added ORM coverage for latest reaction replacement/removal, reactions excluded from timeline/pagination/sidebar preview, synthetic attachment-caption suppression and retry retaining the same message/operation. Existing permission, branch/company, immutable history, uncertain-send and bounded-retry regressions pass.
+- The first reaction-filter attempt excluded ordinary sends without incoming events; the regression exposed this and the final domain uses explicit `not any`. The CSS test uses native keyboard focus because synthetic hover events do not activate browser pseudo-classes.
+- English, `ar`, and `ar_001` runtime checks passed for the new field and retry label, including Arabic frontend translation delivery and RTL locale direction. Both catalogs pass gettext format checks. Python/XML parsing and whitespace checks pass.
+- All 202 protected-addon hashes remain unchanged. Existing unrelated work and the WhatsApp bridge source are preserved. Runtime packaging omits Python/browser tests and test asset declarations; artifact: `/tmp/chatter-compact-validation/ab_crm_sales_workspace-19.0.1.9.0.tar.gz`.
+- Validation uses alternate ports 5069/5072 with zero workers/cron threads and stop-after-init. The live Odoo/gateway processes and database were not upgraded or restarted. No real provider sends were made. Apply the module through the normal runtime upgrade/reload workflow to load the changes there.
