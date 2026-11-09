@@ -7,6 +7,7 @@ from odoo.http import request
 from werkzeug.exceptions import BadRequest, Unauthorized, RequestEntityTooLarge
 
 OPERATIONS = {
+    'get_capabilities': set(),
     'get_provider_credentials': set(),
     'receive_event': {'event'},
     'receive_media': {'event_id', 'data', 'failed'},

@@ -424,3 +424,169 @@ class TestMessaging(TransactionCase):
             'tg', '900000123', payload['token'], 1, 'receipt', 'accepted', 'reference'
         )
         self.assertEqual(operation.state, 'accepted')
+
+    def test_invalid_locations_rejected_before_ingestion(self):
+        invalid = [None, False, [], {}, {'latitude': True, 'longitude': 0},
+                   {'latitude': '0', 'longitude': 0}, {'latitude': 91, 'longitude': 0},
+                   {'latitude': 0, 'longitude': -181}, {'latitude': float('nan'), 'longitude': 0},
+                   {'latitude': 10**500, 'longitude': 0},
+                   {'latitude': 0, 'longitude': 0, 'name': 'A' * 257},
+                   {'latitude': 0, 'longitude': 0, 'address': 'A' * 1025},
+                   {'latitude': 0, 'longitude': 0, 'is_live_snapshot': 1}]
+        for value in invalid:
+            with self.subTest(value=value), self.assertRaises(ValidationError):
+                self.receive(location=value)
+        for latitude, longitude in ((0, 0), (-90, -180), (90, 180)):
+            result = self.receive(f'point-{latitude}', location={'latitude': latitude, 'longitude': longitude})
+            message = self.env['ab_crm_message'].browse(result['message_id'])
+            self.assertEqual(message.location_snapshot['latitude'], latitude)
+            with self.assertRaises(AccessError):
+                message.sudo().write({'location_snapshot': False})
+
+    def test_incoming_markdown_stickers_and_private_downloads(self):
+        import base64
+        import gzip
+        import json
+        samples = [
+            ('image', 'image/jpeg', 'photo.jpg', b'\xff\xd8\xffphoto'),
+            ('image', 'image/png', 'photo.png', b'\x89PNG\r\n\x1a\nphoto'),
+            ('image', 'image/webp', 'sticker.webp', b'RIFF1234WEBPsticker'),
+            ('document', 'text/markdown', 'notes.md', '# Heading\n\nنص'.encode()),
+            ('document', 'application/x-tgsticker', 'sticker.tgs', gzip.compress(json.dumps({'layers': []}).encode())),
+            ('document', 'video/webm', 'sticker.webm', b'\x1a\x45\xdf\xa3sticker'),
+        ]
+        for index, (kind, mime, name, raw) in enumerate(samples):
+            metadata = {'kind': kind, 'mimetype': mime, 'name': name, 'size': len(raw), 'duration': 0, 'file_id': f'file-{index}'}
+            result = self.receive(f'attachment-{index}', media=metadata)
+            encoded = base64.b64encode(raw).decode()
+            self.gateway.receive_media('tg', '900000123', f'attachment-{index}', encoded)
+            media = self.env['ab_crm_message'].browse(result['message_id']).media_ids
+            self.assertEqual(media.state, 'ready')
+            self.assertEqual(media.with_user(self.staff).download()['data'], encoded)
+            with self.assertRaises(AccessError):
+                media.with_user(self.other).download()
+            with self.assertRaises(ValidationError):
+                self.gateway.receive_media('tg', '900000123', f'attachment-{index}', base64.b64encode(b'replaced').decode())
+
+    def test_markdown_and_animation_content_limits(self):
+        import base64
+        import gzip
+        from ..models.media import validate_media
+        invalid = [
+            ('text/markdown', 'notes.md', b'\x00not-text'),
+            ('text/markdown', 'notes.md', b'\xffnot-utf8'),
+            ('text/markdown', 'notes.exe', b'text'),
+            ('application/x-tgsticker', 'sticker.tgs', b'not-gzip'),
+            ('application/x-tgsticker', 'sticker.tgs', gzip.compress(b'{}')),
+            ('application/x-tgsticker', 'sticker.tgs', gzip.compress(b' ' * (1024 * 1024 + 1))),
+        ]
+        for mime, name, raw in invalid:
+            with self.assertRaises(ValidationError):
+                validate_media({'kind': 'document', 'mimetype': mime, 'name': name, 'size': len(raw)}, base64.b64encode(raw).decode())
+
+    def edited_event(self, reference='9', sequence=10, **values):
+        event = {
+            'id': 'edit:' + str(sequence), 'sender': '12345', 'body': 'Changed text',
+            'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
+            'source_digest': 'b' * 64,
+            'edit': {'reference': reference, 'date': '2026-01-01 12:01:00', 'sequence': sequence},
+        }
+        event.update(values)
+        return event
+
+    def test_telegram_edits_update_in_place_with_immutable_history(self):
+        original = self.receive('12345:9', timestamp='2026-01-01 12:00:00')
+        message = self.env['ab_crm_message'].browse(original['message_id'])
+        inbound = message.conversation_id.messaging_last_inbound
+        event = self.edited_event()
+        result = self.gateway.receive_event('tg', '900000123', event)
+        self.assertEqual(result['message_id'], message.id)
+        self.assertEqual(message.body, 'Changed text')
+        self.assertEqual(message.provider_edit_history[0]['body'], 'Hello')
+        self.assertEqual(len(message.provider_edit_history), 2)
+        self.assertEqual(message.conversation_id.messaging_last_inbound, inbound)
+        self.assertEqual(len(message.conversation_id.message_ids), 1)
+        self.assertEqual(self.gateway.receive_event('tg', '900000123', event), result)
+        self.assertEqual(len(message.provider_edit_history), 2)
+        with self.assertRaises(ValidationError):
+            self.gateway.receive_event('tg', '900000123', dict(event, body='Conflicting replay'))
+        older = self.edited_event(sequence=8, body='Older edit')
+        self.gateway.receive_event('tg', '900000123', older)
+        self.assertEqual(message.body, 'Changed text')
+        self.gateway.receive_event('tg', '900000123', self.edited_event(sequence=11, body='Latest edit'))
+        self.assertEqual(message.body, 'Latest edit')
+        self.assertEqual(len(message.provider_edit_history), 3)
+        for values in ({'body': 'Spoof'}, {'provider_edit_content': {}}, {'provider_edit_history': []}):
+            with self.assertRaises(UserError if 'body' in values else AccessError):
+                message.with_user(self.staff).write(values)
+        with self.assertRaises(AccessError):
+            message.sudo().write({'provider_edit_content': {}})
+        with self.assertRaises(AccessError):
+            self.env['ab_crm_message'].with_context(default_provider_edit_content={}).create({
+                'conversation_id': message.conversation_id.id, 'branch_id': self.branch.id, 'body': 'Spoof',
+            })
+
+    def test_telegram_edits_are_account_sender_and_direction_scoped(self):
+        original = self.receive('12345:9', timestamp='2026-01-01 12:00:00')
+        message = self.env['ab_crm_message'].browse(original['message_id'])
+        result = self.gateway.receive_event('tg', '900000123', self.edited_event(sender='999'))
+        self.assertFalse(result['message_id'])
+        self.assertFalse(result['media_required'])
+        self.assertEqual(message.body, 'Hello')
+        outgoing = self.reply()
+        outgoing._internal_write({'provider_reference': '777'})
+        result = self.gateway.receive_event('tg', '900000123', self.edited_event(reference='777', sequence=11))
+        self.assertFalse(result['message_id'])
+        self.assertFalse(outgoing.provider_edit_content)
+        for edit in ({}, {'reference': '9', 'date': 'bad', 'sequence': 12},
+                     {'reference': '9', 'date': '2026-01-01 11:00:00', 'sequence': 12},
+                     {'reference': '9', 'date': '2026-01-01 12:01:00', 'sequence': True}):
+            with self.subTest(edit=edit), self.assertRaises(ValidationError):
+                self.gateway.receive_event('tg', '900000123', dict(self.edited_event(sequence=12), edit=edit))
+        with self.assertRaises(AccessError):
+            self.gateway.with_user(self.staff).receive_event('tg', '900000123', self.edited_event(sequence=20))
+        with self.assertRaises(AccessError):
+            self.gateway.receive_event('tg', 'different-account', self.edited_event(sequence=20))
+        reaction = self.receive('reaction:9', timestamp='2026-01-01 12:00:00', body='Reaction', reaction='👍', reply_reference='9')
+        self.gateway.receive_event('tg', '900000123', self.edited_event(sequence=30))
+        self.assertEqual(message.body, 'Changed text')
+        self.assertEqual(self.env['ab_crm_message'].browse(reaction['message_id']).body, 'Reaction')
+        self.assertEqual(self.gateway.get_capabilities('tg', '900000123'), {'message_edits': True})
+        installed = self.env.ref('base.module_ab_crm_messaging')
+        installed.latest_version = '19.0.1.6.0'
+        self.assertEqual(self.gateway.get_capabilities('tg', '900000123'), {'message_edits': False})
+        with self.assertRaises(AccessError):
+            self.gateway.with_user(self.staff).get_capabilities('tg', '900000123')
+
+    def test_telegram_media_edits_keep_original_bytes_and_event_receipts(self):
+        import base64
+        old_data = base64.b64encode(b'%PDF-old').decode()
+        new_data = base64.b64encode(b'%PDF-new').decode()
+        metadata = {'kind': 'document', 'file_id': 'old-file', 'name': 'old.pdf', 'mimetype': 'application/pdf', 'size': 8}
+        original = self.receive('12345:9', timestamp='2026-01-01 12:00:00', body='Old caption', media=metadata)
+        message = self.env['ab_crm_message'].browse(original['message_id'])
+        self.gateway.receive_media('tg', '900000123', '12345:9', old_data)
+        old_media = message.media_ids
+        event = self.edited_event(media=dict(metadata, file_id='new-file', name='new.pdf'))
+        result = self.gateway.receive_event('tg', '900000123', event)
+        self.assertTrue(result['media_required'])
+        self.gateway.receive_media('tg', '900000123', 'edit:10', new_data)
+        self.assertEqual(len(message.media_ids), 2)
+        self.assertEqual(message._current_media().name, 'new.pdf')
+        self.assertEqual(old_media.data, old_data.encode())
+        self.gateway.receive_media('tg', '900000123', '12345:9', old_data)
+        self.assertEqual(message._current_media().data, new_data.encode())
+        self.gateway.receive_event('tg', '900000123', self.edited_event(sequence=11, body='Text now'))
+        self.assertFalse(message._current_media())
+        self.assertEqual(len(message.media_ids), 2)
+
+    def test_telegram_location_edits_preserve_original_evidence(self):
+        original = self.receive('12345:9', timestamp='2026-01-01 12:00:00', location={'latitude': 1, 'longitude': 2})
+        message = self.env['ab_crm_message'].browse(original['message_id'])
+        snapshot = dict(message.location_snapshot)
+        self.gateway.receive_event('tg', '900000123', self.edited_event(location={'latitude': 3, 'longitude': 4, 'is_live_snapshot': True}))
+        self.assertEqual(message._location_data()['latitude'], 3)
+        self.assertEqual(message._location_data(original=True)['latitude'], 1)
+        self.assertEqual(message.location_snapshot, snapshot)
+        with self.assertRaises(AccessError):
+            message.sudo().write({'location_snapshot': {}})

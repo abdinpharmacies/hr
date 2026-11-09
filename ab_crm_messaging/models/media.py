@@ -1,6 +1,9 @@
 import base64
 import binascii
+import json
 import math
+import zlib
+from pathlib import Path
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
@@ -10,6 +13,8 @@ MIMES = {
     'image/jpeg',
     'image/png',
     'image/webp',
+    'text/markdown',
+    'application/x-tgsticker',
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -49,8 +54,20 @@ def validate_media(metadata, data=None, translate=_):
     ):
         raise ValidationError(_('Invalid media type, size or recording duration.'))
     mime = metadata['mimetype']
+    suffix = Path(metadata['name']).suffix.lower()
     if (
-        (kind == 'document' and not mime.startswith('application/'))
+        (
+            kind == 'document'
+            and not (mime.startswith('application/') or mime in ('text/markdown', 'video/webm'))
+        )
+        or (
+            mime == 'text/markdown'
+            and (kind != 'document' or suffix not in ('.md', '.markdown'))
+        )
+        or (
+            mime == 'application/x-tgsticker'
+            and (kind != 'document' or suffix != '.tgs')
+        )
         or (
             kind in ('audio', 'voice')
             and not (mime.startswith('audio/') or mime == 'video/webm')
@@ -75,8 +92,29 @@ def validate_media(metadata, data=None, translate=_):
         except (ValueError, binascii.Error):
             raise ValidationError(_('Invalid media content or size.')) from None
         mime = metadata['mimetype']
+        text_valid = False
+        animation_valid = False
+        if mime == 'text/markdown':
+            try:
+                text_valid = '\x00' not in raw.decode('utf-8-sig')
+            except UnicodeDecodeError:
+                pass
+        elif mime == 'application/x-tgsticker':
+            try:
+                decoder = zlib.decompressobj(16 + zlib.MAX_WBITS)
+                decoded = decoder.decompress(raw, 1024 * 1024 + 1)
+                if len(decoded) <= 1024 * 1024 and decoder.eof and not decoder.unused_data:
+                    animation = json.loads(decoded)
+                    animation_valid = (
+                        isinstance(animation, dict)
+                        and isinstance(animation.get('layers'), list)
+                    )
+            except (ValueError, zlib.error, UnicodeDecodeError, RecursionError):
+                pass
         valid = (
-            (mime == 'image/jpeg' and raw.startswith(b'\xff\xd8\xff'))
+            text_valid
+            or animation_valid
+            or (mime == 'image/jpeg' and raw.startswith(b'\xff\xd8\xff'))
             or (mime == 'image/png' and raw.startswith(b'\x89PNG\r\n\x1a\n'))
             or (
                 mime == 'image/webp'
@@ -249,7 +287,7 @@ class MessagingAPI(models.AbstractModel):
                 limit=1,
             )
         )
-        media = event.message_id.media_ids
+        media = event.media_id or event.message_id.media_ids
         if (
             len(media) != 1
             or media.company_id != account.company_id

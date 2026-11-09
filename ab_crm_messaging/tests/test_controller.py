@@ -84,6 +84,11 @@ class TestMessagingController(HttpCase):
         return response, correlation
 
     def test_bearer_and_account_scope(self):
+        response, correlation = self.call_gateway(operation='get_capabilities')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'correlation_id': correlation, 'result': {'message_edits': True}})
+        response, _ = self.call_gateway(operation='get_capabilities', key='invalid-key')
+        self.assertEqual(response.status_code, 401)
         response, correlation = self.call_gateway()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(

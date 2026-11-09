@@ -872,3 +872,59 @@ msgstr "رسالة صوتية"
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__error_code__media
 msgid "Media validation failed before sending"
 msgstr "فشل التحقق من المرفق قبل الإرسال"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/location.py:0
+msgid "Invalid location."
+msgstr "الموقع غير صالح."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/location.py:0
+msgid "Location evidence is managed by ingestion."
+msgstr "تتم إدارة بيانات الموقع بواسطة استقبال الرسائل."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/location.py:0
+msgid "Location evidence is immutable."
+msgstr "لا يمكن تغيير بيانات الموقع المسجلة."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Location"
+msgstr "الموقع"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+msgid "Location snapshot"
+msgstr "لقطة الموقع"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__location_snapshot
+msgid "Location Snapshot"
+msgstr "لقطة الموقع"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__edit_payload
+msgid "Edit Payload"
+msgstr "بيانات التعديل"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__provider_edit_content
+msgid "Provider Edit Content"
+msgstr "محتوى تعديل مزود الخدمة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__provider_edit_history
+msgid "Provider Edit History"
+msgstr "سجل تعديلات مزود الخدمة"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/edits.py:0
+msgid "Message delivery evidence is managed by the gateway."
+msgstr "تدير البوابة بيانات تسليم الرسائل."

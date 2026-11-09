@@ -10,6 +10,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.addons.ab_crm_core.models.core import _INTERNAL
 
 _MUTATION = ContextVar('ab_messaging_mutation', default=False)
+_EDIT = ContextVar('ab_messaging_edit', default=False)
 ERRORS = [
     ('none', 'No error'),
     ('media', 'Media validation failed before sending'),
@@ -120,6 +121,9 @@ class Account(models.Model):
             raise UserError(_('Replies must contain between 1 and 4096 characters.'))
         return False
 
+    def _eligible_message(self, message):
+        return self._eligible(message.conversation_id, message.body)
+
     def _prevent_provider_removal(self):
         if self:
             raise UserError(
@@ -223,7 +227,7 @@ class Message(models.Model):
                 )
             account._authorize('read')
             account.lock_for_update()
-            deadline = account._eligible(message.conversation_id, message.body)
+            deadline = account._eligible_message(message)
             mapped.append((message, account, deadline))
         result = super().action_approve()
         for message, account, deadline in mapped:
@@ -387,9 +391,7 @@ class Operation(models.Model):
                 raise UserError(
                     _('Only a definitively rejected retryable send can be retried.')
                 )
-            deadline = record.account_id._eligible(
-                record.message_id.conversation_id, record.body
-            )
+            deadline = record.account_id._eligible_message(record.message_id)
             record._change(
                 {
                     'state': 'queued',
@@ -511,6 +513,8 @@ class MessagingAPI(models.AbstractModel):
             'media',
             'reply_reference',
             'reaction',
+            'location',
+            'edit',
         } != {
             'id',
             'sender',
@@ -542,11 +546,20 @@ class MessagingAPI(models.AbstractModel):
         if not timestamp or timestamp > fields.Datetime.now() + timedelta(minutes=5):
             raise ValidationError(_('Invalid incoming messaging event.'))
         timestamp = min(timestamp, fields.Datetime.now())
+        location = None
+        if 'location' in event:
+            from .location import validate_location
+            location = validate_location(event['location'])
+            if event['unsupported'] or event.get('media') or event.get('contact') or event.get('reaction'):
+                raise ValidationError(_('Invalid incoming messaging event.'))
+            location['timestamp'] = fields.Datetime.to_string(timestamp)
         fingerprint = sha256(json.dumps(event, sort_keys=True).encode()).hexdigest()
         clean_context = {
             'allowed_company_ids': account.company_id.ids,
             'lang': self.env.lang,
         }
+        if 'edit' in event:
+            return self._receive_edit(account, event, timestamp, location, fingerprint, clean_context)
         ledger = self.env['ab_crm_messaging_event'].sudo().with_context(clean_context)
         existing = ledger.search(
             [('account_id', '=', account.id), ('event_key', '=', event['id'])], limit=1
@@ -606,6 +619,12 @@ class MessagingAPI(models.AbstractModel):
                 if event['unsupported']
                 else event['body']
             )
+            if location:
+                body = '\n'.join(filter(None, [
+                    _('Location snapshot') if location['is_live_snapshot'] else _('Location'),
+                    location['name'], location['address'],
+                    f"{location['latitude']}, {location['longitude']}",
+                ]))
             message = (
                 self.env['ab_crm_message']
                 .sudo()
@@ -615,6 +634,7 @@ class MessagingAPI(models.AbstractModel):
                         scope,
                         conversation_id=conversation.id,
                         body=body,
+                        location_snapshot=location or False,
                         direction='in',
                         delivery_state='sent',
                         approved_by=False,
@@ -645,6 +665,7 @@ class MessagingAPI(models.AbstractModel):
                     fingerprint=fingerprint,
                     provider_timestamp=timestamp,
                     message_id=message.id,
+                    media_id=message.media_ids[:1].id,
                 )
             )
         finally:
