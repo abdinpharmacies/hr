@@ -47,6 +47,7 @@
         "views/business_partnership_views.xml",
         "views/management_menus.xml",
         "views/legacy_seo_import_views.xml",
+        "views/image_sync_wizard_views.xml",
         "views/staff_user_views.xml",
         "views/category_image_views.xml",
         "views/storefront_offer_views.xml",
@@ -76,6 +77,9 @@
     ],
     "assets": {
         "web.assets_backend": [
+            "ab_ecommerce_storefront/static/src/js/image_sync_upload.js",
+            "ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml",
+            "ab_ecommerce_storefront/static/src/scss/image_sync_wizard.scss",
             "ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js",
             "ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml",
             "ab_ecommerce_storefront/static/src/scss/call_center_order_workspace.scss",

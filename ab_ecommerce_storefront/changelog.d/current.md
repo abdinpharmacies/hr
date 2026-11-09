@@ -2,13 +2,29 @@
 
 ## Current changes before commit:
 
-- Refresh the module history with order tracking, add-to-cart contrast, and translation-reference commits.
-- Preserve prior storefront commit references and their affected files.
-- Commit preparation passed Python/XML parsing, JavaScript syntax, SCSS compilation, catalog format checks, and translated order labels in both Arabic catalogs. Database upgrades and runtime suites were not rerun.
+- Let administrators choose an image folder or ZIP file from their device, with upload progress and a visible file count.
+- Offer only device folder and ZIP file sources, make scanning the first action, and show synchronization after a preview.
+- Load the upload widget's Arabic text through Odoo's frontend translation catalog.
+- Remove the redundant Configuration heading and divider from image sync, and tighten spacing around the picker.
+- Preserve the existing image matching, replacement confirmation, and report while checking upload paths and limits.
 
 Files changed:
 
+- `ab_ecommerce_storefront/__manifest__.py`
 - `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/image_sync_upload.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/image_sync_wizard.py`
+- `ab_ecommerce_storefront/static/src/js/image_sync_upload.js`
+- `ab_ecommerce_storefront/static/src/scss/image_sync_wizard.scss`
+- `ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml`
+- `ab_ecommerce_storefront/tests/__init__.py`
+- `ab_ecommerce_storefront/tests/test_image_sync_upload.py`
+- `ab_ecommerce_storefront/views/image_sync_wizard_views.xml`
 
 ## Recent commits
 

@@ -30,5 +30,6 @@ from . import checkout_submission
 from . import staff_account
 from . import website_carousel_slide
 from . import legacy_seo_import
+from . import image_sync_wizard
 from . import auth_signup_otp
 from . import legacy_customer

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_storefront.ImageSyncUpload">
+        <div class="ab-storefront-image-upload">
+            <button type="button" class="btn btn-secondary" t-att-disabled="state.uploading" t-on-click="pickImages">
+                <t t-if="mode === 'folder'">Choose Folder</t>
+                <t t-else="">Choose ZIP File</t>
+            </button>
+            <div class="text-muted mt-2" t-if="!hasSelection and !state.uploading">
+                The files are uploaded from this device to the Odoo server. Scan after upload to review matches.
+            </div>
+            <div class="text-muted mt-1" t-if="!hasSelection and !state.uploading">
+                Up to 10,000 images (30 MB each, 2 GB total). ZIP files up to 512 MB.
+            </div>
+            <div class="mt-2" t-if="hasSelection and !state.uploading">
+                <strong t-esc="props.record.data.upload_name"/> ·
+                <t t-esc="props.record.data.upload_file_count"/> images ready to scan
+            </div>
+            <div class="mt-2" t-if="state.uploading" role="status" aria-live="polite">
+                Uploading images: <t t-esc="state.progress"/>%
+                <div class="progress mt-1" role="progressbar" t-att-aria-valuenow="state.progress" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" t-att-style="'width: ' + state.progress + '%'"/>
+                </div>
+            </div>
+            <div class="text-danger mt-2" t-if="state.error" role="alert" t-esc="state.error"/>
+        </div>
+    </t>
+</templates>

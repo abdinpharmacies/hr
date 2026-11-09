@@ -13,3 +13,4 @@ from . import checkout_submission
 from . import payment_status
 from . import auth_signup_otp
 from . import legacy_activation
+from . import image_sync_upload

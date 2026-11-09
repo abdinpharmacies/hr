@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_storefront_image_sync_wizard_form" model="ir.ui.view">
+        <field name="name">ab.storefront.image.sync.wizard.form</field>
+        <field name="model">ab.website.sale.add.many.by.codes.wizard</field>
+        <field name="inherit_id" ref="ab_website_sale_product.view_sync_images_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class">ab-storefront-image-sync-wizard</attribute>
+            </xpath>
+            <xpath expr="//field[@name='directory_path']" position="replace">
+                <field name="source_mode" widget="radio"/>
+                <field name="upload_ready" invisible="1"/>
+                <field name="upload_source_mode" invisible="1"/>
+                <field name="preview_source_mode" invisible="1"/>
+                <field name="upload_name" invisible="1"/>
+                <field name="upload_file_count" invisible="1"/>
+            </xpath>
+            <xpath expr="//group[field[@name='source_mode']]" position="attributes">
+                <attribute name="string"/>
+                <attribute name="class">ab-storefront-image-sync-source</attribute>
+            </xpath>
+            <xpath expr="//group[field[@name='source_mode']]" position="after">
+                <widget name="ab_storefront_image_upload"/>
+            </xpath>
+            <xpath expr="//footer/button[@name='action_preview_images']" position="attributes">
+                <attribute name="string">Scan Images</attribute>
+                <attribute name="class">btn-primary</attribute>
+                <attribute name="invisible">image_sync_confirmation_required or not upload_ready or upload_source_mode != source_mode</attribute>
+            </xpath>
+            <xpath expr="//group[field[@name='image_sync_summary']]" position="attributes">
+                <attribute name="invisible">not image_sync_summary or preview_source_mode != source_mode</attribute>
+            </xpath>
+            <xpath expr="//field[@name='image_sync_line_ids']" position="attributes">
+                <attribute name="invisible">not image_sync_line_ids or preview_source_mode != source_mode</attribute>
+            </xpath>
+            <xpath expr="//footer/button[@name='action_sync_images']" position="attributes">
+                <attribute name="class">btn-secondary</attribute>
+                <attribute name="invisible">not image_sync_summary or preview_source_mode != source_mode or image_sync_confirmation_required</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

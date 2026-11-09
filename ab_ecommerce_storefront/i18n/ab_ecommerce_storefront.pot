@@ -13373,3 +13373,237 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
 msgid "This offer is referenced by an order. Archive it instead."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_storefront_image_sync_wizard_form
+msgid "Scan Images"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "An image exceeds the 30 MB file limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "An uploaded image has an invalid path."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
+msgid "Choose Folder"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
+msgid "Choose ZIP File"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
+msgid "Choose a ZIP file first."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "Choose and upload an image folder or ZIP file first."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_website_sale_add_many_by_codes_wizard__source_mode__folder
+msgid "Folder on this device"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__source_mode
+msgid "Image source"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
+msgid "Image upload failed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
+msgid "Image upload failed. Check your connection and try again."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
+msgid "Invalid image upload operation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
+msgid "No supported image files were selected."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
+msgid "Save the image source before uploading."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "Select the matching image source before uploading."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "Start a ZIP upload before adding images."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "Start a folder upload before adding images."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "The ZIP contains an unsupported image file."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
+msgid "The ZIP file could not be opened."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
+msgid "The ZIP file exceeds the 512 MB upload limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
+msgid ""
+"The files are uploaded from this device to the Odoo server. Scan after "
+"upload to review matches."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
+msgid "The image synchronization session is no longer available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
+msgid "The selected image files could not be read."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "The uploaded image folder is unavailable."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "This ZIP file exceeds the upload limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "This image folder exceeds the upload limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
+msgid "Uploading images:"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "You can only upload images to your own synchronization session."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_website_sale_add_many_by_codes_wizard__source_mode__zip
+msgid "ZIP file on this device"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
+msgid "images ready to scan"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__preview_source_mode
+msgid "Preview Source Mode"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_directory
+msgid "Upload Directory"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_file_count
+msgid "Upload File Count"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_name
+msgid "Upload Name"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_ready
+msgid "Upload Ready"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_source_mode
+msgid "Upload Source Mode"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_total_bytes
+msgid "Upload Total Bytes"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
+msgid ""
+"Folder selection is unavailable in this browser. Choose a ZIP file instead."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
+msgid "Up to 10,000 images (30 MB each, 2 GB total). ZIP files up to 512 MB."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
+msgid "The ZIP contains duplicate image paths."
+msgstr ""
