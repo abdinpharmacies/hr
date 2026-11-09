@@ -217,6 +217,8 @@ def normalize(account, payload):
                     unsupported,
                     message,
                 )
+                if not event['sender'].isascii() or not event['sender'].isdecimal():
+                    event['review_reason'] = 'unsupported_identity'
                 if location:
                     event['location'] = location
                 events.append(('message:' + event['id'], 'incoming', event))
@@ -233,6 +235,8 @@ def normalize(account, payload):
                         'destination': identifier(status['recipient_id']),
                         'status': state,
                     }
+                    if not event['destination'].isascii() or not event['destination'].isdecimal():
+                        event['review_reason'] = 'unsupported_identity'
                     key = ':'.join(
                         (
                             'status',

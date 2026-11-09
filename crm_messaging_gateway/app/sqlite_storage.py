@@ -176,7 +176,7 @@ class SQLiteStore:
                     kind,
                     digest,
                     encode(payload),
-                    'ignored' if kind == 'ignored' else 'pending',
+                    'review' if payload.get('review_reason') else 'ignored' if kind == 'ignored' else 'pending',
                 ),
             )
             row = conn.execute(

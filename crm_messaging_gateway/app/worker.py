@@ -90,6 +90,9 @@ class Worker:
         self.store.finish_incoming(row, success)
 
     def collect(self, code):
+        account = self.config.accounts[code]
+        if not self.config.sending_enabled or not account.enabled or not account.sending_enabled:
+            return
         payload = self.odoo.call('lease_outgoing', code)
         if not payload:
             return
@@ -126,8 +129,10 @@ class Worker:
                 pass
 
     def dispatch(self):
+        if not self.config.sending_enabled:
+            return
         accounts = [
-            code for code, account in self.config.accounts.items() if account.enabled
+            code for code, account in self.config.accounts.items() if account.enabled and account.sending_enabled
         ]
         row = self.store.claim_outgoing(accounts)
         if row:
@@ -191,7 +196,7 @@ class Worker:
         self.recover_receipts()
         if self.config.sending_enabled:
             for code, account in self.config.accounts.items():
-                if account.enabled:
+                if account.enabled and account.sending_enabled:
                     try:
                         self.collect(code)
                     except Exception:

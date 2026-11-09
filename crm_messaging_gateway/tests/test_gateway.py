@@ -28,6 +28,7 @@ def telegram():
 
 def whatsapp():
     return Account(
+        odoo_key='whatsapp-test-service-key',
         provider='whatsapp',
         provider_account='456',
         token='test-only',
@@ -301,7 +302,9 @@ def test_send_requires_fresh_odoo_permission():
     }
     store.claim_outgoing.return_value = row
     odoo.call.return_value = False
-    Worker(config(), store, odoo, client).dispatch()
+    cfg = config()
+    cfg.sending_enabled = True
+    Worker(cfg, store, odoo, client).dispatch()
     client.post.assert_not_called()
     store.defer_send.assert_called_once_with(row)
 
@@ -767,6 +770,7 @@ def test_rejected_download_content_is_shown_as_failed():
 
 def test_outgoing_only_whatsapp_rejects_webhooks():
     account = Account(
+        odoo_key='whatsapp-test-service-key',
         provider='whatsapp', provider_account='456', token='test-only', enabled=True
     )
     assert account.reception == 'disabled'
@@ -855,6 +859,8 @@ def test_whatsapp_media_upload_and_ambiguous_send():
 
 def test_dispatch_terminal_authorization_never_contacts_provider():
     cfg, store, odoo, client = config(), Mock(), Mock(), Mock()
+    cfg.sending_enabled = True
+    cfg.accounts['wa'].sending_enabled = True
     store.claim_outgoing.return_value = {
         'id': 1,
         'account': 'wa',

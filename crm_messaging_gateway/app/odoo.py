@@ -34,7 +34,7 @@ class Odoo:
                     self.config.odoo_url.rstrip('/') + path + method,
                     headers={
                         'Authorization': 'Bearer '
-                        + self.config.odoo_key.get_secret_value(),
+                        + (account.odoo_key or self.config.odoo_key).get_secret_value(),
                         'X-Odoo-Database': self.config.odoo_database,
                     },
                     json=(

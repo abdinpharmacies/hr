@@ -1,28 +1,31 @@
 {
-  "database_url": "sqlite:///var/lib/crm-messaging/queue.db?busy_timeout_ms=1000&contention_retries=3",
+  "database_url": "postgresql://queue_user:REPLACE_IN_PROTECTED_CONFIG@127.0.0.1/crm_messaging_callcenter",
   "odoo_url": "https://callcenter.example.invalid",
   "odoo_database": "callcenter",
   "odoo_key": "REPLACE_IN_PROTECTED_CONFIG",
   "sending_enabled": false,
   "accounts": {
-    "wa-pilot": {
+    "wa-callcenter": {
       "provider": "whatsapp",
+      "odoo_key": "REPLACE_WITH_DEDICATED_WHATSAPP_SERVICE_KEY",
       "provider_account": "100000000000001",
       "token": "REPLACE_IN_PROTECTED_CONFIG",
       "webhook_secret": "REPLACE_WITH_META_APP_SECRET",
       "verify_token": "REPLACE_WITH_RANDOM_VERIFY_TOKEN",
       "graph_version": "v26.0",
       "enabled": false,
-      "reception": "disabled"
+      "reception": "disabled",
+      "sending_enabled": false
     },
-    "tg-pilot": {
+    "tg-callcenter": {
       "provider": "telegram",
       "provider_account": "100000001",
       "webhook_secret": "REPLACE_WITH_RANDOM_WEBHOOK_SECRET",
       "enabled": false,
       "reception": "polling",
       "token_source": "odoo",
-      "location_enabled": false
+      "location_enabled": false,
+      "sending_enabled": true
     }
   },
   "odoo_transport": "controller_v1",

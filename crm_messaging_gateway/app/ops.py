@@ -37,7 +37,11 @@ def main():
         elif args.command == 'import':
             result = import_queue(store, args.file)
         else:
-            result = backup_queue(store, args.file)
+            if sqlite:
+                result = backup_queue(store, args.file)
+            else:
+                from .postgres_backup import backup_postgres
+                result = backup_postgres(store, args.file)
         print(json.dumps(result))
     elif args.command == 'migrate':
         store.migrate()
@@ -53,6 +57,18 @@ def main():
                 'SELECT provider_account,next_offset,updated_at FROM telegram_polling ORDER BY provider_account'
             ).fetchall()
             metrics = {}
+            if not sqlite:
+                for table in ('incoming_event', 'outgoing_operation'):
+                    row = conn.execute(
+                        f"SELECT EXTRACT(EPOCH FROM now()-MIN(created_at)) AS age FROM {table} WHERE state NOT IN ('done','ignored')"
+                    ).fetchone()
+                    metrics[table + '_oldest_seconds'] = float(row['age'] or 0)
+                metrics['polling_heartbeat_age_seconds'] = [float(row['age']) for row in conn.execute(
+                    'SELECT EXTRACT(EPOCH FROM now()-updated_at) AS age FROM telegram_polling'
+                ).fetchall()]
+                metrics['uncertain'] = conn.execute(
+                    "SELECT count(*) AS count FROM outgoing_operation WHERE outcome->>'status'='review'"
+                ).fetchone()['count']
             if sqlite:
                 import shutil
                 import time
@@ -88,7 +104,7 @@ def main():
     elif args.command == 'review':
         with store.connect() as conn:
             rows = conn.execute(
-                "SELECT id,account,kind,state,attempts,error FROM incoming_event WHERE state='review' ORDER BY id"
+                "SELECT id,account,kind,state,attempts,COALESCE(error,payload->>'review_reason') AS error FROM incoming_event WHERE state='review' ORDER BY id"
             ).fetchall()
             outgoing = conn.execute(
                 "SELECT id,account,state,outcome->>'error' AS error FROM outgoing_operation WHERE outcome->>'status'='review' ORDER BY id"

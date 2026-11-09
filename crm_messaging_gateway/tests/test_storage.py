@@ -255,3 +255,52 @@ def test_postgres_to_sqlite_preserves_queue_evidence(store, tmp_path):
             == 'sending'
         )
     assert target.claim_outgoing(['tg']) is None
+
+
+def test_unknown_identity_is_durable_review_without_worker_delivery(store):
+    store.ingest('wa', [('opaque', 'incoming', {
+        'sender': 'opaque:123', 'review_reason': 'unsupported_identity',
+    })])
+    assert store.claim_incoming() is None
+    with store.connect() as conn:
+        row = conn.execute('SELECT state,payload FROM incoming_event').fetchone()
+    assert row['state'] == 'review'
+    assert row['payload']['sender'] == 'opaque:123'
+
+
+def test_postgres_backup_restore_preserves_queue_evidence(store, tmp_path):
+    import subprocess
+    from uuid import uuid4
+    import psycopg
+    from psycopg import sql
+    from psycopg.conninfo import conninfo_to_dict, make_conninfo
+    from app.postgres_backup import backup_postgres, database_environment
+    from app.queue_transfer import digest_records, snapshot
+
+    tmp_path.chmod(0o700)
+    store.ingest('wa', [('review', 'incoming', {'sender': 'opaque:123', 'review_reason': 'unsupported_identity'})])
+    operation_row = store.persist_outgoing('tg', payload())
+    store.mark_ready(operation_row)
+    with store.connect() as conn:
+        expected = digest_records(snapshot(conn))
+    archive = tmp_path / 'queue.dump'
+    result = backup_postgres(store, archive)
+    assert result['bytes'] > 0
+    assert archive.stat().st_mode & 0o077 == 0
+    values = conninfo_to_dict(store.database_url)
+    restore_name = 'crm_gateway_restore_test_' + uuid4().hex
+    with psycopg.connect(store.database_url, autocommit=True) as admin:
+        admin.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(restore_name)))
+        try:
+            restore_dsn = make_conninfo(**dict(values, dbname=restore_name))
+            completed = subprocess.run(['pg_restore', '--exit-on-error', '--no-owner', '--no-acl',
+                                        '--dbname', restore_name, str(archive)],
+                                       env=database_environment(restore_dsn), capture_output=True, timeout=60)
+            assert completed.returncode == 0
+            restored = Store(restore_dsn)
+            with restored.connect() as conn:
+                assert digest_records(snapshot(conn)) == expected
+            assert restored.claim_incoming() is None
+            assert restored.claim_outgoing(['tg'])['token'] == 'token'
+        finally:
+            admin.execute(sql.SQL('DROP DATABASE {}').format(sql.Identifier(restore_name)))

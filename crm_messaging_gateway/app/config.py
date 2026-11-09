@@ -12,10 +12,12 @@ class Account(BaseModel):
     provider: Literal['whatsapp', 'telegram']
     provider_account: str = Field(pattern=r'^[0-9]+$')
     token: SecretStr | None = None
+    odoo_key: SecretStr | None = None
     token_source: Literal['config', 'odoo'] = 'config'
     webhook_secret: SecretStr | None = None
     verify_token: SecretStr | None = None
     graph_version: str = Field(default='v26.0', pattern=r'^v[0-9]+\.0$')
+    sending_enabled: bool = False
     enabled: bool = False
     location_enabled: bool = False
     reception: Literal['webhook', 'polling', 'disabled'] = 'webhook'
@@ -23,6 +25,8 @@ class Account(BaseModel):
     @model_validator(mode='before')
     @classmethod
     def reception_default(cls, values):
+        if isinstance(values, dict) and 'sending_enabled' not in values:
+            values = dict(values, sending_enabled=values.get('provider') == 'telegram')
         if (
             isinstance(values, dict)
             and values.get('provider') == 'whatsapp'
@@ -33,6 +37,10 @@ class Account(BaseModel):
 
     @model_validator(mode='after')
     def credentials(self):
+        if self.provider == 'whatsapp' and self.enabled and not self.odoo_key:
+            raise ValueError('Enabled WhatsApp accounts require a dedicated Odoo credential')
+        if self.provider == 'whatsapp' and self.graph_version != 'v26.0':
+            raise ValueError('WhatsApp requires validated Graph API version v26.0')
         if (
             self.reception == 'webhook'
             and (
