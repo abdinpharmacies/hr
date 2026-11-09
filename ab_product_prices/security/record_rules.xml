@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_product_price_editing_user_for_entry_crud" model="ir.rule">
+            <field name="name">rule_ab_product_price_editing_user_for_entry_crud</field>
+            <field name="model_id" ref="model_ab_product_price_editing"/>
+            <field name="groups" eval="[(4, ref('group_ab_product_price_editing_user'))]"/>
+            <field name="domain_force">[
+                ('status', '=', 'entry'),
+                '|',
+                ('create_uid', '=', user.id),
+                ('create_uid', '=', False),
+            ]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_product_price_editing_user_for_entry_ro" model="ir.rule">
+            <field name="name">rule_ab_product_price_editing_user_for_entry_ro</field>
+            <field name="model_id" ref="model_ab_product_price_editing"/>
+            <field name="groups" eval="[(4, ref('group_ab_product_price_editing_user'))]"/>
+            <field name="domain_force">[
+                '|',
+                ('create_uid', '=', user.id),
+                ('create_uid', '=', False),
+            ]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_product_price_editing_viewer" model="ir.rule">
+            <field name="name">rule_ab_product_price_editing_viewer</field>
+            <field name="model_id" ref="model_ab_product_price_editing"/>
+            <field name="groups" eval="[(4, ref('group_ab_product_price_editing_viewer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_product_price_editing_editor" model="ir.rule">
+            <field name="name">rule_ab_product_price_editing_editor</field>
+            <field name="model_id" ref="model_ab_product_price_editing"/>
+            <field name="groups" eval="[(4, ref('group_ab_product_price_editing_editor'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+    </data>
+</odoo>

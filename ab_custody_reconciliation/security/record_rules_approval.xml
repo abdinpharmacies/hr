@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="rule_ab_reconciliation_employee_approval_user" model="ir.rule">
+            <field name="name">rule_ab_reconciliation_employee_approval_user</field>
+            <field name="model_id" ref="model_ab_reconciliation_employee_approval"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[('account_id.department_manager_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_reconciliation_employee_approval_accounting" model="ir.rule">
+            <field name="name">rule_ab_reconciliation_employee_approval_accounting</field>
+            <field name="model_id" ref="model_ab_reconciliation_employee_approval"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_accounting'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+    </data>
+</odoo>

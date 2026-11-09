@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_payroll.ab_accounting_je_header_view_form_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_je_header_view_form_inherit</field>
+            <field name="model">ab_accounting_je_header</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_header_view_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@id='ab-accounting-balances']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//sheet/group" position="after">
+                    <div class="card card-body border-info">
+                        <group col="4" string="Payment Data" class="text-center">
+                            <field name="je_type" required="1"/>
+                            <field name="due_month"
+                                   required="1"
+                                   options="{'datepicker':
+                                                   {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"/>
+
+
+                        </group>
+                        <label for="costcenter_codes"/>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="abdin-textbox-container">
+                                    <field name="costcenter_codes" nolabel="1" class="abdin-textbox"/>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="h-50">
+                                    <button type="object" name="btn_create_je"
+                                            confirm="Create JE, are you sure?"
+                                            string="Create JE"
+                                            class="btn-outline-success  btn-block h-100"/>
+                                </div>
+                                <div class="h-50">
+                                    <button type="object" name="btn_remove_all_je"
+                                            confirm="Remove all JE, are you sure?"
+                                            string="Remove all JE"
+                                            class="btn-outline-danger  btn-block h-100"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+    <record id="ab_accounting_je_header_view_inherit" model="ir.ui.view">
+        <field name="name">account_header</field>
+        <field name="model">ab_accounting_je_header</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_je_header_search"/>
+        <field name="mode">extension</field>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='filter_posted_je']" position="after">
+                <filter name="filter_salary_process" string="Salary Process"
+                        domain="[('je_type','!=',False)]"/>
+                <separator/>
+
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="ab_accounting_je_header_salaries_action" model="ir.actions.act_window">
+        <field name="name">Salaries Processes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ab_accounting_je_header</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('je_type', '!=', False)]</field>
+        <field name="context" eval="{'default_account_id': ref('ab_accounting.ab_accounting_account_guide_due_salaries'),
+                           'default_costcenter_id': 629, 'default_doctype_id': 7,}"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('ab_accounting.ab_accounting_je_header_view_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('ab_accounting_je_header_view_form_inherit')})]"/>
+
+    </record>
+    <menuitem name="Salaries Processes"
+              id="ab_accounting_je_header_salaries_menu"
+              action="ab_accounting_je_header_salaries_action"
+              sequence="1"
+              groups="ab_accounting.group_ab_accounting_manager"
+              parent="ab_accounting.salaries"/>
+
+
+</odoo>

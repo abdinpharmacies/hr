@@ -1,0 +1,130 @@
+<odoo>
+    <data>
+        <!--#################################################################################-->
+
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="abdin_pl.pl_temp_list_view">
+            <field name="name">pl_temp list</field>
+            <field name="model">abdin_pl.pl_temp</field>
+            <field name="arch" type="xml">
+                <list limit="100">
+                    <field name="due_date" optional="show"/>
+                    <field name="grand_level" optional="show"/>
+                    <field name="analytic_level1" optional="show"/>
+                    <field name="analytic_level2" optional="show"/>
+                    <field name="final_account" class="h5" optional="show"/>
+                    <field name="branch" optional="show"/>
+                    <field name="net_val" optional="show"/>
+                    <field name="with_account" class="text-muted" optional="show"/>
+                    <field name="data_source" class="text-muted" optional="show"/>
+                    <field name="explain" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- pl_temp_PIVOT_VIEW -->
+        <record model="ir.ui.view" id="abdin_pl.pl_temp_pivot_view">
+            <field name="name">pl_temp pivot</field>
+            <field name="model">abdin_pl.pl_temp</field>
+            <field name="arch" type="xml">
+                <pivot string="Abdin Sales Pivot">
+                    <field name="branch" type="row"/>
+                    <field name="due_date" interval="month" type="col"/>
+                    <field name="grand_level" type="col"/>
+                    <field name="net_val" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!--  pl_temp_GRAPH_VIEW -->
+        <record model="ir.ui.view" id="abdin_pl.pl_temp_graph_view">
+            <field name="name">pl_temp graph</field>
+            <field name="model">abdin_pl.pl_temp</field>
+            <field name="arch" type="xml">
+                <graph string="Abdin Sales Graph">
+                    <field name="branch"/>
+                    <field name="net_val" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!--  pl_temp_SEARCH_VIEW -->
+        <record model="ir.ui.view" id="abdin_pl.pl_temp_search_view">
+            <field name="name">pl_temp search</field>
+            <field name="model">abdin_pl.pl_temp</field>
+            <field name="arch" type="xml">
+                <search string="Abdin Sales Graph">
+                    <separator/>
+                    <filter string="Remove HQ"
+                            name="filter_pl_remove_hq"
+                            domain="['!',('branch','=ilike','الادارة العامة'),]"/>
+                    <filter string="Due Date" name="group_due_date" context="{'group_by':'due_date'}"/>
+                    <filter string="Branch" name="group_branch" context="{'group_by':'branch'}"/>
+                    <filter string="Grand Level" name="group_grand_level"
+                            context="{'group_by':'grand_level'}"/>
+                    <filter string="Analytic Level 1" name="group_analytic_level1"
+                            context="{'group_by':'analytic_level1'}"/>
+                    <filter string="Analytic Level 2" name="group_analytic_level2"
+                            context="{'group_by':'analytic_level2'}"/>
+                    <filter string="Final Account" name="group_final_account" context="{'group_by':'final_account'}"/>
+                    <field name="grand_level"/>
+                    <field name="analytic_level1"/>
+                    <field name="analytic_level2"/>
+                    <field name="final_account"/>
+                    <field name="branch"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- action window-->
+        <record model="ir.actions.act_window" id="abdin_pl.p_and_l_browse">
+            <field name="name">P&amp;L</field>
+            <field name="res_model">abdin_pl.pl_temp</field>
+            <field name="view_mode">pivot,list,graph</field>
+            <field name="target">current</field>
+        </record>
+
+
+        <record id="abdin_pl.get_net_pl_act_server" model="ir.actions.server">
+            <field name="name">Refresh P&amp;L Net</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="abdin_pl.model_abdin_pl_pl_temp"/>
+            <field name="binding_model_id" ref="abdin_pl.model_abdin_pl_pl_temp"/>
+            <field name="state">code</field>
+            <field name="code">action = model.env['abdin_pl.pl_temp'].get_pl_net()</field>
+        </record>
+
+        <record id="abdin_pl.reset_pl_act_server" model="ir.actions.server">
+            <field name="name">Refresh P&amp;L Net</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="abdin_pl.model_abdin_pl_pl_temp"/>
+            <field name="binding_model_id" ref="abdin_pl.model_abdin_pl_pl_temp"/>
+            <field name="state">code</field>
+            <field name="code">action = model.env['abdin_pl.pl_temp'].reset_pl()</field>
+        </record>
+
+
+        <!--###############################################################################################-->
+        <!-- Menu with action -->
+        <menuitem name="P&amp;L" id="abdin_pl.abdin_pl_generate_menu"
+                  groups="abdin_pl.group_pl_user"
+                  parent="ab_accounting.root_menu"
+                  sequence="10"/>
+
+
+        <menuitem name="Open P&amp;L" id="abdin_pl.abdin_pl_menu_open" parent="abdin_pl.abdin_pl_generate_menu"
+                  action="abdin_pl.p_and_l_browse" sequence="6"/>
+
+
+        <menuitem name="Generate P&amp;L" id="abdin_pl_menu_generate" parent="abdin_pl.abdin_pl_generate_menu"
+                  sequence="7"/>
+
+        <menuitem name="Refresh P&amp;L" id="abdin_pl_menu_refresh_without" parent="abdin_pl_menu_generate"
+                  action="abdin_pl.get_net_pl_act_server" sequence="10"/>
+
+        <menuitem name="Reset P&amp;L" id="abdin_pl_menu_reset" parent="abdin_pl_menu_generate"
+                  action="abdin_pl.reset_pl_act_server" sequence="20"/>
+
+    </data>
+</odoo>
+

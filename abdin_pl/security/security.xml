@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="module_category_abdin_pl">
+            <field name="name">Abdin_PL</field>
+            <field name="description">Category For Abdin_PL</field>
+            <field name="sequence">45</field>
+        </record>
+        <record id="privilege_module_category_abdin_pl" model="res.groups.privilege">
+            <field name="name">Abdin_PL</field>
+            <field name="category_id" ref="module_category_abdin_pl"/>
+        </record>
+
+
+        <record id="group_pl_user" model="res.groups">
+            <field name="name">PL User</field>
+            <field name="privilege_id" ref="privilege_module_category_abdin_pl"/>
+        </record>
+
+        <record id="group_pl_man" model="res.groups">
+            <field name="name">PL Manager</field>
+            <field name="privilege_id" ref="privilege_module_category_abdin_pl"/>
+            <field name="implied_ids" eval="[(4, ref('group_pl_user'))]"/>
+        </record>
+
+        <record id="group_pl_admin" model="res.groups">
+            <field name="name">PL Admin</field>
+            <field name="privilege_id" ref="privilege_module_category_abdin_pl"/>
+            <field name="implied_ids" eval="[(4, ref('group_pl_man'))]"/>
+        </record>
+
+        <record model="ir.rule" id="see_specific_branch_in_pl">
+            <field name="name">abdin_pl.see_specific_branch_in_pl</field>
+            <field name="model_id" ref="abdin_pl.model_abdin_pl_pl_temp"/>
+            <field name="domain_force">[('branch','in',user.pl_branch_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('group_pl_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record model="ir.rule" id="see_all_branches_pl">
+            <field name="name">abdin_pl.see_all_branches_pl</field>
+            <field name="model_id" ref="abdin_pl.model_abdin_pl_pl_temp"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_pl_man'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('abdin_pl.group_pl_admin'))]"/>
+        </record>
+
+    </data>
+</odoo>

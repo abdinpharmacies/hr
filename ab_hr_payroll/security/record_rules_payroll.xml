@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--    ################## Entry Payroll Rule ##################   -->
+
+        <record id="rule_ab_hr_payroll_specialist_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_hr_payroll_</field>
+            <field name="model_id" ref="model_ab_hr_payroll"/>
+            <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_payroll_specialist'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record model="ir.rule" id="rule_ab_hr_payroll_specialist_crud_own">
+            <field name="name">Payroll For_Entry</field>
+            <field name="model_id" ref="model_ab_hr_payroll"/>
+            <field name="domain_force">
+                [
+                    ('user_id', '=', user.id),
+                    '|', '|',
+                    ('status', '=', 'for_entry'),
+                    ('status', '=', 'negative_salaries'),
+                    ('status', '=', 'suspended_salaries'),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_payroll_specialist'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record model="ir.rule" id="rule_ab_hr_payroll_reviewer_crud_own">
+            <field name="name">Payroll For_Entry</field>
+            <field name="model_id" ref="model_ab_hr_payroll"/>
+            <field name="domain_force">
+                [
+                    ('status', '=', 'for_reviewer'),
+                ]
+            </field>
+            <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_payroll_reviewer'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+        <!--    ################## Manager Payroll Rule ##################   -->
+        <record model="ir.rule" id="payroll_for_manager_user">
+            <field name="name">Payroll For Manager</field>
+            <field name="model_id" ref="model_ab_hr_payroll"/>
+            <field name="domain_force">
+                [('status', '!=', 'paid'), ]
+            </field>
+            <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_manager'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <!--    ################## hr HR Admin Rule ##################   -->
+        <record model="ir.rule" id="payroll_for_manager_user_read_all">
+            <field name="name">Payroll Manager Paid Readonly</field>
+            <field name="model_id" ref="model_ab_hr_payroll"/>
+            <field name="domain_force">[(1, '=', 1), ]</field>
+            <field name="groups"
+                   eval="[(4, ref('ab_hr.group_ab_hr_manager'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+                <record id="res_users_form_inherit" model="ir.ui.view">
+                    <field name="name">res_users.form.inherit</field>
+                    <field name="model">res.users</field>
+                    <field name="inherit_id" ref="base.view_users_tree"/>
+                    <field name="priority" eval="8"/>
+                    <field name="arch" type="xml">
+
+                        <xpath expr="//field[last()]" position="after">
+                            <field name="user_job_position"/>
+                            <field name="user_department"/>
+                        </xpath>
+                        <xpath expr="//list" position="attributes">
+                            <attribute name="editable">top</attribute>
+                        </xpath>
+                    </field>
+                </record>
+        -->
+    </data>
+</odoo>

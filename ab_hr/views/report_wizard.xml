@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_report_wizard_view_form</field>
+            <field name="model">ab_hr_report_wizard</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_report_wizard_form">
+                    <sheet>
+                        <notebook>
+
+                            <page string="History Report">
+                                <group>
+                                    <field name="action_date"/>
+                                    <field name="report_model_id"/>
+                                </group>
+                                <group col="4">
+                                    <field name="job_title_ids" widget="many2many_tags"/>
+                                    <field name="parent_department_ids" widget="many2many_tags"/>
+                                    <field name="workplace_ids" widget="many2many_tags"/>
+                                    <field name="territory"/>
+                                </group>
+                                <button name="btn_termination_feedback" type="object"
+                                        string="Browse Report"
+                                        class="btn-warning"/>
+                                <button name="btn_export_excel_termination_feedback" type="object"
+                                        string="Export Excel"
+                                        class="btn-success"/>
+
+                                <field name="html"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+
+    <record id="ab_hr_report_wizard_action" model="ir.actions.act_window">
+        <field name="name">Report Wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ab_hr_report_wizard</field>
+        <field name="view_mode">form</field>
+    </record>
+
+    <menuitem name="Report Wizard"
+              parent="history_and_history_reports_sub_menu"
+              id="ab_hr_report_wizard_menu"
+              action="ab_hr_report_wizard_action"
+              sequence="100"/>
+
+</odoo>

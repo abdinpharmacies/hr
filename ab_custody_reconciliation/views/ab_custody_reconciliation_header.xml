@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_reconciliation_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_header_view_tree</field>
+            <field name="model">ab_custody_reconciliation_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_custody_reconciliation_header_tree"
+                      decoration-danger="recon_status != 'entry'"
+                >
+                    <field name="recon_status" invisible="1"/>
+                    <field name="id" optional="show" class="text-muted"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="employee_code" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="manager_id" optional="show"/>
+                    <field name="custody_balance" optional="show"/>
+                    <field name="total_value" optional="show"/>
+                    <field name="total_approved_value" optional="show"/>
+                    <field name="feedback" optional="show"/>
+                    <field name="submit_date" optional="show"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="is_sent" invisible="1"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_custody_reconciliation_header_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_header_view_form</field>
+            <field name="model">ab_custody_reconciliation_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_reconciliation_header_form">
+                    <header>
+                        <field name="user_id" invisible="1"/>
+                        <field name="recon_status" invisible="1"/>
+                        <button name="btn_submit" type="object"
+
+                                string="Submit" class="btn-warning btn-arrow-right mx-5" invisible="recon_status != 'entry'"/>
+
+                        <button name="btn_submit" type="object"
+
+                                string="Submit" class="btn-outline-dark"
+                         invisible="recon_status == 'entry'"/>
+                        <button name="btn_print_pdf_reconciliation" type="object" string="Print PDF All"
+                                context="{'print_all':True}"
+                                class="btn-info"/>
+                        <button name="btn_print_pdf_reconciliation" type="object" string="Print PDF Approved"
+                                context="{'print_all':False}"
+                                class="btn-info"/>
+                        <field name="print_all" widget="boolean_toggle"/>
+                        <button name="btn_freeze_recon" type="object"
+                                confirm="Are you sure?"
+                                string="Freeze"
+
+                                groups="ab_custody_reconciliation.group_ab_custody_reconciliation_accounting"
+                                class="btn-info" invisible="recon_status == 'frozen'"/>
+                        <button name="btn_unfreeze_recon" type="object"
+                                confirm="are you sure?"
+                                string="Unfreeze"
+
+                                groups="ab_custody_reconciliation.group_ab_custody_reconciliation_accounting"
+                                class="btn-info" invisible="recon_status == 'submitted'"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Submitted" bg_color="bg-warning"
+                                invisible="recon_status != 'submitted'"/>
+
+                        <widget name="web_ribbon" title="Frozen" bg_color="bg-info"
+                                invisible="recon_status != 'frozen'"/>
+
+                        <widget name="web_ribbon" title="Posted" bg_color="bg-success"
+                                invisible="recon_status != 'posted'"/>
+
+                        <widget name="web_ribbon" title="Confirmed" bg_color="bg-danger"
+                                invisible="recon_status != 'confirmed'"/>
+
+                        <group string="Employee Data">
+                            <group>
+                                <field name="id" string="Serial"/>
+                                <field name="employee_id" force_save="1"/>
+                                <field name="employee_code"/>
+                                <field name="custody_balance"/>
+                            </group>
+                            <group>
+                                <field name="department_id"/>
+                                <field name="manager_id"/>
+                                <field name="feedback"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="submit_date"/>
+                            <field name="total_value"/>
+                            <field name="total_approved_value"/>
+                        </group>
+
+                        <separator/>
+                        <group>
+                            <group string="Required Input">
+                                <field name="att_file_ids" widget="many2many_binary"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Reconciliation Details">
+                                <button name="btn_filter" type="object" string="Filter" class="btn-primary"/>
+                                <field name="user_id" invisible="1"/>
+                                <field name="line_ids"
+                                       context="{'active_test':False}"
+                                       string="Reconciliation Details Lines"
+                                       nolabel="1"
+                                       readonly="recon_status != 'entry'">
+                                    <list editable="bottom" string="Reconciliation Details">
+                                        <field name="header_id" invisible="1"/>
+                                        <field name="id" class="text-muted" optional="show"/>
+                                        <field name="value" optional="show"/>
+                                        <field name="custody_account_id"
+                                               class="text-wrap text-center" optional="show"/>
+                                        <field name="description" required="1" optional="show"/>
+                                        <field name="attachment"/>
+                                        <field name="invoice_code" optional="show"/>
+                                        <field name="status" optional="show" widget="badge"
+                                               decoration-info="status=='entry'"
+                                               decoration-warning="status=='pending'"
+                                               decoration-success="status=='approved'"
+                                               decoration-danger="status=='rejected'"
+                                               decoration-primary="status=='neglected'"/>
+                                        <field name="rejection_reason" class="text-wrap"/>
+                                        <field name="notes"/>
+                                        <field name="concerned_employee_ids" widget="many2many_tags" optional="show"/>
+                                        <button name="btn_reject" type="object" string="Reject" class="btn-danger"
+                                                groups="ab_custody_reconciliation.group_ab_custody_reconciliation_accounting"
+                                        />
+
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+        <record id="ab_custody_reconciliation_header_view_search" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_header_view_search</field>
+            <field name="model">ab_custody_reconciliation_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_custody_reconciliation_header_search">
+                    <field name="id"/>
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="manager_id"/>
+                    <field name="custody_balance"/>
+                    <field name="lines_notes"/>
+                    <filter name="filter_unlinked_only"
+                            string="Unlinked Only"
+                            domain="[('je_header_id','=',False)]"/>
+                    <filter name="filter_pending"
+                            string="Unlinked Has Pending"
+                            domain="[('line_ids.status', '=', 'pending'),('je_header_id','=',False)]"/>
+                    <filter name="filter_approved"
+                            string="Unlinked Has Approved"
+                            domain="[('line_ids.status', '=', 'approved'),('je_header_id','=',False)]"/>
+
+                </search>
+            </field>
+        </record>
+        <record id="ab_custody_reconciliation_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_header_view_pivot</field>
+            <field name="model">ab_custody_reconciliation_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_custody_reconciliation_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_custody_reconciliation_header_action" model="ir.actions.act_window">
+            <field name="name">Custody Reconciliation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_custody_reconciliation_header</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_custody_reconciliation_header_menu"
+                  name="Create Reconciliation"
+                  parent="ab_custody_reconciliation_sub_menu"
+                  action="ab_custody_reconciliation_header_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_purchase_notice_header_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_purchase_notice_header_form_view_inherit</field>
+            <field name="model">ab_purchase_notice_header</field>
+            <field name="inherit_id" ref="ab_purchase.ab_purchase_notice_header_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[last()]" position="after">
+                    <page string="Attachments">
+
+                        <field name="att_file_ids">
+                            <list>
+                                <field name="doc_code"/>
+                                <field name="att_file"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

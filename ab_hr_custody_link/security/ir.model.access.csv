@@ -1,0 +1,2 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_custody_employee_data_co_edit,access_ab_custody_employee_data_co_edit,ab_custody_request.model_ab_custody_employee_data,ab_hr.group_ab_hr_co,1,1,1,1

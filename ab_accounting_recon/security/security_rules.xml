@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_accounting_recon_header_user" model="ir.rule">
+            <field name="name">rule_ab_accounting_recon_header_user</field>
+            <field name="model_id" ref="model_ab_accounting_recon_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting_recon_user'))]"/>
+            <field name="domain_force">[('account_id.always_show_account', '=', True)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_accounting_recon_header_manager" model="ir.rule">
+            <field name="name">rule_ab_accounting_recon_header_manager</field>
+            <field name="model_id" ref="model_ab_accounting_recon_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting_recon_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>

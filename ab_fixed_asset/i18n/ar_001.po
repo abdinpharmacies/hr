@@ -1,0 +1,1169 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_fixed_asset
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-09 08:20+0000\n"
+"PO-Revision-Date: 2025-03-09 08:20+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "<span> ---</span>"
+msgstr ""
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "<span>Serial: --- </span>"
+msgstr "<span>مسلسل: --- </span>"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_assets_inventory_action
+msgid "Ab fixed asset assets inventory"
+msgstr "Ab fixed asset assets inventory"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_move_wizard_action
+msgid "Ab fixed asset move wizard"
+msgstr "Ab fixed asset move wizard"
+
+#. module: ab_fixed_asset
+#: model:ir.module.category,name:ab_fixed_asset.module_category_ab_fixed_asset
+msgid "Abdin Fa"
+msgstr "Abdin Fa"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_final_level_act
+msgid "Abdin final_level window"
+msgstr "Abdin final_level window"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_first_level_act
+msgid "Abdin first_level window"
+msgstr "Abdin first_level window"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_second_level_act
+msgid "Abdin second_level window"
+msgstr "Abdin second_level window"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_standards_act
+msgid "Abdin standards window"
+msgstr "Abdin standards window"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Access Denied!, Only Fixed Asset Accountant can confirm!"
+msgstr "التأكيد مسموح لمحاسب الأصول الثابتة فقط."
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Access Denied!, Only Fixed Asset Manager can submit!"
+msgstr "التأكيد مسموح لمدير الأصول الثابتة فقط."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__account_id
+msgid "Account"
+msgstr "الحساب"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_needaction
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_needaction
+msgid "Action Needed"
+msgstr "الإجراء المطلوب"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_ids
+msgid "Activities"
+msgstr "أنشطة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Activity Exception Decoration"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "نوع النشاط"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Already Confirmed!"
+msgstr "تم التأكيد بالفعل!"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Already submitted!"
+msgstr "تم الارسال بالفعل!"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "Archived"
+msgstr "تم أرشفته"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__final_level
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__asset_id
+msgid "Asset"
+msgstr "الأصل"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "Asset Computations"
+msgstr "عمليات الأصول الحسابية"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__asset_has_accounting_value
+msgid "Asset Has Accounting Value"
+msgstr "Asset Has Accounting Value"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_search
+msgid "Asset ID"
+msgstr "م"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "Asset ID %s already removed (Zero Value)"
+msgstr "مسلسل الأصل %s تم استبعاده (قيمته صفر)"
+
+#. module: ab_fixed_asset
+#: model:ir.actions.act_window,name:ab_fixed_asset.ab_fixed_asset_inventory_standards_action
+msgid "Asset Inventory Standards"
+msgstr "معايير الأصول"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.asset_levels_sub_menu
+msgid "Asset Levels"
+msgstr "مستويات الأصول"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__asset_loss
+msgid "Asset Loss"
+msgstr "أصل مفقود"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.asset_movement_sub_menu
+msgid "Asset Movement"
+msgstr "حركة الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__name
+msgid "Asset Name"
+msgstr "اسم الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__asset_source
+msgid "Asset Source"
+msgstr "مصدر الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__inventory_standards_ids
+msgid "Asset Standards"
+msgstr "معايير الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__asset_status
+msgid "Asset Status"
+msgstr "حالة الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__asset_type
+msgid "Asset Type"
+msgstr "نوع الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_standards
+msgid "Asset standards"
+msgstr "معايير الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_inventory_standards
+msgid "Asset standards in trans table"
+msgstr "معايير الأصل في جدول التحويلات"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__src_fixed_asset_ids
+msgid "Assets"
+msgstr "الأصول"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_assets_inventory
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_final_level
+msgid "Assets Final Level"
+msgstr "أصول المستوى الأخير"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_first_level
+msgid "Assets First Level"
+msgstr "أصول المستوى الأول"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.asset_inventory_sub_menu
+#: model:ir.ui.menu,name:ab_fixed_asset.assets_inventory_menu
+msgid "Assets Inventory"
+msgstr "مخزون الأصول"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_inventory_standards_menu
+msgid "Assets Inventory Standards"
+msgstr "معايير الأصول"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_second_level
+msgid "Assets Second Level"
+msgstr "أصول المستوى الثاني"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_attachment_count
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__balance
+msgid "Balance"
+msgstr "رصيد"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_source__bank
+msgid "Bank"
+msgstr "بنك"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid ""
+"Can not archive asset that has JEs.\n"
+"Move JEs first to another asset, then archive."
+msgstr "لا يمكن أرشفة الأصل الذي له قيد حسابي. يجب نقل القيود لأصل اّخر اولا."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_source__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_fixed_asset
+#: model:ir.module.category,description:ab_fixed_asset.module_category_ab_fixed_asset
+msgid "Category For ab_fixed_asset"
+msgstr "Category For ab_fixed_asset"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__change_useful_life
+msgid "Change Useful Life"
+msgstr "تغيير العمر الإفتراضي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__change_basic_data
+msgid "Changing Assets Basic Data"
+msgstr "تغيير البيانات الأـساسية للأصول"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.config_sub_menu
+msgid "Configurations"
+msgstr "اعدادات"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Confirmed"
+msgstr "تم التأكيد"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__create_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__create_uid
+msgid "Created by"
+msgstr "انشئ بواسطة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__create_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__create_date
+msgid "Created on"
+msgstr "انشئ في"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__current_store_id
+msgid "Current Store"
+msgstr "المخزن الحالي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_source__custody
+msgid "Custody"
+msgstr "عهدة"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_list
+msgid "Depreciate"
+msgstr "إهلاك"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__depreciation_rate
+msgid "Depreciation Rate"
+msgstr "معدل الإهلاك"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid ""
+"Depreciation is nearly zero for ID (%s)!\n"
+"Depreciation is cancelled."
+msgstr "إهلاك الأصل يقارب الصفر. تم الغاء الإهلاك"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__description
+msgid "Description"
+msgstr "الشرح"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_fixed_asset_id
+msgid "Destination Asset"
+msgstr "وجهة الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__display_name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__display_name
+msgid "Display Name"
+msgstr "Display Name"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__example
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__example
+msgid "Example"
+msgstr "مثال"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__extra_useful_life
+msgid "Extra Useful Life"
+msgstr "عمر افتراضي إضافي"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_final_level
+msgid "Final Level"
+msgstr "المستوى الأخير"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__first_level
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__first_level
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__first_level
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_first_level
+msgid "First Level"
+msgstr "المستوى الأول"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_accounting_je_line__fixed_asset_id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_accounting_je_line_qry__fixed_asset_id
+msgid "Fixed Asset"
+msgstr "الأصول الثابتة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__fixed_asset_header_id
+msgid "Fixed Asset Header"
+msgstr "Fixed Asset Header"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__fixed_asset_move_link
+msgid "Fixed Asset Move Link"
+msgstr "Fixed Asset Move Link"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.menu_root
+msgid "Fixed Assets"
+msgstr "الأصول الثابتة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_follower_ids
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_follower_ids
+msgid "Followers"
+msgstr "Followers"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_partner_ids
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Followers (Partners)"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font awesome icon e.g. fa-tasks"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "From Asset"
+msgstr "From Asset"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_accounting_je_header__has_fixed_asset_je
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_accounting_je_line__has_fixed_asset_je
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_accounting_recon_header__has_fixed_asset_je
+msgid "Has Fixed Asset Je"
+msgstr "Has Fixed Asset Je"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__has_message
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__has_message
+msgid "Has Message"
+msgstr "Has Message"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__header_id
+msgid "Header"
+msgstr "Header"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_exception_icon
+msgid "Icon"
+msgstr "Icon"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icon to indicate an exception activity."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_needaction
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_unread
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_needaction
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_unread
+msgid "If checked, new messages require your attention."
+msgstr "توجد رسائل تطلب الانتباه."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_has_error
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "يوجد خطأفي استلام بعض الرسائل."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__image
+msgid "Image"
+msgstr "الصورة"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "Integer value only supported!"
+msgstr "يجب ان تكون القيمة رقم!"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_type__inventory
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__inventory_line_ids
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__src_fixed_asset_line_ids
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "Inventory Lines"
+msgstr "Inventory Lines"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__is_company_ownership
+msgid "Is Company Ownership"
+msgstr "هل الملكية للشركة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__is_confirmed
+msgid "Is Confirmed"
+msgstr "Is Confirmed"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_is_follower
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_is_follower
+msgid "Is Follower"
+msgstr "Is Follower"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__is_submitted
+msgid "Is Submitted"
+msgstr "Is Submitted"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "JE Lines"
+msgstr "سطور القيود الحسابية"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__je_count
+msgid "Je Count"
+msgstr "Je Count"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__je_header_id
+msgid "Je Header"
+msgstr "رأس القيود الحسابية"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__je_line_id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__je_line_ids
+msgid "Je Line"
+msgstr "Je Line"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__last_depreciation_date
+msgid "Last Depreciation Date"
+msgstr "تاريخ اّخر إهلاك"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level____last_update
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards____last_update
+msgid "Last Modified on"
+msgstr "تاريخ اّخر تعديل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__write_uid
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__write_uid
+msgid "Last Updated by"
+msgstr "اّخر تحديث بواسطة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_first_level__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__write_date
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__write_date
+msgid "Last Updated on"
+msgstr "تاريخ اّخر تحديث"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_main_attachment_id
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "المرفق الأساسي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__damage_maintenance
+msgid "Maintenance Due to Employee Cause Damage "
+msgstr "Maintenance Due to Employee Cause Damage "
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__manual_value
+msgid "Manual Value"
+msgstr "القيمة اليدوية"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "Manual Value must be more than zero!"
+msgstr "يجب ان تكون القيمة اليدوية اكبر من صفر!"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__measure_unit
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__measure_unit
+msgid "Measure Unit"
+msgstr "وحدة قياس"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_has_error
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في الارسال"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_ids
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__location_move
+msgid "Move From Location To Another"
+msgstr "نقل من مكان لاّخر"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__line_ids
+msgid "Move Lines"
+msgstr "التحركات"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__move_type
+msgid "Move Type"
+msgstr "نوع الحركة"
+
+#. module: ab_fixed_asset
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_move_wizard_menu
+msgid "Movement Wizard"
+msgstr "Movement Wizard"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Moves Line"
+msgstr "التحركات"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Must be submitted first!"
+msgstr "يجب الرفع اولا!"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد الأخير للنشاط"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__name
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard_line.py:0
+#, python-format
+msgid "Name must be same as 'Source Name'"
+msgstr "يجب ان يكون الاسم نفس 'اسم المصدر'."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__new_description
+msgid "New Description"
+msgstr "الوصف الجديد"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__new_image
+msgid "New Image"
+msgstr "صورة جديدة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد الأخير للنشاط التالي."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Not enough qty for this item"
+msgstr "لا توجد كمية كافية من الصنف."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_needaction_counter
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "عدد الرسائل التي تحتاج لإجراء"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_has_error_counter
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في الإرسال"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_unread_counter
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_unread_counter
+msgid "Number of unread messages"
+msgstr "عدد الرسائل الغير مقروءة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__old_id_to_move_img
+msgid "Old Id To Move Img"
+msgstr "مسلسل الأصل القديم"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__asset_value
+msgid "Old Value"
+msgstr "القيمة القديمة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_source__opening_balance
+msgid "Opening Balance"
+msgstr "الرصيد الافتتاحي"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_accounting_je.py:0
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "Operation not supported"
+msgstr "العملية غير مسموحة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__price
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__price
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard_line.py:0
+#, python-format
+msgid "Price must be same as 'Source Price'"
+msgstr "يجب ان يكون السعر نفس 'سعر المصدر'"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__purchase_date
+msgid "Purchase Date"
+msgstr "تاريخ البيع"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__qty
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__qty
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_type__regular
+msgid "Regular"
+msgstr "منتظم"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسئول"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__sales_value
+msgid "Sales Value"
+msgstr "قيمة المبيعات"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__scrapping
+msgid "Scrapping"
+msgstr "خردة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__scrapping_value
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__scrapping_value
+msgid "Scrapping Value"
+msgstr "قيمة الخردة"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Scrapping Value must be greater than 0"
+msgstr "يجب ان تكون قيمة الكشط اكبر من الصفر."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__second_level
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__second_level
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_second_level__name
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_second_level
+msgid "Second Level"
+msgstr "المستوى الثاني"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__sending_spare_parts
+msgid "Partially Transfer"
+msgstr "نقل جزئي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__sending_spare_parts
+msgid "Partially Depreciation"
+msgstr "إهلاك جزئي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_move_wizard__move_type__sending_spare_parts
+msgid "Wrong Registration"
+msgstr "تسجيل خاطئ"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__src_fixed_asset_ro_ids
+msgid "Source Assets"
+msgstr "مصدر الأصول"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard_line.py:0
+#, python-format
+msgid "Source must be set!"
+msgstr "يجب كتابة المصدر!"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__standard_id
+msgid "Standard"
+msgstr "المعايير"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_standards__name
+msgid "Standard Name"
+msgstr "اسم المعيار"
+
+#. module: ab_fixed_asset
+#: model:ir.model.constraint,message:ab_fixed_asset.constraint_ab_fixed_asset_standards_ab_fixed_asset_standards_name_unique
+msgid "Standard Name can not be duplicated!"
+msgstr "لا يمكن ازدواجية اسم المعيار!"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_standards__standard_value
+msgid "Standard Value"
+msgstr "قيمة المعيار"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__standards_ids
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_standards
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_final_level_form
+msgid "Standards"
+msgstr "المعايير"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة تعتمد على الإجراءات\n"
+"تأخرات: تم التأخر عن التاريخ المستحق\n"
+"اليوم:اليوم هو تاريخ الإجراء\n"
+"المخطط: الإجراءات المستقبلية."
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Submit"
+msgstr "ارسال"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Submitted"
+msgstr "تم الإرسال"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+#, python-format
+msgid "Submitted Successfully"
+msgstr "تم الإرسال بنجاح."
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "To Asset"
+msgstr "إلى الأصل"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_asset_total_depr
+msgid "To Asset - Total Depr."
+msgstr "إلى الأصل - إجمالي معدل الإهلاك."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_asset_total_value
+msgid "To Asset - Total Value"
+msgstr "إلى الأصل - إجمالي الفاتورة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_asset_useful_life
+msgid "To Asset - Useful Life"
+msgstr "إلي الأصل - العمر الإفتراضي"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_asset_after_depr
+msgid "To Asset - Value After Depr."
+msgstr "إلى الأصل - القيمة بعد الإهلاك"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_fixed_asset_line_ids
+msgid "To Asset Lines"
+msgstr "To Asset Lines"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dest_store_id
+msgid "To Store"
+msgstr "To Store"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__total_depr
+msgid "Total Depreciation"
+msgstr "إجمالي الإهلاك"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_inventory_line__total_price
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard_line__total_price
+msgid "Total Price"
+msgstr "إجمالي السعر"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__asset_total_value
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+msgid "Total Value"
+msgstr "اجمالي القيمة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي في السجل."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_unread
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_unread
+msgid "Unread Messages"
+msgstr "رسائل غير مقروءة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__message_unread_counter
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "عداد الرسائل الغير مقروءة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__useful_life
+msgid "Useful Life"
+msgstr "العمر الافتراضي"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "Useful life can not be negative!"
+msgstr "العمر الافتراضي لا يجب ان يكون بالسالب!"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "Useful life must be more than zero for new Assets!"
+msgstr "يجب ان يكون العمر الافتراضي اكبر من صفر للأصول الجديدة!"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__current_value_after_depr
+msgid "Value After Depreciation"
+msgstr "القيمة بعد الإهلاك"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_search
+msgid "With Accounting Value"
+msgstr "With Accounting Value"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_search
+msgid "With JE"
+msgstr "With JE"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_search
+msgid "Without Accounting Value"
+msgstr "Without Accounting Value"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_search
+msgid "Without JE"
+msgstr "Without JE"
+
+#. module: ab_fixed_asset
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+#, python-format
+msgid "You can't depreciate if fixed asset je does not exist."
+msgstr "لا يمكنك الإهلاك اذا كان القيد الحسابي للأصل غير موجود."
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_accounting_je_header
+msgid "ab_accounting_je_header"
+msgstr "ab_accounting_je_header"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_accounting_je_line
+msgid "ab_accounting_je_line"
+msgstr "ab_accounting_je_line"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_accounting_je_line_qry
+msgid "ab_accounting_je_line_qry"
+msgstr "ab_accounting_je_line_qry"
+
+#. module: ab_fixed_asset
+#: model:res.groups,name:ab_fixed_asset.group_ab_fixed_asset_admin
+msgid "ab_fixed_asset Administrator"
+msgstr "صلاحيات - ادمن"
+
+#. module: ab_fixed_asset
+#: model:res.groups,name:ab_fixed_asset.group_ab_fixed_asset_manager
+msgid "ab_fixed_asset Manager"
+msgstr "صلاحيات - مدير"
+
+#. module: ab_fixed_asset
+#: model:res.groups,name:ab_fixed_asset.group_ab_fixed_asset_user
+msgid "ab_fixed_asset User"
+msgstr "صلاحيات - مستخدم"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_view_pivot
+msgid "ab_fixed_asset_assets_inventory_pivot"
+msgstr "ab_fixed_asset_assets_inventory_pivot"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_inventory_line
+msgid "ab_fixed_asset_inventory_line"
+msgstr "ab_fixed_asset_inventory_line"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_inventory_standards_view_form
+msgid "ab_fixed_asset_inventory_standards_form"
+msgstr "ab_fixed_asset_inventory_standards_form"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_inventory_standards_view_pivot
+msgid "ab_fixed_asset_inventory_standards_pivot"
+msgstr "ab_fixed_asset_inventory_standards_pivot"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_inventory_standards_view_search
+msgid "ab_fixed_asset_inventory_standards_search"
+msgstr "ab_fixed_asset_inventory_standards_search"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_inventory_standards_view_tree
+msgid "ab_fixed_asset_inventory_standards_tree"
+msgstr "ab_fixed_asset_inventory_standards_tree"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_move_wizard
+msgid "ab_fixed_asset_move_wizard"
+msgstr "ab_fixed_asset_move_wizard"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "ab_fixed_asset_move_wizard_form"
+msgstr "ab_fixed_asset_move_wizard_form"
+
+#. module: ab_fixed_asset
+#: model:ir.model,name:ab_fixed_asset.model_ab_fixed_asset_move_wizard_line
+msgid "ab_fixed_asset_move_wizard_line"
+msgstr "ab_fixed_asset_move_wizard_line"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_pivot
+msgid "ab_fixed_asset_move_wizard_pivot"
+msgstr "ab_fixed_asset_move_wizard_pivot"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_search
+msgid "ab_fixed_asset_move_wizard_search"
+msgstr "ab_fixed_asset_move_wizard_search"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_tree
+msgid "ab_fixed_asset_move_wizard_tree"
+msgstr "ab_fixed_asset_move_wizard_tree"
+
+#. module: ab_fixed_asset
+#: model:res.groups,name:ab_fixed_asset.group_ab_fixed_asset_accountant
+msgid "group_ab_fixed_asset_accountant"
+msgstr "group_ab_fixed_asset_accountant"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_status__1
+msgid "غير مستغل"
+msgstr ""
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_status__3
+msgid "نفاية"
+msgstr ""
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_status__2
+msgid "هالك قبل أوانه"
+msgstr ""

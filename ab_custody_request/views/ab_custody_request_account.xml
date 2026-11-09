@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_request_account_view_tree" model="ir.ui.view">
+            <field name="name">ab_custody_request_account_view_tree</field>
+            <field name="model">ab_custody_request_account</field>
+            <field name="arch" type="xml">
+                <list string="ab_custody_request_account_tree" multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="department_manager_id" optional="show"/>
+                    <field name="is_recon" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_custody_request_account_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_request_account_view_form</field>
+            <field name="model">ab_custody_request_account</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_request_account_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="telegram_group"/>
+                            <field name="telegram_group_id"/>
+                            <field name="account_id"/>
+                            <field name="department_id"/>
+                            <field name="department_manager_id"/>
+                            <field name="is_recon"/>
+                        </group>
+                        <!--
+                                                <notebook>
+                                                    <page name="occupied_job_ids" string="Available Jobs">
+                                                        <group>
+                                                            <field name="occupied_job_ids" nolabel="1">
+                                                                <list>
+                                                                    <field name="accid"/>
+                                                                    <field name="employee_id"/>
+                                                                    <field name="job_id"/>
+                                                                    <field name="workplace"/>
+                                                                    <field name="parent_id"/>
+                                                                    <field name="territory"/>
+                                                                    <field name="hiring_date"/>
+                                                                </list>
+                                                            </field>
+                                                        </group>
+                                                    </page>
+                                                </notebook>
+                        -->
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_custody_request_account_view_search" model="ir.ui.view">
+            <field name="name">ab_custody_request_account_view_search</field>
+            <field name="model">ab_custody_request_account</field>
+            <field name="arch" type="xml">
+                <search string="ab_custody_request_account_search">
+                    <field name="name"/>
+                    <field name="job_title_id"/>
+                    <field name="department_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_custody_request_account_view_pivot" model="ir.ui.view">
+            <field name="name">ab_custody_request_account_view_pivot</field>
+            <field name="model">ab_custody_request_account</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_custody_request_account_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_custody_request_account_action" model="ir.actions.act_window">
+            <field name="name">Custody Accounts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_custody_request_account</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_custody_request_accounts_menu"
+                  name="Custody Accounts"
+                  parent="config_sub_menu"
+                  action="ab_custody_request.ab_custody_request_account_action"
+                  sequence="200"/>
+
+
+    </data>
+</odoo>

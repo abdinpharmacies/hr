@@ -1,0 +1,129 @@
+<odoo>
+    <data>
+        <!-- ab_hr_payroll_report_list -->
+
+        <record model="ir.ui.view" id="ab_hr_payroll_report_list">
+            <field name="name">ab_hr_payroll_report.list</field>
+            <field name="model">ab_hr_payroll_report</field>
+            <field name="arch" type="xml">
+                <list editable="bottom" limit="100">
+                    <field name="id" class="text-muted text-left" optional="show"/>
+                    <field name="e_code" optional="show"/>
+                    <field name="status"
+                           class="h6"
+                           widget="badge"
+                           decoration-info="status=='for_entry'"
+                           decoration-warning="status=='suspended_salaries'"
+                           decoration-success="status=='for_manager'"
+                           decoration-danger="status=='negative_salaries'"
+                           decoration-primary="status=='paid'"
+                    />
+                    <field name="employee_id" class="text-wrap" optional="show"/>
+                    <field name="job_id" class="text-wrap" optional="show"/>
+                    <field name="payment_type_id" class="text-wrap" optional="show"/>
+                    <field name="territory" class="text-wrap" optional="show"/>
+                    <field name="workplace" class="text-wrap" optional="show"/>
+                    <field name="hr_name_entry" class="text-wrap" optional="show"/>
+                    <field name="store_id" class="text-wrap" optional="show"/>
+                    <field name="due_date" class="text-wrap" optional="show"/>
+                    <field name="section" class="text-wrap" optional="show"/>
+                    <field name="section_type" class="text-wrap" optional="show"/>
+                    <field name="section_value" class="text-wrap" optional="show"/>
+                    <field name="file_name" class="text-wrap" optional="show"/>
+                    <field name="sheet_name" class="text-wrap" optional="show"/>
+                    <field name="create_date" class="text-wrap" optional="show"/>
+                    <field name="write_date" class="text-wrap" optional="show"/>
+                    <field name="net_salary" class="text-wrap" optional="show"/>
+                </list>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="ab_hr_payroll_report_form">
+            <field name="name">ab_hr_payroll_report.form</field>
+            <field name="model">ab_hr_payroll_report</field>
+            <field name="arch" type="xml">
+                <form string="Paroll Report">
+                    <sheet>
+                        <group col="4">
+                            <field name="id" class="text-muted text-left" optional="show"
+                            />
+                            <field name="e_code" optional="show"/>
+                            <field name="employee_id" class="text-wrap" optional="show"/>
+                            <field name="job_id" class="text-wrap" optional="show"/>
+                            <field name="user_line_owner" class="text-wrap" optional="show"/>
+                            <field name="territory" class="text-wrap" optional="show"/>
+                            <field name="workplace" class="text-wrap" optional="show"/>
+                            <field name="costcenter_name" class="text-wrap" optional="show"/>
+                            <field name="section_value" optional="show"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ab_hr_payroll_report_pivot -->
+        <record model="ir.ui.view" id="ab_hr_payroll_report_pivot">
+            <field name="name">ab_hr_payroll_report.pivot</field>
+            <field name="model">ab_hr_payroll_report</field>
+            <field name="arch" type="xml">
+                <pivot string="Abdin hr Pivot">
+                    <field name="costcenter_name" type="row"/>
+                    <field name="section_value" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!--  ab_hr_payroll_report_graph -->
+        <record model="ir.ui.view" id="ab_hr_payroll_report_graph">
+            <field name="name">ab_hr_payroll_report.graph</field>
+            <field name="model">ab_hr_payroll_report</field>
+            <field name="arch" type="xml">
+                <graph string="Abdin hr Graph">
+                    <field name="costcenter_name"/>
+                    <field name="section_value" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="ab_hr_payroll_report_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_payroll_report_view_search</field>
+            <field name="model">ab_hr_payroll_report</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_payroll_report_search">
+                    <field name="employee_id"/>
+                    <field name="job_id"/>
+                    <field name="payment_type_id"/>
+                    <field name="territory"/>
+                    <field name="workplace"/>
+                    <field name="hr_name_entry"/>
+                    <field name="store_id"/>
+                    <field name="due_date"/>
+                    <field name="section"/>
+                    <field name="section_type"/>
+                    <field name="section_value"/>
+                    <field name="file_name"/>
+                    <field name="sheet_name"/>
+                    <field name="create_date"/>
+                    <field name="write_date"/>
+                    <field name="net_salary"/>
+
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ab_hr_payroll_report_act -->
+        <record model="ir.actions.act_window" id="ab_hr_payroll_report_act">
+            <field name="name">ab_hr_payroll_report.act</field>
+            <field name="res_model">ab_hr_payroll_report</field>
+            <field name="view_mode">pivot,list,form,graph</field>
+        </record>
+
+        <menuitem name="Payroll Report"
+                  parent="ab_hr_salaries_root"
+                  id="ab_hr_payroll_report_menu"
+                  action="ab_hr_payroll_report_act"
+                  sequence="40"/>
+
+
+    </data>
+</odoo>

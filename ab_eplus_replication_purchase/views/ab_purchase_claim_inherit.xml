@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_claim___view_inherit" model="ir.ui.view">
+            <field name="name">ab_purchase_claim___view_inherit</field>
+            <field name="model">ab_purchase_claim</field>
+            <field name="inherit_id" ref="ab_purchase.ab_purchase_claim_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='btn_filter_claim_lines']" position="after">
+                    <button string="Confirm Replication"
+                            type="object"
+                            name="btn_confirm_replication"
+                            confirm="Are You Sure?"
+                            class="btn-outline-warning btn-block"/>
+
+                </xpath>
+
+                <!-- <xpath expr="//field[@name='']" position="after"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+                <!-- <xpath expr="//field[last()]" position="after"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+                <!-- 1 or 2 or x will be field index -->
+                <!-- <xpath expr="//field[1]" position="before"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

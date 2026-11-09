@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="abdin_eplus.sales_replication_form">
+            <field name="name">abdin_eplus replication form</field>
+            <field name="model">abdin_eplus.replication</field>
+            <field name="type">form</field>
+            <field name="mode">primary</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Confirmation">
+                    <h1>This will take some amount of time,Are you sure?</h1>
+                    <div class="o_row">
+                        <field name="date_begin" widget="daterange" nolabel="1" class="oe_inline"
+                               options="{'related_end_date': 'date_end'}"/>
+                        <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow"/>
+                        <field name="date_end" widget="daterange" nolabel="1" class="oe_inline"
+                               options="{'related_start_date': 'date_begin'}"/>
+                    </div>
+                    <group string="Put fields separated by comma to update or leave empty to update all fields."
+                           class="h1">
+                        <field name="fields_comma_seperated" nolabel="1" placeholder="Example: bill_type, is_visa"/>
+                    </group>
+                    <group>
+                        <field name="available_fields_html"/>
+                    </group>
+                    <group>
+                        <field name="pull_all_data"/>
+                        <field name="pull_all_sales_data"/>
+                    </group>
+                    <footer>
+                        <button string="Confirm" type="object" name="replicate_abdin_eplus"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+        <!-- action window-->
+        <record model="ir.actions.act_window" id="replicate_sales_act_window">
+            <field name="name">Confirm Wizard</field>
+            <field name="res_model">abdin_eplus.replication</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="abdin_eplus.sales_replication_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Replicate Sales" id="abdin_eplus.replicate_sales" parent="abdin_eplus.replication"
+                  action="replicate_sales_act_window" sequence="20"/>
+
+
+    </data>
+</odoo>

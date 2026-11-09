@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_supplier_note_view_tree" model="ir.ui.view">
+            <field name="name">ab_supplier_note_view_tree</field>
+            <field name="model">ab_supplier_note</field>
+            <field name="arch" type="xml">
+                <list string="ab_supplier_note_tree">
+                    <field name="name" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_supplier_note_view_form" model="ir.ui.view">
+            <field name="name">ab_supplier_note_view_form</field>
+            <field name="model">ab_supplier_note</field>
+            <field name="arch" type="xml">
+                <form string="ab_supplier_note_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_supplier_note_view_search" model="ir.ui.view">
+            <field name="name">ab_supplier_note_view_search</field>
+            <field name="model">ab_supplier_note</field>
+            <field name="arch" type="xml">
+                <search string="ab_supplier_note_search">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_supplier_note_view_pivot" model="ir.ui.view">
+            <field name="name">ab_supplier_note_view_pivot</field>
+            <field name="model">ab_supplier_note</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_supplier_note_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_supplier_note_action" model="ir.actions.act_window">
+            <field name="name">Ab supplier note</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_supplier_note</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+
+    </data>
+</odoo>

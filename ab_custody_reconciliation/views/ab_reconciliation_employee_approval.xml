@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_reconciliation_employee_approval_view_tree" model="ir.ui.view">
+            <field name="name">ab_reconciliation_employee_approval_view_tree</field>
+            <field name="model">ab_reconciliation_employee_approval</field>
+            <field name="arch" type="xml">
+                <list string="ab_reconciliation_employee_approval_tree" editable="bottom">
+                    <field name="account_id" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="store_ids" widget="many2many_tags" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_reconciliation_employee_approval_view_form" model="ir.ui.view">
+            <field name="name">ab_reconciliation_employee_approval_view_form</field>
+            <field name="model">ab_reconciliation_employee_approval</field>
+            <field name="arch" type="xml">
+                <form string="ab_reconciliation_employee_approval_form">
+                    <sheet>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="employee_id"/>
+                            <field name="store_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_reconciliation_employee_approval_view_search" model="ir.ui.view">
+            <field name="name">ab_reconciliation_employee_approval_view_search</field>
+            <field name="model">ab_reconciliation_employee_approval</field>
+            <field name="arch" type="xml">
+                <search string="ab_reconciliation_employee_approval_search">
+                    <field name="account_id"/>
+                    <field name="employee_id"/>
+                    <field name="store_ids"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_reconciliation_employee_approval_view_pivot" model="ir.ui.view">
+            <field name="name">ab_reconciliation_employee_approval_view_pivot</field>
+            <field name="model">ab_reconciliation_employee_approval</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_reconciliation_employee_approval_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_reconciliation_employee_approval_action" model="ir.actions.act_window">
+            <field name="name">Reconciliation Employee Approval</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_reconciliation_employee_approval</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_reconciliation_employee_approval_menu"
+                  name="Reconciliation Employee Approval"
+                  parent="ab_custody_request.config_sub_menu"
+                  action="ab_reconciliation_employee_approval_action"
+                  sequence="400"/>
+
+
+    </data>
+</odoo>

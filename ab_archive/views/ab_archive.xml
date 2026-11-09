@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_archive_view_tree" model="ir.ui.view">
+            <field name="name">ab_archive_view_tree</field>
+            <field name="model">ab_archive</field>
+            <field name="arch" type="xml">
+                <list string="ab_archive_tree" multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="doc_code" optional="show"/>
+                    <field name="att_file" optional="show"/>
+                    <field name="att_filename" optional="show"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="archive_date" optional="show"/>
+                    <field name="is_today" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_archive_view_form" model="ir.ui.view">
+            <field name="name">ab_archive_view_form</field>
+            <field name="model">ab_archive</field>
+            <field name="arch" type="xml">
+                <form string="ab_archive_form">
+                    <header>
+                        <button name="btn_toggle_active" type="object" string="Archive" class="oe_highlight btn-danger"
+                                invisible="active == False"/>
+                        <button name="btn_toggle_active" type="object" string="Restore" class="oe_highlight btn-success"
+                                invisible="active == True"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="doc_code"/>
+                            <field name="att_filename"/>
+                            <field name="user_id" force_save="1"/>
+                            <field name="archive_date" force_save="1"/>
+                            <field name="is_today"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <notebook>
+                            <page name="attachment_page" string="Attachments">
+                                <field name="att_file" filename="att_filename" nolabel="1"/>
+                                <field name="att_is_image" invisible="1"/>
+                                <field name="att_is_pdf" invisible="1"/>
+                                <field name="att_file_pdf" widget="pdf_viewer" filename="att_filename" nolabel="1"
+                                       invisible="att_is_pdf == False"/>
+                                <field name="att_file_image" widget="image" filename="att_filename" nolabel="1"
+                                       invisible="att_is_image == False"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_archive_view_search" model="ir.ui.view">
+            <field name="name">ab_archive_view_search</field>
+            <field name="model">ab_archive</field>
+            <field name="arch" type="xml">
+                <search string="ab_archive_search">
+                    <field name="name"/>
+                    <field name="doc_code"/>
+                    <field name="user_id" force_save="1"/>
+                    <field name="archive_date" force_save="1"/>
+
+                </search>
+            </field>
+        </record>
+        <record id="ab_archive_view_pivot" model="ir.ui.view">
+            <field name="name">ab_archive_view_pivot</field>
+            <field name="model">ab_archive</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_archive_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_archive_action" model="ir.actions.act_window">
+            <field name="name">Ab archive</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_archive</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+    </data>
+</odoo>

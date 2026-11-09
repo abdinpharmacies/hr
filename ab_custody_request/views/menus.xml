@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_root" name="Custody Cycle" sequence="20"
+                  web_icon="ab_custody_request,static/description/icon.png"/>
+
+        <menuitem id="ab_custody_request_sub_menu"
+                  name="Custody Request"
+                  parent="menu_root"
+                  sequence="100"/>
+
+        <menuitem id="config_sub_menu" name="Configuration" parent="menu_root" sequence="300"
+                  groups="base.group_user"/>
+
+    </data>
+</odoo>

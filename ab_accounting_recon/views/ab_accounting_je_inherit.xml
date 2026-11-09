@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_je_line_recon_search_view_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_recon_search_view_inherit</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_search"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="recon_account_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_guide_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_account_guide_form_view_inherit</field>
+            <field name="model">ab_accounting_account_guide</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_account_guide_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='reconcile']" position="after">
+                    <field name="recon_account_id"
+                           invisible="reconcile == False" required="reconcile == True"/>
+                    <field name="prevent_access_directly"
+                           invisible="reconcile == False" required="reconcile == True"/>
+
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_guide_tree_view_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_account_guide_tree_view_inherit</field>
+            <field name="model">ab_accounting_account_guide</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_account_guide_list"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='reconcile']" position="after">
+                    <field name="recon_account_id" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

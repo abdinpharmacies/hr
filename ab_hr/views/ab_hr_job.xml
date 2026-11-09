@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_job_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_job_view_tree</field>
+            <field name="model">ab_hr_job</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_job_tree" multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="access_history_user_ids" optional="show"/>
+                    <field name="internal_job" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_job_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_job_view_form</field>
+            <field name="model">ab_hr_job</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_job_form">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="internal_job"/>
+                            <field name="access_history_user_ids"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_job_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_job_view_search</field>
+            <field name="model">ab_hr_job</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_job_search">
+                    <field name="name"/>
+                    <field name="internal_job"/>
+                    <field name="access_history_user_ids"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_hr_job_view_pivot" model="ir.ui.view">
+            <field name="name">ab_hr_job_view_pivot</field>
+            <field name="model">ab_hr_job</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_hr_job_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_job_action" model="ir.actions.act_window">
+            <field name="name">Jobs</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_job</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_hr_job_config_menu"
+                  name="Jobs"
+                  parent="config"
+                  action="ab_hr_job_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

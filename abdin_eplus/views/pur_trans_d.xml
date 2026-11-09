@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="abdin_eplus.pur_trans_d_list_view">
+            <field name="name">pur_trans_d list</field>
+            <field name="model">abdin_eplus.pur_trans_d</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="sec_update_date" optional="show"/>
+                    <field name="serial"/>
+                    <field name="pth_id"/>
+                    <field name="itm_id"/>
+                    <field name="qnty"/>
+                    <field name="bonus"/>
+                    <field name="itm_back_qty"/>
+                    <field name="itm_back_bonus"/>
+                    <field name="itm_cost"/>
+                    <field name="sec_insert_date"/>
+                    <field name="sec_update_date"/>
+                    <field name="tup"/>
+                </list>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="abdin_eplus.pur_trans_d_form_view">
+            <field name="name">pur_trans_d form</field>
+            <field name="model">abdin_eplus.pur_trans_d</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4">
+                            <field name="serial"/>
+                            <field name="pth_id"/>
+                            <field name="itm_id"/>
+                            <field name="qnty"/>
+                            <field name="bonus"/>
+                            <field name="itm_back_qty"/>
+                            <field name="itm_back_bonus"/>
+                            <field name="itm_cost"/>
+                            <field name="sec_insert_date"/>
+                            <field name="sec_update_date"/>
+                            <field name="tup"/>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="pur_trans_d_action_window">
+            <field name="name">pur_trans_d window</field>
+            <field name="res_model">abdin_eplus.pur_trans_d</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Purchase Items" id="abdin_eplus.pur_trans_d_menu" parent="abdin_eplus.purchase_menu"
+                  action="pur_trans_d_action_window" sequence="70"/>
+
+
+    </data>
+</odoo>

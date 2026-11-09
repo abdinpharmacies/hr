@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_base_guide_admin,access_base_guide_admin,model_ab_accounting_account_guide,base.group_system,1,1,1,1
+access_base_doctype_admin,access_base_doctype_admin,model_ab_accounting_doctype,base.group_system,1,1,1,1
+access_base_first_level_admin,access_base_first_level_admin,model_ab_accounting_account_first_level,base.group_system,1,1,1,1
+access_base_second_level_admin,access_base_second_level_admin,model_ab_accounting_account_second_level,base.group_system,1,1,1,1
+access_base_account_admin,access_base_account_admin,model_ab_accounting_account,base.group_system,1,1,1,1

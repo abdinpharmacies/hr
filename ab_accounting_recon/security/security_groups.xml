@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="privilege_ab_accounting_ab_accounting_category" model="res.groups.privilege">
+            <field name="name">ab_accounting_category</field>
+            <field name="category_id" ref="ab_accounting.ab_accounting_category"/>
+        </record>
+<record id="ab_accounting_recon_user" model="res.groups">
+            <field name="name">Reconciliation User</field>
+            <field name="privilege_id" ref="privilege_ab_accounting_ab_accounting_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="ab_accounting_recon_manager" model="res.groups">
+            <field name="name">Reconciliation Manager</field>
+            <field name="privilege_id" ref="privilege_ab_accounting_ab_accounting_category"/>
+            <field name="implied_ids" eval="[(4, ref('ab_accounting_recon.ab_accounting_recon_user'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('ab_accounting.group_ab_accounting_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

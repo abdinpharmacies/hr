@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_custody_reconciliation_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_line_view_tree</field>
+            <field name="model">ab_custody_reconciliation_line</field>
+            <field name="arch" type="xml">
+                <list string="ab_custody_reconciliation_line_tree" create="0" edit="0">
+                    <field name="id"/>
+                    <field name="header_id" optional="show" string="Claimer"/>
+                    <field name="value" optional="show"/>
+                    <field name="custody_account_id" optional="show"/>
+                    <field name="description" optional="show"/>
+                    <field name="attachment" widget="binary" filename="attachment_filename" readonly="1"/>
+                    <field name="invoice_code" optional="show"/>
+                    <field name="status" optional="show" widget="badge"
+                           decoration-info="status=='entry'"
+                           decoration-warning="status=='pending'"
+                           decoration-success="status=='approved'"
+                           decoration-danger="status=='rejected'"
+                           decoration-primary="status=='neglected'"/>
+                    <field name="rejection_reason" class="text-wrap"/>
+                    <field name="concerned_employee_ids" optional="show" widget="many2many_tags"/>
+                    <field name="claimer_department_id" optional="show"/>
+                    <field name="notes"/>
+                    <field name="follow_up_ids" widget="many2many_tags" optional="hide"/>
+                    <button name="btn_approve" type="object"
+                            string="Approve" class="btn-primary"
+                            confirm="Are you sure?"/>
+                    <button name="btn_reject"
+                            type="object"
+                            string="Reject" class="btn-danger"/>
+                    <button name="btn_add_notes"
+                            type="object"
+                            string="Add Notes" class="btn-info"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_custody_reconciliation_line_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_line_view_form</field>
+            <field name="model">ab_custody_reconciliation_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_reconciliation_line_form">
+                    <sheet>
+                        <group>
+                            <field name="header_id" string="Claimer"/>
+                            <field name="value"/>
+                            <field name="custody_account_id"/>
+                            <field name="description"/>
+                            <field name="attachment"/>
+                            <field name="invoice_code"/>
+                            <field name="status" widget="badge"/>
+                            <field name="rejection_reason"/>
+                            <field name="concerned_employee_ids" widget="many2many_tags"/>
+                            <field name="notes"/>
+                            <field name="claimer_department_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_custody_reconciliation_line_view_search" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_line_view_search</field>
+            <field name="model">ab_custody_reconciliation_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_custody_reconciliation_line_search">
+                    <field name="id"/>
+                    <field name="header_id" string="Header"/>
+                    <field name="value"/>
+                    <field name="custody_account_id"/>
+                    <field name="description"/>
+                    <field name="attachment"/>
+                    <field name="invoice_code"/>
+                    <field name="status"/>
+                    <field name="rejection_reason"/>
+                    <field name="concerned_employee_ids"/>
+                    <field name="notes"/>
+                    <field name="claimer_department_id"/>
+                    <filter name="filter_pending_only" string="Pending" domain="[('status','=','pending')]"/>
+                    <filter name="filter_rejected_only" string="Rejected" domain="[('status','=','rejected')]"/>
+                    <filter name="filter_approved_only" string="Approved" domain="[('status','=','approved')]"/>
+                    <filter name="filter_neglected_only" string="Neglected" domain="[('status','=','neglected')]"/>
+
+                </search>
+            </field>
+        </record>
+        <record id="ab_custody_reconciliation_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_line_view_pivot</field>
+            <field name="model">ab_custody_reconciliation_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_custody_reconciliation_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_custody_reconciliation_line_action" model="ir.actions.act_window">
+            <field name="name">Custody Reconciliation Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_custody_reconciliation_line</field>
+            <field name="view_mode">list,form,pivot</field>
+            <field name="context">{'search_default_filter_pending_only': 1}</field>
+        </record>
+
+        <menuitem id="ab_custody_reconciliation_line_menu"
+                  name="Reconciliation Approval"
+                  parent="ab_custody_reconciliation_sub_menu"
+                  action="ab_custody_reconciliation_line_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

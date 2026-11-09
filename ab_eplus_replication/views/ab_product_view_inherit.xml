@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_product_card_view_inherit" model="ir.ui.view">
+            <field name="name">ab_product_card</field>
+            <field name="model">ab_product_card</field>
+            <field name="inherit_id" ref="ab_product.ab_product_card_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="last_update_date" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_product_view_inherit" model="ir.ui.view">
+            <field name="name">ab_product</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="last_update_date" optional="hide"/>
+                    <field name="eplus_create_date" optional="hide"/>
+                    <field name="eplus_serial" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

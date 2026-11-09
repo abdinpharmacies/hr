@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_request_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_custody_request_header_view_tree</field>
+            <field name="model">ab_custody_request_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_custody_request_header_tree" multi_edit="1">
+                    <field name="current_user_type" invisible="True"/>
+                    <field name="employee_code" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="manager_id" optional="show"/>
+                    <field name="branch_id" optional="show"/>
+                    <field name="status" optional="show"
+                           widget="badge"
+                           decoration-info="status=='for_entry'"
+                           decoration-primary="status=='for_manager'"
+                           decoration-warning="status=='for_accounting'"
+                           decoration-danger="status=='for_payment'"
+                           decoration-muted="status=='paid'"
+                    />
+                    <field name="custody_balance" optional="show"/>
+                    <field name="custody_type" optional="show"/>
+                    <field name="total_requested_custody" optional="show"/>
+                    <field name="approved_value" optional="show"/>
+                    <field name="total_approved_custody" optional="show"/>
+                    <field name="description" optional="show"/>
+                    <field name="custody_date" optional="show"/>
+                    <field name="is_sent" invisible="True"/>
+                    <field name="custody_balance" invisible="True"/>
+                    <field name="payment_date" invisible="True"/>
+                    <field name="employee_account_id" optional="show"/>
+                    <field name="employee_bank" optional="show"/>
+                    <field name="bank" optional="show"/>
+                    <field name="account_number" optional="show"/>
+                    <!--                    <field name="emails_to" invisible="True"/>-->
+                    <button name="btn_set_status" type="object"
+
+                            context="{'action':'paid'}"
+                            string="Paid" class="btn-outline-danger btn-block" invisible="current_user_type != 'payer'"/>
+                    <button name="btn_set_status" type="object"
+
+                            context="{'action':'for_payment'}"
+                            string="For Payment" class="btn-outline-info btn-block" invisible="current_user_type != 'accounting_manager'"/>
+
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_custody_request_header_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_request_header_view_form</field>
+            <field name="model">ab_custody_request_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_request_header_form">
+                    <header>
+                        <field name="is_sent" invisible="1"/>
+                        <field name="status" invisible="1"/>
+                        <field name="current_user_type" invisible="1"/>
+                        <button name="btn_set_status" type="object"
+
+                                context="{'action':'for_entry'}"
+                                string="For Entry" class="btn-info" invisible="current_user_type != 'claimer_manager'"/>
+                        <button name="btn_set_status" type="object"
+                                context="{'action':'for_manager'}"
+
+                                string="For Manager" class="btn-warning" invisible="current_user_type not in ['claimer', 'accounting_manager']"/>
+
+                        <button name="btn_set_status" type="object"
+
+                                context="{'action':'for_accounting'}"
+                                string="For Accounting" class="btn-primary" invisible="current_user_type not in ['claimer_manager', 'payer']"/>
+
+                        <button name="btn_set_status" type="object"
+                                context="{'action':'for_payment'}"
+
+                                string="For Payment" class="btn-success" invisible="current_user_type != 'accounting_manager'"/>
+
+                        <button name="btn_set_status" type="object"
+
+                                context="{'action':'paid'}"
+                                string="Paid" class="btn-danger" invisible="current_user_type != 'payer'"/>
+
+
+                    </header>
+                    <sheet>
+                        <field name="is_sent" invisible="True"/>
+                        <field name="status" invisible="True"/>
+                        <!--                        <widget name="web_ribbon" title="Submitted" bg_color="bg-danger"-->
+                        <!--                                attrs="{'invisible': [('is_sent', '=', False)]}"/>-->
+
+                        <!--                        <widget name="web_ribbon" title="Submitted" bg_color="bg-danger"-->
+                        <!--                                attrs="{'invisible': [('is_sent', '=', False)]}"/>-->
+
+                        <widget name="web_ribbon" title="For Entry" bg_color="bg-info"
+                                invisible="status != 'for_entry'"/>
+
+                        <widget name="web_ribbon" title="For Manager" bg_color="bg-warning"
+                                invisible="status != 'for_manager'"/>
+
+                        <widget name="web_ribbon" title="For Accounting" bg_color="bg-primary"
+                                invisible="status != 'for_accounting'"/>
+
+                        <widget name="web_ribbon" title="For Payment" bg_color="bg-success"
+                                invisible="status != 'for_payment'"/>
+
+                        <widget name="web_ribbon" title="Paid" bg_color="bg-danger"
+                                invisible="status != 'paid'"/>
+
+                        <div class="oe_button_box text-left" name="button_box">
+                            <button name="btn_show_total_details" type="object" class="oe_stat_button  mr-4"
+                                    icon="fa-bank">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">∑ Request </span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_requested_custody"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="btn_show_total_details" type="object" class="oe_stat_button mr-4"
+                                    icon="fa-credit-card">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">∑ Approved </span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_approved_custody"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <!--                            <button name="btn_print_pdf_custody_request" type="object" string="PDF"-->
+                            <!--                                    class="oe_stat_button mr-4"/>-->
+                        </div>
+
+                        <field name="user_id" invisible="1"/>
+                        <group col="2">
+                            <group string="Required Input">
+                                <field name="current_user_type"/>
+                                <field name="employee_id" force_save="1"/>
+
+                                <field name="custody_balance"/>
+                            </group>
+                            <group string="Information">
+                                <field name="employee_code"/>
+                                <field name="branch_id"/>
+                                <field name="manager_id"/>
+                                <!--                                <field name="emails_to" class="text-wrap"/>-->
+                                <field name="custody_link" invisible="1"/>
+                            </group>
+                            <separator/>
+
+                            <group string="Accounting Input">
+                                <field name="custody_type"
+
+
+                                 invisible="status in ['for_entry', 'for_manager']" required="status == 'for_accounting'"/>
+                                <field name="employee_account_id"
+
+                                       domain="[('employee_id','=',employee_id), ('is_custody', '=', True)]"
+                                 invisible="(status in ['for_entry', 'for_manager'] or custody_type == 'cash')" required="(custody_type == 'visa') and (status == 'for_accounting')"/>
+                                <field name="approved_value"/>
+
+                                <field name="payment_date" string="Payment Date"/>
+                                <!--
+                                                                <field name="att_file_ids" string="Attachments" widget="many2many_binary"/>
+                                -->
+                            </group>
+                            <separator/>
+
+                        </group>
+                        <notebook>
+                            <page string="Custody Details">
+                                <field name="user_id" invisible="1"/>
+                                <field name="line_ids" string="Custody Details Lines">
+                                    <list editable="bottom" multi_edit="1">
+                                        <field name="header_id" invisible="1"/>
+                                        <field name="value"/>
+                                        <field name="custody_account_id"
+                                               class="text-wrap text-center"
+                                        />
+                                        <!--
+                                         <field name="concerned_occupied_job_ids" invisible="1"/>
+                                         <field name="occupied_job_id"
+                                              class="text-wrap text-center"
+                                              domain="[('id','in',concerned_occupied_job_ids)]"
+                                           />
+                                        -->
+
+                                        <field name="due_date"/>
+                                        <field name="description" required="1"/>
+                                        <field name="attachment"/>
+                                        <field name="invoice_code" optional="hide"/>
+                                        <field name="competent_department_id" optional="hide"/>
+
+                                        <!--                                        <field name="direct_manager_approval" widget="boolean_toggle"/>-->
+
+                                        <!--   <field name="concerned_management_approval" widget="boolean_toggle"/>-->
+                                    </list>
+
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="ab_custody_request_header_view_search" model="ir.ui.view">
+            <field name="name">ab_custody_request_header_view_search</field>
+            <field name="model">ab_custody_request_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_custody_request_header_search">
+                    <field name="custody_type"/>
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="manager_id"/>
+                    <field name="is_sent"/>
+                    <field name="status"/>
+                    <field name="custody_balance"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_custody_request_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_custody_request_header_view_pivot</field>
+            <field name="model">ab_custody_request_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_custody_request_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_custody_request_header_action" model="ir.actions.act_window">
+            <field name="name">Custody Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_custody_request_header</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="custody_request_header_menu"
+                  name="Custody Request"
+                  parent="ab_custody_request_sub_menu"
+                  action="ab_custody_request_header_action"
+                  sequence="100"/>
+    </data>
+</odoo>
+

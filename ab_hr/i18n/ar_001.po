@@ -1,0 +1,3234 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_hr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-14 13:11+0000\n"
+"PO-Revision-Date: 2025-04-14 13:11+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.history_report_view_form
+msgid ""
+"<i class=\"fa fa-long-arrow-right mx-2 align-self-center\" aria-"
+"label=\"Arrow icon\" title=\"Arrow\"/>"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> \n"
+"        record(s) <span class='h4 text-danger'>DELETED</span> \n"
+"        by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+"<span class='h4 text-success'>%s</span> \n"
+"       سجلات  <span class='h4 text-danger'> تم حذفها </span> \n"
+"        بواسطة  <span class='h4 font-italic text-muted'>%s</span>"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> Employees \n"
+"            <br> Set to <span class='h4 text-success'>%s</span>"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> employee%s <br> changed to status \n"
+"            <span class='h4 text-success'>%s</span> successfully \n"
+"            <br>\n"
+"            by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> employee%s <br> changed to status \n"
+"        <span class='h4 text-success'>%s</span> successfully \n"
+"        <br>\n"
+"        by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.module.category,name:ab_hr.category_ab_hr
+msgid "Abdin HR"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__insurance_type__abdin
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_insurance_info__insurance_type__abdin
+msgid "Abdin Pharmacies"
+msgstr "صيدليات عابدين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_graph
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_graph
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_report_graph
+msgid "Abdin hr Graph"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_history_pivot
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_report_pivot
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_pivot
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_report_pivot
+msgid "Abdin hr Pivot"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_search
+msgid "Abdin hr Search"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__access_history_user_ids
+msgid "Access History User"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_due_salaries_qry.py:0
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__account_id
+#, python-format
+msgid "Account"
+msgstr "حساب"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__account_header_id
+msgid "Account Header"
+msgstr "رأس القيد"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Account Settings"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_section__type__accounts
+msgid "Accounting"
+msgstr "بند حسابات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Accounting Info"
+msgstr "معلومات الحسابات"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_action_wizard_menu
+msgid "Action"
+msgstr "إنشاء حركة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__action_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__action_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__action_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__action_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__action_date
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Action Date"
+msgstr "تاريخ الحركة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__action_date_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__action_date_type
+msgid "Action Date Type"
+msgstr "نوع التاريخ (إنهاء-تعيين-...)"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_needaction
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_needaction
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_needaction
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_needaction
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_needaction
+msgid "Action Needed"
+msgstr "الإجراء المطلوب"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__action_status
+msgid "Action Status"
+msgstr "حالة الحركة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__action_taken
+msgid "Action Taken"
+msgstr "تم التنفيذ"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__action_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__action_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__action_type
+#: model_terms:ir.ui.view,arch_db:ab_hr.emp_history_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Action Type"
+msgstr "نوع الحركة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__active
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_occupied__job_status__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Active Employees"
+msgstr "الموظفون النشطون"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_search
+msgid "Active Jobs"
+msgstr "الوظائف الفعالة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_state
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_state
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_state
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_state
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط "
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_type_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_type_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_type_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_type_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__act_manpower
+msgid "Actual Manpower"
+msgstr "العمالة الفعلية"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.view_employee_form_spec
+msgid "Add Documents"
+msgstr "إضافة الوثائق"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.view_employee_form_spec
+msgid "Add Insurance"
+msgstr "إضافة التأمينات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Add Job"
+msgstr "إضافة وظيفة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+msgid "Add Job Title"
+msgstr "إضافة مسمى وظيفي"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_hr_job_occupied.py:0
+#: code:addons/ab_hr/models/manpower.py:0
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_view_form
+#, python-format
+msgid "Add Movement"
+msgstr "إضافة التحرك"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__address_text
+msgid "Address: "
+msgstr "العنوان:"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_je_header__allowed_negative
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_recon_header__allowed_negative
+msgid "Allowed Negative"
+msgstr "السماح بالرصيد السالب"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__alt_job_id
+msgid "Alt Job"
+msgstr "بديل ل"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Alternative For"
+msgstr "بديل ل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__alt_job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__alt_job_id
+msgid "Alternative Job"
+msgstr "بديل ل"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_history_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr.emp_history_view_form
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: ab_hr
+#. openerp-web
+#: code:addons/ab_hr/static/src/js/hr_employee.js:0
+#: code:addons/ab_hr/static/src/js/hr_employee.js:0
+#: model_terms:ir.ui.view,arch_db:ab_hr.emp_history_view_form
+#, python-format
+msgid "Archive"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.emp_history_view_form
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Are you sure"
+msgstr "هل انت متأكد؟"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Are you sure?"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__attached_file
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__attached_file
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__attached_file
+msgid "Attached File"
+msgstr "المرفق"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__attached_link
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__attached_link
+msgid "Attached Link"
+msgstr "رابط المرفقات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__attachment
+msgid "Attachment"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_attachment_count
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_attachment_count
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_attachment_count
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_attachment_count
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد الملحقات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__barcode
+msgid "Badge ID"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__balance
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__base_action_ids
+msgid "Base Action"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_form
+msgid "Basic Data"
+msgstr "البيانات الأساسية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__birthday
+msgid "Birthday"
+msgstr "تاريخ الميلاد"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_history__new_territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_history__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_occupied__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_wizard__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_need__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__territory__3
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_report_wizard__territory__3
+msgid "Both"
+msgstr "إدارة عامة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_search
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Browse"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Browse Issues"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_report_wizard_view_form
+msgid "Browse Report"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__can_access_history
+msgid "Can Access History"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_hr
+#: model:ir.module.category,description:ab_hr.category_ab_hr
+msgid "Category For Abdin HR"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__cc_id
+msgid "Cc"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Chat"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__religion__christian
+msgid "Christian"
+msgstr "مسيحي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__clear_firing
+msgid "Clear Firing"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__clear_issue
+msgid "Clear Issue"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__accid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__accid
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_kanban
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__comparing_end_month
+msgid "Comparing End Month"
+msgstr "مقارنة بآخر الشهر"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__comparing_start_month
+msgid "Comparing Start Month"
+msgstr "مقارنة أول الشهر"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__confirm
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__confirm_deletion
+msgid "Confirm Deletion"
+msgstr "تأكيد الحذف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__costcenter_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__costcenter_id
+msgid "Costcenter"
+msgstr "مركز تكلفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__costcenter_code
+msgid "Costcenter Code"
+msgstr "كود مركز التكلفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_je_header__costcenter_codes
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_recon_header__costcenter_codes
+msgid "Costcenter Codes"
+msgstr "أكواد مراكز التكلفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__costcenter_name
+msgid "Costcenter Name"
+msgstr "اسم مركز التكلفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_res_users__count_linked
+msgid "Count Linked"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__create_date
+msgid "Create Date"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_accounting_je_header_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Create JE"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_accounting_je_header_view_form_inherit
+msgid "Create JE, are you sure?"
+msgstr "إنشاء القيود المحاسبية، هل انت متأكد؟"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_hr_department.py:0
+#: code:addons/ab_hr/models/ab_hr_employee.py:0
+#, python-format
+msgid "Create New Job"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__create_uid
+msgid "Created by"
+msgstr "إنشاء بواسطة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__credit_account_id
+msgid "Credit Account"
+msgstr "حساب دائن"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__cur_job_title
+msgid "Current Job Title"
+msgstr "الوظيفة الحالية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__cur_workplace
+msgid "Current Workplace"
+msgstr "جهة العمل الحالية"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "DELETE RECORDS"
+msgstr "حذف السجلات"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_department_ab_hr_department_unique
+msgid "DEPARTMENT CAN NOT BE DUPLICATED!"
+msgstr "لا يمكن تكرار جهة العمل"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_emp_doc_status_ab_hr_emp_doc_status_unique
+msgid "DOCUMENT CAN NOT BE DUPLICATED FOR SAME EMPLOYEE!"
+msgstr "لا يمكن ادخال نفس الوثيقة لنفس الموظف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__date_begin
+msgid "Date Begin"
+msgstr "من تاريخ"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__date_end
+msgid "Date End"
+msgstr "إلى تاريخ"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__debit_account_id
+msgid "Debit Account"
+msgstr "حساب مدين"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__manpower_effect_type__decrease
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__manpower_effect__decrease
+msgid "Decrease"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_accounting_je_header__je_type__deduction
+msgid "Deductions"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__op_manpower
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__op_manpower
+msgid "Default Manpower"
+msgstr "العمالة الافتراضية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__default_salary
+msgid "Default Salary"
+msgstr "الراتب الافتراضي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__default_urgent
+msgid "Default Urgent"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.history_report_view_form
+msgid "Delay Days"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__delay_per_day
+msgid "Delay Per Day"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__urgent
+msgid "Delay Per Days"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__department_id
+#: model:ir.model.fields,field_description:ab_hr.field_res_users__ab_department_ids
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__manager_id
+msgid "Department Manager"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_department_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_department_config_menu
+msgid "Departments"
+msgstr "الأقسام"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__depend_action_ids
+msgid "Depend Action"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_form
+msgid "Details"
+msgstr "تفاصيل"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__direct_issue
+msgid "Direct Issue"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__child_ids
+msgid "Direct subordinates"
+msgstr "المرؤسون المباشرون"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_status_view_form
+msgid "Discard"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_employee__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__display_name
+msgid "Display Name"
+msgstr "الاسم الظاهر في العرض"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__do_action
+msgid "Do Action"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__emp_doc_id
+msgid "Document"
+msgstr "الوثائق"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.view_employee_form_spec
+msgid "Documents"
+msgstr "الوثائق"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid "Done"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__manpower_effect_type__double_effect
+msgid "Double Effect"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__due_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__due_date
+msgid "Due Date"
+msgstr "استحقاق"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_je_header__due_month
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_recon_header__due_month
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__due_month
+msgid "Due Month"
+msgstr "شهر الاستحقاق"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_due_salaries_qry_view_form
+msgid "Due Salaries Details"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_due_salaries_qry_menu
+msgid "Due Salaries Enquiry"
+msgstr "تقرير أجور عاملين مستحقة"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_due_salaries_qry_action
+msgid "Due Salaries Report"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_due_salaries_qry_view_search
+msgid "Due Salaries Search"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__due_salary_details_html
+msgid "Due Salary Details Html"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_due_salaries_qry
+msgid "DueSalariesReport"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__e_code
+msgid "E Code"
+msgstr "كود الموظف"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_department_menu
+msgid "Edit Department Manpower"
+msgstr "الأقسام"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__emp_doc_status_ids
+msgid "Emp Doc Status"
+msgstr "سجلات مسوغات التعيين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__emp_history_ids
+msgid "Emp History"
+msgstr "التحركات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__employee_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__employee_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_search
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_employee_ab_hr_employees_employee_unique
+msgid "Employee CAN NOT BE DUPLICATED!"
+msgstr "مركز التكلفة لا يمكن تكراره"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_search
+msgid "Employee Code"
+msgstr "كود الموظف"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_insurance_info_view_form
+msgid "Employee Data"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_job_occupied
+msgid "Employee Jobs"
+msgstr ""
+
+#. module: ab_hr
+#. openerp-web
+#: code:addons/ab_hr/static/src/js/hr_employee.js:0
+#, python-format
+msgid "Employee Termination"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_kanban
+msgid "Employee's Name"
+msgstr "اسم الموظف"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_employee_action
+#: model:ir.model.fields,field_description:ab_hr.field_res_users__ab_employee_ids
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_action_wizard__pasted_type__employee
+#: model:ir.ui.menu,name:ab_hr.ab_hr_employee_menu
+#: model:ir.ui.menu,name:ab_hr.ab_hr_employee_sub_menu
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.template_salaries_compare_report
+#: model_terms:ir.ui.view,arch_db:ab_hr.template_salaries_report
+msgid "Employees &gt;"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__sal_count
+msgid "Employees Count"
+msgstr "عدد الموظفين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Employees Count:"
+msgstr "عدد الموظفين"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_emp_doc_status_menu
+msgid "Employees Docs"
+msgstr "مسوغات التعيين"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.emp_doc_status_action
+msgid "Employees Documents"
+msgstr "مسوغات التعيين"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.emp_doc_status_action_form
+msgid "Employees Documents Form"
+msgstr "مسوغات التعيين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_form
+msgid "Employees Jobs"
+msgstr "وظائف العاملين"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_emp_doc_config_menu
+msgid "Employment Docs"
+msgstr "مسوغات التعيين"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.emp_doc_action
+msgid "Employment Documents"
+msgstr "مسوغات التعيين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__english_name
+msgid "English Name"
+msgstr "الاسم بالإنجليزي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__exceptions
+msgid "Exceptions"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_doc_status__status__excluded
+msgid "Excluded"
+msgstr "لا داع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__exclusion_reason_id
+msgid "Exclusion Reason"
+msgstr "سبب الاستثناء"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_doc_status__status__existing
+msgid "Existing"
+msgstr "يوجد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__expiry_date
+msgid "Expiry Date"
+msgstr "تاريخ انتهاء الاستثناء/الوثيقة"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_due_salaries_qry.py:0
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__explain
+#, python-format
+msgid "Explain"
+msgstr "الشرح"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_report_wizard_view_form
+msgid "Export Excel"
+msgstr "تصدير إكسل"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "FOR ENTRY"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "FOR MANAGER stage"
+msgstr "إلى مرحلة مراجعة م الإدارة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "FOR REVIEWER stage"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__feedback_action
+msgid "Feedback Exit Action"
+msgstr "إفادة نهاية الخدمة"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__gender__female
+msgid "Female"
+msgstr "أنثى"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_form
+msgid "Fields Visibility"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__file_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__file_name
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Filter"
+msgstr "فلتر"
+
+#. module: ab_hr
+#: model:ab_hr_payment_type,name:ab_hr.payment_type_firing
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_accounting_je_header__je_type__firing
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__firing
+msgid "Firing"
+msgstr "إنهاء"
+
+#. module: ab_hr
+#: model:ir.actions.server,name:ab_hr.ab_hr_termination_process_act
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_history_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_report_search
+msgid "Firing Cycle"
+msgstr "دائرة الإخلاءات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_follower_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_follower_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_follower_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_follower_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_partner_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_partner_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_partner_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_partner_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__activity_type_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__activity_type_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__activity_type_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__activity_type_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__status__for_entry
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "For Entry"
+msgstr "تحت الإدخال"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__for_entry_count
+msgid "For Entry Count"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.template_salaries_compare_report
+#: model_terms:ir.ui.view,arch_db:ab_hr.template_salaries_report
+msgid ""
+"For Full Report Press\n"
+"                            <span class=\"h2 text-info\">Report Button</span>"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__status__for_manager
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "For Manager"
+msgstr " تحت مراجعة مدير الإدارة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__for_manager_count
+msgid "For Manager Count"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__status__for_reviewer
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "For Reviewer"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__for_reviewer_count
+msgid "For Reviewer Count"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "From"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_due_salaries_qry.py:0
+#, python-format
+msgid "Future Deduction"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__gender
+msgid "Gender"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__graduate
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__graduate
+msgid "Graduate"
+msgstr "المؤهل الدراسي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_section__type__hr
+#: model:ir.ui.menu,name:ab_hr.menu_root
+msgid "HR"
+msgstr "الموارد البشرية"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_admin
+msgid "HR Administrator"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_basic_data
+msgid "HR Basic Data"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_co
+msgid "HR Coordinator"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_manager
+msgid "HR Manager"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__hr_name_entry
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__hr_name_entry
+msgid "HR Name"
+msgstr "اسم الموظف"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_payroll_accountant
+msgid "HR Payroll Accountant"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_payroll_entry
+msgid "HR Payroll Entry"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_payroll_reviewer
+msgid "HR Payroll Reviewer"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_payroll_specialist
+msgid "HR Payroll Specialist"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_personnel_spec
+msgid "HR Personnel Specialist"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_recruiter
+msgid "HR Recruiter"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_secretary
+msgid "HR Secretary"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_hris_menu
+msgid "HRIS"
+msgstr "HIRS"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__has_message
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__has_message
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__has_message
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__has_message
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__hiring
+msgid "Hiring"
+msgstr "تعيين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__hiring_date
+msgid "Hiring Date"
+msgstr "تاريخ التعيين"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/manpower.py:0
+#: model:ir.model,name:ab_hr.model_ab_hr_emp_history
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__history_ids
+#: model:ir.ui.menu,name:ab_hr.ab_hr_emp_history_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_history_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_report_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_form_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_need_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr.view_employee_form_history
+#, python-format
+msgid "History"
+msgstr "التحركات"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.history_action_type_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_emp_history_action_type_config_menu
+msgid "History Action Type"
+msgstr "أنواع حركات التحركات"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.emp_history_action
+#: model:ir.actions.act_window,name:ab_hr.emp_history_action_form
+msgid "History Actions"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__history_diff
+msgid "History Diff"
+msgstr "الفرق بالأيام"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_history_report
+#: model:ir.ui.menu,name:ab_hr.ab_hr_history_report_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_report_wizard_view_form
+msgid "History Report"
+msgstr "تقرير التحركات"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.history_and_history_reports_sub_menu
+msgid "History and Reports"
+msgstr "الوظائف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__html
+msgid "Html"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_employee__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__barcode
+msgid "ID used for employee identification."
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__activity_exception_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__activity_exception_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__activity_exception_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__activity_exception_icon
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى عمل/ نشاط استثنائي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__identification_id
+msgid "Identification"
+msgstr "رقم قومي"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__message_needaction
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__message_unread
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__message_needaction
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__message_unread
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__message_needaction
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__message_unread
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__message_needaction
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__message_unread
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__message_needaction
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__message_unread
+msgid "If checked, new messages require your attention."
+msgstr "تستدعي الرسائل الجديدة انتباهك عند الفحص"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__message_has_error
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__message_has_error
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__message_has_error
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__message_has_error
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "تحدث مشكلة في الوصول لبعض الرسائل عند الفحص"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_occupied__job_status__inactive
+msgid "Inactive"
+msgstr "غير نشط"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__manpower_effect_type__increase
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__manpower_effect__increase
+msgid "Increase"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_excel_writer
+msgid "Inherit this to call excel functions"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__insurance_branch
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__insurance_branch
+msgid "Insurance Branch"
+msgstr "الجهة التأمينية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__insurance_end
+msgid "Insurance End"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.insurance_info_action
+#: model:ir.actions.act_window,name:ab_hr.insurance_info_action_form
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__insurance_info_ids
+#: model:ir.ui.menu,name:ab_hr.ab_hr_insurance_info_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_insurance_info_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.view_employee_form_spec
+msgid "Insurance Info"
+msgstr "التأمينات"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_insurance_info_ab_hr_insurance_info_unique
+msgid "Insurance Info CAN NOT BE DUPLICATED!"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__insurance_no
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__insurance_no
+msgid "Insurance No"
+msgstr "الرقم التأميني"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__insurance_start
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__insurance_start
+msgid "Insurance Start"
+msgstr "بداية التأمين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__insurance_status
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__insurance_status
+msgid "Insurance Status"
+msgstr "حالة التأمين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__insurance_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__insurance_type
+msgid "Insurance Type"
+msgstr "نوع التأمين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_insurance_info_view_form
+msgid "Internal"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__internal_job
+msgid "Internal Job"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__internal_working_employee
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__internal_working_employee
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__internal_job
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__internal_working_employee
+msgid "Internal Working Employee"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__invisible_job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__invisible_job_id
+msgid "Invisible Job"
+msgstr "إخفاء الوظيفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__invisible_job_title
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__invisible_job_title
+msgid "Invisible Job Title"
+msgstr "إخفاء المسمى الوظيفي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__invisible_workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__invisible_workplace
+msgid "Invisible Workplace"
+msgstr "إخفاء جهة العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__is_applied
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__is_applied
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__is_applied
+msgid "Is Applied"
+msgstr "تم تنفيذ التحرك"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__is_docs_complete
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__is_doc_complete
+msgid "Is Docs Complete"
+msgstr "مسوغات مكتملة؟"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.view_employee_form_spec
+msgid "Is Documents Complete"
+msgstr "هل الوثائق مكتملة؟"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_is_follower
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_is_follower
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_is_follower
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_is_follower
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__is_issue_as_action
+msgid "Is Issue As Action"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__is_main_job
+msgid "Is Main Job"
+msgstr "وظيفة أساسية؟"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__is_overlapped
+msgid "Is Overlapped"
+msgstr "يسبب تداخل في شهر المرتب"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__is_working
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__is_working
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__is_working
+msgid "Is Working"
+msgstr "يعمل؟"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__issue_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__issue_date
+msgid "Issue Date"
+msgstr "تاريخ التنبيه"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_search
+msgid "Issue Jobs"
+msgstr "وظائف تحت النظر"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_history_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_report_search
+msgid "Issues"
+msgstr "التنبيهات"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_job_ab_hr_job_unique
+msgid "JOB CAN NOT BE DUPLICATED!"
+msgstr "لا يمكن تكرار الوظيفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_je_header__je_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_recon_header__je_type
+msgid "Je Type"
+msgstr "نوع القيود"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__job_title_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__job_id
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__job_has_issue
+msgid "Job Has Issue"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__job_occupied_ids
+msgid "Job Occupied"
+msgstr "الوظائف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__job_status
+msgid "Job Status"
+msgstr "حالة الوظيفة(يعمل/لا يعمل)"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__old_job_title
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__job_title_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__job_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__job_title
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__job_title
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__job_title
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__job_title_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_job_wizard
+msgid "JobWizard"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_job_action
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__job_ids
+#: model:ir.ui.menu,name:ab_hr.ab_hr_job_config_menu
+msgid "Jobs"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Jobs Occupied"
+msgstr "وظائف العاملين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__khazna_subscription
+msgid "Khazna Subscription"
+msgstr "اشتراك خزنة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_employee____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard____last_update
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section____last_update
+msgid "Last Modified on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__write_date
+msgid "Last Updated on"
+msgstr "حدث آخر مرة بتاريخ"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.res_users_view_form
+msgid "Link Department"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.res_users_view_form
+msgid "Link employee"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.res_users_view_form
+msgid "Linked To"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_main_attachment_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_main_attachment_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_main_attachment_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_main_attachment_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "المرفق الأساسي"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Main Data"
+msgstr "البيانات الأساسية"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "Main Job"
+msgstr "الوظيفة الأساسية"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__gender__male
+msgid "Male"
+msgstr "ذكر"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__parent_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__parent_id
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__job_title_ids
+msgid "Managerial Job Titles"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__manpower_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__manpower_id
+#: model:ir.ui.menu,name:ab_hr.ab_hr_manpower_operation_menu
+msgid "Manpower"
+msgstr "العمالة الافتراضية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__manpower_effect
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__manpower_effect
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__manpower_effect
+msgid "Manpower Effect"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__manpower_effect_type
+msgid "Manpower Effect Type"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_manpower_need_action
+#: model:ir.model,name:ab_hr.model_ab_hr_manpower_need
+#: model:ir.ui.menu,name:ab_hr.ab_hr_manpower_need_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_need_search
+msgid "Manpower Need"
+msgstr "نواقص العمالة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__max_ratio
+msgid "Max Ratio"
+msgstr "أقصى نسبة مسموحة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_has_error
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_has_error
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_has_error
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_has_error
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في وصول الرسالة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__min_ratio
+msgid "Min Ratio"
+msgstr "أقل نسبة مسموحة"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_doc_status__status__missing
+msgid "Missing"
+msgstr "لا يوجد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__mod_name
+msgid "Mod Name"
+msgstr "الاسم المعدل"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__type__2
+msgid "Modify Job"
+msgstr "تعديل الوظيفة"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__type__4
+msgid "Modify Manpower"
+msgstr "تعديل قوة جهة العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__religion__muslim
+msgid "Muslim"
+msgstr "مسلم"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: ab_hr
+#. openerp-web
+#: code:addons/ab_hr/static/src/js/user_menu.js:0
+#, python-format
+msgid "My Profile"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/job_wizard.py:0
+#, python-format
+msgid "NO REQUIRED JOB FOR THIS WORKPLACE/TERRITORY"
+msgstr "لا توجد نواقص عمالة لجهة العمل هذه"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_exclusion_reason__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payment_type__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_region__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Negative"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__status__negative_salaries
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Negative Salaries"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__negative_salaries_count
+msgid "Negative Salaries Count"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__net_salary
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__net_salary
+msgid "Net Salary"
+msgstr "صافي المرتب"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__type__1
+msgid "New Job"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__new_job_title
+msgid "New Job Title"
+msgstr "المسمى الوظيفي المستهدف"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__type__3
+msgid "New Manpower"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__new_territory
+msgid "New Territory"
+msgstr "قطاع الجديد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__new_workplace
+msgid "New Workplace"
+msgstr "جهة العمل المستهدفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الميعاد النهائي للنشاط التالي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_summary
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_summary
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_summary
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_summary
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_type_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_type_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_type_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_type_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_action_wizard__confirm__no
+msgid "No"
+msgstr "لا"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__no_effect
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__manpower_effect_type__no_effect
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__manpower_effect__no_effect
+msgid "No Effect"
+msgstr "لا يوجد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__no_of_records
+msgid "No Of Records"
+msgstr "عدد السجلات"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_history__new_territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_history__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_occupied__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_wizard__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_need__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__territory__1
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_report_wizard__territory__1
+msgid "North"
+msgstr "الشمالي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__notes
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__notes
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__notes
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_paper_effect__name
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_paper_effect_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.template_salaries_compare_report
+#: model_terms:ir.ui.view,arch_db:ab_hr.template_salaries_report
+msgid "Number Of"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__message_needaction_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__message_needaction_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__message_needaction_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__message_needaction_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "عدد الرسائل التي تتطلب حركة"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__message_has_error_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__message_has_error_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__message_has_error_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__message_has_error_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "هدد الرسائل التي بها مشاكل في الوصول"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__message_unread_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__message_unread_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__message_unread_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__message_unread_counter
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__message_unread_counter
+msgid "Number of unread messages"
+msgstr "عدد الرسائل غير المقروءة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__occupied_job_ids
+msgid "Occupied Job"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_job_occupied_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+msgid "Occupied Jobs"
+msgstr "وظائف العاملين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_status_view_tree
+msgid "Open Form"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.manpower_root_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+msgid "Operation Manpower"
+msgstr "القوة التشغيلية"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_due_salaries_qry.py:0
+#: code:addons/ab_hr/models/ab_hr_employee.py:0
+#: code:addons/ab_hr/models/ab_hr_employee.py:0
+#: code:addons/ab_hr/models/history.py:0
+#, python-format
+msgid "Operation not supported"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__insurance_type__other
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__religion__other
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_insurance_info__insurance_type__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "PDF"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__status__paid
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Paid"
+msgstr "تم الدفع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__paid_count
+msgid "Paid Count"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.paper_effect_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_paper_effect_menu
+msgid "Paper Effects"
+msgstr "المؤثرات الورقية"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_paper_effect
+msgid "PaperEffect"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_pivot
+msgid "Paroll Pivot"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_report_form
+msgid "Paroll Report"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__pasted_salaries
+msgid "Pasted Salaries"
+msgstr "لصق اكواد المرتبات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__pasted_type
+msgid "Pasted Type"
+msgstr "النوع"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_accounting_je_header__je_type__pay
+msgid "Pay with Bank Transfer"
+msgstr "الدفع عن طريق تحويل بنكي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_accounting_je_header__je_type__pay_cash
+msgid "Pay with Cash"
+msgstr "الدفع نقدا"
+
+#. module: ab_hr
+#: model:ab_hr_payment_type,name:ab_hr.payment_type_payback
+msgid "Payback"
+msgstr "مردودات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_accounting_je_header_view_form_inherit
+msgid "Payment Data"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__user_line_owner
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__user_line_owner
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__payment_name
+msgid "Payment Name"
+msgstr "اسم طريقة الدفع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__payment_no
+msgid "Payment No"
+msgstr "رقم حساب طريقة الدفع"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_payment_type_act
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__payment_type_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__payment_type_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__payment_type_id
+#: model:ir.ui.menu,name:ab_hr.ab_hr_payment_type_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payment_type_form
+msgid "Payment Type"
+msgstr "نوع الدفع"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_payment_type_ab_hr_payment_type_unique
+msgid "Payment Type CAN NOT BE DUPLICATED!"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_payment_type
+msgid "PaymentType"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_payroll
+#: model:ir.ui.menu,name:ab_hr.ab_hr_salaries_root
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_form
+msgid "Payroll"
+msgstr "المرتبات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__payroll_action_month
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__payroll_action_month
+msgid "Payroll Action Month"
+msgstr "شهر المرتبات"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_payroll_menu
+msgid "Payroll Entry"
+msgstr "مدخلات المرتبات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__payroll_entry_allowed
+msgid "Payroll Entry Allowed"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Payroll List"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__payroll_month
+msgid "Payroll Month"
+msgstr "شهر الراتب"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_payroll_report
+#: model:ir.ui.menu,name:ab_hr.ab_hr_payroll_report_menu
+msgid "Payroll Report"
+msgstr "تقارير المرتبات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_search
+msgid "Payroll search"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__action_date_type__pending_issue
+msgid "Pending Issue"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__personnel_allowed
+msgid "Personnel Allowed"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "Phone"
+msgstr "تليفون آخر"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Print PDF"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Private Info"
+msgstr "معلومات شخصية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__received_date
+msgid "Received Date"
+msgstr "تاريخ الاستلام"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/history.py:0
+#, python-format
+msgid "Record is already archived."
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__recruiter_allowed
+msgid "Recruiter Allowed"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_form
+msgid "Recruitment"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__allowed_delay
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_tree
+msgid "Recruitment Delay Limit"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__redirected_to_ids
+msgid "Redirected To"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.region_action
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__region
+#: model:ir.ui.menu,name:ab_hr.ab_hr_region_menu
+msgid "Region"
+msgstr "المنطقة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__user_id
+msgid "Related User"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__religion
+msgid "Religion"
+msgstr "الديانة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_accounting_je_header_view_form_inherit
+msgid "Remove all JE"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_accounting_je_header_view_form_inherit
+msgid "Remove all JE, are you sure?"
+msgstr "مسح كل القيود المحاسبية، هل انت متأكد؟"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__replacement_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__replacement_date
+msgid "Replacement Date"
+msgstr "تاريخ الاستبدال"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__report_model_id
+msgid "Report Model"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_report_model_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_report_model_menu
+msgid "Report Models"
+msgstr "نماذج التقارير"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_report_wizard_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_report_wizard_menu
+msgid "Report Wizard"
+msgstr "معالج التقارير"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__need_manpower
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_need_search
+msgid "Required Manpower"
+msgstr "نواقص العمالة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__activity_user_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__activity_user_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__activity_user_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__activity_user_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسئول"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__sal_ids_text
+msgid "Sal Ids Text"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Salaries"
+msgstr "المرتبات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_search
+msgid "Salaries Actions"
+msgstr "حركات المرتبات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_list
+msgid "Salaries Actions List"
+msgstr "قائمة الحركات"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_payroll_employee
+msgid "Salaries Before Payment Report"
+msgstr "مرتبات الموظفين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__salaries_compare_html
+msgid "Salaries Compare Html"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_report_salaries_compare_xlsx
+msgid "Salaries Compare Report"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Salaries Comparing"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Salaries Details"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__salaries_html
+msgid "Salaries Html"
+msgstr "المرتبات"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_accounting_je_header_salaries_action
+#: model:ir.ui.menu,name:ab_hr.ab_accounting_je_header_salaries_menu
+msgid "Salaries Processes"
+msgstr "قيود أجور العاملين المستحقة"
+
+#. module: ab_hr
+#: model:ir.actions.report,name:ab_hr.ab_hr_salary_details_report
+#: model:ir.actions.report,name:ab_hr.action_pdf_salaries
+#: model:ir.actions.report,name:ab_hr.action_pdf_salaries_compare
+#: model:ir.model,name:ab_hr.model_report_salaries_xlsx_model
+msgid "Salaries Report"
+msgstr "مرتبات مفعلة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__sal_ids
+msgid "Salaries records"
+msgstr "سجلات المرتبات"
+
+#. module: ab_hr
+#: model:ab_hr_payment_type,name:ab_hr.payment_type_salary
+msgid "Salary"
+msgstr "مرتبات"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_action_wizard__pasted_type__salary_id
+msgid "Salary IDs"
+msgstr "مسلسلات المرتبات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_je_header__salary_line_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_accounting_recon_header__salary_line_ids
+msgid "Salary Line"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_accounting_je_header_view_inherit
+msgid "Salary Process"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid "Salary lines must be 'for manager'"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_status_view_form
+msgid "Save"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Save and Close"
+msgstr "حفظ وإغلاق"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Search Criteria"
+msgstr "خانات البحث"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__section
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__section
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__section
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Section"
+msgstr "اسم البند"
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_section_ab_hr_section_name_unique
+msgid "Section Name CAN NOT BE DUPLICATED!"
+msgstr "اسم البند لا يمكن تكراره"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__section_type
+msgid "Section Type"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__section_value
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__section_value
+msgid "Section Value"
+msgstr "قيمة البند"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__section_value1
+msgid "Section Value1"
+msgstr "إلى"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__section_value2
+msgid "Section Value2"
+msgstr "من"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.ab_hr_section_menu
+msgid "Sections"
+msgstr "البنود"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_form
+msgid "Security"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__set_payment_type_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Set Payment Type"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__set_user_line_owner
+msgid "Set user who will pay"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__sheet_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__sheet_name
+msgid "Sheet Name"
+msgstr "اسم الشيت"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_due_salaries_qry__show_only_cash
+msgid "Show Only Cash"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_history__new_territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_history__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_occupied__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_job_wizard__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_need__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__territory__2
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_report_wizard__territory__2
+msgid "South"
+msgstr "الجنوبي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__start_fir_date
+msgid "Start Fir Date"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__start_fir_date
+msgid "Start Firing Date"
+msgstr "بدء إخلاء الطرف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__status
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__status
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__status
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__activity_state
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__activity_state
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__activity_state
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__activity_state
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__store_ids
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__store_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__store_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__subscription_val
+msgid "Subscription Val"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__parent_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__parent_department_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__parent_department_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__parent_department_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__parent_department_id
+msgid "Superior Department"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__parent_department_ids
+msgid "Superior Departments"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Suspended"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_payroll__status__suspended_salaries
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Suspended Salaries"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__suspended_salaries_count
+msgid "Suspended Salaries Count"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_model__target_field_id
+msgid "Target Field"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_emp_doc_status__status__temp_excluded
+msgid "Temporary Excluded"
+msgstr "استثناء مؤقت"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__termination_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__termination_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__termination_date
+msgid "Termination Date"
+msgstr "تاريخ نهاية التعاقد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__territory
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__territory
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Territory"
+msgstr "الإقليم"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"There are negative or suspended employees in current actions\n"
+"Please write their codes - COPY/PASTE - in Exception fields\n"
+"Codes are: %s"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "This action will create JE, are you sure?"
+msgstr "إنشاء قيود محاسبية، هل انت متأكد؟"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "To"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__section_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__action_type_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__section_type
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_section__type
+msgid "Type"
+msgstr "النوع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__type_of_action
+msgid "Type Of Action"
+msgstr "نوع الحركة"
+
+#. module: ab_hr
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_action_wizard__activity_exception_decoration
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_emp_history__activity_exception_decoration
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_employee__activity_exception_decoration
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_job_occupied__activity_exception_decoration
+#: model:ir.model.fields,help:ab_hr.field_ab_hr_payroll__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي المسجل/ المرصود"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_unread
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_unread
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_unread
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_unread
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_unread
+msgid "Unread Messages"
+msgstr "الرسائل غير المقروءة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__message_unread_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__message_unread_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__message_unread_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__message_unread_counter
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "عداد الرسائل غير المقروءة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Update User Name"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__urgent
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_need_search
+msgid "Urgent"
+msgstr "طارئ"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__user_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__user_id
+msgid "User"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__user_line_owner
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__user_line_owner
+msgid "User Line Owner"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_res_users
+msgid "Users"
+msgstr "المستخدمين "
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/ab_due_salaries_qry.py:0
+#, python-format
+msgid "Value"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.constraint,message:ab_hr.constraint_ab_hr_manpower_ab_hr_manpower_unique
+msgid "WORKPLACE/JOB_TITLE/TERRITORY CAN NOT BE DUPLICATED!"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__work_email
+msgid "Work Email"
+msgstr "ايميل العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__mobile_phone
+msgid "Work Mobile"
+msgstr "موبايل العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__work_phone
+msgid "Work Phone"
+msgstr "تليفون العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_action_wizard__workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__old_workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__workplace_id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll__workplace
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__workplace
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_occupied_kanban
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Workplace"
+msgstr "جهة العمل"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_manpower
+msgid "Workplace Man Power"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__workplace_region
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__workplace_region
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__workplace_region
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_occupied__workplace_region
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower__workplace_region
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_need__workplace_region
+msgid "Workplace Region"
+msgstr "المنطقة التابع لها جهة العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_report_wizard__workplace_ids
+msgid "Workplaces"
+msgstr "أماكن العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_payroll_report__write_date
+msgid "Write Date"
+msgstr "تاريخ التحديث"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "Write Notes"
+msgstr "كتابة ملاحظات"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "Write an Explain for your action"
+msgstr "اكتب شرحا للحركة:"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/constants.py:0
+#, python-format
+msgid ""
+"YOU ALREADY DO ACTION ON THIS RECORD,\n"
+"                 <span class='h4'>PLEASE </span> DUPLICATE ACTION AND MAKE NEW ONE!"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/job_wizard.py:0
+#, python-format
+msgid "YOU ARE NOT ALLOWED TO DO THIS ACTION"
+msgstr "غير مسموح لك بتنفيذ هذه الحركة"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid "YOU CAN NOT EDIT ANOTHER USER ACTION!"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid "YOU CAN NOT MODIFY THIS ACTION, DO YOU WANT TO COPY IT?"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_action_wizard__confirm__yes
+msgid "Yes"
+msgstr "نعم"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/payroll.py:0
+#, python-format
+msgid "You Must Set Branch"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/payroll.py:0
+#, python-format
+msgid ""
+"You can not edit these records.\n"
+"Please send them to 'For Entry' Stage first."
+msgstr ""
+
+#. module: ab_hr
+#. openerp-web
+#: code:addons/ab_hr/static/src/models/employee/employee.js:0
+#, python-format
+msgid "You can only chat with employees that have a dedicated user."
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/history.py:0
+#, python-format
+msgid "You must have coordinator authority to archive"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"You will  \n"
+"        <span class='h4 text-danger'>DELETE %s</span> record(s) ,\n"
+"        <br/>\n"
+"        are you sure?"
+msgstr ""
+"ستقوم  \n"
+"        <span class='h4 text-danger'>بحذف  %s</span>سجلات ,\n"
+"        <br/>\n"
+"        هل أنت متأكد؟"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.emp_history_view_form
+msgid "You will archive history, are you sure?"
+msgstr ""
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/action_wizard.py:0
+#, python-format
+msgid ""
+"You will change \n"
+"        <span class='h4 text-danger'>%s</span> Employees to status \n"
+"        <span class='h4 text-danger'>%s</span>,\n"
+"        <br/>\n"
+"        are you sure?"
+msgstr ""
+"ستقوم بتغيير \n"
+"        <span class='h4 text-danger'>%s</span> الموظفين إلى حالة \n"
+"        <span class='h4 text-danger'>%s</span>,\n"
+"        <br/>\n"
+"هل انت متأكد؟"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_accounting_je_header
+msgid "ab_accounting_je_header"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_due_salaries_qry_view_form
+msgid "ab_due_salaries_qry_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_due_salaries_qry_view_tree
+msgid "ab_due_salaries_qry_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.report,name:ab_hr.action_salaries_compare_xlsx
+#: model:ir.actions.report,name:ab_hr.action_salaries_xlsx
+#: model:ir.model,name:ab_hr.model_ab_hr_action_wizard
+msgid "ab_hr_action_wizard"
+msgstr "Salaries Compare Report"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_action_wizard_act
+msgid "ab_hr_action_wizard.act"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_department
+msgid "ab_hr_department"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+msgid "ab_hr_department_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_pivot
+msgid "ab_hr_department_pivot"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_search
+msgid "ab_hr_department_search"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_tree
+msgid "ab_hr_department_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_status_view_form
+msgid "ab_hr_emp_doc_status_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_status_view_search
+msgid "ab_hr_emp_doc_status_search"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_status_view_tree
+msgid "ab_hr_emp_doc_status_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_doc_view_tree
+msgid "ab_hr_emp_doc_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_emp_history_view_tree
+msgid "ab_hr_emp_history_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_employee
+msgid "ab_hr_employee"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_pivot
+msgid "ab_hr_employee_pivot"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "ab_hr_employee_search"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_tree
+msgid "ab_hr_employee_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_emp_doc
+msgid "ab_hr_employment_document"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_exclusion_reason
+msgid "ab_hr_exclusion_reason"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_history_action_type
+msgid "ab_hr_history_action_type"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_form
+msgid "ab_hr_history_action_type_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_action_type_view_tree
+msgid "ab_hr_history_action_type_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_history_report_view_tree
+msgid "ab_hr_history_report_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_insurance_info
+msgid "ab_hr_insurance_info"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_insurance_info_view_form
+msgid "ab_hr_insurance_info_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_insurance_info_view_search
+msgid "ab_hr_insurance_info_search"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_insurance_info_view_tree
+msgid "ab_hr_insurance_info_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_job
+msgid "ab_hr_job"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_form
+msgid "ab_hr_job_form"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_job_occupied_act
+msgid "ab_hr_job_occupied.act"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_job_occupied_form_act
+msgid "ab_hr_job_occupied.form.act"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_pivot
+msgid "ab_hr_job_pivot"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_search
+msgid "ab_hr_job_search"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_tree
+msgid "ab_hr_job_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_manpower_operation_action
+msgid "ab_hr_manpower.action"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_manpower_view_search
+msgid "ab_hr_manpower_search"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_paper_effect_view_form
+msgid "ab_hr_paper_effect_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_paper_effect_view_tree
+msgid "ab_hr_paper_effect_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_payroll_act
+msgid "ab_hr_payroll.act"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_payroll_report_act
+msgid "ab_hr_payroll_report.act"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_payroll_report_view_search
+msgid "ab_hr_payroll_report_search"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_region
+msgid "ab_hr_region"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_region_view_tree
+msgid "ab_hr_region_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_report_model
+msgid "ab_hr_report_model"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_report_model_view_form
+msgid "ab_hr_report_model_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_report_model_view_tree
+msgid "ab_hr_report_model_tree"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_report_wizard
+msgid "ab_hr_report_wizard"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_report_wizard_view_form
+msgid "ab_hr_report_wizard_form"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_report_ab_hr_salary_details_report_model
+msgid "ab_hr_salary_details_report_model"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_section
+msgid "ab_hr_section"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_section_act
+msgid "ab_hr_section.act"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.report,name:ab_hr.action_export_termination_feedback_excel
+msgid "ab_hr_termination_feedback_report_wizard"
+msgstr "تقرير التدريب التعريفي"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "action taken"
+msgstr "تم التنفيذ"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_doc_status__accid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_emp_history__accid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__accid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_report__accid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_insurance_info__accid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job_wizard__accid
+msgid "ePlus Code"
+msgstr "كود الموظف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__bc_id
+msgid "ePlus ID"
+msgstr "مسلسل اي بلس"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.emp_history_view_form
+msgid "emp_history_form"
+msgstr "التحركات"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_emp_doc_status
+msgid "employee document status"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.history_report_action
+#: model:ir.actions.act_window,name:ab_hr.history_report_action_form
+msgid "history_report_action"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.history_report_view_form
+msgid "history_report_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.job_wizard_view_form
+msgid "job_wizard_form"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_view_form
+msgid "manpower_form"
+msgstr "قوة العمالة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_manpower_need_graph
+msgid "manpower_need Need Graph"
+msgstr "نواقص العمالة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_manpower
+msgid "manpower_need Need pivot"
+msgstr "نواقص العمالة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_need_view_tree
+msgid "manpower_need_tree"
+msgstr "نواقص العمالة"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_view_tree
+msgid "manpower_tree"
+msgstr "قوة العمالة"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_report_termination_feedback_report_wizard
+msgid "report.termination_feedback_report_wizard"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
+msgid "salaries action form"
+msgstr "حركات المرتبات المستحقة"

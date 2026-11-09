@@ -1,0 +1,210 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="abdin_eplus.employee_list_view">
+            <field name="name">employee list</field>
+            <field name="model">abdin_eplus.employee</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="e_id"/>
+                    <field name="e_code"/>
+                    <field name="e_name"/>
+                    <field name="e_active"/>
+                    <field name="e_delivery"/>
+                    <field name="tup"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="employee_action_window">
+            <field name="name">employee window</field>
+            <field name="res_model">abdin_eplus.employee</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="abdin_eplus.store_list_view">
+            <field name="name">store list</field>
+            <field name="model">abdin_eplus.store</field>
+            <field name="arch" type="xml">
+                <list default_order="geo_distance_weight" multi_edit="1">
+                    <field name="sto_id" optional="hide"/>
+                    <field name="sto_code" optional="show"/>
+                    <field name="sto_name_ar"/>
+                    <field name="region"/>
+                    <field name="is_store" optional="show"/>
+                    <field name="geo_distance_weight" optional="show"/>
+                    <field name="sto_ip1" optional="hide"/>
+                    <field name="activated" optional="hide"/>
+                    <field name="tup" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="abdin_eplus.store_view_search" model="ir.ui.view">
+            <field name="name">abdin_eplus.store_view_search</field>
+            <field name="model">abdin_eplus.store</field>
+            <field name="arch" type="xml">
+                <search string="abdin_eplus.store_search">
+                    <field name="region"/>
+                    <field name="sto_name_ar"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="store_action_window">
+            <field name="name">store window</field>
+            <field name="res_model">abdin_eplus.store</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="abdin_eplus.vendor_list_view">
+            <field name="name">vendor list</field>
+            <field name="model">abdin_eplus.vendor</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="ven_id"/>
+                    <field name="ven_code"/>
+                    <field name="ven_name_ar"/>
+                    <field name="ven_tel"/>
+                    <field name="tup"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="vendor_action_window">
+            <field name="name">vendor window</field>
+            <field name="res_model">abdin_eplus.vendor</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="abdin_eplus.customer_contracts_list_view">
+            <field name="name">customer_contracts list</field>
+            <field name="model">abdin_eplus.customer_contracts</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="cc_id"/>
+                    <field name="cc_cust_id"/>
+                    <field name="cc_name"/>
+                    <field name="cc_pay_perc"/>
+                    <field name="cc_dis_per_for_cust"/>
+                    <field name="tup"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="customer_contracts_action_window">
+            <field name="name">customer_contracts window</field>
+            <field name="res_model">abdin_eplus.customer_contracts</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="abdin_eplus.customer_list_view">
+            <field name="name">customer list</field>
+            <field name="model">abdin_eplus.customer</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="cust_id"/>
+                    <field name="cust_code"/>
+                    <field name="cust_name_ar"/>
+                    <field name="cust_parent"/>
+                    <field name="cust_type"/>
+                    <field name="tup"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="customer_action_window">
+            <field name="name">customer window</field>
+            <field name="res_model">abdin_eplus.customer</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <record model="ir.ui.view" id="abdin_eplus.item_catalog_list_view">
+            <field name="name">item_catalog list</field>
+            <field name="model">abdin_eplus.item_catalog</field>
+            <field name="arch" type="xml">
+                <list multi_edit="1">
+                    <field name="itm_id"/>
+                    <field name="itm_code"/>
+                    <field name="itm_name_ar"/>
+                    <field name="parent_id"/>
+                    <field name="supplier_id"/>
+                    <field name="tup"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="abdin_eplus.item_catalog_view_search" model="ir.ui.view">
+            <field name="name">abdin_eplus.item_catalog_view_search</field>
+            <field name="model">abdin_eplus.item_catalog</field>
+            <field name="arch" type="xml">
+                <search string="abdin_eplus.item_catalog_search">
+                    <field name="itm_name_ar"/>
+                    <field name="supplier_id"/>
+                    <field name="itm_code"/>
+                    <field name="itm_ismedicine"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="abdin_eplus.item_catalog_view_form" model="ir.ui.view">
+            <field name="name">abdin_eplus.item_catalog_view_form</field>
+            <field name="model">abdin_eplus.item_catalog</field>
+            <field name="arch" type="xml">
+                <form string="abdin_eplus.item_catalog_form">
+                    <sheet>
+                        <group>
+                            <field name="itm_id"/>
+                            <field name="itm_code"/>
+                            <field name="itm_name_ar"/>
+                            <field name="itm_def_pharm_price"/>
+                            <field name="itm_def_sell_price"/>
+                            <field name="parent_id"/>
+                            <field name="supplier_id"/>
+                            <field name="tup"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="item_catalog_action_window">
+            <field name="name">item_catalog window</field>
+            <field name="res_model">abdin_eplus.item_catalog</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Stores" id="abdin_eplus_store_menu" parent="abdin_eplus.tables_menu"
+                  action="store_action_window" sequence="1"/>
+
+        <menuitem name="Employees" id="abdin_eplus_employee_menu" parent="abdin_eplus.tables_menu"
+                  action="employee_action_window" sequence="10"/>
+
+
+        <menuitem name="Customers" id="abdin_eplus_customer_menu" parent="abdin_eplus.tables_menu"
+                  action="customer_action_window" sequence="30"/>
+
+        <menuitem name="vendors" id="abdin_eplus_vendor_menu" parent="abdin_eplus.tables_menu"
+                  action="vendor_action_window" sequence="30"/>
+
+        <menuitem name="Items Catalogue" id="abdin_eplus_item_catalog_menu" parent="abdin_eplus.tables_menu"
+                  action="item_catalog_action_window" sequence="40"/>
+
+        <menuitem name="Customers Contracts" id="abdin_eplus_customer_contracts_menu" parent="abdin_eplus.tables_menu"
+                  action="customer_contracts_action_window" sequence="50"/>
+
+
+    </data>
+</odoo>

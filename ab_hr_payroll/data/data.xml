@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="payment_type_salary" model="ab_hr_payment_type">
+            <field name="name">Salary</field>
+        </record>
+
+        <record id="payment_type_payback" model="ab_hr_payment_type">
+            <field name="name">Payback</field>
+        </record>
+
+        <record id="payment_type_firing" model="ab_hr_payment_type">
+            <field name="name">Firing</field>
+        </record>
+    </data>
+</odoo>

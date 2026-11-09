@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_employee_data_view_tree" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_tree</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="arch" type="xml">
+                <list string="ab_custody_employee_data_tree">
+                    <field name="employee_id" optional="show"/>
+                    <field name="employee_code" optional="show"/>
+                    <field name="job_title_id" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="workplace_region_id" optional="show"/>
+                    <field name="bank" optional="show"/>
+                    <field name="account_number" optional="show"/>
+                    <field name="employee_bank" optional="show"/>
+                    <field name="attachment" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_custody_employee_data_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_form</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_employee_data_form">
+                    <sheet>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="employee_code"/>
+                            <field name="job_title_id"/>
+                            <field name="department_id"/>
+                            <field name="workplace_region_id"/>
+                            <field name="bank"/>
+                            <field name="account_number"/>
+                            <field name="employee_bank"/>
+                            <field name="attachment"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_custody_employee_data_view_search" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_search</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="arch" type="xml">
+                <search string="ab_custody_employee_data_search">
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="bank"/>
+                    <field name="account_number"/>
+                    <field name="employee_bank"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_custody_employee_data_view_pivot" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_pivot</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_custody_employee_data_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_custody_employee_data_action" model="ir.actions.act_window">
+            <field name="name">Custody Employee Data</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_custody_employee_data</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_custody_employee_data_menu"
+                  name="Employee Visa Data"
+                  parent="config_sub_menu"
+                  action="ab_custody_employee_data_action"
+                  groups="group_ab_custody_request_accounting,group_ab_custody_request_payment_visa,ab_hr.group_ab_hr_co"
+                  sequence="300"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,475 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_accounting_future
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-22 10:15+0000\n"
+"PO-Revision-Date: 2025-06-22 10:15+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_accounting_future
+#: code:addons/ab_accounting_future/models/ab_accounting_future_header.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> lines added  \n"
+"        <span class='h4 text-success'>successfully</span>  \n"
+"        by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__account_id
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__account_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "Account"
+msgstr "الحساب"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "Adding these lines, are you sure?"
+msgstr "إضافة هذه السطور، هل أنت متأكد؟"
+
+#. module: ab_accounting_future
+#: model:ir.actions.act_window,name:ab_accounting_future.ab_accounting_future_all_orders_action
+#: model:ir.ui.menu,name:ab_accounting_future.ab_accounting_future_all_orders_menu
+msgid "All Orders"
+msgstr "كل الأوامر"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_tree
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields.selection,name:ab_accounting_future.selection__ab_accounting_future__order_type__deposit
+#: model:ir.model.fields.selection,name:ab_accounting_future.selection__ab_accounting_future_header__order_type__deposit
+msgid "Cash/Cheque Deposit"
+msgstr "توريد شيك/نقدية"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields.selection,name:ab_accounting_future.selection__ab_accounting_future__order_type__payment
+#: model:ir.model.fields.selection,name:ab_accounting_future.selection__ab_accounting_future_header__order_type__payment
+msgid "Cash/Cheque Payment"
+msgstr "دفع بشيك/نقدا"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__costcenter_id
+msgid "Costcenter"
+msgstr "مركز التكلفة"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_tree
+msgid "Create JE"
+msgstr "إنشاء القيد المحاسبي"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__create_uid
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__create_uid
+msgid "Created by"
+msgstr "منشأ بواسطة"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__create_date
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_tree
+msgid "Credit Account"
+msgstr "الحساب الدائن"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+msgid "Credit Costcenter"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__credit_val
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+msgid "Credit Value"
+msgstr "القيمة الدائنة"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_tree
+msgid "Credit account"
+msgstr "الحساب الدائن"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_tree
+msgid "Debit Account"
+msgstr "الحساب المدين"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__debit_val
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+msgid "Debit Value"
+msgstr "القيمة المدينة"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_tree
+msgid "Debit account"
+msgstr "الحساب المدين"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+msgid "Deposit Account"
+msgstr "حساب التوريد"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_tree
+msgid "Deposit Account (Debit)"
+msgstr "حساب التوريد (مدين)"
+
+#. module: ab_accounting_future
+#: model:ir.actions.act_window,name:ab_accounting_future.ab_accounting_future_deposit_action
+#: model:ir.ui.menu,name:ab_accounting_future.ab_accounting_future_menu_deposit
+msgid "Deposit Order"
+msgstr "أمر توريد"
+
+#. module: ab_accounting_future
+#: model:ir.actions.act_window,name:ab_accounting_future.ab_accounting_future_header_deposit_action
+#: model:ir.ui.menu,name:ab_accounting_future.ab_accounting_future_header_deposit_menu
+msgid "Deposit Orders"
+msgstr "أوامر التوريد"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+msgid "Deposit To Account (Debit)"
+msgstr "توريد إلى حساب (مدين)"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+msgid "Deposit Value"
+msgstr "قيمة التوريد"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__display_name
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__display_name
+msgid "Display Name"
+msgstr "الاسم"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__doc_no
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__doc_no
+msgid "Doc No"
+msgstr "كود المستند"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__due_date
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__explain
+msgid "Explain"
+msgstr "الشرح"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+msgid "From (Credit)"
+msgstr "المَصْدر (دائن)"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+msgid "From Account (Credit)"
+msgstr "حساب المَصْدر (دائن)"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__from_excel
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "From Excel"
+msgstr "من إكسل"
+
+#. module: ab_accounting_future
+#: model:ir.ui.menu,name:ab_accounting_future.ab_accounting_future_sub_menu
+msgid "Future JEs"
+msgstr "القيود المستقبلية (أوامر الدفع والتوريد)"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__header_id
+msgid "Header"
+msgstr "رأس السجلات"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__id
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "JE Created"
+msgstr "تم إنشاء قيد محاسبي"
+
+#. module: ab_accounting_future
+#: code:addons/ab_accounting_future/models/ab_accounting_future.py:0
+#, python-format
+msgid "JE already created!"
+msgstr "لقد تم إنشاء قيد محاسبي من قبل!"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__je_created
+msgid "Je Created"
+msgstr "تم إنشاء قيد محاسبي"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future____last_update
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header____last_update
+msgid "Last Modified on"
+msgstr "آخر تاريخ تحديث"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__write_uid
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__write_date
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__write_date
+msgid "Last Updated on"
+msgstr "آخر تاريخ تحديث"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__line_ids
+msgid "Line"
+msgstr "سطر"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "Lines"
+msgstr "سطور"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__order_type
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__order_type
+msgid "Order Type"
+msgstr "نوع الأمر"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "Other Data"
+msgstr "بيانات أخرى"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "Payment Account"
+msgstr "حساب دفع"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_tree
+msgid "Payment Account (Credit)"
+msgstr "حساب دفع (دائن)"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "Payment From Account (Credit)"
+msgstr "الدفع من حساب (دائن)"
+
+#. module: ab_accounting_future
+#: model:ir.actions.act_window,name:ab_accounting_future.ab_accounting_future_payment_action
+#: model:ir.ui.menu,name:ab_accounting_future.ab_accounting_future_menu_payment
+msgid "Payment Order"
+msgstr "أمر دفع"
+
+#. module: ab_accounting_future
+#: model:ir.actions.act_window,name:ab_accounting_future.ab_accounting_future_header_payment_action
+#: model:ir.ui.menu,name:ab_accounting_future.ab_accounting_future_header_payment_menu
+msgid "Payment Orders"
+msgstr "أوامر الدفع"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_tree
+msgid "Payment Value"
+msgstr "قيمة الدفع"
+
+#. module: ab_accounting_future
+#: code:addons/ab_accounting_future/models/ab_accounting_future_header.py:0
+#, python-format
+msgid "Record has Lines, Delete Inner Lines First!"
+msgstr "يحتوى السجل على سطور داخلية، قم بحذف السطور الداخلية أولا!"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__sett_costcenter_id
+msgid "Sett Costcenter"
+msgstr "مركز تكلفة المَصْدر"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__sett_account_id
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__sett_account_id
+msgid "Settlement Account"
+msgstr "حساب التسوية"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__store_id
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "To Account (Debit)"
+msgstr "إلى حساب (مدين)"
+
+#. module: ab_accounting_future
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future__user_id
+#: model:ir.model.fields,field_description:ab_accounting_future.field_ab_accounting_future_header__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_accounting_future
+#: model:ir.model,name:ab_accounting_future.model_ab_accounting_future
+msgid "ab_accounting_future"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+msgid "ab_accounting_future_all_orders_view_form"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_tree
+msgid "ab_accounting_future_all_orders_view_tree"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+msgid "ab_accounting_future_deposit_view_form"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_tree
+msgid "ab_accounting_future_deposit_view_tree"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model:ir.model,name:ab_accounting_future.model_ab_accounting_future_header
+msgid "ab_accounting_future_header"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+msgid "ab_accounting_future_header_deposit_view_form"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "ab_accounting_future_header_payment_view_form"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_tree
+msgid "ab_accounting_future_header_payment_view_tree"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_view_pivot
+msgid "ab_accounting_future_header_pivot"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_view_search
+msgid "ab_accounting_future_header_search"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_tree
+msgid "ab_accounting_future_header_tree"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "ab_accounting_future_payment_view_form"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_tree
+msgid "ab_accounting_future_payment_view_tree"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_view_pivot
+msgid "ab_accounting_future_pivot"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_view_search
+msgid "ab_accounting_future_search"
+msgstr ""
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "Example: Supplier Account, Cash Account, Bank Account, Custody Account, ..."
+msgstr "مثال: حساب الموردين، حساب النقدية، حساب بنكي، حساب العهد، ..."
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_all_orders_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+msgid "Example: Choose Supplier for Supplier Account, Choose Custody Responsible for Custody Account."
+msgstr "مثال: اختر المورد لحساب الموردين، اختر مسئول العهدة لحساب العهد."
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_payment_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_payment_view_form
+msgid "Example: Expense Account."
+msgstr "مثال: حساب مصروفات."
+
+#. module: ab_accounting_future
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_deposit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting_future.ab_accounting_future_header_deposit_view_form
+msgid "Example: Income Account."
+msgstr "مثال: حساب ايرادات."
+
+
+#. module: ab_accounting_future
+#: model:res.groups,name:ab_accounting_future.group_je_future_user
+msgid "group_je_future_user"
+msgstr ""

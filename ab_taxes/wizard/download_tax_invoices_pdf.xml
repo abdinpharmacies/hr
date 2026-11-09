@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_download_tax_invoices_pdf_wizard_form" model="ir.ui.view">
+            <field name="name">Download Tax Invoice Wizard</field>
+            <field name="model">ab_download_tax_invoices_pdf_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Download Tax Invoice">
+                    <sheet>
+                        <group col="4">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="issuer_id"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Ok" type="object" name="action_confirm" class="btn btn-primary" data-hotkey="q"/>
+                        <button string="Cancel" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="ab_download_tax_invoices_pdf_wizard_action" model="ir.actions.act_window">
+            <field name="name">Download Tax Invoice Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_download_tax_invoices_pdf_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ab_download_tax_invoices_pdf_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem id="ab_download_tax_invoices_pdf_wizard_menu" name="Download Tax Invoice" parent="purchase_tax_invoices_menu_root" action="ab_download_tax_invoices_pdf_wizard_action"/>
+    </data>
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <!-- Mail template are declared in a NOUPDATE block
+         so users can freely customize/delete them -->
+    <data>
+
+        <record id="template_custody_reconciliation_email" model="mail.template">
+            <!-- @formatter:off -->
+                    <field name="name">Custody Reconciliation</field>
+                    <field name="model_id" ref="ab_custody_reconciliation.model_ab_custody_reconciliation_header"/>
+                    <field name="subject">  طلب تسوية عهدة للموظف: {{ object.employee_id.name }}</field>
+                    <!-- @formatter:on -->
+            <field name="body_html" type="html">
+                <div style="direction: rtl; text-align: right;margin: 0; padding: 0;">
+                    <h3> السادة الأفاضل</h3>
+                    <h3> تحية طيبة وبعد، </h3>
+                    <h3> يرجى اعتماد البنود الاّتية:</h3>
+
+                    <br/>
+
+                    <table style="width: 70%; border-collapse: collapse; font-family: Arial, sans-serif;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: center;">
+                                    <strong>البند</strong>
+                                </th>
+                                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: center;">
+                                    <strong>رقم الفاتورة</strong>
+                                </th>
+                                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: center;">
+                                    <strong>القيمة</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="object.line_ids" t-as="line">
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                        <t t-esc="line.custody_account_id.name"/>
+                                    </td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                        <t t-esc="line.invoice_code"/>
+                                    </td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                                        <t t-esc="line.value"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br/>
+
+
+                    <br/>
+                    <br/><br/>
+                    جزيل الشكر.
+                    <br/>
+                    <t t-esc="user.name"/>
+                </div>
+            </field>
+
+        </record>
+
+    </data>
+</odoo>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_root"
+                  name="Fixed Assets"
+                  web_icon="ab_fixed_asset,static/description/fixed_icon.png"
+                  sequence="100"/>
+
+        <menuitem id="config_sub_menu" name="Configurations" parent="menu_root" sequence="300"/>
+
+        <menuitem name="Asset Levels" id="asset_levels_sub_menu" parent="config_sub_menu"
+                  sequence="10"/>
+
+
+        <menuitem id="asset_movement_sub_menu"
+                  parent="ab_fixed_asset.menu_root"
+                  name="Asset Movement"
+                  sequence="400"/>
+
+        <menuitem name="Assets Inventory" id="asset_inventory_sub_menu" parent="menu_root"
+                  sequence="1"/>
+
+    </data>
+</odoo>

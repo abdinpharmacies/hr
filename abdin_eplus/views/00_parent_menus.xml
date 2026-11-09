@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem name="ePlus"
+                  id="abdin_eplus.menu_root"
+                  web_icon="abdin_eplus,static/description/icon.png"
+                  groups="abdin_eplus.group_abdin_eplus_user"/>
+
+        <!--###############################################################################################-->
+
+
+        <menuitem name="Config" id="abdin_eplus.tables_menu" parent="abdin_eplus.menu_root" sequence="2"/>
+
+        <menuitem name="Replication" id="abdin_eplus.replication"
+                  parent="abdin_eplus.menu_root"
+                  sequence="20"/>
+
+        <menuitem name="Sales" id="abdin_eplus.sales_menu" parent="abdin_eplus.menu_root"
+                  sequence="100"/>
+
+        <menuitem name="Purchase" id="abdin_eplus.purchase_menu" parent="abdin_eplus.menu_root"
+                  sequence="101"/>
+
+
+    </data>
+</odoo>

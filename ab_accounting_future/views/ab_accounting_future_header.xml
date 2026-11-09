@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_accounting_future_header_deposit_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_future_header_view_tree</field>
+            <field name="model">ab_accounting_future_header</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <list string="ab_accounting_future_header_tree" multi_edit="1">
+                    <field name="account_id" optional="show" string="Deposit Account (Debit)"/>
+                    <field name="sett_account_id" optional="show"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="doc_no" optional="show"/>
+                    <field name="store_id" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_accounting_future_header_payment_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_future_header_payment_view_tree</field>
+            <field name="mode">primary</field>
+            <field name="model">ab_accounting_future_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_accounting_future_header_payment_view_tree" multi_edit="1">
+                    <field name="account_id" optional="show" string="Payment Account (Credit)"/>
+                    <field name="sett_account_id" optional="show"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="doc_no" optional="show"/>
+                    <field name="store_id" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_accounting_future_header_deposit_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_future_header_deposit_view_form</field>
+            <field name="mode">primary</field>
+            <field name="model">ab_accounting_future_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_future_header_deposit_view_form">
+                    <sheet>
+                        <group string="Deposit To Account (Debit)">
+                            <field name="account_id" string="Deposit Account" placeholder="Example: Supplier Account, Cash Account, Bank Account, Custody Account, ..."/>
+                        </group>
+
+                        <group string="From (Credit)">
+                            <field name="sett_account_id" string="Account" placeholder="Example: Income Account."/>
+                        </group>
+                        <group string="Other Data">
+                            <field name="store_id"/>
+                            <field name="doc_no"/>
+                            <field name="user_id" force_save="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Lines">
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="debit_val" string="Deposit Value"/>
+                                        <field name="costcenter_id" optional="show"/>
+                                        <field name="account_id" optional="show"/>
+                                        <field name="sett_account_id" optional="show"/>
+                                        <field name="store_id" optional="show"/>
+                                        <field name="due_date"/>
+                                        <field name="explain"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="From Excel">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="from_excel" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button type="object" name="btn_add_data_from_excel"
+                                                    confirm="Adding these lines, are you sure?"
+                                                    string="Add"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_accounting_future_header_payment_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_future_header_payment_view_form</field>
+            <field name="mode">primary</field>
+            <field name="model">ab_accounting_future_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_future_header_payment_view_form">
+                    <sheet>
+                        <group string="Payment From Account (Credit)">
+                            <field name="account_id" string="Payment Account" placeholder="Example: Supplier Account, Cash Account, Bank Account, Custody Account, ..."/>
+                        </group>
+
+                        <group string="To Account (Debit)">
+                            <field name="sett_account_id" string="Account" placeholder="Example: Expense Account."/>
+                        </group>
+
+                        <group string="Other Data">
+                            <field name="store_id"/>
+                            <field name="doc_no"/>
+                            <field name="user_id" force_save="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Lines">
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="credit_val" string="Payment Value"/>
+                                        <field name="costcenter_id" optional="show"/>
+                                        <field name="account_id" optional="show"/>
+                                        <field name="sett_account_id" optional="show"/>
+                                        <field name="store_id" optional="show"/>
+                                        <field name="due_date"/>
+                                        <field name="explain"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="From Excel">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="from_excel" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button type="object" name="btn_add_data_from_excel"
+                                                    confirm="Adding these lines, are you sure?"
+                                                    string="Add"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_accounting_future_header_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_future_header_view_search</field>
+            <field name="model">ab_accounting_future_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_future_header_search">
+                    <field name="account_id"/>
+                    <field name="sett_account_id"/>
+                    <field name="doc_no"/>
+                    <field name="store_id"/>
+                    <field name="user_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_accounting_future_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_accounting_future_header_view_pivot</field>
+            <field name="model">ab_accounting_future_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_accounting_future_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+        <record id="ab_accounting_future_header_deposit_action" model="ir.actions.act_window">
+            <field name="name">Deposit Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_future_header</field>
+            <field name="view_mode">list,form,pivot</field>
+            <field name="view_mode">list,form,pivot</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('ab_accounting_future_header_deposit_view_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('ab_accounting_future_header_deposit_view_form')})]"/>
+            <field name="domain">[('order_type', '=', 'deposit')]</field>
+        </record>
+
+        <record id="ab_accounting_future_header_payment_action" model="ir.actions.act_window">
+            <field name="name">Payment Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_future_header</field>
+            <field name="view_mode">list,form,pivot</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'list', 'view_id': ref('ab_accounting_future_header_payment_view_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('ab_accounting_future_header_payment_view_form')})]"/>
+            <field name="context">{'default_order_type': 'payment'}</field>
+            <field name="domain">[('order_type', '=', 'payment')]</field>
+        </record>
+
+
+        <menuitem id="ab_accounting_future_header_deposit_menu"
+                  name="Deposit Orders"
+                  parent="ab_accounting_future_sub_menu"
+                  action="ab_accounting_future_header_deposit_action"
+                  sequence="30"/>
+
+        <menuitem id="ab_accounting_future_header_payment_menu"
+                  name="Payment Orders"
+                  parent="ab_accounting_future_sub_menu"
+                  action="ab_accounting_future_header_payment_action"
+                  sequence="40"/>
+
+
+    </data>
+</odoo>

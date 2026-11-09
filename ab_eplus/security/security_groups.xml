@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="privilege_ab_accounting_ab_accounting_category" model="res.groups.privilege">
+            <field name="name">ab_accounting_category</field>
+            <field name="category_id" ref="ab_accounting.ab_accounting_category"/>
+        </record>
+<record id="group_pay_vendor" model="res.groups">
+            <field name="name">Pay Vendor on ePlus</field>
+            <field name="privilege_id" ref="privilege_ab_accounting_ab_accounting_category"/>
+                    <field name="implied_ids"
+                   eval="[(4, ref('ab_accounting.group_ab_accounting_accountant')),]"/>
+        </record>
+
+        <record id="ab_eplus_pay_vendor_see_only_vendors" model="ir.rule">
+            <field name="name">ab_eplus_pay_vendor_see_only_vendors</field>
+            <field ref="ab_accounting.model_ab_accounting_je_line" name="model_id"/>
+            <field name="domain_force">[
+                ('debit_val', '&gt;', 0),
+                ('account_id.internal_group', '=', 'payable'),
+            ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('group_pay_vendor'))]"/>
+        </record>
+
+    </data>
+</odoo>

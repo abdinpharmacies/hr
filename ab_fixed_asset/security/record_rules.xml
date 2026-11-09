@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_fixed_asset_move_wizard_read_submitted" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_move_wizard_read_submitted</field>
+            <field name="model_id" ref="model_ab_fixed_asset_move_wizard"/>
+            <field name="groups" eval="[
+            (4, ref('group_ab_fixed_asset_manager')),
+            (4, ref('group_ab_fixed_asset_accountant')),
+            ]"/>
+            <field name="domain_force">[('is_submitted', '=', True)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_fixed_asset_move_wizard_crud_not_submitted" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_move_wizard_crud_not_submitted</field>
+            <field name="model_id" ref="model_ab_fixed_asset_move_wizard"/>
+            <field name="groups" eval="[(4, ref('group_ab_fixed_asset_manager'))]"/>
+            <field name="domain_force">[('is_submitted', '!=', True)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_fixed_asset_assets_inventory_crud_user" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_assets_inventory_crud_user</field>
+            <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
+            <field name="groups" eval="[(4, ref('group_ab_fixed_asset_user'))]"/>
+            <field name="domain_force">[('je_line_ids', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+        <record id="rule_ab_fixed_asset_assets_inventory_ro_user" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_assets_inventory_ro_user</field>
+            <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
+            <field name="groups" eval="[(4, ref('group_ab_fixed_asset_user'))]"/>
+            <field name="domain_force">[('je_line_ids', '!=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record model="discuss.channel" id="custody_channel">
+            <field name="name">Custody Reconciliation</field>
+            <field name="channel_type">group</field>
+        </record>
+    </data>
+</odoo>

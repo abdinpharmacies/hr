@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.actions.server" id="eplus_replicate_action">
+            <field name="name">Replicate ePlus</field>
+            <field name="model_id" ref="ab_purchase.model_ab_purchase_header"/>
+            <field name="binding_model_id" eval="False"/>
+            <field name="binding_view_types">form</field>
+            <field name="state">code</field>
+            <field name="code">action = model.env['ab_eplus_replication'].action_eplus_replicate()</field>
+        </record>
+
+
+        <menuitem id="eplus_replicate_menu"
+                  name="Replicate ePlus"
+                  parent="ab_purchase.purchase_sub_menu"
+                  action="eplus_replicate_action"
+                  groups="ab_purchase.group_ab_purchase_data_entry,ab_purchase.group_ab_purchase_manager"
+                  sequence="100"/>
+
+    </data>
+</odoo>

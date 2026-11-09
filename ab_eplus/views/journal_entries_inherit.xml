@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_je_line_view_tree_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_view_tree_inherit</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='is_confirmed']" position="after">
+                    <field name="internal_type" invisible="1"/>
+                    <button name="btn_check_bill_valid_accountant"
+                            type="object"
+                            string="Check Bill"
+                            groups="ab_accounting.group_ab_accounting_accountant"
+                            class="btn-warning btn-block"
+
+                     invisible="(not ((debit_val &gt; 0 and internal_type == 'payable')))"/>
+                    <button name="btn_check_bill_valid"
+                            type="object" string="Check Bill"
+                            groups="ab_eplus.group_pay_vendor"
+                            class="btn-info btn-block"
+
+                     invisible="(not ((debit_val &gt; 0 and internal_type == 'payable')))"/>
+                    <button name="btn_pay_bill"
+                            type="object"
+                            string="Pay Bill"
+                            groups="ab_eplus.group_pay_vendor"
+                            class="btn-danger btn-block"
+
+                     invisible="(not ((debit_val &gt; 0 and internal_type == 'payable')))"/>
+                    <field name="is_paid" optional="hide"
+                           groups="ab_eplus.group_pay_vendor"
+                    />
+                    <field name="msg" optional="hide"/>
+                    <field name="vendor_id" optional="hide"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_customer_contact_way_phone_call" model="ab_customer_contact_way">
+            <field name="name">Phone Call</field>
+        </record>
+        <record id="ab_customer_contact_way_address" model="ab_customer_contact_way">
+            <field name="name">Address</field>
+        </record>
+    </data>
+</odoo>

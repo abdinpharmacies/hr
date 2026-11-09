@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_recon_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_recon_header_view_tree</field>
+            <field name="model">ab_accounting_recon_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_accounting_recon_header_tree" multi_edit="1">
+                    <field name="account_id" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_accounting_recon_header_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_recon_header_view_form</field>
+            <field name="model">ab_accounting_recon_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_recon_header_view_form">
+                    <header>
+                        <field name="is_frozen" invisible="1"/>
+                        <field name="is_posted" invisible="1"/>
+                        <button name="btn_post_je"
+                                invisible="0"
+                                type="object" string="Post JE"
+                                class="btn-success px-2"/>
+
+                        <button name="btn_confirm_all_je"
+                                class="btn-danger px-2"
+                                confirm="Are you sure"
+                                type="object"
+                                string="Confirm All"/>
+
+                        <button name="btn_freeze"
+                                string="Freeze"
+                                type="object"
+                                class="btn-outline-info px-2"
+
+                                confirm="You will prevent creator from editing this JE, are you sure?" invisible="is_frozen == True"/>
+
+                        <button name="btn_unfreeze"
+                                string="Unfreeze"
+                                type="object"
+                                class="btn-outline-info"
+
+                                confirm="You will permit creator to edit this JE, are you sure?" invisible="is_frozen == False"/>
+                    </header>
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <widget name="web_ribbon" title="Posted" bg_color="bg-success"
+                                invisible="is_posted == False"/>
+                        <widget name="web_ribbon" title="is_frozen" bg_color="bg-info"
+                                invisible="is_frozen == False"/>
+
+                        <field name="recon_has_lines" invisible="1"/>
+                        <group>
+                            <field name="je_header_account_id"
+                                   readonly="recon_has_lines == True"/>
+                            <field name="doctype_id"/>
+                        </group>
+                        <notebook>
+                            <page string="Journal Entries">
+                                <group>
+                                    <field name="je_line_search_ids"
+                                           domain="[
+                                           (not not je_header_account_id,'=',1),
+                                           ('recon_account_id','=',je_header_account_id),
+                                           ]"
+                                           context="{
+                                           'search_default_filter_no_settlement':1,
+                                           'search_default_filter_has_value':1,
+                                           'search_default_filter_past_due_date':1,
+                                           }"
+                                           widget="many2many_tags"/>
+                                </group>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="excel_text" string="Paste From Excel"/>
+                                            <div class="abdin-textbox-container">
+                                                <field name="excel_text"
+                                                       class="abdin-textbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <br/>
+                                            <button name="btn_add_to_reconcile"
+                                                    class="btn-success btn-block"
+                                                    type="object"
+                                                    string="Add"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-4 row">
+                                            <label for="settlement_date" class="col-5"/>
+                                            <field name="settlement_date" class="col-5"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <button name="btn_set_settlement_date_for_all"
+                                                    class="btn-info btn-block"
+                                                    type="object"
+                                                    confirm="Are you sure?"
+                                                    string="Set settlement date for all"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <button name="btn_reconcile_all"
+                                                    class="btn-primary btn-block"
+                                                    confirm="Are you sure?"
+                                                    type="object"
+                                                    string="Reconcile all"/>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <field name="recon_je_line_ids" nolabel="1">
+                                    <list editable="bottom" delete="0" default_order="doc_no desc"
+                                          decoration-success="is_posted"
+                                          decoration-info="is_frozen"
+                                          decoration-danger="is_confirmed">
+                                        <field name="id" optional="show"/>
+                                        <field name="account_id" optional="show"/>
+                                        <field name="costcenter_id" optional="show"/>
+                                        <field name="debit_val" class="h6" optional="show"
+                                               decoration-danger="debit_val&gt;0"/>
+                                        <field name="credit_val" class="h6" optional="show"
+                                               decoration-success="credit_val&gt;0"/>
+                                        <field name="due_date" optional="show"/>
+                                        <field name="doc_no" optional="show"/>
+                                        <field name="explain" optional="show"/>
+                                        <field name="store_id" optional="show"/>
+                                        <field name="is_posted" optional="hide"/>
+                                        <field name="is_confirmed" optional="hide"/>
+                                        <field name="is_frozen" optional="hide"/>
+                                        <field name="settlement_date" optional="show"/>
+                                        <field name="je_settlement_date" optional="hide"/>
+                                        <button name="btn_reconcile_account" type="object"
+                                                icon="fa-chevron-down text-success"
+
+                                         invisible="je_settlement_date != False"/>
+                                        <button name="btn_reconcile_account" type="object"
+                                                icon="fa-chevron-down text-info"
+
+                                         invisible="je_settlement_date == False"/>
+                                        <button name="btn_delete_recon_je_line" type="object"
+                                                icon="fa-trash text-danger"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="JE Lines">
+                                <field name="doctype_id" invisible="1"/>
+                                <field name="account_id" invisible="1"/>
+                                <group>
+                                    <field name="je_header_ro_id"/>
+                                </group>
+                                <field name="line_ids"
+                                       nolabel="1"
+                                       force_save="1"
+
+                                 invisible="(doctype_id == False or account_id == False)">
+                                    <list string="ab_accounting_je_line_tree"
+                                          decoration-muted="is_header == True"
+                                          decoration-danger="is_confirmed == True"
+                                          editable="bottom">
+                                        <field name="active" invisible="1"/>
+                                        <field name="is_header" invisible="1"/>
+                                        <field name="allow_confirm" invisible="1"/>
+                                        <field name="allow_reverse" invisible="1"/>
+                                        <field name="reconcile" invisible="1"/>
+                                        <field name="has_due_date" invisible="1"/>
+                                        <field name="is_frozen" invisible="1"/>
+                                        <field name="id" class="text-muted text-left" width="40px"/>
+                                        <field name="account_id"
+                                               width="80px"
+                                               class="h6 text-right  text-wrap"
+                                               options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                                        <field name="with_account_id" optional="hide"
+                                               width="80px"
+                                               class="h6 text-muted text-right  text-wrap"/>
+                                        <field name="debit_val"
+                                               sum="Total Debit"
+                                               class="h6 text-dark text-right  text-wrap"/>
+                                        <field name="credit_val"
+                                               sum="Total Credit"
+                                               class="h6 text-dark text-right text-wrap"/>
+                                        <field name="net_val" class="h6 text-dark text-right text-wrap"/>
+                                        <!--##########################################################################################-->
+                                        <field name="due_date" optional="show"
+
+                                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}" readonly="has_due_date == False"/>
+                                        <field name="settlement_date" optional="show"
+
+                                               options="{'datepicker':{'dtp_format': 'DD-MM-YYYY',}}" readonly="reconcile == False"/>
+                                        <field name="costcenter_id" width="80px"
+                                               class="text-wrap"
+                                               optional="show"/>
+                                        <field name="store_id" width="80px" class="text-wrap" optional="show"/>
+                                        <field name="explain" optional="show" width="80px"
+                                               class="h6"/>
+                                        <field name="doc_no" optional="show" width="50px"/>
+                                        <field name="doctype_id" optional="show" width="50px"/>
+                                        <field name="is_confirmed" optional="hide" string="Confirmed"/>
+                                        <field name="balance" invisible="1"/>
+                                        <field name="negative_balance" optional="hide"/>
+                                        <field name="pre_balance" invisible="1"/>
+                                        <field name="available_balance" optional="show" class="h6"
+                                               widget="monetary"
+                                               decoration-danger="negative_balance"
+                                               decoration-success="not negative_balance"
+                                        />
+                                        <field name="is_posted" optional="hide" string="Posted"/>
+                                        <field name="create_uid" optional="hide"/>
+                                        <field name="write_uid" optional="hide"/>
+                                        <field name="create_date" optional="hide"/>
+                                        <field name="write_date" optional="hide"/>
+                                        <field name="posted_date" optional="hide"/>
+                                    </list>
+
+                                </field>
+
+                            </page>
+
+                            <page string="Report">
+                                <group col="3">
+                                    <field name="start_date"
+                                           options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                                    <field name="end_date" nolabel="1"
+                                           options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                                </group>
+                                <div class="btn-group">
+                                    <button string="Export Excel" name="btn_export_excel_account_statement"
+                                            type="object"
+                                            class="btn btn-success"/>
+                                    <button string="Print PDF" name="btn_print_pdf_account_statement" type="object"
+                                            class="btn btn-info"/>
+                                    <button string="Browse Here" name="btn_browse_account_statement" type="object"
+                                            class="btn btn-warning"/>
+                                    <button string="Cancel" special="cancel"/>
+                                </div>
+
+
+                                <field name="html" readonly="1"/>
+                            </page>
+                            <page string="Show Fields">
+                                <group>
+                                    <field name="report_field_ids" widget="many2many_tags"/>
+                                </group>
+                            </page>
+
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_accounting_recon_header_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_recon_header_view_search</field>
+            <field name="model">ab_accounting_recon_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_recon_header_search">
+                    <field name="account_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_accounting_recon_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_accounting_recon_header_view_pivot</field>
+            <field name="model">ab_accounting_recon_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_accounting_recon_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_accounting_recon_header_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting recon header</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_recon_header</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_accounting_recon_header_menu"
+                  name="Reconciliation"
+                  parent="ab_accounting.root_menu"
+                  action="ab_accounting_recon_header_action"
+                  sequence="500"/>
+
+    </data>
+</odoo>

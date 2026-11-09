@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_customer_sys,access_ab_customer_sys,model_ab_customer,base.group_system,1,1,1,1
+access_ab_customer_contact_sys,access_ab_customer_contact_sys,model_ab_customer_contact,base.group_system,1,1,1,1
+access_ab_customer_contact_way_sys,access_ab_customer_contact_way_sys,model_ab_customer_contact_way,base.group_system,1,1,1,1
+access_ab_customer_marketing,access_ab_customer_marketing,model_ab_customer,group_customer_marketing,1,0,0,0

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="rule_ab_purchase_notice_header_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_purchase_notice_header_prevent_all</field>
+            <field name="model_id" ref="model_ab_purchase_notice_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_purchase_read_user'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_purchase_notice_header_user_ro_all" model="ir.rule">
+            <field name="name">rule_ab_purchase_notice_header_user_ro_all</field>
+            <field name="model_id" ref="model_ab_purchase_notice_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_purchase_read_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_purchase_notice_header_" model="ir.rule">
+            <field name="name">rule_ab_purchase_notice_header_</field>
+            <field name="model_id" ref="model_ab_purchase_notice_header"/>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+        <!--
+                <record id="rule_ab_purchase_notice_header_entry_all_not_saved" model="ir.rule">
+                    <field name="name">rule_ab_purchase_notice_header_entry_all_not_saved</field>
+                    <field name="model_id" ref="model_ab_purchase_notice_header"/>
+                    <field name="domain_force">[('status', '!=', 'saved')]</field>
+                    <field name="groups" eval="[(4, ref('group_ab_purchase_data_entry'))]"/>
+                    <field name="perm_read" eval="1"/>
+                    <field name="perm_write" eval="1"/>
+                    <field name="perm_create" eval="1"/>
+                    <field name="perm_unlink" eval="1"/>
+                </record>
+        -->
+
+        <!--
+                <record id="rule_ab_purchase_notice_header_entry_ro_not_saved" model="ir.rule">
+                    <field name="name">rule_ab_purchase_notice_header_entry_ro_not_saved</field>
+                    <field name="model_id" ref="model_ab_purchase_notice_header"/>
+                    <field name="domain_force">[(1, '=', 1)]</field>
+                    <field name="groups" eval="[(4, ref('group_ab_purchase_data_entry'))]"/>
+                    <field name="perm_read" eval="1"/>
+                    <field name="perm_write" eval="0"/>
+                    <field name="perm_create" eval="0"/>
+                    <field name="perm_unlink" eval="0"/>
+                </record>
+        -->
+
+
+    </data>
+</odoo>

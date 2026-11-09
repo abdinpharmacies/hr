@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="ab_custody_reconciliation_sub_menu"
+                  name="Custody Reconciliation"
+                  parent="ab_custody_request.menu_root"
+                  sequence="200"/>
+
+
+    </data>
+</odoo>

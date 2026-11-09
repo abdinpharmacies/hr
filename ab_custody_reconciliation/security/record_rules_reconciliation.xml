@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--        ### Concerned Department Rules ####### -->
+        <record id="rule_ab_custody_reconciliation_line_user_can_approve" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_line_user_can_approve</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_line"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('can_approve', '=', True),
+                ('status', '!=', 'entry'),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <!--        ### Accounting Rules ####### -->
+        <record id="rule_ab_custody_reconciliation_line_accounting" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_line_accounting</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_reconciliation_accounting'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_reconciliation_header_accounting" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_header_accounting</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_reconciliation_accounting'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <!--        ### Requester Rules ####### -->
+        <record id="rule_ab_custody_reconciliation_line_user_for_entry_crud" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_line_user_for_entry_crud</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_line"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('header_id.user_id', '=', user.id),
+                ('status', '=', 'entry')]
+            </field>
+
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_reconciliation_line_user_for_not_entry_read_own" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_line_user_for_not_entry_read_own</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_line"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('header_id.user_id', '=', user.id),
+                ('status', '!=', 'entry')]
+            </field>
+
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+        <record id="rule_ab_custody_reconciliation_header_user_pending_crud" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_header_user_pending_crud</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_header"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('user_id', '=', user.id),
+                ('recon_status', '=', 'entry'),
+            ]
+            </field>
+
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_reconciliation_header_user_not_pending_read_own" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_header_user_not_pending_read_own</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_header"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('user_id', '=', user.id),
+                ('recon_status', '!=', 'entry'),
+            ]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_reconciliation_line_follower_read" model="ir.rule">
+            <field name="name">rule_ab_custody_reconciliation_line_follower_read</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_line"/>
+            <field name="groups" eval="[(4, ref('ab_custody_request.group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[('follow_up_ids', 'in', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+    </data>
+</odoo>

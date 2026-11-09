@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_supplier_marketing_view_tree" model="ir.ui.view">
+            <field name="name">ab_supplier_marketing_view_tree</field>
+            <field name="model">ab_supplier_marketing</field>
+            <field name="arch" type="xml">
+                <list string="ab_supplier_marketing_tree">
+                    <field name="supplier_id" optional="show"/>
+                    <field name="reason_of_discount" optional="show"/>
+                    <field name="discount_value" optional="show"/>
+                    <field name="deduction_month" optional="show"/>
+                    <field name="notes" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_supplier_marketing_view_form" model="ir.ui.view">
+            <field name="name">ab_supplier_marketing_view_form</field>
+            <field name="model">ab_supplier_marketing</field>
+            <field name="arch" type="xml">
+                <form string="ab_supplier_marketing_form">
+                    <sheet>
+                        <group>
+                            <field name="supplier_id"/>
+                            <field name="reason_of_discount"/>
+                            <field name="discount_value"/>
+                            <field name="deduction_month"/>
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_supplier_marketing_view_search" model="ir.ui.view">
+            <field name="name">ab_supplier_marketing_view_search</field>
+            <field name="model">ab_supplier_marketing</field>
+            <field name="arch" type="xml">
+                <search string="ab_supplier_marketing_search">
+                    <field name="supplier_id"/>
+                    <field name="reason_of_discount"/>
+                    <field name="discount_value"/>
+                    <field name="deduction_month"/>
+                    <field name="notes"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_supplier_marketing_view_pivot" model="ir.ui.view">
+            <field name="name">ab_supplier_marketing_view_pivot</field>
+            <field name="model">ab_supplier_marketing</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_supplier_marketing_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_supplier_marketing_action" model="ir.actions.act_window">
+            <field name="name">Ab supplier marketing</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_supplier_marketing</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+
+    </data>
+</odoo>

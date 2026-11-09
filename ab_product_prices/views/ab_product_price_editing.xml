@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_price_editing_view_tree" model="ir.ui.view">
+            <field name="name">ab_product_price_editing_view_tree</field>
+            <field name="model">ab_product_price_editing</field>
+            <field name="arch" type="xml">
+                <list string="ab_product_price_editing_tree" editable="top">
+                    <field name="product_id" optional="show"/>
+                    <field name="code" optional="show"/>
+                    <field name="actual_price" optional="show"/>
+                    <field name="product_source_id_domain" invisible="1"/>
+                    <field name="product_source_id" context="{'show_price_only':True}" optional="show"
+                           domain="product_source_id_domain"/>
+                    <field name="new_price" optional="show"/>
+                    <field name="no_of_items" optional="show"/>
+                    <field name="attachment" optional="show" widget="binary"/>
+                    <field name="notes" optional="show"/>
+                    <field name="status" optional="show" widget="badge"
+                           decoration-info="status=='submitted'"
+                           decoration-success="status=='done'"
+                           decoration-danger="status=='rejected'"
+                    />
+                    <field name="store_id" optional="show"/>
+                    <field name="request_date" optional="show"/>
+                    <button name="btn_change_status" type="object" string="Submit" context="{'new_status':'submitted'}"
+                            class="btn-info" groups="ab_product_prices.group_ab_product_price_editing_user"/>
+
+                    <button name="btn_change_status" type="object" string="Done" context="{'new_status':'done'}"
+                            class="btn-success" groups="ab_product_prices.group_ab_product_price_editing_editor"/>
+
+                    <button name="btn_change_status" type="object" string="Reject" context="{'new_status':'rejected'}"
+                            class="btn-danger" groups="ab_product_prices.group_ab_product_price_editing_editor"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_product_price_editing_view_form" model="ir.ui.view">
+            <field name="name">ab_product_price_editing_view_form</field>
+            <field name="model">ab_product_price_editing</field>
+            <field name="arch" type="xml">
+                <form string="ab_product_price_editing_form">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Entry" bg_color="bg-info"
+                                invisible="status != 'entry'"/>
+                        <widget name="web_ribbon" title="Submitted" bg_color="bg-success"
+                                invisible="status != 'submitted'"/>
+                        <widget name="web_ribbon" title="Edited" bg_color="bg-warning"
+                                invisible="status != 'done'"/>
+
+                        <group col="1">
+                            <group>
+                                <field name="store_id"/>
+                                <field name="request_date"/>
+                                <field name="status"/>
+
+
+                            </group>
+
+                            <separator string="" colspan="4"/>
+
+                            <notebook>
+                                <page string="Details">
+                                    <group col="4">
+                                        <field name="product_id"/>
+                                        <field name="code"/>
+                                        <field name="actual_price"/>
+                                        <field name="new_price"/>
+                                        <field name="no_of_items"/>
+                                        <field name="attachment"/>
+                                    </group>
+                                </page>
+
+                                <page string="Notes">
+                                    <div class="abdin-textbox-container">
+                                        <field name="notes"
+                                               groups="ab_product_prices.group_ab_product_price_editing_editor"/>
+                                        <field name="notes" readonly="1"
+                                               groups="ab_product_prices.group_ab_product_price_editing_user"/>
+                                    </div>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+        <record id="ab_product_price_editing_view_search" model="ir.ui.view">
+            <field name="name">ab_product_price_editing_view_search</field>
+            <field name="model">ab_product_price_editing</field>
+            <field name="arch" type="xml">
+                <search string="ab_product_price_editing_search">
+                    <field name="store_id"/>
+                    <field name="product_id"/>
+                    <field name="code"/>
+                    <field name="actual_price"/>
+                    <field name="new_price"/>
+                    <field name="no_of_items"/>
+                    <field name="attachment"/>
+                    <field name="notes"/>
+                    <filter name="submitted" string="Submitted" domain="[('status', '=', 'submitted')]"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_product_price_editing_view_pivot" model="ir.ui.view">
+            <field name="name">ab_product_price_editing_view_pivot</field>
+            <field name="model">ab_product_price_editing</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_product_price_editing_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_product_price_editing_action" model="ir.actions.act_window">
+            <field name="name">Product Price Editing</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product_price_editing</field>
+            <field name="view_mode">list,form,pivot</field>
+            <field name="context">{'show_price_only': True}</field>
+        </record>
+
+        <menuitem id="ab_product_price_editing_menu"
+                  name="Product Price Editing"
+                  parent="ab_management_tools.menu_root"
+                  action="ab_product_price_editing_action"
+                  sequence="900"/>
+
+    </data>
+</odoo>

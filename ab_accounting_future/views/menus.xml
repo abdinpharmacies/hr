@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="ab_accounting_future_sub_menu" name="Future JEs" parent="ab_accounting.root_menu"
+                  sequence="200"/>
+    </data>
+</odoo>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="ab_custody_reconciliation_header_pdf_template">
+        <t t-call="web.html_container">
+            <t t-set="lang" t-value="res_company.partner_id.lang"/>
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="ab_custody_reconciliation_header_pdf_doc_template">
+        <t t-call="web.internal_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=lang)"/>
+            <div class="oe_structure"/>
+            <div class="page">
+                <div class="text-center text-info h3">
+                    Reconciliation Document
+                </div>
+                <div class="row font-weight-bold">
+                    <div class="col-2 offset-9 text-center border border-dark">Reconciliation Serial </div>
+                    <div class="col-1 text-center border border-dark"><t t-esc="doc.id"/></div>
+                </div>
+
+                <div class="font-weight-bold">
+                    <div class="row">
+                        <div class="col-2">Date: </div>
+                        <div class="col-10"><t t-esc="doc.submit_date"/></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-2">Employee Name: </div>
+                        <div class="col-10"><t t-esc="doc.employee_id.name"/></div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-2">Employee Code: </div>
+                        <div class="col-10"><t t-esc="doc.employee_code"/></div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-2">Branch: </div>
+                        <div class="col-10"><t t-esc="doc.department_id.name"/></div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-2">Custody Balance: </div>
+                        <div class="col-10"><t t-esc="doc.custody_balance"/></div>
+                    </div>
+                </div>
+
+
+                <div class="mt-5">
+                    <table class="table table-bordered text-center">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Serial</th>
+                                <th>Expense Name</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <t t-if="doc.print_all">
+                                    <th>Status</th>
+                                </t>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="sequence" t-value="0"/>
+                            <t t-foreach="doc.line_ids" t-as="line">
+                                <t t-if="line.status=='approved' or doc.print_all">
+                                    <t t-set="sequence" t-value="sequence + 1"/>
+                                    <tr>
+                                        <td><t t-esc="sequence"/></td>
+                                        <td width="25%"
+                                            style="white-space: normal; word-break: break-word !important;"><t
+                                                t-esc="line.custody_account_id.name"/></td>
+                                        <td><t t-esc="line.value"/></td>
+                                        <td style="white-space: normal; word-break: break-word;"><t
+                                                t-esc="line.description"/></td>
+                                        <t t-if="doc.print_all">
+                                            <td><t t-esc="line.get_status_selection()[line.status]"/></td>
+                                        </t>
+
+                                    </tr>
+
+                                </t>
+                            </t>
+                            <tr>
+                                <td class="py-4"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <t t-if="doc.print_all">
+                                    <td></td>
+                                </t>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Total</td>
+                                <t t-if="doc.print_all">
+                                    <td><t t-esc="doc.total_value"/></td>
+                                    <td colspan="2"><t t-esc="doc.tafqit(doc.total_value)"/></td>
+                                </t>
+                                <t t-else="">
+                                    <td><t t-esc="doc.total_approved_value"/></td>
+                                    <td><t t-esc="doc.tafqit(doc.total_approved_value)"/></td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4 text-center">
+                    <div class="col-4">
+                        <span>Responsible</span>
+                        <div class="border" style="width: auto; height: 50px; margin: 5px auto;">
+                            <span><t t-esc="doc.employee_id.name"/></span>
+                        </div>
+
+                    </div>
+
+                    <div class="col-4">
+                        <span>Accountant</span>
+                        <div class="border" style="width: auto; height: 50px; margin: 5px auto;"></div>
+                    </div>
+
+                    <div class="col-4">
+                        <span>Reviewer</span>
+                        <div class="border" style="width: auto; height: 50px; margin: 5px auto;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <hr/>
+                <small>Abdin Pharmacies Pharma</small>
+            </div>
+            <div class="oe_structure"/>
+        </t>
+    </template>
+    <record id="paperformat_landscape" model="report.paperformat">
+        <field name="name">paperformat_landscape</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="orientation">Landscape</field>
+        <field name="page_height">210</field>
+        <field name="page_width">297</field>
+        <!--    لها علاقة ب header_spacing    -->
+        <field name="margin_top">20</field>
+        <!--    المساحة المتاحة لل footer    -->
+        <field name="margin_bottom">11</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <!--   هل يتم رسم خط افقي أعلى الهيدر   -->
+        <field name="header_line" eval="True"/>
+        <!--   المسافة بين الهيدر والصفحة      -->
+        <!--  Optimal Settings: margin_top - header_spacing >= 11   -->
+        <field name="header_spacing">9</field>
+        <!--   ملائمة المحتوى في صفحة واحدة قدر الإمكان     -->
+        <field name="disable_shrinking" eval="False"/>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="ab_custody_reconciliation_header_pdf_report" model="ir.actions.report">
+  <field name="name">Custody Reconciliation Header</field>
+  <field name="model">ab_custody_reconciliation_header</field>
+  <field name="report_name">ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_template</field>
+  <field name="report_type">qweb-pdf</field>
+  <field name="print_report_name">'Custody Reconciliation %s'  %object.id</field>
+  <field name="paperformat_id" ref="ab_custody_reconciliation.paperformat_landscape"/>
+  <field name="binding_model_id" ref="model_ab_custody_reconciliation_header"/>
+  <field name="binding_type">report</field>
+</record>
+
+</odoo>
+

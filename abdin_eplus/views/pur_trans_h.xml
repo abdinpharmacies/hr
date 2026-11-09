@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="abdin_eplus.pur_trans_h_list_view">
+            <field name="name">pur_trans_h list</field>
+            <field name="model">abdin_eplus.pur_trans_h</field>
+            <field name="arch" type="xml">
+                <list editable="top">
+                    <field name="pth_id"/>
+                    <field name="sto_id"/>
+                    <field name="ven_id"/>
+                    <field name="total_bill"/>
+                    <field name="total_after_back"/>
+                    <field name="ven_bill_no"/>
+                    <field name="pth_notice"/>
+                    <field name="sec_insert_date"/>
+                    <field name="ven_tel" optional="hide"/>
+                </list>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="abdin_eplus.pur_trans_h_form_view">
+            <field name="name">pur_trans_h form</field>
+            <field name="model">abdin_eplus.pur_trans_h</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4">
+                            <field name="pth_id"/>
+                            <field name="sto_id"/>
+                            <field name="ven_id"/>
+                            <field name="total_bill"/>
+                            <field name="total_after_back"/>
+                            <field name="ven_bill_no"/>
+                            <field name="pth_notice"/>
+                        </group>
+                        <notebook>
+                            <page string="Lines">
+                                <field name="purchase_line_ids">
+                                    <list>
+                                        <field name="itm_id"/>
+                                        <field name="qnty"/>
+                                        <field name="bonus"/>
+                                        <field name="itm_back_qty"/>
+                                        <field name="itm_back_bonus"/>
+                                        <field name="itm_cost"/>
+                                        <field name="sec_insert_date"/>
+                                        <field name="sec_update_date"/>
+                                        <field name="tup"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="pur_trans_h_action_window">
+            <field name="name">pur_trans_h window</field>
+            <field name="res_model">abdin_eplus.pur_trans_h</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Purchase Bills" id="abdin_eplus.pur_trans_h_menu" parent="abdin_eplus.purchase_menu"
+                  action="pur_trans_h_action_window" sequence="60"/>
+
+
+    </data>
+</odoo>

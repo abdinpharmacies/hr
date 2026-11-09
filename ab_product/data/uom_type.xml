@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ab_uom_type_one_unit" model="ab_uom_type">
+            <field name="name">ONE UNIT</field>
+        </record>
+        <record id="ab_uom_type_spray" model="ab_uom_type">
+            <field name="name">SPRAY</field>
+        </record>
+        <record id="ab_uom_type_packet" model="ab_uom_type">
+            <field name="name">PACKET</field>
+        </record>
+        <record id="ab_uom_type_box" model="ab_uom_type">
+            <field name="name">BOX</field>
+        </record>
+        <record id="ab_uom_type_unit" model="ab_uom_type">
+            <field name="name">UNIT</field>
+        </record>
+        <record id="ab_uom_type_plaster" model="ab_uom_type">
+            <field name="name">PLASTER</field>
+        </record>
+        <record id="ab_uom_type_strip" model="ab_uom_type">
+            <field name="name">STRIP</field>
+        </record>
+        <record id="ab_uom_type_tablet" model="ab_uom_type">
+            <field name="name">TABLET</field>
+        </record>
+        <record id="ab_uom_type_bottle" model="ab_uom_type">
+            <field name="name">BOTTLE</field>
+        </record>
+        <record id="ab_uom_type_amp" model="ab_uom_type">
+            <field name="name">AMP</field>
+        </record>
+        <record id="ab_uom_type_vial" model="ab_uom_type">
+            <field name="name">VIAL</field>
+        </record>
+        <record id="ab_uom_type_tube" model="ab_uom_type">
+            <field name="name">TUBE</field>
+        </record>
+    </data>
+</odoo>

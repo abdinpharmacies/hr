@@ -1,0 +1,225 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_product_prices
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-05 10:29+0000\n"
+"PO-Revision-Date: 2025-10-05 10:29+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__attachment
+msgid "Attachment"
+msgstr "مرفقات"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__product_source_id
+msgid "Available Price"
+msgstr "الأسعار المتاحة"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_product_prices
+#: code:addons/ab_product_prices/models/ab_product_price_editing.py:0
+#, python-format
+msgid "Codes separated by comma"
+msgstr "طباعة الأكواد"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__date
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__actual_price
+msgid "Default Price"
+msgstr "السعر الحالي"
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+msgid "Details"
+msgstr "تفاصيل"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:ir.model.fields.selection,name:ab_product_prices.selection__ab_product_price_editing__status__done
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_tree
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+msgid "Edited"
+msgstr "تم التعديل"
+
+#. module: ab_product_prices
+#: model:ir.model.fields.selection,name:ab_product_prices.selection__ab_product_price_editing__status__entry
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+msgid "Entry"
+msgstr "الإدخال"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__is_submitted
+msgid "Is Submitted"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing____last_update
+msgid "Last Modified on"
+msgstr "تاريخ اّخر تعديل"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__write_uid
+msgid "Last Updated by"
+msgstr "اّخر تحديث بواسطة"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__write_date
+msgid "Last Updated on"
+msgstr "تاريخ اّخر تحديث"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__new_price
+msgid "New Price"
+msgstr "السعر الجديد"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__no_of_items
+msgid "No Of Items"
+msgstr "الكمية"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__notes
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_product_prices
+#: model:ir.actions.act_window,name:ab_product_prices.ab_product_price_editing_action
+#: model:ir.module.category,name:ab_product_prices.cat_ab_product_price_editing
+#: model:ir.ui.menu,name:ab_product_prices.ab_product_price_editing_menu
+msgid "Product Price Editing"
+msgstr "تعديل الأسعار"
+
+#. module: ab_product_prices
+#: model:res.groups,name:ab_product_prices.group_ab_product_price_editing_editor
+msgid "Product Price Editing Editor"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:res.groups,name:ab_product_prices.group_ab_product_price_editing_user
+msgid "Product Price Editing User"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__product_source_id_domain
+msgid "Product Source Id Domain"
+msgstr ""
+
+#. module: ab_product_prices
+#: model:ir.model,name:ab_product_prices.model_ab_product_source
+msgid "Products Source For Purchasing And Opening Balance"
+msgstr ""
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_tree
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_product_prices
+#: model:ir.model.fields.selection,name:ab_product_prices.selection__ab_product_price_editing__status__rejected
+msgid "Rejected"
+msgstr "تم الرفض"
+
+#. module: ab_product_prices
+#: model:ir.actions.server,name:ab_product_prices.ab_product_price_editing_action_codes_popup
+msgid "Show Selected Codes (comma-separated)"
+msgstr "اظهار الأكواد للطباعة"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_product_prices
+#: model:ir.model.fields,field_description:ab_product_prices.field_ab_product_price_editing__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_tree
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_product_prices
+#: model:ir.model.fields.selection,name:ab_product_prices.selection__ab_product_price_editing__status__submitted
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+msgid "Submitted"
+msgstr "تم الإرسال"
+
+#. module: ab_product_prices
+#: code:addons/ab_product_prices/models/ab_product_price_editing.py:0
+#, python-format
+msgid "You are not allowed to edit notes."
+msgstr "غير مسموح بتعديل الملاحظات"
+
+#. module: ab_product_prices
+#: model:ir.model,name:ab_product_prices.model_ab_product_price_editing
+msgid "ab_product_price_editing"
+msgstr ""
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_form
+msgid "ab_product_price_editing_form"
+msgstr ""
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_pivot
+msgid "ab_product_price_editing_pivot"
+msgstr ""
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_search
+msgid "ab_product_price_editing_search"
+msgstr ""
+
+#. module: ab_product_prices
+#: model_terms:ir.ui.view,arch_db:ab_product_prices.ab_product_price_editing_view_tree
+msgid "ab_product_price_editing_tree"
+msgstr ""

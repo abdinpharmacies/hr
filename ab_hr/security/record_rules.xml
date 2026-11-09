@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!--    ################## History Co Rule ##################   -->
+        <record model="ir.rule" id="history_co">
+            <field name="name">History Co</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="domain_force">
+                [(1, '=', 1)]
+            </field>
+            <field name="groups" eval="[(4, ref('group_ab_hr_co'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <!--    ################## History SPEC AND RECRUITER Rule ##################   -->
+        <record id="rule_ab_hr_history_report_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_hr_history_report_prevent_all</field>
+            <field name="model_id" ref="model_ab_hr_history_report"/>
+            <field name="groups" eval="[
+            (4, ref('ab_hr.group_ab_hr_recruiter')),
+            (4, ref('ab_hr.group_ab_hr_personnel_spec')),
+            (4, ref('ab_hr.group_ab_hr_payroll_specialist')),
+            ]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+        <record id="rule_ab_hr_history_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_hr_history_report_prevent_all</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="groups" eval="[
+            (4, ref('ab_hr.group_ab_hr_recruiter')),
+            (4, ref('ab_hr.group_ab_hr_personnel_spec')),
+            (4, ref('ab_hr.group_ab_hr_payroll_specialist')),
+            ]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record model="ir.rule" id="rule_ab_hr_emp_history_allow_manager_customization">
+            <field name="name">rule_ab_hr_emp_history_allow_manager_customization</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="domain_force">
+                [('old_job_title.access_history_user_ids', '=', user.id), ]
+            </field>
+            <field name="groups" eval="[(4, ref('group_ab_hr_recruiter'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record model="ir.rule" id="rule_ab_hr_emp_history_supervision_access">
+            <field name="name">rule_ab_hr_emp_history_supervision_access</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="domain_force">
+                [('employee_id.supervision_type', 'in', ['myself', 'direct', 'indirect', 'indirect_to_subordinate'])]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record model="ir.rule" id="rule_ab_hr_emp_history_report_supervision_access">
+            <field name="name">rule_ab_hr_emp_history_report_supervision_access</field>
+            <field name="model_id" ref="ab_hr.model_ab_hr_history_report"/>
+            <field name="domain_force">
+                [('employee_id.supervision_type', 'in', ['myself', 'direct', 'indirect', 'indirect_to_subordinate'])]
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+        <record model="ir.rule" id="rule_ab_hr_history_report_allow_manager_customization">
+            <field name="name">rule_ab_hr_emp_history_allow_manager_customization</field>
+            <field name="model_id" ref="model_ab_hr_history_report"/>
+            <field name="domain_force">
+                [('job_title_id.access_history_user_ids', '=', user.id), ]
+            </field>
+            <field name="groups" eval="[(4, ref('group_ab_hr_recruiter'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+        <record model="ir.rule" id="history_personnel">
+            <field name="name">Specialist</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="domain_force">
+                ['|',
+                 ('action_type.personnel_allowed', '=', True),
+                 ('old_job_title.access_history_user_ids', '=', user.id), ]
+
+            </field>
+            <field name="groups" eval="[(4, ref('group_ab_hr_personnel_spec'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record model="ir.rule" id="history_payroll_entry">
+            <field name="name">Payroll Entry</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="domain_force">
+                ['|',
+                 ('action_type.payroll_entry_allowed', '=', True),
+                 ('old_job_title.access_history_user_ids', '=', user.id), ]
+            </field>
+            <field name="groups" eval="[(4, ref('group_ab_hr_payroll_specialist'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <!--    ################## History SPEC AND RECRUITER REPORT Rule  ##################   -->
+        <record model="ir.rule" id="history_spec_recruiter_report">
+            <field name="name">Recruiter and Specialist</field>
+            <field name="model_id" ref="model_ab_hr_history_report"/>
+            <field name="domain_force">
+                [('action_type.manpower_effect', '=', True), ]
+            </field>
+            <field name="groups" eval="[(4, ref('group_ab_hr_recruiter')),(4, ref('group_ab_hr_personnel_spec'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!--    ################## hr admin Rule ##################   -->
+        <record id="rule_ab_hr_emp_history_manager_allow_all" model="ir.rule">
+            <field name="name">rule_ab_hr_emp_history_manager_allow_all</field>
+            <field name="model_id" ref="model_ab_hr_emp_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_hr_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+    </data>
+</odoo>

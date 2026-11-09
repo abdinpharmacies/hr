@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="employee_payroll_fields" model="ir.ui.view">
+        <field name="name">ab_hr_employee.payroll.fields</field>
+        <field name="model">ab_hr_employee</field>
+        <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='khazna_subscription']" position="after">
+                <field name="user_line_owner"/>
+                <field name="payment_name"/>
+                <field name="payment_no"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="job_salary_list" model="ir.ui.view">
+        <field name="name">ab_hr_job_occupied.salary.list</field>
+        <field name="model">ab_hr_job_occupied</field>
+        <field name="inherit_id" ref="ab_hr.ab_hr_job_occupied_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='region']" position="after">
+                <field name="default_salary" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="job_salary_form" model="ir.ui.view">
+        <field name="name">ab_hr_job_occupied.salary.form</field>
+        <field name="model">ab_hr_job_occupied</field>
+        <field name="inherit_id" ref="ab_hr.ab_hr_job_occupied_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='job_status']" position="after">
+                <field name="default_salary"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

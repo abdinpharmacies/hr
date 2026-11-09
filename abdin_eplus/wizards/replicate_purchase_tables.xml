@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="abdin_eplus.purchase_replication_form">
+            <field name="name">abdin_eplus replication form</field>
+            <field name="model">abdin_eplus.replication</field>
+            <field name="type">form</field>
+            <field name="mode">primary</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Confirmation">
+                    <h1>This may take some amount of time,Are you sure?</h1>
+                    <group>
+                        <field name="pull_all_data"/>
+                    </group>
+                    <footer>
+                        <button string="Confirm" type="object" name="replicate_purchase"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+
+        <!-- action window-->
+        <record model="ir.actions.act_window" id="replicate_purchase_act_window">
+            <field name="name">Confirm Wizard</field>
+            <field name="res_model">abdin_eplus.replication</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="abdin_eplus.purchase_replication_form"/>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Replicate purchase" id="abdin_eplus.replicate_purchase"
+                  parent="abdin_eplus.replication"
+                  action="replicate_purchase_act_window" sequence="20"/>
+
+
+    </data>
+</odoo>

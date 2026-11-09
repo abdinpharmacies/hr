@@ -1,0 +1,215 @@
+<odoo>
+    <data>
+        <!-- ab_hr_payroll_form -->
+        <record model="ir.ui.view" id="ab_hr_payroll_form">
+            <field name="name">ab_hr_payroll.form</field>
+            <field name="model">ab_hr_payroll</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group col="4">
+                            <field name="accid"/>
+                            <field name="costcenter_id"/>
+                            <field name="employee_id" force_save="1" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="job_id" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="user_line_owner" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="territory"/>
+                            <field name="workplace" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="hr_name_entry"/>
+                            <field name="store_id" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="due_date"/>
+                            <field name="section" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="section_type"/>
+                            <field name="payment_type_id"/>
+                            <field name="section_value"/>
+                            <field name="file_name"/>
+                            <field name="sheet_name"/>
+                            <field name="net_salary"/>
+                            <field name="write_date"/>
+                            <field name="create_date"/>
+                            <field name="create_uid" options="{'no_create': True,'no_open': True, }"/>
+                            <field name="write_uid" options="{'no_create': True,'no_open': True, }"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- ab_hr_payroll_list -->
+        <record model="ir.ui.view" id="ab_hr_payroll_list">
+            <field name="name">ab_hr_payroll.list</field>
+            <field name="model">ab_hr_payroll</field>
+            <field name="arch" type="xml">
+                <list editable="bottom" limit="100">
+                    <field name="id" optional="show"/>
+                    <field name="status"
+                           class="h6"
+                           widget="badge"
+                           decoration-info="status=='for_entry'"
+                           decoration-warning="status=='suspended_salaries'"
+                           decoration-success="status=='for_manager'"
+                           decoration-danger="status=='negative_salaries'"
+                           decoration-primary="status=='paid'"
+                    />
+                    <field name="accid" optional="show"/>
+                    <field name="costcenter_id" class="text-wrap" optional="show"/>
+                    <field name="employee_id" force_save="1" class="text-wrap" optional="show"/>
+                    <field name="job_id" class="text-wrap" optional="show"/>
+                    <field name="user_line_owner" class="text-wrap" optional="show"/>
+                    <field name="territory" class="text-wrap" optional="show"/>
+                    <field name="workplace" class="text-wrap" optional="show"/>
+                    <field name="hr_name_entry" class="text-wrap" optional="show"/>
+                    <field name="store_id" class="text-wrap" optional="show"/>
+                    <field name="due_date" class="text-wrap" optional="show"/>
+                    <field name="section" class="text-wrap" optional="show"/>
+                    <field name="section_type" class="text-wrap" optional="show"/>
+                    <field name="payment_type_id"/>
+                    <field name="section_value" class="text-wrap" optional="show"/>
+                    <field name="file_name" class="text-wrap" optional="show"/>
+                    <field name="sheet_name" class="text-wrap" optional="show"/>
+                    <field name="net_salary" class="text-wrap" optional="show"/>
+                    <field name="create_uid" optional="hide" class="text-wrap"/>
+                    <field name="create_date" optional="hide" class="text-wrap"/>
+                    <field name="write_uid" optional="hide" class="text-wrap"/>
+                    <field name="write_date" optional="hide" class="text-wrap"/>
+                    <field name="user_id" optional="hide" class="text-wrap"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ab_hr_payroll_pivot -->
+        <record model="ir.ui.view" id="ab_hr_payroll_pivot">
+            <field name="name">ab_hr_payroll.pivot</field>
+            <field name="model">ab_hr_payroll</field>
+            <field name="arch" type="xml">
+                <pivot string="Paroll Pivot">
+                    <field name="store_id" type="row"/>
+                    <field name="employee_id" type="row"/>
+                    <field name="section_value" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!--  ab_hr_payroll_graph -->
+        <record model="ir.ui.view" id="ab_hr_payroll_graph">
+            <field name="name">ab_hr_payroll.graph</field>
+            <field name="model">ab_hr_payroll</field>
+            <field name="arch" type="xml">
+                <graph string="Abdin hr Graph">
+                    <field name="store_id"/>
+                    <field name="section_value" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!--        #######################################################################################-->
+        <record model="ir.ui.view" id="ab_hr_payroll_search">
+            <field name="name">ab_hr_payroll.search</field>
+            <field name="model">ab_hr_payroll</field>
+            <field name="arch" type="xml">
+                <search string="Payroll search">
+                    <field name="employee_id" class="text-wrap"/>
+                    <field name="job_id" class="text-wrap"/>
+                    <field name="user_line_owner" class="text-wrap"/>
+                    <field name="territory" class="text-wrap"/>
+                    <field name="workplace" class="text-wrap"/>
+                    <field name="hr_name_entry" class="text-wrap"/>
+                    <field name="store_id" class="text-wrap"/>
+                    <field name="due_date" class="text-wrap"/>
+                    <field name="section" class="text-wrap"/>
+                    <field name="section_type" class="text-wrap"/>
+                    <field name="section_value" class="text-wrap"/>
+                    <field name="file_name" class="text-wrap"/>
+                    <field name="sheet_name" class="text-wrap"/>
+                    <field name="net_salary" class="text-wrap"/>
+                    <filter name="group_employee_id" string="Employee" context="{'group_by':'employee_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <!--        #######################################################################################-->
+        <!-- ab_hr_payment_type_list -->
+        <record model="ir.ui.view" id="ab_hr_payment_type_list">
+            <field name="name">ab_hr_payment_type.list</field>
+            <field name="model">ab_hr_payment_type</field>
+            <field name="arch" type="xml">
+                <list limit="80">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ab_hr_payment_type_form -->
+        <record model="ir.ui.view" id="ab_hr_payment_type_form">
+            <field name="name">ab_hr_payment_type.form</field>
+            <field name="model">ab_hr_payment_type</field>
+            <field name="arch" type="xml">
+                <form editable="bottom" string="Payment Type">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--        #######################################################################################-->
+        <!-- ab_hr_section_list -->
+        <record model="ir.ui.view" id="ab_hr_section_list">
+            <field name="name">ab_hr_section.list</field>
+            <field name="model">ab_hr_section</field>
+            <field name="arch" type="xml">
+                <list editable="bottom" limit="100">
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="credit_account_id"/>
+                    <field name="debit_account_id"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ab_hr_payroll_act -->
+        <record model="ir.actions.act_window" id="ab_hr_payroll_act">
+            <field name="name">ab_hr_payroll.act</field>
+            <field name="res_model">ab_hr_payroll</field>
+            <field name="context">{"search_default_group_employee_id": 0}</field>
+            <field name="view_mode">list,pivot,graph</field>
+        </record>
+
+        <menuitem name="Payroll Entry"
+                  parent="ab_hr_salaries_root"
+                  id="ab_hr_payroll_menu"
+                  action="ab_hr_payroll_act"
+                  sequence="30"/>
+
+
+        <!-- ab_hr_section_act -->
+        <record model="ir.actions.act_window" id="ab_hr_section_act">
+            <field name="name">ab_hr_section.act</field>
+            <field name="res_model">ab_hr_section</field>
+            <field name="view_mode">list,form,pivot,graph</field>
+        </record>
+
+        <menuitem name="Sections"
+                  parent="ab_hr_salaries_root"
+                  id="ab_hr_section_menu"
+                  action="ab_hr_section_act"
+                  sequence="50"/>
+
+
+        <!-- ab_hr_payment_type_act -->
+        <record model="ir.actions.act_window" id="ab_hr_payment_type_act">
+            <field name="name">Payment Type</field>
+            <field name="res_model">ab_hr_payment_type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Payment Type"
+                  parent="ab_hr_salaries_root"
+                  id="ab_hr_payment_type_menu"
+                  action="ab_hr_payment_type_act"
+                  sequence="50"/>
+
+
+    </data>
+</odoo>

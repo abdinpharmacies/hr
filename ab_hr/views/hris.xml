@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--################################################################-->
+        <record id="ab_hr_paper_effect_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_paper_effect_view_tree</field>
+            <field name="model">ab_hr_paper_effect</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_paper_effect_tree" limit="100">
+                    <field name="name"/>
+                    <field name="due_month"/>
+                    <field name="attached_link"/>
+                    <field name="attached_file"/>
+                    <field name="is_applied" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_hr_paper_effect_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_paper_effect_view_form</field>
+            <field name="model">ab_hr_paper_effect</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_paper_effect_form" editable="top" limit="100">
+                    <sheet>
+                        <group string="Notes" class="text-center">
+                            <field name="name" nolabel="1" class="text-center h1"/>
+                        </group>
+
+                        <group>
+                            <field name="due_month"
+                                   options="{'datepicker':
+                                                   {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"
+                            />
+                            <field name="attached_link"/>
+                            <field name="attached_file"/>
+                            <field name="is_applied" widget="boolean_toggle"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--################################################################-->
+        <record id="ab_hr_region_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_region_view_tree</field>
+            <field name="model">ab_hr_region</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_region_tree" editable="top" limit="100">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+        <!--################################################################-->
+        <record id="ab_hr_emp_doc_status_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_emp_doc_status_view_tree</field>
+            <field name="model">ab_hr_emp_doc_status</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_emp_doc_status_tree" multi_edit="1" limit="100" duplicate="true">
+                    <field name="accid" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="emp_doc_id" optional="show"/>
+                    <field name="status" optional="show"/>
+                    <field name="attachment" optional="show"/>
+                    <field name="exclusion_reason_id" optional="show"/>
+                    <field name="received_date" optional="show"/>
+                    <field name="expiry_date" optional="show"/>
+                    <button type="object" name="get_formview_action" string="Open Form"
+                            icon="fa-edit h5 text-info"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_hr_emp_doc_status_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_emp_doc_status_view_form</field>
+            <field name="model">ab_hr_emp_doc_status</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_emp_doc_status_form" editable="top" limit="100">
+                    <sheet>
+                        <div class="h1 text-muted text-center">
+                            <field name="accid" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="h2 text-info text-center">
+                            <field name="employee_id" readonly="1" nolabel="1"/>
+                        </div>
+                        <group>
+                            <field name="emp_doc_id"/>
+                            <field name="status"/>
+                            <field name="attachment"/>
+                            <field name="exclusion_reason_id"
+                                   invisible="status not in ['temp_excluded', 'excluded']" required="status in ['temp_excluded', 'excluded']"/>
+                            <field name="received_date"/>
+                            <field name="expiry_date"
+                                   required="status == 'temp_excluded'"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_save" string="Save" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Discard" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_hr_emp_doc_status_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_emp_doc_status_view_search</field>
+            <field name="model">ab_hr_emp_doc_status</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_emp_doc_status_search">
+                    <field name="employee_id"/>
+                    <field name="emp_doc_id"/>
+                    <field name="status"/>
+                    <field name="exclusion_reason_id"/>
+                    <field name="received_date"/>
+                    <field name="expiry_date"/>
+                </search>
+            </field>
+        </record>
+
+
+        <!--################################################################-->
+        <record id="ab_hr_emp_doc_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_emp_doc_view_tree</field>
+            <field name="model">ab_hr_emp_doc</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_emp_doc_tree" editable="top" limit="100">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+        <!--################################################################-->
+        <record id="ab_hr_insurance_info_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_insurance_info_view_tree</field>
+            <field name="model">ab_hr_insurance_info</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_insurance_info_tree" multi_edit="1" limit="100">
+                    <field name="accid" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="insurance_status" optional="show"/>
+                    <field name="insurance_type" optional="show"/>
+                    <field name="insurance_branch" optional="show"/>
+                    <field name="insurance_no" optional="show"/>
+                    <field name="insurance_start" optional="show"/>
+                    <field name="insurance_end" optional="show"/>
+                    <field name="subscription_val" optional="show"/>
+                    <field name="is_working" optional="hide"/>
+                    <field name="internal_job" optional="hide"/>
+                    <field name="is_doc_complete" optional="hide"/>
+                    <field name="graduate" optional="hide"/>
+                    <field name="job_title_id" optional="hide"/>
+                    <field name="job_ids" widget="many2many_tags" optional="hide"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_hr_insurance_info_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_insurance_info_view_form</field>
+            <field name="model">ab_hr_insurance_info</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_insurance_info_form">
+                    <sheet>
+                        <field name="employee_id" invisible="1"/>
+                        <div class="h1 text-muted text-center">
+                            <field name="accid" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="h2 text-info text-center">
+                            <field name="employee_id" nolabel="1" readonly="1"/>
+                        </div>
+                        <group col="4" string="Insurance Info">
+                            <field name="insurance_status"/>
+                            <field name="insurance_type"/>
+                            <field name="insurance_branch"/>
+                            <field name="insurance_no"/>
+                            <field name="insurance_start"/>
+                            <field name="insurance_end"/>
+                            <field name="subscription_val"/>
+                        </group>
+                        <group string="Employee Data" col="4">
+                            <field name="is_working"/>
+                            <field name="internal_job" string="Internal"/>
+                            <field name="is_doc_complete"/>
+                            <field name="graduate"/>
+                            <field name="job_title_id"/>
+                            <field name="job_ids" widget="many2many_tags"/>
+                        </group>
+
+                    </sheet>
+                    <!--
+                                        <footer>
+                                            <button name="action_save" string="Save and Close" type="object" class="btn btn-primary"/>
+                                            <button string="Cancel" type="object" special="cancel"
+                                                    class="btn btn-outline-danger pull-right"/>
+                                        </footer>
+                    -->
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_hr_insurance_info_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_insurance_info_view_search</field>
+            <field name="model">ab_hr_insurance_info</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_insurance_info_search">
+                    <field name="employee_id"/>
+                    <field name="insurance_status"/>
+                    <field name="insurance_type"/>
+                    <field name="insurance_branch"/>
+                    <field name="insurance_no"/>
+                    <field name="insurance_start"/>
+                    <field name="insurance_end"/>
+                    <field name="accid"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="insurance_info_action" model="ir.actions.act_window">
+            <field name="name">Insurance Info</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_insurance_info</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Insurance Info"
+                  parent="ab_hr_hris_menu"
+                  id="ab_hr_insurance_info_menu"
+                  action="ab_hr.insurance_info_action"
+                  sequence="7"/>
+
+
+        <record id="insurance_info_action_form" model="ir.actions.act_window">
+            <field name="name">Insurance Info</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_insurance_info</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="paper_effect_action" model="ir.actions.act_window">
+            <field name="name">Paper Effects</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_paper_effect</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Paper Effects"
+                  parent="ab_hr_hris_menu"
+                  id="ab_hr_paper_effect_menu"
+                  action="ab_hr.paper_effect_action"
+                  sequence="6"/>
+
+
+        <record id="region_action" model="ir.actions.act_window">
+            <field name="name">Region</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_region</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Region"
+                  id="ab_hr_region_menu"
+                  action="region_action"
+                  parent="config"
+                  sequence="40"/>
+
+
+        <record id="emp_doc_status_action_form" model="ir.actions.act_window">
+            <field name="name">Employees Documents Form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_emp_doc_status</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="ab_hr_emp_doc_status_view_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="emp_doc_status_action" model="ir.actions.act_window">
+            <field name="name">Employees Documents</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_emp_doc_status</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+
+        <menuitem name="Employees Docs"
+                  parent="ab_hr_hris_menu"
+                  id="ab_hr_emp_doc_status_menu"
+                  action="ab_hr.emp_doc_status_action"
+                  sequence="5"/>
+
+        <record id="emp_doc_action" model="ir.actions.act_window">
+            <field name="name">Employment Documents</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_emp_doc</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Employment Docs"
+                  id="ab_hr_emp_doc_config_menu"
+                  action="emp_doc_action"
+                  parent="config"
+                  sequence="3"/>
+
+
+    </data>
+</odoo>

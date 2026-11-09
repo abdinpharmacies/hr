@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_purchase_header_view_inherit" model="ir.ui.view">
+            <field name="name">ab_purchase_header</field>
+            <field name="model">ab_purchase_header</field>
+            <field name="inherit_id" ref="ab_purchase.ab_purchase_header_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <!-- for example <field name="myNewAddedField"/> -->
+                    <field name="eplus_serial" optional="hide"/>
+                    <field name="last_update_date" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_purchase_header_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_purchase_header_form_view_inherit</field>
+            <field name="model">ab_purchase_header</field>
+            <field name="inherit_id" ref="ab_purchase.ab_purchase_header_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='doc_code']" position="after">
+                    <field name="eplus_serial" optional="hide"/>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/list/field[last()]" position="after">
+                    <field name="disc_tax_no_effect_value" optional="hide"/>
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record id="ab_purchase_header_search_view_inherit" model="ir.ui.view">
+            <field name="name">ab_purchase_header_search_view_inherit</field>
+            <field name="model">ab_purchase_header</field>
+            <field name="inherit_id" ref="ab_purchase.ab_purchase_header_view_search"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//tagName[@attrName='']" position="after"> -->
+                <!--  <field name="myNewAddedField"/> -->
+                <!-- </xpath> -->
+
+                <!-- <xpath expr="//field[@name='']" position="after"> -->
+                <!-- <field name="myNewAddedField"/> -->
+                <!-- </xpath> -->
+
+                <!-- <xpath expr="//field[last()]" position="after"> -->
+                <!-- <field name="myNewAddedField"/> -->
+                <!-- </xpath> -->
+
+                <xpath expr="//field[1]" position="before">
+                    <field name="eplus_serial"/>
+                </xpath>
+
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

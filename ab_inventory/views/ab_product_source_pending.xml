@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_source_pending_view_tree" model="ir.ui.view">
+            <field name="name">ab_product_source_pending_view_tree</field>
+            <field name="model">ab_product_source_pending</field>
+            <field name="arch" type="xml">
+                <list string="ab_product_source_pending_tree" multi_edit="1">
+                    <field name="id" optional="show"/>
+                    <field name="source_id" optional="show"/>
+                    <field name="qty" optional="show"/>
+                    <field name="product_id" optional="show"/>
+                    <field name="bonus" optional="show"/>
+                    <field name="purchase_price" optional="show"/>
+                    <field name="price" optional="show"/>
+                    <field name="uom_id" optional="show"/>
+                    <field name="unit_cost" optional="show"/>
+                    <field name="unit_taxes_value" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_product_source_pending_view_form" model="ir.ui.view">
+            <field name="name">ab_product_source_pending_view_form</field>
+            <field name="model">ab_product_source_pending</field>
+            <field name="arch" type="xml">
+                <form string="ab_product_source_pending_form">
+                    <sheet>
+                        <group>
+                            <field name="id"/>
+                            <field name="source_id"/>
+                            <field name="qty"/>
+                            <field name="product_id"/>
+                            <field name="bonus"/>
+                            <field name="purchase_price"/>
+                            <field name="price"/>
+                            <field name="uom_id"/>
+                            <field name="unit_cost"/>
+                            <field name="unit_taxes_value"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_product_source_pending_view_search" model="ir.ui.view">
+            <field name="name">ab_product_source_pending_view_search</field>
+            <field name="model">ab_product_source_pending</field>
+            <field name="arch" type="xml">
+                <search string="ab_product_source_pending_search">
+                    <field name="id"/>
+                    <field name="source_id"/>
+                    <field name="qty"/>
+                    <field name="product_id"/>
+                    <field name="bonus"/>
+                    <field name="purchase_price"/>
+                    <field name="price"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_product_source_pending_view_pivot" model="ir.ui.view">
+            <field name="name">ab_product_source_pending_view_pivot</field>
+            <field name="model">ab_product_source_pending</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_product_source_pending_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_product_source_pending_action" model="ir.actions.act_window">
+            <field name="name">Ab product source pending</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product_source_pending</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+        
+
+    </data>
+</odoo>

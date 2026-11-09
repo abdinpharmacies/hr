@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_request_config_view_tree" model="ir.ui.view">
+            <field name="name">ab_custody_request_config_view_tree</field>
+            <field name="model">ab_custody_request_config</field>
+            <field name="arch" type="xml">
+                <list string="ab_custody_request_config_tree">
+                    <field name="date1" optional="show"/>
+                    <field name="date2" optional="show"/>
+                    <field name="employee_ids" optional="show" widget="many2many_tags"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_custody_request_config_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_request_config_view_form</field>
+            <field name="model">ab_custody_request_config</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_request_config_form">
+                    <sheet>
+                        <group>
+                            <field name="date1"/>
+                            <field name="date2"/>
+                            <field name="employee_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_custody_request_config_view_search" model="ir.ui.view">
+            <field name="name">ab_custody_request_config_view_search</field>
+            <field name="model">ab_custody_request_config</field>
+            <field name="arch" type="xml">
+                <search string="ab_custody_request_config_search">
+                    <field name="date1"/>
+                    <field name="date2"/>
+                    <field name="employee_ids"/>
+
+                </search>
+            </field>
+        </record>
+        <record id="ab_custody_request_config_view_pivot" model="ir.ui.view">
+            <field name="name">ab_custody_request_config_view_pivot</field>
+            <field name="model">ab_custody_request_config</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_custody_request_config_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_custody_request_config_action" model="ir.actions.act_window">
+            <field name="name">Ab custody request config</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_custody_request_config</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_custody_request_config_menu"
+                  name="Custody Request Configuration"
+                  parent="config_sub_menu"
+                  action="ab_custody_request_config_action"
+                  groups="group_ab_custody_request_accounting"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

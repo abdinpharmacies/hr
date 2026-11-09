@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_users_view_form" model="ir.ui.view">
+            <field name="name">res.users.form.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//header" position="inside">
+                    <field name="share" invisible="1"/>
+                    <field name="count_linked" invisible="1"/>
+                    <field name="ab_employee_ids" invisible="1"/>
+                    <button string="Link employee"
+                            type="object"
+                            name="btn_link_employee"
+                            invisible="((id == False or share == True) or count_linked &gt; 0)"/>
+                    <button string="Link Department"
+                            type="object"
+                            name="btn_link_department"
+                            invisible="((id == False or share == True) or count_linked &gt; 0)"/>
+                    <!-- share is not correctly recomputed because it depends on fields of reified view => invisible before saving (id=False) -->
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="btn_show_linked"
+                            class="oe_stat_button"
+                            icon="fa-users"
+
+                            context="{'active_test': False}"
+                            type="object" invisible="count_linked == 0">
+                        <field name="count_linked" widget="statinfo" string="Linked To"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_users_view_inherit" model="ir.ui.view">
+            <field name="name">res.users</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="count_linked" optional="show" groups="base.group_system"/>
+                    <field name="ab_employee_ids" widget="many2many_tags"
+                           optional="show" groups="base.group_system"/>
+                    <field name="ab_department_ids" widget="many2many_tags"
+                           optional="show" groups="base.group_system"/>
+
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

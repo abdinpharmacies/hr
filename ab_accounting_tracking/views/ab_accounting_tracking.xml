@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_tracking_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_tracking_view_tree</field>
+            <field name="model">ab_accounting_tracking</field>
+            <field name="arch" type="xml">
+                <list string="ab_accounting_tracking_tree" decoration-danger="has_differences">
+                    <field name="je_line" optional="show"/>
+                    <field name="je_line_id" optional="show"/>
+                    <field name="field_diff_json" optional="hide"/>
+                    <field name="field_diff_html" optional="show"/>
+                    <!--                    <field name="created_by_id" optional="show"/>-->
+                    <field name="update_counter" optional="show"/>
+                    <field name="has_differences" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_accounting_tracking_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_tracking_view_form</field>
+            <field name="model">ab_accounting_tracking</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_tracking_form">
+                    <sheet>
+                        <group col="4">
+                            <field name="je_line"/>
+                            <field name="je_line_id"/>
+                            <field name="field_diff_json"/>
+                            <field name="field_diff_html"/>
+                            <!--                            <field name="created_by_id"/>-->
+                            <field name="update_counter"/>
+                            <field name="create_uid"/>
+                            <field name="create_date"/>
+                            <field name="write_uid"/>
+                            <field name="write_date"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_accounting_tracking_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_tracking_view_search</field>
+            <field name="model">ab_accounting_tracking</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_tracking_search">
+                    <!--                    <field name="created_by_id"/>-->
+                    <field name="update_counter"/>
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                    <field name="write_uid"/>
+                    <field name="write_date"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_accounting_tracking_view_pivot" model="ir.ui.view">
+            <field name="name">ab_accounting_tracking_view_pivot</field>
+            <field name="model">ab_accounting_tracking</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_accounting_tracking_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_accounting_tracking_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting tracking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_tracking</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_accounting_tracking_menu"
+                  name="Tracking Report"
+                  parent="ab_accounting.reports"
+                  action="ab_accounting_tracking_action"
+                  sequence="900"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_delivery_points_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_delivery_points_wizard_view_form</field>
+            <field name="model">ab_delivery_points_wizard</field>
+            <field name="arch" type="xml">
+                <form string="ab_delivery_points_wizard_form">
+                    <sheet>
+                        <group>
+                            <field name="till_date"/>
+                            <button type="object"
+                                    name="btn_get_delivery_points"
+                                    string="Add Delivery Points to payroll"
+                                    class="btn-primary"/>
+                            <br/>
+                            <button type="object"
+                                    name="btn_get_delivery_trans_points"
+                                    string="Add Transfer Points to payroll"
+                                    class="btn-primary"/>
+                            <field name="delivery_ids" widget="many2many_tags"/>
+                            <field name="msg_html" nolabel="1"/>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="ab_delivery_points_payroll_view_tree" model="ir.ui.view">
+            <field name="name">ab_delivery_points_payroll_view_tree</field>
+            <field name="model">ab_delivery_points_payroll</field>
+            <field name="arch" type="xml">
+                <list string="ab_delivery_points_payroll_tree">
+                    <field name="employee_id"/>
+                    <field name="store_id"/>
+                    <field name="due_date"/>
+                    <field name="section"/>
+                    <field name="section_value"/>
+                    <field name="status"/>
+                    <field name="payment_type_id"/>
+                    <field name="orders_count"/>
+                    <field name="order_returned"/>
+                    <field name="last_tup"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_delivery_points_payroll_view_form" model="ir.ui.view">
+            <field name="name">ab_delivery_points_payroll_view_form</field>
+            <field name="model">ab_delivery_points_payroll</field>
+            <field name="arch" type="xml">
+                <form string="ab_delivery_points_payroll_form">
+                    <sheet>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="store_id"/>
+                            <field name="due_date"/>
+                            <field name="section"/>
+                            <field name="section_value"/>
+                            <field name="status"/>
+                            <field name="payment_type_id"/>
+                            <field name="orders_count"/>
+                            <field name="order_returned"/>
+                            <field name="last_tup"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_delivery_points_payroll_action" model="ir.actions.act_window">
+            <field name="name">Delivery Points</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_delivery_points_payroll</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="ab_delivery_points_wizard_action" model="ir.actions.act_window">
+            <field name="name">Delivery Points Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_delivery_points_wizard</field>
+            <field name="view_mode">form</field>
+        </record>
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="ab_delivery_points_wizard_menu"
+                  name="Delivery Points Wizard"
+                  parent="ab_hr_payroll.ab_hr_salaries_root"
+                  action="ab_delivery_points_wizard_action" sequence="100"/>
+        <menuitem id="ab_delivery_points_payroll_menu"
+                  name="Delivery Points"
+                  parent="ab_hr_payroll.ab_hr_salaries_root"
+                  action="ab_delivery_points_payroll_action" sequence="100"/>
+    </data>
+</odoo>

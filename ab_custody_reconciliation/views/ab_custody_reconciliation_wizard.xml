@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_reconciliation_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_wizard_view_form</field>
+            <field name="model">ab_custody_reconciliation_wizard</field>
+            <field name="arch" type="xml">
+                <form string="ab_custody_reconciliation_wizard_form">
+                    <sheet>
+                        <group>
+                            <field name="notes"/>
+                            <field name="recon_id"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_save" string="Save" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Discard" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

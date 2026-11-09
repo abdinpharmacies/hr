@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem name="Payroll" parent="ab_hr.menu_root" id="ab_hr_salaries_root"
+              groups="ab_hr.group_ab_hr_payroll_entry" sequence="50"/>
+</odoo>

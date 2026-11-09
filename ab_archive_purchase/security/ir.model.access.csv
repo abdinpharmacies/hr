@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_archive_data_entry_ro,access_ab_archive_data_entry_ro,model_ab_archive,ab_purchase.group_ab_purchase_data_entry,1,0,0,0
+access_ab_archive_purchase_user,access_ab_archive_purchase_user,model_ab_archive,ab_archive_purchase.group_ab_archive_purchase_user,1,1,1,1
+
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <record id="ab_product_price_editing_action_codes_popup" model="ir.actions.server">
+            <field name="name">Show Selected Codes (comma-separated)</field>
+            <field name="model_id" ref="ab_product_prices.model_ab_product_price_editing"/>
+            <field name="group_ids" eval="[(6, 0, [ref('ab_product_prices.group_ab_product_price_editing_editor')])]"/>
+            <field name="binding_model_id" ref="ab_product_prices.model_ab_product_price_editing"/>
+            <!-- It must be 'list' not 'list' -->
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">action = model.sudo().browse(
+                env.context.get('active_ids', [])).action_show_selected_codes()</field>
+        </record>
+
+        <record id="ab_product_price_editing_action_submit_all" model="ir.actions.server">
+            <field name="name">Submit All</field>
+            <field name="model_id" ref="ab_product_prices.model_ab_product_price_editing"/>
+            <field name="binding_model_id" ref="ab_product_prices.model_ab_product_price_editing"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="group_ids" eval="[(6, 0, [ref('ab_product_prices.group_ab_product_price_editing_user')])]"/>
+            <field name="state">code</field>
+            <field name="code">action = records.action_change_status_all('submitted')</field>
+        </record>
+
+        <record id="ab_product_price_editing_action_done_all" model="ir.actions.server">
+            <field name="name">Done All</field>
+            <field name="model_id" ref="ab_product_prices.model_ab_product_price_editing"/>
+            <field name="binding_model_id" ref="ab_product_prices.model_ab_product_price_editing"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="group_ids" eval="[(6, 0, [ref('ab_product_prices.group_ab_product_price_editing_editor')])]"/>
+            <field name="state">code</field>
+            <field name="code">action = records.action_change_status_all('done')</field>
+        </record>
+    </data>
+</odoo>

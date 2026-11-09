@@ -1,0 +1,914 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_custody_reconciliation
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-13 06:45+0000\n"
+"PO-Revision-Date: 2025-07-13 06:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_custody_reconciliation
+#: model:mail.template,subject:ab_custody_reconciliation.template_custody_reconciliation_email
+msgid "  طلب تسوية عهدة للموظف: {{ object.employee_id.name }}"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.actions.report,print_report_name:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_report
+msgid "'Custody Reconciliation %s'  %object.id"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:mail.template,body_html:ab_custody_reconciliation.template_custody_reconciliation_email
+msgid ""
+"<div style=\"direction: rtl; text-align: right;margin: 0; padding: 0;\">\n"
+"                    <h3> السادة الأفاضل</h3>\n"
+"                    <h3> تحية طيبة وبعد، </h3>\n"
+"                    <h3> يرجى اعتماد البنود الاّتية:</h3>\n"
+"\n"
+"                    <br/>\n"
+"\n"
+"                    <table style=\"width: 70%; border-collapse: collapse; font-family: Arial, sans-serif;\">\n"
+"                        <thead>\n"
+"                            <tr>\n"
+"                                <th style=\"border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: center;\">\n"
+"                                    <strong>البند</strong>\n"
+"                                </th>\n"
+"                                <th style=\"border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: center;\">\n"
+"                                    <strong>رقم الفاتورة</strong>\n"
+"                                </th>\n"
+"                                <th style=\"border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: center;\">\n"
+"                                    <strong>القيمة</strong>\n"
+"                                </th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            <t t-foreach=\"object.line_ids\" t-as=\"line\">\n"
+"                                <tr>\n"
+"                                    <td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">\n"
+"                                        <t t-esc=\"line.custody_account_id.name\"/>\n"
+"                                    </td>\n"
+"                                    <td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">\n"
+"                                        <t t-esc=\"line.invoice_code\"/>\n"
+"                                    </td>\n"
+"                                    <td style=\"border: 1px solid #ddd; padding: 8px; text-align: center;\">\n"
+"                                        <t t-esc=\"line.value\"/>\n"
+"                                    </td>\n"
+"                                </tr>\n"
+"                            </t>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <br/>\n"
+"\n"
+"\n"
+"                    <br/>\n"
+"                    <br/><br/>\n"
+"                    جزيل الشكر.\n"
+"                    <br/>\n"
+"                    <t t-esc=\"user.name\"/>\n"
+"                </div>\n"
+"            "
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "<small>Abdin Pharmacies Pharma</small>"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "<span>Accountant</span>"
+msgstr "المحاسب"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "<span>Responsible</span>"
+msgstr "مسئول العهدة"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "<span>Reviewer</span>"
+msgstr "المراجع"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__account_id
+msgid "Account"
+msgstr "حساب"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_tree
+msgid "Add Notes"
+msgstr "ملاحظات"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Amount"
+msgstr "القيمة"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_tree
+msgid "Approve"
+msgstr "يعتمد"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_line__status__approved
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_search
+msgid "Approved"
+msgstr "تم الإعتماد"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_tree
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__attachment
+msgid "Attachment"
+msgstr "مرفقات"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__att_file_ids
+msgid "Attachments"
+msgstr "مرفقات"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Branch:"
+msgstr "الفرع:"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__can_approve
+msgid "Can Approve"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_form
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_tree
+msgid "Claimer"
+msgstr "مسئول العهدة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__claimer_department_id
+msgid "Claimer Department"
+msgstr "قسم مسئول العهدة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__employee_code
+msgid "Code"
+msgstr "كود"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__concerned_employee_ids
+msgid "Concerned Employees"
+msgstr "الموظف المختص"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_header__recon_status__confirmed
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Confirmed"
+msgstr "تم التأكيد"
+
+#. module: ab_custody_reconciliation
+#: model:ir.ui.menu,name:ab_custody_reconciliation.ab_custody_reconciliation_header_menu
+msgid "Create Reconciliation"
+msgstr "إنشاء تسوية"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__create_uid
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__create_uid
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__create_uid
+msgid "Created by"
+msgstr "انشئ بواسطة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__create_date
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__create_date
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__create_date
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__create_date
+msgid "Created on"
+msgstr "انشئ في"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__custody_account_id
+msgid "Custody Account"
+msgstr "الحساب"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__custody_balance
+msgid "Custody Balance"
+msgstr "رصيد العهدة"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Custody Balance:"
+msgstr "رصيد العهدة:"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_accounting_je_header_inherit.py:0
+#, python-format
+msgid "Custody Costcenter must be same as JE Header Costcenter!"
+msgstr "مركز تكلفة العهدة يجب ان يكون نفس مركز تكلفة رأس القيد!"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_accounting_je_header__custody_header_ids
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_accounting_recon_header__custody_header_ids
+msgid "Custody Header"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Custody Linked to JE Header ID: %s"
+msgstr "تم ربط العهدة بالقيد الحسابي رقم: %s"
+
+#. module: ab_custody_reconciliation
+#: model:ir.actions.act_window,name:ab_custody_reconciliation.ab_custody_reconciliation_header_action
+#: model:ir.ui.menu,name:ab_custody_reconciliation.ab_custody_reconciliation_sub_menu
+#: model:mail.channel,name:ab_custody_reconciliation.custody_channel
+#: model:mail.template,name:ab_custody_reconciliation.template_custody_reconciliation_email
+msgid "Custody Reconciliation"
+msgstr "تسوية العهدة"
+
+#. module: ab_custody_reconciliation
+#: model:res.groups,name:ab_custody_reconciliation.group_ab_custody_reconciliation_accounting
+msgid "Custody Reconciliation Accounting"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.actions.report,name:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_report
+msgid "Custody Reconciliation Header"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.actions.act_window,name:ab_custody_reconciliation.ab_custody_reconciliation_line_action
+msgid "Custody Reconciliation Line"
+msgstr "تسوية العهدة"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_header.py:0
+#, python-format
+msgid "Custody must be entry to submit"
+msgstr "يجب ان تكون التسوية في مرحلة الإدخال!"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Date:"
+msgstr "التاريخ:"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__department_id
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__description
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Description"
+msgstr "الشرح"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_wizard_view_form
+msgid "Discard"
+msgstr "يلغي"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__display_name
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__display_name
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__display_name
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__employee_id
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Employee Code:"
+msgstr "كود الموظف:"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Employee Data"
+msgstr "بيانات الموظف"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Employee Name:"
+msgstr "اسم الموظف:"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_header__recon_status__entry
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_line__status__entry
+msgid "Entry"
+msgstr "الإدخال"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Expense Name"
+msgstr "الحساب"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__feedback
+msgid "Feedback"
+msgstr "ملاحظات"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Filter"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_follower_ids
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__follow_up_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Freeze"
+msgstr "تجميد"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_header__recon_status__frozen
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Frozen"
+msgstr "تم التجميد"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__header_id
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_search
+msgid "Header"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__id
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__id
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__id
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_needaction
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_has_error
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__invoice_code
+msgid "Invoice Code"
+msgstr "رقم الفاتورة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__is_sent
+msgid "Is Sent"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__je_header_id
+msgid "Je Header"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header____last_update
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line____last_update
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard____last_update
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval____last_update
+msgid "Last Modified on"
+msgstr "اّخر تعديل في"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__write_uid
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__write_uid
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__write_uid
+msgid "Last Updated by"
+msgstr "اّخر تحديث بواسطة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__write_date
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__write_date
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__write_date
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__write_date
+msgid "Last Updated on"
+msgstr "اّخر تحديث في"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__manager_id
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_accounting_je_header_inherit.py:0
+#, python-format
+msgid "Many Costcenters!!!"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_header.py:0
+#, python-format
+msgid "Message is posted successfully on telegram."
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_line__status__neglected
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_search
+msgid "Neglected"
+msgstr "مهمل"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_header.py:0
+#, python-format
+msgid "No records to submit!"
+msgstr "لا توجد سجلات!"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__notes
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_unread_counter
+msgid "Number of unread messages"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Operation not supported"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_line__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_search
+msgid "Pending"
+msgstr "معلق"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_header__recon_status__posted
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Posted"
+msgstr "تم الإرسال"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__print_all
+msgid "Print All"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Print PDF All"
+msgstr "طباعة التسوية كاملة"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Print PDF Approved"
+msgstr "طباعة ما تم اعتماده"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__recon_status
+msgid "Recon Status"
+msgstr "حالة التسوية"
+
+#. module: ab_custody_reconciliation
+#: model:ir.ui.menu,name:ab_custody_reconciliation.ab_custody_reconciliation_line_menu
+msgid "Reconciliation Approval"
+msgstr "اعتماد التسوية"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Reconciliation Details"
+msgstr "تفاصيل التسوية"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Reconciliation Details Lines"
+msgstr "تفاصيل تسوية العهدة"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Reconciliation Document"
+msgstr "مستند تسوية عهدة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.actions.act_window,name:ab_custody_reconciliation.ab_reconciliation_employee_approval_action
+#: model:ir.ui.menu,name:ab_custody_reconciliation.ab_reconciliation_employee_approval_menu
+msgid "Reconciliation Employee Approval"
+msgstr "إعدادات اعتماد الموظف المختص"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_wizard__recon_id
+msgid "Reconciliation Line"
+msgstr "بند التسوية"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Reconciliation Serial"
+msgstr "مسلسل التسوية"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Record already approved"
+msgstr "تم الإعتماد بالفعل!"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Record already rejected"
+msgstr "تم الرفض بالفعل!"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Record is not in entry state"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_tree
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_line__status__rejected
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_search
+msgid "Rejected"
+msgstr "تم الرفض"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__rejection_reason
+msgid "Rejection Reason"
+msgstr "سبب الرفض"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Rejection is not allowed"
+msgstr "الرفض غير مسموح"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Required Input"
+msgstr "مدخلات مطلوبة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسئول"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_wizard_view_form
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Serial"
+msgstr "م"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__status
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_reconciliation_employee_approval__store_ids
+msgid "Stores"
+msgstr "الفروع"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__submit_date
+msgid "Submit Date"
+msgstr "تاريخ الإرسال"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields.selection,name:ab_custody_reconciliation.selection__ab_custody_reconciliation_header__recon_status__submitted
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Submitted"
+msgstr "تم الإرسال"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_doc_template
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__total_approved_value
+msgid "Total Approved Value"
+msgstr "إجمالي القيمة المعتمدة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__total_value
+msgid "Total Value"
+msgstr "إجمالي القيمة"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,help:ab_custody_reconciliation.field_ab_custody_reconciliation_header__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "Unfreeze"
+msgstr "الغاء التجميد"
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_search
+msgid "Unlinked Only"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_header__user_id
+msgid "User"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model.fields,field_description:ab_custody_reconciliation.field_ab_custody_reconciliation_line__value
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "Value must be greater than zero!"
+msgstr "يجب ان تكون القيمة أكبر من صفر"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "You are not allowed to approve!"
+msgstr "لا يمكنك الإعتماد!"
+
+#. module: ab_custody_reconciliation
+#: code:addons/ab_custody_reconciliation/models/ab_custody_reconciliation_line.py:0
+#, python-format
+msgid "You can approve pending records only!"
+msgstr "يمكنك إعتماد القيود المعلقة فقط!"
+
+#. module: ab_custody_reconciliation
+#: model:ir.model,name:ab_custody_reconciliation.model_ab_accounting_je_header
+msgid "ab_accounting_je_header"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model,name:ab_custody_reconciliation.model_ab_custody_reconciliation_header
+msgid "ab_custody_reconciliation_header"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "ab_custody_reconciliation_header_form"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_pivot
+msgid "ab_custody_reconciliation_header_pivot"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_search
+msgid "ab_custody_reconciliation_header_search"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_tree
+msgid "ab_custody_reconciliation_header_tree"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model,name:ab_custody_reconciliation.model_ab_custody_reconciliation_line
+msgid "ab_custody_reconciliation_line"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_form
+msgid "ab_custody_reconciliation_line_form"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_pivot
+msgid "ab_custody_reconciliation_line_pivot"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_search
+msgid "ab_custody_reconciliation_line_search"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_line_view_tree
+msgid "ab_custody_reconciliation_line_tree"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model,name:ab_custody_reconciliation.model_ab_custody_reconciliation_wizard
+msgid "ab_custody_reconciliation_wizard"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_wizard_view_form
+msgid "ab_custody_reconciliation_wizard_form"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model:ir.model,name:ab_custody_reconciliation.model_ab_reconciliation_employee_approval
+msgid "ab_reconciliation_employee_approval"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_reconciliation_employee_approval_view_form
+msgid "ab_reconciliation_employee_approval_form"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_reconciliation_employee_approval_view_pivot
+msgid "ab_reconciliation_employee_approval_pivot"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_reconciliation_employee_approval_view_search
+msgid "ab_reconciliation_employee_approval_search"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_reconciliation_employee_approval_view_tree
+msgid "ab_reconciliation_employee_approval_tree"
+msgstr ""
+
+#. module: ab_custody_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_custody_reconciliation.ab_custody_reconciliation_header_view_form
+msgid "are you sure?"
+msgstr ""

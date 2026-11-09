@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_je_line_qry___view_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_qry___view_inherit</field>
+            <field name="model">ab_accounting_je_line_qry</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_qry_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="fixed_asset_id" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_fixed_asset_assets_inventory_normal_user" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_assets_inventory_normal_user</field>
+            <field name="model_id" ref="ab_fixed_asset.model_ab_fixed_asset_assets_inventory"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[
+                ('current_store_id', 'in', user.ab_department_ids.store_id.mapped('id'))]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+    </data>
+</odoo>

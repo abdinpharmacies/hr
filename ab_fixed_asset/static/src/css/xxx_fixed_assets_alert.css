@@ -1,0 +1,41 @@
+.o_notebook .nav-tabs {
+    overflow: visible !important;
+}
+
+.fixed-asset-arrow {
+    width: 0;
+    height: 0;
+    border-left: 10px solid #1e90ff;
+    border-right: 10px solid #1e90ff;
+    border-top: 20px solid #1e90ff;
+    animation: bounce 2s infinite;
+}
+
+
+.fixed-asset-arrow::before {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 30px;
+    background: linear-gradient(to top, #1e90ff, #00bfff);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    top: 0;
+    left: -20px;
+}
+
+
+li.fixed-assets {
+    position: relative;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}

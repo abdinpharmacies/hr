@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_custody_employee_data_view_tree_inherit_is_custody" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_tree_inherit_is_custody</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="inherit_id" ref="ab_custody_request.ab_custody_employee_data_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='account_number']" position="after">
+                    <field name="is_custody" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_custody_employee_data_view_form_inherit_is_custody" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_form_inherit_is_custody</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="inherit_id" ref="ab_custody_request.ab_custody_employee_data_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/field[@name='account_number']" position="after">
+                    <field name="is_custody"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

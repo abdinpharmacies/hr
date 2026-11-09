@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_customer_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_customer_form_view_inherit</field>
+            <field name="model">ab_customer</field>
+            <field name="inherit_id" ref="ab_customer.ab_customer_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//header" position="inside">
+                    <button name="btn_update_from_bconnect" type="object"
+                            groups="base.group_system"
+                            string="Update From BConnect" class="btn-primary"/>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

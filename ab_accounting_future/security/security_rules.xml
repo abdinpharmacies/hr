@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_accounting_future_crud_own" model="ir.rule">
+            <field name="name">rule_ab_accounting_future_crud_own</field>
+            <field name="model_id" ref="model_ab_accounting_future"/>
+            <field name="groups" eval="[(4, ref('ab_accounting_future.group_je_future_user'))]"/>
+            <field name="domain_force">[
+                ('je_created', '=', False),
+                ('user_id', '=', user.id),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_accounting_future_read" model="ir.rule">
+            <field name="name">rule_ab_accounting_accountant_read</field>
+            <field name="model_id" ref="model_ab_accounting_future"/>
+            <field name="groups" eval="[(4, ref('ab_accounting_future.group_je_future_user'))]"/>
+            <field name="domain_force">[
+                '|', '|', '|',
+                ('user_id', '=', user.id),
+                ('account_id.always_show_account', '=', True),
+                ('sett_account_id.always_show_account', '=', True),
+                ('user_id', 'in', user.responsible_for_ids.ids),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_accounting_future_header_crud_own" model="ir.rule">
+            <field name="name">rule_ab_accounting_future_header_crud_own</field>
+            <field name="model_id" ref="model_ab_accounting_future_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting_future.group_je_future_user'))]"/>
+            <field name="domain_force">[
+                ('user_id', '=', user.id),
+                ('line_ids.je_created', '!=', True),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_accounting_future_header_read" model="ir.rule">
+            <field name="name">rule_ab_accounting_accountant_read</field>
+            <field name="model_id" ref="model_ab_accounting_future_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting_future.group_je_future_user'))]"/>
+            <field name="domain_force">[
+                '|', '|', '|',
+                ('user_id', '=', user.id),
+                ('account_id.always_show_account', '=', True),
+                ('sett_account_id.always_show_account', '=', True),
+                ('user_id', 'in', user.responsible_for_ids.ids),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+    </data>
+</odoo>

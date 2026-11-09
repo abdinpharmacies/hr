@@ -1,0 +1,144 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Progress Bar | Odoo App</title>
+</head>
+<body>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        line-height: 1.6;
+        margin: 20px;
+    }
+    .feature-list {
+        margin: 20px 0;
+    }
+    .feature-list li {
+        margin: 8px 0;
+    }
+    .highlight {
+        background-color: #e8f4fd;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #017e84;
+    }
+    .code-block {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: 'Courier New', monospace;
+        margin: 15px 0;
+        border: 1px solid #e9ecef;
+    }
+    .new-badge {
+        background-color: #28a745;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+</style>
+<section>
+    <h1>Dynamic Progress Bar</h1>
+    <div>
+        <p>Progress bar for Odoo waiting screen, possibility to cancel an ongoing operation and a system tray menu for all
+            operations in progress.</p>
+    </div>
+    <img src="progress_bar_loading_cancelling.gif" width="100%" align="center"/>
+    <img src="progress_bar_loading_systray.gif" width="50%" align="right"
+         style="margin-left:20px; margin-top:20px; margin-bottom:20px;"/>
+    <p><strong>web_progress</strong> is compatible with Odoo 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0 (CE and EE).</p>
+    <p>Author: Grzegorz Marczyński</p>
+    <p>License: LGPL-3.</p>
+    <p>Copyright © 2025 Grzegorz Marczyński</p>
+
+    <div class="highlight">
+        <h3> What's New in Version 3.0</h3>
+        <ul>
+            <li>Complete OWL components rewrite for Odoo 17 modern architecture</li>
+            <li>Enhanced UI blocking with "Put to background" functionality</li>
+        </ul>
+    </div>
+
+    <div>
+        <h2> Key Features</h2>
+        <ul class="feature-list">
+            <li><strong> Comprehensive Progress Tracking</strong> - Built-in progress reporting for all standard Odoo import/export operations</li>
+            <li><strong> System Tray Management</strong> - Convenient menu showing all ongoing operations with real-time status updates</li>
+            <li><strong> Background Operations</strong> - Move long-running tasks to background while keeping UI responsive</li>
+            <li><strong> UI Blocking Protection</strong> - Optional UI blocking with easy background transition (inactive by default in Odoo 17)</li>
+            <li><strong> Real-time Updates</strong> - Live progress updates via longpolling with automatic fallback</li>
+            <li><strong> Operation Cancellation</strong> - Cancel long-running operations safely with proper exception handling</li>
+            <li><strong> Multiple Styles</strong> - Choose from standard, simple, or fun nyan cat progress bars</li>
+            <li><strong> Nested Operations</strong> - Support for multi-level progress tracking with sub-operations</li>
+            <li><strong> Cron Job Support</strong> - Works with scheduled tasks and background jobs</li>
+            <li><strong> Generator Support</strong> - Efficient handling of large datasets and generators</li>
+        </ul>
+    </div>
+
+    <div>
+        <h2> For Developers</h2>
+        <p>Adding progress tracking to your operations is incredibly simple:</p>
+
+        <div class="code-block">
+# Before: Standard loop<br>
+def action_operation(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for rec in self:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rec.do_something()<br><br>
+# After: Progress-enabled loop<br>
+def action_operation(self):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for rec in self.with_progress(msg="Processing records"):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rec.do_something()
+        </div>
+
+        <h3> Advanced Usage</h3>
+        <div class="code-block">
+# For generators (when len() cannot be called)<br>
+for item in self.web_progress_iter(data_generator, total=10000):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;process_item(item)<br><br>
+# With proper cancellation handling<br>
+try:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for rec in self.with_progress(msg="Critical operation"):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rec.perform_task()<br>
+except UserError as e:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if "cancelled" in str(e):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.cleanup_after_cancel()
+        </div>
+
+        <p><strong>Parameters available:</strong> <code>msg</code>, <code>total</code>, <code>cancellable</code>, <code>log_level</code></p>
+    </div>
+
+    <div>
+        <h2>User Experience</h2>
+        <ul class="feature-list">
+            <li><strong>Intuitive Interface</strong> - Progress bars appear automatically for long-running operations</li>
+            <li><strong>Flexible Viewing</strong> - Switch between modal dialog and system tray views</li>
+            <li><strong>Smart Notifications</strong> - Clear status messages including "No ongoing operations" when idle</li>
+            <li><strong>Responsive Design</strong> - Works seamlessly on desktop and mobile interfaces</li>
+            <li><strong>Non-intrusive</strong> - Minimal performance impact on your operations</li>
+            <li><strong>Reliable</strong> - Automatic cleanup and error recovery</li>
+        </ul>
+    </div>
+
+    <div class="highlight">
+        <h3>Technical Highlights</h3>
+        <ul>
+            <li><strong>Separate Transactions</strong> - Progress tracking doesn't interfere with your main operations</li>
+            <li><strong>Longpolling Integration</strong> - Real-time updates using Odoo's built-in messaging system</li>
+            <li><strong>Memory Efficient</strong> - Generator-based iteration with no memory overhead</li>
+            <li><strong>Thread Safe</strong> - Multiple operations can run simultaneously without conflicts</li>
+            <li><strong>Automatic Cleanup</strong> - Progress records are automatically removed after completion</li>
+        </ul>
+    </div>
+
+    <div>
+        <h2> Installation & Compatibility</h2>
+        <p>Simply install the module and start using <code>with_progress()</code> or <code>web_progress_iter()</code> in your code. No additional configuration required!</p>
+        <p><strong>Requirements:</strong> Longpolling should be operational for real-time updates (falls back to periodic polling if unavailable).</p>
+    </div>
+
+</section>
+</body>
+</html>

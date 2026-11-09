@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_accounting_tracking_sys,access_ab_accounting_tracking_sys,model_ab_accounting_tracking,base.group_system,1,1,1,1
+access_ab_accounting_tracking_user,access_ab_accounting_tracking_user,model_ab_accounting_tracking,group_accounting_tracking_user,1,0,0,0
+access_ab_accounting_tracking_manager,access_ab_accounting_tracking_manager,model_ab_accounting_tracking,group_accounting_tracking_manager,1,0,0,0
+
+
+
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="cat_ab_archive" model="ir.module.category">
+            <field name="name">Archive</field>
+            <field name="sequence" eval="20"/>
+        </record>
+
+
+    </data>
+</odoo>

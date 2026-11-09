@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_claim_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_form_view_inherit</field>
+            <field name="model">ab_purchase_claim</field>
+            <field name="inherit_id" ref="ab_purchase.ab_purchase_claim_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page string="Future">
+                        <field name="future_je_ids">
+                            <list string="ab_accounting_future_all_orders_view_tree" multi_edit="1"
+                                  decoration-info="je_created">
+                                <field name="je_created" invisible="1"/>
+                                <field name="debit_val" optional="show" string="Debit Value"/>
+                                <field name="credit_val" optional="show" string="Credit Value"/>
+
+                                <field name="store_id" optional="hide"/>
+                                <field name="due_date" optional="show"/>
+                                <field name="doc_no" optional="show"/>
+                                <field name="explain" optional="show"/>
+                                <field name="create_uid" optional="hide"/>
+                                <field name="create_date" optional="hide"/>
+                                <field name="write_uid" optional="hide"/>
+                                <field name="write_date" optional="hide"/>
+                                <field name="account_id" optional="hide" string="On Account"/>
+                                <field name="costcenter_id" optional="hide"/>
+                                <field name="sett_account_id" optional="show" string="With Account"/>
+                                <field name="sett_costcenter_id" optional="hide" string="With Costcenter"/>
+
+                                <field name="je_created" invisible="1"/>
+                                <button name="btn_create_je" type="object"
+                                        string="Create JE" class="btn-primary"
+                                        confirm="Are you sure?"
+
+                                 invisible="je_created == True"/>
+                            </list>
+
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_usage_causes_fever"
+                model="ab_usage_causes">
+            <field name="name">Fever</field>
+        </record>
+        <record id="ab_usage_causes_Stomach_Pain"
+                model="ab_usage_causes">
+            <field name="name">Stomach Pain</field>
+        </record>
+        <record id="ab_usage_causes_cold_and_flu"
+                model="ab_usage_causes">
+            <field name="name">Cold and Flu</field>
+        </record>
+        <record id="ab_usage_causes_headache"
+                model="ab_usage_causes">
+            <field name="name">Headache</field>
+        </record>
+        <record id="ab_usage_causes_toothache"
+                model="ab_usage_causes">
+            <field name="name">Toothache</field>
+        </record>
+        <record id="ab_usage_causes_rheumatic_pain"
+                model="ab_usage_causes">
+            <field name="name">Rheumatic Pain</field>
+        </record>
+        <record id="ab_usage_causes_post_operation_pain"
+                model="ab_usage_causes">
+            <field name="name">Post Operation Pain</field>
+        </record>
+        <record id="ab_usage_causes_diarrahea"
+                model="ab_usage_causes">
+            <field name="name">Diarrahea</field>
+        </record>
+        <record id="ab_usage_causes_throat_pain"
+                model="ab_usage_causes">
+            <field name="name">Throat Pain</field>
+        </record>
+        <record id="ab_usage_causes_ear_pain"
+                model="ab_usage_causes">
+            <field name="name">Ear Pain</field>
+        </record>
+        <record id="ab_usage_causes_muscle_pain"
+                model="ab_usage_causes">
+            <field name="name">Muscle Pain</field>
+        </record>
+        <record id="ab_usage_causes_kidney_pain"
+                model="ab_usage_causes">
+            <field name="name">Kidney Pain</field>
+        </record>
+        <record id="ab_usage_causes_couph_and_congested_chest"
+                model="ab_usage_causes">
+            <field name="name">couph and Congested Chest</field>
+        </record>
+        <record id="ab_usage_causes_menstrual_pain"
+                model="ab_usage_causes">
+            <field name="name">Menstrual Pain</field>
+        </record>
+        <record id="ab_usage_causes_migraine_pain"
+                model="ab_usage_causes">
+            <field name="name">Migraine Pain</field>
+        </record>
+        <record id="ab_usage_causes_cramps_spasms"
+                model="ab_usage_causes">
+            <field name="name">Cramps Spasms</field>
+        </record>
+        <record id="ab_usage_causes_asthma"
+                model="ab_usage_causes">
+            <field name="name">Asthma</field>
+        </record>
+        <record id="ab_usage_causes_wounds"
+                model="ab_usage_causes">
+            <field name="name">Wounds</field>
+        </record>
+        <record id="ab_usage_causes_burns"
+                model="ab_usage_causes">
+            <field name="name">Burns</field>
+        </record>
+        <record id="ab_usage_causes_skin_inflammation"
+                model="ab_usage_causes">
+            <field name="name">Skin Inflammation</field>
+        </record>
+        <record id="ab_usage_causes_vomiting"
+                model="ab_usage_causes">
+            <field name="name">Vomiting</field>
+        </record>
+        <record id="ab_usage_causes_constipation"
+                model="ab_usage_causes">
+            <field name="name">Constipation</field>
+        </record>
+        <record id="ab_usage_causes_cytostatic_gonadotrophin"
+                model="ab_usage_causes">
+            <field name="name">Cytostatic Gonadotrophin</field>
+        </record>
+    </data>
+</odoo>

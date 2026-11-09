@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_custody_request_header_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_prevent_all</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+        <record id="rule_ab_custody_request_header_user" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_user</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('user_id', '=', user.id),
+                ('status', '=', 'for_entry')]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+        <record id="rule_ab_custody_request_header_user_ro" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_user_ro</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[
+                ('user_id', '=', user.id),
+                ('status', '!=', 'for_entry')]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_request_header_manager" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_manager</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_user'))]"/>
+            <field name="domain_force">[('manager_id.user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_request_header_payment_cash" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_payment_cash</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_payment_cash'))]"/>
+            <field name="domain_force">[
+                ('custody_type', '=', 'cash'),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_request_header_payment_visa" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_payment_visa</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_payment_visa'))]"/>
+            <field name="domain_force">[
+                ('custody_type', '=', 'visa'),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_custody_request_header_accounting_read_all" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_accounting_read_all</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_accounting'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+        <record id="rule_ab_custody_request_header_accounting_rw_for_accounting" model="ir.rule">
+            <field name="name">rule_ab_custody_request_header_accounting_rw_for_accounting</field>
+            <field name="model_id" ref="model_ab_custody_request_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_custody_request_accounting'))]"/>
+            <field name="domain_force">[('status', '=', 'for_accounting')]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+    </data>
+</odoo>

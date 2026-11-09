@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="ab_purchase_notices_menu" name="Notices" parent="ab_product_source.menu_root"
+                  sequence="2"/>
+
+        <menuitem id="purchase_sub_menu" name="Purchase" parent="ab_product_source.menu_root" sequence="1"/>
+
+        <menuitem id="reports_menu" name="Reports" parent="ab_product_source.menu_root" sequence="4"
+                  groups="ab_purchase.group_ab_purchase_manager"
+        />
+
+        <menuitem id="configuration_menu" name="Configuration"
+                  groups="ab_purchase.group_ab_purchase_manager"
+                  parent="ab_product_source.menu_root" sequence="5"/>
+
+        <menuitem id="taxes_menu" name="Taxes" parent="configuration_menu"
+                  action="ab_taxes.ab_taxes_action"
+                  sequence="1"/>
+
+        <menuitem id="ab_supplier_sub_menu"
+                  name="Supplier"
+                  parent="configuration_menu" sequence="100"/>
+
+        <menuitem id="ab_supplier_menu"
+                  name="Supplier"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.supplier_action_window" sequence="2"/>
+
+
+        <menuitem id="ab_supplier_discount_menu" name="Supplier Discount" parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_discount_action" sequence="4"/>
+
+        <menuitem id="ab_supplier.ab_supplier_contact_menu" name="Supplier Contact" parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_contact_action" sequence="5"/>
+
+        <menuitem id="ab_supplier.ab_supplier_note_menu"
+                  name="Supplier Note"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_note_action" sequence="6"/>
+
+        <menuitem id="ab_supplier.ab_supplier_schedule_note_menu"
+                  name="Supplier Schedule Note"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_schedule_note_action" sequence="7"/>
+
+        <menuitem id="ab_supplier.ab_supplier_marketing_menu" name="Supplier Marketing"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_marketing_action" sequence="8"/>
+
+        <menuitem id="ab_supplier.ab_supplier_compensation_menu" name="Supplier Compensation"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_compensation_action" sequence="9"/>
+
+        <menuitem id="ab_supplier_payment_type_menu"
+                  name="Supplier Payment Types"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_payment_type_action"
+                  sequence="8"/>
+
+        <menuitem id="accounting_menu" name="Suppliers Accounting" sequence="4" parent="ab_product_source.menu_root"/>
+
+
+        <menuitem id="ab_supplier_bracket_menu"
+                  name="Supplier Bracket"
+                  parent="ab_supplier_sub_menu"
+                  action="ab_supplier.ab_supplier_bracket_action" sequence="3"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="guide_list" model="ir.ui.view">
+        <field name="name">account.catalog.list</field>
+        <field name="model">ab_accounting_account_guide</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="code"/><field name="internal_type"/><field name="parent_id"/></list>
+        </field>
+    </record>
+    <record id="guide_form" model="ir.ui.view">
+        <field name="name">account.catalog.form</field>
+        <field name="model">ab_accounting_account_guide</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <form><sheet><group><field name="name"/><field name="code"/><field name="internal_type"/><field name="internal_group"/><field name="parent_id"/></group></sheet></form>
+        </field>
+    </record>
+    <record id="guide_action" model="ir.actions.act_window">
+        <field name="name">Account Catalog</field>
+        <field name="res_model">ab_accounting_account_guide</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="doctype_list" model="ir.ui.view">
+        <field name="name">account.document.type.list</field>
+        <field name="model">ab_accounting_doctype</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml"><list><field name="name"/><field name="internal_type"/></list></field>
+    </record>
+    <record id="doctype_form" model="ir.ui.view">
+        <field name="name">account.document.type.form</field>
+        <field name="model">ab_accounting_doctype</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml"><form><sheet><group><field name="name"/><field name="internal_type"/></group></sheet></form></field>
+    </record>
+    <record id="doctype_action" model="ir.actions.act_window">
+        <field name="name">Document Types</field>
+        <field name="res_model">ab_accounting_doctype</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

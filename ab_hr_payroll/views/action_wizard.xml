@@ -1,0 +1,322 @@
+<odoo>
+    <data>
+        <!--##############################################################################################-->
+        <!-- ab_hr_action_wizard list view-->
+        <record model="ir.ui.view" id="ab_hr_action_wizard_list">
+            <field name="name">ab_hr_action_wizard list</field>
+            <field name="model">ab_hr_action_wizard</field>
+            <field name="arch" type="xml">
+                <list string="Salaries Actions List" decoration-danger="action_taken" limit="80">
+                    <field name="explain"/>
+                    <field name="sal_count"/>
+                    <field name="create_date"/>
+                    <field name="create_uid"/>
+                    <field name="action_status"
+                           class="h6"
+                           widget="badge"
+                           decoration-info="action_status=='for_entry'"
+                           decoration-warning="action_status=='suspended_salaries'"
+                           decoration-success="action_status=='for_manager'"
+                           decoration-danger="action_status=='negative_salaries'"
+                           decoration-primary="action_status=='paid'"
+                    />
+                    <field name="action_taken" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!--##############################################################################################-->
+        <!-- ab_hr_action_wizard SEARCH view-->
+        <record model="ir.ui.view" id="ab_hr_action_wizard_search">
+            <field name="name">ab_hr_action_wizard_search</field>
+            <field name="model">ab_hr_action_wizard</field>
+            <field name="arch" type="xml">
+                <search string="Salaries Actions">
+                    <field name="sal_ids" string="Employee Code" filter_domain="[('sal_ids.accid','=',self)]"/>
+                    <field name="sal_ids" string="Branch" filter_domain="[('sal_ids.store_id','ilike',self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <!--##############################################################################################-->
+
+
+        <!--##############################################################################################-->
+        <record model="ir.ui.view" id="ab_hr_action_wizard_form">
+            <field name="name">ab_hr_action_wizard form</field>
+            <field name="model">ab_hr_action_wizard</field>
+            <field name="arch" type="xml">
+                <form string="salaries action form">
+                    <header class="w-100">
+                        <button string="FOR ENTRY" type="object" name="button_action_salaries" class="btn-info"
+                                groups="ab_hr.group_ab_hr_payroll_specialist" context="{'action': 'for_entry'}"/>
+
+                        <button string="FOR REVIEWER stage" type="object" name="button_action_salaries" class="btn-dark"
+                                groups="ab_hr.group_ab_hr_payroll_specialist"
+                                context="{'action': 'for_reviewer'}"/>
+
+                        <button string="FOR MANAGER stage" type="object" name="button_action_salaries" class="btn-dark"
+                                groups="ab_hr.group_ab_hr_payroll_reviewer"
+                                context="{'action': 'for_manager'}"/>
+
+                        <button string="Suspended Salaries" type="object" name="button_action_salaries"
+                                class="btn-outline-info border-info"
+                                groups="ab_hr.group_ab_hr_payroll_specialist"
+                                context="{'action': 'suspended_salaries'}"/>
+                        <button string="Negative Salaries" type="object"
+                                name="button_action_salaries" class="btn-outline-warning border-warning"
+                                groups="ab_hr.group_ab_hr_payroll_specialist"
+                                context="{'action': 'negative_salaries'}"/>
+                        <button string="Create JE" type="object"
+                                confirm="This action will create JE, are you sure?"
+                                name="btn_create_je" class="btn-danger"
+                                groups="ab_hr.group_ab_hr_manager"
+                                context="{'action': 'paid'}"/>
+
+                    </header>
+
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="btn_show_payroll_report" context="{'status':'for_entry'}" type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="For Entry" name="for_entry_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_payroll_report" context="{'status':'for_reviewer'}" type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="For Reviewer" name="for_reviewer_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_payroll_report" context="{'status':'for_manager'}" type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="For Manager" name="for_manager_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_payroll_report" context="{'status':'suspended_salaries'}"
+                                    type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="Suspended" name="suspended_salaries_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_payroll_report" context="{'status':'negative_salaries'}"
+                                    type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="Negative" name="negative_salaries_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_payroll_report" context="{'status':'for_pay'}" type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="Paid" name="paid_count" widget="statinfo"/>
+                            </button>
+                        </div>
+
+
+                        <widget name="web_ribbon" class="status" title="action taken" bg_color="bg-danger"
+                                invisible="action_taken == False"/>
+                        <widget name="web_ribbon" title="archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+                        <field name="active" invisible="1"/>
+                        <field name="action_taken" invisible="1"/>
+                        <field name="action_status" invisible="1"/>
+                        <group class="h1 text-info text-center">
+                            <field name="explain" placeholder="Write an Explain for your action" nolabel="1"
+                                   class="h1"/>
+                        </group>
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="card border-info" style="width: 80%;">
+                                <div class="card-header py-3 h4 text-dark bg-light text-center ">Search Criteria</div>
+                                <div class="card-body">
+                                    <group col="2">
+                                        <group>
+                                            <field name="status" required="1"/>
+                                            <field name="date_begin" required="1" string="From" options="{'datepicker':
+                                                   {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"/>
+                                            <field name="date_end" required="1" string="To" options="{'datepicker':
+                                                   {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"/>
+                                            <field name="payment_type_id"/>
+                                            <field name="user_line_owner"/>
+                                            <field name="store_ids" string="Branch" widget="many2many_tags"/>
+                                            <field name="job_id" string="Job Title" widget="many2many_tags"/>
+                                            <field name="workplace" string="Workplace" widget="many2many_tags"/>
+                                            <field name="section" string="Section" widget="many2many_tags"/>
+                                            <field name="employee_id" string="Employee" widget="many2many_tags"/>
+                                        </group>
+                                        <group class="h6">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <field name="pasted_type"/>
+                                                    <div class="abdin-textbox-container">
+                                                        <field name="pasted_salaries" nolabel="1"
+                                                               class="h6 abdin-textbox"/>
+                                                    </div>
+                                                    <div invisible="(status not in ['for_reviewer']) and ((exceptions == False or exceptions == ''))">
+                                                        <label for="exceptions"/>
+                                                        <div class="abdin-textbox-container">
+                                                            <field name="exceptions" nolabel="1"
+                                                                   class="h6 abdin-textbox"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <button string="Search" type="object" name="search_button"
+                                                            class="btn-info w-100 h-25" style="height:50%"/>
+                                                    <button string="Filter" type="object" name="filter_button"
+                                                            class="btn-outline-dark w-100 h-25" style="height:50%"/>
+                                                    <button string="Report" type="object" name="report_button"
+                                                            class="btn-outline-info  w-100 h-25" style="height:50%"/>
+                                                </div>
+                                            </div>
+                                        </group>
+                                    </group>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- PAYMENT METHOD AND TYPE-->
+                        <div class="container ml-5">
+                            <div class="row" groups="ab_hr.group_ab_hr_payroll_specialist">
+                                <div class="col-sm-3">
+                                    <button type="object" string="Set Payment Type" name="btn_sal_payment_type"
+                                            class="btn-warning btn-arrow-right w-100" confirm="Are you sure"/>
+                                </div>
+                                <field name="set_payment_type_id" class="col-sm-4"/>
+                            </div>
+                        </div>
+                        <hr/>
+                        <notebook>
+                            <page string="Salaries">
+                                <div>
+                                    <span class="h2 pr-5">
+                                        <label for="sal_count" string="Employees Count: "/>
+                                        <field name="sal_count"/>
+                                    </span>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2">
+                                        <button string="Report" type="object" name="report_button"
+                                                class="btn-info btn-block"/>
+
+                                    </div>
+                                    <div class="col-2">
+                                        <button name="btn_print_pdf_salaries_html" type="object" string="PDF"
+                                                class="btn-info btn-block"/>
+
+                                    </div>
+                                    <div class="col-2">
+                                        <button name="btn_export_excel_salaries" type="object" string="Export Excel"
+                                                class="btn-success btn-block"/>
+
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <field name="salaries_html"/>
+                                </div>
+                            </page>
+                            <page string="Salaries Details">
+                                <div>
+                                    <button string="Export Excel" type="object" name="print_report_excel"
+                                            class="btn-outline-success"/>
+                                    <button string="DELETE RECORDS" type="object" name="button_delete_salaries"
+                                            class="btn-outline-danger" groups="ab_hr.group_ab_hr_payroll_specialist"/>
+
+                                </div>
+                                <field name="sal_ids" context="{'group_by':'employee_id',
+                                       'search_default_group_employee_id':1,
+                                       'allow_edit': '1'}">
+                                    <list string="Payroll List">
+                                        <field name="id" optional="show"/>
+                                        <field name="status" class="h6"
+                                               widget="badge"
+                                               decoration-info="status=='for_entry'"
+                                               decoration-warning="status=='suspended_salaries'"
+                                               decoration-success="status=='for_manager'"
+                                               decoration-danger="status=='negative_salaries'"
+                                        />
+                                        <field name="accid" optional="show"/>
+                                        <field name="employee_id" class="text-wrap" optional="show"/>
+                                        <field name="job_id" class="text-wrap" optional="show"/>
+                                        <field name="user_line_owner" class="text-wrap" optional="show"/>
+                                        <field name="payment_type_id" class="text-wrap" optional="show"/>
+                                        <field name="territory" class="text-wrap" optional="show"/>
+                                        <field name="workplace" class="text-wrap" optional="show"/>
+                                        <field name="hr_name_entry" class="text-wrap" optional="hide"/>
+                                        <field name="store_id" class="text-wrap" optional="hide"/>
+                                        <field name="due_date" class="text-wrap" optional="hide"/>
+                                        <field name="section" class="text-wrap" optional="hide"/>
+                                        <field name="section_type" class="text-wrap" optional="hide"/>
+                                        <field name="section_value" class="text-wrap" optional="hide"/>
+                                        <field name="file_name" class="text-wrap" optional="hide"/>
+                                        <field name="sheet_name" class="text-wrap" optional="hide"/>
+                                        <field name="net_salary" class="text-wrap" optional="hide"/>
+                                        <field name="write_date" optional="hide" class="text-wrap"/>
+                                        <field name="create_date" optional="hide" class="text-wrap"/>
+                                        <field name="create_uid" optional="hide" class="text-wrap"/>
+                                        <field name="write_uid" optional="hide" class="text-wrap"/>
+                                    </list>
+
+                                </field>
+                            </page>
+                            <page string="Salaries Comparing"
+                                  groups="ab_hr.group_ab_hr_payroll_specialist,
+                                          ab_hr.group_ab_hr_payroll_accountant">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <button name="btn_browse_salaries_compare_html" type="object" string="Browse"
+                                                class="btn-warning btn-block"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <button name="btn_browse_issues_salaries_compare_html" type="object"
+                                                string="Browse Issues"
+                                                class="btn-warning btn-block"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <button name="btn_print_pdf_salaries_compare_html" type="object"
+                                                string="Print PDF"
+                                                class="btn-info btn-block"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <button name="btn_export_excel_salaries_compare" type="object"
+                                                string="Export Excel"
+                                                class="btn-success btn-block"/>
+                                    </div>
+                                </div>
+                                <group col="4">
+                                    <field name="min_ratio"/>
+                                    <field name="max_ratio"/>
+                                </group>
+                                <group col="4">
+                                    <field name="comparing_start_month"/>
+                                    <field name="comparing_end_month"/>
+                                </group>
+                                <div>
+                                    <field name="salaries_compare_html"/>
+                                </div>
+
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+
+                </form>
+
+            </field>
+        </record>
+
+        <!-- ab_hr_action_wizard_act -->
+        <record model="ir.actions.act_window" id="ab_hr_action_wizard_act">
+            <field name="name">ab_hr_action_wizard.act</field>
+            <field name="res_model">ab_hr_action_wizard</field>
+            <field name="view_mode">list,form,pivot,graph</field>
+        </record>
+
+        <menuitem name="Action"
+                  parent="ab_hr_salaries_root"
+                  id="ab_hr_action_wizard_menu"
+                  groups="ab_hr.group_ab_hr_payroll_entry"
+                  action="ab_hr_action_wizard_act"
+                  sequence="20"/>
+
+
+    </data>
+</odoo>

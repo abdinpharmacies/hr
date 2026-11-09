@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_root"
+                  name="Management Tools"
+                  sequence="900"
+                  web_icon="ab_management_tools,static/description/icon.png"/>
+    </data>
+</odoo>

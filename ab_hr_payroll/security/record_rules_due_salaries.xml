@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_due_salaries_qry_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_due_salaries_qry_prevent_all</field>
+            <field name="model_id" ref="model_ab_due_salaries_qry"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_due_salaries_qry_accountant" model="ir.rule">
+            <field name="name">rule_ab_due_salaries_qry_accountant</field>
+            <field name="model_id" ref="model_ab_due_salaries_qry"/>
+            <field name="domain_force">
+                [
+                    ('costcenter_id', 'in', user.costcenter_ids.ids),
+                    ('balance', '&gt;', 0),
+                    ('account_id', '=', ref('ab_accounting.ab_accounting_account_guide_due_salaries_cash').id),
+                ]
+
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+        </record>
+
+        <record id="manager_ab_due_salaries_qry" model="ir.rule">
+            <field name="name">manager_ab_due_salaries_qry</field>
+            <field name="model_id" ref="model_ab_due_salaries_qry"/>
+            <field name="domain_force">[('balance', '&gt;', 1), ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_manager'))]"/>
+        </record>
+        <record id="admin_ab_due_salaries_qry" model="ir.rule">
+            <field name="name">admin_ab_due_salaries_qry</field>
+            <field name="model_id" ref="model_ab_due_salaries_qry"/>
+            <field name="domain_force">[(1, '=', 1), ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+    </data>
+</odoo>

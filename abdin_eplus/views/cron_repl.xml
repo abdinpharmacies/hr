@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <data>
+        <record id="eplus_repl_cron" model="ir.cron" forcecreate="True">
+            <field name="name">ePlus Replication Cron</field>
+            <field name="active">False</field>
+            <!--            <field name="user_id" ref="base.user_root"/>-->
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+
+
+            <field name="model_id" ref="model_abdin_eplus_replication"/>
+            <field name="state">code</field>
+            <field name="code">model.replicate_abdin_eplus()</field>
+        </record>
+
+        <record id="eplus_repl_tables_cron" model="ir.cron" forcecreate="True">
+            <field name="name">ePlus Tables Replication Cron</field>
+            <field name="active">False</field>
+            <!--            <field name="user_id" ref="base.user_root"/>-->
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+
+
+            <field name="model_id" ref="model_abdin_eplus_replication"/>
+            <field name="state">code</field>
+            <field name="code">model.replicate_tables()</field>
+        </record>
+        <record id="eplus_repl_purchase_cron" model="ir.cron" forcecreate="True">
+            <field name="name">ePlus Purchase Replication Cron</field>
+            <field name="active">False</field>
+            <!--            <field name="user_id" ref="base.user_root"/>-->
+            <field name="interval_number">2</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+
+
+            <field name="model_id" ref="model_abdin_eplus_replication"/>
+            <field name="state">code</field>
+            <field name="code">model.replicate_purchase()</field>
+        </record>
+
+        <!--
+                <record id="eplus_repl_cron_x_days_later" model="ir.cron" forcecreate="True">
+                    <field name="name">ePlus Replication x_days_later</field>
+                    <field name="active">True</field>
+                    &lt;!&ndash;            <field name="user_id" ref="base.user_root"/>&ndash;&gt;
+                    <field name="interval_number">1</field>
+                    <field name="interval_type">day</field>
+                    <field name="nextcall"
+                           eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+
+
+                    <field name="model_id" ref="model_abdin_eplus_replication"/>
+                    <field name="state">code</field>
+                    <field name="code">model.replicate_abdin_eplus(2)</field>
+                </record>
+        -->
+
+    </data>
+</odoo>
+
+
+        <!--                   eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>-->

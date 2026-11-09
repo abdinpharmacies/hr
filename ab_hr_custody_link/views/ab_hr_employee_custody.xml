@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_employee_view_form_custody_accounts" model="ir.ui.view">
+            <field name="name">ab_hr_employee_view_form_custody_accounts</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='job_occupied']" position="after">
+                    <page string="Employee Accounts" groups="ab_hr.group_ab_hr_co,ab_custody_request.group_ab_custody_request_accounting">
+                        <field name="employee_account_ids" context="{'active_test': False}">
+                            <list decoration-danger="not active">
+                                <field name="active" invisible="1"/>
+                                <field name="is_custody" optional="show"/>
+                                <field name="custody_type" optional="show"/>
+                                <field name="bank" optional="show"/>
+                                <field name="account_number" optional="show"/>
+                                <field name="employee_bank" optional="show"/>
+                                <field name="attachment" optional="show"/>
+                                <button name="btn_toggle_archive" type="object" string="Archive" class="btn-outline-danger" invisible="active == False"/>
+                                <button name="btn_toggle_archive" type="object" string="Unarchive" class="btn-outline-warning" invisible="active == True"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
