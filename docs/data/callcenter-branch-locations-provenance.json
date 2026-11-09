@@ -1,0 +1,14 @@
+{
+  "branch": "e_commerce",
+  "commit": "bd93516314aa0062f1cd6cddc55b550a5e10471d",
+  "files": {
+    "static/src/js/branches.js": "e033aa4cd4101d0b10fef5a4ef045933481e4f0d259b30c166f53dcd0133ef0f",
+    "views/branches_data.xml": "02e8bc62241634a76c89eab6900368c5ee5c573a10c1203b5868a2e8dbdc6e4e",
+    "views/branches_templates.xml": "697f68b8fae5df536812c0a48b3e4c74d9b7e1c151a9f2c7b3cca435480a993f",
+    "i18n/ar.po": "b2e849ad799c7be522db445c1d636edcf1c4f7cc2c08c880a1fecce52b2c7543",
+    "i18n/ar_001.po": "ba5daf816ee001bce7818676d0d4d201a19b0f44a845fc37afe0b48d3471bbee"
+  },
+  "csv_sha256": "0eefd40b996725f1c7517c91d0162fe9c56eff5804bc53f0024cb6f13633ad26",
+  "rows": 42,
+  "regions": 9
+}
