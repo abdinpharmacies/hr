@@ -1,5 +1,6 @@
 import secrets
 import time
+from urllib.parse import urlsplit
 
 from odoo import fields
 from odoo.addons.sale.controllers.portal import CustomerPortal as SaleCustomerPortal
@@ -10,6 +11,40 @@ from .auth import is_valid_egyptian_mobile, normalize_egyptian_phone
 
 
 class AbStorefrontCustomerPortal(SaleCustomerPortal):
+    @route()
+    def portal_address_country_info(self, country, address_type, **kw):
+        result = super().portal_address_country_info(country, address_type, **kw)
+        language = request.env.lang or ""
+        website_languages = request.website.language_ids
+        referrer = urlsplit(request.httprequest.referrer or "")
+        url_code = referrer.path.strip("/").split("/", 1)[0]
+        page_language = next(
+            (lang.code for lang in website_languages if lang.url_code == url_code),
+            "",
+        )
+        if page_language:
+            language = page_language
+        elif referrer.netloc == request.httprequest.host:
+            language = request.website.default_lang_id.code
+        elif not language.startswith("ar"):
+            cookie_language = request.httprequest.cookies.get("frontend_lang", "")
+            if cookie_language in website_languages.mapped("code"):
+                language = cookie_language
+        if (
+            country.code == "EG"
+            and language.startswith("ar")
+            and language in website_languages.mapped("code")
+        ):
+            state_names = {
+                state.id: state._ab_storefront_name()
+                for state in country.sudo().state_ids.with_context(lang=language)
+            }
+            result["states"] = [
+                (state_id, state_names.get(state_id, name), code)
+                for state_id, name, code in result["states"]
+            ]
+        return result
+
     def _prepare_orders_domain(self, partner):
         customer_domain = fields.Domain(
             "partner_id", "child_of", [partner.commercial_partner_id.id]

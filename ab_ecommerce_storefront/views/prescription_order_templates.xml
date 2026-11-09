@@ -223,7 +223,7 @@
                                                             t-as="state"
                                                             t-att-value="state.id"
                                                             t-att-selected="str(state.id) == str(guest_state_id or '')"
-                                                            t-out="state.name"/>
+                                                            t-out="state.with_context(lang=request.lang.code)._ab_storefront_name()"/>
                                                 </select>
                                             </div>
                                             <div class="col-12 col-md-6 ab-prescription-location-field">

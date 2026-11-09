@@ -646,7 +646,7 @@
                         t-as="s"
                         t-att-value="s.id"
                         t-att-selected="s.id == (int(state_id) if state_id else partner_sudo.state_id.id)"
-                        t-out="s.name"
+                        t-out="s.with_context(lang=request.lang.code)._ab_storefront_name()"
                     />
                 </select>
             </div>

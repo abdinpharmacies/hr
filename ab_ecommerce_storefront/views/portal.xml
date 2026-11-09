@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="portal_governorate_options" inherit_id="portal.address_form_fields" name="Abdin Portal Governorate Names">
+        <xpath expr="//option[@t-foreach='country_states']" position="attributes">
+            <attribute name="t-out">s.with_context(lang=request.lang.code)._ab_storefront_name()</attribute>
+        </xpath>
+    </template>
+
     <template id="order_tracking_timeline" name="Abdin Order Tracking Timeline">
         <t t-set="tracking_steps" t-value="tracking_record._ab_storefront_tracking_steps()"/>
         <t t-set="delivery_completed" t-value="tracking_steps and tracking_steps[-1]['key'] in ('delivered', 'prescription_delivered') and tracking_steps[-1]['state'] in ('complete', 'current')"/>

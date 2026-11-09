@@ -13,6 +13,9 @@ const PERMISSION_NEEDED_LABEL = _t("Location permission is required");
 const SECURE_LOCATION_LABEL = _t("Your browser needs a secure HTTPS connection to use your location. Search by area or governorate instead.");
 const REVERSE_GEOCODE_URL = "https://nominatim.openstreetmap.org/reverse";
 const RECENT_LOCATIONS_KEY = "ab_storefront_recent_locations";
+const GEOCODER_LANGUAGE = document.documentElement.lang.startsWith("ar")
+    ? "ar"
+    : document.documentElement.lang.replace("_", "-") || "en";
 const REGION_LABELS = {
     Egypt: _t("Egypt"),
     Cairo: _t("Cairo"),
@@ -23,10 +26,35 @@ const REGION_LABELS = {
     Dakahlia: _t("Dakahlia"),
     Sohag: _t("Sohag"),
     Assiut: _t("Assiut"),
+    Asyut: _t("Asyut"),
+    "Al Sharqia": _t("Al Sharqia"),
+    "Red Sea": _t("Red Sea"),
+    "Red Sea · Hurghada": _t("Red Sea · Hurghada"),
+    Beheira: _t("Beheira"),
+    Faiyum: _t("Faiyum"),
+    Gharbia: _t("Gharbia"),
+    Ismailia: _t("Ismailia"),
+    Monufia: _t("Monufia"),
+    Minya: _t("Minya"),
+    Luxor: _t("Luxor"),
+    "New Valley": _t("New Valley"),
+    "6th of October": _t("6th of October"),
+    Suez: _t("Suez"),
+    Aswan: _t("Aswan"),
+    "Beni Suef": _t("Beni Suef"),
+    "Port Said": _t("Port Said"),
+    Damietta: _t("Damietta"),
+    Helwan: _t("Helwan"),
+    "South Sinai": _t("South Sinai"),
+    "Kafr el-Sheikh": _t("Kafr el-Sheikh"),
+    Matrouh: _t("Matrouh"),
+    Qena: _t("Qena"),
+    "North Sinai": _t("North Sinai"),
 };
 
 function regionLabel(region) {
-    return REGION_LABELS[region] || region;
+    const name = region?.replace(/\s+Governorate$/i, "") || "";
+    return REGION_LABELS[name] || region;
 }
 
 function storeRecentLocation(location) {
@@ -154,7 +182,7 @@ export class AbStorefrontCurrentLocation extends Interaction {
         url.searchParams.set("addressdetails", "1");
         url.searchParams.set("lat", latitude);
         url.searchParams.set("lon", longitude);
-        url.searchParams.set("accept-language", document.documentElement.lang.replace("_", "-") || "en");
+        url.searchParams.set("accept-language", GEOCODER_LANGUAGE);
 
         try {
             const response = await fetch(url.toString(), { method: "GET" });
@@ -459,7 +487,7 @@ export class AbStorefrontLocationPicker extends Interaction {
         url.searchParams.set("addressdetails", "1");
         url.searchParams.set("lat", latitude);
         url.searchParams.set("lon", longitude);
-        url.searchParams.set("accept-language", document.documentElement.lang.replace("_", "-") || "en");
+        url.searchParams.set("accept-language", GEOCODER_LANGUAGE);
 
         try {
             const response = await fetch(url.toString(), { method: "GET" });

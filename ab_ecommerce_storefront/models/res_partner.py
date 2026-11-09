@@ -21,6 +21,20 @@ AVATAR_SELECTION = [
 class ResPartner(models.Model):
     _inherit = "res.partner"
 
+    def _ab_storefront_location_name(self):
+        self.ensure_one()
+        city = (self.city or "").strip()
+        state = self.state_id
+        if city and (not state or city.casefold() != state.name.casefold()):
+            return city
+        return (
+            (state and state._ab_storefront_name())
+            or city
+            or self.country_id.name
+            or self.street
+            or ""
+        )
+
     ab_storefront_avatar = fields.Selection(
         selection=AVATAR_SELECTION,
         string="Storefront Avatar",

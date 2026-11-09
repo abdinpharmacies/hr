@@ -17,6 +17,11 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_storefront_image_sync_wizard_form
+msgid "Scan Images"
+msgstr "فحص الصور"
+
+#. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/eplus_sync_guard.py:0
 msgid "Eplus inventory sync is blocked because website deliveries are not reflected in Eplus stock. Syncing now would restore sold stock."
@@ -8525,6 +8530,8 @@ msgstr "المحافظات"
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#. odoo-python
 msgid "Cairo"
 msgstr "القاهرة"
 
@@ -8534,6 +8541,8 @@ msgstr "القاهرة"
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#. odoo-python
 msgid "Giza"
 msgstr "الجيزة"
 
@@ -8541,6 +8550,8 @@ msgstr "الجيزة"
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#. odoo-python
 msgid "Alexandria"
 msgstr "الإسكندرية"
 
@@ -8550,6 +8561,8 @@ msgstr "الإسكندرية"
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#. odoo-python
 msgid "Qalyubia"
 msgstr "القليوبية"
 
@@ -8564,6 +8577,8 @@ msgstr "الشرقية"
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#. odoo-python
 msgid "Dakahlia"
 msgstr "الدقهلية"
 
@@ -8573,6 +8588,8 @@ msgstr "الدقهلية"
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#. odoo-python
 msgid "Sohag"
 msgstr "سوهاج"
 
@@ -14049,11 +14066,218 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
 msgid "This offer is referenced by an order. Archive it instead."
 msgstr "هذا العرض مرتبط بطلب. قم بأرشفته بدلًا من حذفه."
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Red Sea"
+msgstr "البحر الأحمر"
+
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_storefront_image_sync_wizard_form
-msgid "Scan Images"
-msgstr "فحص الصور"
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Red Sea · Hurghada"
+msgstr "البحر الأحمر · الغردقة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Beheira"
+msgstr "البحيرة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Faiyum"
+msgstr "الفيوم"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Gharbia"
+msgstr "الغربية"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Ismailia"
+msgstr "الإسماعيلية"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Monufia"
+msgstr "المنوفية"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Minya"
+msgstr "المنيا"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Luxor"
+msgstr "الأقصر"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "New Valley"
+msgstr "الوادي الجديد"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Al Sharqia"
+msgstr "الشرقية"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "6th of October"
+msgstr "السادس من أكتوبر"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Suez"
+msgstr "السويس"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Aswan"
+msgstr "أسوان"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Asyut"
+msgstr "أسيوط"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Beni Suef"
+msgstr "بني سويف"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Port Said"
+msgstr "بورسعيد"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Damietta"
+msgstr "دمياط"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Helwan"
+msgstr "حلوان"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "South Sinai"
+msgstr "جنوب سيناء"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Kafr el-Sheikh"
+msgstr "كفر الشيخ"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Matrouh"
+msgstr "مطروح"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Qena"
+msgstr "قنا"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/res_country_state.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "North Sinai"
+msgstr "شمال سيناء"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14061,11 +14285,13 @@ msgstr "فحص الصور"
 msgid "An image exceeds the 30 MB file limit."
 msgstr "تتجاوز إحدى الصور الحد الأقصى البالغ 30 ميجابايت."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "An uploaded image has an invalid path."
 msgstr "مسار إحدى الصور المرفوعة غير صالح."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14073,11 +14299,13 @@ msgstr "مسار إحدى الصور المرفوعة غير صالح."
 msgid "Choose Folder"
 msgstr "اختيار مجلد"
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml:0
 msgid "Choose ZIP File"
 msgstr "اختيار ملف ZIP"
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14085,21 +14313,25 @@ msgstr "اختيار ملف ZIP"
 msgid "Choose a ZIP file first."
 msgstr "اختر ملف ZIP أولاً."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "Choose and upload an image folder or ZIP file first."
 msgstr "اختر مجلد صور أو ملف ZIP وارفعه أولاً."
 
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_website_sale_add_many_by_codes_wizard__source_mode__folder
 msgid "Folder on this device"
 msgstr "مجلد على هذا الجهاز"
 
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__source_mode
 msgid "Image source"
 msgstr "مصدر الصور"
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14107,17 +14339,20 @@ msgstr "مصدر الصور"
 msgid "Image upload failed."
 msgstr "فشل رفع الصور."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
 msgid "Image upload failed. Check your connection and try again."
 msgstr "فشل رفع الصور. تحقق من الاتصال وحاول مرة أخرى."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
 msgid "Invalid image upload operation."
 msgstr "عملية رفع الصور غير صالحة."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14127,11 +14362,13 @@ msgstr "عملية رفع الصور غير صالحة."
 msgid "No supported image files were selected."
 msgstr "لم يتم اختيار ملفات صور مدعومة."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/image_sync_upload.js:0
 msgid "Save the image source before uploading."
 msgstr "احفظ مصدر الصور قبل الرفع."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14139,11 +14376,13 @@ msgstr "احفظ مصدر الصور قبل الرفع."
 msgid "Select the matching image source before uploading."
 msgstr "اختر مصدر الصور المناسب قبل الرفع."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "Start a ZIP upload before adding images."
 msgstr "ابدأ رفع ملف ZIP قبل إضافة الصور."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14151,11 +14390,13 @@ msgstr "ابدأ رفع ملف ZIP قبل إضافة الصور."
 msgid "Start a folder upload before adding images."
 msgstr "ابدأ رفع المجلد قبل إضافة الصور."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "The ZIP contains an unsupported image file."
 msgstr "يحتوي ملف ZIP على صورة غير مدعومة."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14163,11 +14404,13 @@ msgstr "يحتوي ملف ZIP على صورة غير مدعومة."
 msgid "The ZIP file could not be opened."
 msgstr "تعذر فتح ملف ZIP."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
 msgid "The ZIP file exceeds the 512 MB upload limit."
 msgstr "يتجاوز ملف ZIP حد الرفع البالغ 512 ميجابايت."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14179,11 +14422,13 @@ msgstr ""
 "تُرفع الملفات من هذا الجهاز إلى خادم أودو. افحص الصور بعد الرفع لمراجعة "
 "المطابقات."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/controllers/image_sync_upload.py:0
 msgid "The image synchronization session is no longer available."
 msgstr "لم تعد جلسة مزامنة الصور متاحة."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14191,11 +14436,13 @@ msgstr "لم تعد جلسة مزامنة الصور متاحة."
 msgid "The selected image files could not be read."
 msgstr "تعذرت قراءة ملفات الصور المختارة."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "The uploaded image folder is unavailable."
 msgstr "مجلد الصور المرفوعة غير متاح."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14203,11 +14450,13 @@ msgstr "مجلد الصور المرفوعة غير متاح."
 msgid "This ZIP file exceeds the upload limit."
 msgstr "يتجاوز ملف ZIP حد الرفع."
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "This image folder exceeds the upload limit."
 msgstr "يتجاوز مجلد الصور حد الرفع."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14215,16 +14464,19 @@ msgstr "يتجاوز مجلد الصور حد الرفع."
 msgid "Uploading images:"
 msgstr "جارٍ رفع الصور:"
 
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/image_sync_wizard.py:0
 msgid "You can only upload images to your own synchronization session."
 msgstr "يمكنك رفع الصور إلى جلسة المزامنة الخاصة بك فقط."
 
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_website_sale_add_many_by_codes_wizard__source_mode__zip
 msgid "ZIP file on this device"
 msgstr "ملف ZIP على هذا الجهاز"
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14237,30 +14489,36 @@ msgstr "صورة جاهزة للفحص"
 msgid "Preview Source Mode"
 msgstr "وضع مصدر المعاينة"
 
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_directory
 msgid "Upload Directory"
 msgstr "مجلد الرفع"
+
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_file_count
 msgid "Upload File Count"
 msgstr "عدد الملفات المرفوعة"
 
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_name
 msgid "Upload Name"
 msgstr "اسم الملفات المرفوعة"
+
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_ready
 msgid "Upload Ready"
 msgstr "الرفع جاهز"
 
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_source_mode
 msgid "Upload Source Mode"
 msgstr "وضع مصدر الرفع"
+
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_sale_add_many_by_codes_wizard__upload_total_bytes
@@ -14273,6 +14531,7 @@ msgstr "إجمالي حجم الملفات المرفوعة"
 msgid ""
 "Folder selection is unavailable in this browser. Choose a ZIP file instead."
 msgstr "اختيار المجلد غير متاح في هذا المتصفح. اختر ملف ZIP بدلاً منه."
+
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript

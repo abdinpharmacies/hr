@@ -28,6 +28,15 @@ class AbEcommerceStorefrontShop(WebsiteSale):
         country = super()._get_default_country(order_sudo=order_sudo, **kwargs)
         return country or request.website.company_id.country_id
 
+    def _prepare_address_form_values(self, *args, **kwargs):
+        values = super()._prepare_address_form_values(*args, **kwargs)
+        if kwargs.get("order_sudo") and not values.get("country"):
+            country = request.website.company_id.country_id
+            if country.code == "EG":
+                values["country"] = country
+                values["country_states"] = country.state_ids
+        return values
+
     def _get_mandatory_address_fields(self, country_sudo):
         fields = super()._get_mandatory_address_fields(country_sudo)
         fields.discard("zip")

@@ -126,7 +126,7 @@
                 <t t-set="ab_location_partner" t-value="False if request.env.user._is_public() else request.env.user.partner_id"/>
                 <t t-set="ab_location_saved_addresses" t-value="ab_location_partner and ab_location_partner.child_ids.filtered(lambda address: address.type in ('delivery', 'other') and (address.city or address.state_id or address.country_id or address.street))[:1]"/>
                 <t t-set="ab_location_address" t-value="ab_location_saved_addresses and ab_location_saved_addresses[0] or ab_location_partner"/>
-                <t t-set="ab_location_name" t-value="ab_location_address and (ab_location_address.city or ab_location_address.state_id.name or ab_location_address.country_id.name or ab_location_address.street) or ''"/>
+                <t t-set="ab_location_name" t-value="ab_location_address and ab_location_address._ab_storefront_location_name() or ''"/>
                 <t t-set="ab_location_label" t-value="website._ab_storefront_location_label(ab_location_name)"/>
 
                 <div class="ab-storefront-announcement">
