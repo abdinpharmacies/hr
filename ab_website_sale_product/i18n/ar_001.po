@@ -5921,3 +5921,7 @@ msgstr "أمثلة لأكواد تم تخطيها"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_legacy_publication_import__published_count
 msgid "Unique Products to Match"
 msgstr "منتجات فريدة للمطابقة"
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
+msgid "An export product without a code could not be matched uniquely: %s"
+msgstr "تعذرت مطابقة منتج في ملف التصدير بدون كود بصورة فريدة: %s"

@@ -138,6 +138,17 @@ class TestLegacyPublicationImport(TransactionCase):
         self.assertTrue(axe.website_product_tmpl_id.is_published)
         self.assertTrue(dozova.website_product_tmpl_id.is_published)
 
+    def test_json_uncoded_product_matches_unique_name(self):
+        product = self.product('LEGACY-JSON-UNIQUE', 'SYNC JSON UNIQUE 150 ML 1 BOX')
+        wizard = self.wizard([product.code])
+        payload = json.loads(base64.b64decode(wizard.source_file))
+        payload['products'] = [{'id': 1, 'default_code': False, 'name': 'SYNC JSON UNIQUE 150 ML--'}]
+        wizard.source_file = base64.b64encode(json.dumps(payload).encode())
+        wizard.action_preview()
+        self.assertEqual(wizard.published_count, 1)
+        wizard.action_apply()
+        self.assertTrue(product.website_product_tmpl_id.is_published)
+
     def test_unlinked_templates_follow_export_too(self):
         Template = self.env['product.template'].sudo()
         included = Template.create({

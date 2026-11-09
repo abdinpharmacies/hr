@@ -72,17 +72,26 @@ class LegacyPublicationImport(models.TransientModel):
             raise UserError(_("The old website publication export is incomplete or invalid."))
         codes = set()
         source_ids = set()
+        names_without_code = set()
         for row in source["products"]:
             if not isinstance(row, dict) or type(row.get("id")) is not int or row["id"] <= 0:
                 raise UserError(_("The old website publication export contains an invalid product."))
             code = row.get("default_code")
             if not isinstance(code, str) or not code.strip():
-                raise UserError(_("Every published old website product must have a code."))
+                name = row.get("name")
+                if not isinstance(name, str) or not name.strip():
+                    raise UserError(_("Every published old website product must have a code."))
+                names_without_code.add(name.strip())
+                if row["id"] in source_ids:
+                    raise UserError(_("The old website publication export contains duplicate IDs or codes."))
+                source_ids.add(row["id"])
+                continue
             code = code.strip()
             if row["id"] in source_ids or code in codes:
                 raise UserError(_("The old website publication export contains duplicate IDs or codes."))
             source_ids.add(row["id"])
             codes.add(code)
+        self._resolve_uncoded_names(names_without_code, codes)
         return raw, source, codes
 
     def _load_csv_source(self, raw):
@@ -115,18 +124,20 @@ class LegacyPublicationImport(models.TransientModel):
             raise UserError(_("Upload a valid publication export JSON or CSV file.")) from None
         if not codes and not names_without_code or len(codes) + len(names_without_code) > 200000:
             raise UserError(_("The old website publication export is incomplete or invalid."))
-        if names_without_code:
-            Product = self.env["ab_product"].sudo().with_context(active_test=False)
-            for name in sorted(names_without_code):
-                words = name.replace("--", " ").split()
-                domain = [("name", "ilike", word) for word in words[:3]]
-                products = Product.search(domain).filtered(
-                    lambda product: self._publication_name_key(product.name) == self._publication_name_key(name)
-                )
-                if len(products) != 1 or not products.code:
-                    raise UserError(_("A CSV product without a code could not be matched uniquely: %s") % name)
-                codes.add(products.code)
+        self._resolve_uncoded_names(names_without_code, codes)
         return raw, {"exported_at": ""}, codes
+
+    def _resolve_uncoded_names(self, names_without_code, codes):
+        Product = self.env["ab_product"].sudo().with_context(active_test=False)
+        for name in sorted(names_without_code):
+            words = name.replace("--", " ").split()
+            domain = [("name", "ilike", word) for word in words[:3]]
+            products = Product.search(domain).filtered(
+                lambda product: self._publication_name_key(product.name) == self._publication_name_key(name)
+            )
+            if len(products) != 1 or not products.code:
+                raise UserError(_("An export product without a code could not be matched uniquely: %s") % name)
+            codes.add(products.code)
 
     @staticmethod
     def _publication_name_key(name):
