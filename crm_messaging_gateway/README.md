@@ -1,3 +1,5 @@
+> For the callcenter PostgreSQL deployment, use [the current dual-channel runbook](../docs/omnichannel-callcenter-runbook.md). SQLite instructions below describe an optional deployment, not a migration requirement. Per-account sending and dedicated WhatsApp Odoo credentials are described in that runbook.
+
 # CRM messaging integration
 
 SQLite storage, consistent backups and the optional WhatsApp Chatter bridge are documented in [SQLITE.md](SQLITE.md). PostgreSQL remains supported for compatibility and controlled migration.
