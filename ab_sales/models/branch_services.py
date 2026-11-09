@@ -40,22 +40,36 @@ class BranchServices(models.AbstractModel):
                 raise UserError(_('The branch returned an invalid snapshot.'))
             offset = next_offset
 
-    def _balances(self, store, serials):
-        started = datetime.utcnow()
+    def _balance_snapshot(self, store, serials):
+        """Validated live values, without changing the persistent inventory cache."""
         serials = sorted({int(s) for s in serials if s})
-        result, fetched = [], False
+        result = []
         for offset in range(0, len(serials), 200):
             batch = serials[offset:offset + 200]
             response = self._call(store, 'get_product_balances', batch)
-            rows = response['data']
-            self._validate_balance_rows(store, rows)
-            if {r['product_eplus_serial'] for r in rows} != set(batch):
-                raise UserError(_('Some products are unavailable at the branch.'))
-            result.extend(rows)
-            fetched = response['fetched_at']
-        self.env['ab_sales_inventory']._apply_api_balances(store, result, fetched, started=started)
-        saved = self.env['ab_sales_inventory']._branch_sync_metadata(store, serials)
-        return [dict(row, balance=saved[row['product_eplus_serial']]['balance']) for row in result]
+            try:
+                rows = response['data']
+                if not isinstance(rows, list) or any(
+                        not isinstance(row, dict)
+                        or type(row.get('store_eplus_serial')) is not int
+                        or any(type(row.get(key)) not in (int, float) for key in ('balance', 'default_price'))
+                        for row in rows):
+                    raise ValueError('Invalid rows')
+                self._validate_balance_rows(store, rows)
+                if {r['product_eplus_serial'] for r in rows} != set(batch):
+                    raise ValueError('Incomplete balance snapshot')
+                if not isinstance(response['fetched_at'], str):
+                    raise ValueError('Invalid timestamp')
+                fetched = fields.Datetime.to_datetime(response['fetched_at'])
+                if not fetched:
+                    raise ValueError('Missing timestamp')
+            except (KeyError, TypeError, ValueError, OverflowError):
+                raise UserError(_('The branch returned invalid stock data.')) from None
+            result.extend(dict(row, last_sync_at=fields.Datetime.to_string(fetched)) for row in rows)
+        return result
+
+    def _balances(self, store, serials):
+        return self._balance_snapshot(store, serials)
 
     def _validate_balance_rows(self, store, rows):
         serials = set()
@@ -263,14 +277,13 @@ class ApiPosServices(models.TransientModel):
         self.env['ab_sales_ui_api']._inventory_balance_store_ids(store.id)
         client = self.env['ab_sales_branch_client']
         success = False
+        metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
         try:
-            with self.env.cr.savepoint():
-                client._balances(store, products.mapped('eplus_serial'))
+            rows = client._balance_snapshot(store, products.mapped('eplus_serial'))
+            metadata = {row['product_eplus_serial']: {'balance': row['balance'], 'last_sync_at': row['last_sync_at']} for row in rows}
             success = True
         except (UserError, AccessError):
             _logger.info('Selected branch balance refresh unavailable for store=%s', store.id)
-        totals = self.pos_cached_balance_totals(product_ids, store_id, include_sync_metadata=True)
-        metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
         return {p.id: dict(metadata.get(p.eplus_serial, {}), refresh_success=success,
                            **totals[p.id]) for p in products}
 
@@ -281,8 +294,7 @@ class ApiPosServices(models.TransientModel):
             return self._refresh_selected_balances(store_id, product_ids, False)
         totals = self.pos_cached_balance_totals(product_ids, store_id, include_sync_metadata=True)
         try:
-            with self.env.cr.savepoint():
-                return self._refresh_selected_balances(store_id, product_ids, True)
+            return self._refresh_selected_balances(store_id, product_ids, True)
         except (UserError, AccessError):
             products = self.env['ab_product'].browse(list(totals))
             store = self.env['ab_store'].browse(int(store_id or 0)).exists()
@@ -303,14 +315,12 @@ class ApiPosServices(models.TransientModel):
         if include_sync_metadata:
             # Use the existing validated branch API, including successful empty
             # snapshots. These display reads never change the cashier's line.
-            inventory = self.env['ab_sales_inventory']
             serials = products.mapped('eplus_serial')
-            before_stock = inventory._branch_sync_metadata(store, serials)
             stock_rows = client._stock(store, serials)
             stock_by_serial = {}
             for row in stock_rows:
                 stock_by_serial.setdefault(row['product_eplus_serial'], []).append(row)
-            metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
+            metadata = {row['product_eplus_serial']: {'balance': row['balance'], 'last_sync_at': row['last_sync_at']} for row in rows}
             totals = self.pos_cached_balance_totals(products.ids, store.id, include_sync_metadata=True)
             result = {}
             for product in products:
@@ -319,10 +329,6 @@ class ApiPosServices(models.TransientModel):
                     continue
                 details = dict(metadata[serial], refresh_success=True, **totals[product.id])
                 result[product.id] = details
-                # The stock API has no snapshot timestamp. Keep the badges if
-                # the cache changed while the live stock request was in flight.
-                if details['last_sync_at'] != before_stock.get(serial, {}).get('last_sync_at'):
-                    continue
                 payload = {'data': [dict(row, store_id=store.id, product_id=product.id)
                                     for row in stock_by_serial.get(serial, [])]}
                 details.update(inventory_json=payload,

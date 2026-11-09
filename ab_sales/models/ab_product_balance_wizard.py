@@ -1,6 +1,4 @@
 # models/ab_product_balance_wizard.py
-from datetime import datetime
-
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, UserError
 
@@ -83,7 +81,6 @@ class AbProductBalanceWizard(models.TransientModel):
         reason = self._branch_api_unavailable_reason(store, config)
         if reason:
             raise UserError(reason)
-        started = datetime.utcnow()
         response = config._execute_kw('ab_branch_api', 'get_product_balances',
                                       [config.db_serial, [product.eplus_serial]])
         config._validate_identity(response)
@@ -103,14 +100,9 @@ class AbProductBalanceWizard(models.TransientModel):
             fetched = fields.Datetime.to_datetime(fetched)
         except (TypeError, ValueError, OverflowError):
             raise UserError(_('The branch returned invalid stock data.')) from None
-        inventory = self.env['ab_sales_inventory']
-        # The fixed informational operation above has already authorized this branch.
-        # Do not weaken the general transaction client's employee scope checks.
-        inventory._apply_balance_cache(store, rows, 'branch_api', started, fetched=fetched)
-        snapshot = self.env['ab_sales_all_store_balance']._read([product.eplus_serial])
-        pair = (store.id, product.eplus_serial)
         return {'product_id': product.id, 'store_id': store.id,
-                'balance': snapshot['balances'].get(pair), **snapshot['metadata'].get(pair, {})}
+                'balance': rows[0]['balance'], 'source': 'branch_api',
+                'refreshed_at': fields.Datetime.to_string(fetched)}
 
     @api.depends('product_id')
     def _compute_balance_html(self):
