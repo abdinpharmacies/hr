@@ -26,7 +26,7 @@ saves these values, verifies access, and downloads the initial stock snapshot.
 There is no pairing code, per-replica secret, service-user login, CA bundle, or
 certificate verification step. HTTP and HTTPS are supported; HTTPS certificate
 verification remains disabled as requested. Changing the target or key requires
-Connect again. The existing replica identity (db_serial, 102 for this branch)
+Connect again. The configured replica identity (db_serial)
 and replicated store assignments remain routing/access metadata, not credentials.
 
 Central posts as the authenticated Inventory Writer. The branch employee remains
@@ -125,6 +125,9 @@ stock posting refreshes affected products; connection failures mark the connecti
 for a complete refresh on recovery. Sync Now delivers queued operations then
 refreshes stock. Older installed noupdate retry jobs need their interval reviewed
 during the bounded pilot cutover; fresh installs receive the one-minute schedule.
+When a development branch database is assigned a different replica, retries skip
+operations for stores outside the current replica. Historical operations remain
+in the journal for reconciliation and are never replayed as the new branch.
 
 ## Snapshot replacement
 

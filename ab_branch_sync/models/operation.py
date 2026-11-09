@@ -162,6 +162,10 @@ class CentralOperation(models.Model):
             return
         if self._param('role') != 'branch' or self.direction != 'out' or self.state == 'accepted' or (self.state == 'rejected' and not force_retry):
             return
+        # A repurposed branch keeps its historical journal, but must never replay
+        # a previous branch's operations using the new replica credentials.
+        if not self._uses_central(self.store_id, 'branch'):
+            return
         if not self.try_lock_for_update(allow_referencing=True):
             return
         self.invalidate_recordset()
