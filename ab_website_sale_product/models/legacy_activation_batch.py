@@ -122,7 +122,9 @@ class ActivationBatch(models.Model):
         self.ensure_one()
         if self.review_master_batch_id:
             return self.review_master_batch_id
-        domain = fields.Domain('website_id', '=', self.website_id.id) & fields.Domain('owner_id', '=', self.owner_id.id) & fields.Domain('state', '=', 'done')
+        domain = fields.Domain('website_id', '=', self.website_id.id) & fields.Domain('owner_id', '=', self.owner_id.id) & (
+            fields.Domain('state', '=', 'done') | fields.Domain('staging_state', '=', 'done')
+        )
         latest = self.sudo().search(domain, order='id desc', limit=1)
         return latest.review_master_batch_id or latest or self
 

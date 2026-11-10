@@ -25,7 +25,7 @@ class TestLegacyStagingRows(TransactionCase):
             company_id=cls.website.company_id.id,
         )
 
-    def _batch(self):
+    def _batch(self, renamed_first=False):
         source = (
             'source_id,name,mobile_phone,active\n'
             '1,First,01012345678,t\n'
@@ -39,6 +39,8 @@ class TestLegacyStagingRows(TransactionCase):
             '8,Invalid phone,0,t\n'
             '9,Same invalid phone,0,t\n'
         )
+        if renamed_first:
+            source = source.replace('1,First,01012345678,t\n', '1,First updated,01012345678,t\n', 1)
         batch = self.env['ab_ecommerce_legacy_batch'].with_user(self.owner).create({
             'name': 'All customer rows',
             'website_id': self.website.id,
@@ -118,3 +120,18 @@ class TestLegacyStagingRows(TransactionCase):
         second.sudo().write({'staging_state': 'done', 'review_master_batch_id': first.id})
         action = self.env['ab_ecommerce_legacy_batch'].with_user(self.owner).action_open_latest_customers()
         self.assertEqual(action['res_id'], first.id)
+
+    def test_unprocessed_files_share_rows_and_hide_only_exact_copies(self):
+        first = self._batch()
+        first.action_store_all_rows()
+        first._store_all_rows_job()
+        second = self._batch(renamed_first=True)
+        self.assertEqual(second._review_master(), first)
+        second.action_store_all_rows()
+        second._store_all_rows_job()
+        self.assertEqual(second.review_master_batch_id, first)
+        self.assertEqual(second._mark_duplicate_rows_job(), {'duplicates': 10, 'conflicts': 2})
+        self.assertEqual(first.review_row_count, 10)
+        self.assertEqual(first.review_duplicate_count, 10)
+        self.assertEqual(second.staging_row_ids.filtered(lambda row: row.source_row == 1).duplicate_state, 'unique')
+        self.assertEqual(second.created_count, 0)

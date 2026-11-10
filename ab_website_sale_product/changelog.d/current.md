@@ -2,6 +2,24 @@
 
 ## Recent commits
 
+Commit: `b20d02cf`
+Author: Mohamed Fawzy
+Date: 2026-11-10
+Original subject: `ab_website_sale_product/FIX: open stored customer rows without codes`
+
+User-facing changes:
+
+- Open the latest stored review directly from Eplus Stock even before creating activation codes.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/docs/legacy-customers.md`
+- `ab_website_sale_product/models/legacy_activation_batch.py`
+- `ab_website_sale_product/tests/test_legacy_staging_rows.py`
+
+## Earlier review commit
+
 Commit: `9eb88472`
 Author: Mohamed Fawzy
 Date: 2026-11-10
@@ -88,7 +106,7 @@ Files changed:
 
 ## Current changes before commit:
 
-- Open the unified customer table from Eplus Stock after storing rows, without requiring activation codes to be created.
+- Keep later uploads in the same customer review table while the previous batch awaits code creation.
 
 Files changed:
 
