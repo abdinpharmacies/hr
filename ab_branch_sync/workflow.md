@@ -11,6 +11,20 @@ opening-balance or purchase-accounting modules. Staff enter all stock receipts,
 opening balances and adjustments in central. Branch sales use the central snapshot
 and durable local reservations; an unenrolled native store cannot post a sale.
 
+## Independent replication
+
+Branch Synchronization installs and runs without ab_odoo_replication or
+ab_odoo_connect. Prepare the local branch identity, assigned stores, products,
+units and other required master records before connecting. The ab_replica_db
+model belongs to ab_store and remains the source of branch routing metadata.
+
+When installed separately, ab_odoo_replication continues importing its configured
+sales master data from central. Branch Synchronization does not extend or control
+the replication engine. Stock snapshots, local reservations and outgoing
+synchronization operations remain owned by Branch Synchronization; do not add
+them to master-data replication jobs. Existing replication installations and job
+activation settings are unchanged.
+
 ## Connection and stock
 
 The only authentication credential is a standard Odoo user API key (RPC scope).

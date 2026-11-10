@@ -9,8 +9,7 @@
              'ab_sales_inventory',
              'ab_sales_contract',
              'ab_sales_promo',
-             'ab_hr',
-             'ab_odoo_replication'],
+             'ab_hr'],
  'external_dependencies': {'python': ['requests']},
  'assets': {'web.assets_backend': [
      'ab_branch_sync/static/src/pos/central_status.js',
