@@ -14,7 +14,9 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 from ..services.legacy_activation import LegacyCodeSecurity
-from ..services.legacy_csv import CORRECTED_CODES, INFO_CODES, csv_events, customer_event, issue
+from ..services.legacy_csv import (
+    CORRECTED_CODES, INFO_CODES, MAX_ROWS, csv_events, customer_event, issue, normalized_phone,
+)
 
 
 class ActivationBatch(models.Model):
@@ -53,6 +55,33 @@ class ActivationBatch(models.Model):
     export_count = fields.Integer(readonly=True)
     last_export_at = fields.Datetime(readonly=True)
     chunk_ids = fields.One2many('ab_ecommerce_legacy_chunk', 'batch_id', readonly=True)
+    staging_row_ids = fields.One2many('ab_ecommerce_legacy_staging_row', 'batch_id', readonly=True)
+    review_master_batch_id = fields.Many2one('ab_ecommerce_legacy_batch', readonly=True)
+    review_row_ids = fields.One2many('ab_ecommerce_legacy_staging_row', 'display_batch_id', readonly=True)
+    review_row_count = fields.Integer(string='Customer Rows for Review', compute='_compute_review_row_count')
+    review_duplicate_count = fields.Integer(string='Hidden Exact Duplicates', compute='_compute_review_row_count')
+    staging_state = fields.Selection([
+        ('not_started', 'Not Stored'), ('queued', 'Storing'),
+        ('done', 'Stored'), ('incomplete', 'Incomplete'),
+    ], default='not_started', required=True, readonly=True, string='Row Storage')
+    staging_count = fields.Integer(string='Rows Stored for Review', readonly=True)
+    duplicate_scan_state = fields.Selection([
+        ('not_started', 'Not Checked'), ('queued', 'Checking'), ('done', 'Checked'),
+    ], default='not_started', required=True, readonly=True, string='Duplicate Check')
+    duplicate_count = fields.Integer(string='Exact Duplicate Rows', readonly=True)
+    conflict_count = fields.Integer(string='Identity Conflicts', readonly=True)
+
+    def _compute_review_row_count(self):
+        rows = self.env['ab_ecommerce_legacy_staging_row']
+        for batch in self:
+            batch.review_row_count = rows.search_count([
+                ('display_batch_id', '=', batch.id),
+                ('duplicate_state', '!=', 'exact_duplicate'),
+            ])
+            batch.review_duplicate_count = rows.search_count([
+                ('display_batch_id', '=', batch.id),
+                ('duplicate_state', '=', 'exact_duplicate'),
+            ])
 
     @api.depends('accepted_count', 'total_rows', 'has_blocking_issues', 'issue_count', 'state', 'review_version')
     def _compute_eligibility(self):
@@ -74,6 +103,26 @@ class ActivationBatch(models.Model):
             if batch.company_id not in self.env.companies or (batch.owner_id != user and not user.has_group('base.group_system')):
                 raise AccessError(_('You can manage only your own activation batches in your allowed companies.'))
 
+    @api.model
+    def action_open_latest_customers(self):
+        self._check_operator()
+        domain = fields.Domain('company_id', 'in', self.env.companies.ids) & fields.Domain('state', '=', 'done')
+        if not self.env.user.has_group('base.group_system'):
+            domain &= fields.Domain('owner_id', '=', self.env.uid)
+        batch = self.search(domain, order='id desc', limit=1)
+        action = self.env['ir.actions.actions']._for_xml_id('ab_website_sale_product.action_activation_batches')
+        if batch:
+            action.update(view_mode='form', views=[(self.env.ref('ab_website_sale_product.view_batch_form').id, 'form')], res_id=batch.id)
+        return action
+
+    def _review_master(self):
+        self.ensure_one()
+        if self.review_master_batch_id:
+            return self.review_master_batch_id
+        domain = fields.Domain('website_id', '=', self.website_id.id) & fields.Domain('owner_id', '=', self.owner_id.id) & fields.Domain('state', '=', 'done')
+        latest = self.sudo().search(domain, order='id desc', limit=1)
+        return latest.review_master_batch_id or latest or self
+
     @api.model_create_multi
     def create(self, vals_list):
         if not self.env.su:
@@ -82,7 +131,7 @@ class ActivationBatch(models.Model):
             allowed = {'name', 'website_id', 'source_namespace', 'source_file', 'source_filename', 'source_encoding', 'expires_at'}
             if any(set(values) - allowed for values in vals_list):
                 raise AccessError(_('Activation processing fields cannot be changed directly.'))
-            vals_list = [dict(values, owner_id=self.env.uid, state='draft', accepted_count=0, rejected_count=0, inactive_count=0, created_count=0, skipped_count=0, export_count=0, last_export_at=False, source_digest=False, chunk_ids=[], issue_ids=[], issue_count=0, corrected_count=0, total_rows=0, has_blocking_issues=False, review_version=0) for values in vals_list]
+            vals_list = [dict(values, owner_id=self.env.uid, state='draft', accepted_count=0, rejected_count=0, inactive_count=0, created_count=0, skipped_count=0, export_count=0, last_export_at=False, source_digest=False, chunk_ids=[], issue_ids=[], issue_count=0, corrected_count=0, total_rows=0, has_blocking_issues=False, review_version=0, staging_state='not_started', staging_count=0, duplicate_scan_state='not_started', duplicate_count=0, conflict_count=0) for values in vals_list]
         for values in vals_list:
             self._validate_upload_size(values.get('source_file', self.env.context.get('default_source_file')))
         result = super().create(vals_list)
@@ -141,8 +190,8 @@ class ActivationBatch(models.Model):
             with io.BytesIO(attachment.raw or b'') as source:
                 yield source
 
-    def _diagnostic_events(self, binary):
-        for event in csv_events(binary, self.source_encoding):
+    def _diagnostic_events(self, binary, max_rows=MAX_ROWS):
+        for event in csv_events(binary, self.source_encoding, max_rows=max_rows):
             yield customer_event(event, self.source_namespace)
 
     def _issue_values(self, event, status):
@@ -303,6 +352,171 @@ class ActivationBatch(models.Model):
         })
         return True
 
+    def action_store_all_rows(self):
+        self._check_operator()
+        self._lock_batch()
+        if self.state not in {'ready', 'review'} or self.staging_state != 'not_started' or not self.source_digest:
+            raise UserError(_('Preview an unprocessed customer file before storing its rows.'))
+        self.sudo().write({'staging_state': 'queued', 'review_master_batch_id': self._review_master().id})
+        self.with_user(self.env.user).with_delay(
+            identity_key=f'legacy-staging:{self.id}:0',
+            description=_('Store customer rows for review: %s', self.id),
+        )._store_all_rows_job()
+        return True
+
+    def _store_all_rows_job(self):
+        self._check_operator()
+        self._lock_batch()
+        if self.staging_state != 'queued' or self.state not in {'ready', 'review'}:
+            raise UserError(_('This customer file cannot be stored for review.'))
+        records = []
+        master = self._review_master()
+        checkpoint = self.staging_count
+        count = 0
+        more = False
+        incomplete = False
+        with self._source_stream() as binary:
+            digest = hashlib.sha256()
+            while block := binary.read(1024 * 1024):
+                digest.update(block)
+            if digest.hexdigest() != self.source_digest:
+                raise UserError(_('The source file changed. Preview it again before storing rows.'))
+            binary.seek(0)
+            for event in self._diagnostic_events(binary, max_rows=None):
+                if not event['number']:
+                    if any(problem['issue_code'] in {'invalid_header', 'empty_file'} for problem in event['issues']):
+                        incomplete = True
+                        break
+                    continue
+                if event['number'] <= checkpoint:
+                    continue
+                if count == 10000:
+                    more = True
+                    break
+                values = event.get('values') or event.get('identity_values') or {}
+                records.append({
+                    'batch_id': self.id,
+                    'display_batch_id': master.id,
+                    'source_row': event['number'],
+                    'line_start': event.get('start', 0),
+                    'line_end': event.get('end', 0),
+                    'source_reference': event.get('source_key', ''),
+                    'customer_name': values.get('name', ''),
+                    'mobile_phone': values.get('mobile_phone', ''),
+                    'source_data': json.dumps({
+                        'columns': event.get('original_columns', []),
+                        'values': event.get('source_values', []),
+                        'raw_record': event.get('raw_record', ''),
+                    }, ensure_ascii=False),
+                })
+                count += 1
+                if len(records) == 1000:
+                    self._store_preview_records('ab_ecommerce_legacy_staging_row', records)
+                if any(problem['issue_code'] == 'record_limit' for problem in event['issues']):
+                    incomplete = True
+                    break
+        self._store_preview_records('ab_ecommerce_legacy_staging_row', records)
+        new_count = checkpoint + count
+        self.sudo().write({'staging_state': 'incomplete' if incomplete else 'queued' if more else 'done', 'staging_count': new_count})
+        if more:
+            self.with_user(self.env.user).with_delay(
+                identity_key=f'legacy-staging:{self.id}:{new_count}',
+                description=_('Store customer rows for review: %s', self.id),
+            )._store_all_rows_job()
+        elif not incomplete:
+            self.sudo().write({'duplicate_scan_state': 'queued'})
+            self.with_user(self.env.user).with_delay(
+                identity_key=f'legacy-duplicates:{self.id}',
+                description=_('Check customer duplicates: %s', self.id),
+            )._mark_duplicate_rows_job()
+        return new_count
+
+    def action_review_staging_rows(self):
+        self._check_operator()
+        self.ensure_one()
+        action = self.env['ir.actions.actions']._for_xml_id('ab_website_sale_product.action_legacy_staging_rows')
+        action.update(domain=[('display_batch_id', '=', self._review_master().id)], context={'search_default_workable': 1})
+        return action
+
+    def _staging_pages(self):
+        self.ensure_one()
+        model = self.env['ab_ecommerce_legacy_staging_row'].sudo()
+        last_id = 0
+        while True:
+            rows = model.search_read(
+                fields.Domain('display_batch_id', '=', self._review_master().id) & fields.Domain('id', '>', last_id),
+                ['id', 'source_reference', 'mobile_phone', 'source_data'], order='id', limit=5000,
+            )
+            if not rows:
+                break
+            last_id = rows[-1]['id']
+            yield rows
+
+    def _mark_duplicate_rows_job(self):
+        self._check_operator()
+        self._lock_batch()
+        if self.staging_state != 'done' or self.duplicate_scan_state != 'queued':
+            raise UserError(_('Customer duplicate checking is unavailable.'))
+        first_rows = {}
+        reference_pairs = {}
+        phone_pairs = {}
+        conflicting_references = set()
+        conflicting_phones = set()
+        for rows in self._staging_pages():
+            for row in rows:
+                source = json.loads(row['source_data'] or '{}')
+                fingerprint = hashlib.sha256(json.dumps(
+                    [source.get('columns', []), source.get('values', [])],
+                    ensure_ascii=False, separators=(',', ':'),
+                ).encode()).digest()
+                first_rows.setdefault(fingerprint, row['id'])
+                reference = row['source_reference'] or ''
+                raw_phone = (row['mobile_phone'] or '').strip()
+                phone = normalized_phone(raw_phone)
+                pair = (reference, phone or raw_phone)
+                if reference and reference in reference_pairs and reference_pairs[reference] != pair:
+                    conflicting_references.add(reference)
+                if phone and phone in phone_pairs and (phone_pairs[phone] != reference or not reference):
+                    conflicting_phones.add(phone)
+                if reference:
+                    reference_pairs.setdefault(reference, pair)
+                if phone:
+                    phone_pairs.setdefault(phone, reference)
+        duplicate_count = conflict_count = 0
+        model = self.env['ab_ecommerce_legacy_staging_row'].sudo()
+        stale_domain = fields.Domain('display_batch_id', '=', self._review_master().id) & fields.Domain('duplicate_state', '!=', 'unique')
+        while stale := model.search(stale_domain, limit=5000):
+            stale.write({'duplicate_state': 'unique'})
+        for rows in self._staging_pages():
+            duplicates = []
+            conflicts = []
+            for row in rows:
+                source = json.loads(row['source_data'] or '{}')
+                fingerprint = hashlib.sha256(json.dumps(
+                    [source.get('columns', []), source.get('values', [])],
+                    ensure_ascii=False, separators=(',', ':'),
+                ).encode()).digest()
+                if first_rows[fingerprint] != row['id']:
+                    duplicates.append(row['id'])
+                    continue
+                reference = row['source_reference'] or ''
+                raw_phone = (row['mobile_phone'] or '').strip()
+                phone = normalized_phone(raw_phone)
+                if reference in conflicting_references or phone and phone in conflicting_phones:
+                    conflicts.append(row['id'])
+            if duplicates:
+                model.browse(duplicates).write({'duplicate_state': 'exact_duplicate'})
+                duplicate_count += len(duplicates)
+            if conflicts:
+                model.browse(conflicts).write({'duplicate_state': 'conflict'})
+                conflict_count += len(conflicts)
+        self.sudo().write({
+            'duplicate_scan_state': 'done',
+            'duplicate_count': duplicate_count,
+            'conflict_count': conflict_count,
+        })
+        return {'duplicates': duplicate_count, 'conflicts': conflict_count}
+
     def action_review_issues(self):
         self._check_operator()
         self.ensure_one()
@@ -313,6 +527,8 @@ class ActivationBatch(models.Model):
     def action_reset_preview(self):
         self._check_operator()
         self._lock_batch()
+        if self.staging_state != 'not_started':
+            raise UserError(_('Create a new batch to replace a file already stored for review.'))
         if self.state not in ('draft', 'review', 'ready'):
             raise UserError(_('Only unprocessed batches can be reviewed again.'))
         self.sudo().issue_ids.unlink()
@@ -433,6 +649,8 @@ class ActivationBatch(models.Model):
     def action_generate_codes(self):
         self._check_operator()
         self.ensure_one()
+        if self.staging_state == 'queued':
+            raise UserError(_('Wait for customer rows to finish storing before creating codes.'))
         if self.state not in {'ready', 'processing'} or self.has_blocking_issues or self.review_version != 2:
             raise UserError(_('Prepare the customer preview before creating codes.'))
         self._validate_expiry()
@@ -441,6 +659,8 @@ class ActivationBatch(models.Model):
     def action_process_next(self):
         self._check_operator()
         self._lock_batch()
+        if self.staging_state == 'queued':
+            raise UserError(_('Wait for customer rows to finish storing before creating codes.'))
         if self.state == 'done':
             return {'done': True, 'processed': self.created_count + self.skipped_count, 'total': self.accepted_count}
         if self.state not in {'ready', 'processing'} or self.has_blocking_issues or self.review_version != 2:
@@ -515,6 +735,8 @@ class ActivationBatch(models.Model):
     def action_cancel(self):
         self._check_operator()
         self._lock_batch()
+        if self.staging_state == 'queued':
+            raise UserError(_('Wait for customer rows to finish storing before cancelling the batch.'))
         if self.state == 'cancelled':
             return True
         service = LegacyCodeSecurity(self.env)

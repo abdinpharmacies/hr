@@ -74,6 +74,75 @@
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_legacy_import_issue_search"/>
     </record>
+    <record id="view_legacy_staging_row_list" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_staging_row.list</field>
+        <field name="model">ab_ecommerce_legacy_staging_row</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false" default_order="source_row" decoration-muted="duplicate_state == 'exact_duplicate'" decoration-warning="duplicate_state == 'conflict'">
+                <field name="source_row"/>
+                <field name="source_reference"/>
+                <field name="customer_name"/>
+                <field name="mobile_phone"/>
+                <field name="source_data" optional="hide"/>
+                <field name="duplicate_state" widget="badge"/>
+                <field name="review_state" widget="badge"/>
+                <field name="review_note" optional="hide"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_legacy_staging_row_form" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_staging_row.form</field>
+        <field name="model">ab_ecommerce_legacy_staging_row</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="batch_id" readonly="True"/>
+                            <field name="source_row" readonly="True"/>
+                            <field name="line_start" readonly="True"/>
+                            <field name="line_end" readonly="True"/>
+                        </group>
+                        <group>
+                            <field name="source_reference" readonly="True"/>
+                            <field name="customer_name" readonly="True"/>
+                            <field name="mobile_phone" readonly="True"/>
+                            <field name="duplicate_state" readonly="True"/>
+                            <field name="review_state"/>
+                            <field name="reviewed_by" readonly="True"/>
+                            <field name="reviewed_at" readonly="True"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="review_note"/>
+                        <field name="source_data" readonly="True"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_legacy_staging_row_search" model="ir.ui.view">
+        <field name="name">ab_ecommerce_legacy_staging_row.search</field>
+        <field name="model">ab_ecommerce_legacy_staging_row</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="source_reference"/>
+                <field name="customer_name"/>
+                <field name="mobile_phone"/>
+                <filter name="pending" string="Pending Review" domain="[('review_state', '=', 'pending')]"/>
+                <filter name="reviewed" string="Reviewed" domain="[('review_state', '=', 'reviewed')]"/>
+                <filter name="exact_duplicates" string="Exact Duplicates" domain="[('duplicate_state', '=', 'exact_duplicate')]"/>
+                <filter name="identity_conflicts" string="Identity Conflicts" domain="[('duplicate_state', '=', 'conflict')]"/>
+                <filter name="workable" string="Hide Exact Duplicates" domain="[('duplicate_state', '!=', 'exact_duplicate')]"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_legacy_staging_rows" model="ir.actions.act_window">
+        <field name="name">Customer Rows for Review</field>
+        <field name="res_model">ab_ecommerce_legacy_staging_row</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_legacy_staging_row_search"/>
+    </record>
     <record id="view_batch_list" model="ir.ui.view">
         <field name="name">ab_ecommerce_legacy_batch.list</field>
         <field name="model">ab_ecommerce_legacy_batch</field>
@@ -99,9 +168,11 @@
                 <header>
                     <button name="action_preview" type="object" string="Preview Customers" class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_review_issues" type="object" string="Review All Issues" invisible="not issue_count"/>
-                    <button name="action_recheck" type="object" string="Recheck and Apply Safe Corrections" invisible="state not in ('ready', 'review')"/>
+                    <button name="action_store_all_rows" type="object" string="Store All Rows for Review" invisible="state not in ('ready', 'review') or staging_state != 'not_started'"/>
+                    <button name="action_review_staging_rows" type="object" string="Review Stored Rows" invisible="not review_row_count"/>
+                    <button name="action_recheck" type="object" string="Recheck and Apply Safe Corrections" invisible="state not in ('ready', 'review') or staging_state != 'not_started'"/>
                     <button name="action_download_review" type="object" string="Download Customer Review CSV" invisible="state not in ('ready', 'review') or review_version != 2"/>
-                    <button name="action_reset_preview" type="object" string="Replace File / Review Again" invisible="state not in ('ready', 'review')"/>
+                    <button name="action_reset_preview" type="object" string="Replace File / Review Again" invisible="state not in ('ready', 'review') or staging_state != 'not_started'"/>
                     <button name="action_generate_codes" type="object" string="Create Customer Codes" class="oe_highlight" invisible="state not in ('ready', 'processing') or review_version != 2"/>
                     <button name="action_download" type="object" string="Download SMS File" class="oe_highlight" invisible="state != 'done'"/>
                     <button name="action_cancel" type="object" string="Cancel and Invalidate Unused Codes" invisible="state == 'cancelled'" confirm="Unused codes in this batch will stop working. Continue?"/>
@@ -110,6 +181,9 @@
                 <sheet>
                     <field name="has_blocking_issues" invisible="True"/>
                     <field name="review_version" invisible="True"/>
+                    <div class="alert alert-warning" role="alert" invisible="staging_state != 'incomplete'">
+                        Customer row storage stopped because the file header or record boundary could not be read safely. Correct the source file and create a new batch.
+                    </div>
                     <div class="alert alert-warning" role="alert" invisible="state not in ('ready', 'review') or review_version == 2">
                         Recheck this saved preview to apply the current corrections and eligibility rules.
                     </div>
@@ -132,6 +206,13 @@
                         <group>
                             <field name="owner_id"/>
                             <field name="total_rows"/>
+                            <field name="staging_count" invisible="state == 'done' and staging_state == 'not_started'"/>
+                            <field name="review_row_count"/>
+                            <field name="review_duplicate_count"/>
+                            <field name="staging_state" widget="badge" invisible="state == 'done' and staging_state == 'not_started'"/>
+                            <field name="duplicate_scan_state" widget="badge" invisible="state == 'done' and staging_state == 'not_started'"/>
+                            <field name="duplicate_count" invisible="state == 'done' and staging_state == 'not_started'"/>
+                            <field name="conflict_count" invisible="state == 'done' and staging_state == 'not_started'"/>
                             <field name="eligible_count"/>
                             <field name="eligible_percentage"/>
                             <field name="existing_count"/>
@@ -151,6 +232,9 @@
                         Duplicate or invalid mobile numbers are excluded. Existing customer references or phone numbers are skipped. Keep the downloaded SMS file private and preserve leading zeros in activation codes.
                     </div>
                     <notebook invisible="state == 'draft'">
+                        <page string="All Customers">
+                            <field name="review_row_ids" readonly="True" domain="[('duplicate_state', '!=', 'exact_duplicate')]" context="{'list_view_ref': 'ab_website_sale_product.view_legacy_staging_row_list', 'form_view_ref': 'ab_website_sale_product.view_legacy_staging_row_form'}"/>
+                        </page>
                         <page string="Column Validation">
                             <p>Each entry identifies one column issue. A record can have several issues. Clean records are included in the counts without filling this table. Record 0 describes the file or its headers. Values are displayed up to 1,000 characters; the uploaded file is retained until processing finishes.</p>
                             <field name="issue_ids" readonly="True" context="{'list_view_ref': 'ab_website_sale_product.view_legacy_import_issue_list', 'form_view_ref': 'ab_website_sale_product.view_legacy_import_issue_form'}"/>
@@ -164,5 +248,11 @@
         <field name="name">Legacy Customer Codes</field>
         <field name="res_model">ab_ecommerce_legacy_batch</field>
         <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_open_latest_legacy_customers" model="ir.actions.server">
+        <field name="name">Legacy Customer Codes</field>
+        <field name="model_id" ref="model_ab_eplus_stock_snapshot"/>
+        <field name="state">code</field>
+        <field name="code">action = env['ab_ecommerce_legacy_batch'].action_open_latest_customers()</field>
     </record>
 </odoo>

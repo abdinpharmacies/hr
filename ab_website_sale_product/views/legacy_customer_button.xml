@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="ab_eplus_stock_snapshot_view_list"/>
         <field name="arch" type="xml">
             <xpath expr="//header/button[@name='action_start_full_inventory_sync']" position="after">
-                <button name="%(action_activation_batches)d" type="action"
+                <button name="%(action_open_latest_legacy_customers)d" type="action"
                         string="Legacy Customer Codes" class="btn-primary" display="always"
                         groups="website.group_website_designer,base.group_system"/>
             </xpath>

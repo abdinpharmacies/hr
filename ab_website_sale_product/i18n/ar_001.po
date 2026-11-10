@@ -359,6 +359,7 @@ msgstr "الأكواد"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -383,6 +384,7 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -438,6 +440,7 @@ msgstr "لا يستطيع خادم Odoo قراءة المجلد: %s"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -611,6 +614,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__id
 msgid "ID"
 msgstr "المعرف"
 
@@ -677,6 +681,7 @@ msgstr "آخر تحديث"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -701,6 +706,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -2250,6 +2256,7 @@ msgstr "البرد والجهاز التنفسي"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__company_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__company_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__company_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -4695,6 +4702,7 @@ msgstr "يجب أرشفة العملاء القدامى بدلًا من حذفه
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_customer__batch_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_export__batch_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_import_issue__batch_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__batch_id
 msgid "Batch"
 msgstr "الدفعة"
 
@@ -5925,3 +5933,335 @@ msgstr "منتجات فريدة للمطابقة"
 #: code:addons/ab_website_sale_product/models/legacy_publication_import.py:0
 msgid "An export product without a code could not be matched uniquely: %s"
 msgstr "تعذرت مطابقة منتج في ملف التصدير بدون كود بصورة فريدة: %s"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model,name:ab_website_sale_product.model_ab_ecommerce_legacy_staging_row
+msgid "Legacy Customer Review Row"
+msgstr "صف مراجعة عميل قديم"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_ecommerce_legacy_staging_row_batch_row_unique
+msgid "This source row is already stored in the batch."
+msgstr "صف المصدر هذا محفوظ بالفعل في الدفعة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py
+msgid "Customer review rows can only be created by batch processing."
+msgstr "لا يمكن إنشاء صفوف مراجعة العملاء إلا من خلال معالجة الدفعة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py
+msgid "Original customer data cannot be changed."
+msgstr "لا يمكن تغيير بيانات العميل الأصلية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py
+msgid "Customer review rows cannot be deleted."
+msgstr "لا يمكن حذف صفوف مراجعة العملاء."
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_staging_row__review_state__pending
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_staging_row_search
+msgid "Pending Review"
+msgstr "بانتظار المراجعة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_staging_row__review_state__reviewed
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_staging_row_search
+msgid "Reviewed"
+msgstr "تمت المراجعة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_staging_row__duplicate_state__unique
+msgid "Unique"
+msgstr "غير مكرر"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_staging_row__duplicate_state__exact_duplicate
+msgid "Exact Duplicate"
+msgstr "نسخة مكررة مطابقة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_staging_row__duplicate_state__conflict
+msgid "Identity Conflict"
+msgstr "تعارض في هوية العميل"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__staging_state__not_started
+msgid "Not Stored"
+msgstr "لم تُحفظ"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__staging_state__queued
+msgid "Storing"
+msgstr "جارٍ الحفظ"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__staging_state__done
+msgid "Stored"
+msgstr "تم الحفظ"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__staging_count
+msgid "Rows Stored for Review"
+msgstr "صفوف محفوظة للمراجعة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__duplicate_scan_state__not_started
+msgid "Not Checked"
+msgstr "لم يُفحص"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__duplicate_scan_state__queued
+msgid "Checking"
+msgstr "جارٍ الفحص"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__duplicate_scan_state__done
+msgid "Checked"
+msgstr "تم الفحص"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__duplicate_count
+msgid "Exact Duplicate Rows"
+msgstr "الصفوف المكررة المطابقة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__conflict_count
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_staging_row_search
+msgid "Identity Conflicts"
+msgstr "تعارضات هوية العملاء"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Preview an unprocessed customer file before storing its rows."
+msgstr "عاين ملف عملاء لم تبدأ معالجته قبل حفظ صفوفه."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Store customer rows for review: %s"
+msgstr "حفظ صفوف العملاء للمراجعة: %s"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "This customer file cannot be stored for review."
+msgstr "لا يمكن حفظ ملف العملاء هذا للمراجعة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "The source file changed. Preview it again before storing rows."
+msgstr "تغير ملف المصدر. عاينه مرة أخرى قبل حفظ الصفوف."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Store the customer rows before checking duplicates."
+msgstr "احفظ صفوف العملاء قبل فحص التكرارات."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Check customer duplicates: %s"
+msgstr "فحص العملاء المكررين: %s"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Customer duplicate checking is unavailable."
+msgstr "فحص تكرار العملاء غير متاح حاليًا."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Create a new batch to replace a file already stored for review."
+msgstr "أنشئ دفعة جديدة لاستبدال ملف حُفظت صفوفه للمراجعة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Wait for customer rows to finish storing before creating codes."
+msgstr "انتظر اكتمال حفظ صفوف العملاء قبل إنشاء الأكواد."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_legacy_staging_rows
+msgid "Customer Rows for Review"
+msgstr "صفوف العملاء للمراجعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Store All Rows for Review"
+msgstr "حفظ كل الصفوف للمراجعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Review Stored Rows"
+msgstr "مراجعة الصفوف المحفوظة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Exclude Exact Duplicates"
+msgstr "استبعاد النسخ المكررة المطابقة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_staging_row_search
+msgid "Exact Duplicates"
+msgstr "النسخ المكررة المطابقة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_legacy_staging_row_search
+msgid "Hide Exact Duplicates"
+msgstr "إخفاء النسخ المكررة المطابقة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__source_row
+msgid "Source Row"
+msgstr "صف المصدر"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__line_start
+msgid "Line Start"
+msgstr "بداية السطر"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__line_end
+msgid "Line End"
+msgstr "نهاية السطر"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__source_reference
+msgid "Source Reference"
+msgstr "مرجع المصدر"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__customer_name
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__mobile_phone
+msgid "Mobile Phone"
+msgstr "رقم المحمول"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__source_data
+msgid "Source Data"
+msgstr "بيانات المصدر"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__review_state
+msgid "Review State"
+msgstr "حالة المراجعة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__review_note
+msgid "Review Note"
+msgstr "ملاحظة المراجعة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__reviewed_by
+msgid "Reviewed By"
+msgstr "راجعه"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__reviewed_at
+msgid "Reviewed At"
+msgstr "تاريخ المراجعة"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_staging_row.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__duplicate_state
+msgid "Duplicate State"
+msgstr "حالة التكرار"
+
+#. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_ecommerce_legacy_batch__staging_state__incomplete
+msgid "Incomplete"
+msgstr "غير مكتمل"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "Customer row storage stopped because the file header or record boundary could not be read safely. Correct the source file and create a new batch."
+msgstr "توقف حفظ صفوف العملاء لأن عنوان الملف أو حدود أحد السجلات لم تُقرأ بأمان. صحح ملف المصدر وأنشئ دفعة جديدة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/legacy_activation_batch.py:0
+msgid "Wait for customer rows to finish storing before cancelling the batch."
+msgstr "انتظر اكتمال حفظ صفوف العملاء قبل إلغاء الدفعة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__staging_state
+msgid "Row Storage"
+msgstr "حفظ الصفوف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__duplicate_scan_state
+msgid "Duplicate Check"
+msgstr "فحص التكرارات"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_batch_form
+msgid "All Customers"
+msgstr "كل العملاء"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_staging_row__display_batch_id
+msgid "Display Batch"
+msgstr "دفعة العرض"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__review_row_ids
+msgid "Review Row"
+msgstr "صف المراجعة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__review_master_batch_id
+msgid "Review Master Batch"
+msgstr "الدفعة الرئيسية للمراجعة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__review_duplicate_count
+msgid "Hidden Exact Duplicates"
+msgstr "الصفوف المتطابقة المخفية"

@@ -39,3 +39,5 @@ access_legacy_chunk_admin,Legacy activation chunk administrator,model_ab_ecommer
 access_legacy_export_admin,Legacy activation export administrator,model_ab_ecommerce_legacy_export,base.group_system,1,0,0,0
 access_legacy_import_issue_designer,Customer import diagnostics designer,model_ab_ecommerce_legacy_import_issue,website.group_website_designer,1,0,0,0
 access_legacy_import_issue_admin,Customer import diagnostics administrator,model_ab_ecommerce_legacy_import_issue,base.group_system,1,0,0,0
+access_legacy_staging_row_designer,Customer review row designer,model_ab_ecommerce_legacy_staging_row,website.group_website_designer,1,1,0,0
+access_legacy_staging_row_admin,Customer review row administrator,model_ab_ecommerce_legacy_staging_row,base.group_system,1,1,0,0

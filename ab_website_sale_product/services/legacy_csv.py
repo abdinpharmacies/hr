@@ -75,14 +75,14 @@ def record_anchor(rows, headers):
     )
 
 
-def csv_events(binary, encoding='auto'):
+def csv_events(binary, encoding='auto', max_rows=MAX_ROWS):
     prefix = binary.read(4)
     binary.seek(0)
     codec = ('utf-16' if prefix.startswith((b'\xff\xfe', b'\xfe\xff')) else 'utf-8-sig') if encoding == 'auto' else encoding
     source = io.TextIOWrapper(binary, encoding=codec, errors='replace', newline='')
     try:
         headers = originals = []
-        for event in text_events(source):
+        for event in text_events(source, max_rows=max_rows):
             headers = event.get('columns', headers)
             originals = event.get('original_columns', originals)
             event['columns'] = headers
@@ -92,7 +92,7 @@ def csv_events(binary, encoding='auto'):
         source.detach()
 
 
-def text_events(source):
+def text_events(source, max_rows=MAX_ROWS):
     first = source.readline(MAX_RECORD_SIZE + 1)
     if not first:
         yield {'number': 0, 'start': 1, 'end': 1, 'values': {}, 'issues': [issue('(file)', 'empty_file')], 'blocked': True}
@@ -148,7 +148,7 @@ def text_events(source):
             line_number += 1
             start = line_number
         number += 1
-        if number > MAX_ROWS:
+        if max_rows is not None and number > max_rows:
             yield {'number': number, 'start': start, 'end': start, 'values': {}, 'issues': [issue('(file)', 'row_limit')], 'blocked': True}
             return
         buffer = line

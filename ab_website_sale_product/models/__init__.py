@@ -15,3 +15,4 @@ from . import classification_force
 from . import legacy_customer
 from . import legacy_activation_batch
 from . import legacy_import_issue
+from . import legacy_staging_row

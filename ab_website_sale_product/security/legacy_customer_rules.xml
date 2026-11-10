@@ -5,6 +5,11 @@
         <field name="model_id" ref="model_ab_ecommerce_legacy_import_issue"/>
         <field name="domain_force">[('company_id', 'in', company_ids)] + ([] if user.has_group('base.group_system') else [('batch_id.owner_id', '=', user.id)])</field>
     </record>
+    <record id="rule_staging_row_owner_company" model="ir.rule">
+        <field name="name">Customer review rows: owner and company</field>
+        <field name="model_id" ref="model_ab_ecommerce_legacy_staging_row"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)] + ([] if user.has_group('base.group_system') else [('batch_id.owner_id', '=', user.id)])</field>
+    </record>
     <record id="rule_batch_owner_company" model="ir.rule">
         <field name="name">Activation batches: owner and company</field>
         <field name="model_id" ref="model_ab_ecommerce_legacy_batch"/>
