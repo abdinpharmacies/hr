@@ -110,3 +110,11 @@ class TestLegacyStagingRows(TransactionCase):
         second.sudo().write({'review_master_batch_id': first.id, 'state': 'done'})
         third = self._batch()
         self.assertEqual(third._review_master(), first)
+
+    def test_stored_rows_open_from_stock_button_without_codes(self):
+        first = self._batch()
+        first.sudo().write({'staging_state': 'done', 'review_master_batch_id': first.id})
+        second = self._batch()
+        second.sudo().write({'staging_state': 'done', 'review_master_batch_id': first.id})
+        action = self.env['ab_ecommerce_legacy_batch'].with_user(self.owner).action_open_latest_customers()
+        self.assertEqual(action['res_id'], first.id)

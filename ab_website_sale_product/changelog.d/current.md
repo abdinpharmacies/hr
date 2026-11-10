@@ -2,6 +2,37 @@
 
 ## Recent commits
 
+Commit: `9eb88472`
+Author: Mohamed Fawzy
+Date: 2026-11-10
+Original subject: `ab_website_sale_product/IMP: unify legacy customer review rows`
+
+User-facing changes:
+
+- Store every customer row for review and show rows from repeated uploads in one table.
+- Hide only fully identical rows automatically and display the hidden duplicate count.
+- Open the latest completed batch directly from Eplus Stock.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/docs/legacy-customers.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/__init__.py`
+- `ab_website_sale_product/models/legacy_activation_batch.py`
+- `ab_website_sale_product/models/legacy_staging_row.py`
+- `ab_website_sale_product/security/ir.model.access.csv`
+- `ab_website_sale_product/security/legacy_customer_rules.xml`
+- `ab_website_sale_product/services/legacy_csv.py`
+- `ab_website_sale_product/tests/__init__.py`
+- `ab_website_sale_product/tests/test_legacy_staging_rows.py`
+- `ab_website_sale_product/views/legacy_customer_button.xml`
+- `ab_website_sale_product/views/legacy_customer_views.xml`
+
+## Earlier customer import commit
+
 Commit: `47990e20`
 Author: Mohamed Fawzy
 Date: 2026-11-08
@@ -57,25 +88,11 @@ Files changed:
 
 ## Current changes before commit:
 
-- Store every readable customer source row for staff review without creating accounts or codes.
-- Open the latest completed batch from Eplus Stock and show stored customer rows in its All Customers tab.
-- Automatically hide only fully identical source rows; keep rows with different values visible even when their reference or phone matches.
-- Preserve existing code eligibility checks, add scoped access controls, Arabic UI text, documentation, and tests.
+- Open the unified customer table from Eplus Stock after storing rows, without requiring activation codes to be created.
 
 Files changed:
 
 - `ab_website_sale_product/changelog.d/current.md`
 - `ab_website_sale_product/docs/legacy-customers.md`
-- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
-- `ab_website_sale_product/i18n/ar.po`
-- `ab_website_sale_product/i18n/ar_001.po`
-- `ab_website_sale_product/models/__init__.py`
 - `ab_website_sale_product/models/legacy_activation_batch.py`
-- `ab_website_sale_product/models/legacy_staging_row.py`
-- `ab_website_sale_product/security/ir.model.access.csv`
-- `ab_website_sale_product/security/legacy_customer_rules.xml`
-- `ab_website_sale_product/services/legacy_csv.py`
-- `ab_website_sale_product/tests/__init__.py`
 - `ab_website_sale_product/tests/test_legacy_staging_rows.py`
-- `ab_website_sale_product/views/legacy_customer_views.xml`
-- `ab_website_sale_product/views/legacy_customer_button.xml`

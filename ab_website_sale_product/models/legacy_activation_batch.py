@@ -106,12 +106,15 @@ class ActivationBatch(models.Model):
     @api.model
     def action_open_latest_customers(self):
         self._check_operator()
-        domain = fields.Domain('company_id', 'in', self.env.companies.ids) & fields.Domain('state', '=', 'done')
+        domain = fields.Domain('company_id', 'in', self.env.companies.ids) & (
+            fields.Domain('state', '=', 'done') | fields.Domain('staging_state', '=', 'done')
+        )
         if not self.env.user.has_group('base.group_system'):
             domain &= fields.Domain('owner_id', '=', self.env.uid)
         batch = self.search(domain, order='id desc', limit=1)
         action = self.env['ir.actions.actions']._for_xml_id('ab_website_sale_product.action_activation_batches')
         if batch:
+            batch = batch._review_master()
             action.update(view_mode='form', views=[(self.env.ref('ab_website_sale_product.view_batch_form').id, 'form')], res_id=batch.id)
         return action
 
