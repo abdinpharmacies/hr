@@ -1,14 +1,24 @@
 # Prepared-target migration validation
 
-## Resume validation (2026-11-11)
+## Durable staging validation (2026-11-11)
 
-**201 tests: 191 passed, 10 skipped**, with disposable PostgreSQL tests enabled.
+**214 tests: 204 passed, 10 skipped**, with disposable PostgreSQL tests enabled.
 The skipped cases require optional legacy settings or an explicitly selected Odoo
 clone template. No application database was migrated or had its availability
 changed. All table changes and availability gates used generated disposable test
 DBs; maintenance connections used `postgres`.
 
 New coverage verifies:
+
+- Staging tables 1/3 commit despite table 2 failing; retry COPY loads only table 2.
+- COPY/index/validation rollback, committed data fingerprints, missing tables/PKs,
+  source-snapshot mismatches, identity-table handling, and legacy staging adoption.
+- Lost staging reports/interruption preserve success markers; completed tables are
+  skipped without COPY/index recreation.
+- A full controller preflight failure retains `staging_complete`; its next attempt
+  performs no staging COPY before continuing the live-table workflow.
+- Confirmed reset clears staging-only runs while preserving public records and
+  refuses reset after live setup commits.
 
 - Independently committed live tables and atomic table-success markers.
 - A failed copy preserving old rows/XML IDs/relations while later tables commit.

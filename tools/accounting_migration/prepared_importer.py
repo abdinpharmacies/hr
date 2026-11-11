@@ -11,7 +11,7 @@ from importer import FRAMEWORK_FIELDS
 from prepared_snapshot import SCHEMA
 import prepared_progress as progress
 
-META = 'prepared_custom_migration'
+from prepared_checkpoints import META
 WORK = 'prepared_migration_work'
 MIN_MATCHED_ID = 7
 

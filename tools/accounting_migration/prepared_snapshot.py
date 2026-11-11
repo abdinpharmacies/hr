@@ -6,10 +6,10 @@ from bulk import catalog, CopyWriter, copy_column_order
 from common import MigrationError, save_json, digest, settings
 from importer import FRAMEWORK_FIELDS
 from source import inventory
+from prepared_staging import SCHEMA, StagingLoader
 import prepared_progress as progress
 
 FORMAT = 1
-SCHEMA = 'prepared_migration_source'
 
 
 def select_models(info, target):
@@ -137,31 +137,6 @@ def verify(stage, manifest):
     progress.finish('extraction verified')
 
 
-def stage_tables(connection, stage, manifest):
-    """Caller owns the transaction; staging becomes durable with table setup."""
-    with connection.cursor() as cr:
-        cr.execute(sql.SQL('CREATE SCHEMA IF NOT EXISTS {}').format(sql.Identifier(SCHEMA)))
-        cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(SCHEMA)))
-        for index,(table, meta) in enumerate(manifest['tables'].items(),1):
-            columns = meta['column_order']
-            if table in ('res_users','res_partner'):
-                cr.execute(sql.SQL('DROP TABLE IF EXISTS {}').format(sql.Identifier(SCHEMA,table)))
-            cr.execute(sql.SQL('CREATE TABLE {} ({})').format(sql.Identifier(SCHEMA, table),
-                sql.SQL(',').join(sql.SQL('{} {}').format(sql.Identifier(c), sql.SQL(meta['columns'][c]['type']))
-                                 for c in columns)))
-            with open(Path(stage) / 'tables' / (table + '.copy'), 'rb') as file:
-                progress.begin('staging COPY',table=table,total=meta['rows'],operation='COPY FROM',monitor=True,
-                               table_index=index,table_count=len(manifest['tables']),bytes_total=meta['bytes'])
-                cr.copy_expert(sql.SQL('COPY {} ({}) FROM STDIN').format(sql.Identifier(SCHEMA, table),
-                    sql.SQL(',').join(map(sql.Identifier, columns))).as_string(connection), progress.InputCounter(file))
-            progress.update(processed=meta['rows'],bytes=meta['bytes'])
-            progress.finish('copied; pending commit')
-            if 'id' in columns:
-                progress.begin('index',table=table,operation='Create staging primary key',monitor=True)
-                cr.execute(sql.SQL('ALTER TABLE {} ADD PRIMARY KEY (id)').format(sql.Identifier(SCHEMA, table)))
-                progress.finish('indexed; pending commit')
-            progress.begin('validate staging',table=table,operation='Validate COPY row count',monitor=True)
-            cr.execute(sql.SQL('SELECT count(*) FROM {}').format(sql.Identifier(SCHEMA, table)))
-            if cr.fetchone()[0] != meta['rows']:
-                raise MigrationError(f'Staging COPY count mismatch: {table}')
-            progress.finish('row count verified; pending commit')
+def stage_tables(connection, stage, manifest, legacy_setup=None):
+    """Commit and verify each staging table independently of preflight/live setup."""
+    return StagingLoader(connection, stage, manifest, legacy_setup).run()

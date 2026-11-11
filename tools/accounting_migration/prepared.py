@@ -16,6 +16,7 @@ from resume import endpoint, fingerprint
 import prepared_snapshot as snapshot
 import prepared_progress as progress
 from prepared_importer import PreparedImporter, META, WORK, MIN_MATCHED_ID, missing_identity_query
+from prepared_checkpoints import read_checkpoint, write_checkpoint
 
 HERE=Path(__file__).resolve().parent
 FORMAT=2
@@ -29,16 +30,6 @@ def confirm(summary):
         return input('Continue? [y/N] ').strip().lower() in ('y','yes')
     except EOFError:
         return False
-
-
-def read_checkpoint(connection, name):
-    with connection.cursor() as cr:
-        cr.execute('SELECT to_regclass(%s)',[META+'.checkpoint'])
-        if cr.fetchone()[0] is None:
-            return None
-        cr.execute(sql.SQL('SELECT value FROM {} WHERE name=%s').format(sql.Identifier(META,'checkpoint')),[name])
-        row=cr.fetchone()
-        return loads(row[0]) if row else None
 
 
 def initialize(connection, identity):
@@ -55,13 +46,6 @@ def initialize(connection, identity):
             cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(META)))
             cr.execute(sql.SQL('CREATE TABLE {} (name text PRIMARY KEY,value text NOT NULL)').format(sql.Identifier(META,'checkpoint')))
             write_checkpoint(connection,'run',identity)
-
-
-def write_checkpoint(connection, name, value):
-    from common import dumps
-    with connection.cursor() as cr:
-        cr.execute(sql.SQL('INSERT INTO {} VALUES (%s,%s) ON CONFLICT(name) DO UPDATE SET value=EXCLUDED.value').format(
-            sql.Identifier(META,'checkpoint')),[name,dumps(value)])
 
 
 def metadata(args, stage, smoke=False):
@@ -262,11 +246,11 @@ def run(args, root):
             save_json(stage/'schema-identity.json',dict(identity=target_signature(target)))
         ids_path=stage/'source-ids.json'
         done=read_checkpoint(target_con,'identities')
-        imported=saved_setup or read_checkpoint(target_con,'custom_and_xmlids')
+        imported=saved_setup or read_checkpoint(target_con,'staging_run') or read_checkpoint(target_con,'custom_and_xmlids')
         target_con.rollback()
         if not manifest or not manifest.get('complete'):
             if imported:
-                raise MigrationError('Original complete extraction is required after custom data has committed')
+                raise MigrationError('Original complete extraction is required after staging or live data has committed')
             try:
                 source_con=connect(args.source_config,args.source_db,readonly=True)
             except Exception as exc:
@@ -335,14 +319,18 @@ def run(args, root):
         try:
             with target_offline(tg,target_con,stage,workers=[smoke.pid]):
                 initialize(target_con,identity)
+                snapshot.stage_tables(target_con,stage,manifest,legacy_setup=saved_setup)
                 if not saved_setup:
-                    snapshot.stage_tables(target_con,stage,manifest)
                     with target_con.cursor() as cr:
                         cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
                         cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
                 engine=PreparedImporter(target_con,stage,manifest,target,rules,conversions)
                 engine.validate_ids()
-                engine.preflight(replacing=not bool(saved_setup))
+                try:
+                    engine.preflight(replacing=not bool(saved_setup))
+                except Exception:
+                    print('Preflight failed. Committed staging is retained for the next run; no live-table copying started in this attempt.',flush=True)
+                    raise
                 def validate_orm(selected):
                     save_json(validation_manifest,{**manifest,'selected':selected})
                     smoke.run()

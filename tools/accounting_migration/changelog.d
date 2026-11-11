@@ -2,6 +2,30 @@
 
 ## Current changes before commit:
 
+- Commit each staging COPY, required index, validation, and success marker independently; continue other staging tables after an individual failure.
+- Reuse verified staging checkpoints after interruptions or preflight failures; reject changed staging or extraction and adopt retained format-2 staging without recopying it.
+- Preserve initial identity checks separately and require every staging table to be ready before preflight or live-table copying.
+- Add staging progress/report/history and clarify when staging versus live records are committed.
+- Allow confirmed reset of recognized staging-only state while retaining ownership checks and refusal after live setup/imports.
+- Add disposable PostgreSQL and controller regression coverage; update the runbook and validation evidence.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `prepared.py`
+- `prepared_checkpoints.py`
+- `prepared_importer.py`
+- `prepared_snapshot.py`
+- `prepared_staging.py`
+- `reset_migration.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_prepared_staging.py`
+
+## a973d4bd3 — emadco88 — 2026-11-11
+
+Original commit subject: `tools/accounting_migration/ FIX remove je_line mapping rule`
+
 - Resume failed and interrupted table operations on the same command; skip committed copies and retry failed/dependent work using the original extraction.
 - Replan corrected mappings/model fields for failed work while guarding committed data, XML IDs, table identities, and relationships.
 - Reuse original incoming-reference captures and attachment ID maps; track model coverage to prevent double remapping and duplicate attachments.

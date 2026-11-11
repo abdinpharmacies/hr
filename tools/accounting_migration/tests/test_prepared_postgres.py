@@ -1041,10 +1041,22 @@ with target_offline(gate,con,sys.argv[4]):
                 first=run(args,root)
             self.assertEqual(first['status'],'cancelled')
             self.assertFalse(any(c.args[1]==source_db for c in connections.call_args_list))
-            # Lose the report after the terminal result commits. Repeating the
-            # command returns that result without replaying any table operation.
+            # Global preflight failure must retain the staging checkpoints.
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke), \
-                    patch('prepared.confirm',return_value=True),patch('table_checkpoints.save_json',side_effect=lose_report):
+                    patch('prepared.confirm',return_value=True), \
+                    patch.object(PreparedImporter,'preflight',side_effect=MigrationError('injected preflight failure')):
+                with self.assertRaisesRegex(MigrationError,'injected preflight failure'):
+                    run(args,root)
+            probe=connect(configs[1],self.database,readonly=True)
+            try:
+                self.assertIsNotNone(read_checkpoint(probe,'staging_complete'))
+                self.assertIsNone(read_checkpoint(probe,'table_setup'))
+            finally:
+                probe.close()
+            # Lost final JSON must not cause staging or live tables to recopy.
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke), \
+                    patch('prepared.confirm',return_value=True),patch('table_checkpoints.save_json',side_effect=lose_report), \
+                    patch('prepared_staging.StagingLoader.load',side_effect=AssertionError('repeated staging COPY')):
                 with self.assertRaisesRegex(MigrationError,'OSError'):
                     run(args,root)
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):

@@ -47,9 +47,12 @@ changes are outside the migration. There is no incremental synchronization.
 1. Ask approval for identity validation and commit its metadata checkpoint.
 2. Extract the source snapshot while the target is online. Ask approval for the
    complete table-processing window; create and verify a full online target backup.
-3. Block new target connections and terminate other target sessions. Stage the
-   retained extraction, run preflight, capture incoming references and original
-   foreign-key definitions, and commit setup with relevant FKs removed.
+3. Block new target connections and terminate other target sessions. Stage each
+   retained source table in its own transaction: COPY, primary-key/index creation,
+   count/schema/content validation, and its staging checkpoint commit together.
+   Failed staging tables roll back individually while remaining tables continue.
+   Once every staging table is ready, run global preflight, capture incoming
+   references/original FKs, and commit live setup with relevant FKs removed.
 4. Replace each physical custom table in its own transaction: DELETE + adapted
    INSERT SELECT + ID/count validation + XML-ID repair + sequence adjustment +
    success checkpoint. **A failed table rolls back to its previous rows, and later
@@ -80,11 +83,39 @@ preventing cascading deletion while supporting cycles and self-references.
 Incoming references are mapped through reviewed identities only for successfully
 replaced models; references to failed models retain their original IDs.
 
+## Staging checkpoints
+
+Staging uses private `prepared_migration_source` tables, separate from live Odoo
+records. Each `staging:<table>` checkpoint binds its rows to the original run and
+extraction, file SHA-256, ordered column definitions, required index, row count,
+and deterministic content fingerprint. COPY is durable only after that table's
+staging checkpoint commits.
+
+Rerunning verifies committed staging and skips its COPY/index creation, even if a
+later table or global preflight failed. Verification reads staged data, so skipping
+COPY does not eliminate integrity-check time. Failed or interrupted staging tables
+are retried from the same saved files; successful tables are not reloaded. An
+interruption after commit but before JSON reporting still uses the database marker.
+
+`staging_complete` is written only when all manifest tables are ready. Until then,
+preflight and live-table copying are blocked. A preflight failure rolls back its
+own work and preserves every committed staging table. The initial user/partner ID
+check is distinct; those private ID tables are replaced atomically once by their
+extraction staging and then skipped on subsequent retries.
+
+Existing format-2 runs with committed live setup can adopt verified retained
+staging without recopying it. Missing/changed staging, a different extraction, or
+unexplained tables stop processing rather than triggering an automatic overwrite.
+The original extraction remains mandatory once staging starts. No per-table
+approval prompts are added, and source access remains read-only.
+
 ## Failure reports and accepted exceptions
 
 Private run directories are under `/opt/odoo19/migration-runs/`. The command prints
 the exact path. Reports are updated during processing:
 
+- `staging.json`: staging loaded/skipped/adopted tables, current failures, counts,
+  and extraction binding. Per-attempt staging history also remains in the database.
 - `failed_tables.json`: table, failed/skipped operation, safe error type and
   SQLSTATE/constraint metadata. A failed later operation does not undo the table's
   earlier committed copy.
@@ -210,9 +241,10 @@ Optional `--reset` asks `Reset migration state? [y/N]`, then removes only the
 selected target's private `prepared_migration_work`, `prepared_migration_source`,
 and `prepared_custom_migration` schemas and matching run directories, including
 backups/logs/extraction. It preserves public records and installed modules and exits.
-Rerun without `--reset` afterward. It refuses committed table setup/imports,
-completed runs, active migrations, offline targets, changed identities, or unsafe
-paths. Pre-import partial directory cleanup can be retried. Source access and
+Rerun without `--reset` afterward. Recognized staging-only state can be reset
+before live setup commits. Reset refuses committed live setup/imports, unknown or
+unowned staging/work tables, completed runs, active migrations, offline targets,
+changed identities, or unsafe paths. Pre-import partial directory cleanup can be retried. Source access and
 availability are never changed.
 
 ## Progress and validation
