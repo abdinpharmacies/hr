@@ -108,7 +108,7 @@ class ProductTemplate(models.Model):
         self.ensure_one()
         if not self.ab_product_id:
             return False
-        return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_from_eplus()
+        return self.env["ab_eplus_stock_snapshot"].action_refresh_from_eplus()
 
     def action_open_eplus_stock_items(self):
         self.ensure_one()

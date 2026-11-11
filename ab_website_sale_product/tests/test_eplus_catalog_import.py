@@ -28,14 +28,32 @@ class TestEplusCatalogImport(TransactionCase):
         self.assertEqual(len(product), 1)
         self.assertEqual(product.code, row.itm_code)
         self.assertEqual(product.product_card_name, "Real English Name")
-        self.assertFalse(product.active)
+        self.assertTrue(product.active)
         self.assertFalse(product.allow_sale)
         self.assertFalse(product.website_sale_available)
-        self.assertFalse(product.website_product_tmpl_id)
+        template = product.website_product_tmpl_id
+        self.assertTrue(template)
+        self.assertTrue(template.active)
+        self.assertFalse(template.sale_ok)
+        self.assertFalse(template.is_published)
         self.assertEqual(product.website_catalog_status, "eplus_draft")
         self.assertEqual(row.product_id, product)
         self.assertEqual(self.import_rows(row, source), 0)
         self.assertEqual(self.Product.search_count([("eplus_serial", "=", row.itm_id)]), 1)
+
+    def test_existing_eplus_draft_gets_unpublished_website_product(self):
+        product = self.Product.create({
+            "name": "Existing draft", "product_card_name": "Existing draft",
+            "code": "99177008", "eplus_serial": 99177008,
+            "active": False, "allow_sale": False,
+            "website_sale_available": False, "eplus_catalog_draft": True,
+        })
+        row = self.snapshot(99177008, "99177008")
+        row.write({"product_id": product.id})
+
+        self.assertEqual(row._import_eplus_catalog_batch(), 0)
+        self.assertTrue(product.website_product_tmpl_id)
+        self.assertFalse(product.website_product_tmpl_id.is_published)
 
     def test_links_existing_product_by_barcode(self):
         row = self.snapshot(99177002, "99177002")
@@ -74,3 +92,9 @@ class TestEplusCatalogImport(TransactionCase):
 
         with self.assertRaises(AccessError):
             row.with_user(user)._import_eplus_catalog_batch()
+
+    def test_non_admin_cannot_refresh_through_product_button(self):
+        user = self.env.ref("base.public_user")
+
+        with self.assertRaises(AccessError):
+            self.Product.with_user(user).action_refresh_eplus_stock_items()

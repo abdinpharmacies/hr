@@ -2,10 +2,30 @@
 
 ## Current changes before commit
 
-- Include active Abdin products without website templates in the image synchronization scan.
-- Create an unpublished website product only when a valid matching image is synchronized.
-- Require administrator access in the image synchronization service, including direct method calls.
-- Cover unpublished template creation and unauthorized service calls.
+- Create a linked, unpublished website product when an Eplus stock refresh imports a new catalog draft.
+- Complete website product creation for previously imported Eplus drafts when the stock refresh runs again.
+- Keep imported drafts unavailable for sale and prevent regular users from bypassing the Eplus refresh permission check through product buttons.
+- Cover new draft creation and existing draft completion.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/models/product_template.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
+
+## Recent commits
+
+Commit: `f862b1c7`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/IMP: sync images for unlinked catalog products`
+
+User-facing changes:
+
+- Include active catalog products without website templates in image synchronization.
+- Create an unpublished website product when a valid matching image is synchronized.
 
 Files changed:
 
@@ -15,8 +35,6 @@ Files changed:
 - `ab_website_sale_product/i18n/ar_001.po`
 - `ab_website_sale_product/models/product_image_sync.py`
 - `ab_website_sale_product/tests/test_website_category_mapping.py`
-
-## Recent commits
 
 Commit: `e95e0803`
 Author: Mohamed Fawzy

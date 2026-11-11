@@ -249,8 +249,16 @@ class EplusStockSnapshot(models.Model):
             ("product_id", "=", False),
             ("itm_code", "!=", False),
         ])
-        for offset in range(0, len(unmatched), 100):
-            batch = unmatched[offset:offset + 100].with_user(self.env.user)
+        drafts = self.env["ab_product"].sudo().with_context(active_test=False).search([
+            ("eplus_catalog_draft", "=", True),
+            ("website_product_tmpl_id", "=", False),
+        ])
+        rows = unmatched | self.sudo().search([
+            ("active", "=", True),
+            ("product_id", "in", drafts.ids),
+        ])
+        for offset in range(0, len(rows), 100):
+            batch = rows[offset:offset + 100].with_user(self.env.user)
             batch.with_delay(
                 identity_key="eplus-catalog-import:%s:%s" % (batch[0].id, batch[-1].id),
                 description=_("Import Eplus product drafts"),
@@ -260,8 +268,14 @@ class EplusStockSnapshot(models.Model):
     def _import_eplus_catalog_batch(self):
         if not self.env.user.has_group("base.group_system"):
             raise AccessError(_("Only administrators can import Eplus products."))
+        pending_drafts = self.sudo().filtered(
+            lambda row: row.active and row.product_id.eplus_catalog_draft
+            and not row.product_id.website_product_tmpl_id
+        ).mapped("product_id")
         snapshots = self.sudo().filtered(lambda row: row.active and not row.product_id and row.itm_code)
         if not snapshots:
+            if pending_drafts:
+                pending_drafts._sync_website_products(create_missing=True)
             return 0
 
         names_by_id = self._fetch_eplus_catalog_names(snapshots.mapped("itm_id"))
@@ -293,6 +307,8 @@ class EplusStockSnapshot(models.Model):
         created = 0
         linked = 0
         skipped = 0
+        new_drafts = Product.browse()
+        linked_drafts = Product.browse()
         for row in snapshots:
             source = names_by_id.get(row.itm_id, [])
             if (
@@ -326,6 +342,8 @@ class EplusStockSnapshot(models.Model):
                 if not product.eplus_serial:
                     product.write({"eplus_serial": row.itm_id})
                 row.write({"product_id": product.id, "matched_by": matched_by})
+                if product.eplus_catalog_draft and not product.website_product_tmpl_id:
+                    linked_drafts |= product
                 linked += 1
                 continue
             name = source[0][2] or source[0][1]
@@ -336,7 +354,7 @@ class EplusStockSnapshot(models.Model):
                         "product_card_name": name,
                         "code": row.itm_code,
                         "eplus_serial": row.itm_id,
-                        "active": False,
+                        "active": True,
                         "allow_sale": False,
                         "allow_purchase": False,
                         "website_sale_available": False,
@@ -344,11 +362,15 @@ class EplusStockSnapshot(models.Model):
                     })
                     row.write({"product_id": product.id, "matched_by": "eplus_serial"})
                     created += 1
+                    new_drafts |= product
                     candidates_by_serial.setdefault(row.itm_id, set()).add(product.id)
                     candidates_by_code.setdefault(row.itm_code, set()).add(product.id)
             except (IntegrityError, ValidationError):
                 _logger.exception("Eplus catalog draft import failed for itm_id=%s", row.itm_id)
                 skipped += 1
+        drafts_to_sync = pending_drafts | linked_drafts | new_drafts
+        if drafts_to_sync:
+            drafts_to_sync._sync_website_products(create_missing=True)
         _logger.info(
             "Eplus catalog draft import: created=%s linked=%s skipped=%s",
             created, linked, skipped,

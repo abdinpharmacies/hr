@@ -490,7 +490,7 @@ class AbProduct(models.Model):
             "ab_product_id").ids
 
     def action_refresh_eplus_stock_items(self):
-        return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_from_eplus()
+        return self.env["ab_eplus_stock_snapshot"].action_refresh_from_eplus()
 
     def action_open_sync_images_wizard(self):
         self.env["ab.website.product.image.sync.service"].check_image_sync_access()
