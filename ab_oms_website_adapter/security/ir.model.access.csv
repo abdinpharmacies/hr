@@ -1,4 +1,0 @@
-id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-access_event_service,Event service,model_ab_oms_website_event,ab_oms_website_adapter.group_sync,1,1,1,0
-access_event_system,Event administration,model_ab_oms_website_event,base.group_system,1,1,1,0
-access_service_sale_order,OMS order exchange,sale.model_sale_order,ab_oms_website_adapter.group_sync,1,1,0,0
