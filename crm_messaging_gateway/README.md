@@ -1,3 +1,5 @@
+> Gateway 1.5.0 WhatsApp reception, contact cards and media: see [the reception rollout and validation record](../docs/whatsapp-reception-rollout.md). Earlier capability descriptions below describe previous releases.
+
 > For the callcenter PostgreSQL deployment, use [the current dual-channel runbook](../docs/omnichannel-callcenter-runbook.md). SQLite instructions below describe an optional deployment, not a migration requirement. Per-account sending and dedicated WhatsApp Odoo credentials are described in that runbook.
 
 # CRM messaging integration
@@ -118,3 +120,35 @@ flag and the matching Odoo account's **Telegram Branch Locations Enabled**.
 Existing global/account sending gates remain required. Until both sides are
 ready, keep location sending disabled. No webhook setup is required by this
 feature. See `docs/telegram-branch-location-validation.md` in the repository root.
+
+### Reception health and historical receipt reconciliation
+
+`python -m app.ops status` retains its existing fields and adds `reception_health`,
+keyed by configured account. Enabled Telegram polling becomes unhealthy when its
+heartbeat is missing or older than 120 seconds. This is independent of HTTP
+liveness and queue readiness. Per-account backlog age covers unfinished inbound
+messages and status receipts.
+
+The existing Telegram receiver preserves its offset and exclusive lock. Temporary
+network/provider/queue failures back off up to eight attempts and exit 75 for
+systemd recovery. Invalid credentials, ownership conflicts, active webhooks and
+malformed events stop explicitly; diagnostics omit provider responses and tokens.
+No webhook is automatically removed and no second poller is started.
+
+After deploying the WhatsApp companion, preview explicitly selected historical
+status events (the command does not collect or dispatch outgoing operations):
+
+```sh
+python -m app.reconcile wa-callcenter --event-id 101 --event-id 102
+python -m app.reconcile wa-callcenter --event-id 101 --event-id 102 --apply retry --digest PREVIEW_DIGEST --note 'Verified unique historical outgoing matches'
+python -m app.reconcile wa-callcenter --event-id 103 --apply ignore --digest PREVIEW_DIGEST --note 'Confirmed orphan after historical and operation lookup'
+```
+
+Use the IDs from the reviewed queue, not these examples. A preview digest binds
+account, event IDs, fingerprints, queue states and current Odoo match results.
+Only unique verified historical/operation matches can be retried. Only confirmed
+orphans can be ignored; ambiguous and unverified records remain for review.
+Application rechecks the preview and records actor, action, reason and digest in
+`operator_audit`. Payloads and fingerprints are preserved. Normal unmatched new
+callbacks keep their existing bounded retry/review behavior. Queue ordering
+continues to serialize receipts for each account, destination and reference.
