@@ -653,7 +653,7 @@ msgid "Connect this branch and download its stock snapshot before selling."
 msgstr "اربط هذا الفرع وحمّل صورة مخزونه قبل البيع."
 
 #. module: ab_branch_sync
-#: model_terms:ir.ui.view,arch_db:ab_branch_sync.settings_form
+#: model_terms:ir.ui.view,arch_db:ab_branch_sync.operation_list
 msgid "Connect to Central"
 msgstr "الربط بالمركزي"
 
@@ -878,7 +878,7 @@ msgid "Stock refresh needs attention"
 msgstr "يلزم مراجعة تحديث المخزون"
 
 #. module: ab_branch_sync
-#: model_terms:ir.ui.view,arch_db:ab_branch_sync.settings_form
+#: model_terms:ir.ui.view,arch_db:ab_branch_sync.operation_list
 msgid "Sync Now"
 msgstr "مزامنة الآن"
 
@@ -1468,3 +1468,27 @@ msgstr "أساس وحدة المنتج المركزية"
 #: code:addons/ab_branch_sync/models/product.py:0
 msgid "Unit conversion factors must be positive and finite."
 msgstr "يجب أن تكون معاملات تحويل الوحدات موجبة ومحدودة."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/enrollment.py:0
+msgid "Central synchronization completed."
+msgstr "اكتملت المزامنة مع المركز الرئيسي."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/enrollment.py:0
+msgid "Connect to central before synchronizing."
+msgstr "اتصل بالمركز الرئيسي قبل المزامنة."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/enrollment.py:0
+msgid "Stock refreshed. Some outgoing operations still need attention."
+msgstr "تم تحديث المخزون. لا تزال بعض العمليات الصادرة تحتاج إلى مراجعة."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/enrollment.py:0
+msgid "Synchronization failed. Check the central connection and retry."
+msgstr "فشلت المزامنة. تحقق من الاتصال بالمركز الرئيسي وأعد المحاولة."

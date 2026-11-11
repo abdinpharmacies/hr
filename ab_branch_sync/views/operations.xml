@@ -1,6 +1,12 @@
 <odoo>
     <record id="operation_list" model="ir.ui.view"><field name="name">Central operations</field><field name="model">ab_branch_sync_operation</field><field name="arch" type="xml">
-            <list create="0" delete="0" edit="0"><field name="store_id"/><field name="direction"/><field name="serial"/><field name="kind"/><field name="state"/><field name="accepted_at"/><field name="attempts"/><field name="next_retry"/><field name="error"/></list></field></record>
+            <list create="0" delete="0" edit="0">
+                <header>
+                    <button name="action_connect_central" type="object" string="Connect to Central"
+                            class="btn-primary" display="always" groups="base.group_system"/>
+                    <button name="action_sync_now" type="object" string="Sync Now"
+                            display="always" groups="base.group_system"/>
+                </header><field name="store_id"/><field name="direction"/><field name="serial"/><field name="kind"/><field name="state"/><field name="accepted_at"/><field name="attempts"/><field name="next_retry"/><field name="error"/></list></field></record>
     <record id="operation_form" model="ir.ui.view"><field name="name">Central operation</field><field name="model">ab_branch_sync_operation</field><field name="arch" type="xml">
             <form create="0" delete="0" edit="0"><header><button name="action_retry" type="object" string="Retry" invisible="state == 'accepted'" groups="ab_branch_sync.group_manager"/><button name="action_reconcile" type="object" string="Check Missing Serials" invisible="direction != 'out'" groups="ab_branch_sync.group_manager"/><field name="state" widget="statusbar"/></header><sheet><group><field name="origin"/><field name="token"/><field name="store_id"/><field name="serial"/><field name="kind"/><field name="direction"/><field name="accepted_at"/><field name="attempts"/><field name="next_retry"/><field name="error"/></group><notebook><page string="Payload"><field name="payload"/></page><page string="Result"><field name="result"/></page><page string="Reconciliation"><group/><field name="reconciliation"/></page><page string="History"><field name="history"/></page></notebook></sheet></form></field></record>
     <record id="operation_action" model="ir.actions.act_window"><field name="name">Branch Synchronization</field><field name="res_model">ab_branch_sync_operation</field><field name="view_mode">list,form</field></record>

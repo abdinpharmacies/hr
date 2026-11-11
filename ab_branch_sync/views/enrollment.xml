@@ -3,40 +3,18 @@
         <field name="name">Replica central enrollment</field>
         <field name="model">ab_replica_db</field>
         <field name="inherit_id" ref="ab_store.ab_replica_db_view_form"/>
-        <field name="arch" type="xml"><xpath expr="//sheet" position="inside"/></field><field name="active" eval="False"/></record>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside"/>
+        </field>
+        <field name="active" eval="False"/>
+    </record>
     <record id="settings_form" model="ir.ui.view">
         <field name="name">Central synchronization settings</field><field name="model">res.config.settings</field>
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-            <app string="Branch Synchronization" name="ab_branch_sync" groups="base.group_system">
-                <block title="Connection">
-                    <setting string="Central server">
-                        <div class="content-group">
-                            <div class="row mt16">
-                                <label for="central_url" class="col-lg-4 o_light_label"/>
-                                <field name="central_url" placeholder="https://central.example.com" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_database" class="col-lg-4 o_light_label"/>
-                                <field name="central_database" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_api_key" class="col-lg-4 o_light_label"/>
-                                <field name="central_api_key" password="True" class="col-lg-8"/>
-                            </div>
-                            <div class="row mt16">
-                                <label for="central_connection" class="col-lg-4 o_light_label"/>
-                                <field name="central_connection" class="col-lg-8"/>
-                            </div>
-                        </div>
-                        <button name="action_connect_central" type="object" string="Connect to Central" class="btn-primary" noSaveDialog="true"/>
-                        <button name="action_sync_now" type="object" string="Sync Now"/>
-                        <div class="text-muted">Connect once per branch installation. Sessions and restarts reconnect automatically.</div>
-                    </setting>
-                </block>
-            </app>
-        </xpath></field>
+            <xpath expr="//form" position="inside"/>
+        </field>
+        <field name="active" eval="False"/>
     </record>
     <record id="sale_inventory_sync_form" model="ir.ui.view">
         <field name="name">Branch bill inventory synchronization</field>

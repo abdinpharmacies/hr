@@ -253,6 +253,9 @@ class CentralOperation(models.Model):
             raise ValidationError(_('Reconcile existing local native stock movements before enabling central synchronization.'))
         sales = self.env['ab_sales_header'].sudo().with_context(active_test=False).search(
             domain & (fields.Domain('native_submitted', '=', True) | fields.Domain('native_posted', '=', True)))
+        sales = sales.filtered(lambda sale: not (
+            sale.status == 'cancelled' and sale.native_cancelled_by_id
+            and sale.native_cancelled_at and (sale.native_cancel_reason or '').strip()))
         returns = self.env['ab_sales_return_header'].sudo().with_context(active_test=False).search(
             domain & fields.Domain('native_posted', '=', True))
         payments = self.env['ab_sales_native_payment'].sudo().search(domain)

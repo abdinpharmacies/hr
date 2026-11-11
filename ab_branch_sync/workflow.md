@@ -34,14 +34,50 @@ inventory stores, allowed companies, and the requested replica's sales stores.
 The role is not granted to administrators automatically. Revoking the key or
 removing the role removes transport access.
 
-In branch Settings → Branch Synchronization, enter the Central URL, Central
-Database, and Inventory Writer API Key, then click Connect to Central. The button
-saves these values, verifies access, and downloads the initial stock snapshot.
+On the branch, enable developer mode and open Settings → Technical → Parameters →
+System Parameters. Configure these existing keys directly:
+
+| Key | Value |
+| --- | --- |
+| `ab_branch_sync.url` | Central HTTP or HTTPS URL |
+| `ab_branch_sync.database` | Central Odoo database name |
+| `ab_branch_sync.api_key` | Inventory Writer's standard Odoo user API key |
+
+Then open Branch Synchronization → Operations and click **Connect to Central**.
+The button reads the saved parameters, verifies access, and downloads the initial
+stock snapshot. **Sync Now** delivers up to 100 queued, uncertain or retryable
+protocol-3 operations and refreshes stock; its notification reports whether any
+outgoing operations still need attention. Both buttons are available on an empty
+Operations list and require a system administrator, including direct RPC calls.
+The object-button handlers accept empty or multiple-record selections through
+Odoo record-method dispatch; the connection and synchronization run once per click.
+Synchronization managers retain their existing operation review/retry access.
+
+Enrollment ignores cancelled native invoices only when cancellation records include
+the actor, timestamp and a non-empty reason. Local stock allocations, payments and
+posted returns still require reconciliation. Never delete invoices or journal rows
+to enable a connection. For a missing journal, restore verifiable central evidence
+first; cancel abandoned invoices only after reviewing central counterparts and
+using native cancellation/reversal workflows on the affected installations.
+
+Changing, creating, renaming or deleting a connection parameter clears connection
+authorization and stock readiness. Click Connect to Central again after editing
+the target or API key. Unchanged values and unrelated parameters do not reset the
+connection. The module maintains `ab_branch_sync.authorized`, `ready`, `origin`,
+`stores` and `connection_status`; do not configure these manually. The optional
+`ab_branch_sync.pos_sync_interval_seconds` controls the POS refresh timer (default
+10 seconds). Existing parameter values, snapshots and operation records are retained.
+
 There is no pairing code, per-replica secret, service-user login, CA bundle, or
 certificate verification step. HTTP and HTTPS are supported; HTTPS certificate
-verification remains disabled as requested. Changing the target or key requires
-Connect again. The configured replica identity (db_serial)
-and replicated store assignments remain routing/access metadata, not credentials.
+verification remains disabled as requested. The configured replica identity
+(`db_serial` in the Odoo configuration file) and replicated store assignments
+remain routing/access metadata, not credentials.
+
+Master-data replication uses a separate connection through `ab_odoo_connect`:
+`server_address`, `server_db`, `server_user` and encrypted `server_password`.
+Its URL/database may point to the same server, but its credentials and purpose
+are independent. Do not replace those keys with the inventory synchronization keys.
 
 Central posts as the authenticated Inventory Writer. The branch employee remains
 bill metadata, and its replicated employee/profile must exist when employee
