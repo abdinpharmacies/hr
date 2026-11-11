@@ -32,7 +32,6 @@ APPROVED_UNUSED = {
     'abdin_eplus.store': {'region_moved0'},
 }
 
-
 from mapping import MappingStrategies
 from quarantine import Quarantine
 from seeds import StrictSeeds, STRICT_FORMAT, STRICT_POLICY, SEED_ADAPTER_VERSION, CONFIG_LINKS, require_strict
@@ -50,7 +49,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         self.rules = loads(Path(__file__).with_name('mappings.json').read_text())
         self.models = self.manifest['models']
         self.physical = catalog(self.cr._cnx)
-        self.report = dict(passed=False, development=True, cutover_ready=False, connection_policy='always_enabled', tables={}, skipped_columns=[],
+        self.report = dict(passed=False, development=True, cutover_ready=False, connection_policy='always_enabled',
+                           tables={}, skipped_columns=[],
                            missing_files=[], unresolved_references=[], excluded_roles=[], tests=[])
         self.prepared = {}
 
@@ -127,14 +127,17 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             if 'id' in meta['columns']:
                 self.execute(sql.SQL('ALTER TABLE {} ADD PRIMARY KEY (id)').format(ident(STAGE, table)))
             self.execute(sql.SQL('ANALYZE {}').format(ident(STAGE, table)))
-            self.report['tables'][table] = dict(source_rows=actual, copy_seconds=round(time.monotonic()-started, 3))
+            self.report['tables'][table] = dict(source_rows=actual, copy_seconds=round(time.monotonic() - started, 3))
             put_checkpoint(self.cr, 'copy:' + table, {'identity': fingerprint(meta), 'source_rows': actual})
             self.cr.commit()
             current().finish('committed COPY table')
         if 'ir_translation' in self.manifest['tables']:
-            self.execute(sql.SQL("CREATE INDEX IF NOT EXISTS migration_translation_name_res ON {} (name,res_id) WHERE type='model'").format(ident(STAGE, 'ir_translation')))
+            self.execute(sql.SQL(
+                "CREATE INDEX IF NOT EXISTS migration_translation_name_res ON {} (name,res_id) WHERE type='model'").format(
+                ident(STAGE, 'ir_translation')))
         if 'ir_model_data' in self.manifest['tables']:
-            self.execute(sql.SQL('CREATE INDEX IF NOT EXISTS migration_xml_model_res ON {} (model,res_id)').format(ident(STAGE, 'ir_model_data')))
+            self.execute(sql.SQL('CREATE INDEX IF NOT EXISTS migration_xml_model_res ON {} (model,res_id)').format(
+                ident(STAGE, 'ir_model_data')))
         self.cr.commit()  # immutable raw staging; business transaction begins below
         current().transaction('committed', 'raw staging COPY')
         self.current_phase, self.current_table = 'post-staging', None
@@ -161,7 +164,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             raise MigrationError('Fresh target already has record mappings')
         self.create_model_plan()
         self.start_seed_plan()
-        self.execute(sql.SQL('CREATE TABLE accounting_migration.xml_data AS TABLE {}').format(ident(STAGE, 'ir_model_data')))
+        self.execute(
+            sql.SQL('CREATE TABLE accounting_migration.xml_data AS TABLE {}').format(ident(STAGE, 'ir_model_data')))
         # Normalize a working copy, preserving raw COPY tables.
         for old, new in self.rules['xmlids'].items():
             module, name = new.split('.', 1)
@@ -173,23 +177,29 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         self.execute(sql.SQL('CREATE INDEX ON {} (module,name)').format(ident('accounting_migration', 'xml_data')))
         for index, model in enumerate(self.models, 1):
             self.current_phase, self.current_table = 'identity mapping', self.models[model]['table']
-            current().begin('mapping', model=model, table=self.current_table, model_index=index, model_count=len(self.models),
+            current().begin('mapping', model=model, table=self.current_table, model_index=index,
+                            model_count=len(self.models),
                             operation='resolve XML identities')
             if model not in self.schema:
                 if model in LOOKUPS:
                     continue
                 raise MigrationError(f'Missing target model: {model}')
             candidates = sql.SQL('SELECT DISTINCT s.id,d.res_id FROM {} s JOIN {} x ON x.model=%s AND x.res_id=s.id '
-                'JOIN ir_model_data d ON d.module=x.module AND d.name=x.name AND d.model=%s '
-                'JOIN {} t ON t.id=d.res_id').format(self.src(model), ident('accounting_migration', 'xml_data'), self.dst(model))
-            self.fail_if(sql.SQL('SELECT count(*) FROM (SELECT id FROM ({}) q GROUP BY id HAVING count(*)>1) q').format(candidates),
-                         [model, model], f'Ambiguous seeded XML identity: {model}')
+                                 'JOIN ir_model_data d ON d.module=x.module AND d.name=x.name AND d.model=%s '
+                                 'JOIN {} t ON t.id=d.res_id').format(self.src(model),
+                                                                      ident('accounting_migration', 'xml_data'),
+                                                                      self.dst(model))
+            self.fail_if(sql.SQL('SELECT count(*) FROM (SELECT id FROM ({}) q GROUP BY id HAVING count(*)>1) q').format(
+                candidates),
+                [model, model], f'Ambiguous seeded XML identity: {model}')
             if model not in LOOKUPS:
                 self.plan_identity(model, candidates)
                 continue
             current().update(strategy='explicit')
-            self.execute(sql.SQL('INSERT INTO accounting_migration.record_map(model,source_id,target_model,target_id,phase) '
-                "SELECT %s,q.id,%s,q.res_id,'seeded' FROM ({}) q").format(candidates), [model, model, model, model])
+            self.execute(
+                sql.SQL('INSERT INTO accounting_migration.record_map(model,source_id,target_model,target_id,phase) '
+                        "SELECT %s,q.id,%s,q.res_id,'seeded' FROM ({}) q").format(candidates),
+                [model, model, model, model])
             mapping_written = self.cr.rowcount
             current().update(mapping_rows_written=mapping_written)
             if model in LOOKUPS:
@@ -201,7 +211,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                 self.fail_if(sql.SQL('SELECT count(*)>1 FROM {} WHERE name=%s').format(self.src('res.groups')), [name],
                              'Ambiguous manually-created legacy role')
                 module, xmlname = xmlid.split('.', 1)
-                self.execute(sql.SQL("INSERT INTO accounting_migration.record_map SELECT 'res.groups',s.id,'res.groups',d.res_id,'seeded' "
+                self.execute(sql.SQL(
+                    "INSERT INTO accounting_migration.record_map SELECT 'res.groups',s.id,'res.groups',d.res_id,'seeded' "
                     'FROM {} s JOIN ir_model_data d ON d.module=%s AND d.name=%s AND d.model=\'res.groups\' WHERE s.name=%s '
                     'ON CONFLICT (model,source_id) DO NOTHING').format(self.src('res.groups')), [module, xmlname, name])
         current().begin('mapping', operation='classify excluded lookups and analyze mappings')
@@ -222,8 +233,9 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         # Only the previously approved legacy stock/audit defects may survive.
         if not allow_orphan or model not in GUARDED:
             raise MigrationError(f'Unmapped reference: {model}.{field} ({count} rows)')
-        self.execute(sql.SQL('UPDATE {} s SET migration_reference_missing=true, migration_source_references=to_jsonb(s)::text '
-            'WHERE s.id IN (SELECT id FROM ({} ) q)').format(self.src(model), query))
+        self.execute(
+            sql.SQL('UPDATE {} s SET migration_reference_missing=true, migration_source_references=to_jsonb(s)::text '
+                    'WHERE s.id IN (SELECT id FROM ({} ) q)').format(self.src(model), query))
 
     def prepare(self, model):
         self.current_phase, self.current_table = 'schema adaptation', self.models[model]['table']
@@ -234,8 +246,12 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         tc = self.physical[target['table']]
         if model in GUARDED:
             for col, typ in [('migration_reference_missing', 'boolean'), ('migration_source_references', 'text')]:
-                self.execute(sql.SQL('ALTER TABLE {} ADD COLUMN IF NOT EXISTS {} {}').format(self.src(model), ident(col), sql.SQL(typ)))
-        expressions = {'id': sql.SQL('s.id') if self.identity_model(model) else self.mapped_expression(sql.Literal(model), sql.SQL('s.id'))}
+                self.execute(
+                    sql.SQL('ALTER TABLE {} ADD COLUMN IF NOT EXISTS {} {}').format(self.src(model), ident(col),
+                                                                                    sql.SQL(typ)))
+        expressions = {
+            'id': sql.SQL('s.id') if self.identity_model(model) else self.mapped_expression(sql.Literal(model),
+                                                                                            sql.SQL('s.id'))}
         skipped = set()
         for field in source_columns:
             if field == 'id':
@@ -255,32 +271,36 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                     harmless = True  # migrated into its Odoo19 delegated partner field
                 if model == 'res.partner' and field == 'mobile':
                     self.fail_if(sql.SQL("SELECT count(*) FROM {} WHERE nullif(mobile,'') IS NOT NULL "
-                        "AND nullif(phone,'') IS NOT NULL AND mobile<>phone").format(self.src(model)), None,
-                        'Conflicting source partner phone/mobile values need an adapter')
+                                         "AND nullif(phone,'') IS NOT NULL AND mobile<>phone").format(self.src(model)),
+                                 None,
+                                 'Conflicting source partner phone/mobile values need an adapter')
                     expressions['phone'] = sql.SQL("coalesce(nullif(s.phone,''),s.mobile)")
                     harmless = True
                 if model == 'ab_store' and field == 'user_id':
                     self.fail_if(sql.SQL('SELECT count(*) FROM {} s WHERE s.user_id IS NOT NULL AND NOT EXISTS '
-                        '(SELECT 1 FROM {} d WHERE d.store_id=s.id AND d.user_id=s.user_id)').format(
-                            self.src(model), self.src('ab_hr_department')), None, 'Store user assignment would be lost')
+                                         '(SELECT 1 FROM {} d WHERE d.store_id=s.id AND d.user_id=s.user_id)').format(
+                        self.src(model), self.src('ab_hr_department')), None, 'Store user assignment would be lost')
                     harmless = True
                 if field in ZERO_ONLY.get(model, set()):
                     self.fail_if(sql.SQL('SELECT count(*) FROM {} WHERE {} IS NOT NULL AND {}<>0').format(
                         self.src(model), ident(field), ident(field)), None, f'Nonzero legacy value: {model}.{field}')
                     harmless = True
                 if not harmless:
-                    self.fail_if(sql.SQL('SELECT count(*) FROM {} WHERE {} IS NOT NULL').format(self.src(model), ident(field)),
-                                 None, f'Populated source-only field needs adapter: {model}.{field}')
+                    self.fail_if(
+                        sql.SQL('SELECT count(*) FROM {} WHERE {} IS NOT NULL').format(self.src(model), ident(field)),
+                        None, f'Populated source-only field needs adapter: {model}.{field}')
                 skipped.add(field)
                 continue
-            related = 'res.users' if field in ('create_uid', 'write_uid') else f.get('relation') if f.get('ttype') == 'many2one' else None
+            related = 'res.users' if field in ('create_uid', 'write_uid') else f.get('relation') if f.get(
+                'ttype') == 'many2one' else None
             related = self.rules.get('integer_links', {}).get(model, {}).get(field, related)
             polymorphic = self.rules.get('polymorphic', {}).get(model, {}).get(field)
             if related or polymorphic:
                 if polymorphic:
                     rel = sql.SQL('s.{}').format(ident(polymorphic))
                     for old, new in self.rules.get('source_aliases', {}).items():
-                        rel = sql.SQL('CASE WHEN {}={} THEN {} ELSE {} END').format(rel, sql.Literal(old), sql.Literal(new), rel)
+                        rel = sql.SQL('CASE WHEN {}={} THEN {} ELSE {} END').format(rel, sql.Literal(old),
+                                                                                    sql.Literal(new), rel)
                 else:
                     rel = sql.Literal(related)
                 self.check_link(model, field, rel, value, field in {'res_id', 'je_line'})
@@ -296,12 +316,15 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             oldtype, newtype = source_columns[field]['type'], tc[field]['type']
             if oldtype != newtype:
                 if newtype == 'jsonb' and tf.get('translate'):
-                    value = sql.SQL("CASE WHEN {} IS NULL THEN NULL ELSE jsonb_build_object('en_US',{}) END").format(value, value)
+                    value = sql.SQL("CASE WHEN {} IS NULL THEN NULL ELSE jsonb_build_object('en_US',{}) END").format(
+                        value, value)
                     if 'ir_translation' in self.manifest['tables']:
-                        value = sql.SQL("({} || coalesce((SELECT jsonb_object_agg(tr.lang,tr.value ORDER BY tr.id) FROM {} tr "
+                        value = sql.SQL(
+                            "({} || coalesce((SELECT jsonb_object_agg(tr.lang,tr.value ORDER BY tr.id) FROM {} tr "
                             "WHERE tr.type='model' AND tr.name={} AND tr.res_id=s.id AND tr.value IS NOT NULL), '{{}}'::jsonb))").format(
-                                value, ident(STAGE, 'ir_translation'), sql.Literal(model + ',' + field))
-                elif (oldtype, newtype) in {('double precision', 'numeric'), ('integer', 'bigint'), ('character varying', 'text')}:
+                            value, ident(STAGE, 'ir_translation'), sql.Literal(model + ',' + field))
+                elif (oldtype, newtype) in {('double precision', 'numeric'), ('integer', 'bigint'),
+                                            ('character varying', 'text')}:
                     value = sql.SQL('({})::{}').format(value, sql.SQL(newtype))
                 else:
                     raise MigrationError(f'Unsupported SQL conversion: {model}.{field}: {oldtype} -> {newtype}')
@@ -318,13 +341,17 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         if model == 'res.partner' and 'res.company' in self.models:
             company_columns = self.manifest['tables'][self.models['res.company']['table']]['columns']
             if 'company_registry' in company_columns and 'company_registry' in tc:
-                self.fail_if(sql.SQL('SELECT count(*) FROM (SELECT partner_id FROM {} WHERE company_registry IS NOT NULL '
-                    'GROUP BY partner_id HAVING count(DISTINCT company_registry)>1) q').format(self.src('res.company')),
+                self.fail_if(
+                    sql.SQL('SELECT count(*) FROM (SELECT partner_id FROM {} WHERE company_registry IS NOT NULL '
+                            'GROUP BY partner_id HAVING count(DISTINCT company_registry)>1) q').format(
+                        self.src('res.company')),
                     None, 'Conflicting company registry values for one partner')
-                registry = sql.SQL('(SELECT max(c.company_registry) FROM {} c WHERE c.partner_id=s.id)').format(self.src('res.company'))
+                registry = sql.SQL('(SELECT max(c.company_registry) FROM {} c WHERE c.partner_id=s.id)').format(
+                    self.src('res.company'))
                 if 'company_registry' in source_columns:
-                    self.fail_if(sql.SQL('SELECT count(*) FROM {} s WHERE s.company_registry IS NOT NULL AND {} IS NOT NULL '
-                        'AND s.company_registry<>{}').format(self.src(model), registry, registry), None,
+                    self.fail_if(
+                        sql.SQL('SELECT count(*) FROM {} s WHERE s.company_registry IS NOT NULL AND {} IS NOT NULL '
+                                'AND s.company_registry<>{}').format(self.src(model), registry, registry), None,
                         'Conflicting partner/company registry values')
                     registry = sql.SQL('coalesce(s.company_registry,{})').format(registry)
                 expressions['company_registry'] = registry
@@ -360,23 +387,26 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             condition = sql.SQL(' OR ').join(sql.SQL('({})').format(expr) for _, expr in invalid)
             if self.count(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s WHERE {})').format(self.src(model), condition)):
                 for field, condition in invalid:
-                    self.fail_if(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s WHERE {})').format(self.src(model), condition),
-                                 None, f'Invalid required/selection value: {model}.{field}')
+                    self.fail_if(
+                        sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s WHERE {})').format(self.src(model), condition),
+                        None, f'Invalid required/selection value: {model}.{field}')
         return expressions
 
     def classify_lookup_exclusions(self):
         self.excluded_group_ids, self.retired_field_ids = [], []
         if 'res.groups' in self.models:
             self.execute(sql.SQL("SELECT g.id,array_agg(x.module||'.'||x.name) FROM {} g "
-                "JOIN {} x ON x.model='res.groups' AND x.res_id=g.id "
-                "WHERE NOT EXISTS (SELECT 1 FROM accounting_migration.record_map m WHERE m.model='res.groups' AND m.source_id=g.id) "
-                "GROUP BY g.id HAVING bool_and(NOT EXISTS (SELECT 1 FROM ir_module_module t WHERE t.name=x.module AND t.state='installed'))").format(
-                    self.src('res.groups'), ident('accounting_migration', 'xml_data')))
+                                 "JOIN {} x ON x.model='res.groups' AND x.res_id=g.id "
+                                 "WHERE NOT EXISTS (SELECT 1 FROM accounting_migration.record_map m WHERE m.model='res.groups' AND m.source_id=g.id) "
+                                 "GROUP BY g.id HAVING bool_and(NOT EXISTS (SELECT 1 FROM ir_module_module t WHERE t.name=x.module AND t.state='installed'))").format(
+                self.src('res.groups'), ident('accounting_migration', 'xml_data')))
             for gid, identities in self.cr.fetchall():
                 self.excluded_group_ids.append(gid)
-                self.report['excluded_roles'].append(dict(source_id=gid, xmlids=identities, reason='Application outside migration scope'))
+                self.report['excluded_roles'].append(
+                    dict(source_id=gid, xmlids=identities, reason='Application outside migration scope'))
         if 'ir.model.fields' in self.models:
-            self.execute(sql.SQL("SELECT DISTINCT res_id FROM {} WHERE model='ir.model.fields' AND module||'.'||name=ANY(%s)").format(
+            self.execute(sql.SQL(
+                "SELECT DISTINCT res_id FROM {} WHERE model='ir.model.fields' AND module||'.'||name=ANY(%s)").format(
                 ident('accounting_migration', 'xml_data')), [list(self.rules.get('retired_report_fields', {}))])
             self.retired_field_ids = [r[0] for r in self.cr.fetchall()]
             self.report['retired_report_fields'] = self.retired_field_ids
@@ -384,31 +414,46 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
     # Source user IDs are preserved; audit references must still exist in the snapshot.
     def install_json_adapter(self):
         self.execute("""
-            CREATE OR REPLACE FUNCTION accounting_migration.remap_audit(value jsonb) RETURNS jsonb
+                     CREATE
+                     OR REPLACE FUNCTION accounting_migration.remap_audit(value jsonb) RETURNS jsonb
             LANGUAGE plpgsql AS $$
-            DECLARE result jsonb; k text; v jsonb; mapped bigint;
-            BEGIN
-                IF value IS NULL THEN RETURN NULL; END IF;
-                IF jsonb_typeof(value)='object' THEN
+            DECLARE
+                     result jsonb; k
+                     text; v
+                     jsonb; mapped
+                     bigint;
+                     BEGIN
+                IF
+                     value IS NULL THEN RETURN NULL;
+                     END IF;
+                IF
+                     jsonb_typeof(value)='object' THEN
                     result := '{}'::jsonb;
-                    FOR k,v IN SELECT * FROM jsonb_each(value) LOOP
-                        IF k='user_id' AND (v #>> '{}') ~ '^[0-9]+$' AND (v #>> '{}')<>'0' THEN
-                            SELECT id INTO mapped FROM accounting_migration_source.res_users
-                            WHERE id=(v #>> '{}')::bigint;
-                            IF mapped IS NULL THEN RAISE EXCEPTION 'Unmapped audit user'; END IF;
-                            result := result || jsonb_build_object(k,CASE WHEN jsonb_typeof(v)='string' THEN to_jsonb(mapped::text) ELSE to_jsonb(mapped) END);
-                        ELSE
+                     FOR k,v IN
+                     SELECT *
+                     FROM jsonb_each(value) LOOP IF k='user_id' AND (v #>> '{}') ~ '^[0-9]+$' AND (v #>> '{}')<>'0' THEN
+                     SELECT id
+                     INTO mapped
+                     FROM accounting_migration_source.res_users
+                     WHERE id = (v #>> '{}')::bigint;
+                     IF
+                     mapped IS NULL THEN RAISE EXCEPTION 'Unmapped audit user';
+                     END IF;
+                            result
+                     := result || jsonb_build_object(k,CASE WHEN jsonb_typeof(v)='string' THEN to_jsonb(mapped::text) ELSE to_jsonb(mapped) END);
+                     ELSE
                             result := result || jsonb_build_object(k,accounting_migration.remap_audit(v));
-                        END IF;
-                    END LOOP;
-                    RETURN result;
-                ELSIF jsonb_typeof(value)='array' THEN
+                     END IF;
+                     END LOOP;
+                     RETURN result;
+                     ELSIF
+                     jsonb_typeof(value)='array' THEN
                     RETURN coalesce((SELECT jsonb_agg(accounting_migration.remap_audit(a.v) ORDER BY a.n)
                         FROM jsonb_array_elements(value) WITH ORDINALITY a(v,n)), '[]'::jsonb);
-                END IF;
-                RETURN value;
-            END $$
-        """)
+                     END IF;
+                     RETURN value;
+                     END $$
+                     """)
 
     def property_expressions(self, model, expressions):
         if 'ir_property' not in self.manifest['tables']:
@@ -421,7 +466,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         names = [r[0] for r in self.cr.fetchall()]
         for name in names:
             tf = self.schema[model]['fields'].get(name, {})
-            if not tf.get('company_dependent') or self.physical[self.schema[model]['table']].get(name, {}).get('type') != 'jsonb':
+            if not tf.get('company_dependent') or self.physical[self.schema[model]['table']].get(name, {}).get(
+                    'type') != 'jsonb':
                 raise MigrationError(f'Company-dependent property requires a target JSONB field: {model}.{name}')
             typ = tf['type']
             column = {'float': 'value_float', 'monetary': 'value_float', 'integer': 'value_integer',
@@ -433,29 +479,34 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             value = sql.SQL('p.{}').format(ident(column))
             if typ == 'many2one':
                 value = self.mapped_expression(sql.SQL("split_part(p.value_reference,',',1)"),
-                                              sql.SQL("nullif(split_part(p.value_reference,',',2),'')::bigint"))
-                self.fail_if(sql.SQL('SELECT count(*) FROM {} p JOIN {} f ON f.id=p.fields_id WHERE f.model=%s AND f.name=%s '
-                    'AND p.value_reference IS NOT NULL AND {} IS NULL').format(properties, fields, value),
+                                               sql.SQL("nullif(split_part(p.value_reference,',',2),'')::bigint"))
+                self.fail_if(
+                    sql.SQL('SELECT count(*) FROM {} p JOIN {} f ON f.id=p.fields_id WHERE f.model=%s AND f.name=%s '
+                            'AND p.value_reference IS NOT NULL AND {} IS NULL').format(properties, fields, value),
                     [model, name], f'Unmapped company property reference: {model}.{name}')
             elif typ == 'boolean':
                 value = sql.SQL('({}<>0)').format(value)
             # Odoo 15 resolves record-specific then company-specific property values.
             lookup = sql.SQL('SELECT {} value FROM {} p JOIN {} f ON f.id=p.fields_id '
-                'WHERE f.model={} AND f.name={} AND (p.res_id IS NULL OR p.res_id={}||s.id::text) '
-                'AND (p.company_id IS NULL OR p.company_id=c.source_id) '
-                'ORDER BY (p.res_id IS NOT NULL) DESC,(p.company_id IS NOT NULL) DESC,p.id DESC LIMIT 1').format(
-                    value, properties, fields, sql.Literal(model), sql.Literal(name), sql.Literal(model + ','))
+                             'WHERE f.model={} AND f.name={} AND (p.res_id IS NULL OR p.res_id={}||s.id::text) '
+                             'AND (p.company_id IS NULL OR p.company_id=c.source_id) '
+                             'ORDER BY (p.res_id IS NOT NULL) DESC,(p.company_id IS NOT NULL) DESC,p.id DESC LIMIT 1').format(
+                value, properties, fields, sql.Literal(model), sql.Literal(name), sql.Literal(model + ','))
             expressions[name] = sql.SQL("(SELECT jsonb_object_agg(c.target_id::text,p.value) "
-                "FROM ({}) c CROSS JOIN LATERAL ({}) p)").format(self.mapping_relation('res.company'), lookup)
+                                        "FROM ({}) c CROSS JOIN LATERAL ({}) p)").format(
+                self.mapping_relation('res.company'), lookup)
 
     def prepare_header_reference(self, model, expressions):
-        self.fail_if(sql.SQL("SELECT count(*) FROM {} WHERE header_ref IS NOT NULL AND header_ref !~ '^[PNO][0-9]+$'").format(
-            self.src(model)), None, 'Unsupported inventory header reference format')
-        related = sql.SQL("CASE left(s.header_ref,1) WHEN 'P' THEN 'ab_purchase_header' WHEN 'N' THEN 'ab_purchase_notice_header' ELSE 'ab_purchase_ob_header' END")
+        self.fail_if(
+            sql.SQL("SELECT count(*) FROM {} WHERE header_ref IS NOT NULL AND header_ref !~ '^[PNO][0-9]+$'").format(
+                self.src(model)), None, 'Unsupported inventory header reference format')
+        related = sql.SQL(
+            "CASE left(s.header_ref,1) WHEN 'P' THEN 'ab_purchase_header' WHEN 'N' THEN 'ab_purchase_notice_header' ELSE 'ab_purchase_ob_header' END")
         value = sql.SQL('substring(s.header_ref from 2)::bigint')
         self.check_link(model, 'header_ref', related, value, True)
         mapped = self.mapped_expression(related, value)
-        expressions['header_ref'] = sql.SQL("CASE WHEN s.header_ref IS NULL THEN NULL WHEN {} IS NULL THEN 'LEGACY:'||s.header_ref "
+        expressions['header_ref'] = sql.SQL(
+            "CASE WHEN s.header_ref IS NULL THEN NULL WHEN {} IS NULL THEN 'LEGACY:'||s.header_ref "
             'ELSE left(s.header_ref,1)||{}::text END').format(mapped, mapped)
 
     def defer_constraints(self):
@@ -480,10 +531,13 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             self.current_table = self.models[model]['table']
             expressions = self.typed_expressions(model, expressions)
             names = list(expressions)
-            updates = sql.SQL(',').join(sql.SQL('{}=EXCLUDED.{}').format(ident(f), ident(f)) for f in names if f != 'id')
+            updates = sql.SQL(',').join(
+                sql.SQL('{}=EXCLUDED.{}').format(ident(f), ident(f)) for f in names if f != 'id')
             self.execute(sql.SQL('EXPLAIN INSERT INTO {} ({}) SELECT {} FROM {} s WHERE false '
-                'ON CONFLICT (id) DO UPDATE SET {}').format(self.dst(model),
-                sql.SQL(',').join(map(ident, names)), sql.SQL(',').join(expressions.values()), self.src(model), updates))
+                                 'ON CONFLICT (id) DO UPDATE SET {}').format(self.dst(model),
+                                                                             sql.SQL(',').join(map(ident, names)),
+                                                                             sql.SQL(',').join(expressions.values()),
+                                                                             self.src(model), updates))
         current().finish('all target inserts type-checked; no business rows written')
 
     def load_model(self, model, expressions):
@@ -496,9 +550,11 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         self.prepared[model] = prepared
         table = ident(WORK, prepared)
         total = self.manifest['tables'][self.models[model]['table']]['rows']
-        current().begin('adaptation', model=model, table=self.current_table, total=total, operation='prepare converted rows')
+        current().begin('adaptation', model=model, table=self.current_table, total=total,
+                        operation='prepare converted rows')
         # Establish SQL result types without executing the full source SELECT.
-        self.execute(sql.SQL('CREATE TABLE {} AS SELECT * FROM ({}) q({}) WITH NO DATA').format(table, select, column_sql))
+        self.execute(
+            sql.SQL('CREATE TABLE {} AS SELECT * FROM ({}) q({}) WITH NO DATA').format(table, select, column_sql))
         started = time.monotonic()
         for lower, upper, scanned in self.batches(self.src(model)):
             self.execute(sql.SQL('INSERT INTO {} ({}) {} WHERE {}').format(
@@ -508,11 +564,13 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         self.execute(sql.SQL('ALTER TABLE {} ADD PRIMARY KEY (id)').format(table))
         current().finish()
         updates = [sql.SQL('{}=EXCLUDED.{}').format(ident(f), ident(f)) for f in columns if f != 'id']
-        current().begin('business load', model=model, table=self.current_table, total=total, operation='insert converted rows')
+        current().begin('business load', model=model, table=self.current_table, total=total,
+                        operation='insert converted rows')
         for lower, upper, scanned in self.batches(table):
             query = sql.SQL('INSERT INTO {} ({}) SELECT {} FROM {} p WHERE {} '
-                'ON CONFLICT (id) DO UPDATE SET {}').format(self.dst(model), column_sql, column_sql, table,
-                    bounds('p', lower, upper), sql.SQL(',').join(updates))
+                            'ON CONFLICT (id) DO UPDATE SET {}').format(self.dst(model), column_sql, column_sql, table,
+                                                                        bounds('p', lower, upper),
+                                                                        sql.SQL(',').join(updates))
             self.execute(query)
             current().advance(scanned, affected=self.cr.rowcount, status='pending commit')
         current().operation('mark mapped records applied')
@@ -520,7 +578,7 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             self.execute('UPDATE accounting_migration.record_map SET phase=\'done\' WHERE model=%s', [model])
         if getattr(self, 'mapping_format', 1) == STRICT_FORMAT:
             self.execute("UPDATE accounting_migration.model_plan SET status='applied' WHERE model=%s", [model])
-        self.report['tables'][self.models[model]['table']]['apply_seconds'] = round(time.monotonic()-started, 3)
+        self.report['tables'][self.models[model]['table']]['apply_seconds'] = round(time.monotonic() - started, 3)
         current().finish()
 
     def relations(self):
@@ -543,13 +601,15 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                     self.execute(sql.SQL('DELETE FROM {} WHERE {}=ANY(%s)').format(ident(WORK, table), ident(srcb)),
                                  [self.excluded_group_ids])
                 if related == 'ir.model.fields' and (model, field) in {
-                    ('ab_accounting_account_statement', 'report_field_ids'), ('ab_accounting_recon_header', 'report_field_ids')}:
+                    ('ab_accounting_account_statement', 'report_field_ids'),
+                    ('ab_accounting_recon_header', 'report_field_ids')}:
                     self.execute(sql.SQL('DELETE FROM {} WHERE {}=ANY(%s)').format(ident(WORK, table), ident(srcb)),
                                  [self.retired_field_ids])
                 query = sql.SQL('SELECT ma.target_id a,mb.target_id b FROM {} s '
-                    'JOIN ({}) ma ON ma.source_id=s.{} '
-                    'LEFT JOIN ({}) mb ON mb.source_id=s.{}').format(
-                        ident(WORK, table), self.mapping_relation(model), ident(srca), self.mapping_relation(related), ident(srcb))
+                                'JOIN ({}) ma ON ma.source_id=s.{} '
+                                'LEFT JOIN ({}) mb ON mb.source_id=s.{}').format(
+                    ident(WORK, table), self.mapping_relation(model), ident(srca), self.mapping_relation(related),
+                    ident(srcb))
                 missing = self.count(sql.SQL('SELECT count(*) FROM ({}) q WHERE b IS NULL').format(query))
                 if missing:
                     if related == 'res.groups' and model == 'res.users':
@@ -558,8 +618,9 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                     raise MigrationError(f'Unresolved many-to-many references: {model}.{field} ({missing})')
                 self.execute(sql.SQL('DELETE FROM {} WHERE {} IN (SELECT target_id FROM ({}) mapped)').format(
                     ident(rt), ident(a), self.mapping_relation(model)))
-                self.execute(sql.SQL('INSERT INTO {} ({},{}) SELECT DISTINCT a,b FROM ({}) q ON CONFLICT DO NOTHING').format(
-                    ident(rt), ident(a), ident(b), query))
+                self.execute(
+                    sql.SQL('INSERT INTO {} ({},{}) SELECT DISTINCT a,b FROM ({}) q ON CONFLICT DO NOTHING').format(
+                        ident(rt), ident(a), ident(b), query))
                 self.report['tests'].append(f'Resolved relationship {model}.{field}')
 
     # Attachment IDs are preserved; polymorphic technical references use prepare().
@@ -572,7 +633,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         from odoo.tools import config
         source_root = Path(loads((self.stage / 'bulk-settings.json').read_text())['source_filestore'])
         target_root = Path(config.filestore(self.cr.dbname))
-        self.execute(sql.SQL('SELECT id,store_fname,checksum,file_size FROM {} WHERE store_fname IS NOT NULL').format(self.src('ir.attachment')))
+        self.execute(sql.SQL('SELECT id,store_fname,checksum,file_size FROM {} WHERE store_fname IS NOT NULL').format(
+            self.src('ir.attachment')))
         # Metadata only; blob contents are streamed from disk.
         copied = {}
         examined = copied_count = copied_bytes = missing_count = 0
@@ -590,9 +652,9 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                 current().update(missing=missing_count)
                 self.report['missing_files'].append(dict(source_id=sid, path=name, checksum=checksum, size=size))
                 self.execute("UPDATE ir_attachment SET migration_file_missing=true,migration_source_path=%s,"
-                    "migration_source_checksum=%s,migration_source_size=%s,store_fname=NULL,db_datas=NULL "
-                    "WHERE id=%s",
-                    [name, checksum, size, sid])
+                             "migration_source_checksum=%s,migration_source_size=%s,store_fname=NULL,db_datas=NULL "
+                             "WHERE id=%s",
+                             [name, checksum, size, sid])
                 continue
             if (size is not None and src.stat().st_size != size) or (checksum and digest(src, 'sha1') != checksum):
                 raise MigrationError(f'Source attachment changed or checksum invalid: {sid}')
@@ -613,7 +675,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         self.current_phase, self.current_table = 'verification', None
         for model, prepared in self.prepared.items():
             self.current_table = self.models[model]['table']
-            current().begin('verification', model=model, table=self.current_table, operation='compare counts and mapped values')
+            current().begin('verification', model=model, table=self.current_table,
+                            operation='compare counts and mapped values')
             if not self.identity_model(model):
                 raise MigrationError(f'Copied model is not using strict source IDs: {model}')
             self.fail_if(sql.SQL('SELECT count(*) FROM {} s LEFT JOIN {} t ON t.id=s.id WHERE t.id IS NULL').format(
@@ -621,9 +684,11 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             fields = list(self.prepared_columns[model])
             if model == 'ir.attachment':
                 fields = [f for f in fields if f not in {'store_fname', 'db_datas'}]
-            comparison = sql.SQL(' OR ').join(sql.SQL('s.{} IS DISTINCT FROM t.{}').format(ident(f), ident(f)) for f in fields)
-            mismatch = self.count(sql.SQL('SELECT count(*) FROM {} s LEFT JOIN {} t ON t.id=s.id WHERE t.id IS NULL OR ({})').format(
-                ident(WORK, prepared), self.dst(model), comparison))
+            comparison = sql.SQL(' OR ').join(
+                sql.SQL('s.{} IS DISTINCT FROM t.{}').format(ident(f), ident(f)) for f in fields)
+            mismatch = self.count(
+                sql.SQL('SELECT count(*) FROM {} s LEFT JOIN {} t ON t.id=s.id WHERE t.id IS NULL OR ({})').format(
+                    ident(WORK, prepared), self.dst(model), comparison))
             if mismatch:
                 raise MigrationError(f'Post-load value mismatch: {model}: {mismatch} records')
             self.verify_totals(model, prepared, fields)
@@ -638,15 +703,17 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             self.execute('SELECT pg_get_serial_sequence(%s,\'id\')', [self.schema[model]['table']])
             sequence = self.cr.fetchone()[0]
             if sequence:
-                self.execute(sql.SQL('SELECT setval(%s,greatest(coalesce(max(id),0),1),max(id) IS NOT NULL) FROM {}').format(
-                    self.dst(model)), [sequence])
+                self.execute(
+                    sql.SQL('SELECT setval(%s,greatest(coalesce(max(id),0),1),max(id) IS NOT NULL) FROM {}').format(
+                        self.dst(model)), [sequence])
         self.verify_quarantine()
         current().begin('verification', operation='validate and restore foreign keys')
         self.execute('SET CONSTRAINTS ALL IMMEDIATE')
         for table, name, deferred, initially in self.constraints:
             self.execute(sql.SQL('ALTER TABLE {} ALTER CONSTRAINT {} {}').format(
                 ident('public', table.removeprefix('public.')), ident(name),
-                sql.SQL(('DEFERRABLE INITIALLY DEFERRED' if initially else 'DEFERRABLE INITIALLY IMMEDIATE') if deferred else 'NOT DEFERRABLE')))
+                sql.SQL((
+                            'DEFERRABLE INITIALLY DEFERRED' if initially else 'DEFERRABLE INITIALLY IMMEDIATE') if deferred else 'NOT DEFERRABLE')))
         current().begin('verification', operation='rebuild derived fields')
         self.rebuild_derived_fields()
         self.env.invalidate_all()
@@ -659,7 +726,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                 record.read(['display_name'])
         current().begin('verification', operation='check company access')
         self.verify_company_access()
-        self.report['tests'] += ['Mapped values and counts', 'Foreign key constraints', 'Bootstrap administrator', 'ORM display-name smoke reads']
+        self.report['tests'] += ['Mapped values and counts', 'Foreign key constraints', 'Bootstrap administrator',
+                                 'ORM display-name smoke reads']
 
     def verify_totals(self, model, prepared, fields):
         amounts = [name for name in ('qty', 'debit_val', 'credit_val', 'net_val') if name in fields]
@@ -670,25 +738,28 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
         base = sql.SQL('SELECT {},{} FROM {} x {} GROUP BY 1 ORDER BY 1 NULLS FIRST')
         self.execute(base.format(branch, aggregates, ident(WORK, prepared), sql.SQL('')))
         expected = self.cr.fetchall()
-        self.execute(base.format(branch, aggregates, self.dst(model), sql.SQL('JOIN {} p ON p.id=x.id').format(ident(WORK, prepared))))
+        self.execute(base.format(branch, aggregates, self.dst(model),
+                                 sql.SQL('JOIN {} p ON p.id=x.id').format(ident(WORK, prepared))))
         if expected != self.cr.fetchall():
             raise MigrationError(f'Branch financial/quantity totals mismatch: {model}')
         self.report.setdefault('branch_totals', {})[model] = [dict(store_id=row[0], **{
-            field: str(value) if value is not None else None for field, value in zip(amounts, row[1:])}) for row in expected]
+            field: str(value) if value is not None else None for field, value in zip(amounts, row[1:])}) for row in
+                                                              expected]
 
     def historical_validation(self):
         findings = []
         checks = []
         if 'ab_purchase_header' in self.models:
             checks.append(('ab_purchase_header', 'invoice_number_outside_interactive_entry_format',
-                sql.SQL("SELECT id FROM {} WHERE coalesce(doc_code,'') !~ '^[a-zA-Z0-9-]+$'").format(self.src('ab_purchase_header'))))
+                           sql.SQL("SELECT id FROM {} WHERE coalesce(doc_code,'') !~ '^[a-zA-Z0-9-]+$'").format(
+                               self.src('ab_purchase_header'))))
         if {'ab_product', 'ab_uom'} <= self.models.keys():
             checks.append(('ab_product', 'legacy_product_unit_ratio', sql.SQL(
                 'SELECT p.id FROM {} p JOIN {} s ON s.id=p.unit_s_id JOIN {} m ON m.id=p.unit_m_id '
                 'JOIN {} l ON l.id=p.unit_l_id WHERE m.unit_no=0 OR (s.unit_no=1 AND m.unit_no>1) '
                 'OR round((s.unit_no/nullif(m.unit_no,0))::numeric,5)<>trunc(round((s.unit_no/nullif(m.unit_no,0))::numeric,5)) '
                 'OR (m.type_id=l.type_id AND m.unit_no>1)').format(
-                    self.src('ab_product'), self.src('ab_uom'), self.src('ab_uom'), self.src('ab_uom'))))
+                self.src('ab_product'), self.src('ab_uom'), self.src('ab_uom'), self.src('ab_uom'))))
         if {'ab_product_source', 'ab_taxes'} <= self.models.keys():
             field = self.models['ab_product_source']['fields'].get('taxes_ids', {})
             table = field.get('relation_table')
@@ -700,13 +771,14 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                     'SELECT p.id FROM {} p LEFT JOIN rates r ON r.id=p.id '
                     'WHERE coalesce(p.price,0)<coalesce(p.purchase_price,0)*(1-coalesce(p.extra_discount_percentage,0)/100.0) '
                     '*(1+coalesce(r.first_rate,0))*(1+coalesce(r.second_rate,0))').format(
-                        ident(field['column1']), ident(STAGE, table), self.src('ab_taxes'), ident(field['column2']),
-                        ident(field['column1']), self.src('ab_product_source'))))
+                    ident(field['column1']), ident(STAGE, table), self.src('ab_taxes'), ident(field['column2']),
+                    ident(field['column1']), self.src('ab_product_source'))))
         for model, reason, query in checks:
             current().begin('historical validation', model=model, operation=reason)
             self.execute(query)
             findings.extend(dict(model=model, source_id=row[0], reason=reason) for row in self.cr.fetchall())
-        save_json(self.stage / 'historical-validation.json', dict(development_only=True, count=len(findings), records=findings))
+        save_json(self.stage / 'historical-validation.json',
+                  dict(development_only=True, count=len(findings), records=findings))
         self.report['historical_validation_exceptions'] = len(findings)
 
     def rebuild_derived_fields(self):
@@ -737,9 +809,9 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
 
     def verify_company_access(self):
         self.fail_if("SELECT count(*) FROM res_users u JOIN accounting_migration_source.res_users m "
-            "ON m.id=u.id WHERE NOT EXISTS "
-            "(SELECT 1 FROM res_company_users_rel r WHERE r.user_id=u.id AND r.cid=u.company_id)", None,
-            'A migrated user has no access to its default company')
+                     "ON m.id=u.id WHERE NOT EXISTS "
+                     "(SELECT 1 FROM res_company_users_rel r WHERE r.user_id=u.id AND r.cid=u.company_id)", None,
+                     'A migrated user has no access to its default company')
         self.execute("SELECT id FROM accounting_migration_source.res_users")
         user_ids = [r[0] for r in self.cr.fetchall()]
         for user in self.env['res.users'].browse(user_ids):
@@ -776,22 +848,27 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
                     self.execute(sql.SQL('SELECT count(*) FROM {} WHERE {}').format(self.src(model), condition))
                     count = self.cr.fetchone()[0]
                     if count:
-                        self.execute(sql.SQL('SELECT id FROM {} WHERE {} ORDER BY id LIMIT 10').format(self.src(model), condition))
-                        problems.append(dict(model=model, field=field, count=count, ids=[r[0] for r in self.cr.fetchall()]))
+                        self.execute(sql.SQL('SELECT id FROM {} WHERE {} ORDER BY id LIMIT 10').format(self.src(model),
+                                                                                                       condition))
+                        problems.append(
+                            dict(model=model, field=field, count=count, ids=[r[0] for r in self.cr.fetchall()]))
         save_json(self.stage / 'preflight-errors.json', problems)
         if problems:
             raise MigrationError(f'{len(problems)} schema/required-value issues; see preflight-errors.json')
 
     def mapping_identity(self):
-        return fingerprint(dict(version=getattr(self, 'mapping_format', MAPPING_VERSION), snapshot=self.manifest_id, rules=self.rules,
-                                schema=self.schema, id_policy=STRICT_POLICY, seed_adapters=SEED_ADAPTER_VERSION, config_links=CONFIG_LINKS))
+        return fingerprint(
+            dict(version=getattr(self, 'mapping_format', MAPPING_VERSION), snapshot=self.manifest_id, rules=self.rules,
+                 schema=self.schema, id_policy=STRICT_POLICY, seed_adapters=SEED_ADAPTER_VERSION,
+                 config_links=CONFIG_LINKS))
 
     def prepare_working_tables(self):
         self.execute(sql.SQL('CREATE SCHEMA {}').format(ident(WORK)))
         self.working_models = set()
         for model in GUARDED.intersection(self.models):
             table = self.models[model]['table']
-            self.execute(sql.SQL('CREATE TABLE {} (LIKE {} INCLUDING ALL)').format(ident(WORK, table), ident(STAGE, table)))
+            self.execute(
+                sql.SQL('CREATE TABLE {} (LIKE {} INCLUDING ALL)').format(ident(WORK, table), ident(STAGE, table)))
             self.execute(sql.SQL('INSERT INTO {} SELECT * FROM {}').format(ident(WORK, table), ident(STAGE, table)))
             self.working_models.add(model)
 
@@ -829,10 +906,17 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             else:
                 self.map_ids()
                 put_checkpoint(self.cr, 'mapping', dict(identity=self.mapping_identity(),
-                    format=self.mapping_format, id_policy=STRICT_POLICY, plans=self.plan_records(),
-                    seed_plan_identity=self.seed_plan_identity(), seed_moves=self.seed_moves, seed_fingerprints=self.seed_fingerprints, seed_surplus=self.seed_surplus, seed_references=self.seed_references,
-                    excluded_group_ids=self.excluded_group_ids, retired_field_ids=self.retired_field_ids,
-                    diagnostics={k: self.report.get(k, []) for k in ('excluded_roles', 'retired_report_fields')}))
+                                                        format=self.mapping_format, id_policy=STRICT_POLICY,
+                                                        plans=self.plan_records(),
+                                                        seed_plan_identity=self.seed_plan_identity(),
+                                                        seed_moves=self.seed_moves,
+                                                        seed_fingerprints=self.seed_fingerprints,
+                                                        seed_surplus=self.seed_surplus,
+                                                        seed_references=self.seed_references,
+                                                        excluded_group_ids=self.excluded_group_ids,
+                                                        retired_field_ids=self.retired_field_ids,
+                                                        diagnostics={k: self.report.get(k, []) for k in
+                                                                     ('excluded_roles', 'retired_report_fields')}))
                 self.cr.commit()
                 current().transaction('committed', 'identity mapping')
             self.current_phase = 'seed relocation'
@@ -840,8 +924,10 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             self.relocate_seeds()
             self.prepare_working_tables()
             self.prepare_quarantine()
-            save_json(self.stage / 'schema-comparison.json', {'source': self.manifest['tables'], 'target': self.physical,
-                'source_constraints': self.manifest.get('constraints', []), 'target_constraints': constraints(self.cr._cnx)})
+            save_json(self.stage / 'schema-comparison.json',
+                      {'source': self.manifest['tables'], 'target': self.physical,
+                       'source_constraints': self.manifest.get('constraints', []),
+                       'target_constraints': constraints(self.cr._cnx)})
             self.prepared_columns = {}
             # Validate all adapters before writing business records.
             errors = []
@@ -865,7 +951,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             # Constraints were deferred before seed relocation; restore them during verify().
             # Load smaller tables first so ordinary data constraints fail before
             # the largest replica tables. Foreign keys remain deferred as before.
-            for model in sorted(self.prepared_columns, key=lambda m: (self.manifest['tables'][self.models[m]['table']]['rows'], m)):
+            for model in sorted(self.prepared_columns,
+                                key=lambda m: (self.manifest['tables'][self.models[m]['table']]['rows'], m)):
                 self.load_model(model, self.prepared_columns[model])
             self.relations()
             self.files()
@@ -878,7 +965,8 @@ class BulkImporter(MappingStrategies, StrictSeeds, Quarantine):
             if self.report.get('quarantine'):
                 self.report['quarantine']['committed'] = True
             put_checkpoint(self.cr, 'business', dict(
-                format=getattr(self, 'mapping_format', STRICT_FORMAT), id_policy=STRICT_POLICY, identity=self.business_identity(), report=self.report))
+                format=getattr(self, 'mapping_format', STRICT_FORMAT), id_policy=STRICT_POLICY,
+                identity=self.business_identity(), report=self.report))
             self.cr.commit()
             current().transaction('committed', 'business load and verification')
             if self.report.get('quarantine'):
@@ -914,7 +1002,7 @@ def smoke_test(env, stage):
     compiled = 0
     checked = set()
     for view in env['ir.ui.view'].search([('active', '=', True), ('model', 'in', list(manifest['models'])),
-                                        ('type', 'in', ['form', 'list', 'search', 'kanban'])]):
+                                          ('type', 'in', ['form', 'list', 'search', 'kanban'])]):
         if view.model not in env or (view.model, view.type, view.inherit_id.id or view.id) in checked:
             continue
         env[view.model].get_view(view_id=view.id, view_type=view.type)
@@ -978,5 +1066,5 @@ def smoke_test(env, stage):
     current().transaction('committed', 'runtime acceptance')
     save_json(stage / 'verification.json', report)
     save_json(stage / 'activation.json', dict(target=env.cr.dbname, development=True,
-                                            scheduled_jobs_disabled=True, production_cutover=False))
+                                              scheduled_jobs_disabled=True, production_cutover=False))
     print(f'Fresh registry checks passed: {compiled} views, {len(scenarios)} branch scenarios', flush=True)

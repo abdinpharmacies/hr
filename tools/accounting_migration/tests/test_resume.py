@@ -7,12 +7,13 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
+from psycopg2 import sql
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import MigrationError, save_json
 from resume import (find_run, fingerprint, require_compatible, verify_staged,
                     legacy_evidence, get_checkpoint, put_checkpoint, assert_exclusive)
 from bulk_importer import BulkImporter
-from migrate import resume_run
+from legacy_migrate import resume_run
 import test_bulk
 
 
@@ -111,7 +112,7 @@ class ResumeTests(unittest.TestCase):
         engine.check_seed_state = MagicMock()
         engine.relocate_seeds = MagicMock()
         engine.restore_business_xmlids = MagicMock()
-        engine.prepare = MagicMock(return_value={'id': None})
+        engine.prepare = MagicMock(return_value={'id': sql.SQL('s.id')})
         engine.load_model = MagicMock()
         for method in ('historical_validation', 'defer_constraints', 'replace_calendar_seed_schedules',
                        'relations', 'files', 'verify'):
@@ -175,9 +176,9 @@ class ResumeTests(unittest.TestCase):
             cr = con.cursor.return_value.__enter__.return_value
             cr.fetchone.side_effect = [('accounting_migration.run',), ('old', 'new')]
             args = MagicMock(source_db='old', target_db='new')
-            with patch('migrate.connect', return_value=con), patch('migrate.assert_exclusive'), \
-                 patch('migrate.get_checkpoint', side_effect=[None, {'identity': fingerprint(manifest), 'id_policy': 'preserve_business_ids_v1', 'report': {'passed': True}}]), \
-                 patch('migrate.worker') as worker:
+            with patch('legacy_migrate.connect', return_value=con), patch('legacy_migrate.assert_exclusive'), \
+                 patch('legacy_migrate.get_checkpoint', side_effect=[None, {'identity': fingerprint(manifest), 'id_policy': 'preserve_business_ids_v1', 'report': {'passed': True}}]), \
+                 patch('legacy_migrate.worker') as worker:
                 self.assertTrue(resume_run(args, stage, {})['passed'])
                 worker.assert_not_called()
                 self.assertTrue(json.loads((stage / 'verification.json').read_text())['passed'])
@@ -233,9 +234,9 @@ class ResumeTests(unittest.TestCase):
                 order.append(command)
                 if command == 'bulk-smoke':
                     save_json(stage / 'verification.json', {'passed': True})
-            with patch('migrate.connect', return_value=con) as connect, patch('migrate.assert_exclusive'), \
-                 patch('migrate.get_checkpoint', side_effect=[{'identity': fingerprint(manifest)}, None, None]), \
-                 patch('migrate.worker', side_effect=run_worker):
+            with patch('legacy_migrate.connect', return_value=con) as connect, patch('legacy_migrate.assert_exclusive'), \
+                 patch('legacy_migrate.get_checkpoint', side_effect=[{'identity': fingerprint(manifest)}, None, None]), \
+                 patch('legacy_migrate.worker', side_effect=run_worker):
                 self.assertTrue(resume_run(args, stage, {'modules': ['ab_accounting']})['passed'])
                 connect.assert_called_once_with(args.target_config, 'new')
                 self.assertEqual(order, ['init-target', 'bulk-import', 'bulk-smoke'])
@@ -248,9 +249,9 @@ class ResumeTests(unittest.TestCase):
             cr = con.cursor.return_value.__enter__.return_value
             cr.fetchone.side_effect = [('accounting_migration.run',), ('old', 'new')]
             args = MagicMock(source_db='old', target_db='new')
-            with patch('migrate.connect', return_value=con), patch('migrate.assert_exclusive'), \
-                 patch('migrate.get_checkpoint', side_effect=[{'identity': 'original'}, None, None]), \
-                 patch('migrate.worker') as worker:
+            with patch('legacy_migrate.connect', return_value=con), patch('legacy_migrate.assert_exclusive'), \
+                 patch('legacy_migrate.get_checkpoint', side_effect=[{'identity': 'original'}, None, None]), \
+                 patch('legacy_migrate.worker') as worker:
                 with self.assertRaisesRegex(MigrationError, 'manifest missing or changed'):
                     resume_run(args, stage, {'modules': []})
                 worker.assert_not_called()
@@ -273,12 +274,12 @@ class ResumeTests(unittest.TestCase):
                 self.assertIs(con, source)
                 self.assertFalse((directory / 'tables').exists())
                 save_json(directory / 'verification.json', {'passed': True})
-            with patch('migrate.connect', side_effect=[target, source]), patch('migrate.assert_exclusive'), \
-                 patch('migrate.get_checkpoint', return_value=None), patch('migrate.worker'), \
-                 patch('migrate.monitor_factory'), patch('migrate.settings', return_value={}), \
-                 patch('migrate.source.inventory', return_value={'modules': []}), \
-                 patch('migrate.discover_languages', return_value=marker['required_languages']), \
-                 patch('migrate.export_snapshot', side_effect=export) as exporter:
+            with patch('legacy_migrate.connect', side_effect=[target, source]), patch('legacy_migrate.assert_exclusive'), \
+                 patch('legacy_migrate.get_checkpoint', return_value=None), patch('legacy_migrate.worker'), \
+                 patch('legacy_migrate.monitor_factory'), patch('legacy_migrate.settings', return_value={}), \
+                 patch('legacy_migrate.source.inventory', return_value={'modules': []}), \
+                 patch('legacy_migrate.discover_languages', return_value=marker['required_languages']), \
+                 patch('legacy_migrate.export_snapshot', side_effect=export) as exporter:
                 self.assertTrue(resume_run(args, stage, marker)['passed'])
                 exporter.assert_called_once()
                 self.assertEqual(len(list(stage.glob('incomplete-extraction-*/tables/partial.copy'))), 1)

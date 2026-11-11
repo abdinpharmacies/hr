@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import MigrationError, loads, save_json
 from languages import discover_languages, install_languages
 from bulk_importer import BulkImporter
-from migrate import main
+from legacy_migrate import legacy_main as main
 from test_bulk import render
 
 
@@ -113,15 +113,15 @@ class LifecycleTests(unittest.TestCase):
             order.append('discover languages')
             return ['en_US', 'ar_001']
         with tempfile.TemporaryDirectory() as d, contextlib.redirect_stdout(io.StringIO()), \
-                patch('migrate.RUN_ROOT', Path(d)), \
-                patch('migrate.monitor_factory', return_value=lambda: None), \
-                patch('migrate.connect', side_effect=[maintenance, source]), \
-                patch('migrate.settings', return_value={'data_dir': '/unused'}), \
-                patch('migrate.endpoint', return_value={}), \
-                patch('migrate.source.inventory', return_value={'modules': []}), \
-                patch('migrate.discover_languages', side_effect=discovery), \
-                patch('migrate.worker', side_effect=worker), \
-                patch('migrate.export_snapshot', side_effect=lambda *a: order.append('extract')) as export:
+                patch('legacy_migrate.RUN_ROOT', Path(d)), \
+                patch('legacy_migrate.monitor_factory', return_value=lambda: None), \
+                patch('legacy_migrate.connect', side_effect=[maintenance, source]), \
+                patch('legacy_migrate.settings', return_value={'data_dir': '/unused'}), \
+                patch('legacy_migrate.endpoint', return_value={}), \
+                patch('legacy_migrate.source.inventory', return_value={'modules': []}), \
+                patch('legacy_migrate.discover_languages', side_effect=discovery), \
+                patch('legacy_migrate.worker', side_effect=worker), \
+                patch('legacy_migrate.export_snapshot', side_effect=lambda *a: order.append('extract')) as export:
             argv = ['--source-config', 'source.conf', '--source-db', 'old',
                     '--target-config', 'target.conf', '--target-db', 'new']
             if failure is None:

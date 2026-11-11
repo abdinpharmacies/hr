@@ -12,7 +12,8 @@ from bulk import (BULK_FORMAT_VERSION, CopyWriter, choose_models, target_field,
                   copy_column_order, validate_bulk_manifest, export_snapshot)
 from bulk_importer import BulkImporter
 from common import MigrationError, loads
-from migrate import main, parser
+from legacy_migrate import legacy_main as main
+from migrate import parser
 
 
 def render(value):
@@ -114,7 +115,7 @@ class BulkTests(unittest.TestCase):
                 parser().parse_args(args + extra)
 
     def test_same_database_rejected_before_connect(self):
-        with patch('migrate.connect') as connect, self.assertRaises(MigrationError):
+        with patch('legacy_migrate.connect') as connect, self.assertRaises(MigrationError):
             main(['--source-config', 'a', '--source-db', 'same', '--target-config', 'b', '--target-db', 'same'])
         connect.assert_not_called()
 
@@ -122,7 +123,7 @@ class BulkTests(unittest.TestCase):
         connection = MagicMock()
         cursor = connection.cursor.return_value.__enter__.return_value
         cursor.fetchone.return_value = (1,)
-        with patch('migrate.connect', return_value=connection), patch('migrate.RUN_ROOT') as root:
+        with patch('legacy_migrate.connect', return_value=connection), patch('legacy_migrate.RUN_ROOT') as root:
             with self.assertRaisesRegex(MigrationError, 'already exists'):
                 main(['--source-config', 'a', '--source-db', 'old', '--target-config', 'b', '--target-db', 'existing'])
             root.mkdir.assert_not_called()

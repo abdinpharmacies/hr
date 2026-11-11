@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "stable_keys": {"res.currency": "name", "res.country": "code", "res.lang": "code"},
+  "external_ids": {},
+  "incoming_ids": {},
+  "ignore_fields": {},
+  "branch_manager_xmlids": {},
+  "notes": [
+    "external_ids maps model/source ID to an explicitly reviewed existing target ID.",
+    "incoming_ids maps model/old target ID to the replacement source custom ID.",
+    "ignore_fields requires a model/field/reason entry; populated fields otherwise stop preflight.",
+    "Stable keys must be reviewed, non-null and unique on both sides; groups never use name matching."
+  ]
+}

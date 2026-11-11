@@ -19,14 +19,14 @@ def staging_db(path):
     return db
 
 
-def inventory(con, addon_paths=()):
+def inventory(con, addon_paths=(), prepared=False):
     with con.cursor(cursor_factory=RealDictCursor) as cr:
         cr.execute("SELECT m.name,d.name AS dependency FROM ir_module_module m JOIN "
                    "ir_module_module_dependency d ON d.module_id=m.id WHERE m.state='installed'")
         deps = {}
         for r in cr:
             deps.setdefault(r['name'], []).append(r['dependency'])
-        selected = downstream(deps)
+        selected = sorted(m for m in deps if m.startswith('ab')) if prepared else downstream(deps)
         required = set(selected)
         while True:
             expanded = required | {d for m in required for d in deps.get(m, [])}
@@ -34,7 +34,7 @@ def inventory(con, addon_paths=()):
             required = expanded
         available = manifests()
         missing = sorted(set(selected) - set(available))
-        if missing:
+        if missing and not prepared:
             raise MigrationError(f'Missing target addons: {missing}')
         cr.execute("SELECT m.model,m.transient, array_agg(DISTINCT d.module) AS modules "
                    "FROM ir_model m LEFT JOIN ir_model_data d ON d.model='ir.model' AND d.res_id=m.id "
