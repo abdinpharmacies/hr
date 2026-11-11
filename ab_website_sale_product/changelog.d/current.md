@@ -2,10 +2,26 @@
 
 ## Current changes before commit
 
-- Create a linked, unpublished website product when an Eplus stock refresh imports a new catalog draft.
-- Complete website product creation for previously imported Eplus drafts when the stock refresh runs again.
-- Keep imported drafts unavailable for sale and prevent regular users from bypassing the Eplus refresh permission check through product buttons.
-- Cover new draft creation and existing draft completion.
+- Retry Eplus catalog import jobs after a temporary connection timeout instead of failing after the first attempt.
+- Cover the retry behavior for connection errors.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
+
+## Recent commits
+
+Commit: `fc7b8062`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/IMP: create unpublished website products from Eplus drafts`
+
+User-facing changes:
+
+- Create linked, unpublished website products from Eplus catalog drafts.
+- Complete website products for previously imported drafts and protect Eplus refresh access.
 
 Files changed:
 
@@ -14,8 +30,6 @@ Files changed:
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/models/product_template.py`
 - `ab_website_sale_product/tests/test_eplus_catalog_import.py`
-
-## Recent commits
 
 Commit: `f862b1c7`
 Author: Mohamed Fawzy

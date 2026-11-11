@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
-from odoo.exceptions import AccessError
+from odoo.addons.integration_queue_job.exception import RetryableJobError
+from odoo.exceptions import AccessError, UserError
 from odoo.tests.common import TransactionCase
 
 
@@ -98,3 +99,10 @@ class TestEplusCatalogImport(TransactionCase):
 
         with self.assertRaises(AccessError):
             self.Product.with_user(user).action_refresh_eplus_stock_items()
+
+    def test_eplus_connection_timeout_retries_catalog_import(self):
+        with patch.object(type(self.Snapshot), "connect_eplus", side_effect=UserError("offline")):
+            with self.assertRaises(RetryableJobError) as raised:
+                self.Snapshot._fetch_eplus_catalog_names([99177009])
+
+        self.assertEqual(raised.exception.seconds, 60)

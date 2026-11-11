@@ -5,6 +5,7 @@ from decimal import Decimal
 from psycopg2 import IntegrityError
 
 from odoo import api, fields, models
+from odoo.addons.integration_queue_job.exception import RetryableJobError
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import float_compare
 from odoo.tools.translate import _
@@ -380,24 +381,27 @@ class EplusStockSnapshot(models.Model):
     @api.model
     def _fetch_eplus_catalog_names(self, itm_ids):
         names_by_id = {}
-        with self.connect_eplus(param_str="?", charset="CP1256", propagate_error=True) as conn:
-            with conn.cursor() as cursor:
-                for offset in range(0, len(itm_ids), 200):
-                    batch = itm_ids[offset:offset + 200]
-                    placeholders = ",".join(["?"] * len(batch))
-                    cursor.execute(
-                        "SELECT n.itm_id, n.itm_code, n.itm_name_ar, n.itm_name_en, ic.itm_active "
-                        "FROM m_name n JOIN Item_Catalog ic ON ic.itm_id = n.itm_id "
-                        "WHERE n.itm_id IN (%s)" % placeholders,
-                        tuple(batch),
-                    )
-                    for itm_id, code, name_ar, name_en, active in cursor.fetchall():
-                        names_by_id.setdefault(int(itm_id), []).append((
-                            str(code or "").strip(),
-                            str(name_ar or "").strip(),
-                            str(name_en or "").strip(),
-                            bool(active),
-                        ))
+        try:
+            with self.connect_eplus(param_str="?", charset="CP1256", propagate_error=True) as conn:
+                with conn.cursor() as cursor:
+                    for offset in range(0, len(itm_ids), 200):
+                        batch = itm_ids[offset:offset + 200]
+                        placeholders = ",".join(["?"] * len(batch))
+                        cursor.execute(
+                            "SELECT n.itm_id, n.itm_code, n.itm_name_ar, n.itm_name_en, ic.itm_active "
+                            "FROM m_name n JOIN Item_Catalog ic ON ic.itm_id = n.itm_id "
+                            "WHERE n.itm_id IN (%s)" % placeholders,
+                            tuple(batch),
+                        )
+                        for itm_id, code, name_ar, name_en, active in cursor.fetchall():
+                            names_by_id.setdefault(int(itm_id), []).append((
+                                str(code or "").strip(),
+                                str(name_ar or "").strip(),
+                                str(name_en or "").strip(),
+                                bool(active),
+                            ))
+        except UserError as error:
+            raise RetryableJobError(str(error), seconds=60) from error
         return names_by_id
 
     @api.model
