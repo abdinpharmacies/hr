@@ -5,10 +5,11 @@
   "incoming_ids": {},
   "ignore_fields": {},
   "branch_manager_xmlids": {},
+  "accepted_foreign_key_failures": [],
   "notes": [
     "external_ids maps model/source ID to an explicitly reviewed existing target ID.",
     "incoming_ids maps model/old target ID to the replacement source custom ID.",
-    "ignore_fields requires a model/field/reason entry; populated fields otherwise stop preflight.",
+    "ignore_fields requires a model/field/reason entry; source-only fields are skipped automatically; incompatible shared fields still stop preflight.",
     "Stable keys must be reviewed, non-null and unique on both sides; groups never use name matching."
   ]
 }

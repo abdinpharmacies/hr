@@ -39,14 +39,17 @@ def recovery_help(args):
     for name in ('source_config','source_db','target_config','target_db'):
         command+=['--'+name.replace('_','-'),getattr(args,name)]
     command.append('--reset')
-    print('Recovery: rerun normally to resume. To start fresh after schema/rule changes, use optional --reset.',file=sys.stderr)
+    print('Before live commits, rerun normally to retry. After table setup, partial runs require manual handling; automatic continuation is disabled.',file=sys.stderr)
+    print('For pre-import schema/rule changes only, use optional --reset.',file=sys.stderr)
     print('--reset asks before deleting private schemas and matching run directories (including backups). It refuses committed imports.',file=sys.stderr)
     print(shlex.join(command),file=sys.stderr)
 
 
 if __name__ == '__main__':
     try:
-        main()
+        result = main()
+        if isinstance(result, dict) and result.get("status") == "finished_with_errors":
+            sys.exit(2)
     except (MigrationError, KeyboardInterrupt) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         sys.exit(2)

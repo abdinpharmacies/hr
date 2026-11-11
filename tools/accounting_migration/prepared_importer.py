@@ -45,6 +45,7 @@ class PreparedImporter:
         self.cr = connection.cursor()
         self.target, self.rules, self.conversions = target, rules, conversions
         self.selected = set(manifest['selected'])
+        self.custom_models = set(self.selected)
         self.models = manifest['models']
         self.physical = catalog(connection)
         self.report = dict(omitted_models=manifest['omitted'], ignored_fields=[], skipped_fields=[],missing_files=[],
@@ -85,13 +86,13 @@ class PreparedImporter:
 
     def mapped(self, model, value):
         if isinstance(model, str):
-            if model in self.selected:
+            if model in self.custom_models:
                 return sql.SQL('(SELECT id FROM {} WHERE id={})').format(self.src(model), value)
             return sql.SQL('(SELECT target_id FROM {} WHERE model={} AND source_id={})').format(
                 ident(META,'record_map'),sql.Literal(model),value)
         # Dynamic model fields can refer to either selected or standard models.
         cases = [sql.SQL('WHEN {}={} THEN (SELECT id FROM {} WHERE id={})').format(
-            model, sql.Literal(m), self.src(m), value) for m in sorted(self.selected)]
+            model, sql.Literal(m), self.src(m), value) for m in sorted(self.custom_models)]
         return sql.SQL('(CASE {} ELSE (SELECT target_id FROM {} WHERE model={} AND source_id={}) END)').format(
             sql.SQL(' ').join(cases), ident(META, 'record_map'), model, value)
 
@@ -464,13 +465,15 @@ class PreparedImporter:
     def attachment_source(self):
         return ident(WORK,'selected_attachments')
 
-    def prepare_attachment_scope(self):
+    def prepare_attachment_scope(self, excluded_owners=()):
         """Filter cached snapshots too; raw extraction is never rewritten."""
         owners=self.normalize_model(sql.SQL('a.res_model'))
         owner=sql.SQL('({}=ANY({}) AND {} IS NOT NULL)').format(owners,sql.Literal(sorted(self.selected)),
                     self.mapped(owners,sql.SQL('a.res_id')))
         links=[]
         for model,plan in self.plans.items():
+            if model not in self.selected:
+                continue
             for name in self.manifest['tables'][self.models[model]['table']]['columns']:
                 dest=self.conversions.get('fields',{}).get(model,{}).get(name,name)
                 if dest in plan['attachments']:
@@ -480,6 +483,9 @@ class PreparedImporter:
                 links.append(sql.SQL('SELECT {} FROM {}').format(ident(p['source']['column2']),ident(SCHEMA,p['source']['table'])))
         if links:
             owner=sql.SQL('{} OR a.id IN ({})').format(owner,sql.SQL(' UNION ').join(links))
+        if excluded_owners:
+            owner=sql.SQL('({}) AND NOT coalesce({}=ANY({}),false)').format(
+                owner,owners,sql.Literal(sorted(excluded_owners)))
         self.execute(sql.SQL('CREATE OR REPLACE VIEW {} AS SELECT a.* FROM {} a WHERE {}').format(
             self.attachment_source(),ident(SCHEMA,'ir_attachment'),owner))
         for name in self.manifest['tables']['ir_attachment']['columns']:
@@ -766,7 +772,7 @@ class PreparedImporter:
                     ident(META,'attachment_map'),self.mapped(self.normalize_model(sql.SQL('s.res_model')),sql.SQL('s.res_id')),
                     self.normalize_model(sql.SQL('s.res_model'))),'Attachment payload/owner/link validation failed')
 
-    def attachments(self, source_root, target_root):
+    def attachments(self, source_root, target_root, restore_links=True):
         progress.begin('attachments',operation='Import scoped attachment metadata',monitor=True)
         source=self.attachment_source()
         cols=self.manifest['tables']['ir_attachment']['columns']
@@ -870,22 +876,27 @@ class PreparedImporter:
             copied_bytes+=src.stat().st_size
             progress.update(copied=len(copied),bytes=copied_bytes)
         cursor.close()
-        for model in sorted(self.selected):
-            fields=self.plans[model]['attachments']
-            for name,value in fields.items():
-                # The map now exists; verify every deferred attachment reference.
-                source_name=next((n for n in self.manifest['tables'][self.models[model]['table']]['columns']
-                    if self.conversions.get('fields',{}).get(model,{}).get(n,n)==name),name)
-                self.check_link(model,source_name,sql.SQL('s.{}').format(ident(source_name)),value,'ir.attachment')
-            if fields:
-                self.execute(sql.SQL('UPDATE {} t SET {} FROM {} s WHERE t.id=s.id').format(self.dst(model),
-                    sql.SQL(',').join(sql.SQL('{}={}').format(ident(n),v) for n,v in fields.items()),self.src(model)))
-        for p in self.relations:
-            if p['phase']=='attachments':
-                self.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s WHERE {} IS NULL OR {} IS NULL)').format(
-                    ident(SCHEMA,p['source']['table']),*p['values']), 'Unmapped attachment relationship')
-        self.load_relations('attachments')
+        if restore_links:
+            for model in sorted(self.selected):
+                self.restore_attachment_links(model)
+            for p in self.relations:
+                if p['phase']=='attachments':
+                    self.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s WHERE {} IS NULL OR {} IS NULL)').format(
+                        ident(SCHEMA,p['source']['table']),*p['values']), 'Unmapped attachment relationship')
+            self.load_relations('attachments')
         self.reset_sequence('ir_attachment')
         self.report['copied_files']=len(copied)
         save_json(self.stage/'attachments.json',dict(missing_files=self.report['missing_files'],copied_files=len(copied)))
         progress.finish('attachments imported; pending commit')
+
+    def restore_attachment_links(self, model):
+        fields=self.plans[model]['attachments']
+        for name,value in fields.items():
+            # The map now exists; verify every deferred attachment reference.
+            source_name=next((n for n in self.manifest['tables'][self.models[model]['table']]['columns']
+                if self.conversions.get('fields',{}).get(model,{}).get(n,n)==name),name)
+            self.check_link(model,source_name,sql.SQL('s.{}').format(ident(source_name)),value,'ir.attachment')
+        if fields:
+            self.execute(sql.SQL('UPDATE {} t SET {} FROM {} s WHERE t.id=s.id').format(self.dst(model),
+                sql.SQL(',').join(sql.SQL('{}={}').format(ident(n),v) for n,v in fields.items()),self.src(model)))
+        return self.cr.rowcount if fields else 0

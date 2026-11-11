@@ -214,6 +214,156 @@ class PreparedPostgresTests(unittest.TestCase):
         self.arguments=(self.con,self.stage,manifest,target,rules,{})
         return PreparedImporter(*self.arguments)
 
+    def run_table_workflow(self, engine):
+        from table_checkpoints import TableMigration
+        engine.validate_ids()
+        engine.preflight()
+        runner=TableMigration(engine,write_checkpoint)
+        return runner.run(self.source_files,self.target_files)
+
+    def test_table_checkpoints_copy_links_and_constraints(self):
+        result=self.run_table_workflow(self.fixture())
+        self.assertEqual(result['status'],'complete',result)
+        self.assertEqual(self.scalar('SELECT accounting_auth_group_id FROM res_users WHERE id=1'),13)
+        self.assertEqual(self.scalar('SELECT group_id FROM user_group_link WHERE user_id=1'),13)
+        self.assertEqual(self.scalar('SELECT currency_id FROM ab_record WHERE id=42'),900)
+        self.assertEqual(self.scalar('SELECT res_id FROM ir_attachment WHERE id=1'),42)
+        self.assertEqual(self.scalar('SELECT count(*) FROM ab_record_att_rel'),2)
+        self.assertTrue(read_checkpoint(self.con,'table:copy:ab_record')['success'])
+        self.assertTrue(read_checkpoint(self.con,'table_setup')['constraints'])
+        self.assertEqual(read_checkpoint(self.con,'table_result')['status'],'complete')
+        self.assertEqual(loads((self.stage/'failed_foreign_keys.json').read_text()),[])
+
+    def test_table_failure_preserves_old_rows_and_continues(self):
+        engine=self.fixture()
+        with self.con.cursor() as cr:
+            cr.execute('ALTER TABLE ab_record ADD CONSTRAINT record_limit CHECK(id<20)')
+            cr.execute('CREATE TABLE ab_z(id integer PRIMARY KEY,name varchar NOT NULL)')
+            cr.execute("INSERT INTO ab_z VALUES(1,'old')")
+            cr.execute('CREATE TABLE prepared_migration_source.ab_z AS SELECT * FROM ab_z WITH NO DATA')
+            cr.execute("INSERT INTO prepared_migration_source.ab_z VALUES(2,'new')")
+        from bulk import catalog
+        physical=catalog(self.con)
+        engine.manifest['selected'].append('ab_z')
+        engine.manifest['models']['ab_z']=dict(table='ab_z',fields=engine.target['ab_group']['fields'])
+        engine.target['ab_z']=dict(table='ab_z',fields=engine.target['ab_group']['fields'])
+        engine.manifest['tables']['ab_z']=dict(columns=physical['ab_z'],rows=1)
+        self.con.commit()
+        engine=PreparedImporter(*self.arguments)
+        result=self.run_table_workflow(engine)
+        self.assertEqual(result['status'],'finished_with_errors')
+        self.assertEqual(self.scalar('SELECT id FROM ab_record'),9)
+        self.assertEqual(self.scalar('SELECT id FROM ab_group'),13)
+        self.assertEqual(self.scalar('SELECT id FROM ab_z'),2)
+        self.assertEqual(self.scalar('SELECT record_id FROM ab_record_user_rel'),9)
+        self.assertEqual(self.scalar("SELECT res_id FROM ir_model_data WHERE name='record'"),9)
+        self.assertTrue(any(f['constraint']=='ab_record_group_id_fkey' for f in result['failed_foreign_keys']))
+        failure=next(f for f in result['failed_tables'] if f['operation']=='copy')
+        self.assertEqual(failure['sqlstate'],'23514')
+        self.assertNotIn('old record',str(result['failed_tables']))
+
+    def test_fk_exceptions_are_reported_and_other_constraints_restore(self):
+        engine=self.fixture()
+        original_fk_count=self.scalar("SELECT count(*) FROM pg_constraint WHERE contype='f'")
+        with self.con.cursor() as cr:
+            cr.execute('CREATE TABLE loose_reference(id integer PRIMARY KEY,group_id integer REFERENCES ab_group(id))')
+            cr.execute('INSERT INTO loose_reference VALUES(1,7)')
+        self.con.commit()
+        engine=PreparedImporter(*self.arguments)
+        engine.validate_ids()
+        engine.preflight()
+        from table_checkpoints import TableMigration
+        # Simulate a table update failure after preflight: the captured reference
+        # cannot be remapped, so its FK restoration must fail independently.
+        engine.rules['accepted_foreign_key_failures']=[dict(table='loose_reference',
+            constraint='loose_reference_group_id_fkey',reason='Reviewed legacy exception')]
+        runner=TableMigration(engine,write_checkpoint)
+        restore=runner.restore_incoming
+        def fail(item):
+            if item['table']=='loose_reference':
+                raise MigrationError('injected incoming update failure')
+            return restore(item)
+        runner.restore_incoming=fail
+        with contextlib.redirect_stdout(__import__('io').StringIO()) as output:
+            result=runner.run(self.source_files,self.target_files)
+        self.assertEqual(result['status'],'finished_with_errors')
+        self.assertNotIn('Foreign key not restored: loose_reference',output.getvalue())
+        missing=result['failed_foreign_keys']
+        self.assertEqual(len(missing),1)
+        self.assertTrue(missing[0]['accepted'])
+        self.assertIn('ALTER TABLE public.',missing[0]['restore_sql'])
+        self.assertEqual(self.scalar("SELECT count(*) FROM pg_constraint WHERE contype='f'"),original_fk_count)
+
+    def test_table_circular_and_self_foreign_keys_restore(self):
+        engine=self.fixture()
+        with self.con.cursor() as cr:
+            cr.execute('ALTER TABLE ab_group ADD COLUMN record_id integer REFERENCES ab_record(id)')
+            cr.execute('ALTER TABLE ab_group ADD COLUMN parent_id integer REFERENCES ab_group(id)')
+            cr.execute('UPDATE ab_group SET record_id=9,parent_id=7')
+            cr.execute('ALTER TABLE prepared_migration_source.ab_group ADD COLUMN record_id integer')
+            cr.execute('ALTER TABLE prepared_migration_source.ab_group ADD COLUMN parent_id integer')
+            cr.execute('UPDATE prepared_migration_source.ab_group SET record_id=42,parent_id=13')
+        for name,relation in [('record_id','ab_record'),('parent_id','ab_group')]:
+            engine.target['ab_group']['fields'][name]=dict(type='many2one',ttype='many2one',store=True,relation=relation)
+        from bulk import catalog
+        engine.manifest['tables']['ab_group']['columns']=catalog(self.con)['ab_group']
+        self.con.commit()
+        result=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(result['status'],'complete',result)
+        self.assertEqual(self.scalar('SELECT parent_id FROM ab_group'),13)
+        self.assertEqual(self.scalar('SELECT record_id FROM ab_group'),42)
+
+    def test_accepted_fk_only_finishes_with_exceptions_and_reopens_target(self):
+        engine=self.fixture()
+        with self.con.cursor() as cr:
+            cr.execute('CREATE TABLE loose_reference(id integer PRIMARY KEY,group_id integer REFERENCES ab_group(id))')
+            cr.execute('INSERT INTO loose_reference VALUES(1,7)')
+        self.con.commit()
+        engine=PreparedImporter(*self.arguments)
+        engine.rules['accepted_foreign_key_failures']=[dict(table='loose_reference',
+            constraint='loose_reference_group_id_fkey',reason='Accepted in fixture')]
+        engine.preflight()
+        from table_checkpoints import TableMigration
+        runner=TableMigration(engine,write_checkpoint)
+        restore=runner.restore_incoming
+        def add_orphan(item):
+            rows=restore(item)
+            if item['table']=='loose_reference':
+                engine.execute('INSERT INTO loose_reference VALUES(2,999)')
+            return rows
+        runner.restore_incoming=add_orphan
+        gate=DatabaseGate(self.config,self.database)
+        try:
+            with target_offline(gate,self.con,self.stage):
+                result=runner.run(self.source_files,self.target_files)
+            self.assertTrue(gate.online())
+        finally:
+            gate.close()
+        self.assertEqual(result['status'],'finished_with_exceptions',result)
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['failed_tables'],[])
+        self.assertEqual(result['failed_foreign_keys'][0]['sqlstate'],'23503')
+
+    def test_controlled_interrupt_retains_commits_and_attempts_constraints(self):
+        engine=self.fixture()
+        engine.preflight()
+        from table_checkpoints import TableMigration
+        runner=TableMigration(engine,write_checkpoint)
+        copy=runner.copy_model
+        def interrupt(model):
+            if model=='ab_record':
+                raise KeyboardInterrupt()
+            return copy(model)
+        runner.copy_model=interrupt
+        with self.assertRaises(KeyboardInterrupt):
+            runner.run(self.source_files,self.target_files)
+        self.assertEqual(self.scalar('SELECT id FROM ab_group'),13)
+        self.assertEqual(self.scalar('SELECT id FROM ab_record'),9)
+        self.assertTrue(read_checkpoint(self.con,'table:copy:ab_group')['success'])
+        self.assertIsNone(read_checkpoint(self.con,'table_result'))
+        attempts=self.scalar("SELECT count(*) FROM prepared_custom_migration.checkpoint WHERE name LIKE 'fk:%'")
+        self.assertEqual(attempts,len(runner.constraints))
+
     def test_full_copy_external_attachment_pipeline_preserves_references(self):
         engine=self.fixture()
         engine.validate_ids()  # IDs 999 in target are allowed.
@@ -585,7 +735,7 @@ with target_offline(gate,con,sys.argv[4]):
             proc.stdout.close()
             proc.stderr.close()
 
-    def test_controller_keeps_live_source_read_only_and_resumes_failed_run(self):
+    def test_controller_keeps_source_read_only_and_returns_finished_table_result(self):
         engine=self.fixture()
         target=copy.deepcopy(engine.target)
         info=dict(source_version='15.0',models=copy.deepcopy(engine.models))
@@ -707,7 +857,7 @@ with target_offline(gate,con,sys.argv[4]):
                 def close(self):
                     self.connection.close()
             def lose_report(path,value):
-                if Path(path).name=='custom_and_xmlids.json':
+                if Path(path).name=='verification.json':
                     raise OSError('injected loss of post-commit report')
                 return save_json(path,value)
             # First fail after checkpoint 1, before any extraction, with source still usable.
@@ -724,14 +874,11 @@ with target_offline(gate,con,sys.argv[4]):
                 cr.execute('INSERT INTO res_users(id) VALUES(8)')
                 cr.execute('INSERT INTO res_partner(id) VALUES(8)')
             prep.close()
-            answers=iter([True,True])
+            answers=iter([True,False])
             with patch('prepared.metadata',side_effect=schema),patch('prepared_snapshot.inventory',side_effect=inventory), \
-                    patch('prepared.confirm',side_effect=approve),patch('prepared.save_json',side_effect=lose_report), \
-                    patch('prepared.connect',side_effect=guarded_connect):
-                with self.assertRaisesRegex(MigrationError,'OSError'):
-                    run(args,root)
-            # Database checkpoint is authoritative even when its JSON report was lost.
-            self.assertFalse(any(root.glob('*/custom_and_xmlids.json')))
+                    patch('prepared.confirm',side_effect=approve):
+                cancelled=run(args,root)
+            self.assertEqual(cancelled['status'],'cancelled')
             self.assertEqual((old_stage/'source-availability.json').read_bytes(),old_availability)
             self.assertEqual(loads((old_stage/'source-ids.json').read_text())['res_users'],[1,5,7,8])
             self.assertTrue(list(old_stage.glob('source-ids-before-refresh-*.json')))
@@ -740,25 +887,36 @@ with target_offline(gate,con,sys.argv[4]):
                 first=run(args,root)
             self.assertEqual(first['status'],'cancelled')
             self.assertFalse(any(c.args[1]==source_db for c in connections.call_args_list))
+            # Lose the report after the terminal result commits. Repeating the
+            # command returns that result without replaying any table operation.
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke), \
+                    patch('prepared.confirm',return_value=True),patch('table_checkpoints.save_json',side_effect=lose_report):
+                with self.assertRaisesRegex(MigrationError,'OSError'):
+                    run(args,root)
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.confirm',side_effect=AssertionError('unexpected replay')):
+                finished=run(args,root)
+            self.assertTrue(finished['passed'])
+            self.assertEqual(finished['status'],'complete')
             with self.admin.cursor() as cr:
                 cr.execute('SELECT datallowconn FROM pg_database WHERE datname=%s',[source_db])
                 self.assertTrue(cr.fetchone()[0])
                 cr.execute('SELECT datallowconn FROM pg_database WHERE datname=%s',[self.database])
                 self.assertTrue(cr.fetchone()[0])
-            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke), \
-                    patch('prepared.confirm',side_effect=[True,True,True]):
-                second=run(args,root)
-            self.assertTrue(second['passed'])
-            with patch('prepared.metadata',side_effect=schema),patch('prepared.confirm',side_effect=AssertionError('unexpected checkpoint replay')):
-                third=run(args,root)
-            self.assertTrue(third['passed'])
-            with self.admin.cursor() as cr:
-                cr.execute('SELECT datallowconn FROM pg_database WHERE datname=%s',[source_db])
-                self.assertTrue(cr.fetchone()[0])
             self.con=connect(self.config,self.database,readonly=False)
             self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
             self.assertEqual(self.scalar('SELECT currency_id FROM ab_record'),900)
             self.assertEqual(self.scalar('SELECT name FROM ab_group'),'live update after snapshot 1')
+            with self.con.cursor() as cr:
+                cr.execute("DELETE FROM prepared_custom_migration.checkpoint WHERE name='table_result'")
+            self.con.commit()
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.confirm') as prompt:
+                with self.assertRaisesRegex(MigrationError,'automatic continuation is disabled'):
+                    run(args,root)
+                prompt.assert_not_called()
+            with patch('builtins.input') as prompt:
+                with self.assertRaisesRegex(MigrationError,'checkpoints'):
+                    reset(args,root)
+                prompt.assert_not_called()
             with live_source.cursor() as cr:
                 cr.execute('SELECT name FROM ab_group')
                 self.assertEqual(cr.fetchone()[0],'live update after snapshot 2')

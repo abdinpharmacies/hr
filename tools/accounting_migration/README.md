@@ -1,6 +1,6 @@
 # Custom-model migration into a prepared Odoo 19 target
 
-Run with the Odoo 19 virtual environment. Both database names are arguments:
+Run with the Odoo 19 virtual environment. Both database names are explicit:
 
 ```bash
 /opt/odoo19/venv19/bin/python /opt/odoo19/migrate19/tools/accounting_migration/migrate.py \
@@ -10,263 +10,184 @@ Run with the Odoo 19 virtual environment. Both database names are arguments:
   --target-db YOUR_PREPARED_TARGET_DB
 ```
 
-These four arguments are required. Usage and all options, including optional
-`--reset`, are printed at startup before connecting. `--help` never connects to a database.
-There are no automatic-confirmation, database-creation, or installation options.
+All four arguments are required. Usage/options print before connecting; `--help`
+never connects. There are no automatic-confirmation, database-creation, or module
+installation options. The target must already contain its Odoo 19 modules,
+standard business records, metadata, and security configuration.
 
-**Source access is read-only.** The script never enables/disables the source,
-terminates its sessions, or requires source ownership/session-control privileges.
-Normal source clients may remain connected and continue writing. Only the target
-is temporarily unavailable during approved checkpoint processing.
+**Source access stays read-only.** Normal source clients may remain connected and
+continue writing. The tool never changes source availability or sessions. ID
+inspection and extraction share a read-only repeatable-read snapshot; later source
+changes are outside the migration. There is no incremental synchronization.
 
-The target must already contain its Odoo 19 modules, standard business records,
-technical metadata, and security configuration. The tool does not install or
-upgrade modules, copy credentials/memberships, or import standard business tables.
-Existing data in the selected custom tables is disposable and will be replaced.
+## Selection and identity
 
-## Scope and ID rules
+- Select shared persistent custom models beginning with `ab`, including `abdin*`.
+  Model metadata determines physical tables; a prefix alone never permits deletion.
+  Skip transient/abstract models and SQL views. Report omitted source models and
+  preserve target-only models. Existing selected custom data is replaced.
+- Preserve source custom IDs and custom-to-custom references. Standard records are
+  not imported; credentials and group memberships are not copied.
+- Require source user/partner IDs >= 7 to exist in the target, including inactive
+  records. Extra target IDs are allowed; IDs below 7 are skipped by this check.
+  Retain all IDs in reference metadata: unresolved populated references still fail
+  preflight, including references to low IDs. Equal user/partner IDs are accepted
+  without comparing names, logins, or emails.
+- Resolve other standard IDs through XML IDs, structural identities, reviewed
+  unique keys, or explicit mappings. Equal numeric IDs and group display names
+  are not identity evidence.
+- Import only shared stored fields, honoring explicit renames/conversions.
+  Skip source-only and nonstored target fields and report reasons in preflight.
+  Raw extraction files remain unchanged. Incompatible shared fields, required
+  values, and unresolved shared references still stop preflight. Do not invent
+  placeholders, weaken required constraints, or recalculate stock/prices.
 
-- Select persistent custom models beginning with `ab`, including `abdin*`, present
-  in both source and target. Technical model metadata determines physical tables;
-  a table prefix alone never authorizes deletion.
-- Report missing source models, rather than installing their modules. Preserve
-  target-only models. Skip transient/abstract models and SQL views.
-- Preserve source custom IDs, including custom-to-custom relationships.
-- Require source user and partner IDs **7 and above** to exist in the target;
-  extra target IDs are allowed. IDs below 7 (including 5 and 6) are skipped by
-  both the initial and later checks. Reports show checked/skipped/missing counts.
-- Keep all source user/partner IDs in extraction metadata and reference maps.
-  Skipping an ID check never discards its references: unresolved populated
-  references still stop preflight. Audit users such as ID 1 continue to map.
-- Compare IDs only, including inactive records. Equal IDs are accepted as equal
-  identities without comparing names, logins, or emails.
-- Standard IDs other than users/partners are resolved through XML IDs, structural
-  model/field identities, reviewed unique keys, or explicit mappings.
-- Do not guess security groups by display name or treat equal standard IDs as
-  identity. Missing/ambiguous mappings stop processing.
+## Table checkpoints and availability
 
-## Checkpoints and availability
+1. Ask approval for identity validation and commit its metadata checkpoint.
+2. Extract the source snapshot while the target is online. Ask approval for the
+   complete table-processing window; create and verify a full online target backup.
+3. Block new target connections and terminate other target sessions. Stage the
+   retained extraction, run preflight, capture incoming references and original
+   foreign-key definitions, and commit setup with relevant FKs removed.
+4. Replace each physical custom table in its own transaction: DELETE + adapted
+   INSERT SELECT + ID/count validation + XML-ID repair + sequence adjustment +
+   success checkpoint. **A failed table rolls back to its previous rows, and later
+   tables continue. Earlier successful table commits remain durable.**
+5. Process incoming-reference remapping, external-field updates, attachment import,
+   attachment fields, and relation tables through separate table transactions.
+   Skip relations requiring a failed custom table and report them. Preserve
+   prepared standard/target-only associations. Attachment scope uses successfully
+   copied models and their eligible links; failed owners are excluded.
+6. Validate successfully imported values/links. Attempt every removed FK in an
+   independent transaction. Keep successful constraints; leave failed constraints
+   absent and report them for manual repair. Run read-only fresh-registry and
+   representative branch checks for successfully copied models.
+7. Save the result and reopen the target, **including runs with failed tables or
+   missing constraints**. The reopened target may contain mixed old/imported data.
 
-| Checkpoint | Operations committed together |
-| --- | --- |
-| 1. Identities | Validate source user/partner IDs >= 7; save run metadata and ID staging. |
-| 2. Custom data and XML IDs | Stage extraction; preflight; DELETE selected data; COPY adapted rows; restore incoming references; repair custom XML IDs; validate constraints. |
-| 3. External references | Populate deferred custom fields and M2M links to existing Odoo records. |
-| 4. Attachments | Import scoped attachment records, copy available files, restore attachment fields/M2M links. |
-| 5. Validation | Record activity import as skipped; compare values/links; run read-only fresh-registry and branch checks; mark complete. |
+There is one approval for the table-processing window, not one prompt per table.
+Enter, no, or EOF cancels before that window. The target stays offline across all
+individual commits and FK restoration attempts. PostgreSQL and other databases
+are never stopped. Controlled interruption attempts constraint restoration before
+reopening. The watchdog restores target access after controller failure, including
+SIGKILL; it does not repair data or restore constraints. Server outages can prevent
+immediate reopening; inspect `availability.json` and `watchdog.log`.
 
-Every unfinished checkpoint asks `Continue? [y/N]` while the target is online.
-Only `y`/`yes` starts processing; Enter, no, or EOF cancels. Source availability
-is never changed, including after errors or cancellation. Each approved checkpoint blocks new target
-connections and terminates its other sessions. Migration connections are opened
-before the target gate closes. The target is reopened after commit or rollback,
-before the next question. PostgreSQL and other databases are never stopped.
+NOT NULL, unique, and check constraints remain enforced. Temporary FK removal
+covers references into selected custom/relation tables and FKs on those tables,
+preventing cascading deletion while supporting cycles and self-references.
+Incoming references are mapped through reviewed identities only for successfully
+replaced models; references to failed models retain their original IDs.
 
-DELETE, COPY, and XML-ID repair share one checkpoint: the target never returns
-online between those stages. Custom records with nullable external fields are
-incomplete until the subsequent mapping/attachment checkpoints. Online access
-between checkpoints does not mean the migration has finished. Changes to imported
-data between checkpoints can invalidate recovery; the tool detects changed
-fingerprints and stops instead of silently overwriting them.
+## Failure reports and accepted exceptions
 
-An independent watchdog restores target access after controller failure, including
-SIGKILL. It controls only the target. Database/server outages can prevent
-immediate recovery; inspect `availability.json` and `watchdog.log`, restore server
-access, and rerun. A target disabled outside this run is not automatically adopted.
+Private run directories are under `/opt/odoo19/migration-runs/`. The command prints
+the exact path. Reports are updated during processing:
 
-## Extraction, preflight, and backup
+- `failed_tables.json`: table, failed/skipped operation, safe error type and
+  SQLSTATE/constraint metadata. A failed later operation does not undo the table's
+  earlier committed copy.
+- `failed_foreign_keys.json`: table, constraint, local/referenced columns and
+  table, original definition, executable `restore_sql`, safe failure reason, and
+  accepted-exception status. No PostgreSQL row-detail/business values are logged.
+- `table-setup.json`: original constraints and private capture-table descriptions,
+  retained for manual inspection after an interruption.
+- `verification.json`: terminal status, successful models, committed operations,
+  failures, and attachment/omission information. Database checkpoint records are
+  authoritative if a report cannot be written.
 
-Source ID discovery and extraction use the same read-only, repeatable-read
-transaction. This consistent PostgreSQL view does not change source records or
-block normal writes. Changes committed after the snapshot begins are outside that
-extraction; no incremental synchronization is performed. Private COPY files retain
-its data for recovery. Source business/schema/XML-ID tables, availability settings,
-and other sessions are never changed.
+Terminal output gives counts and report paths. Status/exit behavior:
 
-The extraction includes selected custom rows and links, scoped attachment rows,
-lookup metadata, user/partner IDs, translations, and property values. Metadata may
-be staged privately but is not copied into public standard tables. No source
-passwords or user credentials are extracted.
+| Status | Meaning | Exit code |
+| --- | --- | --- |
+| `complete` | All operations validated; no missing FKs | 0 |
+| `finished_with_exceptions` | Only explicitly accepted FK failures remain | 0 |
+| `finished_with_errors` | Failed/skipped operations, validation/report errors, or unaccepted FK failures | 2 |
 
-Only shared stored fields are imported into public target models. Existing
-explicit rename mappings are honored. Source-only or nonstored target fields are
-skipped even when populated, across every copied model, M2M field, and attachment
-metadata field. Skipped fields and reasons appear in `preflight.json` and checkpoint
-reports. This is generic, not a special case for `vendor_id`.
-
-Raw extraction files remain unchanged and retain source-only values. Cached
-snapshots use the same filtering policy; no re-extraction or target reset is needed.
-Attachment owner records remain eligible, but links existing only in skipped fields
-cannot pull unrelated attachments into the import.
-
-Before deleting, validate shared-field conversions, required values, relationships,
-incoming references, and XML-ID identities. Incompatible shared fields or unresolved
-shared references still stop safely. Required external fields that
-cannot remain empty also stop; required constraints are not weakened and no
-placeholder IDs are invented. Historical prices and inventory quantities are not
-recalculated.
-
-A verified full target backup is created online immediately before the first
-replacement checkpoint enters its offline window. It is retained as
-`before_import.dump` with a SHA-256 manifest. Database transactions provide the
-exact rollback boundary for checkpoint failures. The backup records the earlier
-online backup snapshot; it is not a substitute for the transaction rollback.
-The source filestore is only read; resolved source/target roots must not overlap. A target filestore baseline path is recorded,
-and existing files are never overwritten with conflicting content.
-
-Incoming target references are matched before deletion using captured target XML
-IDs, reviewed unique keys, or explicit mappings. A matching numeric ID alone is
-insufficient. Incoming FK definitions are removed only within the replacement
-transaction to prevent cascading deletes/SET NULL on standard records; original
-constraints and references are restored and validated before commit. Standard
-scalar capture retains only row IDs and affected fields, not copies of credentials.
-Shared relation tables cannot erase existing prepared standard/target-only
-associations; incompatible rows stop preflight.
-
-## Mapping configuration
-
-`mappings.json` retains reviewed field/selection, XML-ID, integer-link, polymorphic, and
-source-model aliases. The prepared workflow additionally reads
-`prepared_rules.json`:
+To silence individual warnings for reviewed constraints, configure exact names and
+reasons before starting a new run:
 
 ```json
-{
-  "format": 1,
-  "stable_keys": {"res.currency": "name", "res.country": "code", "res.lang": "code"},
-  "external_ids": {},
-  "incoming_ids": {},
-  "ignore_fields": {},
-  "branch_manager_xmlids": {}
-}
+"accepted_foreign_key_failures": [
+  {"table": "ab_example", "constraint": "ab_example_parent_id_fkey", "reason": "Reviewed legacy exception"}
+]
 ```
 
+The tool always attempts restoration. Accepted failures remain in the saved
+report and summary counts. It never infers that a missing constraint is harmless.
+Exception rules are fingerprinted with other mappings; they cannot be edited under
+an existing run and silently adopted.
+
+## Mappings, XML IDs, and attachments
+
+`mappings.json` contains reviewed field/selection conversions, XML-ID aliases,
+integer links, polymorphic references, and source-model aliases.
+`prepared_rules.json` retains format 1 and supports:
+
+- `stable_keys`: reviewed non-null unique identity columns, initially currency
+  `name`, country `code`, and language `code`. Ambiguity blocks; groups, users,
+  partners, and attachments cannot use these overrides.
 - `external_ids`: model -> source ID -> reviewed existing standard target ID.
 - `incoming_ids`: custom model -> old target ID -> replacement source custom ID.
-- `stable_keys`: reviewed, non-null unique identity column; ambiguity blocks.
-  Security groups cannot use this strategy.
-- `ignore_fields`: model -> field -> explicit reason for excluding that field.
-- `branch_manager_xmlids`: model-name glob -> reviewed manager group XML IDs that
-  bypass the representative branch audit. System administrators are checked first
-  and bypass it automatically. Configure applicable manager/regional-manager
-  groups before starting; this setting never changes permissions or memberships.
-  For example, `"ab_hr*": ["ab_hr.group_ab_hr_manager"]` is appropriate only when
-  that group is authorized for those models. Undeclared cross-branch access is
-  reported for review rather than assumed to be authorized.
+- `ignore_fields`: model -> field -> explicit exclusion reason.
+- `branch_manager_xmlids`: model-name glob -> reviewed manager/regional-manager
+  group XML IDs bypassing the representative branch audit. System administrators
+  bypass first. This does not modify permissions or memberships.
+- `accepted_foreign_key_failures`: exact reviewed exceptions described above.
 
-For example, `"incoming_ids": {"ab_example": {"7": 13}}` declares that old target
-custom record 7 represents source custom record 13. This is not seed relocation:
-the selected target custom rows are deleted and replaced, and references are
-restored to source IDs.
+For example, `"incoming_ids": {"ab_example": {"7": 13}}` maps old target custom
+record 7 to copied source record 13. It does not relocate source IDs.
 
-Source-to-target lookup maps are fingerprinted too. Changes to existing XML-ID or
-stable-key identities between checkpoints stop before later writes.
+For successfully copied custom models, match source XML IDs by `(module, name)`,
+verify their model, and repair their destination to the source custom ID. Exclude
+`__export__`; do not parse numbers from XML-ID names or copy `ir_model_data.id`.
+Preserve unrelated aliases and target `noupdate`; new aliases use `noupdate=true`.
+A failed copy rolls back that model's XML-ID changes with its data.
 
-Rules and schema fingerprints bind to the run. Do not edit mappings beneath a
-committed run and expect automatic adoption: incompatible changes stop. Prepare
-reviewed rules before starting, or explicitly recover/restore a failed target
-before starting a separate migration attempt.
+Attachments are limited to copied owners and eligible stored-field/M2M links.
+Allocate collision-free target attachment IDs and resolve standard references.
+Both configs must specify `data_dir`; filestores are
+`data_dir/filestore/DB_NAME`, and resolved roots must not overlap. Read source files
+only. Copy verified files atomically, fsync, reuse identical files, and reject
+conflicting content. Missing source files retain database records/metadata and
+appear in `attachments.json`. Inline binary and URL records are retained. File
+publication can survive a database rollback; existing conflicting files are never
+overwritten. Activity import is skipped with the extraction count retained;
+chatter messages and followers are not imported.
 
-## XML IDs and attachments
+## Retry, compatibility, and reset
 
-For copied custom models, use source `(module, name, model, res_id)` identities and
-exclude module `__export__`. Match `(module, name)`, verify the model, and set
-`res_id` to the copied source ID. Do not extract numbers from XML-ID names or copy
-`ir_model_data.id`. Preserve unrelated aliases and existing target `noupdate` flags;
-new aliases use `noupdate=true`. Unresolved/conflicting aliases stop replacement.
+The table workflow uses **run format 2**. Existing format-1 runs are rejected before
+live changes. Review their state before preparing a separate attempt.
 
-Import attachments owned by copied records or explicitly linked by their stored
-fields/M2M tables. Unrelated attachments remain untouched. Allocate collision-free
-target attachment IDs, persist a map, and restore custom attachment links. Resolve
-owner/user/company references rather than assuming standard IDs match.
+Before table setup commits, retry can reuse complete extraction or refresh an
+incomplete source snapshot. Identity changes require revalidation. Saved extraction
+and schema/rule fingerprints remain checked. Once table setup commits, **there is
+no automatic partial-run continuation, table retry, whole-run rollback, or repair**.
+Use the backup, checkpoint records, FK restoration SQL, and reports for manual
+handling. The backup is the earlier online snapshot, not a rollback of all committed
+work. A repeat command on a finished run returns its saved result without retrying
+tables or asserting that the current live data has been revalidated.
 
-Source and target filestores use their respective `data_dir/filestore/DB_NAME`.
-Verify available files, copy through temporary files, publish atomically without
-overwriting a racing file, and fsync before commit. Reuse identical existing files.
-Missing source files keep their database records and original metadata and appear
-in `attachments.json`. Inline binary and URL attachments are retained. A rollback
-may leave verified files, which retry safely reuses.
+Optional `--reset` asks `Reset migration state? [y/N]`, then removes only the
+selected target's private `prepared_migration_work`, `prepared_migration_source`,
+and `prepared_custom_migration` schemas and matching run directories, including
+backups/logs/extraction. It preserves public records and installed modules and exits.
+Rerun without `--reset` afterward. It refuses committed table setup/imports,
+completed runs, active migrations, offline targets, changed identities, or unsafe
+paths. Pre-import partial directory cleanup can be retried. Source access and
+availability are never changed.
 
-Activity import is intentionally not implemented. Inspection found no source
-activities for custom models; reports retain the actual extraction count and mark
-activity import skipped. Chatter messages/followers are not imported.
+## Progress and validation
 
-## Resume
+Progress emits stage labels and five-second updates. Staging COPY distinguishes
+server rows from file bytes. INSERT SELECT and validation use phase heartbeats;
+rows become durable only after their table checkpoint commits. Logging and
+monitoring use a separate read-only connection to `postgres`; business values and
+SQL parameters are not logged. Approval prompts pause periodic console output.
 
-To start fresh after installing modules or changing the target schema, append
-`--reset` to the same four-argument command. Errors also print the exact reset
-command for the supplied databases/configurations. Without this flag, normal
-resume behavior is unchanged.
-
-Reset prints its scope and asks `Reset migration state? [y/N]`. Enter, no, or EOF
-preserves state. Confirming drops only `prepared_migration_work`,
-`prepared_migration_source`, and `prepared_custom_migration` in the selected
-target, then permanently removes matching run directories, including their
-extraction files, logs, and backups. It preserves public records and installed
-modules. Reset exits when finished; rerun without `--reset` to start fresh.
-
-Reset is limited to pre-import state: it refuses committed data-copy/later
-checkpoints, completed runs, evidence of committed staging, database identity
-changes, unsafe directory links, or another active migration/recovery. An offline
-target requires normal recovery first. Source access/availability is never
-changed by reset. If directory cleanup fails after the schema transaction commits,
-the error lists remaining directories; repeat `--reset` to finish cleanup.
-
-Repeat the same four-argument command to resume the same target. Run directories
-are private under `/opt/odoo19/migration-runs/`; the command prints its exact path.
-Checkpoint data and markers commit atomically in the target. A committed database
-marker is authoritative even if interruption prevented its JSON report being written.
-
-A failed ID check does not require a new target or run directory. When extraction
-is incomplete, retry opens a fresh read-only source snapshot and refreshes saved
-ID inputs. If source IDs changed after a previously successful identity checkpoint,
-the script asks to revalidate that checkpoint before extracting. Prior ID lists
-are archived. Only private staging ID tables are refreshed; standard target user
-and partner records are never copied or replaced.
-
-Completed extraction is reused without opening a source data connection; a
-read-only catalog query verifies source database identity. Once custom data has
-committed, the original complete extraction is mandatory. Missing/corrupted files
-stop recovery rather than mixing data from another snapshot. Incomplete extraction
-files are archived before restarting extraction.
-
-Source availability is always managed by the operator, never by this script. An
-unavailable source produces a read/access error when new extraction is required;
-no activation or deactivation is attempted. Historical `source-availability.json`
-files from the retired policy are retained unchanged and ignored by the runner.
-Current result/failure reports describe source access as read-only.
-
-If target recovery is blocked by a server outage, reconnect to `postgres` on the
-target server and review its run marker before manually restoring target access.
-
-Useful private diagnostics include `id-validation.json`, `preflight.json`,
-`snapshot.json`, `failure.json`, `availability.json`,
-`watchdog.log`, `metadata.log`, `orm-validation.log`, and `verification.json`.
-`failure.json` records safe error type/SQLSTATE/table/column/constraint metadata,
-not SQL parameter values. Store run files/backups as confidential data.
-
-The retired controller is isolated in `legacy_migrate.py`, whose CLI is disabled.
-Legacy initialization/seed-relocation libraries remain for historical regression
-tests; the public `migrate.py` entry point never dispatches to that workflow.
-See `VALIDATION.md` for fixture coverage and remaining rehearsal limitations.
-
-## Progress and live observation
-
-The runner emits stage labels and periodic updates every five seconds. Staging
-COPY shows server rows processed against the retained manifest total, bytes, table
-number, percentage, and elapsed time. File bytes read are labelled separately from
-server rows loaded. Index stages show PostgreSQL counters when available. Backup
-shows file size/elapsed time; validation and INSERT SELECT operations use phase
-heartbeats rather than invented percentages. Rows remain pending commit until the
-checkpoint commits.
-
-Output is asynchronous and bounded. Slow/broken output or unavailable statistics
-cannot stop the migration. Monitoring uses its own read-only connection to
-`postgres`, so it works during target offline windows without sharing the writer
-cursor or changing source availability. Periodic console output pauses for approval
-prompts. Private `progress.json`, `progress.jsonl`, and `migration.log` files are
-written inside the run directory. SQL parameters and business values are not logged.
-
-Observe an already running migration from a second terminal without restarting it:
+Observe an active run without restarting it:
 
 ```bash
 /opt/odoo19/venv19/bin/python tools/accounting_migration/watch_progress.py \
@@ -274,8 +195,13 @@ Observe an already running migration from a second terminal without restarting i
   --stage /opt/odoo19/migration-runs/YOUR_RUN_DIRECTORY
 ```
 
-Use `--once` for one observation. The observer verifies database/PID/start-time
-identity, reads PostgreSQL statistics and retained metadata only, and never changes
-data or availability. No registered backend does not mean migration succeeded;
-check the migration terminal and verification report. Integrated logs apply on the
-next launch; the watcher can observe older active processes.
+Use `--once` for a single observation. An absent backend does not imply success;
+inspect the result and failure reports. Other diagnostics include
+`id-validation.json`, `preflight.json`, `snapshot.json`, `failure.json`,
+`orm-validation.log`, `progress.json`, `progress.jsonl`, and `migration.log`.
+Treat all run files/backups as confidential.
+
+The retired initializer remains isolated in disabled `legacy_migrate.py`. The
+historical atomic importer is retained for regression fixtures; the public entry
+point uses the independent table workflow. See `VALIDATION.md` for test coverage
+and remaining production rehearsal limitations.

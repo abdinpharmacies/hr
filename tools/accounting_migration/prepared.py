@@ -18,8 +18,8 @@ import prepared_progress as progress
 from prepared_importer import PreparedImporter, META, WORK, MIN_MATCHED_ID, missing_identity_query
 
 HERE=Path(__file__).resolve().parent
-FORMAT=1
-CHECKPOINTS=('identities','custom_and_xmlids','external','attachments','validation')
+FORMAT=2
+RULE_FORMAT=1
 
 
 def confirm(summary):
@@ -84,7 +84,7 @@ class SmokeWorker:
         self.log=open(Path(stage)/'orm-validation.log','a')
         self.proc=subprocess.Popen([sys.executable,str(HERE/'prepared_metadata.py'),
             '--config',args.target_config,'--database',args.target_db,'--server',str(HERE.parents[2]/'server'),
-            '--output',str(self.output),'--manifest',str(Path(stage)/'snapshot.json'),'--wait'],
+            '--output',str(self.output),'--manifest',str(Path(stage)/('validation-snapshot.json' if (Path(stage)/'validation-snapshot.json').exists() else 'snapshot.json')),'--wait'],
             stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.log,text=True)
         deadline=time.monotonic()+120
         try:
@@ -203,7 +203,9 @@ def run(args, root):
         raise MigrationError('Source and target database names must differ')
     rules=loads((HERE/'prepared_rules.json').read_text())
     conversions=loads((HERE/'mappings.json').read_text())
-    if rules.get('format')!=FORMAT:
+    from table_checkpoints import TableMigration, validate_exceptions
+    validate_exceptions(rules)
+    if rules.get('format')!=RULE_FORMAT:
         raise MigrationError('Unsupported prepared rules version')
     for model in rules.get('stable_keys',{}):
         if model in ('res.users','res.partner','res.groups','ir.attachment'):
@@ -241,6 +243,15 @@ def run(args, root):
         existing_run=read_checkpoint(target_con,'run')
         if existing_run is not None and existing_run!=identity:
             raise MigrationError('Target database belongs to a different prepared migration run')
+        prior_result=read_checkpoint(target_con,'table_result')
+        if prior_result:
+            target_con.rollback()
+            print('Returning stored result of finished table workflow; no tables retried.',flush=True)
+            save_json(stage/'verification.json',prior_result)
+            return prior_result
+        if read_checkpoint(target_con,'table_setup'):
+            raise MigrationError('Partially committed table migration: automatic continuation is disabled. '
+                                 'Review table-setup.json, failure reports and backup manually; --reset cannot undo live commits.')
         if not str(target.get('res.users',{}).get('table','')).startswith('res_users'):
             raise MigrationError('Prepared target registry unavailable')
         with target_con.cursor() as cr:
@@ -314,54 +325,38 @@ def run(args, root):
         print(f'Extracted custom rows: {sum(manifest["tables"][manifest["models"][m]["table"]]["rows"] for m in manifest["selected"]):,}; '
               f'total extraction bytes: {sum(t["bytes"] for t in manifest["tables"].values()):,}.',flush=True)
         print('Omitted models: '+', '.join(manifest['omitted']),flush=True)
-        summaries={
-            'custom_and_xmlids':'Checkpoint 2: back up target; replace selected custom rows and repair XML IDs in one transaction.',
-            'external':'Checkpoint 3: populate custom fields referencing existing Odoo records.',
-            'attachments':'Checkpoint 4: import attachment records/files and restore attachment links.',
-            'validation':'Checkpoint 5: skip activity import and validate completed migration.'}
-        completed=read_checkpoint(target_con,'validation')
-        if completed:
-            engine=PreparedImporter(target_con,stage,manifest,target,rules,conversions)
-            engine.preflight(replacing=False)
-            engine.validate_ids()
-            engine.verify_fingerprints(completed['fingerprints'])
-            if engine.mapping_fingerprint()!=completed['mapping_fingerprint']:
-                raise MigrationError('Lookup identities changed after completed migration')
-            engine.validate_values()
-            target_con.rollback()
-            print('All checkpoints already committed; verified imported table fingerprints.',flush=True)
-        for phase in CHECKPOINTS[1:]:
-            saved=read_checkpoint(target_con,phase)
-            target_con.rollback()
-            if saved:
-                if saved['snapshot']!=fingerprint(manifest):
-                    raise MigrationError('Committed snapshot identity differs')
-                print(f'Skip committed checkpoint: {phase}',flush=True)
-                continue
-            if not confirm(summaries[phase]):
-                return dict(passed=False,status='cancelled',source_access='read_only')
-            if phase=='custom_and_xmlids':
-                ensure_backup(args.target_config,args.target_db,stage,progress=progress)
-                save_json(stage/'filestore-baseline.json',dict(path=str(target_root),exists=target_root.exists()))
-            smoke=SmokeWorker(args,stage) if phase=='validation' else None
-            try:
-                process_checkpoint(args,stage,identity,manifest,target,rules,conversions,target_con,tg,
-                                   phase,source_root,target_root,smoke)
-            finally:
-                if smoke:
-                    smoke.close()
-            report=read_checkpoint(target_con,phase)
-            target_con.rollback()
-            save_json(stage/(phase+'.json'),report)
-        result=read_checkpoint(target_con,'validation')
-        target_con.rollback()
-        save_json(stage/'verification.json',dict(passed=True,source_access='read_only',report=result))
-        print(f'Migration complete. Target online: {args.target_db}. Source availability was not changed.',flush=True)
-        print(f'Omitted models: {len(manifest["omitted"])}; missing attachment files: '
-              f'{len(result["report"].get("missing_files",[]))}; activities skipped: {manifest["activities"]}.',flush=True)
-        return dict(passed=True,source_access='read_only',stage=str(stage))
+        if not confirm('Checkpoint 2: back up target; commit each live table independently, map references, '
+                       'import attachments, validate, and attempt FK restoration. Failed tables are retained; '
+                       'processing continues and the target reopens even with missing constraints. No automatic recovery.'):
+            return dict(passed=False,status='cancelled',source_access='read_only')
+        ensure_backup(args.target_config,args.target_db,stage,progress=progress)
+        save_json(stage/'filestore-baseline.json',dict(path=str(target_root),exists=target_root.exists()))
+        # The worker connects while online, but reads this manifest only after GO.
+        validation_manifest=stage/'validation-snapshot.json'
+        save_json(validation_manifest,{**manifest,'selected':[]})
+        smoke=SmokeWorker(args,stage)
+        try:
+            with target_offline(tg,target_con,stage,workers=[smoke.pid]):
+                initialize(target_con,identity)
+                snapshot.stage_tables(target_con,stage,manifest)
+                with target_con.cursor() as cr:
+                    cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
+                    cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
+                engine=PreparedImporter(target_con,stage,manifest,target,rules,conversions)
+                engine.validate_ids()
+                engine.preflight(replacing=True)
+                def validate_orm(selected):
+                    save_json(validation_manifest,{**manifest,'selected':selected})
+                    smoke.run()
+                    return None
+                result=TableMigration(engine,write_checkpoint).run(source_root,target_root,validate_orm)
+        finally:
+            smoke.close()
+        print(f'Table migration finished: {result["status"]}. Target online: {args.target_db}. '
+              'Source availability was not changed.',flush=True)
+        return result
     except BaseException as exc:
-        progress.finish('failed; unfinished checkpoint rolled back or recovery required')
+        progress.finish('stopped; current transaction rolled back; earlier table commits retained')
         if stage:
             diagnostics=dict(error_type=type(exc).__name__,complete=False,source_policy='read_only')
             if getattr(exc,'diag',None):
@@ -381,53 +376,3 @@ def run(args, root):
         if tg is not None:
             tg.close()
         progress.stop()
-
-
-def process_checkpoint(args,stage,identity,manifest,target,rules,conversions,target_con,tg,
-                       phase,source_root,target_root,smoke=None):
-    progress.begin(phase,operation='Acquire exclusive target access')
-    with target_offline(tg,target_con,stage,workers=[smoke.pid] if smoke else []):
-        initialize(target_con,identity)
-        if phase=='custom_and_xmlids':
-            snapshot.stage_tables(target_con,stage,manifest)
-            with target_con.cursor() as cr:
-                cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
-                cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
-        progress.begin('inspect schema',operation='Read target columns and constraints',monitor=True)
-        engine=PreparedImporter(target_con,stage,manifest,target,rules,conversions)
-        engine.validate_ids()
-        engine.preflight(replacing=phase=='custom_and_xmlids')
-        previous=None
-        for name in reversed(CHECKPOINTS[1:CHECKPOINTS.index(phase)]):
-            previous=read_checkpoint(target_con,name)
-            if previous:
-                break
-        if previous:
-            engine.verify_fingerprints(previous['fingerprints'])
-            if engine.mapping_fingerprint()!=previous['mapping_fingerprint']:
-                raise MigrationError('Prepared target lookup identities changed between checkpoints')
-        if phase=='custom_and_xmlids':
-            engine.replace()
-        elif phase=='external':
-            engine.external()
-        elif phase=='attachments':
-            engine.attachments(source_root,target_root)
-        else:
-            attachment_result=read_checkpoint(target_con,'attachments')
-            engine.report.update({k:v for k,v in attachment_result['report'].items() if k in ('missing_files','copied_files')})
-            engine.validate_custom()
-            engine.validate_values()
-            engine.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s LEFT JOIN public.ir_model_data t USING(module,name) '
-                'WHERE s.model=ANY(%s) AND s.module<>%s AND (t.id IS NULL OR t.model<>s.model OR t.res_id<>s.res_id))').format(
-                    sql.Identifier(snapshot.SCHEMA,'ir_model_data')),'Final XML-ID validation failed',
-                    [manifest['selected'],'__export__'])
-        report=dict(snapshot=fingerprint(manifest),fingerprints=engine.fingerprints(),mapping_fingerprint=engine.mapping_fingerprint(),
-                    report=engine.report,complete=phase=='validation')
-        if phase=='validation':
-            progress.begin('ORM validation',operation='Read records in fresh registry',monitor=True)
-            report['orm']=smoke.run()
-            write_checkpoint(target_con,'status',dict(complete=True))
-        write_checkpoint(target_con,phase,report)
-        progress.begin('commit',operation='Commit '+phase,monitor=True)
-        target_con.commit()
-        progress.finish('checkpoint committed')

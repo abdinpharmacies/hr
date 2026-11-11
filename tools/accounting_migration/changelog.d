@@ -2,6 +2,30 @@
 
 ## Current changes before commit:
 
+- Commit each successful live custom-table replacement and its checkpoint independently; roll back a failed table and continue with later tables.
+- Persist original FK definitions and incoming references before removing constraints; restore FKs independently and report unapplied constraints with manual restoration SQL.
+- Process incoming references, external fields, attachment links, and relation tables through separate table transactions; preserve failed-model records and skip dependent relations/attachment owners.
+- Keep the target offline throughout table processing and reopen with reports, including runs with errors. Support exact reviewed FK exceptions without hiding saved failures.
+- Add terminal statuses/CLI exit codes and versioned run markers; reject partial-run automatic continuation/reset while retaining pre-import retry and saved final-result retrieval.
+- Add disposable PostgreSQL and offline coverage; update the runbook and validation evidence.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `migrate.py`
+- `prepared.py`
+- `prepared_importer.py`
+- `prepared_rules.json`
+- `prepared_snapshot.py`
+- `table_checkpoints.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_table_checkpoints.py`
+
+## eb4484d88 — emadco88 — 2026-11-11
+
+Original commit subject: `tools/accounting_migration/ UPD add --reset option`
+
 - Add optional confirmed `--reset` for private pre-import schemas and matching run directories; exit after cleanup so the next normal run starts fresh.
 - Preserve public records and unrelated runs; refuse active migrations, committed imports, identity changes, and unsafe paths. Support retry after partial directory cleanup.
 - Print usage/options at startup and a complete reset recovery command on errors.

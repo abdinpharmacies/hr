@@ -1,6 +1,34 @@
 # Prepared-target migration validation
 
-## Results
+## Current table-checkpoint validation (2026-11-11)
+
+**194 tests: 184 passed, 10 skipped**, with disposable PostgreSQL tests enabled.
+The skipped cases require optional legacy settings or an explicitly selected Odoo
+clone template. No application database was migrated or had its availability
+changed. All table changes and availability gates used generated disposable test
+DBs; maintenance connections used `postgres`.
+
+New coverage verifies:
+
+- Independently committed live tables and atomic table-success markers.
+- A failed copy preserving old rows/XML IDs/relations while later tables commit.
+- Incoming-reference remapping, external fields, attachment IDs/files and links.
+- Circular/self-referencing FK restoration and isolated restoration failures.
+- Accepted FK exceptions retained in reports with individual warnings suppressed.
+- Target reopening with missing constraints, controlled-interruption restoration,
+  partial-run continuation/reset rejection, and saved terminal-result retrieval.
+- Safe error reports and distinct CLI exit statuses for errors/accepted exceptions.
+
+The controller fixture continues writing through a separate source connection and
+checks that imported values come from the consistent read-only snapshot. Its
+registry worker is mocked; fresh-registry clone acceptance was not enabled for
+this change. Python compilation and `git diff --check` are also required.
+
+The public controller now uses run format 2 and the independent table workflow.
+Atomic importer primitives remain available to historical regression fixtures.
+The earlier multi-phase resume contract does not apply after table setup commits.
+
+## Historical implementation results
 
 Optional reset validation (2026-11-11): **184 tests, 174 passed and 10 skipped**,
 with disposable PostgreSQL tests enabled. Odoo clone acceptance and optional
@@ -33,9 +61,9 @@ No migration, source blocking, or target availability change was performed again
 `abdinpharmacies` or `dev-central19`. The Odoo template database was read only.
 Generated test databases were removed after testing.
 
-## Coverage
+## Historical primitives and retained coverage
 
-The prepared workflow tests cover:
+The retained importer/helper fixtures and current controller tests cover:
 
 - Shared persistent `ab*`/`abdin*` selection, omissions, and transient/view exclusion.
 - Source user/partner ID containment for IDs >= 7 with extra target IDs allowed.
@@ -67,9 +95,9 @@ The prepared workflow tests cover:
   extraction, and preserves the same run directory.
 - A separate source client stays connected and writes during migration. Copied
   values reflect the consistent snapshot rather than a later committed update.
-- Lost JSON report after a committed replacement, cancellation, completed-snapshot
-  resume without a source data connection, completion, and a repeat run that skips
-  committed phases without duplicate attachments. Source access stays available
+- Lost JSON report after a committed terminal table result, cancellation, reuse of
+  completed extraction before live setup without a source data connection, and
+  repeat retrieval of a saved result without duplicate attachments. Source access stays available
   after failures, cancellation, success, and repeat runs. Old availability reports
   are left unchanged and ignored.
 - The read-only ORM worker opens its cursor before target blocking and executes

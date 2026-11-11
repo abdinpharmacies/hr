@@ -138,7 +138,7 @@ def verify(stage, manifest):
 
 
 def stage_tables(connection, stage, manifest):
-    """Caller owns the transaction; staging and checkpoint 1 commit together."""
+    """Caller owns the transaction; staging becomes durable with table setup."""
     with connection.cursor() as cr:
         cr.execute(sql.SQL('CREATE SCHEMA IF NOT EXISTS {}').format(sql.Identifier(SCHEMA)))
         cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(SCHEMA)))
