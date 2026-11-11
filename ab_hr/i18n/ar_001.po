@@ -10,6 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2025-04-14 13:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ar_001\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -3232,3 +3233,35 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_action_wizard_form
 msgid "salaries action form"
 msgstr "حركات المرتبات المستحقة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__supervision_type
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "Supervision Type"
+msgstr "نوع الإشراف"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__supervision_type__direct
+msgid "Direct"
+msgstr "مباشر"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__supervision_type__indirect
+msgid "Indirect"
+msgstr "غير مباشر"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__supervision_type__indirect_to_subordinate
+msgid "Indirect to subordinate"
+msgstr "غير مباشر لأحد المرؤوسين"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__supervision_type__myself
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Myself"
+msgstr "نفسي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__supervision_type__workplace_manager_job
+msgid "Workplace manager job"
+msgstr "وظيفة مدير مكان العمل"
