@@ -509,3 +509,9 @@ msgstr "الموقع الإلكتروني"
 #: model:ir.model.fields.selection,name:ab_crm_core.selection__ab_crm_channel__provider__whatsapp
 msgid "WhatsApp"
 msgstr "WhatsApp"
+
+#. module: ab_crm_core
+#: model:ir.actions.act_window,name:ab_crm_core.action_ab_crm_conversation
+#: model:ir.ui.menu,name:ab_crm_core.menu_ab_crm_conversation
+msgid "Inbox"
+msgstr "الوارد"

@@ -1,5 +1,5 @@
-{'name': 'CRM Conversations',
- 'version': '19.0.1.0.0',
+{'name': 'CRM Inbox',
+ 'version': '19.0.1.1.0',
  'license': 'LGPL-3',
  'category': 'Sales/CRM',
  'author': 'Abdin Pharmacies',
