@@ -1,5 +1,0 @@
-<odoo>
-<record id="rule_ab_oms_connection_company" model="ir.rule"><field name="name">Branch Connections: company</field><field name="model_id" ref="model_ab_oms_connection"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
-<record id="rule_ab_oms_connection_branch" model="ir.rule"><field name="name">Branch Connections: branch</field><field name="model_id" ref="model_ab_oms_connection"/><field name="domain_force">[] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])]</field></record>
-<record id="mapping_company" model="ir.rule"><field name="name">Product mappings: company</field><field name="model_id" ref="model_ab_oms_reference_map"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
-<record id="mapping_branch" model="ir.rule"><field name="name">Product mappings: branch</field><field name="model_id" ref="model_ab_oms_reference_map"/><field name="domain_force">[] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])]</field></record></odoo>
