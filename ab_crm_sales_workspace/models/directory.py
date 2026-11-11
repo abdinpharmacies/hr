@@ -1,7 +1,7 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
-from .workspace import normalized_phone, _WORKSPACE
+from .workspace import normalized_phone, display_phone, _WORKSPACE
 
 
 class Customer(models.Model):
@@ -27,15 +27,26 @@ class Customer(models.Model):
 
     def _directory_data(self):
         self.ensure_one()
+        names = [self.chatter_name, self.name, self.catalog_customer_id.name]
+        name = next((value for value in names if value and not value.replace('+', '').replace(' ', '').isdigit()), '')
         return {
             'id': self.id,
-            'name': self.chatter_name if self.chatter_override else self.name,
+            'name': name or display_phone(normalized_phone(self.chatter_phone or self.phone, self.company_id.country_id.code), self.company_id.country_id.code) or _('Unidentified sender'),
             'phone': (self.chatter_phone if self.chatter_override else self.phone)
             or '',
             'address': (self.chatter_address if self.chatter_override else self.address)
             or '',
             'branch_id': self.branch_id.id,
         }
+
+    def _matches_directory_query(self, query):
+        self.ensure_one()
+        needle = query.casefold().strip()
+        digits = ''.join(filter(str.isdigit, query))
+        canonical = normalized_phone(query, self.company_id.country_id.code)
+        return any(needle in (value or '').casefold() for value in (self.name, self.chatter_name)) or any(
+            canonical == number or (digits and (digits in number or digits in ''.join(filter(str.isdigit,
+                display_phone(number, self.company_id.country_id.code))))) for number in self._active_phone_numbers())
 
 
 class WorkspaceAudit(models.Model):
@@ -124,40 +135,19 @@ class ChatterAPI(models.AbstractModel):
             ('branch_id', 'in', branches.ids),
             ('company_id', '=', session.company_id.id),
         ]
+        if not query and not phone:
+            contacts = self.env['ab_crm_customer'].search(domain, order='id desc', offset=offset, limit=31)
+        else:
+            contacts = self.env['ab_crm_customer'].search(domain, order='id desc')
         if query:
-            domain += [
-                '|',
-                '|',
-                '|',
-                ('name', 'ilike', query),
-                ('phone', 'ilike', query),
-                ('chatter_name', 'ilike', query),
-                ('chatter_phone', 'ilike', query),
-            ]
+            contacts = contacts.filtered(lambda contact: contact._matches_directory_query(query))
         if phone:
             phone = normalized_phone(phone, session.company_id.country_id.code)
             if not phone:
                 raise ValidationError(_('Enter a valid customer phone number.'))
-            pattern = '%' + '%'.join(c for c in phone[-7:] if c.isdigit()) + '%'
-            domain += [
-                '|',
-                ('phone', 'ilike', pattern),
-                ('chatter_phone', 'ilike', pattern),
-            ]
-            contacts = self.env['ab_crm_customer'].search(domain, order='id desc')
-            contacts = contacts.filtered(
-                lambda contact: phone
-                in (
-                    normalized_phone(contact.phone, session.company_id.country_id.code),
-                    normalized_phone(
-                        contact.chatter_phone, session.company_id.country_id.code
-                    ),
-                )
-            )[offset : offset + 31]
-        else:
-            contacts = self.env['ab_crm_customer'].search(
-                domain, limit=31, offset=offset, order='id desc'
-            )
+            contacts = contacts.filtered(lambda contact: phone in contact._active_phone_numbers())
+        if query or phone:
+            contacts = contacts[offset:offset + 31]
         return {
             'contacts': [contact._directory_data() for contact in contacts[:30]],
             'has_more': len(contacts) > 30,
@@ -189,12 +179,23 @@ class ChatterAPI(models.AbstractModel):
         if contact:
             contact._authorize()
             self._branch_scope(session, contact.branch_id)
+            contact.branch_id.lock_for_update()
+            contact.branch_id.sudo().write({})
             contact.lock_for_update()
         else:
             branch = self._branch_scope(
                 session, self.env['ab_crm_branch'].browse(branch_id).exists()
             )
+            branch.lock_for_update()
+            branch.sudo().write({})
         previous = contact._directory_data() if contact else {}
+        if contact and ((contact.primary_phone_id and phone != contact.primary_phone_id.number)
+                or (not contact.primary_phone_id and contact._active_phone_numbers() and phone not in contact._active_phone_numbers())):
+            raise UserError(_('Use Add number or select another primary number.'))
+        if not contact:
+            existing = self.env['ab_crm_customer'].search([('branch_id', '=', branch.id), ('company_id', '=', session.company_id.id)])
+            if existing.filtered(lambda c: phone in c._active_phone_numbers()) and not existing._manager():
+                raise AccessError(_('Only CRM managers can resolve shared numbers.'))
         guard = _WORKSPACE.set(True)
         try:
             if contact:
@@ -218,6 +219,8 @@ class ChatterAPI(models.AbstractModel):
                 )
         finally:
             _WORKSPACE.reset(guard)
+        if not contact.primary_phone_id:
+            contact._save_phone(phone, '', 'Saved contact phone', self.env.user)
         self._contact_audit(
             session,
             contact,
@@ -247,11 +250,35 @@ class ChatterAPI(models.AbstractModel):
             raise AccessError(_('Select a saved contact.'))
         contact._authorize()
         self._branch_scope(session, contact.branch_id)
+        contact.branch_id.lock_for_update()
+        contact.branch_id.sudo().write({})
         contact.lock_for_update()
         previous = contact._directory_data()
         contact.write({'active': False})
         self._contact_audit(session, contact, 'archive_contact', previous)
         return True
+
+    @api.model
+    def contact_accounts(self, token, contact_id):
+        session = self._session(token)
+        contact = self.env['ab_crm_customer'].browse(contact_id).exists()
+        if not contact:
+            raise AccessError(_('Select a saved contact.'))
+        contact._authorize('read')
+        self._branch_scope(session, contact.branch_id)
+        streams = self.env['ab_crm_conversation'].search([
+            ('customer_id', '=', contact.id), ('branch_id', '=', contact.branch_id.id),
+            ('company_id', '=', session.company_id.id),
+        ])
+        accounts = []
+        for stream in streams:
+            try:
+                stream.with_context(ab_chatter_session_token=token)._workspace_scope()
+            except (AccessError, UserError):
+                continue
+            accounts.append({'id': stream.id, 'provider': stream.channel_id.provider,
+                'display_destination': stream._display_destination(), 'label': stream.messaging_account_id.name})
+        return {'accounts': accounts}
 
     @api.model
     def contact_open(self, token, contact_id):

@@ -5,6 +5,7 @@ from uuid import uuid4
 from psycopg2.errors import SerializationFailure
 
 from odoo import SUPERUSER_ID, api, fields, sql_db
+from odoo.exceptions import AccessError
 from odoo.service.model import retrying
 
 
@@ -48,6 +49,8 @@ def run(database_name):
                 env = api.Environment(cursor, SUPERUSER_ID, {})
                 env['ab_crm_chatter_session'].browse(session_id).write({
                     'last_activity_at': self.stale,
+                    'state': 'active',
+                    'expires_at': self.now + timedelta(hours=8),
                 })
                 cursor.commit()
             self.first_cursor = connection.cursor()
@@ -90,15 +93,26 @@ def run(database_name):
             self.second.flush_all()
             self.assertGreaterEqual(session.last_activity_at, self.now)
 
-        def test_committed_competitor_propagates_serialization_failure(self):
+        def test_committed_competitor_skips_activity_without_sql_error(self):
             self.assertEqual(self.second_session.last_activity_at, self.stale)
+            self.second['res.users'].sudo().browse(user_id).write({
+                'chatter_failed_attempts': 2,
+            })
+            self.second.flush_all()
             self.first['ab_crm_chatter_api']._session(token)
             self.first_cursor.commit()
-            with self.assertRaises(SerializationFailure):
-                self.second['ab_crm_chatter_api']._session(token)
-            self.second_cursor.rollback()
+            with self.assertNoLogs('odoo.sql_db', level='ERROR'):
+                session = self.second['ab_crm_chatter_api']._session(token)
+            self.assertEqual(session.id, session_id)
+            self.second.flush_all()
+            self.second_cursor.execute(
+                'SELECT chatter_failed_attempts FROM res_users WHERE id = %s',
+                (user_id,),
+            )
+            self.assertEqual(self.second_cursor.fetchone(), (2,))
+            self.second_cursor.commit()
 
-        def test_native_retry_refreshes_committed_activity(self):
+        def test_native_retry_is_not_needed_for_activity_conflict(self):
             self.assertEqual(self.second_session.last_activity_at, self.stale)
             first = self.first['ab_crm_chatter_api']._session(token)
             timestamp = first.last_activity_at
@@ -109,8 +123,50 @@ def run(database_name):
                 attempts.append(True)
                 return self.second['ab_crm_chatter_api']._session(token).last_activity_at
 
-            self.assertEqual(retrying(request, self.second), timestamp)
-            self.assertEqual(len(attempts), 2)
+            with self.assertNoLogs('odoo.sql_db', level='ERROR'):
+                self.assertEqual(retrying(request, self.second), self.stale)
+            self.assertEqual(len(attempts), 1)
+            self.assertEqual(self.second_session.last_activity_at, timestamp)
+
+        def test_logout_still_retries_after_competing_activity_commit(self):
+            self.assertEqual(self.second_session.last_activity_at, self.stale)
+            self.first['ab_crm_chatter_api']._session(token)
+            self.first_cursor.commit()
+            with self.assertRaises(SerializationFailure):
+                self.second['ab_crm_chatter_api'].logout(token)
+                self.second.flush_all()
+            self.second_cursor.rollback()
+            self.assertTrue(retrying(
+                lambda: self.second['ab_crm_chatter_api'].logout(token), self.second
+            ))
+            with self.assertRaises(AccessError):
+                self.second['ab_crm_chatter_api']._session(token)
+
+        def test_concurrent_logout_preserves_retry_and_rejects_session(self):
+            self.assertEqual(self.second_session.last_activity_at, self.stale)
+            self.first['ab_crm_chatter_api'].logout(token)
+            self.first_cursor.commit()
+            with self.assertNoLogs('odoo.sql_db', level='ERROR'):
+                with self.assertRaises(SerializationFailure):
+                    self.second['ab_crm_chatter_api']._session(token)
+            with self.assertRaises(AccessError):
+                retrying(
+                    lambda: self.second['ab_crm_chatter_api']._session(token),
+                    self.second,
+                )
+
+        def test_concurrent_expiry_preserves_retry_and_rejects_session(self):
+            self.assertEqual(self.second_session.last_activity_at, self.stale)
+            self.first_session.expires_at = self.now - timedelta(seconds=1)
+            self.first_cursor.commit()
+            with self.assertNoLogs('odoo.sql_db', level='ERROR'):
+                with self.assertRaises(SerializationFailure):
+                    self.second['ab_crm_chatter_api']._session(token)
+            with self.assertRaises(AccessError):
+                retrying(
+                    lambda: self.second['ab_crm_chatter_api']._session(token),
+                    self.second,
+                )
 
     try:
         result = unittest.TextTestRunner(verbosity=2).run(

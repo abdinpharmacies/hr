@@ -33,7 +33,8 @@ test("branch picker previews a native card and sends selected server revision", 
     await chooseBranch();
     expect(".ab_branch_picker .ab_location_card").toHaveCount(1);
     expect("button:contains(Use for delivery)").toHaveCount(0);
-    expect(".ab_branch_picker .alert-warning").toHaveCount(1);
+    expect(".ab_branch_picker .alert-warning").toHaveCount(0);
+    expect(".o_notification").toHaveText(/Some text is unavailable/);
     await contains(".modal-footer button:first").click();
     const sent = calls.find(call => call.method === "action_share_branch");
     expect(sent.args.slice(0, 4)).toEqual([[1], 4, 2, "en_US"]);
@@ -55,7 +56,7 @@ test("branch details are explicit and expired navigation prevents a send", async
     expect(sends).toEqual([]);
     valid = false;
     await contains(".modal-footer button:first").click();
-    expect("[role=alert]").toHaveText("This branch picker has expired. Open it again from the conversation.");
+    expect(".o_notification:contains(This branch picker has expired)").toHaveCount(1);
     expect(sends).toEqual([]);
 });
 

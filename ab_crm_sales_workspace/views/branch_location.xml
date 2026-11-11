@@ -26,6 +26,5 @@
             <field name="outgoing_enabled" position="after"><field name="branch_location_enabled" groups="ab_crm_core.group_manager,base.group_system" invisible="provider != 'telegram'"/></field></field></record>
     <record id="branch_location_crm_form" model="ir.ui.view"><field name="name">ab_crm_conversation.branch.location</field><field name="model">ab_crm_conversation</field><field name="inherit_id" ref="ab_crm_core.view_ab_crm_conversation_form"/><field name="arch" type="xml">
             <sheet position="inside"><widget name="ab_branch_share" groups="ab_crm_sales_workspace.group_agent"/></sheet></field></record>
-    <record id="branch_location_oms_form" model="ir.ui.view"><field name="name">ab_oms_request.branch.location</field><field name="model">ab_oms_request</field><field name="inherit_id" ref="ab_oms_core.view_ab_oms_request_form"/><field name="arch" type="xml">
-            <sheet position="inside"><widget name="ab_branch_share" groups="ab_crm_sales_workspace.group_agent" invisible="not conversation_id"/></sheet></field></record>
+
 </odoo>

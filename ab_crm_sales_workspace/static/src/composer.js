@@ -1,3 +1,4 @@
+import {useChatterFeedback, useChatterNotice, feedbackError} from "./feedback";
 import {Component, onWillUnmount, useState} from "@odoo/owl";
 import {AutoComplete} from "@web/core/autocomplete/autocomplete";
 import {Dialog} from "@web/core/dialog/dialog";
@@ -11,6 +12,9 @@ export class LocationDialog extends Component {
     setup() {
         this.title = _t("Choose branch");
         this.state = useState({query: "", preview: null, busy: false, error: "", includeDetails: false});
+        this.feedback = useChatterFeedback(this);
+        useChatterNotice(() => this.state.preview?.fallback ? {type: "warning", message: _t("Some text is unavailable in the selected language. The preview shows the fallback that will be sent.")} : null,
+            () => [this.state.preview?.id, this.state.preview?.fallback]);
         this.searchId = `ab-branch-search-${crypto.randomUUID()}`;
         this.searchPlaceholder = _t("Name, region, address or store code");
         this.sources = [{placeholder: _t("Searching…"), options: query => this.search(query)}];
@@ -43,7 +47,7 @@ export class LocationDialog extends Component {
                 },
             })) : [{label: _t("No reviewed branches available.")}];
         } catch (error) {
-            if (sequence === this.sequence && !this.destroyed) this.state.error = error.data?.message || error.message;
+            if (sequence === this.sequence && !this.destroyed) this.state.error = feedbackError(this, error);
             return [];
         }
     }
@@ -58,7 +62,7 @@ export class LocationDialog extends Component {
             this.state.preview = preview;
             this.tokens = {location: crypto.randomUUID(), details: crypto.randomUUID()};
         } catch (error) {
-            if (sequence === this.sequence && !this.destroyed) this.state.error = error.data?.message || error.message;
+            if (sequence === this.sequence && !this.destroyed) this.state.error = feedbackError(this, error);
         }
     }
     async send() {
@@ -71,7 +75,7 @@ export class LocationDialog extends Component {
             await this.props.call("ab_crm_conversation", "action_share_branch", [[this.props.conversationId], preview.id, preview.revision, preview.language, this.tokens.location, this.state.includeDetails]);
             this.props.sent?.();
             this.props.close();
-        } catch (error) { this.state.error = error.data?.message || error.message; }
+        } catch (error) { this.state.error = feedbackError(this, error); }
         finally { this.state.busy = false; }
     }
 }

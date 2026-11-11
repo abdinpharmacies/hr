@@ -1,3 +1,4 @@
+import {useChatterFeedback, useChatterNotice, feedbackError} from "./feedback";
 import {Component, onMounted, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {ConfirmationDialog} from "@web/core/confirmation_dialog/confirmation_dialog";
@@ -14,9 +15,12 @@ export class SavedReplies extends Component {
     static components = {Dialog: TemplateDialog};
     static props = {call: Function, conversation: Object, insert: Function, close: Function};
     setup() {
-        this.title = _t("Templates");
+        this.title = _t("Saved replies");
         this.dialog = useService("dialog");
         this.state = useState({items: [], can_manage: false, selected: false, name: "", body: "", variables: {}, query: "", error: "", busy: false});
+        this.feedback = useChatterFeedback(this);
+        useChatterNotice(() => this.missingValues ? {message: _t("Complete all required parameters.")} : null,
+            () => [this.state.selected, this.missingValues]);
         this.saved = this.snapshot;
         onMounted(() => this.refresh());
     }
@@ -39,7 +43,7 @@ export class SavedReplies extends Component {
         this.state.busy = true;
         this.state.error = "";
         try { await action(); }
-        catch (error) { this.state.error = error.data?.message || error.message; }
+        catch (error) { this.state.error = feedbackError(this, error); }
         finally { this.state.busy = false; }
     }
     refresh() {

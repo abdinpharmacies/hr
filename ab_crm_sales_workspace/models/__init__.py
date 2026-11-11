@@ -8,3 +8,6 @@ from . import alerts
 from . import media
 from . import branch_location
 from . import customer_streams
+from . import contact_phones
+
+from . import pos_handoff

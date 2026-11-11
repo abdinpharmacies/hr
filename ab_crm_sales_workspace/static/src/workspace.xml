@@ -1,16 +1,16 @@
 <templates xml:space="preserve">
 <t t-name="ab_crm_sales_workspace.Workspace">
     <div class="ab_crm_sales_workspace" t-att-dir="direction">
-        <header><h2 t-esc="isOrders ? ordersLabel : chatterLabel"/><nav class="ab_workspace_navigation"><button class="btn btn-light" t-on-click="() => this.openView(false)" t-att-class="{active: !isOrders}">Conversations</button><button class="btn btn-light" t-on-click="() => this.openView(true)" t-att-class="{active: isOrders}">Orders</button></nav><span t-if="state.busy">Loading…</span><div><span t-if="state.loggedIn" t-esc="state.employee"/><button t-if="state.loggedIn" class="btn btn-light" t-on-click="logout" t-att-disabled="state.busy">Sign out</button></div></header>
-        <div t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+        <header><h2 t-esc="chatterLabel"/><nav class="ab_workspace_navigation"><button class="btn btn-light active" aria-current="page" t-on-click="openInbox">Inbox</button><button class="btn btn-light" t-on-click="() => this.createOrder()" t-att-disabled="state.busy || !state.loggedIn">Create order</button><button class="btn btn-light" t-on-click="openInvoices">Invoices</button></nav><span t-if="state.busy">Loading…</span><div><span t-if="state.loggedIn" t-esc="state.employee"/><button t-if="state.loggedIn" class="btn btn-light" t-on-click="logout" t-att-disabled="state.busy">Sign out</button></div></header>
+
         <div t-if="!state.loggedIn" class="ab_workspace_login"><p>Sign in to Sales Chatter with your employee and PIN.</p><button class="btn btn-primary" t-on-click="() => this.showLogin()">Employee login</button></div>
         <div t-else="" class="ab_workspace_columns">
-            <aside aria-label="Conversations">
-                <div class="ab_contacts_header"><h3>Contacts</h3><button class="btn btn-light" t-on-click="() => this.contacts('add')" title="Add" aria-label="Add"><i class="fa fa-plus"/></button><button class="btn btn-light" t-on-click="() => this.contacts('edit')" title="Edit" aria-label="Edit"><i class="fa fa-pencil"/></button><button class="btn btn-light" t-on-click="() => this.contacts('delete')" title="Delete" aria-label="Delete"><i class="fa fa-trash"/></button><button class="btn btn-light" t-on-click="() => this.run(() => this.refresh())" t-att-disabled="state.busy" title="Refresh" aria-label="Refresh"><i class="fa fa-refresh"/></button></div>
+            <aside aria-label="Inbox">
+                <div class="ab_contacts_header"><h3>Inbox</h3><button class="btn btn-light" t-on-click="() => this.contacts('add')" title="Add" aria-label="Add"><i class="fa fa-plus"/></button><button class="btn btn-light" t-on-click="() => this.contacts('edit')" title="Edit" aria-label="Edit"><i class="fa fa-pencil"/></button><button class="btn btn-light" t-on-click="() => this.contacts('delete')" title="Archive" aria-label="Archive"><i class="fa fa-trash"/></button><button class="btn btn-light ab_link_contact" t-on-click="() => this.contacts('link')" t-att-disabled="state.busy || !state.detail" title="Link to existing contact" aria-label="Link to existing contact"><i class="fa fa-link" aria-hidden="true"/></button><button t-if="state.detail?.contact &amp;&amp; state.detail.streams.length > 1" class="btn btn-light ab_unlink_contact" t-on-click="() => this.run(() => this.unlinkCustomer())" t-att-disabled="state.busy" title="Unlink conversations" aria-label="Unlink conversations"><i class="fa fa-chain-broken" aria-hidden="true"/></button><button class="btn btn-light" t-on-click="() => this.run(() => this.refresh())" t-att-disabled="state.busy" title="Refresh" aria-label="Refresh"><i class="fa fa-refresh"/></button></div>
                 <form t-on-submit.prevent="searchInbox" class="input-group"><input class="form-control" t-model="state.inboxQuery" placeholder="Search contacts" aria-label="Search contacts" maxlength="200"/><button class="btn btn-outline-primary">Search</button></form>
-                <button t-foreach="state.contacts.filter(contact => !state.inbox.some(item => item.customer_id === contact.id))" t-as="contact" t-key="'contact-' + contact.id" class="ab_conversation ab_saved_contact" t-on-click="() => this.run(() => this.openContact(contact))"><strong><bdi t-esc="contact.name"/></strong><small><bdi dir="ltr" t-esc="contact.phone"/></small></button>
+                <button t-foreach="state.contacts.filter(contact => !state.inbox.some(item => item.customer_id === contact.id))" t-as="contact" t-key="'contact-' + contact.id" class="ab_conversation ab_saved_contact" t-on-click="() => this.run(() => this.openContact(contact))"><strong><bdi t-esc="contact.name"/></strong><small><bdi dir="ltr" t-esc="contact.display_phone || contact.phone"/></small></button>
                 <p t-if="!state.inbox.length">No conversations yet.</p>
-                <button t-foreach="state.inbox" t-as="item" t-key="item.group_key" t-att-data-conversation-id="item.id" class="ab_conversation" t-att-class="{'selected': item.streams.some(stream => stream.id === state.detail?.id)}" t-on-click="() => this.selectCustomer(item)" t-att-disabled="state.busy">
+                <button t-foreach="state.inbox" t-as="item" t-key="item.group_key" t-att-data-conversation-id="item.id" class="ab_conversation" t-att-data-channel="item.provider" t-att-class="{'selected': item.streams.some(stream => stream.id === state.detail?.id)}" t-on-click="() => this.selectCustomer(item)" t-att-disabled="state.busy">
                     <strong><bdi t-esc="item.name"/></strong>
                     <span class="ab_channels"><i t-foreach="item.channels" t-as="provider" t-key="provider" class="fa" t-att-class="this.icon(provider) + (item.streams.some(stream => stream.id === state.detail?.id) &amp;&amp; item.provider === provider ? ' source-' + provider : '')" t-att-title="provider" t-att-aria-label="provider"/></span>
                     <span t-if="item.unread" class="badge text-bg-primary" t-esc="item.unread"/>
@@ -18,12 +18,17 @@
                 </button>
                 <button t-if="state.inboxHasMore" class="btn btn-light" t-on-click="olderConversations" t-att-disabled="state.busy">Older conversations</button>
             </aside>
-            <section t-if="!isOrders" class="ab_chat" t-att-data-channel="state.detail?.provider || 'telegram'" aria-label="Messages">
+            <section class="ab_chat" t-att-data-channel="state.detail?.provider || 'telegram'" aria-label="Messages">
                 <t t-if="state.detail">
                     <div class="ab_chat_header" t-att-class="{'ab_search_open': state.searchOpen}">
-                        <div class="ab_contact_heading"><div class="ab_contact_title"><h3><bdi t-esc="state.detail.name"/></h3><time t-if="state.detail.last_update_at" class="ab_contact_update" t-att-title="this.fullTime(state.detail.last_update_at)" t-esc="this.compactTime(state.detail.last_update_at)"/></div><small><bdi dir="ltr" t-esc="state.detail.phone"/></small></div>
+                        <div class="ab_contact_heading"><div class="ab_contact_title"><h3><bdi t-esc="state.detail.name"/></h3></div><small t-if="state.detail.contact?.display_phone || state.detail.display_phone"><bdi dir="ltr" t-esc="state.detail.contact?.display_phone || state.detail.display_phone"/></small></div>
                         <nav class="ab_channel_navigation" aria-label="Contacted channels">
-                            <button t-foreach="state.detail.streams" t-as="stream" t-key="stream.id" class="ab_channel_button" t-att-data-channel="stream.provider" t-att-class="{'active': stream.id === state.detail.id}" t-att-aria-current="stream.id === state.detail.id ? 'page' : undefined" t-att-title="this.channelLabel(stream.provider) + ' · ' + stream.label" t-att-aria-label="this.channelLabel(stream.provider) + ' · ' + stream.label" t-att-disabled="state.busy" t-on-click="() => this.select(stream.id, true)"><i class="fa" t-att-class="this.icon(stream.provider)"/><span class="ab_channel_led" aria-hidden="true"/><span t-if="stream.unread" class="badge text-bg-primary" t-esc="stream.unread"/></button>
+                            <div t-foreach="channelGroups" t-as="group" t-key="group.provider" class="position-relative ab_channel_group">
+                                <button class="ab_channel_button" t-att-data-channel="group.provider" t-att-class="{'active': group.provider === state.detail.provider}" t-att-title="this.channelLabel(group.provider)" t-att-aria-label="this.channelLabel(group.provider)" t-att-aria-expanded="state.channelChooser === group.provider ? 'true' : 'false'" t-att-disabled="state.busy" t-on-click="() => this.openChannel(group)"><i class="fa" t-att-class="this.icon(group.provider)"/><span class="ab_channel_led" aria-hidden="true"/></button>
+                                <div t-if="state.channelChooser === group.provider" class="ab_channel_chooser" t-on-keydown="channelKeydown" role="group" aria-label="Choose conversation">
+                                    <button t-foreach="group.streams" t-as="stream" t-key="stream.id" class="btn btn-light d-block text-start w-100" t-att-class="{active: stream.id === state.detail.id}" t-att-aria-pressed="stream.id === state.detail.id ? 'true' : 'false'" t-att-disabled="state.busy" t-on-click="() => this.select(stream.id, true)"><bdi dir="ltr" t-esc="stream.display_destination || stream.destination"/><small class="d-block" t-esc="stream.label"/></button>
+                                </div>
+                            </div>
                         </nav>
                         <button class="btn ab_search_toggle" t-ref="searchToggle" t-on-click="toggleSearch" title="Search messages" aria-label="Search messages" t-att-aria-expanded="state.searchOpen ? 'true' : 'false'"><i class="fa fa-search" aria-hidden="true"/></button>
                         <form t-if="state.searchOpen" class="ab_search_field" role="search" t-on-submit.prevent="() => this.searchMessages()"><input class="form-control" t-ref="searchInput" type="search" placeholder="Search messages" aria-label="Search messages" t-att-value="state.searchQuery" t-on-input="searchInput"/></form>
@@ -31,7 +36,7 @@
                     <div class="ab_chat_timeline">
                     <section t-if="state.searchOpen &amp;&amp; (state.searchBusy || state.searchError || state.searchSubmitted || state.firstUnread)" class="ab_message_search" aria-label="Search messages">
                         <button t-if="state.firstUnread" class="btn btn-sm btn-light my-2" t-on-click="() => this.openSearchResult({id: state.firstUnread})" t-att-disabled="state.busy">First unread</button>
-                        <p t-if="state.searchBusy" role="status">Searching…</p><p t-if="state.searchError" role="alert" t-esc="state.searchError"/>
+                        <p t-if="state.searchBusy" role="status">Searching…</p>
                         <p t-if="state.searchSubmitted &amp;&amp; !state.searchResults.length" role="status">No matching messages.</p>
                         <div class="ab_search_results"><button t-foreach="state.searchResults || []" t-as="result" t-key="result.id" class="btn btn-light" t-on-click="() => this.openSearchResult(result)" t-att-disabled="state.busy"><time t-esc="this.fullTime(result.timestamp)"/><span dir="auto" t-esc="result.body"/></button></div>
                         <button t-if="state.searchOlder" class="btn btn-light" t-on-click="() => this.searchMessages(true)" t-att-disabled="state.searchBusy">Older results</button>
@@ -62,6 +67,16 @@
                                         </svg>
                                     </span>
                                 </footer>
+                                <article t-foreach="message.contact_cards || []" t-as="card" t-key="card_index" class="ab_shared_contact">
+                                    <strong dir="auto" t-esc="card.name?.formatted_name || card.name?.first_name || ''"/>
+                                    <p t-foreach="card.phones || []" t-as="phone" t-key="phone_index" dir="ltr" t-esc="phone.phone || phone.wa_id"/>
+                                    <p t-foreach="card.emails || []" t-as="email" t-key="email_index" dir="auto" t-esc="email.email"/>
+                                    <p t-foreach="card.addresses || []" t-as="address" t-key="address_index" dir="auto" t-esc="[address.street, address.city, address.state, address.zip, address.country].filter(value => value).join(', ')"/>
+                                    <p t-if="card.org" dir="auto" t-esc="[card.org.company, card.org.department, card.org.title].filter(value => value).join(' · ')"/>
+                                    <p t-if="card.birthday" dir="ltr" t-esc="card.birthday"/>
+                                    <p t-foreach="card.urls || []" t-as="url" t-key="url_index" dir="auto" t-esc="url.url"/>
+                                    <button class="btn btn-sm" t-on-click="() => this.saveContactCard(card)">Create contact</button>
+                                </article>
                                 <div t-if="message.reactions.length" class="ab_message_reactions"><span t-foreach="message.reactions" t-as="reaction" t-key="reaction.id" t-att-title="this.messageStateLabel(reaction.status)"><t t-esc="reaction.reaction"/><button t-if="['failed', 'retry_failed', 'uncertain'].includes(reaction.status)" class="ab_delivery_warning" t-att-class="{'can_retry': reaction.retry_operation_id}" t-att-disabled="state.busy || !reaction.retry_operation_id" t-att-title="this.retryLabel(reaction)" t-att-aria-label="this.retryLabel(reaction)" t-on-click="() => this.retry(reaction)"><i class="fa fa-exclamation-triangle ab_warning_icon"/><i t-if="reaction.retry_operation_id" class="fa fa-repeat ab_retry_icon"/></button><i t-elif="['waiting', 'sending', 'retrying'].includes(reaction.status)" class="fa fa-clock-o"/></span></div>
                             </article>
                         </t>
@@ -69,7 +84,6 @@
                     <div t-if="state.away || state.historyContext" class="ab_jump_latest_container"><button class="btn ab_jump_latest" t-on-click="jumpLatest" t-att-disabled="state.busy" title="Jump to latest" aria-label="Jump to latest"><i class="fa fa-arrow-down" aria-hidden="true"/><span t-if="state.detail.unread_count" class="ab_jump_unread badge" t-esc="state.detail.unread_count"/></button></div>
                     </div>
                     <div class="ab_composer">
-                        <p t-if="!state.detail.can_send" class="alert alert-info" role="status" t-esc="state.detail.send_reason"/>
                         <MessageQuote t-if="state.replyTo" t-key="state.replyTo.id" quote="state.replyTo" call.bind="call" open="() => this.openQuote(state.replyTo)" cancel="() => state.replyTo = null"/>
                         <fieldset t-att-disabled="!state.detail.owned || state.busy || state.detail.provider !== 'telegram'">
                             <div class="ab_attachment_drafts"><div t-foreach="state.attachments" t-as="attachment" t-key="attachment.url"><img t-if="attachment.kind === 'image'" t-att-src="attachment.url" t-att-alt="attachment.name" class="ab_media_preview"/><video t-if="attachment.kind === 'video'" t-att-src="attachment.url" controls="controls" preload="metadata" class="ab_media_preview"/><audio t-if="['audio', 'voice'].includes(attachment.kind)" t-att-src="attachment.url" controls="controls"/><span t-esc="attachment.name"/><button class="btn btn-outline-danger" t-on-click="() => this.removeAttachment(attachment_index)" aria-label="Remove attachment"><i class="fa fa-times"/></button></div></div>
@@ -81,7 +95,7 @@
                                         <button t-if="state.detail.provider === 'telegram'" class="btn" t-on-click="location"><i class="fa fa-map-marker" aria-hidden="true"/> Location</button>
                                         <button class="btn" t-on-click="() => this.chooseAttachment('document')"><i class="fa fa-file-o" aria-hidden="true"/> Document</button>
                                         <button class="btn" t-on-click="() => this.chooseAttachment('music')"><i class="fa fa-music" aria-hidden="true"/> Music</button>
-                                        <button class="btn" t-on-click="attachmentTemplates"><i class="fa fa-clone" aria-hidden="true"/> Templates</button>
+                                        <button class="btn" t-on-click="attachmentTemplates"><i class="fa fa-clone" aria-hidden="true"/> Saved replies</button>
                                     </div>
                                 </div>
                                 <textarea class="form-control ab_composer_input" dir="auto" t-ref="reply" t-model="state.reply" maxlength="4096" t-on-paste="paste" t-on-keydown="composerKeydown" placeholder="Write a message..." aria-label="Reply"/>
@@ -89,22 +103,17 @@
                                     <button class="btn btn-light ab_emoji_toggle" t-on-click="() => state.emoji = !state.emoji" title="Emoji" aria-label="Emoji" t-att-aria-expanded="state.emoji ? 'true' : 'false'"><i class="fa fa-smile-o" aria-hidden="true"/></button>
                                     <button t-if="!state.recording" class="btn btn-light" t-on-click="record" title="Record audio" aria-label="Record audio" t-att-disabled="state.preparing"><i class="fa fa-microphone" aria-hidden="true"/></button>
                                     <t t-else=""><button class="btn btn-warning" t-on-click="() => this.stopRecording()" title="Stop recording" aria-label="Stop recording"><i class="fa fa-stop" aria-hidden="true"/></button><button class="btn btn-light" t-on-click="() => this.stopRecording(true)" title="Cancel recording" aria-label="Cancel recording"><i class="fa fa-times" aria-hidden="true"/></button></t>
-                                    <button class="btn btn-primary ab_send" t-on-click="send" t-att-disabled="!!sendDisabledReason" t-att-title="sendDisabledReason || sendLabel" aria-label="Send message"><i class="fa fa-paper-plane" aria-hidden="true"/></button>
+                                    <button class="btn btn-primary ab_send" t-on-click="send" t-att-disabled="!!sendDisabledReason" t-att-title="sendDisabledReason || sendLabel" aria-label="Send message"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                                 </div>
                                 <div t-if="state.emoji" class="ab_emoji_panel" role="group" aria-label="Emoji"><button t-foreach="emojis" t-as="emoji" t-key="emoji" class="btn btn-light" t-att-aria-label="emoji" t-on-click="() => this.insertEmoji(emoji)" t-esc="emoji"/></div>
                             </div>
                             <input type="file" multiple="multiple" class="d-none" t-ref="files" t-on-change="filesChanged"/>
-                            <small t-if="composerHint &amp;&amp; state.detail.can_send" role="status" t-esc="composerHint"/>
                         </fieldset>
                     </div>
                 </t>
                 <div t-elif="state.contact" class="ab_messages ab_empty"><h3 t-esc="state.contact.name"/><p t-esc="state.contact.address"/><p>Sending is available after this contact starts a channel conversation.</p></div><div t-else="" class="ab_messages ab_empty">Select a conversation to begin.</div>
             </section>
-            <section t-else="" class="ab_orders_view" aria-label="Orders">
-                <div class="ab_chat_header" t-att-class="{'ab_search_open': state.searchOpen}"><div><h3>Orders</h3><small t-if="state.detail" t-esc="state.detail.name"/></div><button t-if="state.detail" class="btn btn-primary" t-att-disabled="!state.detail.owned || state.busy" t-on-click="newOrder" aria-label="New order"><i class="fa fa-plus"/> New order</button></div>
-                <div t-if="state.detail" class="ab_orders_content"><p t-if="!state.detail.orders.length">No orders yet.</p><div class="ab_order_history"><button t-foreach="state.detail.orders" t-as="order" t-key="order.id" class="ab_order_card" t-att-disabled="!state.detail.owned || state.busy" t-on-click="() => this.selectOrder(order.id)"><strong><t t-esc="order.name"/> #<t t-esc="order.id"/></strong><span t-esc="this.stateLabel(order.state)"/><small><span>Revision</span> <t t-esc="order.revision"/></small></button></div></div>
-                <p t-else="" class="ab_empty">Select a conversation to begin.</p>
-            </section>
+
         </div>
     </div>
 </t>

@@ -1,3 +1,4 @@
+import {useChatterFeedback, feedbackError} from "./feedback";
 /** @odoo-module **/
 
 import {Component, useState} from "@odoo/owl";
@@ -14,6 +15,7 @@ export class ChatterLoginDialog extends Component {
         this.direction = localization.direction;
         this.title = _t("Employee Login");
         this.state = useState({employee: false, pin: "", busy: false, error: ""});
+        this.feedback = useChatterFeedback(this);
     }
     employeeDomain() {
         return [["id", "in", this.props.employees.map(employee => employee.id)]];
@@ -25,7 +27,7 @@ export class ChatterLoginDialog extends Component {
     async submit() {
         if (this.state.busy) return;
         if (!this.state.employee || !this.state.pin) {
-            this.state.error = _t("Employee and PIN are required.");
+            this.state.error = feedbackError(this, _t("Employee and PIN are required."));
             return;
         }
         this.state.busy = true;
@@ -33,7 +35,7 @@ export class ChatterLoginDialog extends Component {
             await this.props.onLogin(this.state.employee.id, this.state.pin.trim());
             this.props.close();
         } catch (error) {
-            this.state.error = error.data?.message || error.message || _t("Login failed.");
+            this.state.error = feedbackError(this, error);
         } finally {
             this.state.pin = "";
             this.state.busy = false;

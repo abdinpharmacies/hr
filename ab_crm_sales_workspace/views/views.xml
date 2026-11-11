@@ -13,11 +13,14 @@
     </record>
     <menuitem id="menu_workspace" name="Sales Chatter" parent="ab_sales.sales_menu_root" action="action_workspace" sequence="1" groups="group_agent"/>
     <record id="action_orders" model="ir.actions.client">
-        <field name="name">Orders</field>
-        <field name="tag">ab_crm_sales_workspace.orders</field>
+        <field name="name">Inbox</field>
+        <field name="tag">ab_crm_sales_workspace.workspace</field>
     </record>
-    <menuitem id="menu_conversations" name="Conversations" parent="menu_workspace" action="action_workspace" sequence="1" groups="group_agent"/>
-    <menuitem id="menu_orders" name="Orders" parent="menu_workspace" action="action_orders" sequence="2" groups="group_agent"/>
+    <menuitem id="menu_conversations" name="Inbox" parent="menu_workspace" action="action_workspace" sequence="1" groups="group_agent" active="0"/>
+    <record id="action_pos" model="ir.actions.client"><field name="name">Create order</field><field name="tag">ab_crm_sales_workspace.pos</field></record>
+    <record id="action_create_order" model="ir.actions.client"><field name="name">Create order</field><field name="tag">ab_crm_sales_workspace.workspace</field><field name="context">{'chatter_create_order': True}</field></record>
+    <menuitem id="menu_orders" name="Create order" parent="menu_workspace" action="action_create_order" sequence="2" groups="group_agent" active="0"/>
+    <menuitem id="menu_invoices" name="Invoices" parent="menu_workspace" action="ab_sales.ab_sales_bill_wizard_action" sequence="3" groups="group_agent" active="0"/>
     <record id="conversation_identity_review" model="ir.ui.view">
         <field name="name">ab_crm_conversation.identity.review</field>
         <field name="model">ab_crm_conversation</field>
@@ -47,7 +50,7 @@
         <field name="model">ab_crm_customer</field>
         <field name="inherit_id" ref="ab_crm_core.view_ab_crm_customer_form"/>
         <field name="arch" type="xml">
-            <field name="phone" position="after"><field name="catalog_customer_id"/></field>
+            <field name="phone" position="after"><field name="catalog_customer_id"/><field name="is_ab_customer"/></field>
         </field>
     </record>
     <record id="message_contact_evidence" model="ir.ui.view">
@@ -85,4 +88,19 @@
         <field name="view_mode">list,form</field>
     </record>
     <menuitem id="menu_workspace_audit" name="Chatter Action Log" parent="ab_crm_core.menu_root" action="action_workspace_audit" groups="ab_crm_core.group_manager,base.group_system"/>
+    <record id="view_order_archive_list" model="ir.ui.view">
+        <field name="name">ab_crm_channel_order.archive.list</field><field name="model">ab_crm_channel_order</field>
+        <field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="name"/><field name="state"/><field name="conversation_id"/><field name="branch_id"/><field name="company_id"/><field name="revision"/><field name="total"/></list></field>
+    </record>
+    <record id="view_order_archive_form" model="ir.ui.view">
+        <field name="name">ab_crm_channel_order.archive.form</field><field name="model">ab_crm_channel_order</field>
+        <field name="arch" type="xml"><form create="0" edit="0" delete="0"><sheet>
+            <div class="alert alert-info" role="status">Legacy chatter orders are read-only. Use Sales to create orders.</div>
+            <group><field name="name"/><field name="state"/><field name="conversation_id"/><field name="branch_id"/><field name="company_id"/><field name="revision"/><field name="store_id"/><field name="customer_name"/><field name="phone"/><field name="delivery_address"/><field name="delivery_notes"/><field name="confirmation"/><field name="accepted_by"/><field name="accepted_employee_id"/><field name="accepted_at"/></group>
+            <field name="line_ids" context="{'active_test': False}" readonly="1"><list create="0" edit="0" delete="0"><field name="product_id"/><field name="uom_id"/><field name="quantity"/><field name="price"/><field name="active"/></list></field>
+            <field name="audit_ids" readonly="1"><list create="0" edit="0" delete="0"><field name="action"/><field name="revision"/><field name="actor_id"/><field name="at"/><field name="values"/></list></field>
+        </sheet></form></field>
+    </record>
+    <record id="action_order_archive" model="ir.actions.act_window"><field name="name">Legacy Order Archive</field><field name="res_model">ab_crm_channel_order</field><field name="view_mode">list,form</field></record>
+    <menuitem id="menu_order_archive" name="Legacy Order Archive" parent="ab_crm_core.menu_root" action="action_order_archive" groups="group_agent"/>
 </odoo>

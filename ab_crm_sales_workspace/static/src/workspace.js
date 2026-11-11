@@ -1,12 +1,12 @@
+import {useChatterFeedback, useChatterNotice, feedbackError} from "./feedback";
 /** @odoo-module **/
 
 import {Component, onMounted, onWillStart, onWillUnmount, onWillPatch, onPatched, useRef, useState, useExternalListener} from "@odoo/owl";
 import {registry} from "@web/core/registry";
 import {LocationDialog} from "./composer";
 import {SavedReplies} from "./templates";
-import {ChatterContacts} from "./contacts";
-import {OrderDialog} from "./order_dialog";
-import {LocationCard, DeliveryLocationPicker} from "./location";
+import {ChatterContacts, ChatterOrderPhone} from "./contacts";
+import {LocationCard} from "./location";
 import {ChatterLoginDialog} from "./login";
 import {useBus} from "@web/core/utils/hooks";
 import {useService} from "@web/core/utils/hooks";
@@ -23,8 +23,6 @@ export class SalesWorkspace extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
-        this.isOrders = this.props.action?.tag === "ab_crm_sales_workspace.orders";
-        this.ordersLabel = _t("Orders");
         this.chatterLabel = _t("Sales Chatter");
         this.noMessagesLabel = _t("No messages yet.");
         this.dialog = useService("dialog");
@@ -36,8 +34,7 @@ export class SalesWorkspace extends Component {
                 if (this.previewClose) this.previewClose();
                 this.stopRecording(true);
                 this.rememberDraft();
-                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams});
-                if (this.orderClose) this.orderClose();
+                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, contactId: this.state.contact?.id}});
                 this.state.token = "";
                 this.state.loggedIn = false;
                 this.state.inbox = [];
@@ -51,11 +48,12 @@ export class SalesWorkspace extends Component {
                 this.state.emoji = false;
                 this.state.attachmentMenu = false;
                 this.emojiCaret = null;
-                this.state.order = null;
                 this.drafts = new Map();
-                this.orderDrafts = new Map();
                 this.showLogin();
             }
+        });
+        useBus(this.env.bus, "AB_CHATTER_UNREAD", () => {
+            if (this.state.loggedIn) this.refresh().catch(error => { this.state.error = feedbackError(this, error); });
         });
         this.messagesRef = useRef("messages");
         this.filesRef = useRef("files");
@@ -64,11 +62,13 @@ export class SalesWorkspace extends Component {
         this.searchInputRef = useRef("searchInput");
         this.searchToggleRef = useRef("searchToggle");
         useExternalListener(document, "pointerdown", event => {
+            if (!event.target.closest(".ab_channel_group")) this.state.channelChooser = "";
             if (!event.target.closest(".ab_attachment_control")) this.state.attachmentMenu = false;
             if (!event.target.closest(".ab_emoji_panel, .ab_emoji_toggle")) this.state.emoji = false;
             if (this.state.searchOpen && !event.target.closest(".ab_message_search, .ab_search_field, .ab_search_toggle")) this.closeSearch(false);
         });
         useExternalListener(document, "keydown", event => {
+            if (event.key === "Escape" && this.state.channelChooser) this.closeChannelChooser();
             if (event.key === "Escape" && this.state.attachmentMenu) { this.state.attachmentMenu = false; this.attachToggleRef.el?.focus(); }
             if (event.key === "Escape" && this.state.searchOpen) this.closeSearch();
             if (event.key === "Escape" && this.state.emoji) { this.state.emoji = false; this.replyRef.el?.focus(); }
@@ -76,7 +76,6 @@ export class SalesWorkspace extends Component {
         this.sendLabel = _t("Send message");
         this.mediaUrls = new Set();
         this.drafts = new Map();
-        this.orderDrafts = new Map();
         this.employeeDrafts = this.chatterSession.workspaceDrafts;
         this.scrollState = null;
         this.prepending = false;
@@ -105,9 +104,15 @@ export class SalesWorkspace extends Component {
         onMounted(restoreScroll);
         onPatched(restoreScroll);
         this.direction = localization.direction;
-        this.state = useState({inbox: [], contacts: [], contact: null, detail: null, order: null, reply: "", phone: "",
+        this.state = useState({inbox: [], contacts: [], contact: null, detail: null, reply: "", phone: "",
              inboxQuery: "", inboxHasMore: false, candidates: [], customer: "", confirmed: false, query: "", products: [], reason: "",
             firstUnread: false, away: false, historyContext: false, searchOpen: false, searchQuery: "", searchResults: [], searchOlder: false, searchBusy: false, searchSubmitted: false, searchError: "", preparing: 0, attachments: [], replyTo: null, recording: false, attachmentMenu: false, emoji: false, error: "", busy: false, token: "", employee: "", loggedIn: false});
+        this.feedback = useChatterFeedback(this);
+        useChatterNotice(() => this.state.detail && !this.state.detail.can_send ? {message: this.state.detail.send_reason} : null,
+            () => [this.state.detail?.id, this.state.detail?.can_send, this.state.detail?.send_reason]);
+        useChatterNotice(() => this.state.detail?.can_send && !this.state.busy && !this.state.preparing && this.composerHint ? {message: this.composerHint} : null,
+            () => [this.state.detail?.id, this.state.busy, this.state.preparing, this.composerHint]);
+
         this.destroyed = false;
         this.refreshing = false;
         this.navigationVersion = 0;
@@ -115,46 +120,37 @@ export class SalesWorkspace extends Component {
         this.readTimer = setInterval(() => this.acknowledgeVisible(), 1000);
         this.focusHandler = (item, token) => this.focusAlert(item, token);
         onMounted(() => {
-            if (!this.isOrders) this.chatterSession.focusHandler = this.focusHandler;
-            const item = this.props.action?.context?.chatter_alert;
-            if (item && this.state.loggedIn) this.focusAlert(item, this.state.token).catch(error => { this.state.error = error.data?.message || error.message; });
+            this.chatterSession.focusHandler = this.focusHandler;
+            const item = this.props?.action?.context?.chatter_alert;
+            if (item && this.state.loggedIn) this.focusAlert(item, this.state.token).catch(error => { this.state.error = feedbackError(this, error); });
         });
         onWillStart(async () => {
-            await this.run(async () => {
-                const cached = this.chatterSession.current;
-                const bootstrap = await this.call("ab_crm_chatter_api", "bootstrap", [], {token: cached?.token || false});
-                if (bootstrap.session) {
-                    this.restoreEmployeeDrafts(bootstrap.session.employee_id);
-                    this.state.token = cached.token;
-                    this.state.employee = bootstrap.session.employee;
-                    this.state.loggedIn = true;
-                    await this.refresh();
-
-                } else {
-                    this.chatterSession.clear();
-                    this.showLogin(bootstrap.employees);
-                }
-            });
+            await this.run(() => this.restoreSession());
+            if (this.state.loggedIn && this.props?.action?.context?.chatter_create_order) {
+                setTimeout(() => this.createOrder(), 0);
+            }
             this.timer = setInterval(() => {
-                if (this.state.loggedIn && !this.state.busy && !this.refreshing) {
-                    this.refresh().catch(error => { this.state.error = error.data?.message || error.message; });
+                if (!this.state.loggedIn && this.chatterSession.current && !this.loginClose && !this.state.busy) {
+                    this.run(() => this.restoreSession());
+                } else if (this.state.loggedIn && !this.state.busy && !this.refreshing) {
+                    this.refresh().catch(error => { this.state.error = feedbackError(this, error); });
                 }
             }, 5000);
         });
-        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); if (this.orderClose) this.orderClose(); });
+        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, contactId: this.state.contact?.id}}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); });
     }
 
     get emojis() { return ["😀", "😂", "😍", "👍", "🙏", "🔥", "✅", "🎉", "❤️", "😢", "😮", "👏"]; }
-    context() { return {ab_chatter_session_token: this.state.token}; }
+    context() { return {ab_chatter_session_token: this.state.token, ab_chatter_inbox_only: true}; }
     call(model, method, args = [], kwargs = {}) {
-        return this.orm.call(model, method, args, {...kwargs, context: this.context()});
+        return this.feedback.call(this.orm, model, method, args, {...kwargs, context: this.context()});
     }
     async run(action) {
         if (this.state.busy) return;
         this.state.busy = true;
         this.state.error = "";
         try { await action(); }
-        catch (error) { this.state.error = error.data?.message || error.message || _t("Operation failed."); }
+        catch (error) { this.state.error = feedbackError(this, error); }
         finally { this.state.busy = false; }
     }
     async showLogin(employees) {
@@ -168,7 +164,7 @@ export class SalesWorkspace extends Component {
             this.loginClose = this.dialog.add(ChatterLoginDialog, {
                 employees, onLogin: (profileId, pin) => this.login(profileId, pin),
             }, {onClose: () => { this.loginClose = null; }});
-        } catch (error) { this.state.error = error.data?.message || error.message; }
+        } catch (error) { this.state.error = feedbackError(this, error); }
     }
     async login(profileId, pin) {
         let device = sessionStorage.getItem(`ab_chatter_device_${user.userId}`);
@@ -181,15 +177,32 @@ export class SalesWorkspace extends Component {
         this.chatterSession.set(result);
         this.state.loggedIn = true;
         this.state.error = "";
-        await this.refresh();
+        try { await this.refresh(); }
+        catch (error) { this.state.error = feedbackError(this, error); }
+        if (this.props?.action?.context?.chatter_create_order) setTimeout(() => this.createOrder(), 0);
+    }
+    async restoreSession() {
+        const cached = this.chatterSession.current;
+        const bootstrap = await this.call("ab_crm_chatter_api", "bootstrap", [], {token: cached?.token || false});
+        if (this.destroyed) return;
+        if (bootstrap.session) {
+            this.restoreEmployeeDrafts(bootstrap.session.employee_id);
+            this.state.token = cached.token;
+            this.state.employee = bootstrap.session.employee;
+            this.state.loggedIn = true;
+            await this.refresh();
+        } else {
+            this.chatterSession.clear();
+            await this.showLogin(bootstrap.employees);
+        }
     }
     restoreEmployeeDrafts(employeeId) {
         this.employeeId = employeeId;
         const preserved = this.employeeDrafts.get(`${user.activeCompany.id}:${employeeId}`);
         this.drafts = preserved?.messages || new Map();
         this.selectedStreams = preserved?.streams || new Map();
-        this.orderDrafts = preserved?.orders || new Map();
         this.mediaUrls = preserved?.mediaUrls || new Set();
+        this.initialSelection = preserved?.selection;
     }
     async logout() {
         this.stopRecording(true);
@@ -208,8 +221,17 @@ export class SalesWorkspace extends Component {
             this.state.inbox = inbox.items;
             this.state.inboxHasMore = inbox.has_more;
             await this.refreshContacts();
-            if (!this.state.detail && !this.state.contact && this.state.inbox.length) {
-                const selected = this.props.action?.context?.chatter_conversation_id || this.preferredStream(this.state.inbox[0]);
+            const restoreContact = this.props?.action?.context?.chatter_contact_id || this.initialSelection?.contactId;
+            let restoreConversation = this.props?.action?.context?.chatter_conversation_id || this.initialSelection?.conversationId;
+            if (!this.restoredContact && !this.state.detail && restoreContact && !restoreConversation) {
+                this.restoredContact = true;
+                const restored = await this.call("ab_crm_chatter_api", "contact_open", [], {token: this.state.token, contact_id: restoreContact});
+                if (restored.conversation_id) restoreConversation = restored.conversation_id;
+                else this.state.contact = restored.contact;
+            }
+            if (!this.state.detail && !this.state.contact && this.state.inbox.length &&
+                (!this.props?.action?.context?.chatter_create_order || restoreConversation)) {
+                const selected = restoreConversation || this.preferredStream(this.state.inbox[0]);
                 const initial = await this.call("ab_crm_conversation", "workspace_detail", [[selected]], {});
                 if (this.destroyed || navigationVersion !== this.navigationVersion) return;
                 this.resetScroll = true;
@@ -256,7 +278,7 @@ export class SalesWorkspace extends Component {
     rememberDraft() {
         if (this.state.detail) this.drafts.set(this.state.detail.id, {reply: this.state.reply, attachments: [...this.state.attachments], replyTo: this.state.replyTo});
     }
-    async select(id, channel = false) {
+    async select(id, channel = false, focusedDetail = null) {
         if (this.state.busy) return;
         const version = ++this.navigationVersion;
         await this.run(async () => {
@@ -264,14 +286,19 @@ export class SalesWorkspace extends Component {
             this.rememberDraft();
             this.state.contact = null;
             const source = this.state.detail?.id;
-            const detail = await this.call("ab_crm_conversation", channel ? "workspace_channel" : "workspace_detail", channel ? [[source], id] : [[id]]);
+            const detail = focusedDetail || await this.call("ab_crm_conversation", channel ? "workspace_channel" : "workspace_detail", channel ? [[source], id] : [[id]]);
             if (this.destroyed || version !== this.navigationVersion) return;
             if (this.previewClose) this.previewClose();
             this.resetScroll = true;
             this.state.detail = detail;
+            this.state.channelChooser = "";
             this.selectedStreams ||= new Map();
             const group = this.state.inbox?.find(item => item.streams?.some(stream => stream.id === id));
-            if (group) this.selectedStreams.set(`${user.activeCompany.id}:${this.employeeId}:${group.group_key}`, id);
+            if (group) {
+                const key = `${user.activeCompany.id}:${this.employeeId}:${group.group_key}`;
+                this.selectedStreams.set(key, id);
+                try { localStorage.setItem(`ab_chatter_stream:${key}`, String(id)); } catch {}
+            }
             this.state.firstUnread = detail.first_unread_message_id;
             this.state.historyContext = false;
             this.clearSearch();
@@ -279,7 +306,6 @@ export class SalesWorkspace extends Component {
             this.state.attachmentMenu = false;
             this.state.emoji = false;
             this.state.phone = this.state.detail.phone;
-            this.state.order = this.drafts.get(id)?.order || null;
             this.state.reason = this.drafts.get(id)?.reason || "";
             this.state.candidates = this.state.detail.candidates || [];
             this.state.attachments = this.drafts.get(id)?.attachments || [];
@@ -290,17 +316,69 @@ export class SalesWorkspace extends Component {
             this.state.reply = this.drafts.get(id)?.reply || "";
         });
     }
-    openView(orders) {
-        if (orders === this.isOrders) return;
-        this.stopRecording(true);
-        this.rememberDraft();
-        this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, orders: this.orderDrafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams});
-        this.action.doAction(orders ? "ab_crm_sales_workspace.action_orders" : "ab_crm_sales_workspace.action_workspace", {additionalContext: {chatter_conversation_id: this.state.detail?.id || false}});
+    openInvoices() { return this.action.doAction("ab_sales.ab_sales_bill_wizard_action"); }
+    openInbox() { return this.refresh(); }
+    async createOrder(messageId = false, contact = null, phoneId = false) {
+        contact ||= this.state.detail?.contact || this.state.contact;
+        if (!contact) {
+            this.dialog.add(ChatterContacts, {mode: "add", call: this.call.bind(this), token: this.state.token,
+                initial: this.state.detail ? {name: this.state.detail.name, phone: this.state.detail.phone,
+                    display_phone: this.state.detail.display_phone, branch_id: this.state.detail.branch_id} : undefined,
+                onSaved: selected => this.createOrder(messageId, selected), pick: true});
+            return;
+        }
+        if (!phoneId && contact.phones?.length > 1) {
+            this.dialog.add(ChatterOrderPhone, {phones: contact.phones,
+                select: id => this.createOrder(messageId, contact, id)});
+            return;
+        }
+        return this.run(async () => {
+            this.stopRecording(true);
+            this.rememberDraft();
+            const id = await this.call("ab_crm_chatter_api", "pos_handoff_start", [], {
+                token: this.state.token, contact_id: contact.id,
+                conversation_id: this.state.detail && (!this.state.detail.contact || this.state.detail.contact.id === contact.id) ? this.state.detail.id : false,
+                message_id: messageId, phone_id: phoneId,
+            });
+            await this.action.doAction("ab_crm_sales_workspace.action_pos", {additionalContext: {crm_handoff_id: id}});
+        });
     }
     preferredStream(item) {
         const key = `${user.activeCompany.id}:${this.employeeId}:${item.group_key}`;
-        const selected = this.selectedStreams?.get(key);
+        let selected = this.selectedStreams?.get(key);
+        if (!selected) {
+            try { selected = Number(localStorage.getItem(`ab_chatter_stream:${key}`)); } catch {}
+        }
         return item.streams?.some(stream => stream.id === selected) ? selected : item.id;
+    }
+    get channelGroups() {
+        const groups = new Map();
+        for (const stream of this.state.detail?.streams || []) {
+            if (!groups.has(stream.provider)) groups.set(stream.provider, {provider: stream.provider, streams: [], unread: 0});
+            const group = groups.get(stream.provider);
+            group.streams.push(stream); group.unread += stream.unread || 0;
+        }
+        return [...groups.values()];
+    }
+    openChannel(group) {
+        if (group.streams.length === 1) return this.select(group.streams[0].id, true);
+        this.state.channelChooser = this.state.channelChooser === group.provider ? "" : group.provider;
+        requestAnimationFrame(() => document.querySelector(".ab_channel_chooser button.active, .ab_channel_chooser button")?.focus());
+    }
+    closeChannelChooser() {
+        const provider = this.state.channelChooser;
+        this.state.channelChooser = "";
+        document.querySelector(`.ab_channel_button[data-channel="${provider}"]`)?.focus();
+    }
+    channelKeydown(event) {
+        const buttons = [...event.currentTarget.querySelectorAll("button")];
+        let index = buttons.indexOf(event.target);
+        if (event.key === "ArrowDown") index = (index + 1) % buttons.length;
+        else if (event.key === "ArrowUp") index = (index - 1 + buttons.length) % buttons.length;
+        else if (event.key === "Home") index = 0;
+        else if (event.key === "End") index = buttons.length - 1;
+        else return;
+        event.preventDefault(); buttons[index]?.focus();
     }
     selectCustomer(item) { return this.select(this.preferredStream(item)); }
     async loadCustomerInbox(pages = this.inboxPages || 1) {
@@ -337,6 +415,7 @@ export class SalesWorkspace extends Component {
             const detail = await this.call("ab_crm_conversation", "workspace_detail", [[this.state.detail.id]], {before_id: this.state.detail.messages[0]?.id});
             if (this.destroyed || version !== this.navigationVersion || this.state.detail?.id !== detail.id) return;
             this.prepending = true;
+            this.state.historyContext = true;
             this.state.detail = {...this.state.detail, has_older: detail.has_older, messages: [...detail.messages, ...this.state.detail.messages]};
         });
     }
@@ -373,12 +452,44 @@ export class SalesWorkspace extends Component {
         const result = await this.call("ab_crm_chatter_api", "contact_search", [], {token: this.state.token, query: this.state.inboxQuery});
         if (!this.destroyed) this.state.contacts = result.contacts;
     }
-    contacts(mode) {
-        this.dialog.add(ChatterContacts, {mode, call: this.call.bind(this), token: this.state.token, onSaved: async contact => {
+    contacts(mode, initial = null, offerLink = false) {
+        const conversationId = this.state.detail?.id;
+        const channel = this.state.detail?.provider;
+        initial ||= ["edit", "delete"].includes(mode) ? this.state.detail?.contact || this.state.contact : null;
+        this.dialog.add(ChatterContacts, {mode, initial, channel, conversationId, branchId: this.state.detail?.branch_id, onLink: contact => this.contacts("link", contact), call: this.call.bind(this), token: this.state.token, onSaved: async contact => {
             await this.refreshContacts();
-            if (contact) await this.openContact(contact);
+            if (conversationId && this.state.detail?.id === conversationId) {
+                await this.refresh();
+                if (mode === "add" && contact && offerLink) this.contacts("link", contact);
+            } else if (contact) await this.openContact(contact);
             else { this.state.contact = null; await this.refresh(); }
         }});
+    }
+    async unlinkCustomer() {
+        const detail = this.state.detail;
+        if (!detail?.contact || detail.streams.length < 2) return;
+        const id = detail.id;
+        const customerId = detail.contact.id;
+        const preview = await this.call("ab_crm_conversation", "action_preview_customer_unlink", [[id], customerId]);
+        if (this.state.detail?.id !== id || this.state.detail?.contact?.id !== customerId) return;
+        this.rememberDraft();
+        await this.call("ab_crm_conversation", "action_unlink_customer", [[id], customerId, preview.fingerprint]);
+        this.state.channelChooser = null;
+        await this.refresh();
+        this.chatterSession?.unreadChanged();
+    }
+    async createConversationContact() {
+        const id = this.state.detail.id;
+        const result = await this.call("ab_crm_conversation", "action_customer_link_candidates", [[id]]);
+        if (this.state.detail?.id !== id) return;
+        if (result.contacts.length) { this.contacts("link"); return; }
+        this.contacts("add", {name: this.state.detail.name, phone: result.phone, display_phone: result.display_phone, branch_id: this.state.detail.branch_id}, true);
+    }
+    saveContactCard(card) {
+        const address = card.addresses?.[0];
+        this.contacts("add", {name: card.name?.formatted_name || "", phone: card.phones?.[0]?.phone || "",
+            address: address ? [address.street, address.city, address.state, address.country].filter(Boolean).join(", ") : "",
+            branch_id: this.state.detail.branch_id});
     }
     async openContact(contact) {
         const result = await this.call("ab_crm_chatter_api", "contact_open", [], {token: this.state.token, contact_id: contact.id});
@@ -389,29 +500,31 @@ export class SalesWorkspace extends Component {
     async focusAlert(item, token) {
         const version = ++this.navigationVersion;
         if (token !== this.state.token || !this.state.loggedIn) throw new Error(_t("Sign in to Sales Chatter with your employee and PIN."));
-        const detail = await this.call("ab_crm_conversation", "workspace_focus", [[item.conversation_id], item.latest_message_id]);
-        if (this.destroyed || token !== this.state.token || version !== this.navigationVersion) return;
-        if (this.orderClose) this.orderClose();
-        this.stopRecording(true); this.rememberDraft();
-        this.state.contact = null;
-        this.state.detail = detail;
-        this.state.firstUnread = detail.first_unread_message_id;
-        this.state.historyContext = true;
-        this.clearSearch();
-        const draft = this.drafts.get(detail.id);
-        this.state.reply = draft?.reply || ""; this.state.attachments = draft?.attachments || []; this.state.replyTo = draft?.replyTo || null;
-        this.resetScroll = false;
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-        const target = this.messagesRef.el?.querySelector(`[data-message-id="${item.latest_message_id}"]`);
-        if (!target || this.destroyed) throw new Error(_t("Couldn’t open the conversation. Try again."));
-        await Promise.all([...this.messagesRef.el.querySelectorAll("img")].map(img => img.decode().catch(() => {})));
-        if (this.destroyed || version !== this.navigationVersion || token !== this.state.token) return;
-        target.scrollIntoView({block: "center"});
-        this.messagesRef.el.querySelectorAll(".ab_message_focus").forEach(element => element.classList.remove("ab_message_focus"));
-        target.classList.add("ab_message_focus");
-        target.focus({preventScroll: true});
-        await this.chatterSession.acknowledge(item, token);
+        this.focusingAlert = version;
+        try {
+            const detail = await this.call("ab_crm_conversation", "workspace_focus", [[item.conversation_id], item.latest_message_id]);
+            if (this.destroyed || token !== this.state.token || version !== this.navigationVersion) return;
+            if (this.state.busy) throw new Error(_t("Couldn’t open the conversation. Try again."));
+            await this.select(detail.id, false, detail);
+            const selectedVersion = this.navigationVersion;
+            if (this.state.detail?.id !== detail.id) throw new Error(_t("Couldn’t open the conversation. Try again."));
+            this.state.historyContext = true;
+            this.resetScroll = false;
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const target = this.messagesRef.el?.querySelector(`[data-message-id="${item.latest_message_id}"]`);
+            if (!target || this.destroyed) throw new Error(_t("Couldn’t open the conversation. Try again."));
+            await Promise.all([...this.messagesRef.el.querySelectorAll("img")].map(img => img.decode().catch(() => {})));
+            if (this.destroyed || selectedVersion !== this.navigationVersion || token !== this.state.token) return;
+            target.scrollIntoView({block: "center"});
+            this.messagesRef.el.querySelectorAll(".ab_message_focus").forEach(element => element.classList.remove("ab_message_focus"));
+            target.classList.add("ab_message_focus");
+            target.focus({preventScroll: true});
+            await this.chatterSession.acknowledge(item, token);
+        } finally {
+            if (this.focusingAlert === version) this.focusingAlert = false;
+        }
     }
+
     async conversationAction(method, args = []) {
         await this.run(async () => {
             await this.call("ab_crm_conversation", method, [[this.state.detail.id], ...args]);
@@ -498,11 +611,8 @@ export class SalesWorkspace extends Component {
         this.state.attachmentMenu = false;
         const conversation = this.state.detail.id;
         const version = this.navigationVersion;
-        const orders = this.state.detail.orders.filter(order => order.store_id);
-        const storeIds = [...new Set(orders.map(order => order.store_id))];
         this.dialog.add(LocationDialog, {
             call: this.call.bind(this), conversationId: conversation,
-            storeId: storeIds.length === 1 ? storeIds[0] : undefined,
             valid: () => !this.destroyed && this.state.detail?.id === conversation && this.navigationVersion === version && this.state.detail.owned,
             sent: () => { if (!this.destroyed && this.state.detail?.id === conversation && this.navigationVersion === version) this.refresh(); },
         }, {onClose: () => { if (!this.destroyed && this.state.detail?.id === conversation && this.navigationVersion === version) this.attachToggleRef?.el?.focus(); }});
@@ -518,20 +628,21 @@ export class SalesWorkspace extends Component {
             const video = mime === "video/mp4";
             const limit = image ? (this.state.detail.provider === "whatsapp" ? 5 : 10) : video || (this.state.detail.provider === "whatsapp" && mime.startsWith("audio/")) ? 16 : 20;
             if (this.state.attachments.length >= 4 || file.size > limit * 1024 * 1024) {
-                this.state.error = _t("Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; other files: 20 MB (WhatsApp audio: 16 MB).");
+                this.state.error = feedbackError(this, _t("Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; other files: 20 MB (WhatsApp audio: 16 MB)."));
                 return;
             }
             const data = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(",")[1]); reader.onerror = reject; reader.readAsDataURL(file); });
             if (this.destroyed || this.state.detail?.id !== conversationId || !this.state.detail?.owned) return;
             if (this.state.attachments.length >= 4) {
-                this.state.error = _t("Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; other files: 20 MB (WhatsApp audio: 16 MB).");
+                this.state.error = feedbackError(this, _t("Attach up to four files. Images: 10 MB (WhatsApp: 5 MB); videos: 16 MB; other files: 20 MB (WhatsApp audio: 16 MB)."));
                 return;
             }
             const url = URL.createObjectURL(file);
             this.mediaUrls.add(url);
             this.state.attachments.push({name: file.name, mimetype: mime, size: file.size, duration, kind: kind || (image ? "image" : video ? "video" : mime.startsWith("audio/") ? "audio" : "document"), data, url});
         }
-        } finally { this.state.preparing--; }
+        } catch (error) { this.state.error = feedbackError(this, error); }
+        finally { this.state.preparing--; }
     }
     async filesChanged(event) {
         if (!this.fileConversationId || this.fileConversationId === this.state.detail?.id) await this.attachFiles(event.target.files);
@@ -564,7 +675,7 @@ export class SalesWorkspace extends Component {
                         const blob = new Blob(chunks, {type: chunks[0]?.type || "audio/webm"});
                         await this.attachFiles([new File([blob], "voice.webm", {type: blob.type})], "voice", Math.min(300, (Date.now() - started) / 1000));
                     }
-                } catch (error) { this.state.error = error.message; }
+                } catch (error) { this.state.error = feedbackError(this, error); }
                 finally { if (recording.preparing) this.state.preparing--; }
             };
             this.recorder.start();
@@ -606,7 +717,7 @@ export class SalesWorkspace extends Component {
     }
     async copy(message) {
         try { await navigator.clipboard.writeText(message.body || ""); }
-        catch { this.state.error = _t("Couldn’t copy the message. Check clipboard permissions."); }
+        catch { this.state.error = feedbackError(this, _t("Couldn’t copy the message. Check clipboard permissions.")); }
     }
     react(message, reaction) {
         if (!message.actions.react.enabled || !message.actions.reactions.includes(reaction)) return;
@@ -712,11 +823,11 @@ export class SalesWorkspace extends Component {
             this.state.searchOlder = detail.has_older;
             this.state.searchSubmitted = true;
         } catch (error) {
-            if (request === this.searchVersion && version === this.navigationVersion) this.state.searchError = error.data?.message || error.message;
+            if (request === this.searchVersion && version === this.navigationVersion) this.state.searchError = feedbackError(this, error);
         } finally { if (request === this.searchVersion) this.state.searchBusy = false; }
     }
     async acknowledgeVisible() {
-        if (this.destroyed || this.isOrders || !this.state.loggedIn || this.state.searchOpen || this.state.busy || this.refreshing || this.reading || this.chatterSession.focusHandler !== this.focusHandler) return;
+        if (document.visibilityState !== "visible" || !document.hasFocus() || this.state.historyContext || this.focusingAlert || this.destroyed || !this.state.loggedIn || this.state.searchOpen || this.state.busy || this.refreshing || this.reading || this.chatterSession.focusHandler !== this.focusHandler) return;
         const id = this.state.detail?.id;
         const messageId = visibleMessageId(this.messagesRef.el);
         const key = `${this.state.token}:${id}`;
@@ -725,47 +836,16 @@ export class SalesWorkspace extends Component {
         try {
             await this.call("ab_crm_conversation", "workspace_acknowledge", [[id], messageId]);
             this.acknowledged.set(key, messageId);
-        } catch { }
+            this.chatterSession.unreadChanged();
+        } catch (error) { this.feedback?.report(error); }
         finally { this.reading = false; }
     }
     time(value) { return messageDate(value)?.toLocaleString({hour: "2-digit", minute: "2-digit"}) || ""; }
     fullTime(value) { return messageDate(value)?.toLocaleString({dateStyle: "full", timeStyle: "short"}) || ""; }
     day(value) { return messageDate(value)?.toLocaleString({dateStyle: "long"}) || ""; }
     newDay(index) { return !index || this.day(this.state.detail.messages[index - 1].timestamp) !== this.day(this.state.detail.messages[index].timestamp); }
-    auditLabel(action) {
-        return {created: _t("Created"), line_added: _t("Line added"), line_changed: _t("Line changed"),
-            accepted: _t("Accepted"), reopened: _t("Reopened"), closed: _t("Closed"), cancelled: _t("Cancelled")}[action] || action;
-    }
-    async loadOrder(id, location = null) {
-        this.stopRecording(true);
-        const order = await this.call("ab_crm_channel_order", "workspace_data", [[id]]);
-        this.orderClose = this.dialog.add(OrderDialog, {order, location, orders: [...this.state.detail.orders.filter(row => row.id !== order.id), {id: order.id, name: order.name, state: order.state, revision: order.revision}].sort((a, b) => b.id - a.id), cachedDrafts: this.orderDrafts, call: this.call.bind(this), context: this.context(), onSaved: () => this.refresh()}, {onClose: () => { this.orderClose = null; }});
-    }
-    useLocation(message) {
-        return this.run(async () => {
-            const conversationId = this.state.detail.id;
-            const orders = await this.call("ab_crm_conversation", "workspace_location_orders", [[conversationId], message.id]);
-            const select = async id => {
-                if (this.state.detail?.id !== conversationId) throw new Error(_t("Return to the location's conversation first."));
-                await this.loadOrder(id, message.location);
-            };
-            if (orders.length === 1) return select(orders[0].id);
-            this.dialog.add(DeliveryLocationPicker, {orders, select, newOrder: async () => {
-                if (this.state.detail?.id !== conversationId) throw new Error(_t("Return to the location's conversation first."));
-                const id = await this.call("ab_crm_conversation", "action_new_order", [[conversationId]]);
-                await select(id);
-                await this.refresh();
-            }});
-        });
-    }
-    selectOrder(id) { return this.run(() => this.loadOrder(id)); }
-    async newOrder() {
-        await this.run(async () => {
-            const id = await this.call("ab_crm_conversation", "action_new_order", [[this.state.detail.id]]);
-            await this.loadOrder(id);
-            await this.refresh();
-        });
-    }
+    useLocation(message) { return this.createOrder(message.id); }
+
 }
 registry.category("actions").add("ab_crm_sales_workspace.workspace", SalesWorkspace);
 

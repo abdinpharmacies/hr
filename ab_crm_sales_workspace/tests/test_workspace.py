@@ -1,11 +1,11 @@
 from datetime import timedelta
 from unittest.mock import patch
 
-from odoo import fields
+from odoo import fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 
-from ..models.workspace import normalized_phone
+from ..models.workspace import normalized_phone, display_phone
 
 
 @tagged('post_install', '-at_install')
@@ -18,6 +18,7 @@ class TestWorkspace(TransactionCase):
             {
                 'name': 'Workspace Agent',
                 'login': 'workspace-agent',
+                'lang': 'en_US',
                 'group_ids': [
                     fields.Command.set(
                         [
@@ -32,6 +33,7 @@ class TestWorkspace(TransactionCase):
             {
                 'name': 'Other Agent',
                 'login': 'workspace-other',
+                'lang': 'en_US',
                 'group_ids': [
                     fields.Command.set(
                         [
@@ -46,6 +48,7 @@ class TestWorkspace(TransactionCase):
             {
                 'name': 'Workspace Service',
                 'login': 'workspace-service',
+                'lang': 'en_US',
                 'group_ids': [
                     fields.Command.set(
                         [
@@ -162,24 +165,61 @@ class TestWorkspace(TransactionCase):
             .with_context(ab_chatter_session_token=self.session_token)
         )
 
-    def order(self):
-        conversation = self.conversation()
-        conversation.action_claim()
-        conversation.action_identify()
-        order = (
-            self.env['ab_crm_channel_order']
-            .with_user(self.staff)
-            .with_context(ab_chatter_session_token=self.session_token)
-            .browse(conversation.action_new_order())
-        )
-        order.write(
-            {
-                'store_id': self.store.id,
-                'confirmation': 'Customer confirmed the quoted order in Telegram.',
-            }
-        )
-        order.action_add_product(self.product.id)
-        return order
+    def order(self, conversation=None):
+        conversation = conversation if conversation is not None else self.conversation()
+        values = {
+            'name': 'Historical order', 'conversation_id': conversation.id,
+            'channel_id': conversation.channel_id.id, 'customer_id': conversation.customer_id.id,
+            'customer_name': conversation.customer_id.name, 'phone': conversation.confirmed_phone,
+            'store_id': self.store.id, 'confirmation': 'Historical confirmation',
+        }
+        order = models.Model.create(self.env['ab_crm_channel_order'].sudo(), values)
+        models.Model.create(self.env['ab_crm_channel_order_line'].sudo(), {
+            'order_id': order.id, 'product_id': self.product.id,
+            'uom_id': self.product.uom_id.id, 'quantity': 1, 'price': 10,
+        })
+        return order.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
+
+    def test_legacy_archive_rejects_all_mutations_even_sudo(self):
+        order = self.order()
+        audit = models.Model.create(self.env['ab_crm_channel_order_audit'].sudo(), {
+            'order_id': order.id, 'action': 'accepted', 'revision': 1,
+            'actor_id': self.staff.id, 'employee_id': self.employee.id,
+            'at': fields.Datetime.now(), 'values': {'original': True},
+        })
+        snapshot = order.read()
+        audit_values = audit.read()
+        for record in (order, order.sudo()):
+            for method, args in (
+                ('create', [{'conversation_id': order.conversation_id.id}]),
+                ('write', [{'name': 'Changed'}]), ('unlink', []),
+                ('action_accept', []), ('action_reopen', ['Reason']), ('action_close', []),
+                ('action_cancel', ['Reason']), ('action_save_draft', [{}, [], order.edit_version]),
+                ('action_add_product', [self.product.id]),
+            ):
+                with self.subTest(method=method, sudo=record.env.su), self.assertRaises(AccessError):
+                    getattr(record, method)(*args)
+        for record in (order.line_ids.sudo(), audit.sudo()):
+            for method, args in (('create', [{}]), ('write', [{}]), ('unlink', [])):
+                with self.assertRaises(AccessError):
+                    getattr(record, method)(*args)
+        with self.assertRaises(AccessError):
+            order.conversation_id.sudo().action_new_order()
+        self.assertEqual(order.read(), snapshot)
+        self.assertEqual(audit.read(), audit_values)
+        self.assertEqual(order.workspace_data()['id'], order.id)
+
+    def test_legacy_archive_translations(self):
+        english = 'Legacy chatter orders are read-only. Use Sales to create orders.'
+        arabic = 'طلبات المحادثات القديمة للقراءة فقط. استخدم المبيعات لإنشاء الطلبات.'
+        action = self.env.ref('ab_crm_sales_workspace.action_order_archive')
+        self.assertEqual(action.with_context(lang='en_US').name, 'Legacy Order Archive')
+        for language in ('ar', 'ar_001'):
+            self.assertEqual(action.with_context(lang=language).name, 'أرشيف الطلبات القديمة')
+            with self.assertRaisesRegex(AccessError, arabic):
+                self.env['ab_crm_channel_order'].with_context(lang=language).create({})
+        with self.assertRaisesRegex(AccessError, english):
+            self.env['ab_crm_channel_order'].with_context(lang='en_US').create({})
 
     def test_phone_normalization(self):
         self.assertEqual(normalized_phone('010 1234 5678', 'EG'), '+201012345678')
@@ -237,7 +277,10 @@ class TestWorkspace(TransactionCase):
         )
         conversation = self.conversation()
         conversation.action_claim()
-        conversation.action_identify()
+        suggestion = conversation.action_identify()
+        self.assertFalse(conversation.customer_id.catalog_customer_id)
+        self.assertEqual(suggestion['candidates'][0]['id'], customer.id)
+        conversation.action_identify(customer_id=customer.id)
         self.assertEqual(conversation.customer_id.catalog_customer_id, customer)
         duplicate = (
             self.env['ab_customer']
@@ -260,54 +303,7 @@ class TestWorkspace(TransactionCase):
         duplicate.default_store_id = self.foreign_store
         self.assertEqual(conversation._phone_candidates('+201012345678'), customer)
 
-    def test_accept_has_no_sales_or_stock_side_effects(self):
-        order = self.order()
-        names = [
-            'ab_sales_header',
-            'ab_sales_callcenter_rpc_log',
-            'ab_oms_attempt',
-            'account.payment',
-            'stock.move',
-        ]
-        models = [name for name in names if name in self.env.registry]
-        before = {name: self.env[name].sudo().search_count([]) for name in models}
-        order.action_accept()
-        self.assertEqual(order.state, 'accepted')
-        self.assertEqual(order.accepted_by, self.staff)
-        self.assertEqual(order.accepted_employee_id, self.employee)
-        self.assertEqual(order.channel_id, self.channel)
-        self.assertEqual(
-            before, {name: self.env[name].sudo().search_count([]) for name in models}
-        )
-        self.assertTrue(
-            order.audit_ids.filtered(lambda a: a.action == 'accepted').values['lines']
-        )
 
-    def test_frozen_revision_cancellation_and_price_audit(self):
-        order = self.order()
-        order.line_ids.write({'price': 30})
-        audit = order.audit_ids.filtered(lambda a: a.action == 'line_changed')[-1]
-        self.assertEqual(audit.values['old']['price'], 25)
-        self.assertEqual(audit.values['new']['price'], 30)
-        previous_version = order.edit_version
-        order.action_accept()
-        with self.assertRaises(UserError):
-            order.line_ids.write({'price': 20})
-        with self.assertRaises(AccessError):
-            order.with_context(default_state='accepted').write({'state': 'draft'})
-        order.action_close()
-        order.action_reopen('Customer changed quantity')
-        self.assertEqual(order.revision, 2)
-        with self.assertRaises(UserError):
-            order.action_save_draft({}, [], previous_version)
-        self.assertFalse(order.confirmation)
-        order.action_cancel('Customer cancelled')
-        self.assertEqual(order.state, 'cancelled')
-        self.assertTrue(order.line_ids)
-        with self.assertRaises(UserError):
-            order.unlink()
-        with self.assertRaises(AccessError):
-            audit.sudo().write({'values': {}})
 
     def test_branch_company_and_agent_isolation(self):
         order = self.order()
@@ -380,32 +376,11 @@ class TestWorkspace(TransactionCase):
         self.branch.replica_id = self.replica
         self.account.enabled = True
         order = self.order()
-        with self.assertRaises(ValidationError), self.cr.savepoint():
+        with self.assertRaises(AccessError), self.cr.savepoint():
             order.line_ids.write({'quantity': 0})
-        with self.assertRaises(ValidationError), self.cr.savepoint():
+        with self.assertRaises(AccessError), self.cr.savepoint():
             order.line_ids.write({'price': -1})
 
-    def test_acceptance_preconditions_and_multiple_orders(self):
-        conversation = self.conversation()
-        conversation.action_claim()
-        order = (
-            self.env['ab_crm_channel_order']
-            .with_user(self.staff)
-            .with_context(ab_chatter_session_token=self.session_token)
-            .browse(conversation.action_new_order())
-        )
-        with self.assertRaises(UserError):
-            order.action_accept()
-        conversation.action_identify()
-        order.write({'store_id': self.store.id, 'confirmation': 'Confirmed in chat'})
-        with self.assertRaises(UserError):
-            order.action_accept()
-        order.action_add_product(self.product.id)
-        order.action_accept()
-        second = conversation.action_new_order()
-        self.assertNotEqual(second, order.id)
-        self.assertEqual(len(conversation.order_ids), 2)
-        self.assertEqual(order.state, 'accepted')
 
     def test_returning_identity_and_read_position(self):
         conversation = self.conversation()
@@ -434,28 +409,6 @@ class TestWorkspace(TransactionCase):
                 }
             )
 
-    def test_second_employee_can_edit_shared_order(self):
-        order = self.order()
-        other_employee = self.env['ab_hr_employee'].create(
-            {
-                'name': 'Other Employee',
-                'barcode': 'WORKSPACE2',
-                'user_id': self.staff.id,
-            }
-        )
-        other_profile = self.profile.copy(
-            {'employee_id': other_employee.id, 'pos_pin': '1234'}
-        )
-        other_token = self.chatter_api.employee_login(
-            other_profile.id, '1234', 'other-device'
-        )['token']
-        order.with_context(ab_chatter_session_token=other_token).action_accept()
-        self.assertEqual(order.accepted_employee_id, other_employee)
-        self.assertTrue(
-            order.conversation_id.with_context(
-                ab_chatter_session_token=other_token
-            ).workspace_detail()['owned']
-        )
 
     def test_paginated_history_search_and_read_position(self):
         conversation = self.conversation()
@@ -549,7 +502,7 @@ class TestWorkspace(TransactionCase):
         now = fields.Datetime.now()
         session_model = type(self.session)
         self.session.last_activity_at = now
-        with patch.object(session_model, 'try_lock_for_update') as lock:
+        with patch.object(session_model, '_try_lock_activity') as lock:
             self.assertEqual(
                 self.chatter_api._session(self.session_token), self.session
             )
@@ -564,7 +517,7 @@ class TestWorkspace(TransactionCase):
         stale = now - timedelta(minutes=2)
         self.session.last_activity_at = stale
         session_model = type(self.session)
-        original_lock = session_model.try_lock_for_update
+        original_lock = session_model._try_lock_activity
         original_write = session_model.write
 
         def refresh_activity(session, **kwargs):
@@ -574,7 +527,7 @@ class TestWorkspace(TransactionCase):
             self.env.cache.set(locked, locked._fields['last_activity_at'], stale)
             return locked
 
-        with patch.object(session_model, 'try_lock_for_update', refresh_activity):
+        with patch.object(session_model, '_try_lock_activity', refresh_activity):
             with patch.object(
                 session_model, 'write', autospec=True, side_effect=original_write
             ) as write:
@@ -585,7 +538,7 @@ class TestWorkspace(TransactionCase):
     def test_session_expiry_and_company_are_checked_before_activity(self):
         self.session.last_activity_at = fields.Datetime.now() - timedelta(minutes=2)
         self.session.expires_at = fields.Datetime.now() - timedelta(seconds=1)
-        with patch.object(type(self.session), 'try_lock_for_update') as lock:
+        with patch.object(type(self.session), '_try_lock_activity') as lock:
             with self.assertRaises(AccessError):
                 self.chatter_api._session(self.session_token)
             lock.assert_not_called()
@@ -594,7 +547,7 @@ class TestWorkspace(TransactionCase):
             {'name': 'Session Foreign Company'}
         )
         self.staff.company_ids = [fields.Command.link(foreign_company.id)]
-        with patch.object(type(self.session), 'try_lock_for_update') as lock:
+        with patch.object(type(self.session), '_try_lock_activity') as lock:
             with self.assertRaises(AccessError):
                 self.chatter_api.with_company(foreign_company)._session(self.session_token)
             lock.assert_not_called()
@@ -644,7 +597,8 @@ class TestWorkspace(TransactionCase):
         )
         conversation.action_claim()
         conversation.action_identify()
-        self.assertTrue(conversation.action_new_order())
+        with self.assertRaises(AccessError):
+            conversation.action_new_order()
         conversation.action_reply('Approved employee reply')
         with self.assertRaises(AccessError):
             self.chatter_api.with_user(self.service).bootstrap()
@@ -723,65 +677,7 @@ class TestWorkspace(TransactionCase):
         with self.assertRaises(AccessError):
             self.env['ir.config_parameter'].with_user(service).search([])
 
-    def test_order_identity_is_derived_and_delivery_is_private(self):
-        order = self.order()
-        with self.assertRaises(AccessError):
-            order.write({'customer_name': 'Spoofed'})
-        with self.assertRaises(AccessError):
-            self.env['ab_crm_channel_order'].with_user(self.staff).with_context(
-                ab_chatter_session_token=self.session_token
-            ).create(
-                {
-                    'conversation_id': order.conversation_id.id,
-                    'customer_name': 'Spoofed',
-                }
-            )
-        address = order.customer_id.address
-        order.write({'delivery_address': 'Order only'})
-        self.assertEqual(order.customer_id.address, address)
-        order.workspace_data()
-        self.assertEqual(order.customer_name, order.conversation_id.confirmed_phone)
-        order.action_accept()
-        snapshot = order._snapshot()
-        order.conversation_id.customer_id.sudo().write({'name': 'Changed CRM name'})
-        self.assertEqual(
-            order.workspace_data()['customer_name'], snapshot['customer_name']
-        )
 
-    def test_atomic_save_repricing_and_stale_editor(self):
-        order = self.order()
-        self.replica.allowed_sales_store_ids |= self.foreign_store
-        self.profile.pos_allowed_store_ids |= self.foreign_store
-        data = order.workspace_data()
-        lines = [
-            {k: line[k] for k in ('id', 'product_id', 'uom_id', 'quantity', 'price')}
-            for line in data['lines']
-        ]
-        lines[0]['quantity'] = -1
-        with self.assertRaises(ValidationError):
-            order.action_save_draft(
-                {'store_id': self.foreign_store.id},
-                lines,
-                data['edit_version'],
-                reprice=True,
-            )
-        self.assertEqual(order.store_id, self.store)
-        self.assertEqual(order.line_ids.quantity, 1)
-        lines[0]['quantity'] = 2
-        lines[0]['price'] = 999
-        result = order.action_save_draft(
-            {'store_id': self.foreign_store.id},
-            lines,
-            data['edit_version'],
-            reprice=True,
-        )
-        self.assertEqual(order.line_ids.price, 25)
-        self.assertEqual(result['total'], 50)
-        self.assertTrue(
-            order.audit_ids.filtered(lambda row: row.action == 'branch_changed')
-        )
-        with self.assertRaises(UserError):
-            order.action_save_draft({}, lines, data['edit_version'])
 
     def test_branch_preview_scope_and_barcode(self):
         order = self.order()
@@ -789,11 +685,8 @@ class TestWorkspace(TransactionCase):
             order.preview_branch(self.foreign_store.id, self.product.ids)
         with self.assertRaises(UserError):
             order.write({'store_id': False})
-        barcode = self.env['ab_product_barcode'].create({'name': 'TESTPOPUP123'})
-        self.product.barcode_ids |= barcode
-        rows = order.search_products('TESTPOPUP123')
-        self.assertEqual(rows[0]['id'], self.product.id)
-        self.assertEqual(rows[0]['balance_state'], 'unavailable')
+        with self.assertRaises(AccessError):
+            order.search_products('TESTPOPUP123')
 
     def test_contact_request_once_and_cancel_unsent(self):
         conversation = self.conversation()
@@ -852,6 +745,8 @@ class TestWorkspace(TransactionCase):
         )
         conversation.action_claim()
         self.receive('profile:2')
+        self.assertFalse(conversation.customer_id)
+        conversation.action_identify()
         conversation.workspace_detail()
         self.assertEqual(conversation.confirmed_phone, '+201012345678')
         self.assertEqual(conversation._customer_display_name(), 'Telegram Name')
@@ -990,23 +885,22 @@ class TestWorkspace(TransactionCase):
         self.assertTrue(detail['messages'])
         self.assertFalse(conversation.confirmed_phone)
 
-    def test_ingestion_resolves_before_claim_and_with_expired_session(self):
+    def test_ingestion_preserves_evidence_without_linking_with_expired_session(self):
         self.session.sudo().write({'expires_at': fields.Datetime.now()})
         result = self.receive()
         conversation = (
             self.env['ab_crm_message'].browse(result['message_id']).conversation_id
         )
         self.assertFalse(conversation.assigned_id)
-        self.assertEqual(conversation.confirmed_phone, '+201012345678')
-        self.assertEqual(conversation.catalog_match_state, 'unmatched')
-        contact = conversation.customer_id
-        identity = contact.identity_ids
+        self.assertFalse(conversation.confirmed_phone)
+        self.assertFalse(conversation.customer_id)
+        self.assertEqual(conversation.catalog_match_state, 'pending')
+        self.assertTrue(conversation.contact_evidence_id.telegram_contact_owned)
         self.receive(event_id='second-contact')
-        self.assertEqual(conversation.customer_id, contact)
-        self.assertEqual(contact.identity_ids, identity)
-        self.assertEqual(len(identity), 1)
+        self.assertFalse(conversation.customer_id)
+        self.assertFalse(self.env['ab_crm_identity'].search([('channel_id', '=', self.channel.id)]))
 
-    def test_ambiguous_ingestion_retains_crm_contact_and_evidence(self):
+    def test_ambiguous_ingestion_retains_unlinked_evidence(self):
         for code in ('MATCH-A', 'MATCH-B'):
             self.env['ab_customer'].create(
                 {
@@ -1017,21 +911,17 @@ class TestWorkspace(TransactionCase):
                 }
             )
         conversation = self.conversation()
-        self.assertEqual(conversation.catalog_match_state, 'ambiguous')
-        self.assertTrue(conversation.customer_id)
-        self.assertFalse(conversation.customer_id.catalog_customer_id)
+        self.assertEqual(conversation.catalog_match_state, 'pending')
+        self.assertFalse(conversation.customer_id)
         self.assertTrue(conversation.contact_evidence_id.telegram_contact_owned)
+        candidates = conversation.action_identify()['candidates']
+        self.assertEqual(len(candidates), 2)
+        conversation.action_identify(customer_id=candidates[0]['id'])
         conversation.action_claim()
-        order = (
-            self.env['ab_crm_channel_order']
-            .with_user(self.staff)
-            .with_context(ab_chatter_session_token=self.session_token)
-            .browse(conversation.action_new_order())
-        )
-        order.write({'store_id': self.store.id, 'confirmation': 'Customer approved'})
-        order.action_add_product(self.product.id)
-        order.action_accept()
-        self.assertEqual(order.state, 'accepted')
+        order = self.order(conversation)
+        with self.assertRaises(AccessError):
+            order.action_accept()
+        self.assertEqual(order.state, 'draft')
 
     def test_third_party_order_acceptance_does_not_verify_contact(self):
         self.receive(owner='another-person')
@@ -1048,15 +938,9 @@ class TestWorkspace(TransactionCase):
         self.assertFalse(conversation.customer_id)
         self.assertFalse(conversation.confirmed_phone)
         conversation.action_claim()
-        order = (
-            self.env['ab_crm_channel_order']
-            .with_user(self.staff)
-            .with_context(ab_chatter_session_token=self.session_token)
-            .browse(conversation.action_new_order())
-        )
-        order.write({'store_id': self.store.id, 'confirmation': 'Customer approved'})
-        order.action_add_product(self.product.id)
-        order.action_accept()
+        order = self.order(conversation)
+        with self.assertRaises(AccessError):
+            order.action_accept()
         self.assertFalse(order.phone)
         self.assertFalse(order.customer_id)
         self.assertFalse(conversation.confirmed_phone)
@@ -1103,6 +987,7 @@ class TestWorkspace(TransactionCase):
 
     def test_catalog_review_requires_manager_and_scoped_candidate(self):
         conversation = self.conversation()
+        conversation.action_identify()
         customer = self.env['ab_customer'].create(
             {
                 'name': 'Candidate',
@@ -1121,43 +1006,6 @@ class TestWorkspace(TransactionCase):
         with self.assertRaises(AccessError):
             admin_conversation.action_review_catalog()
 
-    def test_late_contact_fills_empty_draft_and_preserves_accepted_snapshot(self):
-        self.receive(owner='third-party')
-        conversation = (
-            self.env['ab_crm_conversation']
-            .search(
-                [
-                    ('channel_id', '=', self.channel.id),
-                ]
-            )
-            .with_user(self.staff)
-            .with_context(ab_chatter_session_token=self.session_token)
-        )
-        conversation.action_claim()
-        order = (
-            self.env['ab_crm_channel_order']
-            .with_user(self.staff)
-            .with_context(ab_chatter_session_token=self.session_token)
-            .browse(conversation.action_new_order())
-        )
-        order.write(
-            {
-                'store_id': self.store.id,
-                'delivery_address': 'Agent address',
-                'confirmation': 'Customer approved',
-            }
-        )
-        order.action_add_product(self.product.id)
-        self.receive(event_id='self-contact')
-        data = order.workspace_data()
-        self.assertEqual(data['phone'], '+201012345678')
-        self.assertEqual(data['delivery_address'], 'Agent address')
-        order.action_accept()
-        snapshot = order._snapshot()
-        self.receive(event_id='different-phone', phone='01112345678')
-        self.assertEqual(conversation.catalog_match_state, 'conflict')
-        self.assertEqual(order._snapshot(), snapshot)
-        self.assertEqual(conversation.confirmed_phone, '+201012345678')
 
     def test_ingestion_scope_and_evidence_cannot_be_forged(self):
         conversation = self.conversation()
@@ -1178,10 +1026,11 @@ class TestWorkspace(TransactionCase):
 
     def test_customer_label_excludes_legacy_destination_and_employee(self):
         conversation = self.conversation()
+        conversation.action_identify()
         conversation.action_claim()
         conversation.customer_id.name = conversation.external_key
         self.assertEqual(
-            conversation._customer_display_name(), conversation.confirmed_phone
+            conversation._customer_display_name(), display_phone(conversation.confirmed_phone, 'EG')
         )
         row = next(
             item
@@ -1196,14 +1045,29 @@ class TestWorkspace(TransactionCase):
         with self.assertRaises(AccessError):
             conversation.with_user(self.other).workspace_detail()
 
-    def test_orders_menu_is_separate_from_conversations(self):
+    def test_navigation_and_legacy_orders_redirect(self):
         root = self.env.ref('ab_crm_sales_workspace.menu_workspace')
         orders = self.env.ref('ab_crm_sales_workspace.menu_orders')
         conversations = self.env.ref('ab_crm_sales_workspace.menu_conversations')
         self.assertEqual(orders.parent_id, root)
         self.assertEqual(conversations.parent_id, root)
-        self.assertEqual(orders.action.tag, 'ab_crm_sales_workspace.orders')
+        self.assertEqual(orders.name, 'Create order')
+        self.assertEqual(orders.action.tag, 'ab_crm_sales_workspace.workspace')
+        self.assertIn('chatter_create_order', orders.action.context)
+        self.assertEqual(self.env.ref('ab_crm_sales_workspace.action_orders').tag, 'ab_crm_sales_workspace.workspace')
+        invoices = self.env.ref('ab_crm_sales_workspace.menu_invoices')
+        self.assertEqual(invoices.action, self.env.ref('ab_sales.ab_sales_bill_wizard_action'))
         self.assertEqual(conversations.action.tag, 'ab_crm_sales_workspace.workspace')
+        self.assertEqual(root.action, self.env.ref('ab_crm_sales_workspace.action_workspace'))
+        self.assertFalse(conversations.active)
+        self.assertFalse(orders.active)
+        self.assertFalse(invoices.active)
+        self.assertNotIn(
+            conversations.id,
+            self.env['ir.ui.menu']._visible_menu_ids(debug=True),
+        )
+        self.assertNotIn(orders.id, self.env['ir.ui.menu']._visible_menu_ids(debug=True))
+        self.assertNotIn(invoices.id, self.env['ir.ui.menu']._visible_menu_ids(debug=True))
 
     def test_alert_persistence_read_independence_and_arrival_race(self):
         conversation = self.conversation()
@@ -1345,6 +1209,10 @@ class TestWorkspace(TransactionCase):
             'phone': '01098765432',
             'address': 'Local address',
         }
+        updated = self.chatter_api.contact_phone_add(self.session_token, customer.id, values['phone'],
+            reason='Customer confirmed additional number', customer_confirmed=True)
+        phone = next(p for p in updated['phones'] if p['number'] == '+201098765432')
+        self.chatter_api.contact_phone_update(self.session_token, customer.id, phone['id'], 'primary', 'Customer selected primary')
         saved = self.chatter_api.contact_save(
             self.session_token, values, contact_id=customer.id
         )
@@ -1376,7 +1244,7 @@ class TestWorkspace(TransactionCase):
             [('customer_id', '=', customer.id)]
         )
         self.assertEqual(
-            set(logs.mapped('action')), {'edit_contact', 'archive_contact'}
+            set(logs.mapped('action')), {'edit_contact', 'archive_contact', 'add_contact_phone', 'contact_phone_primary'}
         )
         self.assertEqual(logs.employee_id, self.employee)
         with self.assertRaises(AccessError):
@@ -1527,6 +1395,7 @@ class TestWorkspace(TransactionCase):
             operation.with_user(self.staff).action_close_review('Forged review')
 
     def test_contact_pagination_and_formatted_phone_duplicates(self):
+        self.staff.group_ids += self.env.ref('ab_crm_core.group_manager')
         for index in range(35):
             self.chatter_api.contact_save(
                 self.session_token,
@@ -1795,107 +1664,8 @@ class TestWorkspace(TransactionCase):
                 'body': 'Forged', 'conversation_id': conversation.id, 'branch_id': self.branch.id,
             })
 
-    def test_delivery_location_selection_removal_versions_and_audit(self):
-        order = self.order()
-        original = (order.delivery_address, order.delivery_notes, order.customer_id.address)
-        message = self.location_message(name='First point')
-        other = self.location_message('location-2', name='Second point')
-        def save(source=None):
-            values = {} if source is None else {'delivery_location_message_id': source}
-            lines = [{k: row[k] for k in ('id', 'product_id', 'uom_id', 'quantity', 'price')}
-                     for row in order._snapshot()['lines']]
-            return order.action_save_draft(values, lines, order.edit_version)
-        choices = order.conversation_id.workspace_location_orders(message.id)
-        self.assertEqual([row['id'] for row in choices], [order.id])
-        second = order.conversation_id.action_new_order()
-        self.assertEqual(len(order.conversation_id.workspace_location_orders(message.id)), 2)
-        old_version = order.edit_version
-        data = save(message.id)
-        self.assertEqual(data['delivery_location']['latitude'], 0)
-        self.assertEqual(data['delivery_location_message_id'], message.id)
-        save()
-        self.assertEqual(order.delivery_location_message_id, message)
-        with self.assertRaises(UserError):
-            order.action_save_draft({'delivery_location_message_id': False}, [], old_version)
-        save(other.id)
-        audit = order.audit_ids.filtered(lambda row: row.action == 'delivery_location_changed')[-1]
-        self.assertEqual(audit.values['old']['message_id'], message.id)
-        self.assertEqual(audit.values['new']['message_id'], other.id)
-        self.assertEqual(audit.actor_id, self.staff)
-        self.assertEqual(audit.sudo().employee_id, self.employee)
-        self.assertTrue(audit.at)
-        save(False)
-        self.assertFalse(order.delivery_location_message_id)
-        save(message.id)
-        order.action_accept()
-        accepted = order.audit_ids.filtered(lambda row: row.action == 'accepted')[-1].values
-        self.assertEqual(accepted['delivery_location']['message_id'], message.id)
-        with self.assertRaises(UserError):
-            save(False)
-        order.action_close()
-        with self.assertRaises(UserError):
-            save(other.id)
-        order.action_reopen('Customer corrected location')
-        save(other.id)
-        self.assertEqual(accepted['delivery_location']['message_id'], message.id)
-        self.assertEqual((order.delivery_address, order.delivery_notes, order.customer_id.address), original)
-        self.assertTrue(second)
 
-    def test_delivery_location_denied_rpc_and_foreign_sources(self):
-        order = self.order()
-        message = self.location_message()
-        foreign = self.location_message('foreign-location', sender='98765')
-        text = self.env['ab_crm_message'].browse(self.receive()['message_id'])
-        for source in (foreign.id, text.id):
-            with self.assertRaises(AccessError):
-                order.action_save_draft({'delivery_location_message_id': source}, [], order.edit_version)
-        for source in (True, 0, -1, '1', {'latitude': 0}, None):
-            with self.assertRaises(ValidationError):
-                order.action_save_draft({'delivery_location_message_id': source}, [], order.edit_version)
-        with self.assertRaises(AccessError):
-            order.write({'delivery_location_message_id': message.id})
-        with self.assertRaises(AccessError):
-            order.copy({'delivery_location_message_id': message.id})
-        with self.assertRaises(AccessError):
-            order.action_save_draft({'delivery_location': {'latitude': 0}}, [], order.edit_version)
-        with self.assertRaises(AccessError):
-            order.with_context(ab_chatter_session_token=False).action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
-        with self.assertRaises(AccessError):
-            order.with_user(self.other).action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
-        with self.assertRaises(AccessError):
-            order.conversation_id.workspace_location_orders(foreign.id)
 
-    def test_delivery_location_cross_branch_and_company(self):
-        order = self.order()
-        company = self.env['res.company'].create({'name': 'Location Foreign Company', 'country_id': self.env.ref('base.eg').id})
-        self.service.company_ids |= company
-        for index, scope in enumerate((self.env.company, company)):
-            branch = self.env['ab_crm_branch'].with_company(scope).create({
-                'name': 'Location Foreign Branch', 'code': f'location-foreign-{index}',
-                'replica_id': self.replica.id, 'company_id': scope.id,
-                'user_ids': [fields.Command.set(self.service.ids)],
-            })
-            channel = self.env['ab_crm_channel'].with_company(scope).create({
-                'name': 'Foreign Telegram', 'code': f'location-channel-{index}',
-                'provider': 'telegram', 'branch_id': branch.id, 'company_id': scope.id,
-            })
-            account = self.env['ab_crm_messaging_account'].with_company(scope).create({
-                'name': 'Foreign Location Bot', 'code': f'location-bot-{index}',
-                'provider': 'telegram', 'provider_account': f'900009{index}',
-                'channel_id': channel.id, 'branch_id': branch.id, 'company_id': scope.id,
-                'service_user_id': self.service.id, 'legacy_worker_disabled': True, 'enabled': True,
-            })
-            result = self.env['ab_crm_messaging_api'].with_user(self.service).with_company(scope).receive_event(
-                account.code, account.provider_account, {
-                    'id': 'foreign-location', 'sender': '12345', 'body': 'Location',
-                    'timestamp': '2026-01-01 12:00:00', 'unsupported': False,
-                    'source_digest': 'e' * 64, 'location': {'latitude': 0, 'longitude': 0},
-                },
-            )
-            with self.assertRaises(AccessError):
-                order.action_save_draft({'delivery_location_message_id': result['message_id']}, [], order.edit_version)
-            with self.assertRaises(AccessError):
-                order.conversation_id.workspace_location_orders(result['message_id'])
 
     def branch_profile(self, **values):
         return self.env['ab_crm_branch_location'].create(dict({
@@ -2171,7 +1941,7 @@ class TestWorkspace(TransactionCase):
 
         path = Path(__file__).resolve().parents[1] / 'views' / 'branch_location.xml'
         records = etree.parse(str(path)).xpath('//record[@model="ir.ui.view"]')
-        self.assertEqual(len(records), 7)
+        self.assertEqual(len(records), 6)
         for record in records:
             xmlid = f"ab_crm_sales_workspace.{record.get('id')}"
             with self.subTest(xmlid=xmlid):
@@ -2223,7 +1993,7 @@ class TestWorkspace(TransactionCase):
             'source_digest': 'c' * 64, 'location': {'latitude': 1, 'longitude': 2},
         })
         message = self.env['ab_crm_message'].browse(original['message_id'])
-        order.action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
+        models.Model.write(order.sudo(), {'delivery_location_message_id': message.id, 'delivery_location_snapshot': message._location_data(original=True)})
         frozen = order._snapshot()['delivery_location']
         version = order.edit_version
         api.receive_event('workspace-bot', '900000234', {
@@ -2239,8 +2009,9 @@ class TestWorkspace(TransactionCase):
         self.assertEqual(detail['messages'][0]['edited_at'], '2026-01-01 12:01:00')
         self.assertEqual(detail['messages'][0]['timestamp'], '2026-01-01 12:00:00')
         self.assertEqual(order.conversation_id._workspace_quote(message)['location']['latitude'], 3)
-        order.action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
-        self.assertEqual(order._snapshot()['delivery_location']['latitude'], 3)
+        with self.assertRaises(AccessError):
+            order.action_save_draft({'delivery_location_message_id': message.id}, [], order.edit_version)
+        self.assertEqual(order._snapshot()['delivery_location'], frozen)
         with self.assertRaises(AccessError):
             order.write({'delivery_location_snapshot': {}})
         with self.assertRaises(ValidationError):
@@ -2278,3 +2049,274 @@ class TestWorkspace(TransactionCase):
         self.assertEqual([row['id'] for row in conversation.workspace_templates()['items']], replies[:1].ids)
         with self.assertRaises(AccessError):
             conversation.with_user(self.other).workspace_templates()
+
+
+    def test_egyptian_display_preserves_canonical_and_legacy_search(self):
+        for value in ('+201098320212', '+20 1098320212', '01098320212'):
+            self.assertEqual(normalized_phone(value, 'EG'), '+201098320212')
+            self.assertEqual(display_phone(value, 'EG'), '01098320212')
+        self.assertEqual(display_phone('+442079460123', 'EG'), '+44 20 7946 0123')
+        legacy = self.env['ab_crm_customer'].create({
+            'name': 'Legacy format', 'phone': '+20 1098320212', 'branch_id': self.branch.id,
+        })
+        for query in ('01098320212', '+201098320212', '+20 1098320212', '010983', '983202'):
+            found = self.chatter_api.contact_search(self.session_token, query=query)['contacts']
+            self.assertIn(legacy.id, [row['id'] for row in found])
+        data = legacy._directory_data()
+        self.assertEqual(data['phone'], '+20 1098320212')
+        self.assertEqual(data['display_phone'], '01098320212')
+        with self.assertRaises(AccessError):
+            self.chatter_api.contact_save(self.session_token,
+                {'name': 'Duplicate', 'phone': '01098320212', 'address': ''}, branch_id=self.branch.id)
+        conversation = self.conversation()
+        self.assertEqual(conversation._display_destination(), conversation.external_key)
+        with self.assertRaises(AccessError):
+            self.chatter_api.with_user(self.other).contact_accounts(self.session_token, legacy.id)
+
+    def test_read_removes_alerts_without_acknowledging_other_conversations(self):
+        conversation = self.conversation()
+        self.receive('read-second')
+        before = self.chatter_api.notifications(self.session_token)['items'][0]
+        self.assertEqual(before['unread_count'], conversation.workspace_detail()['unread_count'])
+        self.assertEqual(before['display_destination'], '12345')
+        conversation.workspace_acknowledge(before['message_ids'][0])
+        pending = self.chatter_api.notifications(self.session_token)['items'][0]
+        self.assertEqual(pending['message_ids'], before['message_ids'][1:])
+        self.assertEqual(pending['unread_count'], 1)
+        self.chatter_api.acknowledge_alert(self.session_token, conversation.id, pending['message_ids'])
+        self.assertEqual(conversation.workspace_detail()['unread_count'], 1)
+        self.assertFalse(self.chatter_api.notifications(self.session_token)['items'])
+        self.receive('read-later')
+        later = self.chatter_api.notifications(self.session_token)['items'][0]
+        self.assertEqual(later['count'], 1)
+        self.assertEqual(later['unread_count'], 2)
+        conversation.workspace_acknowledge(later['latest_message_id'])
+        self.assertFalse(self.chatter_api.notifications(self.session_token)['items'])
+        self.assertEqual(conversation.workspace_detail()['unread_count'], 0)
+
+
+    def test_customer_alert_group_keeps_independent_channel_read_positions(self):
+        first = self.conversation()
+        contact = self.chatter_api.contact_save(self.session_token,
+            {'name': 'One customer', 'phone': '01012345678', 'address': ''}, branch_id=self.branch.id)
+        result = self.env['ab_crm_messaging_api'].with_user(self.service).receive_event(
+            self.account.code, self.account.provider_account,
+            {'id': 'other-account', 'sender': '54321', 'body': 'Other account message',
+             'timestamp': '2026-01-01 12:00:00', 'unsupported': False, 'source_digest': 'c' * 64})
+        second = self.env['ab_crm_message'].browse(result['message_id']).conversation_id.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
+        for conversation in first | second:
+            preview = conversation.action_preview_customer_link(contact['id'])
+            conversation.action_confirm_customer_link(contact['id'], preview['fingerprint'],
+                'Customer confirmed both accounts', customer_confirmed=True)
+        items = self.chatter_api.notifications(self.session_token)['items']
+        self.assertEqual(len({item['customer_group_key'] for item in items}), 1)
+        self.assertEqual(len(items), 2)
+        first.workspace_acknowledge(first.message_ids[-1].id)
+        pending = self.chatter_api.notifications(self.session_token)['items']
+        self.assertEqual([item['conversation_id'] for item in pending], second.ids)
+        row = first.workspace_customer_inbox()['items'][0]
+        self.assertEqual(row['unread'], 1)
+        self.assertEqual(sum(stream['unread'] for stream in first.workspace_detail()['streams']), 1)
+        self.assertEqual(len(self.chatter_api.contact_accounts(self.session_token, contact['id'])['accounts']), 2)
+
+    def test_merge_preview_keeps_primary_and_rejects_changed_contact(self):
+        self.staff.group_ids += self.env.ref('ab_crm_core.group_manager')
+        first = self.chatter_api.contact_save(self.session_token,
+            {'name': 'Canonical', 'phone': '01098320212', 'address': 'Keep address'}, branch_id=self.branch.id)
+        duplicate = self.env['ab_crm_customer'].create({'name': 'Same number', 'phone': '+20 1098320212', 'branch_id': self.branch.id})
+        preview = self.chatter_api.contact_consolidate(self.session_token, first['id'], duplicate.id)
+        self.assertEqual(preview['duplicate']['display_phone'], '01098320212')
+        self.chatter_api.contact_phone_add(self.session_token, first['id'], '+442079460123',
+            reason='Confirmed international number', customer_confirmed=True)
+        with self.assertRaises(UserError):
+            self.chatter_api.contact_consolidate(self.session_token, first['id'], duplicate.id,
+                fingerprint=preview['fingerprint'], reason='Stale consolidation preview')
+        preview = self.chatter_api.contact_consolidate(self.session_token, first['id'], duplicate.id)
+        merged = self.chatter_api.contact_consolidate(self.session_token, first['id'], duplicate.id,
+            fingerprint=preview['fingerprint'], reason='Manager reviewed equivalent number')
+        self.assertEqual(merged['phone'], first['phone'])
+        self.assertEqual(merged['address'], 'Keep address')
+        self.assertEqual(len(merged['phones']), 2)
+        self.assertFalse(duplicate.active)
+        self.assertEqual(duplicate.phone, '+20 1098320212')
+
+
+    def test_contact_alert_runtime_translations(self):
+        from odoo.tools.translate import code_translations
+        for lang in ('ar', 'ar_001'):
+            self.env['res.lang']._activate_lang(lang)
+            web = {row['id']: row['string'] for row in code_translations.get_web_translations('ab_crm_sales_workspace', lang)['messages']}
+            self.assertEqual(web['Archive contact'], 'أرشفة جهة الاتصال')
+            self.assertEqual(web['Merge duplicates'], 'دمج جهات الاتصال المكررة')
+            self.assertEqual(web['%s pending messages'], '%s رسالة معلقة')
+            self.assertEqual(web['Use existing'], 'استخدام جهة اتصال موجودة')
+            self.assertEqual(web['Inbox'], 'الوارد')
+            self.assertEqual(web['Connection to Odoo restored.'], 'تمت استعادة الاتصال بأودو.')
+            self.assertIn('تم الاحتفاظ بمسوداتك', web['Connection to Odoo was lost. Reconnecting… Your drafts are kept. Check the result before retrying an action.'])
+            self.assertEqual(web['Unlink conversations'], 'إلغاء ربط المحادثات')
+            python = code_translations.get_python_translations('ab_crm_sales_workspace', lang)
+            self.assertEqual(python['Select a customer with linked conversations.'], 'اختر عميلاً لديه محادثات مرتبطة.')
+
+    def test_unique_verified_phone_links_without_reason_and_preserves_history(self):
+        contact = self.chatter_api.contact_save(self.session_token,
+            {'name': 'Saved customer', 'phone': '+20 1012345678', 'address': 'Saved address'}, branch_id=self.branch.id)
+        conversation = self.conversation()
+        message_ids = conversation.message_ids.ids
+        order = self.order(conversation)
+        queued = self.env['ab_crm_message'].browse(conversation.action_reply('Queued before automatic association')).messaging_operation_ids
+        snapshot = (order.customer_id.id, order.phone, queued.destination, conversation.external_key)
+        preview = conversation.action_preview_customer_link(contact['id'])
+        self.assertTrue(preview['automatic_match'])
+        conversation.action_confirm_customer_link(contact['id'], preview['fingerprint'])
+        for unused in range(2):
+            detail = conversation.workspace_detail()
+            self.assertEqual(detail['contact']['id'], contact['id'])
+            self.assertEqual(detail['display_phone'], '01012345678')
+        self.assertEqual((order.customer_id.id, order.phone, queued.destination, conversation.external_key), snapshot)
+        self.assertTrue(set(message_ids).issubset(conversation.message_ids.ids))
+        audit = self.env['ab_crm_workspace_audit'].search([
+            ('conversation_id', '=', conversation.id), ('action', '=', 'auto_link_customer')])
+        self.assertEqual(len(audit), 1)
+        self.assertEqual(audit.user_id, self.staff)
+        self.assertEqual(audit.employee_id, self.employee)
+        self.assertEqual(audit.values['association'], 'verified_phone_match')
+        self.assertEqual(audit.values['verified_phone'], '+201012345678')
+
+    def test_automatic_link_rejects_ambiguous_archived_and_third_party_numbers(self):
+        first = self.env['ab_crm_customer'].create({'name': 'First customer', 'phone': '01012345678', 'branch_id': self.branch.id})
+        second = self.env['ab_crm_customer'].create({'name': 'Another customer', 'phone': '+20 1012345678', 'branch_id': self.branch.id})
+        conversation = self.conversation()
+        self.assertTrue(conversation.workspace_detail()['link_review'])
+        self.assertFalse(conversation.customer_id)
+        first.active = False
+        second.active = False
+        self.assertFalse(conversation._auto_link_matching_customer())
+        second.active = True
+        from ..models.workspace import _WORKSPACE
+        flag = _WORKSPACE.set(True)
+        try:
+            identity = self.env['ab_crm_identity'].create({'customer_id': first.id, 'channel_id': self.channel.id,
+                'external_key': conversation.external_key, 'branch_id': self.branch.id, 'active': False})
+        finally:
+            _WORKSPACE.reset(flag)
+        self.assertFalse(conversation._auto_link_matching_customer())
+        self.assertEqual(identity.customer_id, first)
+        self.assertFalse(identity.active)
+        self.assertFalse(conversation.customer_id)
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).workspace_detail()
+        with self.assertRaises(AccessError):
+            conversation.with_context(ab_chatter_session_token='forged').workspace_detail()
+
+    def test_manual_customer_link_without_confirmation_or_reason(self):
+        contact = self.chatter_api.contact_save(self.session_token,
+            {'name': 'Unverified customer', 'phone': '01012345678', 'address': ''}, branch_id=self.branch.id)
+        result = self.receive('third-party', owner='54321')
+        conversation = self.env['ab_crm_message'].browse(result['message_id']).conversation_id.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
+        self.assertTrue(conversation.workspace_detail()['link_review'])
+        self.assertFalse(conversation.customer_id)
+        preview = conversation.action_preview_customer_link(contact['id'])
+        self.assertFalse(preview['automatic_match'])
+        self.assertFalse(preview['requires_confirmation'])
+        with self.assertRaises(AccessError):
+            conversation.with_user(self.other).action_confirm_customer_link(
+                contact['id'], preview['fingerprint'])
+        with self.assertRaises(AccessError):
+            conversation.with_context(ab_chatter_session_token='forged').action_confirm_customer_link(
+                contact['id'], preview['fingerprint'])
+        with self.assertRaises(UserError):
+            conversation.action_confirm_customer_link(contact['id'], 'stale')
+        with self.assertRaises(AccessError):
+            conversation.write({'customer_id': contact['id']})
+        foreign_branch = self.env['ab_crm_branch'].create({
+            'name': 'Other contact intake', 'code': 'manual-link-other', 'replica_id': self.replica.id,
+            'user_ids': [fields.Command.link(self.staff.id)]})
+        foreign_contact = self.env['ab_crm_customer'].create({
+            'name': 'Other intake contact', 'branch_id': foreign_branch.id})
+        with self.assertRaises(AccessError):
+            conversation.action_preview_customer_link(foreign_contact.id)
+        available = self.chatter_api.contact_search(self.session_token, branch_id=self.branch.id)['contacts']
+        self.assertIn(contact['id'], [item['id'] for item in available])
+        self.assertNotIn(foreign_contact.id, [item['id'] for item in available])
+        message_ids = conversation.message_ids.ids
+        destination = conversation.external_key
+        conversation.action_confirm_customer_link(contact['id'], preview['fingerprint'])
+        self.assertEqual(conversation.customer_id.id, contact['id'])
+        self.assertEqual(conversation.message_ids.ids, message_ids)
+        self.assertEqual(conversation.external_key, destination)
+        audit = self.env['ab_crm_workspace_audit'].search([
+            ('conversation_id', '=', conversation.id), ('action', '=', 'review_customer_link')])
+        self.assertEqual(len(audit), 1)
+        self.assertEqual(audit.employee_id, self.employee)
+        self.assertEqual(audit.values['reason'], 'Linked to existing customer')
+        self.assertEqual(audit.values['association'], 'manual_review')
+        self.assertFalse(audit.values['customer_confirmed'])
+        self.assertFalse(audit.values['phone_verified'])
+
+    def test_automatic_link_preserves_branch_isolation_and_phone_archive(self):
+        contact = self.chatter_api.contact_save(self.session_token,
+            {'name': 'Other primary', 'phone': '+201014763233', 'address': ''}, branch_id=self.branch.id)
+        contact = self.chatter_api.contact_phone_add(self.session_token, contact['id'], '01012345678',
+            reason='Customer confirmed extra number', customer_confirmed=True)
+        secondary = next(phone for phone in contact['phones'] if phone['number'] == '+201012345678')
+        self.chatter_api.contact_phone_update(self.session_token, contact['id'], secondary['id'], 'archive', 'Customer no longer uses number')
+        foreign_branch = self.env['ab_crm_branch'].create({'name': 'Other intake', 'code': 'auto-other', 'replica_id': self.replica.id})
+        self.env['ab_crm_customer'].create({'name': 'Foreign customer', 'phone': '01012345678', 'branch_id': foreign_branch.id})
+        conversation = self.conversation()
+        self.assertTrue(conversation.workspace_detail()['link_review'])
+        self.assertFalse(conversation.customer_id)
+
+    def test_unlink_customer_splits_all_inboxes_and_preserves_history(self):
+        contact = self.chatter_api.contact_save(self.session_token,
+            {'name': 'Grouped customer', 'phone': '01012345678', 'address': ''}, branch_id=self.branch.id)
+        first = self.conversation()
+        streams = first
+        for number in ('54321', '67890'):
+            result = self.env['ab_crm_messaging_api'].with_user(self.service).receive_event(
+                self.account.code, self.account.provider_account,
+                {'id': 'unlink-' + number, 'sender': number, 'body': 'Keep this message',
+                 'timestamp': '2026-01-01 12:00:00', 'unsupported': False, 'source_digest': 'c' * 64})
+            streams |= self.env['ab_crm_message'].browse(result['message_id']).conversation_id.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
+        for stream in streams:
+            preview = stream.action_preview_customer_link(contact['id'])
+            stream.action_confirm_customer_link(contact['id'], preview['fingerprint'])
+        order = self.order(first)
+        queued = self.env['ab_crm_message'].browse(first.action_reply('Keep queued destination')).messaging_operation_ids
+        messages = streams.message_ids.ids
+        snapshot = (order.customer_id.id, order.phone, queued.destination, streams.mapped('external_key'))
+        preview = first.action_preview_customer_unlink(contact['id'])
+        self.assertEqual(set(preview['conversation_ids']), set(streams.ids))
+        with self.assertRaises(AccessError):
+            first.with_user(self.other).action_unlink_customer(contact['id'], preview['fingerprint'])
+        with self.assertRaises(AccessError):
+            first.with_context(ab_chatter_session_token='forged').action_unlink_customer(contact['id'], preview['fingerprint'])
+        with self.assertRaises(UserError):
+            first.action_unlink_customer(contact['id'], 'stale')
+        unrelated = self.chatter_api.contact_save(self.session_token,
+            {'name': 'Unrelated', 'phone': '+201014763233', 'address': ''}, branch_id=self.branch.id)
+        with self.assertRaises(UserError):
+            first.action_preview_customer_unlink(unrelated['id'])
+        first.action_unlink_customer(contact['id'], preview['fingerprint'])
+        self.assertFalse(streams.customer_id)
+        self.assertEqual(streams.message_ids.ids, messages)
+        self.assertEqual((order.customer_id.id, order.phone, queued.destination, streams.mapped('external_key')), snapshot)
+        self.assertTrue(self.env['ab_crm_customer'].browse(contact['id']).active)
+        identities = self.env['ab_crm_identity'].with_context(active_test=False).search([('customer_id', '=', contact['id'])])
+        self.assertEqual(len(identities), 3)
+        self.assertFalse(any(identities.mapped('active')))
+        for stream in streams:
+            self.assertFalse(stream._auto_link_matching_customer())
+            self.assertEqual(len(stream.workspace_detail()['streams']), 1)
+        self.receive('after-unlink')
+        rows = first.workspace_customer_inbox()['items']
+        self.assertEqual(len(rows), 3)
+        self.assertTrue(all(len(row['streams']) == 1 for row in rows))
+        audits = self.env['ab_crm_workspace_audit'].search([('action', '=', 'unlink_customer')])
+        self.assertEqual(set(audits.conversation_id.ids), set(streams.ids))
+        self.assertEqual(audits.employee_id, self.employee)
+        with self.assertRaises(UserError):
+            first.action_unlink_customer(contact['id'], preview['fingerprint'])
+        link = first.action_preview_customer_link(contact['id'])
+        first.action_confirm_customer_link(contact['id'], link['fingerprint'])
+        self.assertEqual(first.customer_id.id, contact['id'])
+        self.assertFalse((streams - first).customer_id)

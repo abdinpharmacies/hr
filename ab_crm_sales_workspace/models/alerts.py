@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 
 
 class AlertPosition(models.Model):
@@ -43,6 +43,9 @@ class AlertPosition(models.Model):
 class ChatterAPI(models.AbstractModel):
     _inherit = 'ab_crm_chatter_api'
 
+    def _notification_message_domain(self):
+        return []
+
     @api.model
     def notifications(self, token, after_id=0):
         session = self._session(token)
@@ -75,14 +78,16 @@ class ChatterAPI(models.AbstractModel):
         acknowledged = {
             row.conversation_id.id: set(row.acknowledged_ids.ids) for row in positions
         }
-        messages = self.env['ab_crm_message'].search(
-            [
-                ('conversation_id', 'in', page.ids),
-                ('direction', '=', 'in'),
-                ('historical', '=', False),
-            ],
-            order='id',
-        )
+        authorized = page.browse()
+        for conversation in page.sorted(lambda record: (record.branch_id.id, record.id)):
+            try:
+                conversation.with_context(ab_chatter_session_token=token)._workspace_scope()
+            except (AccessError, UserError):
+                continue
+            conversation.with_context(ab_chatter_session_token=token)._auto_link_matching_customer()
+            authorized |= conversation
+        messages = authorized._workspace_unread_messages(session).filtered_domain(self._notification_message_domain())
+        unread_counts = {conversation.id: len(messages.filtered(lambda message: message.conversation_id == conversation)) for conversation in authorized}
         groups = {}
         for message in messages:
             cid = message.conversation_id.id
@@ -95,6 +100,10 @@ class ChatterAPI(models.AbstractModel):
                 {
                     'alert_key': f'{self.env.uid}:{session.employee_id.id}:{session.company_id.id}:{cid}',
                     'conversation_id': cid,
+                    'customer_group_key': pending[-1].conversation_id.customer_group_key,
+                    'display_destination': pending[-1].conversation_id._display_destination(),
+                    'conversation_label': pending[-1].conversation_id.messaging_account_id.name,
+                    'unread_count': unread_counts[cid],
                     'latest_message_id': pending[-1].id,
                     'message_ids': [message.id for message in pending],
                     'count': len(pending),

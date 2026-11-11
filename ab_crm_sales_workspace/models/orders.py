@@ -1,11 +1,8 @@
+from .workspace import display_phone
 import math
-from datetime import timedelta
-from contextvars import ContextVar
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
-
-_ORDER = ContextVar('ab_crm_channel_order_mutation', default=False)
 
 
 class Order(models.Model):
@@ -65,132 +62,23 @@ class Order(models.Model):
             )
 
     def _authorize(self, draft=False):
-        self.ensure_one()
-        self.check_access('write')
-        session, stores = self.conversation_id._owned()
-        self.lock_for_update()
-        self.invalidate_recordset(['state', 'store_id', 'revision', 'edit_version'])
-        if self.store_id and self.store_id not in stores:
-            raise AccessError(_('The fulfillment branch is not permitted.'))
-        if draft and self.state != 'draft':
-            raise UserError(_('Reopen the order before editing an accepted revision.'))
-        return session, stores
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def _change(self, values):
-        token = _ORDER.set(True)
-        try:
-            return self.write(values)
-        finally:
-            _ORDER.reset(token)
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def _audit(self, action, values):
-        self.ensure_one()
-        session = self.conversation_id._workspace_actor()
-        token = _ORDER.set(True)
-        try:
-            self.env['ab_crm_channel_order_audit'].sudo().create(
-                {
-                    'order_id': self.id,
-                    'action': action,
-                    'revision': self.revision,
-                    'actor_id': self.env.uid,
-                    'employee_id': session.employee_id.id,
-                    'at': fields.Datetime.now(),
-                    'values': values,
-                }
-            )
-        finally:
-            _ORDER.reset(token)
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     @api.model_create_multi
     def create(self, values_list):
-        prepared = []
-        allowed = {
-            'conversation_id',
-            'name',
-            'store_id',
-            'delivery_address',
-            'delivery_notes',
-            'line_ids',
-        }
-        for values in values_list:
-            if values.keys() - allowed:
-                raise AccessError(_('Order evidence is managed by workflow actions.'))
-            conversation = (
-                self.env['ab_crm_conversation']
-                .browse(values.get('conversation_id'))
-                .exists()
-            )
-            conversation.ensure_one()
-            session, stores = conversation._owned()
-            if values.get('store_id') and values['store_id'] not in stores.ids:
-                raise AccessError(_('The fulfillment branch is not permitted.'))
-            prepared.append(
-                dict(
-                    values,
-                    state='draft',
-                    revision=1,
-                    accepted_by=False,
-                    accepted_employee_id=False,
-                    accepted_at=False,
-                    confirmation=False,
-                    customer_id=conversation.customer_id.id,
-                    channel_id=conversation.channel_id.id,
-                    customer_name=(
-                        conversation._customer_display_name()
-                        if conversation.customer_id
-                        else False
-                    ),
-                    delivery_address=values.get(
-                        'delivery_address', conversation.customer_id.address or ''
-                    ),
-                    phone=conversation.confirmed_phone or False,
-                )
-            )
-        records = super(
-            Order,
-            self.with_context(
-                {
-                    k: v
-                    for k, v in self.env.context.items()
-                    if not k.startswith('default_')
-                }
-            ),
-        ).create(prepared)
-        for record in records:
-            record._audit('created', {'conversation_id': record.conversation_id.id})
-        return records
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def write(self, values):
-        if _ORDER.get():
-            return super().write(values)
-        if values.keys() - {
-            'name',
-            'store_id',
-            'delivery_address',
-            'delivery_notes',
-            'confirmation',
-            'line_ids',
-        }:
-            raise AccessError(_('Order evidence is managed by workflow actions.'))
-        for record in self:
-            session, stores = record._authorize(draft=True)
-            if values.get('store_id') and values['store_id'] not in stores.ids:
-                raise AccessError(_('The fulfillment branch is not permitted.'))
-        if 'store_id' in values and any(
-            record.line_ids.filtered('active')
-            and record.store_id.id != values['store_id']
-            for record in self
-        ):
-            raise UserError(_('Confirm branch recalculation before saving.'))
-        for record in self:
-            super(Order, record).write(
-                dict(values, edit_version=record.edit_version + 1)
-            )
-        return True
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def unlink(self):
-        raise UserError(_('Cancel orders instead of deleting them.'))
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def _snapshot(self):
         self.ensure_one()
@@ -223,84 +111,21 @@ class Order(models.Model):
         }
 
     def action_accept(self):
-        session, stores = self._authorize(draft=True)
-        self._refresh_customer()
-        if (
-            not self.store_id
-            or not self.confirmation
-            or not self.confirmation.strip()
-            or not self.line_ids.filtered('active')
-        ):
-            raise UserError(
-                _(
-                    'Acceptance requires a branch, valid order lines and customer confirmation.'
-                )
-            )
-        self.line_ids.filtered('active')._validate_values()
-        self._change(
-            {
-                'state': 'accepted',
-                'edit_version': self.edit_version + 1,
-                'accepted_by': self.env.uid,
-                'accepted_employee_id': session.employee_id.id,
-                'accepted_at': fields.Datetime.now(),
-            }
-        )
-        self._audit('accepted', self._snapshot())
-        return True
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def action_reopen(self, reason):
-        self._authorize()
-        if (
-            self.state not in ('accepted', 'closed')
-            or not isinstance(reason, str)
-            or not reason.strip()
-        ):
-            raise UserError(
-                _('Provide a reason to reopen an accepted or closed order.')
-            )
-        self._audit('reopened', {'reason': reason, 'snapshot': self._snapshot()})
-        self._change(
-            {
-                'state': 'draft',
-                'revision': self.revision + 1,
-                'edit_version': self.edit_version + 1,
-                'confirmation': False,
-                'accepted_by': False,
-                'accepted_employee_id': False,
-                'accepted_at': False,
-            }
-        )
-        self._refresh_customer()
-        return True
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def action_close(self):
-        self._authorize()
-        if self.state != 'accepted':
-            raise UserError(_('Only accepted orders can be closed.'))
-        self._audit('closed', self._snapshot())
-        self._change({'state': 'closed', 'edit_version': self.edit_version + 1})
-        return True
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def action_cancel(self, reason):
-        self._authorize()
-        if (
-            self.state == 'cancelled'
-            or not isinstance(reason, str)
-            or not reason.strip()
-        ):
-            raise UserError(_('Provide a reason to cancel the order.'))
-        self._audit('cancelled', {'reason': reason, 'snapshot': self._snapshot()})
-        self._change({'state': 'cancelled', 'edit_version': self.edit_version + 1})
-        return True
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def workspace_data(self):
         self.ensure_one()
         self.check_access('read')
         session, stores = self.conversation_id._workspace_scope()
-        if self.state == 'draft':
-            self._authorize(draft=True)
-            self._refresh_customer()
         return dict(
             self._snapshot(),
             id=self.id,
@@ -311,6 +136,9 @@ class Order(models.Model):
             edit_version=self.edit_version,
             provider=self.channel_id.provider,
             identified=bool(self.customer_id and self.phone),
+            display_phone=display_phone(self.phone, self.company_id.country_id.code),
+            phone_options=self.customer_id._directory_data()['phones'] if self.customer_id else [],
+            selected_phone_id=self.customer_id.phone_ids.filtered(lambda p: p.number == self.phone)[:1].id,
             stores=[
                 {'id': store.id, 'name': store.name, 'code': store.code}
                 for store in stores
@@ -346,24 +174,7 @@ class Order(models.Model):
         )
 
     def _refresh_customer(self):
-        self.ensure_one()
-        if self.state == 'draft':
-            conversation = self.conversation_id
-            values = {
-                'customer_id': conversation.customer_id.id,
-                'customer_name': (
-                    conversation._customer_display_name()
-                    if conversation.customer_id
-                    else False
-                ),
-                'phone': conversation.confirmed_phone or conversation.customer_id.phone,
-                'delivery_address': conversation.customer_id.address,
-            }
-            empty = {
-                key: value for key, value in values.items() if value and not self[key]
-            }
-            if empty:
-                self._change(dict(empty, edit_version=self.edit_version + 1))
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def _branch(self, store_id):
         session, stores = self._authorize(draft=True)
@@ -484,134 +295,10 @@ class Order(models.Model):
     def action_save_draft(
         self, values, lines, edit_version, reprice=False, accept=False
     ):
-        self._authorize(draft=True)
-        if edit_version != self.edit_version:
-            raise UserError(
-                _('This order changed in another window. Reopen it before saving.')
-            )
-        if not isinstance(values, dict) or values.keys() - {
-            'store_id',
-            'delivery_address',
-            'delivery_notes',
-            'confirmation',
-            'delivery_location_message_id',
-        }:
-            raise AccessError(_('Order evidence is managed by workflow actions.'))
-        if 'delivery_location_message_id' in values:
-            source_id = values['delivery_location_message_id']
-            if source_id is not False and (type(source_id) is not int or source_id <= 0):
-                raise ValidationError(_('Invalid delivery location source.'))
-            if source_id is not False:
-                source = self.env['ab_crm_message'].browse(source_id).exists()
-                source.check_access('read')
-                if (len(source) != 1 or not source._location_data() or source.direction != 'in'
-                        or source.conversation_id != self.conversation_id
-                        or source.branch_id != self.branch_id or source.company_id != self.company_id):
-                    raise AccessError(_('Select an incoming location from this conversation.'))
-            values = dict(values, delivery_location_snapshot=source._location_data() if source_id else False)
-        if not isinstance(lines, list) or len(lines) > 200:
-            raise ValidationError(_('Invalid order lines.'))
-        store_id = values.get('store_id', self.store_id.id)
-        store = self._branch(store_id) if store_id else False
-        branch_changed = bool(self.store_id and store != self.store_id)
-        if branch_changed and self.line_ids.filtered('active') and not reprice:
-            raise UserError(_('Confirm branch recalculation before saving.'))
-        if lines and not store:
-            raise UserError(_('Select a fulfillment branch first.'))
-        with self.env.cr.savepoint():
-            old_store = self.store_id.id
-            old_location = self.delivery_location_message_id
-            old_location_data = self._snapshot()['delivery_location']
-            self._change(dict(values, edit_version=self.edit_version + 1))
-            kept = self.env['ab_crm_channel_order_line']
-            seen = set()
-            for row in lines:
-                if not isinstance(row, dict) or row.keys() - {
-                    'id',
-                    'product_id',
-                    'uom_id',
-                    'quantity',
-                    'price',
-                }:
-                    raise ValidationError(_('Invalid order lines.'))
-                line = self.line_ids.filtered(
-                    lambda r: r.id == row.get('id') and r.active
-                )
-                if row.get('id') and (not line or line.id in seen):
-                    raise AccessError(_('Invalid order lines.'))
-                seen.add(line.id)
-                product = (
-                    line.product_id
-                    if line
-                    else self.env['ab_product'].browse(row.get('product_id')).exists()
-                )
-                product.ensure_one()
-                product.check_access('read')
-                if line and product.id != row.get('product_id'):
-                    raise AccessError(
-                        _('Order line ownership and product cannot be changed.')
-                    )
-                unit = self.env['ab_product_uom'].browse(row.get('uom_id')).exists()
-                unit.ensure_one()
-                unit.check_access('read')
-                price = row.get('price')
-                if branch_changed:
-                    price = (
-                        self.env['ab_sales_pos_api']._store_default_price(
-                            store.id, product
-                        )
-                        * unit.factor
-                        / (product.uom_id.factor or 1)
-                    )
-                line_values = {
-                    'uom_id': unit.id,
-                    'quantity': row.get('quantity'),
-                    'price': price,
-                }
-                if line:
-                    line.write(line_values)
-                else:
-                    line = self.env['ab_crm_channel_order_line'].create(
-                        dict(line_values, order_id=self.id, product_id=product.id)
-                    )
-                kept |= line
-            (self.line_ids.filtered('active') - kept).write({'active': False})
-            kept._validate_values()
-            if old_location != self.delivery_location_message_id or old_location_data != self._snapshot()['delivery_location']:
-                self._audit('delivery_location_changed', {
-                    'old': old_location_data,
-                    'new': self._snapshot()['delivery_location'],
-                })
-            if branch_changed:
-                self._audit('branch_changed', {'old': old_store, 'new': store.id})
-            self._refresh_customer()
-            if accept:
-                self.action_accept()
-            return self.workspace_data()
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def action_add_product(self, product_id):
-        self._authorize(draft=True)
-        if not self.store_id:
-            raise UserError(_('Select a fulfillment branch first.'))
-        product = self.env['ab_product'].browse(product_id).exists()
-        product.ensure_one()
-        product.check_access('read')
-        price = self.env['ab_sales_pos_api']._store_default_price(
-            self.store_id.id, product
-        )
-        return (
-            self.env['ab_crm_channel_order_line']
-            .create(
-                {
-                    'order_id': self.id,
-                    'product_id': product.id,
-                    'uom_id': product.uom_id.id,
-                    'quantity': 1,
-                    'price': price,
-                }
-            )
-            .id
-        )
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
 
 class Line(models.Model):
@@ -666,53 +353,13 @@ class Line(models.Model):
 
     @api.model_create_multi
     def create(self, values_list):
-        for values in values_list:
-            self.env['ab_crm_channel_order'].browse(values.get('order_id'))._authorize(
-                draft=True
-            )
-        records = super().create(values_list)
-        for order in records.order_id:
-            order._change({'edit_version': order.edit_version + 1})
-        for line in records:
-            line.order_id._audit(
-                'line_added',
-                {
-                    'line_id': line.id,
-                    'price': line.price,
-                    'quantity': line.quantity,
-                    'product_id': line.product_id.id,
-                },
-            )
-        return records
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def write(self, values):
-        if values.keys() - {'uom_id', 'quantity', 'price', 'active'}:
-            raise AccessError(_('Order line ownership and product cannot be changed.'))
-        for line in self:
-            line.check_access('write')
-            line.order_id._authorize(draft=True)
-            before = {
-                key: line[key].id if key == 'uom_id' else line[key] for key in values
-            }
-            changed = {
-                key: value for key, value in values.items() if before[key] != value
-            }
-            if changed:
-                line.order_id._audit(
-                    'line_changed',
-                    {
-                        'line_id': line.id,
-                        'old': {key: before[key] for key in changed},
-                        'new': changed,
-                    },
-                )
-        result = super().write(values)
-        for order in self.order_id:
-            order._change({'edit_version': order.edit_version + 1})
-        return result
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def unlink(self):
-        raise UserError(_('Archive order lines instead of deleting them.'))
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
 
 class Audit(models.Model):
@@ -737,12 +384,10 @@ class Audit(models.Model):
 
     @api.model_create_multi
     def create(self, values_list):
-        if not _ORDER.get():
-            raise AccessError(_('Audit records are managed by workflow actions.'))
-        return super().create(values_list)
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def write(self, values):
-        raise AccessError(_('Audit records cannot be changed.'))
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def unlink(self):
-        raise AccessError(_('Audit records cannot be deleted.'))
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))

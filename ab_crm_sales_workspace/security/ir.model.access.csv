@@ -1,6 +1,6 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-access_ab_crm_channel_order,ab_crm_channel_order,model_ab_crm_channel_order,group_agent,1,1,1,0
-access_ab_crm_channel_order_line,ab_crm_channel_order_line,model_ab_crm_channel_order_line,group_agent,1,1,1,0
+access_ab_crm_channel_order,ab_crm_channel_order,model_ab_crm_channel_order,group_agent,1,0,0,0
+access_ab_crm_channel_order_line,ab_crm_channel_order_line,model_ab_crm_channel_order_line,group_agent,1,0,0,0
 access_ab_crm_channel_order_audit,ab_crm_channel_order_audit,model_ab_crm_channel_order_audit,group_agent,1,0,0,0
 access_ab_crm_workspace_read,ab_crm_workspace_read,model_ab_crm_workspace_read,ab_crm_core.group_manager,1,0,0,0
 access_ab_crm_workspace_read_admin,ab_crm_workspace_read,model_ab_crm_workspace_read,base.group_system,1,0,0,0
@@ -17,3 +17,7 @@ access_ab_crm_branch_location_manager,ab_crm_branch_location,model_ab_crm_branch
 access_ab_crm_branch_location_admin,ab_crm_branch_location,model_ab_crm_branch_location,base.group_system,1,1,1,0
 access_ab_crm_branch_location_import_manager,ab_crm_branch_location_import,model_ab_crm_branch_location_import,ab_crm_core.group_manager,1,1,1,0
 access_ab_crm_branch_location_import_admin,ab_crm_branch_location_import,model_ab_crm_branch_location_import,base.group_system,1,1,1,0
+access_contact_phone_agent,Contact phones,model_ab_crm_contact_phone,group_agent,1,1,1,0
+access_contact_phone_manager,Contact phones,model_ab_crm_contact_phone,ab_crm_core.group_manager,1,1,1,0
+access_contact_phone_admin,Contact phones,model_ab_crm_contact_phone,base.group_system,1,1,1,0
+access_pos_handoff_agent,CRM POS handoff,model_ab_crm_pos_handoff,group_agent,1,0,0,0

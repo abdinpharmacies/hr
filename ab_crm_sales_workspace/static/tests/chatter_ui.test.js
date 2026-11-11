@@ -214,7 +214,8 @@ test("unauthorized template editor stays read only and load failure can refresh"
         return {items: [{id: 1, name: "Reply", body: "Read only"}], can_manage: false};
     }});
     await animationFrame(); await animationFrame();
-    expect(".ab_template_dialog [role=alert]").toHaveText("Load failed");
+    expect(".ab_template_dialog [role=alert]").toHaveCount(0);
+    expect(".o_notification:contains(Load failed)").toHaveCount(1);
     failed = false;
     await contains("button:contains(Refresh)").click();
     expect(".ab_template_preview").toHaveText("Read only");

@@ -2,8 +2,11 @@ import secrets
 from datetime import timedelta
 from hashlib import sha256
 
+from psycopg2.errors import SerializationFailure
+
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
+from odoo.tools import SQL
 
 
 class User(models.Model):
@@ -49,6 +52,36 @@ class Session(models.Model):
     def _get_pos_profile(self):
         self.ensure_one()
         return self.profile_id
+
+    def _try_lock_activity(self):
+        self.ensure_one()
+        self.flush_recordset()
+        try:
+            with self.env.cr.savepoint(flush=False):
+                self.env.cr.execute(
+                    SQL(
+                        'SELECT id FROM %s WHERE id = %s '
+                        'FOR NO KEY UPDATE SKIP LOCKED',
+                        SQL.identifier(self._table),
+                        self.id,
+                    ),
+                    log_exceptions=False,
+                )
+                return self if self.env.cr.fetchone() else self.browse()
+        except SerializationFailure:
+            session_fields = [
+                'token_hash', 'user_id', 'employee_id', 'profile_id',
+                'company_id', 'state', 'login_at', 'expires_at', 'device_uid',
+            ]
+            previous = self.read(session_fields, load=None)
+            with self.env.registry.cursor() as cursor:
+                current_env = api.Environment(
+                    cursor, self.env.uid, self.env.context, su=self.env.su
+                )
+                current = current_env[self._name].browse(self.id).exists()
+                if current.read(session_fields, load=None) != previous:
+                    raise
+            return self.browse()
 
     def unlink(self):
         raise UserError(_('Close chatter sessions instead of deleting them.'))
@@ -109,7 +142,7 @@ class ChatterAPI(models.AbstractModel):
             raise AccessError(_('Your chatter session expired. Sign in again.'))
         activity_cutoff = fields.Datetime.now() - timedelta(minutes=1)
         if session.last_activity_at < activity_cutoff:
-            locked_session = session.try_lock_for_update(allow_referencing=True)
+            locked_session = session._try_lock_activity()
             if locked_session:
                 locked_session.invalidate_recordset(['last_activity_at'])
                 if locked_session.last_activity_at < activity_cutoff:

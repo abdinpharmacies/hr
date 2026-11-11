@@ -159,9 +159,19 @@ test("compact update time uses local day, recent weekday and older date", () => 
 test("compact header uses icon channels and no redundant helper lines", async () => {
     const component = await mountWithCleanup(ChatterHarness);
     component.state.detail.streams = [{id: 1, provider: "telegram", label: "Bot"}, {id: 2, provider: "whatsapp", label: "Phone"}];
-    component.state.detail.last_update_at = "2026-11-07 12:00:00";
+    Object.assign(component.state.detail, {last_update_at: "2026-11-07 12:00:00", name: "Customer", destination: "767608631", conversation_label: "abdin_callcenter_bot", display_phone: "01098320212", unread_count: 7,
+        contact: {id: 3, is_ab_customer: true, display_phone: "01098320212"}});
     await animationFrame();
-    expect(".ab_contact_title time").toHaveCount(1);
+    expect(".ab_contact_heading").toHaveText("Customer\n01098320212");
+    expect(".ab_chat_header .badge").toHaveCount(0);
+    expect(".ab_chat_header input[type='checkbox']").toHaveCount(0);
+    expect(".ab_chat_header > *").toHaveCount(3);
+    component.state.detail.provider = "whatsapp";
+    component.state.detail.destination = "201098320212";
+    component.state.detail.conversation_label = "WhatsApp";
+    await animationFrame();
+    expect(".ab_contact_heading").toHaveText("Customer\n01098320212");
+    expect(".ab_contact_title time").toHaveCount(0);
     expect(".ab_channel_button").toHaveCount(2);
     expect(".ab_channel_button.active .ab_channel_led").toHaveCount(1);
     expect(".ab_channel_button").toHaveText("");
@@ -269,5 +279,59 @@ for (const direction of ["ltr", "rtl"]) {
             await animationFrame();
             expect(element.scrollTop).toBe(80);
         }
+    });
+}
+
+for (const direction of ["ltr", "rtl"]) {
+    test(`channel chooser keyboard dismissal and alert selection preserve drafts in ${direction}`, async () => {
+        const acknowledged = [];
+        mockService("ab_chatter_session", {current: {token: "test"}, workspaceDrafts: new Map(), unreadChanged() {},
+            async acknowledge(item) { acknowledged.push(item.message_ids); }});
+        const streams = [
+            {id: 1, provider: "whatsapp", destination: "201098320212", display_destination: "01098320212", label: "Business inbox", unread: 1},
+            {id: 2, provider: "whatsapp", destination: "201012345678", display_destination: "01012345678", label: "Business inbox", unread: 1},
+            {id: 3, provider: "telegram", destination: "12345", display_destination: "12345", label: "Telegram bot", unread: 0},
+        ];
+        const detail = id => ({id, name: "Customer", phone: "+201098320212", provider: "whatsapp", owned: true,
+            can_send: true, streams, unread_count: 1, conversation_label: "Business inbox", messages: [message(id * 100, "received", "in")], orders: []});
+        class NavigationHarness extends SalesWorkspace {
+            setup() { super.setup(); this.direction = direction; }
+            async call(model, method, args, kwargs = {}) {
+                if (method === "bootstrap") return {session: {employee_id: 1, employee: "Agent"}};
+                if (method === "workspace_customer_inbox") return {items: [{id: 1, name: "Customer", group_key: "customer:1", streams, channels: ["whatsapp", "telegram"]}], has_more: false};
+                if (method === "contact_search") return {contacts: []};
+                if (method === "workspace_focus") return detail(args[0][0]);
+                if (method === "workspace_detail") return {...detail(args[0][0]), messages: kwargs.after_id ? [] : detail(args[0][0]).messages};
+            }
+        }
+        const workspace = await mountWithCleanup(NavigationHarness);
+        expect('.ab_chat_header .badge').toHaveCount(0);
+        await contains('.ab_channel_button[data-channel="whatsapp"]').click();
+        expect('.ab_channel_chooser button.active').toHaveText(/01098320212/);
+        expect('.ab_channel_chooser button.active').toHaveAttribute('aria-pressed', 'true');
+        await contains('.ab_channel_chooser button:first').press('ArrowDown');
+        expect('.ab_channel_chooser button:last').toBeFocused();
+        await contains('.ab_channel_chooser button:last').press('Escape');
+        expect('.ab_channel_chooser').toHaveCount(0);
+        expect('.ab_channel_button[data-channel="whatsapp"]').toBeFocused();
+        await contains('.ab_channel_button[data-channel="whatsapp"]').click();
+        await contains('.ab_contact_title').click();
+        expect('.ab_channel_chooser').toHaveCount(0);
+        workspace.state.reply = "First draft";
+        workspace.state.attachments = [{name: "first.pdf"}];
+        workspace.drafts.set(2, {reply: "Second draft", attachments: [{name: "second.pdf"}], replyTo: null});
+        workspace.state.channelChooser = "whatsapp";
+        const navigation = workspace.focusAlert({conversation_id: 2, latest_message_id: 200, message_ids: [200]}, "test");
+        await animationFrame(); await animationFrame(); await animationFrame();
+        await navigation;
+        expect(workspace.state.detail.id).toBe(2);
+        expect(workspace.state.channelChooser).toBe("");
+        expect(workspace.state.reply).toBe("Second draft");
+        expect(workspace.state.attachments[0].name).toBe("second.pdf");
+        expect(workspace.drafts.get(1).reply).toBe("First draft");
+        expect(workspace.drafts.get(1).attachments[0].name).toBe("first.pdf");
+        expect(workspace.preferredStream(workspace.state.inbox[0])).toBe(2);
+        expect('[data-message-id="200"]').toHaveClass('ab_message_focus');
+        expect(acknowledged).toEqual([[200]]);
     });
 }

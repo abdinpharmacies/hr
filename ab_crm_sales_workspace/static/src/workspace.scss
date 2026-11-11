@@ -53,7 +53,6 @@
         > header > div { font-size: .8rem; }
         .ab_workspace_columns { grid-template-columns: minmax(0, 1fr); grid-template-rows: 150px minmax(0, 1fr); }
         aside { padding: 8px; border-inline-end: 0; border-block-end: 1px solid #d9e2ec; }
-        .ab_contacts_header { display: none; }
         .ab_chat_header { min-height: 56px; padding: 8px; }
         .ab_composer { padding: 8px; }
         .ab_composer_input { height: 64px; }
@@ -86,14 +85,7 @@
     .ab_message_explanation { font-size: .85rem; margin-top: 4px; }
 }
 
-.ab_chatter_alert_stack {
-    position: fixed; inset-block-end: 12px; inset-inline-end: 12px;
-    z-index: 1050; width: 360px; max-width: calc(100vw - 24px); max-height: 35vh;
-    overflow-y: auto; pointer-events: none;
-    .ab_chatter_customer_alert { pointer-events: auto; background: var(--o-view-background-color, white); color: var(--body-color, #263238); border: 1px solid #bad5e9; border-radius: 8px; box-shadow: 0 3px 12px #0002; padding: 12px; margin-top: 8px; }
-    .ab_alert_title { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
-    p { overflow-wrap: anywhere; margin: 6px 0; }
-}
+.ab_chatter_notification .o_notification_content { white-space: pre-line; }
 
 .ab_chatter_contacts .form-label { display: block; text-align: start; }
 
@@ -361,3 +353,18 @@
     .ab_chat_header.ab_search_open .ab_contact_heading,
     .ab_chat_header.ab_search_open .ab_channel_navigation { visibility: hidden; }
 }
+
+.ab_crm_sales_workspace {
+    .ab_send { border-radius: 50%; width: 44px; height: 44px; padding: 8px; }
+    .ab_send:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+    .ab_send:disabled { opacity: .45; }
+    [dir="rtl"] .ab_send svg { transform: scaleX(-1); }
+    .ab_shared_contact { padding: .7rem; border: 1px solid currentColor; border-radius: .7rem; }
+    .ab_conversation.selected[data-channel="whatsapp"] { border-inline-start: 4px solid #128c7e; }
+    .ab_conversation.selected[data-channel="telegram"] { border-inline-start: 4px solid #229ed9; }
+}
+.ab_chatter_contact_dialog.channel-whatsapp .btn-primary { background: #128c7e; border-color: #128c7e; }
+.ab_chatter_contact_dialog.channel-telegram .btn-primary { background: #229ed9; border-color: #229ed9; }
+
+.ab_crm_sales_workspace .ab_channel_chooser { position: absolute; inset-inline-end: 0; top: 100%; z-index: 20; min-width: 240px; max-width: 85vw; padding: 6px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px #0002; }
+.ab_chatter_contacts .ab_contact_phones input.form-control { max-width: 100%; }

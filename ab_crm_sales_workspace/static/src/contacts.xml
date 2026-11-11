@@ -1,30 +1,86 @@
 <templates xml:space="preserve">
 <t t-name="ab_crm_sales_workspace.Contacts">
-    <Dialog title="title" size="'md'">
+    <Dialog title="title" size="'md'" contentClass="'ab_chatter_contact_dialog channel-' + (props.channel || 'telegram')">
         <div class="ab_chatter_contacts" t-att-dir="direction">
-            <p t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+
+            <div t-if="props.mode === 'add'" class="d-flex gap-2 mb-3">
+                <button class="btn" t-att-class="state.contactMode === 'existing' ? 'btn-primary' : 'btn-outline-primary'" t-att-aria-pressed="state.contactMode === 'existing' ? 'true' : 'false'" t-on-click="existingMode">Use existing</button>
+                <button class="btn" t-att-class="state.contactMode === 'new' ? 'btn-success' : 'btn-outline-success'" t-att-aria-pressed="state.contactMode === 'new' ? 'true' : 'false'" t-on-click="createNew">Create new</button>
+            </div>
             <t t-if="!state.editing">
                 <input t-ref="search" class="form-control" t-model="state.query" t-on-input="queryChanged" placeholder="Search by name or phone" aria-label="Search by name or phone"/>
+                <h5 class="mt-3">Saved contacts</h5>
                 <p t-if="state.loading" role="status">Loading…</p>
                 <p t-elif="!state.contacts.length">No saved contacts found.</p>
-                <button t-foreach="state.contacts" t-as="contact" t-key="contact.id" class="btn btn-light d-block w-100 text-start my-2" t-on-click="() => this.select(contact)"><bdi t-esc="contact.name"/> · <bdi dir="ltr" t-esc="contact.phone"/></button>
+                <button t-foreach="state.contacts" t-as="contact" t-key="contact.id" class="btn btn-light d-block w-100 text-start my-2" t-on-click="() => this.select(contact)"><bdi t-esc="contact.name"/> · <bdi dir="ltr" t-esc="contact.display_phone || contact.phone"/></button>
                 <button class="btn btn-light" t-att-disabled="!state.offset || state.loading" t-on-click="() => this.page(-1)">Previous</button>
                 <button class="btn btn-light" t-att-disabled="!state.more || state.loading" t-on-click="() => this.page(1)">Next</button>
+                <t t-if="props.mode === 'add'" t-call="ab_crm_sales_workspace.PosContactSearch"/>
+            </t>
+            <t t-elif="props.mode === 'consolidate'">
+                <p>Reviewed numbers and identity links will move to the kept contact. Messages and order snapshots remain.</p>
+                <section t-foreach="[state.preview.canonical, state.preview.duplicate]" t-as="contact" t-key="contact.id" class="border rounded p-2 mb-2">
+                    <h5><t t-if="contact.id === props.initial.id">Keep contact:</t><t t-else="">Archive duplicate:</t> <bdi t-esc="contact.name"/></h5>
+                    <p t-if="contact.id === props.initial.id">Keep primary number: <bdi dir="ltr" t-esc="contact.display_phone || contact.phone"/></p>
+                    <p t-if="!contact.phones.length"><bdi dir="ltr" t-esc="contact.display_phone || contact.phone"/></p>
+                    <p t-foreach="contact.phones" t-as="phone" t-key="phone.id"><bdi dir="ltr" t-esc="phone.display_number || phone.number"/> <t t-esc="phone.label"/><span t-if="phone.primary"> · <span>Primary</span></span></p>
+                    <p t-foreach="state.preview.identity_details.filter(account => account.customer_id === contact.id)" t-as="account" t-key="account.id"><t t-esc="this.channelLabel(account.provider)"/> · <bdi dir="ltr" t-esc="account.display_account || account.account"/></p>
+                    <p t-foreach="state.preview.conversation_details.filter(entry => entry.customer_id === contact.id)" t-as="entry" t-key="entry.id"><t t-esc="this.channelLabel(entry.provider)"/> · <bdi dir="ltr" t-esc="entry.destination"/> · <t t-esc="entry.label"/></p>
+                </section>
+                <label>Link review reason<textarea class="form-control" t-model="state.reason" maxlength="2000"/></label>
+            </t>
+            <t t-elif="props.mode === 'link'">
+                <p><bdi t-esc="state.selected.name"/> · <bdi dir="ltr" t-esc="state.selected.display_phone || state.selected.phone"/></p>
+                <label t-if="state.preview.conflict"><input type="checkbox" t-model="state.resolveConflict"/> Resolve conflicting identity ownership</label>
             </t>
             <t t-elif="props.mode === 'delete'">
-                <p><span>Delete contact?</span> <bdi t-esc="state.selected.name"/></p>
+                <p><span>Archive contact?</span> <bdi t-esc="state.selected.name"/></p>
                 <p>The contact will be archived. Messages and orders remain. Future incoming messages will still appear.</p>
             </t>
             <t t-else="">
+                <label class="d-block mb-2"><input type="checkbox" disabled="disabled" t-att-checked="!!state.selected?.is_ab_customer"/> Is POS customer</label>
+                <t t-if="state.selected &amp;&amp; ['add', 'edit'].includes(props.mode)"><input class="form-control" t-model="state.query" t-on-input="() => this.searchPos()" placeholder="Search POS customers" aria-label="Search POS customers"/><t t-call="ab_crm_sales_workspace.PosContactSearch"/></t>
                 <label class="form-label" for="ab_contact_name">Name</label><input id="ab_contact_name" t-ref="name" class="form-control mb-2" t-model="state.name" maxlength="200"/>
-                <label class="form-label" for="ab_contact_phone">Phone</label><input id="ab_contact_phone" class="form-control mb-2" t-model="state.phone" t-on-input="() => state.confirmedDuplicate = false" type="tel" dir="ltr"/>
+                <label class="form-label" for="ab_contact_phone">Phone</label><input id="ab_contact_phone" t-att-readonly="!!state.selected" class="form-control mb-2" t-model="state.phone" t-on-input="() => state.confirmedDuplicate = false" type="tel" dir="ltr"/>
+                <div t-if="state.selected" class="ab_contact_phones"><button t-if="!state.phones.length &amp;&amp; state.selected.can_manage" class="btn btn-light" t-on-click="() => this.phoneAction('initialize')">Initialize saved numbers</button>
+                    <div t-foreach="state.phones" t-as="phone" t-key="phone.id" class="d-flex gap-2 align-items-center flex-wrap my-2">
+                        <bdi dir="ltr" t-esc="phone.display_number || phone.number"/><input class="form-control" t-model="phone.label" placeholder="Phone label" aria-label="Phone label" maxlength="100"/>
+                        <span t-if="phone.primary">Primary</span>
+                        <button t-else="" class="btn btn-light" t-on-click="() => this.phoneAction('primary', phone)">Make primary</button>
+                        <button class="btn btn-light" t-on-click="() => this.phoneAction('label', phone)">Save label</button>
+                        <button t-if="!phone.primary" class="btn btn-light" t-on-click="() => this.phoneAction('archive', phone)">Archive number</button>
+                    </div>
+                    <label>Phone review reason<textarea class="form-control" t-model="state.reason" maxlength="2000"/></label>
+                    <input class="form-control my-2" t-model="state.newPhone" type="tel" dir="ltr" placeholder="Additional number" aria-label="Additional number"/>
+                    <input class="form-control my-2" t-model="state.phoneLabel" maxlength="100" placeholder="Phone label" aria-label="Phone label"/>
+                    <label class="d-block"><input type="checkbox" t-model="state.customerConfirmed"/> Customer confirmed this is the same person</label>
+                    <label t-if="state.selected.can_manage" class="d-block"><input type="checkbox" t-model="state.sharedNumber"/> Manager review: allow shared number</label>
+                    <label t-if="state.posStores.length > 1" class="d-block">POS branch<select class="form-select" t-model="state.posStore"><option value="">Select a branch</option><option t-foreach="state.posStores" t-as="store" t-key="store.id" t-att-value="store.id" t-esc="store.name"/></select></label>
+                    <button class="btn btn-outline-primary my-2" t-att-disabled="state.loading" t-on-click="() => this.phoneAction('add')">Add number</button>
+                </div>
+                <div t-if="state.selected" class="my-3">
+                    <h5>Linked channel accounts</h5>
+                    <p t-foreach="state.accounts" t-as="account" t-key="account.id"><t t-esc="this.channelLabel(account.provider)"/> · <bdi dir="ltr" t-esc="account.display_destination"/> · <t t-esc="account.label"/></p>
+                    <button t-if="props.onLink &amp;&amp; props.conversationId" class="btn btn-light" t-on-click="() => props.onLink(state.selected)">Review conversation association</button>
+                    <p>Number changes do not redirect conversations or queued replies.</p>
+                </div>
                 <label class="form-label" for="ab_contact_address">Address</label><textarea id="ab_contact_address" class="form-control mb-2" t-model="state.address" maxlength="2000"/>
                 <t t-if="!state.selected"><label class="form-label" for="ab_contact_branch">Branch</label><select id="ab_contact_branch" class="form-select" t-model="state.branch"><option t-foreach="state.branches" t-as="branch" t-key="branch.id" t-att-value="branch.id" t-esc="branch.name"/></select></t>
                 <p class="text-muted mt-2">Contact details do not verify identity or enable sending.</p>
-                <div t-if="state.duplicates?.length" class="alert alert-info"><p>Potential duplicates. Select an existing contact or save separately.</p><button t-foreach="state.duplicates" t-as="contact" t-key="contact.id" class="btn btn-light d-block" t-on-click="() => this.useExisting(contact)"><bdi t-esc="contact.name"/> · <bdi dir="ltr" t-esc="contact.phone"/></button><button class="btn btn-outline-primary mt-2" t-att-disabled="state.loading" t-on-click="() => { state.confirmedDuplicate = true; this.save(); }">Save separately</button></div>
+                <div t-if="state.duplicates?.length" class="my-3"><div t-foreach="state.duplicates" t-as="contact" t-key="contact.id"><button class="btn btn-light" t-on-click="() => this.useExisting(contact)"><bdi t-esc="contact.name"/> · <bdi dir="ltr" t-esc="contact.display_phone || contact.phone"/></button></div><button class="btn btn-outline-primary mt-2" t-att-disabled="state.loading" t-on-click="() => { state.confirmedDuplicate = true; this.save(); }">Save separately</button></div>
             </t>
         </div>
-        <t t-set-slot="footer"><button t-if="state.editing" class="btn" t-att-class="props.mode === 'delete' ? 'btn-danger' : 'btn-primary'" t-att-disabled="state.loading" t-on-click="save"><t t-if="props.mode === 'delete'">Delete</t><t t-else="">Save</t></button><button class="btn btn-secondary" t-on-click="props.close">Cancel</button></t>
+        <t t-set-slot="footer"><button t-if="state.editing" class="btn" t-att-class="props.mode === 'delete' ? 'btn-danger' : 'btn-primary'" t-att-disabled="state.loading" t-on-click="save"><t t-if="props.mode === 'delete'">Archive</t><t t-else="">Save</t></button><button class="btn btn-secondary" t-on-click="props.close">Cancel</button></t>
     </Dialog>
 </t>
+<t t-name="ab_crm_sales_workspace.OrderPhone"><Dialog title="title" size="'sm'"><button t-foreach="props.phones" t-as="phone" t-key="phone.id" class="btn btn-light d-block w-100 my-2" t-on-click="() => this.select(phone)"><bdi dir="ltr" t-esc="phone.display_number || phone.number"/> <t t-esc="phone.label"/></button><t t-set-slot="footer"><button class="btn btn-secondary" t-on-click="props.close">Cancel</button></t></Dialog></t>
+<t t-name="ab_crm_sales_workspace.PosContactSearch">                <section class="border-top mt-3 pt-3" aria-label="POS customers">
+                    <h5>POS customers</h5>
+                    <label for="ab_pos_search_branch">Branch</label><select id="ab_pos_search_branch" class="form-select" t-model="state.branch" t-on-change="() => this.searchPos()"><option t-foreach="state.branches" t-as="branch" t-key="branch.id" t-att-value="branch.id" t-esc="branch.name"/></select>
+                    <label t-if="state.posStores.length > 1" class="d-block">POS branch<select class="form-select" t-model="state.posStore"><option value="">Select a branch</option><option t-foreach="state.posStores" t-as="store" t-key="store.id" t-att-value="store.id" t-esc="store.name"/></select></label>
+                    <button class="btn btn-outline-primary my-2" t-att-disabled="state.loading" t-on-click="() => this.searchPos(true)">Search POS by phone</button>
+                    <p t-if="state.posMessage" role="status" t-esc="state.posMessage"/>
+                    <p t-if="!state.posCustomers.length">No POS customers found.</p>
+                    <button t-foreach="state.posCustomers" t-as="customer" t-key="customer.id" class="btn btn-light d-block w-100 text-start my-2" t-att-disabled="state.loading" t-on-click="() => this.selectPos(customer)"><bdi t-esc="customer.name"/> · <bdi dir="ltr" t-esc="customer.mobile_phone || customer.work_phone"/></button>
+                </section></t>
 </templates>

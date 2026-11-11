@@ -1,3 +1,4 @@
+import {useChatterFeedback, feedbackError} from "./feedback";
 import {Component, onWillUnmount, onWillUpdateProps, useState} from "@odoo/owl";
 import {registry} from "@web/core/registry";
 import {useService} from "@web/core/utils/hooks";
@@ -15,6 +16,7 @@ export class BranchShareWidget extends Component {
         this.dialog = useService("dialog");
         this.session = useService("ab_chatter_session");
         this.state = useState({error: ""});
+        this.feedback = useChatterFeedback(this);
         this.generation = 0;
         onWillUpdateProps(() => { this.generation++; });
         onWillUnmount(() => { this.destroyed = true; });
@@ -23,18 +25,18 @@ export class BranchShareWidget extends Component {
         this.state.error = "";
         try {
             const cached = this.session.current;
-            const bootstrap = await this.orm.call("ab_crm_chatter_api", "bootstrap", [], {token: cached?.token || false});
+            const bootstrap = await this.feedback.call(this.orm, "ab_crm_chatter_api", "bootstrap", [], {token: cached?.token || false});
             if (!bootstrap.session) {
                 this.dialog.add(ChatterLoginDialog, {employees: bootstrap.employees, onLogin: async (profileId, pin) => {
                     let device = sessionStorage.getItem(`ab_chatter_device_${user.userId}`);
                     if (!device) { device = crypto.randomUUID(); sessionStorage.setItem(`ab_chatter_device_${user.userId}`, device); }
-                    const result = await this.orm.call("ab_crm_chatter_api", "employee_login", [], {profile_id: profileId, pin, device_uid: device});
+                    const result = await this.feedback.call(this.orm, "ab_crm_chatter_api", "employee_login", [], {profile_id: profileId, pin, device_uid: device});
                     if (result.error) throw new Error(result.error);
                     this.session.set(result);
                     this.show();
                 }});
             } else this.show();
-        } catch (error) { this.state.error = error.data?.message || error.message; }
+        } catch (error) { this.state.error = feedbackError(this, error); }
     }
     show() {
         if (this.destroyed) return;
@@ -42,11 +44,11 @@ export class BranchShareWidget extends Component {
         const record = this.props.record;
         const id = record.resId;
         const conversationId = record.resModel === "ab_crm_conversation" ? id : record.data.conversation_id?.id;
-        if (!conversationId) { this.state.error = _t("Select a conversation before sharing a branch."); return; }
+        if (!conversationId) { this.state.error = feedbackError(this, _t("Select a conversation before sharing a branch.")); return; }
         const token = this.session.current.token;
         this.dialog.add(LocationDialog, {
             conversationId,
-            call: (model, method, args) => this.orm.call(model, method, args, {context: {ab_chatter_session_token: token}}),
+            call: (model, method, args) => this.feedback.call(this.orm, model, method, args, {context: {ab_chatter_session_token: token}}),
             valid: () => !this.destroyed && this.generation === generation && this.props.record.resId === id && this.session.current?.token === token && (record.resModel === "ab_crm_conversation" || record.data.conversation_id?.id === conversationId),
         });
     }

@@ -1,6 +1,6 @@
 {
     'name': 'Sales Chatter',
-    'version': '19.0.1.15.1',
+    'version': '19.0.1.27.0',
     'license': 'LGPL-3',
     'category': 'Sales',
     'author': 'Abdin Pharmacies',
@@ -10,7 +10,6 @@
         'web',
         'ab_widgets',
         'ab_crm_telegram',
-        'ab_oms_core',
         'ab_sales',
         'ab_hr',
         'ab_employee_access_sales',
@@ -29,7 +28,9 @@
         'views/branch_location.xml',
     ],
     'assets': {
-        'web.assets_backend': ['ab_crm_sales_workspace/static/src/*'],
+        'web.assets_backend': [
+            'ab_crm_sales_workspace/static/src/*',
+        ],
         'web.assets_unit_tests': ['ab_crm_sales_workspace/static/tests/*.test.js'],
     },
     'installable': True,

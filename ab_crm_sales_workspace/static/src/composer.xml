@@ -2,7 +2,7 @@
     <t t-name="ab_crm_sales_workspace.LocationDialog">
         <Dialog title="title" size="'md'">
             <div class="ab_branch_picker">
-                <p t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+
                 <fieldset t-att-disabled="state.busy">
                     <div class="ab_branch_search_header">
                         <label t-att-for="searchId">Search branches</label>
@@ -12,7 +12,6 @@
                         <AutoComplete id="searchId" value="state.query" sources="sources" placeholder="searchPlaceholder" autofocus="true" searchOnInputClick="false" menuPositionOptions="{position: 'bottom-fit'}"/>
                     </div>
                     <t t-if="state.preview">
-                        <p t-if="state.preview.fallback" class="alert alert-warning">Some text is unavailable in the selected language. The preview shows the fallback that will be sent.</p>
                         <LocationCard location="state.preview" provider="'telegram'"/>
                         <pre t-if="state.includeDetails" class="ab_branch_details" dir="auto" t-esc="state.preview.details"/>
                         <p t-if="state.preview.public_phones"><span>Verified public phones</span>: <bdi dir="ltr" t-esc="state.preview.public_phones"/></p>

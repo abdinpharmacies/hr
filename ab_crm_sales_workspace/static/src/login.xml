@@ -14,7 +14,7 @@
                         <label class="form-label" for="ab_chatter_pin">PIN</label>
                         <input id="ab_chatter_pin" name="ab_chatter_pin" class="form-control" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Enter PIN" t-model="state.pin" t-att-disabled="state.busy"/>
                     </div>
-                    <p t-if="state.error" class="alert alert-danger py-2 mb-0" role="alert" t-esc="state.error"/>
+
                     <div class="d-flex justify-content-end"><button class="btn btn-primary" type="submit" t-att-disabled="state.busy"><t t-if="state.busy">Signing in...</t><t t-else="">Employee Login</t></button></div>
                 </div>
             </form>

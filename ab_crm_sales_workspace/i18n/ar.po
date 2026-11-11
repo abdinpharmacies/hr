@@ -854,8 +854,10 @@ msgstr "البحث عن منتجات"
 
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
+#. odoo-python
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.js:0
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
 msgid "Select a conversation to begin."
 msgstr "اختر محادثة للبدء."
 
@@ -1421,6 +1423,7 @@ msgstr "حساب المراسلة غير مخوّل."
 #: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
 #: code:addons/ab_crm_sales_workspace/models/workspace.py:0
 #: code:addons/ab_crm_sales_workspace/models/directory.py:0
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
 msgid "The selected company or branch is not allowed."
 msgstr "الشركة أو الفرع المحدد غير مسموح به."
 
@@ -2436,6 +2439,7 @@ msgstr "البحث بالاسم أو الهاتف"
 #. module: ab_crm_sales_workspace
 #. odoo-python
 #: code:addons/ab_crm_sales_workspace/models/directory.py:0
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
 msgid "Select a saved contact."
 msgstr "اختر جهة اتصال محفوظة."
 
@@ -2740,6 +2744,8 @@ msgstr "نتائج أقدم"
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
 #: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/templates.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
 msgid "Saved replies"
 msgstr "الردود المحفوظة"
 
@@ -3399,6 +3405,7 @@ msgstr "تم التعديل"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__delivery_location_snapshot
 msgid "Delivery Location Snapshot"
 msgstr "لقطة موقع التوصيل"
+
 #. module: ab_crm_sales_workspace
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__customer_group_key
 msgid "Customer Group Key"
@@ -3444,3 +3451,560 @@ msgstr "استيراد تاريخي · غير موثّق"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__language_code
 msgid "Language"
 msgstr "اللغة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Create contact"
+msgstr "إنشاء جهة اتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Link review reason"
+msgstr "سبب مراجعة الربط"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Link to existing contact"
+msgstr "ربط بجهة اتصال موجودة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Only CRM managers can review ambiguous or conflicting customer links."
+msgstr ""
+"يمكن لمديري إدارة علاقات العملاء فقط مراجعة روابط العملاء الملتبسة أو "
+"المتعارضة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Resolve conflicting identity ownership"
+msgstr "حل تعارض ملكية الهوية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Add number"
+msgstr "إضافة رقم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Additional number"
+msgstr "رقم إضافي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Archive duplicate:"
+msgstr "أرشفة جهة الاتصال المكررة:"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Archive number"
+msgstr "أرشفة الرقم"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__canonical_customer_id
+msgid "Canonical Customer"
+msgstr "العميل الأساسي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Choose conversation"
+msgstr "اختيار محادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Confirm that this identity belongs to the same customer."
+msgstr "أكد أن هذه الهوية تخص العميل نفسه."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/contact_phones.py:0
+msgid "Confirm that this number belongs to the same customer."
+msgstr "أكد أن هذا الرقم يخص العميل نفسه."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_contact_phone__confirmed_at
+msgid "Confirmed At"
+msgstr "وقت التأكيد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Consolidate duplicate contact"
+msgstr "توحيد جهة الاتصال المكررة"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_contact_phone
+msgid "Contact Phone"
+msgstr "هاتف جهة الاتصال"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_contact_phone__customer_confirmed
+msgid "Customer Confirmed"
+msgstr "تأكيد العميل"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Customer confirmed this is the same person"
+msgstr "أكد العميل أنه الشخص نفسه"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Initialize saved numbers"
+msgstr "تهيئة الأرقام المحفوظة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Keep contact:"
+msgstr "الاحتفاظ بجهة الاتصال:"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_contact_phone__label
+msgid "Label"
+msgstr "التسمية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Make primary"
+msgstr "تعيين كأساسي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Manager review: allow shared number"
+msgstr "مراجعة المدير: السماح برقم مشترك"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_contact_phone__number
+msgid "Number"
+msgstr "الرقم"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/contact_phones.py:0
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Only CRM managers can resolve shared numbers."
+msgstr "يمكن لمديري علاقات العملاء فقط معالجة الأرقام المشتركة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Order phone"
+msgstr "هاتف الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.js:0
+msgid "Order phone changed"
+msgstr "تم تغيير هاتف الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Phone label"
+msgstr "تسمية الهاتف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Phone review reason"
+msgstr "سبب مراجعة الهاتف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Primary"
+msgstr "أساسي"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__primary_phone_id
+msgid "Primary Phone"
+msgstr "الهاتف الأساسي"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Review the matching saved contact before linking this identity."
+msgstr "راجع جهة الاتصال المحفوظة المطابقة قبل ربط هذه الهوية."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid ""
+"Reviewed numbers and identity links will move to the kept contact. Messages "
+"and order snapshots remain."
+msgstr ""
+"ستُنقل الأرقام وروابط الهوية التي تمت مراجعتها إلى جهة الاتصال المحتفظ بها. "
+"ستبقى الرسائل ولقطات الطلبات محفوظة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Save label"
+msgstr "حفظ التسمية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
+msgid "Select a phone"
+msgstr "اختر هاتفًا"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/contact_phones.py:0
+msgid "Select a valid number in the contact scope."
+msgstr "اختر رقمًا صالحًا ضمن نطاق جهة الاتصال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/contact_phones.py:0
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Select an active number on this contact."
+msgstr "اختر رقمًا نشطًا لجهة الاتصال هذه."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/contact_phones.py:0
+msgid "Select another primary number before archiving this number."
+msgstr "اختر رقمًا أساسيًا آخر قبل أرشفة هذا الرقم."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+msgid "Select the customer phone for this order."
+msgstr "اختر هاتف العميل لهذا الطلب."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.constraint,message:ab_crm_sales_workspace.constraint_ab_crm_contact_phone_number_unique
+msgid "This number is already saved on this contact."
+msgstr "هذا الرقم محفوظ بالفعل لجهة الاتصال هذه."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Unlinked conversation. Review the customer association."
+msgstr "محادثة غير مرتبطة. راجع ارتباطها بالعميل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/directory.py:0
+msgid "Use Add number or select another primary number."
+msgstr "استخدم إضافة رقم أو اختر رقمًا أساسيًا آخر."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/contact_phones.py:0
+msgid "Use the reviewed contact phone actions."
+msgstr "استخدم إجراءات مراجعة هواتف جهة الاتصال."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Numbers awaiting review:"
+msgstr "أرقام بانتظار المراجعة:"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+msgid "%s pending messages"
+msgstr "%s رسالة معلقة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+msgid "Archive contact"
+msgstr "أرشفة جهة الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Archive contact?"
+msgstr "أرشفة جهة الاتصال؟"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/session_service.js:0
+msgid "Couldn’t dismiss the alert. Try again."
+msgstr "تعذر إغلاق التنبيه. حاول مرة أخرى."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Create new"
+msgstr "إنشاء جديد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Keep primary number:"
+msgstr "الاحتفاظ بالرقم الأساسي:"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Linked channel accounts"
+msgstr "حسابات القنوات المرتبطة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Merge duplicates"
+msgstr "دمج جهات الاتصال المكررة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Number changes do not redirect conversations or queued replies."
+msgstr "تغييرات الأرقام لا تعيد توجيه المحادثات أو الردود المنتظرة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Review conversation association"
+msgstr "مراجعة ارتباط المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Use existing"
+msgstr "استخدام جهة اتصال موجودة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+msgid "Unlink conversations"
+msgstr "إلغاء ربط المحادثات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Select a customer with linked conversations."
+msgstr "اختر عميلاً لديه محادثات مرتبطة."
+
+#. modules: ab_crm_core, ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_orders
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_conversations
+msgid "Inbox"
+msgstr "الوارد"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/feedback.js:0
+msgid ""
+"Connection to Odoo was lost. Reconnecting… Your drafts are kept. Check the "
+"result before retrying an action."
+msgstr ""
+"انقطع الاتصال بأودو. جارٍ إعادة الاتصال… تم الاحتفاظ بمسوداتك. تحقق من نتيجة"
+" العملية قبل إعادة المحاولة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/feedback.js:0
+msgid "Connection to Odoo restored."
+msgstr "تمت استعادة الاتصال بأودو."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__is_ab_customer
+msgid "Is POS customer"
+msgstr "عميل مسجل في نقاط البيع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Saved contacts"
+msgstr "جهات الاتصال المحفوظة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "POS customers"
+msgstr "عملاء نقاط البيع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Search POS by phone"
+msgstr "البحث في نقاط البيع برقم الهاتف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "No POS customers found."
+msgstr "لم يتم العثور على عملاء في نقاط البيع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "POS branch"
+msgstr "فرع نقاط البيع"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Select a branch"
+msgstr "اختر فرعًا"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_create_order
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_pos
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_orders
+msgid "Create order"
+msgstr "إنشاء طلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_invoices
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.js:0
+msgid "Choose order phone"
+msgstr "اختر رقم هاتف الطلب"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+msgid "Use Create order in Inbox."
+msgstr "استخدم إنشاء طلب في الوارد."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+msgid "CRM handoffs cannot be deleted."
+msgstr "لا يمكن حذف عمليات التحويل من إدارة علاقات العملاء."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/pos_handoff.js:0
+msgid "Select an active POS customer."
+msgstr "اختر عميلًا نشطًا في نقاط البيع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+msgid "Select a conversation for this contact."
+msgstr "اختر محادثة لجهة الاتصال هذه."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+msgid "Sign in with the employee who opened Create order."
+msgstr "سجل الدخول بالموظف الذي فتح إنشاء الطلب."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+msgid "Invalid POS draft."
+msgstr "مسودة نقاط البيع غير صالحة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/pos_handoff.py:0
+msgid "This contact handoff already has a POS draft."
+msgstr "توجد بالفعل مسودة نقاط بيع لهذا التحويل."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/pos_handoff.js:0
+msgid "Retry CRM update"
+msgstr "إعادة محاولة تحديث جهة الاتصال"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/pos_handoff.js:0
+msgid ""
+"This handoff already has a saved POS draft. Restore it from POS drafts."
+msgstr ""
+"توجد مسودة نقاط بيع محفوظة لهذا التحويل. استعدها من مسودات نقاط البيع."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/pos_handoff.js:0
+msgid "Create a separate POS draft for this contact."
+msgstr "أنشئ مسودة نقاط بيع منفصلة لجهة الاتصال هذه."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/pos_handoff.js:0
+msgid "Save the POS draft, then retry the CRM update."
+msgstr "احفظ مسودة نقاط البيع، ثم أعد محاولة تحديث جهة الاتصال."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model,name:ab_crm_sales_workspace.model_ab_crm_pos_handoff
+msgid "CRM POS Handoff"
+msgstr "تحويل من إدارة علاقات العملاء إلى نقاط البيع"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_pos_handoff__contact_id
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_pos_handoff__draft_token
+msgid "Draft Token"
+msgstr "معرف المسودة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+msgid "Search POS customers"
+msgstr "البحث عن عملاء نقاط البيع"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_pos_handoff__session_id
+msgid "Session"
+msgstr "الجلسة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/pos_handoff.js:0
+msgid "This handoff has already been invoiced. Open Invoices to view it."
+msgstr "تم إصدار فاتورة لهذا التحويل بالفعل. افتح الفواتير لعرضها."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/orders.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: model_terms:ir.ui.view,arch_db:ab_crm_sales_workspace.view_order_archive_form
+#, python-format
+msgid "Legacy chatter orders are read-only. Use Sales to create orders."
+msgstr "طلبات المحادثات القديمة للقراءة فقط. استخدم المبيعات لإنشاء الطلبات."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.actions.act_window,name:ab_crm_sales_workspace.action_order_archive
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_order_archive
+msgid "Legacy Order Archive"
+msgstr "أرشيف الطلبات القديمة"

@@ -11,16 +11,6 @@
                 <button t-if="url" class="btn btn-sm btn-light" t-on-click="copy">Copy location</button>
                 <button t-if="url &amp;&amp; props.useDelivery" class="btn btn-sm btn-primary" t-att-disabled="props.busy" t-on-click="props.useDelivery">Use for delivery</button>
             </div>
-            <small t-if="state.feedback" role="status" t-esc="state.feedback"/>
         </section>
-    </t>
-    <t t-name="ab_crm_sales_workspace.DeliveryLocationPicker">
-        <Dialog title="title" size="'md'">
-            <p t-if="props.orders.length">Choose a draft order. Save the order to confirm the location.</p>
-            <p t-else="">No editable draft orders. Create a new order to stage this location.</p>
-            <p t-if="state.error" role="alert" t-esc="state.error"/>
-            <div class="d-flex flex-column gap-2"><button t-foreach="props.orders" t-as="order" t-key="order.id" class="btn btn-light" t-att-disabled="state.busy" t-on-click="() => this.choose(order.id)"><bdi t-esc="order.name"/> #<t t-esc="order.id"/></button></div>
-            <t t-set-slot="footer"><button t-if="!props.orders.length" class="btn btn-primary" t-att-disabled="state.busy" t-on-click="() => this.choose(false)">New order</button><button class="btn btn-light" t-att-disabled="state.busy" t-on-click="props.close">Cancel</button></t>
-        </Dialog>
     </t>
 </templates>

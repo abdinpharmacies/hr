@@ -11,7 +11,7 @@ _WORKSPACE = ContextVar('ab_crm_workspace', default=False)
 
 
 def normalized_phone(value, country):
-    if not country:
+    if not country and not str(value or '').startswith('+'):
         return False
     try:
         number = phonenumbers.parse(value or '', country)
@@ -22,6 +22,17 @@ def normalized_phone(value, country):
     except phonenumbers.NumberParseException:
         pass
     return False
+
+
+def display_phone(value, country):
+    canonical = normalized_phone(value, country)
+    if not canonical:
+        return value or ''
+    number = phonenumbers.parse(canonical, None)
+    if number.country_code == 20:
+        return ''.join(filter(str.isdigit, phonenumbers.format_number(
+            number, phonenumbers.PhoneNumberFormat.NATIONAL)))
+    return phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
 
 
 class Scoped(models.AbstractModel):
@@ -437,25 +448,34 @@ class Conversation(models.Model):
         self._owned()
         return True
 
+    def _provider_display_name(self):
+        return self.telegram_profile_name or self.telegram_username
+
     def _customer_display_name(self):
         self.ensure_one()
-        customer_name = self.customer_id.name
-        if customer_name in (
-            self.external_key,
-            self.customer_id.phone,
-            self.confirmed_phone,
-        ):
-            customer_name = False
-        return (
-            self.customer_id.chatter_name
-            or self.customer_id.catalog_customer_id.name
-            or customer_name
-            or self.telegram_profile_name
-            or self.telegram_username
-            or self.confirmed_phone
-            or self.customer_id.phone
-            or _('Unidentified sender')
-        )
+        customer = self.customer_id
+        names = [customer.chatter_name, customer.name, customer.catalog_customer_id.name,
+                 self._provider_display_name()]
+        for name in names:
+            if name and name != self.external_key and not name.replace('+', '').replace(' ', '').isdigit():
+                return name
+        for phone in (customer.chatter_phone, self.confirmed_phone, customer.phone,
+                      '+' + self.external_key if self.channel_id.provider == 'whatsapp' else ''):
+            value = normalized_phone(phone, self.company_id.country_id.code)
+            if value:
+                return display_phone(value, self.company_id.country_id.code)
+        return _('Unidentified sender')
+
+    def _workspace_visible_domain(self):
+        return [('reaction', '=', False),
+                ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')])]
+
+    def _workspace_reactions(self, references):
+        groups = self.env['ab_crm_message']._read_group([
+            ('conversation_id', '=', self.id), ('reply_reference', 'in', references),
+            '|', ('reaction', '!=', False), ('chatter_event_ids.event_key', '=like', 'reaction:%'),
+        ], ['reply_reference', 'direction'], ['id:max'])
+        return self.env['ab_crm_message'].browse([row[2] for row in groups])
 
     def _resolve_ingested_contact(self, account, message):
         self.ensure_one()
@@ -479,16 +499,7 @@ class Conversation(models.Model):
             if not phone:
                 self.write({'catalog_match_state': 'invalid'})
                 return
-            stores = account.branch_id.replica_id.allowed_sales_store_ids.filtered(
-                lambda store: store.active and store.allow_sale
-            )
-            try:
-                candidates = self._catalog_phone_candidates(phone, stores)
-            except UserError:
-                self._link_contact(phone, self.env['ab_customer'], verified=True)
-                self.write({'catalog_match_state': 'ambiguous'})
-                return
-            self._link_contact(phone, candidates, verified=True)
+            self.write({'catalog_match_state': 'pending'})
         finally:
             _WORKSPACE.reset(token)
 
@@ -644,12 +655,12 @@ class Conversation(models.Model):
                 _('Confirm typed or third-party phone numbers before linking.')
             )
         candidates = self._phone_candidates(phone)
-        if len(candidates) > 1 and not customer_id:
+        if candidates and not customer_id:
             return {'candidates': [{'id': r.id, 'name': r.name} for r in candidates]}
         selected = (
             candidates.filtered(lambda r: r.id == customer_id)
             if customer_id
-            else candidates[:1]
+            else candidates.browse()
         )
         if customer_id and not selected:
             raise AccessError(_('Select an authorized matching customer.'))
@@ -805,7 +816,7 @@ class Conversation(models.Model):
             ('company_id', '=', self.company_id.id),
             ('branch_id', '=', self.branch_id.id),
             ('channel_id.active', '=', True),
-        ], limit=100) if self.customer_id else self
+        ]) if self.customer_id else self
         result = self.browse()
         for conversation in candidates:
             if conversation.channel_id.provider not in ('whatsapp', 'telegram', 'website', 'application'):
@@ -926,9 +937,7 @@ class Conversation(models.Model):
         ]
 
     def action_new_order(self):
-        self._owned()
-        order = self.env['ab_crm_channel_order'].create({'conversation_id': self.id})
-        return order.id
+        raise AccessError(_('Legacy chatter orders are read-only. Use Sales to create orders.'))
 
     def _workspace_inbox_domain(self, query):
         session = self._workspace_actor()
@@ -940,7 +949,11 @@ class Conversation(models.Model):
         if query:
             if not isinstance(query, str) or len(query) > 200:
                 raise ValidationError(_('Invalid conversation search.'))
+            contacts = self.env['ab_crm_customer'].search([
+                ('company_id', '=', session.company_id.id), ('branch_id', 'in', branches.ids),
+            ]).filtered(lambda contact: contact._matches_directory_query(query))
             domain += [
+                '|', ('customer_id', 'in', contacts.ids),
                 '|',
                 '|',
                 '|',
@@ -953,7 +966,9 @@ class Conversation(models.Model):
                 ('customer_id.name', 'ilike', query),
                 ('customer_id.chatter_name', 'ilike', query),
                 ('customer_id.chatter_phone', 'ilike', query),
+                '|',
                 ('customer_id.phone', 'ilike', query),
+                ('customer_id.phone_ids', 'any', [('active', '=', True), ('number', 'ilike', normalized_phone(query, session.company_id.country_id.code) or query)]),
             ]
         return domain
 
@@ -966,38 +981,46 @@ class Conversation(models.Model):
         conversations = self.search(domain, limit=50, order='id desc')
         return conversations._workspace_inbox_rows(session)
 
+    def _workspace_unread_messages(self, session):
+        positions = self.env['ab_crm_workspace_read'].sudo().search([
+            ('conversation_id', 'in', self.ids), ('user_id', '=', self.env.uid),
+            ('employee_id', '=', session.employee_id.id),
+            ('company_id', '=', session.company_id.id),
+        ])
+        seen = {row.conversation_id.id: row.last_message_id.id for row in positions}
+        messages = self.env['ab_crm_message'].search([
+            ('conversation_id', 'in', self.ids), ('direction', '=', 'in'),
+            ('historical', '=', False),
+        ] + self._workspace_visible_domain(), order='id')
+        return messages.filtered(lambda message: message.id > seen.get(message.conversation_id.id, 0))
+
+    def _display_destination(self):
+        self.ensure_one()
+        destination = self.external_key or ''
+        if self.channel_id.provider == 'whatsapp' and destination.lstrip('+').isdigit():
+            return display_phone('+' + destination.lstrip('+'), self.company_id.country_id.code)
+        return destination
+
     def _workspace_inbox_rows(self, session):
         conversations = self
-        positions = (
-            self.env['ab_crm_workspace_read']
-            .sudo()
-            .search(
-                [
-                    ('conversation_id', 'in', conversations.ids),
-                    ('user_id', '=', self.env.uid),
-                    ('employee_id', '=', session.employee_id.id),
-                ]
-            )
-        )
-        seen = {r.conversation_id.id: r.last_message_id.id for r in positions}
+        unread = self._workspace_unread_messages(session)
         result = []
         for record in conversations:
-            timeline = record.message_ids.filtered_domain([
-                ('reaction', '=', False),
-                ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
-            ])
+            timeline = record.message_ids.filtered_domain(record._workspace_visible_domain())
             messages = timeline.filtered(lambda m: m.direction == 'in' and not m.historical)
             channels = {record.channel_id.provider} if messages else set()
             result.append(
                 {
                     'id': record.id,
                     'customer_id': record.customer_id.id,
+                    'destination': record.external_key,
+                    'display_destination': record._display_destination(),
                     'name': record._customer_display_name(),
                     'provider': record.channel_id.provider,
                     'channels': sorted(channels),
                     'preview': timeline.sorted(lambda m: (m.timeline_at, m.id))[-1:].body or '',
                     'unread': len(
-                        messages.filtered(lambda m: m.id > seen.get(record.id, 0))
+                        unread.filtered(lambda m: m.conversation_id == record)
                     ),
                 }
             )
@@ -1009,10 +1032,7 @@ class Conversation(models.Model):
         self.ensure_one()
         session, stores = self._workspace_scope()
         send_code, send_reason = self._reply_eligibility()
-        visible_domain = [
-            ('conversation_id', '=', self.id), ('reaction', '=', False),
-            ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
-        ]
+        visible_domain = [('conversation_id', '=', self.id)] + self._workspace_visible_domain()
         domain = list(visible_domain)
         if query:
             domain.append(('body', 'ilike', str(query)[:200]))
@@ -1049,15 +1069,9 @@ class Conversation(models.Model):
                 limit=1,
             )
         )
-        position = self.env['ab_crm_workspace_read'].sudo().search([
-            ('conversation_id', '=', self.id), ('user_id', '=', self.env.uid),
-            ('employee_id', '=', session.employee_id.id),
-        ], limit=1)
-        unread_domain = visible_domain + [
-            ('direction', '=', 'in'), ('historical', '=', False), ('id', '>', position.last_message_id.id or 0),
-        ]
-        first_unread = self.env['ab_crm_message'].search(unread_domain, order='id', limit=1)
-        unread_count = self.env['ab_crm_message'].search_count(unread_domain)
+        unread = self._workspace_unread_messages(session)
+        first_unread = unread[:1]
+        unread_count = len(unread)
         streams = self._workspace_streams()
         stream_unread = {row['id']: row['unread'] for row in streams._workspace_inbox_rows(session)}
         references = list(set(messages.mapped('reply_reference')) - {False, ''})
@@ -1067,13 +1081,7 @@ class Conversation(models.Model):
             ('chatter_event_ids', 'not any', [('event_key', '=like', 'reaction:%')]),
         ], limit=50) if references else self.env['ab_crm_message']
         quotes = {m.provider_reference: self._workspace_quote(m) for m in originals}
-        reaction_groups = self.env['ab_crm_message']._read_group([
-            ('conversation_id', '=', self.id),
-            ('reply_reference', 'in', list(set(messages.mapped('provider_reference')) - {False, ''})),
-            '|', ('reaction', '!=', False),
-            ('chatter_event_ids.event_key', '=like', 'reaction:%'),
-        ], ['reply_reference', 'direction'], ['id:max'])
-        reactions = self.env['ab_crm_message'].browse([row[2] for row in reaction_groups])
+        reactions = self._workspace_reactions(list(set(messages.mapped('provider_reference')) - {False, ''}))
         updated = self.env['ab_crm_message'].search([
             ('conversation_id', '=', self.id),
         ], order='write_date desc, id desc', limit=1)
@@ -1111,11 +1119,19 @@ class Conversation(models.Model):
             'unread_count': unread_count,
             'streams': [
                 {'id': r.id, 'provider': r.channel_id.provider, 'unread': stream_unread.get(r.id, 0),
+                 'destination': r.external_key, 'display_destination': r._display_destination(),
                  'label': ' · '.join(filter(None, [r.channel_id.name, r.messaging_account_id.name]))}
                 for r in streams
             ],
             'name': self._customer_display_name(),
-            'phone': self.customer_id.chatter_phone
+            'contact': dict(self.customer_id._directory_data(), name=self._customer_display_name()) if self.customer_id else False,
+            'branch_id': self.branch_id.id,
+            'destination': self.external_key,
+            'display_destination': self._display_destination(),
+            'conversation_label': self.messaging_account_id.name,
+            'link_review': not bool(self.customer_id and self.customer_id.active),
+            'phone': self.customer_id.primary_phone_id.number
+            or self.customer_id.chatter_phone
             or self.confirmed_phone
             or self.customer_id.phone
             or '',
@@ -1161,7 +1177,7 @@ class Conversation(models.Model):
                     'provider': o.conversation_id.channel_id.provider,
                     'store_id': o.store_id.id,
                 }
-                for o in self._workspace_orders(streams, stores)
+                for o in (self.env['ab_crm_channel_order'] if self.env.context.get('ab_chatter_inbox_only') else self._workspace_orders(streams, stores))
             ],
         }
 
