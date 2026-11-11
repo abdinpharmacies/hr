@@ -18,6 +18,7 @@
                 <field name="code"/>
                 <field name="default_price"/>
                 <field name="active"/>
+                <field name="website_catalog_status"/>
                 <field name="website_sale_available"/>
                 <field name="website_product_synced"/>
                 <field name="website_product_is_published"/>
@@ -37,16 +38,20 @@
                                     </div>
                                 </div>
                                 <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_published"
-                                      t-if="record.website_product_is_published.raw_value">
+                                      t-if="record.website_catalog_status.raw_value === 'published'">
                                     Published
                                 </span>
                                 <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_synced"
-                                      t-if="!record.website_product_is_published.raw_value and record.website_product_synced.raw_value">
+                                      t-if="record.website_catalog_status.raw_value === 'synced'">
                                     Synced
                                 </span>
                                 <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_new"
-                                      t-if="!record.website_product_synced.raw_value and record.website_sale_available.raw_value">
+                                      t-if="record.website_catalog_status.raw_value === 'ready'">
                                     Ready
+                                </span>
+                                <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_new"
+                                      t-if="record.website_catalog_status.raw_value === 'archived'">
+                                    Archived
                                 </span>
                                 <div class="abdin_ecommerce_dropdown_container">
                                     <div class="o_dropdown_kanban dropdown">

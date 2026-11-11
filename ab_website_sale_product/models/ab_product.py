@@ -244,6 +244,19 @@ class AbProduct(models.Model):
         compute_sudo=True,
         groups="base.group_user",
     )
+    website_catalog_status = fields.Selection(
+        selection=[
+            ("archived", "Archived"),
+            ("published", "Published"),
+            ("synced", "Synced, Not Published"),
+            ("ready", "Ready to Sync"),
+            ("unavailable", "Unavailable for Website"),
+        ],
+        string="Website Status",
+        compute="_compute_website_catalog_status",
+        compute_sudo=True,
+        groups="base.group_user",
+    )
     website_image_file_found = fields.Boolean(
         string="Image File Found",
         compute="_compute_website_image_file_info",
@@ -323,6 +336,23 @@ class AbProduct(models.Model):
             product.website_product_is_published = bool(
                 template and template.active and template.sale_ok and template.is_published
             )
+
+    @api.depends(
+        "active", "allow_sale", "website_sale_available",
+        "website_product_synced", "website_product_is_published",
+    )
+    def _compute_website_catalog_status(self):
+        for product in self:
+            if not product.active:
+                product.website_catalog_status = "archived"
+            elif product.website_product_is_published:
+                product.website_catalog_status = "published"
+            elif product.website_product_synced:
+                product.website_catalog_status = "synced"
+            elif product.allow_sale and product.website_sale_available:
+                product.website_catalog_status = "ready"
+            else:
+                product.website_catalog_status = "unavailable"
 
     def _compute_website_image_file_info(self):
         directory_path = self._get_configured_website_image_directory()

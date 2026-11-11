@@ -1,6 +1,39 @@
 # Website Sale Product change log
 
+## Current changes before commit
+
+- Show active and archived Abdin products together in the Website catalog list.
+- Add a translated website status column and archived filter, and distinguish archived cards from ready or synced cards.
+- Cover catalog visibility and status transitions in the website product sync test.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/tests/test_website_product_sync.py`
+- `ab_website_sale_product/views/ab_product_kanban_views.xml`
+- `ab_website_sale_product/views/ab_product_views.xml`
+- `ab_website_sale_product/views/website_sale_menus.xml`
+
 ## Recent commits
+
+Commit: `d0265c08`
+Author: Mohamed Fawzy
+Date: 2026-11-10
+Original subject: `ab_website_sale_product/FIX: combine unprocessed customer uploads`
+
+User-facing changes:
+
+- Combine review rows from unprocessed customer uploads in one review batch.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/docs/legacy-customers.md`
+- `ab_website_sale_product/models/legacy_activation_batch.py`
+- `ab_website_sale_product/tests/test_legacy_staging_rows.py`
 
 Commit: `b20d02cf`
 Author: Mohamed Fawzy

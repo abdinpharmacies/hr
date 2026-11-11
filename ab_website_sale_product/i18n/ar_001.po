@@ -862,6 +862,7 @@ msgstr "متغير المنتج"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__published
 msgid "Published"
 msgstr "منشور"
 
@@ -6265,3 +6266,30 @@ msgstr "الدفعة الرئيسية للمراجعة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__review_duplicate_count
 msgid "Hidden Exact Duplicates"
 msgstr "الصفوف المتطابقة المخفية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__archived
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__synced
+msgid "Synced, Not Published"
+msgstr "متزامن وغير منشور"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__ready
+msgid "Ready to Sync"
+msgstr "جاهز للمزامنة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__unavailable
+msgid "Unavailable for Website"
+msgstr "غير متاح للموقع"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_catalog_status
+msgid "Website Status"
+msgstr "حالة الموقع"

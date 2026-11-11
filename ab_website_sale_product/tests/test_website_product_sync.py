@@ -5,6 +5,7 @@ from psycopg2.errors import SerializationFailure
 from odoo import Command, fields
 from odoo.exceptions import AccessError, UserError
 from odoo.tests.common import TransactionCase, new_test_user
+from odoo.tools.safe_eval import safe_eval
 
 
 class TestWebsiteProductSync(TransactionCase):
@@ -31,6 +32,25 @@ class TestWebsiteProductSync(TransactionCase):
         job = self.Job.create({'state': 'running', 'total_count': len(products)})
         job._add_product_lines(products)
         return job
+
+    def test_catalog_shows_archived_products_with_website_status(self):
+        action = self.env.ref('ab_website_sale_product.action_ab_products_ecommerce_sync')
+        self.assertEqual(safe_eval(action.domain), [])
+        self.assertFalse(safe_eval(action.context)['active_test'])
+
+        product = self.product('SYNC-CATALOG-STATUS')
+        self.assertEqual(product.website_catalog_status, 'ready')
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
+        self.assertEqual(product.website_catalog_status, 'published')
+        template.is_published = False
+        self.assertEqual(product.website_catalog_status, 'synced')
+        product.active = False
+        archived = self.Product.with_context(active_test=False).search([('id', '=', product.id)])
+        self.assertEqual(archived.website_catalog_status, 'archived')
+
+        unavailable = self.product('SYNC-CATALOG-UNAVAILABLE')
+        unavailable.website_sale_available = False
+        self.assertEqual(unavailable.website_catalog_status, 'unavailable')
 
     def test_only_add_many_by_codes_creates_and_publishes(self):
         product = self.product('SYNC-CODES-ONLY')
