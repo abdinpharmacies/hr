@@ -376,3 +376,43 @@ def test_location_payload_is_frozen_across_duplicate_receipts_and_retries(tmp_pa
         store.persist_outgoing('tg', dict(venue, location=dict(venue['location'], address='Changed')))
     retry = store.persist_outgoing('tg', dict(venue, attempt=2, lease='retry'))
     assert retry['payload']['location'] == venue['location']
+
+
+def test_reviewed_status_does_not_block_incoming_message(store):
+    store.ingest('wa', [('failed-status', 'status', {'destination': '201014763233', 'status': 'delivered'})])
+    with store.connect() as conn:
+        conn.execute("UPDATE incoming_event SET state='review', attempts=8 WHERE event_key='failed-status'")
+    store.ingest('wa', [('new-message', 'incoming', {'sender': '201014763233', 'body': 'Hello'})])
+    row = store.claim_incoming()
+    assert row and row['event_key'] == 'new-message'
+
+
+def test_reviewed_opaque_retry_keeps_content_and_deduplication(store, monkeypatch):
+    from app import ops
+    from pydantic import SecretStr
+    from types import SimpleNamespace
+    original = {'id': 'opaque-event', 'sender': 'opaque:123', 'body': 'Original message',
+                'source_digest': 'a' * 64, 'review_reason': 'unsupported_identity'}
+    store.ingest('wa', [('opaque-event', 'incoming', original)])
+    with store.connect() as conn:
+        event_id = conn.execute("SELECT id FROM incoming_event WHERE event_key='opaque-event'").fetchone()['id']
+    monkeypatch.setattr(ops, 'settings', lambda **kwargs: SimpleNamespace(database_url=SecretStr(store.database_url)))
+    monkeypatch.setattr('sys.argv', ['ops', 'retry-incoming', '--event-id', str(event_id), '--note', 'Reviewed sender validation fix'])
+    ops.main()
+    expected = {k: v for k, v in original.items() if k != 'review_reason'}
+    store.ingest('wa', [('opaque-event', 'incoming', expected)])
+    row = store.claim_incoming()
+    assert row['payload'] == expected
+    store.finish_incoming(row, True)
+    assert store.claim_incoming() is None
+    with store.connect() as conn:
+        assert conn.execute('SELECT count(*) AS count FROM operator_audit').fetchone()['count'] == 1
+
+
+def test_reviewed_status_does_not_block_other_message_status(store):
+    store.ingest('wa', [('older-status', 'status', {'destination': '201014763233', 'reference': 'old-message', 'status': 'delivered'})])
+    with store.connect() as conn:
+        conn.execute("UPDATE incoming_event SET state='review', attempts=8 WHERE event_key='older-status'")
+    store.ingest('wa', [('newer-status', 'status', {'destination': '201014763233', 'reference': 'new-message', 'status': 'read'})])
+    row = store.claim_incoming()
+    assert row and row['event_key'] == 'newer-status'

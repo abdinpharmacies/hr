@@ -8,13 +8,40 @@ import httpx
 from .config import settings
 
 
+class TelegramVerificationError(RuntimeError):
+    def __init__(self, category):
+        self.category = category
+        super().__init__('Telegram verification failed: ' + category)
+
+
+def checked_response(response):
+    if response.status_code in (401, 403, 404):
+        raise TelegramVerificationError('invalid_credentials')
+    if response.status_code == 409:
+        try:
+            description = response.json().get('description', '')
+        except (ValueError, AttributeError):
+            description = ''
+        category = 'active_webhook' if isinstance(description, str) and 'webhook' in description.lower() else 'competing_receiver'
+        raise TelegramVerificationError(category)
+    if response.status_code == 429 or response.status_code >= 500:
+        raise TelegramVerificationError('provider_unavailable')
+    try:
+        data = response.json()
+        if response.status_code != 200 or not isinstance(data, dict) or data.get('ok') is not True:
+            raise ValueError()
+        return data
+    except (ValueError, TypeError):
+        raise TelegramVerificationError('malformed_response') from None
+
+
 def configure(client, account, webhook_url=None, polling=False, expected_webhook=None):
     if account.provider != 'telegram':
         raise ValueError('Select a Telegram account')
     origin = 'https://api.telegram.org/bot' + account.token.get_secret_value()
     try:
         response = client.post(origin + '/getMe')
-        data = response.json()
+        data = checked_response(response)
         identity = data.get('result', {})
         if (
             response.status_code != 200
@@ -22,14 +49,14 @@ def configure(client, account, webhook_url=None, polling=False, expected_webhook
             or identity.get('is_bot') is not True
             or str(identity.get('id')) != account.provider_account
         ):
-            raise ValueError('Bot identity verification failed')
+            raise TelegramVerificationError('identity_mismatch')
         result = {
             'verified': True,
             'bot_id': str(identity['id']),
             'username': identity.get('username', ''),
         }
         response = client.post(origin + '/getWebhookInfo')
-        status = response.json()
+        status = checked_response(response)
         if (
             response.status_code != 200
             or status.get('ok') is not True
@@ -81,7 +108,11 @@ def configure(client, account, webhook_url=None, polling=False, expected_webhook
                 raise ValueError('Webhook registration failed')
             result['webhook_registered'] = True
         return result
-    except (httpx.HTTPError, KeyError, TypeError, ValueError):
+    except TelegramVerificationError:
+        raise
+    except httpx.HTTPError:
+        raise TelegramVerificationError('network_failure') from None
+    except (KeyError, TypeError, ValueError, AttributeError):
         raise RuntimeError(
             'Telegram setup failed; inspect protected configuration and retry verification.'
         ) from None

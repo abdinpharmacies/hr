@@ -31,7 +31,7 @@ def test_whatsapp_version_is_pinned():
         Account(provider='whatsapp', provider_account='456', token='test', graph_version='v22.0')
 
 
-def test_opaque_whatsapp_identity_is_retained_for_review():
+def test_opaque_whatsapp_identity_is_retained_for_delivery():
     payload = {'object': 'whatsapp_business_account', 'entry': [{'changes': [{'field': 'messages', 'value': {
         'metadata': {'phone_number_id': '456'},
         'messages': [{'id': 'wamid-opaque', 'from': 'opaque.12:34', 'type': 'text',
@@ -39,7 +39,7 @@ def test_opaque_whatsapp_identity_is_retained_for_review():
     }}]}]}
     event = normalize(whatsapp(), payload)[0][2]
     assert event['sender'] == 'opaque.12:34'
-    assert event['review_reason'] == 'unsupported_identity'
+    assert 'review_reason' not in event
     assert 'contact' not in event
 
 

@@ -9,10 +9,14 @@ from .config import settings
 from .observability import logger
 from .providers import normalize
 from .storage import Store, Conflict
-from .telegram_setup import configure
+from .telegram_setup import configure, checked_response, TelegramVerificationError
 
 
 class ReceiverStopped(Exception):
+    pass
+
+
+class ReceiverRetryable(Exception):
     pass
 
 
@@ -39,22 +43,26 @@ class Receiver:
                 'allowed_updates': ['message', 'edited_message', 'message_reaction'],
             },
         )
-        if response.status_code in (401, 403, 409):
-            raise ReceiverStopped(
-                'Bot unavailable or another receiver/webhook is active'
-            )
-        if response.status_code != 200:
-            raise RuntimeError('Polling unavailable')
-        data = response.json()
+        try:
+            data = checked_response(response)
+        except TelegramVerificationError as error:
+            if error.category in ('invalid_credentials', 'competing_receiver', 'active_webhook'):
+                raise ReceiverStopped(error.category) from None
+            raise ReceiverRetryable(error.category) from None
         updates = data.get('result')
-        if data.get('ok') is not True or not isinstance(updates, list):
-            raise RuntimeError('Invalid polling response')
+        if not isinstance(updates, list):
+            raise ReceiverStopped('malformed_event')
         events = []
         for update in updates:
+            if not isinstance(update, dict):
+                raise ReceiverStopped('malformed_event')
             update_id = update.get('update_id')
             if type(update_id) is not int or update_id < offset:
-                raise ReceiverStopped('Invalid polling sequence')
-            events.extend(normalize(self.account, update))
+                raise ReceiverStopped('malformed_event')
+            try:
+                events.extend(normalize(self.account, update))
+            except (ValueError, TypeError, KeyError, AttributeError, OverflowError):
+                raise ReceiverStopped('malformed_event') from None
             offset = update_id + 1
         self.store.persist_poll(
             conn, self.code, self.account.provider_account, events, offset
@@ -75,26 +83,35 @@ class Receiver:
 
     def run(self):
         with self.store.receiver(self.account.provider_account) as conn:
-            identity = configure(self.client, self.account)
-            if identity['webhook_present']:
-                raise ReceiverStopped('Webhook is active; polling was not started')
+            verified = False
             failures = 0
             while True:
                 try:
+                    if not verified:
+                        identity = configure(self.client, self.account)
+                        if identity['webhook_present']:
+                            raise ReceiverStopped('active_webhook')
+                        verified = True
                     self.tick(conn)
                     failures = 0
                 except (ReceiverStopped, Conflict):
                     raise
-                except Exception:
+                except Exception as error:
+                    category = (
+                        error.category if isinstance(error, TelegramVerificationError)
+                        else 'network_failure' if isinstance(error, httpx.HTTPError)
+                        else str(error) if isinstance(error, ReceiverRetryable)
+                        else 'dependency_failure'
+                    )
+                    if category in ('invalid_credentials', 'identity_mismatch', 'competing_receiver', 'active_webhook'):
+                        raise ReceiverStopped(category) from None
                     if conn.closed or conn.broken:
-                        raise ReceiverStopped('Receiver lock connection lost') from None
+                        raise ReceiverRetryable('receiver_lock_lost') from None
                     conn.rollback()
                     failures += 1
                     if failures >= 8:
-                        raise ReceiverStopped(
-                            'Polling stopped after eight failures; inspect the queue and configuration'
-                        ) from None
-                    logging.warning('Polling deferred (%s/8)', failures)
+                        raise ReceiverRetryable(category) from None
+                    logging.warning('Polling deferred category=%s attempt=%s/8', category, failures)
                     time.sleep(min(60, 2**failures))
 
 
@@ -122,8 +139,12 @@ def main():
                 Store(config.database_url.get_secret_value()),
                 client,
             ).run()
-    except (ReceiverStopped, Conflict) as error:
+    except Conflict:
+        parser.exit(78, 'receiver_or_event_conflict\n')
+    except ReceiverStopped as error:
         parser.exit(78, str(error) + '\n')
+    except ReceiverRetryable as error:
+        parser.exit(75, 'Receiver retryable: ' + str(error) + '\n')
     except Exception:
         parser.exit(75, 'Receiver dependency unavailable; retry initialization.\n')
 

@@ -304,3 +304,21 @@ def test_postgres_backup_restore_preserves_queue_evidence(store, tmp_path):
             assert restored.claim_outgoing(['tg'])['token'] == 'token'
         finally:
             admin.execute(sql.SQL('DROP DATABASE {}').format(sql.Identifier(restore_name)))
+
+
+def test_reviewed_status_does_not_block_incoming_message(store):
+    store.ingest('wa', [('failed-status', 'status', {'destination': '201014763233', 'status': 'delivered'})])
+    with store.connect() as conn:
+        conn.execute("UPDATE incoming_event SET state='review', attempts=8 WHERE event_key='failed-status'")
+    store.ingest('wa', [('new-message', 'incoming', {'sender': '201014763233', 'body': 'Hello'})])
+    row = store.claim_incoming()
+    assert row and row['event_key'] == 'new-message'
+
+
+def test_reviewed_status_does_not_block_other_message_status(store):
+    store.ingest('wa', [('older-status', 'status', {'destination': '201014763233', 'reference': 'old-message', 'status': 'delivered'})])
+    with store.connect() as conn:
+        conn.execute("UPDATE incoming_event SET state='review', attempts=8 WHERE event_key='older-status'")
+    store.ingest('wa', [('newer-status', 'status', {'destination': '201014763233', 'reference': 'new-message', 'status': 'read'})])
+    row = store.claim_incoming()
+    assert row and row['event_key'] == 'newer-status'

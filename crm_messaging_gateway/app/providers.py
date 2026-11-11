@@ -6,7 +6,7 @@ import math
 from datetime import datetime, timezone
 
 import httpx
-from .media import attachment_diagnostic, telegram_media, supported, prepare, prepare_whatsapp, prepare_video
+from .media import whatsapp_media, attachment_diagnostic, telegram_media, supported, prepare, prepare_whatsapp, prepare_video
 
 
 def verify_signature(account, raw, headers):
@@ -79,6 +79,31 @@ def location_text(location):
         location['name'], location['address'],
         f"{location['latitude']}, {location['longitude']}",
     ]))
+
+
+def valid_contact_cards(cards):
+    if not isinstance(cards, list) or len(cards) > 100:
+        return False
+    schemas = {
+        'phones': {'phone', 'wa_id', 'type'}, 'emails': {'email', 'type'},
+        'addresses': {'street', 'city', 'state', 'zip', 'country', 'country_code', 'type'},
+        'urls': {'url', 'type'},
+    }
+    for card in cards:
+        if not isinstance(card, dict) or card.keys() - {'name', 'phones', 'emails', 'addresses', 'urls', 'org', 'birthday'}:
+            return False
+        for key, allowed in dict(schemas, name={'formatted_name', 'first_name', 'last_name', 'middle_name', 'suffix', 'prefix'},
+                                 org={'company', 'department', 'title'}).items():
+            value = card.get(key, [] if key in schemas else {})
+            values = value if key in schemas else [value]
+            if not isinstance(values, list) or len(values) > 100:
+                return False
+            if any(not isinstance(item, dict) or item.keys() - allowed
+                   or any(not isinstance(text, str) or len(text) > 2000 for text in item.values()) for item in values):
+                return False
+        if not isinstance(card.get('birthday', ''), str) or len(card.get('birthday', '')) > 32:
+            return False
+    return True
 
 
 def normalize(account, payload):
@@ -208,17 +233,37 @@ def normalize(account, payload):
                 raise ValueError('Provider account mismatch')
             for message in value.get('messages', []):
                 location = provider_location(message.get('location')) if message.get('type') == 'location' else None
-                unsupported = message.get('type') != 'text' and location is None
-                event = incoming(
-                    message['id'],
-                    message['from'],
-                    location_text(location) if location else '' if unsupported else message['text']['body'],
-                    message['timestamp'],
-                    unsupported,
-                    message,
-                )
-                if not event['sender'].isascii() or not event['sender'].isdecimal():
-                    event['review_reason'] = 'unsupported_identity'
+                kind = message.get('type', 'unknown')
+                media = whatsapp_media(message)
+                cards = message.get('contacts') if kind == 'contacts' else None
+                if cards is not None and (not valid_contact_cards(cards) or not cards
+                                           or len(json.dumps(cards)) > 50000):
+                    raise ValueError('Invalid contact cards')
+                reaction = message.get('reaction') if kind == 'reaction' else None
+                if reaction is not None and (not isinstance(reaction, dict)
+                    or not isinstance(reaction.get('emoji'), str) or len(reaction['emoji']) > 64):
+                    raise ValueError('Invalid reaction')
+                unsupported = kind != 'text' and not any((location, media, cards, reaction))
+                body = (location_text(location) if location else message['text']['body'] if kind == 'text'
+                        else message.get(kind, {}).get('caption', '') if media
+                        else 'Contact shared' if cards else 'Reaction' if reaction else '')
+                event = incoming(message['id'], message['from'], body or ('Attachment' if media else body),
+                                 message['timestamp'], unsupported, message)
+                event['whatsapp'] = {'type': kind, 'cards': cards or [],
+                                     'diagnostic': attachment_diagnostic(message) if unsupported else {}}
+                profiles = [item.get('profile', {}).get('name', '') for item in value.get('contacts', [])
+                            if item.get('wa_id') == event['sender']]
+                if profiles and isinstance(profiles[0], str):
+                    event['whatsapp']['profile_name'] = profiles[0][:256]
+                if not event['sender'].isascii() or not all(33 <= ord(char) <= 126 for char in event['sender']):
+                    raise ValueError('Invalid event identity')
+                if media:
+                    event['media'] = media
+                if reaction is not None:
+                    event['reaction'] = reaction['emoji']
+                    event['reply_reference'] = identifier(reaction['message_id'])
+                elif message.get('context', {}).get('id'):
+                    event['reply_reference'] = identifier(message['context']['id'])
                 if location:
                     event['location'] = location
                 events.append(('message:' + event['id'], 'incoming', event))

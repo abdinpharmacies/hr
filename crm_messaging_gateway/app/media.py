@@ -1,5 +1,8 @@
 import base64
 import json
+import hashlib
+import hmac
+from urllib.parse import urlsplit
 import math
 from pathlib import Path
 import re
@@ -115,6 +118,8 @@ def attachment_diagnostic(message):
 
 
 def download(client, account, metadata):
+    if account.provider == 'whatsapp':
+        return download_whatsapp(client, account, metadata)
     if not supported(metadata):
         raise ValueError('Media exceeds supported limits')
     origin = 'https://api.telegram.org/'
@@ -282,3 +287,139 @@ def prepare_video(metadata):
     if metadata.get('kind') != 'video' or metadata.get('mimetype') != 'video/mp4':
         raise ValueError('Invalid video')
     return _prepare_extended_attachment(metadata)
+
+
+WHATSAPP_MIMES = {
+    'image': {'image/jpeg', 'image/png', 'image/webp'},
+    'document': {'text/plain', 'application/pdf', 'application/msword',
+                 'application/vnd.ms-excel', 'application/vnd.ms-powerpoint',
+                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                 'application/vnd.openxmlformats-officedocument.presentationml.presentation'},
+    'audio': {'audio/aac', 'audio/amr', 'audio/mpeg', 'audio/mp4', 'audio/ogg'},
+    'voice': {'audio/ogg'},
+    'video': {'video/mp4', 'video/3gpp'},
+}
+
+
+def whatsapp_limit(metadata):
+    if metadata.get('sticker'):
+        return 500 * 1024 if metadata.get('animated') else 100 * 1024
+    return {'image': 5, 'audio': 16, 'voice': 16, 'video': 16}.get(metadata['kind'], 20) * 1024 * 1024
+
+
+def whatsapp_supported(metadata):
+    return (
+        metadata.get('mimetype') in WHATSAPP_MIMES.get(metadata.get('kind'), set())
+        and type(metadata.get('size')) is int
+        and 0 <= metadata['size'] <= whatsapp_limit(metadata)
+        and type(metadata.get('duration', 0)) in (int, float)
+        and 0 <= metadata.get('duration', 0) <= 300
+        and (not metadata.get('sticker') or metadata['mimetype'] == 'image/webp')
+    )
+
+
+def whatsapp_media(message):
+    kind = message.get('type')
+    if kind not in ('image', 'document', 'sticker', 'audio', 'video'):
+        return None
+    source = message.get(kind)
+    if not isinstance(source, dict) or not isinstance(source.get('id'), str):
+        return None
+    mime = source.get('mime_type', '').split(';')[0].strip().lower()
+    if kind == 'sticker' or kind == 'document' and mime.startswith('image/'):
+        kind = 'image'
+    if kind == 'audio' and source.get('voice') and mime == 'audio/ogg':
+        kind = 'voice'
+    suffix = {'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png',
+              'application/pdf': 'pdf', 'audio/ogg': 'ogg', 'video/mp4': 'mp4'}.get(mime, 'bin')
+    result = {'kind': kind, 'file_id': source['id'], 'mimetype': mime,
+              'name': Path(str(source.get('filename') or 'attachment.' + suffix)).name[:255],
+              'size': source.get('file_size', 0), 'duration': source.get('duration', 0),
+              'sha256': source.get('sha256', ''), 'sticker': message['type'] == 'sticker',
+              'animated': bool(source.get('animated'))}
+    return result if whatsapp_supported(result) else None
+
+
+def validate_whatsapp_content(metadata, raw):
+    mime = metadata['mimetype']
+    if not raw or len(raw) > whatsapp_limit(metadata):
+        raise ValueError('Media exceeds supported limits')
+    valid = (
+        mime == 'image/jpeg' and raw.startswith(b'\xff\xd8\xff')
+        or mime == 'image/png' and raw.startswith(b'\x89PNG\r\n\x1a\n')
+        or mime == 'image/webp' and raw[:4] == b'RIFF' and raw[8:12] == b'WEBP'
+        and int.from_bytes(raw[4:8], 'little') + 8 == len(raw)
+        or mime == 'application/pdf' and raw.startswith(b'%PDF-')
+        or mime in ('application/msword', 'application/vnd.ms-excel', 'application/vnd.ms-powerpoint')
+        and raw.startswith(b'\xd0\xcf\x11\xe0')
+        or mime.startswith('application/vnd.openxmlformats') and raw.startswith(b'PK')
+        or mime == 'audio/ogg' and raw.startswith(b'OggS')
+        or mime in ('audio/mp4', 'video/mp4', 'video/3gpp') and raw[4:8] == b'ftyp'
+        or mime == 'audio/mpeg' and (raw.startswith(b'ID3') or raw[:1] == b'\xff')
+        or mime == 'audio/aac' and raw[:1] == b'\xff'
+        or mime == 'audio/amr' and raw.startswith(b'#!AMR')
+    )
+    if mime == 'text/plain':
+        valid = '\x00' not in raw.decode('utf-8-sig')
+    if not valid:
+        raise ValueError('Invalid media content')
+    if metadata['kind'] in ('audio', 'voice', 'video'):
+        with tempfile.TemporaryDirectory(prefix='crm-wa-media-') as directory:
+            source = Path(directory) / 'source'
+            source.write_bytes(raw)
+            probe = subprocess.run([
+                'ffprobe', '-protocol_whitelist', 'file,pipe', '-v', 'error',
+                '-show_entries', 'format=duration:stream=codec_type,codec_name',
+                '-of', 'json', str(source),
+            ], capture_output=True, timeout=15, check=True)
+            details = json.loads(probe.stdout)
+            duration = float(details['format']['duration'])
+            if not 0 < duration <= 300:
+                raise ValueError('Media duration exceeds limits')
+            streams = details['streams']
+            if metadata['kind'] == 'video' and (
+                not any(s.get('codec_name') == 'h264' for s in streams)
+                or any(s.get('codec_name') not in ('h264', 'aac') for s in streams)
+            ):
+                raise ValueError('Unsupported video codecs')
+            if mime == 'audio/ogg' and any(s.get('codec_name') != 'opus' for s in streams):
+                raise ValueError('Unsupported audio codecs')
+
+
+def download_whatsapp(client, account, metadata):
+    if not whatsapp_supported(metadata) or not re.fullmatch(r'[0-9]+', metadata['file_id']):
+        raise ValueError('Invalid WhatsApp media')
+    headers = {'Authorization': 'Bearer ' + account.token.get_secret_value()}
+    response = client.get(
+        f'https://graph.facebook.com/{account.graph_version}/{metadata["file_id"]}',
+        params={'phone_number_id': account.provider_account}, headers=headers,
+        follow_redirects=False,
+    )
+    response.raise_for_status()
+    result = response.json()
+    url = urlsplit(result.get('url', ''))
+    if (url.scheme != 'https' or url.hostname not in ('lookaside.fbsbx.com', 'graph.facebook.com')
+            or url.username or url.password or url.port not in (None, 443)
+            or result.get('mime_type', '').split(';')[0] != metadata['mimetype']
+            or type(result.get('file_size')) is not int
+            or not 0 < result['file_size'] <= whatsapp_limit(metadata)):
+        raise ValueError('Invalid provider media metadata')
+    raw = bytearray()
+    with client.stream('GET', result['url'], headers=headers, follow_redirects=False) as response:
+        response.raise_for_status()
+        for chunk in response.iter_bytes():
+            raw.extend(chunk)
+            if len(raw) > whatsapp_limit(metadata):
+                raise ValueError('Media exceeds supported limits')
+    raw = bytes(raw)
+    if len(raw) != result['file_size']:
+        raise ValueError('Invalid media size')
+    for digest in (metadata.get('sha256'), result.get('sha256')):
+        if digest and not any(hmac.compare_digest(expected, digest) for expected in (base64.b64encode(hashlib.sha256(raw).digest()).decode(), hashlib.sha256(raw).hexdigest())):
+            raise ValueError('Media digest mismatch')
+    try:
+        validate_whatsapp_content(metadata, raw)
+    except (OSError, subprocess.SubprocessError, KeyError, UnicodeError, TypeError) as error:
+        raise ValueError('Invalid media content') from error
+    return base64.b64encode(raw).decode()

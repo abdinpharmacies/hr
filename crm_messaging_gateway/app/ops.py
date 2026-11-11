@@ -1,5 +1,6 @@
 import argparse
 import getpass
+import hashlib
 import json
 
 from .config import settings
@@ -25,7 +26,8 @@ def main():
     parser.add_argument('--file')
     parser.add_argument('--quiesced', action='store_true')
     args = parser.parse_args()
-    store = Store(settings(load_provider_tokens=False).database_url.get_secret_value())
+    config = settings(load_provider_tokens=False)
+    store = Store(config.database_url.get_secret_value())
     sqlite = store.database_url.startswith('sqlite:')
     if args.command in ('export', 'import', 'backup'):
         from .queue_transfer import export_queue, import_queue, backup_queue
@@ -56,6 +58,12 @@ def main():
             polling = conn.execute(
                 'SELECT provider_account,next_offset,updated_at FROM telegram_polling ORDER BY provider_account'
             ).fetchall()
+            from .health import reception_health
+
+            backlog = conn.execute(
+                "SELECT account,MIN(created_at) AS oldest FROM incoming_event WHERE state NOT IN ('done','ignored') GROUP BY account"
+            ).fetchall()
+            health = reception_health(config, polling, backlog)
             metrics = {}
             if not sqlite:
                 for table in ('incoming_event', 'outgoing_operation'):
@@ -97,6 +105,7 @@ def main():
                     'outgoing': outgoing,
                     'polling': polling,
                     'metrics': metrics,
+                    'reception_health': health,
                 },
                 default=str,
             )
@@ -115,12 +124,21 @@ def main():
         if not args.event_id or not args.note or len(args.note) > 2000:
             parser.error('A reviewed event ID and note are required')
         with store.connect() as conn:
-            row = conn.execute(
-                f"UPDATE incoming_event SET state='pending',attempts=0,available_at=now() WHERE id={placeholder} AND state='review' RETURNING id",
+            lock = '' if sqlite else ' FOR UPDATE'
+            current = conn.execute(
+                f"SELECT * FROM incoming_event WHERE id={placeholder} AND state='review'" + lock,
                 (args.event_id,),
             ).fetchone()
-            if not row:
+            if not current:
                 parser.error('Event is not awaiting review')
+            payload = dict(current['payload'])
+            if current['kind'] == 'incoming' and payload.get('review_reason') == 'unsupported_identity':
+                payload.pop('review_reason')
+            digest = hashlib.sha256(json.dumps([current['kind'], payload], sort_keys=True).encode()).hexdigest()
+            conn.execute(
+                f"UPDATE incoming_event SET state='pending',attempts=0,available_at=now(),lease_until=NULL,payload={placeholder},fingerprint={placeholder} WHERE id={placeholder}",
+                (json.dumps(payload, sort_keys=True), digest, args.event_id),
+            )
             conn.execute(
                 f'INSERT INTO operator_audit(event_id,actor,note) VALUES ({placeholder},{placeholder},{placeholder})',
                 (args.event_id, getpass.getuser(), args.note),

@@ -223,7 +223,8 @@ class SQLiteStore:
                 """UPDATE incoming_event SET state='processing', lease_until=now()+60, attempts=attempts+1
                 WHERE id=(SELECT candidate.id FROM incoming_event candidate WHERE ((candidate.state='pending' AND candidate.available_at<=now())
                     OR (candidate.state='processing' AND candidate.lease_until<now()))
-                    AND NOT EXISTS (SELECT 1 FROM incoming_event earlier WHERE earlier.account=candidate.account
+                    AND NOT EXISTS (SELECT 1 FROM incoming_event earlier WHERE earlier.account=candidate.account AND earlier.kind=candidate.kind
+                        AND (candidate.kind!='status' OR COALESCE(earlier.payload->>'reference','')=COALESCE(candidate.payload->>'reference',''))
                         AND COALESCE(earlier.payload->>'sender',earlier.payload->>'destination','')=COALESCE(candidate.payload->>'sender',candidate.payload->>'destination','')
                         AND earlier.id<candidate.id AND earlier.state NOT IN ('done','ignored'))
                     ORDER BY candidate.id LIMIT 1) RETURNING *"""
