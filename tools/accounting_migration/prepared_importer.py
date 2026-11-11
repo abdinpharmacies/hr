@@ -739,7 +739,7 @@ class PreparedImporter:
                     sql.SQL(',').join(sql.SQL('{}={}').format(ident(n),v) for n,v in fields.items()),self.src(model)))
         self.load_relations('external')
 
-    def validate_values(self):
+    def validate_values(self, check_attachments=True):
         """Compare actual values/links, not only counts or map existence."""
         for model in sorted(self.selected):
             plan=self.plans[model]
@@ -763,7 +763,7 @@ class PreparedImporter:
             actual=sql.SQL('SELECT {} FROM public.{}').format(sql.SQL(',').join(map(ident,columns)),ident(table))
             self.fail(sql.SQL('SELECT EXISTS(({} EXCEPT {}) UNION ALL ({} EXCEPT {}))').format(
                 actual,expected,expected,actual),f'Imported relationship values differ: {table}')
-        if self.scalar('SELECT to_regclass(%s)',[META+'.attachment_map']):
+        if check_attachments and self.scalar('SELECT to_regclass(%s)',[META+'.attachment_map']):
             self.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s LEFT JOIN {} m ON m.source_id=s.id '
                 'LEFT JOIN public.ir_attachment t ON t.id=m.target_id WHERE t.id IS NULL OR '
                 't.res_id IS DISTINCT FROM CASE WHEN s.res_model IS NULL OR s.res_id=0 THEN s.res_id ELSE {} END '
@@ -772,7 +772,7 @@ class PreparedImporter:
                     ident(META,'attachment_map'),self.mapped(self.normalize_model(sql.SQL('s.res_model')),sql.SQL('s.res_id')),
                     self.normalize_model(sql.SQL('s.res_model'))),'Attachment payload/owner/link validation failed')
 
-    def attachments(self, source_root, target_root, restore_links=True):
+    def attachments(self, source_root, target_root, restore_links=True, incremental=False):
         progress.begin('attachments',operation='Import scoped attachment metadata',monitor=True)
         source=self.attachment_source()
         cols=self.manifest['tables']['ir_attachment']['columns']
@@ -780,8 +780,13 @@ class PreparedImporter:
         self.execute(sql.SQL('CREATE TABLE IF NOT EXISTS {} (source_id bigint PRIMARY KEY,target_id bigint UNIQUE NOT NULL)').format(
             ident(META,'attachment_map')))
         self.execute(sql.SQL('SELECT EXISTS(SELECT 1 FROM {})').format(ident(META,'attachment_map')))
-        if self.cr.fetchone()[0]:
+        if self.cr.fetchone()[0] and not incremental:
             raise MigrationError('Uncheckpointed attachment mapping exists')
+        if incremental:
+            self.execute(sql.SQL('CREATE TEMP TABLE pending_attachment_rows ON COMMIT DROP AS '
+                'SELECT s.* FROM {} s WHERE NOT EXISTS(SELECT 1 FROM {} m WHERE m.source_id=s.id)').format(
+                    source,ident(META,'attachment_map')))
+            source=ident('pg_temp','pending_attachment_rows')
         self.execute("SELECT pg_get_serial_sequence('public.ir_attachment','id')")
         seq=self.cr.fetchone()[0]
         if not seq:
@@ -789,7 +794,8 @@ class PreparedImporter:
         self.reset_sequence('ir_attachment')
         self.execute(sql.SQL('INSERT INTO {} SELECT id,nextval(%s::regclass) FROM {} ORDER BY id').format(
             ident(META,'attachment_map'),source),[seq])
-        self.execute(sql.SQL("INSERT INTO {} SELECT 'ir.attachment',source_id,target_id FROM {}").format(
+        self.execute(sql.SQL("INSERT INTO {} SELECT 'ir.attachment',source_id,target_id FROM {} "
+                            'ON CONFLICT(model,source_id) DO UPDATE SET target_id=EXCLUDED.target_id').format(
             ident(META,'record_map'),ident(META,'attachment_map')))
         expressions={'id':self.mapped('ir.attachment',sql.SQL('s.id'))}
         for name in cols:
@@ -885,7 +891,7 @@ class PreparedImporter:
                         ident(SCHEMA,p['source']['table']),*p['values']), 'Unmapped attachment relationship')
             self.load_relations('attachments')
         self.reset_sequence('ir_attachment')
-        self.report['copied_files']=len(copied)
+        self.report['copied_files']=self.report.get('copied_files',0)+len(copied)
         save_json(self.stage/'attachments.json',dict(missing_files=self.report['missing_files'],copied_files=len(copied)))
         progress.finish('attachments imported; pending commit')
 

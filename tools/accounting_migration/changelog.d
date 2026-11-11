@@ -2,6 +2,32 @@
 
 ## Current changes before commit:
 
+- Resume failed and interrupted table operations on the same command; skip committed copies and retry failed/dependent work using the original extraction.
+- Replan corrected mappings/model fields for failed work while guarding committed data, XML IDs, table identities, and relationships.
+- Reuse original incoming-reference captures and attachment ID maps; track model coverage to prevent double remapping and duplicate attachments.
+- Adopt existing format-2 checkpoints without a reset, record per-attempt history, and refresh outstanding failure reports after successful retries.
+- Retain the existing processing approval and offline target window; revalidate completed runs without recopying their tables.
+- Add disposable PostgreSQL/offline resume coverage and update the runbook and validation evidence.
+- Remove the accounting tracking `je_line` integer-link override; preserve historical integer IDs even when their journal lines are absent, with a disposable PostgreSQL regression check.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `migrate.py`
+- `mappings.json`
+- `prepared.py`
+- `prepared_importer.py`
+- `table_checkpoints.py`
+- `table_resume.py`
+- `tests/test_prepared.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_table_checkpoints.py`
+
+## dc7bca670 — emadco88 — 2026-11-11
+
+Original commit subject: `tools/accounting_migration/ UPD commit each table`
+
 - Commit each successful live custom-table replacement and its checkpoint independently; roll back a failed table and continue with later tables.
 - Persist original FK definitions and incoming references before removing constraints; restore FKs independently and report unapplied constraints with manual restoration SQL.
 - Process incoming references, external fields, attachment links, and relation tables through separate table transactions; preserve failed-model records and skip dependent relations/attachment owners.

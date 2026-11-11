@@ -116,13 +116,19 @@ reasons before starting a new run:
 
 The tool always attempts restoration. Accepted failures remain in the saved
 report and summary counts. It never infers that a missing constraint is harmless.
-Exception rules are fingerprinted with other mappings; they cannot be edited under
-an existing run and silently adopted.
+Exception rules are tracked with mapping revisions. Resume validates completed
+work before adopting corrections; accepted FK exceptions never hide saved failures.
 
 ## Mappings, XML IDs, and attachments
 
 `mappings.json` contains reviewed field/selection conversions, XML-ID aliases,
 integer links, polymorphic references, and source-model aliases.
+`ab_accounting_tracking.je_line` is copied as its original integer audit reference,
+including historical IDs whose journal lines no longer exist. It is not an
+`integer_links` relationship. The separate computed `je_line_id` is not imported.
+This correction can reuse the saved extraction after the reported preflight
+failure; rerun normally without `--reset`.
+
 `prepared_rules.json` retains format 1 and supports:
 
 - `stable_keys`: reviewed non-null unique identity columns, initially currency
@@ -161,14 +167,44 @@ chatter messages and followers are not imported.
 The table workflow uses **run format 2**. Existing format-1 runs are rejected before
 live changes. Review their state before preparing a separate attempt.
 
-Before table setup commits, retry can reuse complete extraction or refresh an
-incomplete source snapshot. Identity changes require revalidation. Saved extraction
-and schema/rule fingerprints remain checked. Once table setup commits, **there is
-no automatic partial-run continuation, table retry, whole-run rollback, or repair**.
-Use the backup, checkpoint records, FK restoration SQL, and reports for manual
-handling. The backup is the earlier online snapshot, not a rollback of all committed
-work. A repeat command on a finished run returns its saved result without retrying
-tables or asserting that the current live data has been revalidated.
+**Rerun the same command without `--reset` to resume.** Successful table copies
+are skipped, including tables that succeeded after an earlier table failed. For
+example, if tables 1, 2, and 4 committed and table 3 failed, the next attempt copies
+only table 3. A failed external update or relationship operation retries that
+operation without recopying the successfully imported table.
+
+Retry uses the **original saved extraction**, staging, reference captures, and
+attachment IDs. It does not re-extract source changes or create a new backup.
+Missing/corrupted extraction or changed database identities stop processing.
+Before the first extraction completes, retry can refresh its incomplete snapshot;
+source identity changes require revalidation.
+
+You may correct mappings and compatible model definitions for failed work. The
+script replans it using the saved source data. Completed data, XML IDs, field
+shapes, relationship mappings, and recorded table fingerprints are checked before
+adopting a mapping revision. A correction that would alter committed work is
+rejected with the affected table/operation; successful tables are not automatically
+overwritten. Physical table identities cannot change within an existing run.
+
+Existing format-2 runs gain resume metadata without a reset. If such a run has
+committed copies but no saved mapping baseline, first retry with its original
+mapping files to establish that baseline; then apply failed-table corrections.
+If those original files cannot be established, the script reports insufficient
+compatibility evidence instead of guessing. Format-1 runs remain incompatible.
+
+Dependent operations track the models they covered. Newly successful models
+unblock pending references and relations. Dynamic references use retained original
+values; already remapped IDs are not remapped again. Newly eligible attachments
+are added using the existing ID map, without duplicating previous imports.
+Matching FKs already restored manually are accepted. Removed or failing FKs retain
+restoration SQL in the report.
+
+Each attempt retains database history and an `attempt-N.json` summary. Current
+failure reports contain outstanding failures; successful retries remove resolved
+failures. A fully successful repeat run revalidates the data and skips all copy
+operations. Overall processing approval remains; there are no per-table prompts.
+There is no automatic business-data repair or undo of earlier commits. The backup
+is the original online snapshot, not a rollback of all committed work.
 
 Optional `--reset` asks `Reset migration state? [y/N]`, then removes only the
 selected target's private `prepared_migration_work`, `prepared_migration_source`,

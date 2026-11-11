@@ -217,9 +217,163 @@ class PreparedPostgresTests(unittest.TestCase):
     def run_table_workflow(self, engine):
         from table_checkpoints import TableMigration
         engine.validate_ids()
-        engine.preflight()
+        engine.preflight(replacing=not bool(read_checkpoint(self.con,'table_setup')))
         runner=TableMigration(engine,write_checkpoint)
         return runner.run(self.source_files,self.target_files)
+
+    def test_tracking_integer_reference_preserves_absent_journal_line(self):
+        engine=self.fixture()
+        model='ab_accounting_tracking'
+        with self.con.cursor() as cr:
+            cr.execute('CREATE TABLE ab_accounting_tracking(id integer PRIMARY KEY,je_line integer)')
+            cr.execute('CREATE TABLE prepared_migration_source.ab_accounting_tracking '
+                       'AS SELECT * FROM ab_accounting_tracking WITH NO DATA')
+            cr.execute('INSERT INTO prepared_migration_source.ab_accounting_tracking '
+                       'VALUES(1,987654321),(2,0),(3,NULL)')
+        fields={name:dict(type='integer',ttype='integer',store=True,required=False)
+                for name in ('id','je_line')}
+        engine.target[model]=dict(table=model,fields=copy.deepcopy(fields))
+        engine.target[model]['fields']['je_line_id']=dict(type='many2one',store=False,
+            relation='ab_accounting_je_line',compute='_compute_je_line_id')
+        engine.manifest['selected'].append(model)
+        engine.manifest['models'][model]=dict(table=model,fields=fields)
+        from bulk import catalog
+        engine.manifest['tables'][model]=dict(columns=catalog(self.con)[model],rows=3)
+        self.con.commit()
+        # Load the shipped mapping, so reintroducing the override fails this test.
+        conversions=loads((Path(__file__).resolve().parents[1]/'mappings.json').read_text())
+        engine=PreparedImporter(*self.arguments[:-1],conversions)
+        result=self.run_table_workflow(engine)
+        self.assertEqual(result['status'],'complete',result)
+        self.assertEqual(self.scalar('SELECT array_agg(je_line ORDER BY id) FROM ab_accounting_tracking'),
+                         [987654321,0,None])
+        self.assertTrue(read_checkpoint(self.con,'table:copy:ab_accounting_tracking')['success'])
+
+    def test_resume_four_tables_retries_failed_copy_with_corrected_mapping(self):
+        engine=self.fixture()
+        from bulk import catalog
+        with self.con.cursor() as cr:
+            cr.execute("ALTER TABLE ab_record ADD CONSTRAINT record_name CHECK(name<>'source record')")
+            for table in ('ab_a','ab_z'):
+                cr.execute(sql.SQL('CREATE TABLE {}(id integer PRIMARY KEY,name varchar NOT NULL)').format(sql.Identifier(table)))
+                cr.execute(sql.SQL("INSERT INTO {} VALUES(1,'old')").format(sql.Identifier(table)))
+                cr.execute(sql.SQL('CREATE TABLE {} AS SELECT * FROM public.{} WITH NO DATA').format(sql.Identifier(SCHEMA,table),sql.Identifier(table)))
+                cr.execute(sql.SQL("INSERT INTO {} VALUES(2,'new')").format(sql.Identifier(SCHEMA,table)))
+        physical=catalog(self.con)
+        for table in ('ab_a','ab_z'):
+            engine.manifest['selected'].append(table)
+            engine.target[table]=dict(table=table,fields=copy.deepcopy(engine.target['ab_group']['fields']))
+            engine.manifest['models'][table]=copy.deepcopy(engine.target[table])
+            engine.manifest['tables'][table]=dict(columns=physical[table],rows=1)
+        self.con.commit()
+        first=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(first['successful_models'],['ab_a','ab_group','ab_z'])
+        self.assertEqual(first['status'],'finished_with_errors')
+        conversions=copy.deepcopy(self.arguments[-1])
+        conversions['selections']={'ab_record':{'name':{'source record':'fixed record'}}}
+        conversions['fields']={'ab_record':{'name':'label'}}
+        target=copy.deepcopy(self.arguments[3])
+        target['ab_record']['fields']['label']=target['ab_record']['fields'].pop('name')
+        with self.con.cursor() as cr:
+            cr.execute('ALTER TABLE ab_record RENAME COLUMN name TO label')
+        self.con.commit()
+        self.arguments=(*self.arguments[:3],target,self.arguments[4],conversions)
+        from table_checkpoints import TableMigration
+        original=TableMigration.copy_model
+        copied=[]
+        def record_copy(runner,model):
+            copied.append(model)
+            return original(runner,model)
+        with patch.object(TableMigration,'copy_model',record_copy):
+            second=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(copied,['ab_record'])
+        self.assertEqual(second['status'],'complete',second)
+        self.assertEqual(self.scalar('SELECT label FROM ab_record'),'fixed record')
+        self.assertEqual(self.scalar('SELECT res_id FROM ir_attachment WHERE id=1'),42)
+        self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
+        with patch.object(TableMigration,'copy_model',side_effect=AssertionError('recopy')):
+            third=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(third['status'],'complete',third)
+        self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
+        self.assertEqual(loads((self.stage/'failed_tables.json').read_text()),[])
+
+    def test_resume_failed_external_update_does_not_recopy_and_rejects_committed_changes(self):
+        engine=self.fixture()
+        from table_checkpoints import TableMigration
+        engine.preflight()
+        original=engine.external
+        def fail_external():
+            if 'ab_record' in engine.selected:
+                raise MigrationError('injected external failure')
+            return original()
+        engine.external=fail_external
+        first=TableMigration(engine,write_checkpoint).run(self.source_files,self.target_files)
+        self.assertEqual(first['status'],'finished_with_errors')
+        with patch.object(TableMigration,'copy_model',side_effect=AssertionError('recopy')):
+            second=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(second['status'],'complete',second)
+        self.assertEqual(self.scalar('SELECT currency_id FROM ab_record'),900)
+        conversions={'selections':{'ab_group':{'name':{'source group':'changed'}}}}
+        arguments=(*self.arguments[:-1],conversions)
+        with self.assertRaisesRegex(MigrationError,'committed'):
+            self.run_table_workflow(PreparedImporter(*arguments))
+        self.con.rollback()
+        self.assertEqual(self.scalar('SELECT name FROM ab_group'),'source group')
+
+    def test_resume_interrupt_uses_commit_marker_without_json_result(self):
+        engine=self.fixture()
+        engine.preflight()
+        from table_checkpoints import TableMigration
+        runner=TableMigration(engine,write_checkpoint)
+        original=runner.copy_model
+        def interrupt(model):
+            if model=='ab_record':
+                raise KeyboardInterrupt()
+            return original(model)
+        runner.copy_model=interrupt
+        with self.assertRaises(KeyboardInterrupt):
+            runner.run(self.source_files,self.target_files)
+        self.assertIsNone(read_checkpoint(self.con,'table_result'))
+        copied=[]
+        original=TableMigration.copy_model
+        def record(runner,model):
+            copied.append(model)
+            return original(runner,model)
+        with patch.object(TableMigration,'copy_model',record):
+            result=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(result['status'],'complete',result)
+        self.assertEqual(copied,['ab_record'])
+
+    def test_resume_bootstraps_original_format_two_markers(self):
+        result=self.run_table_workflow(self.fixture())
+        setup=read_checkpoint(self.con,'table_setup')
+        for name in setup.pop('dynamic_captures').values():
+            with self.con.cursor() as cr:
+                cr.execute(sql.SQL('DROP TABLE {}').format(sql.Identifier(WORK,name)))
+        setup.pop('dynamic')
+        setup.pop('snapshot')
+        with self.con.cursor() as cr:
+            cr.execute("DELETE FROM prepared_custom_migration.checkpoint WHERE name='resume_state'")
+            cr.execute("UPDATE prepared_custom_migration.checkpoint SET value=(value::jsonb - 'coverage')::text WHERE name LIKE 'table:%'")
+        write_checkpoint(self.con,'table_setup',setup)
+        self.con.commit()
+        from table_checkpoints import TableMigration
+        with patch.object(TableMigration,'copy_model',side_effect=AssertionError('legacy recopy')):
+            resumed=self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.assertEqual(resumed['status'],'complete',resumed)
+        self.assertEqual(self.scalar('SELECT res_id FROM ir_attachment WHERE id=1'),42)
+        self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
+        self.assertIsNotNone(read_checkpoint(self.con,'resume_state'))
+
+    def test_resume_rejects_edits_to_successfully_imported_table(self):
+        self.run_table_workflow(self.fixture())
+        with self.con.cursor() as cr:
+            cr.execute("UPDATE ab_group SET name='manual change'")
+        self.con.commit()
+        with self.assertRaisesRegex(MigrationError,'Committed table data changed'):
+            self.run_table_workflow(PreparedImporter(*self.arguments))
+        self.con.rollback()
+        self.assertEqual(self.scalar('SELECT name FROM ab_group'),'manual change')
 
     def test_table_checkpoints_copy_links_and_constraints(self):
         result=self.run_table_workflow(self.fixture())
@@ -893,7 +1047,7 @@ with target_offline(gate,con,sys.argv[4]):
                     patch('prepared.confirm',return_value=True),patch('table_checkpoints.save_json',side_effect=lose_report):
                 with self.assertRaisesRegex(MigrationError,'OSError'):
                     run(args,root)
-            with patch('prepared.metadata',side_effect=schema),patch('prepared.confirm',side_effect=AssertionError('unexpected replay')):
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
                 finished=run(args,root)
             self.assertTrue(finished['passed'])
             self.assertEqual(finished['status'],'complete')
@@ -909,10 +1063,11 @@ with target_offline(gate,con,sys.argv[4]):
             with self.con.cursor() as cr:
                 cr.execute("DELETE FROM prepared_custom_migration.checkpoint WHERE name='table_result'")
             self.con.commit()
-            with patch('prepared.metadata',side_effect=schema),patch('prepared.confirm') as prompt:
-                with self.assertRaisesRegex(MigrationError,'automatic continuation is disabled'):
-                    run(args,root)
-                prompt.assert_not_called()
+            self.con.close()
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
+                continued=run(args,root)
+            self.assertEqual(continued['status'],'complete')
+            self.con=connect(self.config,self.database,readonly=False)
             with patch('builtins.input') as prompt:
                 with self.assertRaisesRegex(MigrationError,'checkpoints'):
                     reset(args,root)

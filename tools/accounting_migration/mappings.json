@@ -27,9 +27,6 @@
     "Every ignored business field requires a documented reason in ignore_fields."
   ],
   "integer_links": {
-    "ab_accounting_tracking": {
-      "je_line": "ab_accounting_je_line"
-    },
     "ab_inventory": {
       "header_id": "ab_inventory_header"
     }

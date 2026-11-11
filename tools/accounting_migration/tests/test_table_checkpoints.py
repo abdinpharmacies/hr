@@ -42,7 +42,7 @@ class TableCheckpointTests(unittest.TestCase):
     def test_unit_commits_marker_and_continues_after_rollback(self):
         with tempfile.TemporaryDirectory() as directory:
             engine = SimpleNamespace(con=MagicMock(), selected={'ab_test'}, relations=[],
-                                     rules={}, stage=Path(directory))
+                                     rules={}, conversions={}, target={'ab_test': {'table': 'ab_test'}}, physical={}, stage=Path(directory))
             checkpoint = MagicMock()
             worker = TableMigration(engine, checkpoint)
             def fail():

@@ -1,10 +1,12 @@
-"""Independent live-table transactions. Deliberately no partial-run recovery."""
+"""Independent live-table transactions with durable, operation-level resume."""
 from contextlib import contextmanager
 from psycopg2 import sql, errorcodes
 
 from common import MigrationError, save_json
-from prepared_importer import WORK, ident
+from resume import fingerprint
+from prepared_importer import META, WORK, ident
 from prepared_snapshot import SCHEMA
+from table_resume import ResumeState
 import prepared_progress as progress
 
 
@@ -51,7 +53,18 @@ class TableMigration:
         self.accepted = validate_exceptions(engine.rules)
         self.committed = []
         self.report_errors = set()
-        self.write_reports()
+        self.resume = ResumeState(engine, checkpoint)
+        self.skipped = []
+        previous_report = self.resume.records.get('table_result', {}).get('report', {})
+        for name in ('missing_files', 'copied_files'):
+            if name in previous_report:
+                engine.report[name] = previous_report[name]
+        if self.resume.setup:
+            self.captures = self.resume.setup['captures']
+            engine.incoming_scalars = {x['table']: x['columns'] for x in self.captures}
+            engine.dynamic = self.resume.setup.get('dynamic', self.discover_dynamic())
+        # Preserve last attempt's reports until compatibility checks pass.
+
 
     def write_reports(self):
         for name, value in (('failed_tables.json', self.failed_tables),
@@ -73,18 +86,43 @@ class TableMigration:
         finally:
             e.selected, e.relations = previous
 
-    def unit(self, table, operation, action):
+    def unit(self, table, operation, action, coverage=None, force=False):
         """The live operation and its success marker have exactly one commit."""
+        key = 'table:' + operation + ':' + table
+        saved = self.resume.marker(table, operation)
+        previous_coverage = saved.get('coverage')
+        if previous_coverage is None and coverage is not None and 'models' in coverage:
+            previous_coverage = dict(models=sorted(self.resume.original_models))
+        if not force and saved.get('success') and previous_coverage == coverage:
+            self.skipped.append(dict(table=table, operation=operation))
+            print(f'Skip committed operation: {operation} {table}', flush=True)
+            return True
         progress.begin(operation, table=table, operation=operation, monitor=True)
         try:
             rows = action()
-            entry = dict(table=table, operation=operation, rows=rows, success=True)
-            self.checkpoint(self.con, 'table:' + operation + ':' + table, entry)
+            entry = dict(table=table, operation=operation, rows=rows, success=True, coverage=coverage)
+            self.resume.remember(table, operation)
+            for model in self.all_models:
+                if operation == 'copy' and self.engine.target[model]['table'] == table:
+                    self.resume.state['definitions'][model] = self.resume.definition(model)
+            self.resume.history(operation, table, entry)
+            self.resume.save()
+            with self.con.cursor() as cr:
+                cr.execute(sql.SQL('DELETE FROM {} WHERE name=%s').format(ident(META,'checkpoint')),
+                           ['failure:' + operation + ':' + table])
+            self.checkpoint(self.con, key, entry)
             self.con.commit()
+            self.resume.records[key] = entry
         except Exception as exc:
             self.con.rollback()
+            # Failed transactions must not leave in-memory fingerprints ahead
+            # of the database's authoritative resume marker.
+            from table_resume import records
+            self.resume.records = records(self.con)
+            self.resume.state = self.resume.records.get('resume_state', self.resume.state)
             entry = dict(table=table, operation=operation, success=False, **safe_error(exc))
             self.failed_tables.append(entry)
+            self.resume.history(operation, table, entry)
             self.checkpoint(self.con, 'failure:' + operation + ':' + table, entry)
             self.con.commit()
             self.write_reports()
@@ -96,8 +134,24 @@ class TableMigration:
         self.write_reports()
         return True
 
-    def setup(self):
-        """Commit captures, original constraints, and the partial-run guard together."""
+    def discover_dynamic(self):
+        e = self.engine
+        excluded = {e.target[m]['table'] for m in self.all_models} | {p['table'] for p in self.all_relations}
+        dynamic = set()
+        for model, meta in e.target.items():
+            table = meta['table']
+            if table in excluded:
+                continue
+            for name, field in meta['fields'].items():
+                if field.get('store') and field.get('type') == 'reference' and name in e.physical.get(table, {}):
+                    dynamic.add((table, name, None))
+        for table, columns in e.physical.items():
+            if table not in excluded and table != 'ir_model_data' and {'res_model','res_id'} <= columns.keys():
+                dynamic.add((table, 'res_id', 'res_model'))
+        return sorted(dynamic, key=str)
+
+    def collect_constraints(self):
+        """Inspect current relevant constraints without touching live data."""
         e = self.engine
         tables = sorted({e.target[m]['table'] for m in self.all_models} |
                         {p['table'] for p in self.all_relations})
@@ -113,25 +167,60 @@ class TableMigration:
                   "WHERE k.contype='f' AND n.nspname='public' AND tn.nspname='public' "
                   "AND (s.relname=ANY(%s) OR t.relname=ANY(%s)) ORDER BY s.relname,k.conname",
                   [tables, tables])
+        found = []
         for table, name, definition, parent, columns, referenced in e.cr.fetchall():
             statement = sql.SQL('ALTER TABLE public.{} ADD CONSTRAINT {} {}').format(
                 ident(table), ident(name), sql.SQL(definition)).as_string(self.con)
-            self.constraints.append(dict(table=table, constraint=name, definition=definition,
+            found.append(dict(table=table, constraint=name, definition=definition,
                                          referenced_table=parent, columns=columns,
                                          referenced_columns=referenced, restore_sql=statement))
-        for index, (table, columns) in enumerate(sorted(e.incoming_scalars.items())):
+        return found
+
+    def setup(self):
+        """Reuse original captures; constraints may be restored between attempts."""
+        e = self.engine
+        current = self.collect_constraints()
+        if self.resume.setup:
+            merged = {(x['table'], x['constraint']): x for x in self.resume.setup['constraints']}
+            merged.update({(x['table'], x['constraint']): x for x in current})
+            self.constraints = list(merged.values())
+        else:
+            self.constraints = current
+        for index, (table, columns) in enumerate(sorted(e.incoming_scalars.items()) if not self.resume.setup else []):
             captured = ['id', *columns] if 'id' in e.physical[table] else list(e.physical[table])
             name = 'captured_' + str(index)
             e.execute(sql.SQL('CREATE TABLE {} AS SELECT {} FROM public.{}').format(
                 ident(WORK, name), sql.SQL(',').join(map(ident, captured)), ident(table)))
             self.captures.append(dict(table=table, capture=name, columns=columns))
-        setup = dict(constraints=self.constraints, captures=self.captures, started=True)
+        self.dynamic_captures = dict((self.resume.setup or {}).get('dynamic_captures', {}))
+        for table in sorted({t for t, _, _ in e.dynamic}):
+            if table in self.dynamic_captures:
+                continue
+            if 'id' not in e.physical[table]:
+                raise MigrationError(f'Dynamic-reference resume requires a row ID: {table}')
+            name = 'dynamic_' + str(len(self.dynamic_captures))
+            columns = {'id'}
+            for t, column, discriminator in e.dynamic:
+                if t == table:
+                    columns.add(column)
+                    if discriminator:
+                        columns.add(discriminator)
+            e.execute(sql.SQL('CREATE TABLE {} AS SELECT {} FROM public.{}').format(
+                ident(WORK, name), sql.SQL(',').join(map(ident, sorted(columns))), ident(table)))
+            self.dynamic_captures[table] = name
+        setup = dict(constraints=self.constraints, captures=self.captures, started=True, snapshot=fingerprint(e.manifest),
+                     dynamic=e.dynamic, dynamic_captures=self.dynamic_captures,
+                     tables={m:e.target[m]['table'] for m in self.all_models})
         save_json(e.stage / 'table-setup.json', setup)
-        for item in self.constraints:
-            e.execute(sql.SQL('ALTER TABLE public.{} DROP CONSTRAINT {}').format(
-                ident(item['table']), ident(item['constraint'])))
+        previous = self.resume.records.get('table_result')
+        needs_writes = not previous or bool(previous.get('failed_tables')) or self.resume.original_models != self.all_models
+        if needs_writes:
+            for item in current:
+                e.execute(sql.SQL('ALTER TABLE public.{} DROP CONSTRAINT {}').format(
+                    ident(item['table']), ident(item['constraint'])))
         self.checkpoint(self.con, 'table_setup', setup)
         self.con.commit()
+        self.resume.setup = setup
 
     def copy_model(self, model):
         e = self.engine
@@ -168,17 +257,18 @@ class TableMigration:
                 sql.SQL(',').join(expressions.values()), ident(WORK, item['capture'])))
         return e.cr.rowcount
 
-    def restore_dynamic(self, table, entries):
+    def restore_dynamic(self, table, entries, models=None):
         e = self.engine
         rows = 0
         for _, column, discriminator in entries:
-            value = sql.SQL('t.{}').format(ident(column))
-            model = sql.SQL('t.{}').format(ident(discriminator)) if discriminator else sql.SQL("split_part({},',',1)").format(value)
+            value = sql.SQL('s.{}').format(ident(column))
+            model = sql.SQL('s.{}').format(ident(discriminator)) if discriminator else sql.SQL("split_part({},',',1)").format(value)
             rid = value if discriminator else sql.SQL("nullif(split_part({},',',2),'')::bigint").format(value)
             mapped = e.incoming_value(model, rid)
             expression = mapped if discriminator else sql.SQL("{}||','||{}::text").format(model, mapped)
-            e.execute(sql.SQL('UPDATE public.{} t SET {}={} WHERE {}=ANY(%s) AND {} IS NOT NULL').format(
-                ident(table), ident(column), expression, model, value), [sorted(self.successful)])
+            e.execute(sql.SQL('UPDATE public.{} t SET {}={} FROM {} s WHERE t.id=s.id AND {}=ANY(%s) AND {} IS NOT NULL').format(
+                ident(table), ident(column), expression, ident(WORK,self.dynamic_captures[table]), model, value),
+                [sorted(self.successful if models is None else models)])
             rows += e.cr.rowcount
         return rows
 
@@ -186,7 +276,15 @@ class TableMigration:
         self.con.rollback()
         for item in self.constraints:
             try:
-                self.engine.execute(sql.SQL(item['restore_sql']))
+                self.engine.execute("SELECT pg_get_constraintdef(k.oid) FROM pg_constraint k JOIN pg_class t ON t.oid=k.conrelid "
+                                    "JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname='public' AND t.relname=%s AND k.conname=%s",
+                                    [item['table'],item['constraint']])
+                existing = self.engine.cr.fetchone()
+                if existing and existing[0] != item['definition']:
+                    raise MigrationError('Existing FK definition differs from saved restoration definition')
+                if not existing:
+                    self.engine.execute(sql.SQL(item['restore_sql']))
+                self.resume.history('fk', item['table'] + ':' + item['constraint'], dict(success=True))
                 self.checkpoint(self.con, 'fk:' + item['table'] + ':' + item['constraint'], dict(success=True))
                 self.con.commit()
             except Exception as exc:
@@ -225,15 +323,20 @@ class TableMigration:
 
     def run(self, source_root, target_root, validate_orm=None):
         e = self.engine
+        self.resume.begin()
         self.setup()
+        self.write_reports()
         try:
             for model in sorted(self.all_models):
                 if self.unit(e.target[model]['table'], 'copy', lambda m=model: self.copy_model(m)):
                     self.successful.add(model)
             for item in self.captures:
-                self.unit(item['table'], 'incoming', lambda item=item: self.restore_incoming(item))
+                covered = self.successful & set(item['columns'].values())
+                self.unit(item['table'], 'incoming', lambda item=item: self.restore_incoming(item), coverage=dict(models=sorted(covered)))
             for table in sorted({p[0] for p in e.dynamic}):
-                self.unit(table, 'incoming_dynamic', lambda t=table: self.restore_dynamic(t, [p for p in e.dynamic if p[0] == t]))
+                pending = self.successful - self.resume.coverage(table, 'incoming_dynamic')
+                self.unit(table, 'incoming_dynamic', lambda t=table, models=pending: self.restore_dynamic(
+                    t, [p for p in e.dynamic if p[0] == t], models), coverage=dict(models=sorted(self.successful)))
             for model in sorted(self.successful):
                 def external(model=model):
                     with self.scope([model]):
@@ -245,7 +348,8 @@ class TableMigration:
                 e.prepare_attachment_scope(excluded_owners=self.all_models - self.successful)
                 self.con.commit()
                 attached = self.unit('ir_attachment', 'attachments', lambda: e.attachments(
-                    source_root, target_root, restore_links=False))
+                    source_root, target_root, restore_links=False, incremental=True),
+                    coverage=dict(models=sorted(self.successful)))
             if attached:
                 for model in sorted(self.successful):
                     self.unit(e.target[model]['table'], 'attachment_links', lambda m=model: e.restore_attachment_links(m))
@@ -264,27 +368,29 @@ class TableMigration:
                         e.validate_custom()
                         e.validate_values()
                     return None
-                self.unit(e.target[model]['table'], 'validation', validate)
+                self.unit(e.target[model]['table'], 'validation', validate, force=True)
             for table in sorted({p['table'] for p in loaded_relations}):
                 def validate_relation(table=table):
                     with self.scope([], [p for p in loaded_relations if p['table'] == table]):
                         e.validate_values()
                     return None
-                self.unit(table, 'validation', validate_relation)
+                self.unit(table, 'validation', validate_relation, force=True)
         finally:
             # Controlled interruption still attempts every original constraint.
             self.restore_constraints()
         if validate_orm:
-            self.unit('registry', 'validation', lambda: validate_orm(sorted(self.successful)))
+            self.unit('registry', 'validation', lambda: validate_orm(sorted(self.successful)), force=True)
         errors = bool(self.failed_tables or self.report_errors or any(not f['accepted'] for f in self.failed_fks))
         status = 'finished_with_errors' if errors else 'finished_with_exceptions' if self.failed_fks else 'complete'
         result = dict(passed=not errors, status=status, complete=True, committed=self.committed,
-                      successful_models=sorted(self.successful), failed_tables=self.failed_tables,
+                      successful_models=sorted(self.successful), skipped=self.skipped, attempt=self.resume.attempt, failed_tables=self.failed_tables,
                       failed_foreign_keys=self.failed_fks, report=e.report,
                       report_errors=sorted(self.report_errors), source_access='read_only', stage=str(e.stage))
+        self.resume.finish(result)
         self.checkpoint(self.con, 'table_result', result)
         self.con.commit()
         self.write_reports()
+        save_json(e.stage / ('attempt-' + str(self.resume.attempt) + '.json'), result)
         save_json(e.stage / 'verification.json', result)
         print(f'{status}: {len(self.successful)} custom tables committed; '
               f'{len(self.failed_tables)} failed operations; {len(self.failed_fks)} missing foreign keys. '

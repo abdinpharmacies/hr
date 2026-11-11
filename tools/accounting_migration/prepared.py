@@ -65,7 +65,7 @@ def write_checkpoint(connection, name, value):
 
 
 def metadata(args, stage, smoke=False):
-    output=Path(stage)/('orm-validation.json' if smoke else 'target-schema.json')
+    output=Path(stage)/('orm-validation.json' if smoke else 'target-schema-current.json')
     argv=[sys.executable,str(HERE/'prepared_metadata.py'),'--config',args.target_config,
           '--database',args.target_db,'--server',str(HERE.parents[2]/'server'),'--output',str(output)]
     if smoke:
@@ -74,7 +74,10 @@ def metadata(args, stage, smoke=False):
         result=subprocess.run(argv,stdout=log,stderr=subprocess.STDOUT)
     if result.returncode:
         raise MigrationError('Read-only Odoo worker failed; see '+str(Path(stage)/('orm-validation.log' if smoke else 'metadata.log')))
-    return loads(output.read_text())
+    result=loads(output.read_text())
+    if not smoke and not (Path(stage)/'target-schema.json').exists():
+        save_json(Path(stage)/'target-schema.json',result)
+    return result
 
 
 class SmokeWorker:
@@ -138,8 +141,9 @@ def find_stage(root, identity):
         raise MigrationError('Ambiguous prepared-target run directories')
     if candidates:
         path,old=candidates[0]
-        if old!=identity:
-            raise MigrationError('Database identity, schema or rules changed; incompatible prepared run')
+        changed=[k for k in set(old)|set(identity) if k!='rules' and old.get(k)!=identity.get(k)]
+        if changed:
+            raise MigrationError('Database identity/run format changed; incompatible prepared run: '+', '.join(sorted(changed)))
         return path
     path=Path(root)/(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'_prepared_'+uuid.uuid4().hex[:12])
     path.mkdir(parents=True,mode=0o700)
@@ -228,6 +232,9 @@ def run(args, root):
             source_endpoint=endpoint(args.source_config),target_endpoint=endpoint(args.target_config),
             source_oid=source_database_oid(args.source_config,args.source_db),target_oid=tg.oid,rules=fingerprint([rules,conversions]))
         stage=find_stage(root,identity)
+        # Keep the original identity stable; reviewed mapping revisions belong
+        # to resume metadata, not the database/snapshot identity.
+        identity=loads((stage/'prepared-run.json').read_text())
         progress.start(stage,args.target_config)
         print(f'Prepared custom migration: {args.source_db} -> {args.target_db}\nRun: {stage}',flush=True)
         recover_target(tg,stage)
@@ -243,15 +250,7 @@ def run(args, root):
         existing_run=read_checkpoint(target_con,'run')
         if existing_run is not None and existing_run!=identity:
             raise MigrationError('Target database belongs to a different prepared migration run')
-        prior_result=read_checkpoint(target_con,'table_result')
-        if prior_result:
-            target_con.rollback()
-            print('Returning stored result of finished table workflow; no tables retried.',flush=True)
-            save_json(stage/'verification.json',prior_result)
-            return prior_result
-        if read_checkpoint(target_con,'table_setup'):
-            raise MigrationError('Partially committed table migration: automatic continuation is disabled. '
-                                 'Review table-setup.json, failure reports and backup manually; --reset cannot undo live commits.')
+        saved_setup=read_checkpoint(target_con,'table_setup')
         if not str(target.get('res.users',{}).get('table','')).startswith('res_users'):
             raise MigrationError('Prepared target registry unavailable')
         with target_con.cursor() as cr:
@@ -259,14 +258,11 @@ def run(args, root):
             if not str(cr.fetchone()[0]).startswith('19.'):
                 raise MigrationError('Prepared target must be Odoo 19')
         target_con.rollback()
-        if (stage/'schema-identity.json').exists():
-            if loads((stage/'schema-identity.json').read_text())!=dict(identity=target_signature(target)):
-                raise MigrationError('Target registry schema changed since extraction')
-        else:
+        if not (stage/'schema-identity.json').exists():
             save_json(stage/'schema-identity.json',dict(identity=target_signature(target)))
         ids_path=stage/'source-ids.json'
         done=read_checkpoint(target_con,'identities')
-        imported=read_checkpoint(target_con,'custom_and_xmlids')
+        imported=saved_setup or read_checkpoint(target_con,'custom_and_xmlids')
         target_con.rollback()
         if not manifest or not manifest.get('complete'):
             if imported:
@@ -327,10 +323,11 @@ def run(args, root):
         print('Omitted models: '+', '.join(manifest['omitted']),flush=True)
         if not confirm('Checkpoint 2: back up target; commit each live table independently, map references, '
                        'import attachments, validate, and attempt FK restoration. Failed tables are retained; '
-                       'processing continues and the target reopens even with missing constraints. No automatic recovery.'):
+                       'skip committed operations and retry pending work; the target reopens even with missing constraints.'):
             return dict(passed=False,status='cancelled',source_access='read_only')
         ensure_backup(args.target_config,args.target_db,stage,progress=progress)
-        save_json(stage/'filestore-baseline.json',dict(path=str(target_root),exists=target_root.exists()))
+        if not (stage/'filestore-baseline.json').exists():
+            save_json(stage/'filestore-baseline.json',dict(path=str(target_root),exists=target_root.exists()))
         # The worker connects while online, but reads this manifest only after GO.
         validation_manifest=stage/'validation-snapshot.json'
         save_json(validation_manifest,{**manifest,'selected':[]})
@@ -338,13 +335,14 @@ def run(args, root):
         try:
             with target_offline(tg,target_con,stage,workers=[smoke.pid]):
                 initialize(target_con,identity)
-                snapshot.stage_tables(target_con,stage,manifest)
-                with target_con.cursor() as cr:
-                    cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
-                    cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
+                if not saved_setup:
+                    snapshot.stage_tables(target_con,stage,manifest)
+                    with target_con.cursor() as cr:
+                        cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
+                        cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
                 engine=PreparedImporter(target_con,stage,manifest,target,rules,conversions)
                 engine.validate_ids()
-                engine.preflight(replacing=True)
+                engine.preflight(replacing=not bool(saved_setup))
                 def validate_orm(selected):
                     save_json(validation_manifest,{**manifest,'selected':selected})
                     smoke.run()

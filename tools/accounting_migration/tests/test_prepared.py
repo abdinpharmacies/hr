@@ -42,6 +42,15 @@ class PreparedTests(unittest.TestCase):
             with self.assertRaisesRegex(MigrationError,'incompatible'):
                 find_stage(directory,{**identity,'source_oid':12})
 
+    def test_run_identity_allows_mapping_revision_without_reset(self):
+        identity=dict(source_endpoint={},target_endpoint={},source_db='source',target_db='target',format=2,
+                      source_oid=11,target_oid=12,rules='original')
+        with tempfile.TemporaryDirectory() as directory:
+            path=find_stage(directory,identity)
+            self.assertEqual(find_stage(directory,{**identity,'rules':'corrected'}),path)
+            from common import loads
+            self.assertEqual(loads((path/'prepared-run.json').read_text())['rules'],'original')
+
     def test_cli_uses_only_prepared_workflow(self):
         with patch('prepared.run',return_value={'passed':True}) as run,patch('legacy_migrate.legacy_main') as legacy:
             result=main(['--source-config','source','--source-db','a','--target-config','target','--target-db','b'])

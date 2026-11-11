@@ -1,8 +1,8 @@
 # Prepared-target migration validation
 
-## Current table-checkpoint validation (2026-11-11)
+## Resume validation (2026-11-11)
 
-**194 tests: 184 passed, 10 skipped**, with disposable PostgreSQL tests enabled.
+**201 tests: 191 passed, 10 skipped**, with disposable PostgreSQL tests enabled.
 The skipped cases require optional legacy settings or an explicitly selected Odoo
 clone template. No application database was migrated or had its availability
 changed. All table changes and availability gates used generated disposable test
@@ -16,8 +16,15 @@ New coverage verifies:
 - Circular/self-referencing FK restoration and isolated restoration failures.
 - Accepted FK exceptions retained in reports with individual warnings suppressed.
 - Target reopening with missing constraints, controlled-interruption restoration,
-  partial-run continuation/reset rejection, and saved terminal-result retrieval.
+  interrupted-run continuation, reset rejection, and terminal result revalidation.
 - Safe error reports and distinct CLI exit statuses for errors/accepted exceptions.
+- Four-table resume: skip tables 1/2/4, correct table 3 mappings/model fields, and
+  retry table 3 alone, including newly eligible references and attachments.
+- Retrying failed external updates without recopying data, third-run no-copy
+  behavior, and rejection of edits/mapping changes affecting completed tables.
+- Original format-2 marker adoption and lost-result recovery from database markers.
+- The shipped mapping preserves accounting tracking `je_line` as an integer,
+  including absent journal-line IDs, zero, and NULL, through a committed table copy.
 
 The controller fixture continues writing through a separate source connection and
 checks that imported values come from the consistent read-only snapshot. Its
@@ -26,7 +33,8 @@ this change. Python compilation and `git diff --check` are also required.
 
 The public controller now uses run format 2 and the independent table workflow.
 Atomic importer primitives remain available to historical regression fixtures.
-The earlier multi-phase resume contract does not apply after table setup commits.
+Table operations now resume from their success markers after setup commits; the
+original extraction and captures remain authoritative.
 
 ## Historical implementation results
 
