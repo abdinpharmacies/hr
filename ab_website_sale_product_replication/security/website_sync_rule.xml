@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_sync_status_admin_rule" model="ab_odoo_replication_override_write_rule">
+        <field name="override_id" ref="ab_odoo_replication.override_ab_product"/>
+        <field name="group_id" ref="base.group_system"/>
+        <field name="field_ids" eval="[(6, 0, [ref('ab_website_sale_product.field_ab_product__website_sync_pending')])]"/>
+    </record>
+</odoo>
