@@ -1,9 +1,17 @@
+import re
+
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
+
+from .common import _BRIDGE, bridge_mutation
 
 
 class Account(models.Model):
     _inherit = 'ab_crm_messaging_account'
+
+    whatsapp_business_account = fields.Char(readonly=True, copy=False)
+    whatsapp_templates_synced_at = fields.Datetime(readonly=True, copy=False)
+    whatsapp_templates_error = fields.Char(readonly=True, copy=False)
 
     whatsapp_migrated = fields.Boolean(string='WhatsApp Queue Ownership', copy=False)
     whatsapp_webhook_enabled = fields.Boolean(
@@ -16,6 +24,7 @@ class Account(models.Model):
         'account_id',
         'template_id',
         string='Authorized WhatsApp Templates',
+        copy=False,
     )
 
     @api.constrains(
@@ -41,9 +50,11 @@ class Account(models.Model):
 
     @api.model_create_multi
     def create(self, values_list):
+        if not _BRIDGE.get() and (any({'whatsapp_template_ids', 'whatsapp_business_account'} & values.keys() for values in values_list) or any('default_' + key in self.env.context for key in ('whatsapp_template_ids', 'whatsapp_business_account'))):
+            raise AccessError(_('Refresh WhatsApp templates to update the account inventory.'))
         if any(
             set(values)
-            & {'whatsapp_migrated', 'whatsapp_template_ids', 'whatsapp_webhook_enabled', 'whatsapp_extended_enabled'}
+            & {'whatsapp_migrated', 'whatsapp_template_ids', 'whatsapp_webhook_enabled', 'whatsapp_extended_enabled', 'whatsapp_business_account', 'whatsapp_templates_synced_at', 'whatsapp_templates_error'}
             for values in values_list
         ):
             self._check_whatsapp_manager()
@@ -58,7 +69,10 @@ class Account(models.Model):
             )
 
     def write(self, values):
+        if not _BRIDGE.get() and {'whatsapp_template_ids', 'whatsapp_business_account'} & values.keys():
+            raise AccessError(_('Refresh WhatsApp templates to update the account inventory.'))
         if set(values) & {
+            'whatsapp_business_account', 'whatsapp_templates_synced_at', 'whatsapp_templates_error',
             'whatsapp_migrated',
             'whatsapp_template_ids',
             'whatsapp_webhook_enabled',
@@ -76,6 +90,89 @@ class Account(models.Model):
                 )
         return super().write(values)
 
+    def _available_whatsapp_templates(self):
+        self.ensure_one()
+        self._authorize('read')
+        return self.whatsapp_template_ids.filtered(lambda template:
+            self.whatsapp_business_account
+            and template.business_account_id == self.whatsapp_business_account
+            and (template.status or '').upper() == 'APPROVED')
+
+    def action_refresh_whatsapp_templates(self):
+        self.ensure_one()
+        self._check_whatsapp_manager()
+        self._authorize()
+        if self.provider != 'whatsapp' or not self.whatsapp_migrated:
+            raise UserError(_('Select a migrated WhatsApp account.'))
+        self.lock_for_update()
+        service = self.env['ab.whatsapp.service'].sudo()
+        settings = service._settings()
+        waba = settings['waba_id']
+        if not waba or not str(waba).isascii() or not str(waba).isdecimal():
+            raise UserError(_('Configure the WhatsApp business account before synchronizing templates.'))
+        headers = service._graph_headers(service._require_token())
+        origin = f"https://graph.facebook.com/{settings['api_version']}/{waba}"
+        try:
+            with self.env.cr.savepoint():
+                phones = self._whatsapp_inventory(service, origin + '/phone_numbers', headers, 'id')
+                if self.provider_account not in {str(row.get('id')) for row in phones}:
+                    raise UserError(_('The sender does not belong to the configured WhatsApp business account.'))
+                rows = self._whatsapp_inventory(service, origin + '/message_templates', headers,
+                    'id,name,language,status,category,quality_score,components')
+                templates = self.env['ab.whatsapp.template'].sudo()
+                seen = templates.browse()
+                now = fields.Datetime.now()
+                for row in rows:
+                    if not all(isinstance(row.get(key), str) and row[key] for key in ('id', 'name', 'language', 'status')):
+                        raise UserError(_('Meta returned an invalid template inventory.'))
+                    components = row.get('components', [])
+                    if not isinstance(components, list):
+                        raise UserError(_('Meta returned an invalid template inventory.'))
+                    template = templates.search([('template_uid', '=', row['id'])], limit=1)
+                    if template.business_account_id and template.business_account_id != waba:
+                        raise UserError(_('Meta returned an invalid template inventory.'))
+                    values = {'name': row['name'], 'language': row['language'], 'status': row['status'],
+                              'business_account_id': waba, 'category': row.get('category'),
+                              'components_payload': components, 'raw_payload': row,
+                              'body_preview': service._template_body_preview(components),
+                              'has_placeholders': service._template_has_placeholders(components),
+                              'last_synced_at': now}
+                    if template:
+                        template.write(values)
+                    else:
+                        template = templates.create(dict(values, template_uid=row['id']))
+                    seen |= template
+                missing = templates.search([('business_account_id', '=', waba)]) - seen
+                missing.write({'status': 'UNAVAILABLE'})
+                with bridge_mutation():
+                    self.write({'whatsapp_business_account': waba,
+                                'whatsapp_template_ids': [fields.Command.set((seen | missing).ids)],
+                                'whatsapp_templates_synced_at': now, 'whatsapp_templates_error': False})
+        except (UserError, ValueError, TypeError, AttributeError) as error:
+            reason = str(error) if isinstance(error, UserError) else _('Meta returned an invalid template inventory.')
+            self.write({'whatsapp_templates_error': reason[:1000]})
+            return {'ok': False, 'error': reason}
+        return {'ok': True, 'count': len(seen), 'last_sync': fields.Datetime.to_string(now)}
+
+    def _whatsapp_inventory(self, service, url, headers, field_names):
+        rows, cursors = [], set()
+        params = {'fields': field_names, 'limit': 100}
+        for page in range(100):
+            payload = service._get_graph_json(url=url, headers=headers, params=params)
+            data = payload.get('data')
+            if not isinstance(data, list) or any(not isinstance(row, dict) for row in data):
+                raise UserError(_('Meta returned an invalid template inventory.'))
+            rows.extend(data)
+            paging = payload.get('paging') or {}
+            if not paging.get('next'):
+                return rows
+            cursor = (paging.get('cursors') or {}).get('after')
+            if not isinstance(cursor, str) or not cursor or cursor in cursors:
+                break
+            cursors.add(cursor)
+            params['after'] = cursor
+        raise UserError(_('Meta template pagination could not be completed.'))
+
     def _queue_eligibility(self, conversation):
         code, reason = super()._queue_eligibility(conversation)
         if (
@@ -90,6 +187,8 @@ class Account(models.Model):
             return 'account_disabled', _(
                 'WhatsApp queue sending is disabled for this account.'
             )
+        if not code and self.provider == 'whatsapp' and (not conversation.external_key.isascii() or not conversation.external_key.isdecimal()):
+            return 'invalid_destination', _('Unsupported WhatsApp identity requires review.')
         return code, reason
 
     def _eligible_message(self, message):
@@ -286,6 +385,20 @@ class Template(models.Model):
     _inherit = 'ab.whatsapp.template'
 
     raw_payload = fields.Json(groups='base.group_system')
+    business_account_id = fields.Char(readonly=True, index=True)
+
+    def _layout_error(self):
+        self.ensure_one()
+        for component in self.components_payload or []:
+            if not isinstance(component, dict):
+                return _('This template layout is not supported. Use a template with text and body parameters only.')
+            placeholders = re.findall(r'{{(.*?)}}', component.get('text', ''))
+            if placeholders and (any(not value.strip().isdigit() for value in placeholders) or sorted(set(int(value.strip()) for value in placeholders)) != list(range(1, len(set(placeholders)) + 1))):
+                return _('This template layout is not supported. Use a template with text and body parameters only.')
+            kind = component.get('type', '').upper()
+            if kind not in ('BODY', 'HEADER', 'FOOTER') or (kind == 'HEADER' and component.get('format', 'TEXT') != 'TEXT') or (kind != 'BODY' and '{{' in component.get('text', '')):
+                return _('This template layout is not supported. Use a template with text and body parameters only.')
+        return ''
 
     crm_account_ids = fields.Many2many(
         'ab_crm_messaging_account',

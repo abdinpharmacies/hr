@@ -504,3 +504,157 @@ msgstr "راجع ربط حساب واتساب الحالي."
 #: model:res.users,name:ab_crm_whatsapp_workspace.user_whatsapp_gateway
 msgid "WhatsApp Gateway Service"
 msgstr "خدمة بوابة واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "All languages"
+msgstr "كل اللغات"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_whatsapp_template__business_account_id
+msgid "Business Account"
+msgstr "حساب الأعمال"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid ""
+"Configure the WhatsApp business account before synchronizing templates."
+msgstr "اضبط حساب واتساب للأعمال قبل مزامنة القوالب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/edits.py:0
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_messaging/models/messaging.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+msgid "Invalid incoming messaging event."
+msgstr "حدث رسالة واردة غير صالح."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/media.py:0
+msgid "Invalid media type, size or recording duration."
+msgstr "نوع الوسائط أو حجمها أو مدة التسجيل غير صالحة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/edits.py:0
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_sales_workspace/models/workspace.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/media.py:0
+msgid "Invalid media."
+msgstr "وسائط غير صالحة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__language_code
+msgid "Language"
+msgstr "اللغة"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/media.py:0
+#: code:addons/ab_crm_whatsapp_workspace/models/media.py:0
+msgid "Media content does not match its declared type."
+msgstr "محتوى الوسائط لا يطابق نوعها المعلن."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Meta returned an invalid template inventory."
+msgstr "أعادت ميتا قائمة قوالب غير صالحة."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Meta template pagination could not be completed."
+msgstr "تعذر إكمال جلب صفحات قوالب ميتا."
+
+#. module: ab_crm_whatsapp_workspace
+#: model_terms:ir.ui.view,arch_db:ab_crm_whatsapp_workspace.view_account_whatsapp
+msgid "Refresh WhatsApp Templates"
+msgstr "تحديث قوالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Select a migrated WhatsApp account."
+msgstr "اختر حساب واتساب تم نقله إلى قائمة الإرسال."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid ""
+"The sender does not belong to the configured WhatsApp business account."
+msgstr "رقم الإرسال لا يتبع حساب واتساب للأعمال المحدد."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid ""
+"This template layout is not supported. Use a template with text and body "
+"parameters only."
+msgstr ""
+"تنسيق هذا القالب غير مدعوم. استخدم قالبًا يحتوي على نص ومعاملات في المتن "
+"فقط."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.js:0
+#: code:addons/ab_crm_whatsapp_workspace/static/src/templates.xml:0
+msgid "WhatsApp templates"
+msgstr "قوالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_business_account
+msgid "Whatsapp Business Account"
+msgstr "حساب واتساب للأعمال"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__whatsapp_payload
+msgid "Whatsapp Payload"
+msgstr "بيانات رسالة واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_conversation__whatsapp_profile_name
+msgid "Whatsapp Profile Name"
+msgstr "اسم ملف واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_message__whatsapp_reaction_event
+msgid "Whatsapp Reaction Event"
+msgstr "حدث تفاعل واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_templates_error
+msgid "Whatsapp Templates Error"
+msgstr "خطأ قوالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#: model:ir.model.fields,field_description:ab_crm_whatsapp_workspace.field_ab_crm_messaging_account__whatsapp_templates_synced_at
+msgid "Whatsapp Templates Synced At"
+msgstr "وقت مزامنة قوالب واتساب"
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/account.py:0
+msgid "Refresh WhatsApp templates to update the account inventory."
+msgstr "حدّث قوالب واتساب لتحديث قائمة القوالب الخاصة بالحساب."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+#, python-format
+msgid "Invalid delivery evidence."
+msgstr "دليل التسليم غير صالح."
+
+#. module: ab_crm_whatsapp_workspace
+#. odoo-python
+#: code:addons/ab_crm_whatsapp_workspace/models/gateway.py:0
+#, python-format
+msgid "Provider acceptance is not recorded yet. Retry this status later."
+msgstr "لم يتم تسجيل قبول مزود الخدمة بعد. أعد محاولة تحديث الحالة لاحقًا."

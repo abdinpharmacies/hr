@@ -158,6 +158,9 @@ class WhatsAppContact(models.Model):
 class Message(models.Model):
     _inherit = 'ab_crm_message'
 
+    whatsapp_payload = fields.Json(readonly=True)
+    whatsapp_reaction_event = fields.Boolean(readonly=True)
+
     whatsapp_history_ids = fields.One2many(
         'ab.whatsapp.message', 'crm_message_id', readonly=True
     )
@@ -177,6 +180,8 @@ class Message(models.Model):
         if not _BRIDGE.get() and any(
             set(v)
             & {
+                'whatsapp_payload',
+                'whatsapp_reaction_event',
                 'whatsapp_history_ids',
                 'whatsapp_template_id',
                 'whatsapp_template_params',
@@ -189,6 +194,8 @@ class Message(models.Model):
 
     def write(self, values):
         if not _BRIDGE.get() and set(values) & {
+            'whatsapp_payload',
+            'whatsapp_reaction_event',
             'whatsapp_history_ids',
             'whatsapp_template_id',
             'whatsapp_template_params',
@@ -202,12 +209,14 @@ class Message(models.Model):
         template = self.whatsapp_template_id
         account = self.conversation_id.messaging_account_id
         if (
-            template not in account.whatsapp_template_ids
+            template not in account._available_whatsapp_templates()
             or (template.status or '').upper() != 'APPROVED'
         ):
             raise UserError(
                 _('Select an approved template authorized for this WhatsApp account.')
             )
+        if template._layout_error():
+            raise UserError(template._layout_error())
         indexes = self.env[
             'ab.whatsapp.service'
         ]._template_required_placeholder_indexes(template)

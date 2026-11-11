@@ -4,9 +4,8 @@ import binascii
 from odoo import api, models, _
 from odoo.exceptions import AccessError, UserError
 
-from odoo.addons.ab_crm_sales_workspace.models.saved_reply import template_language
 
-from .common import _DASHBOARD
+from .common import _DASHBOARD, _BRIDGE
 
 
 class Service(models.Model):
@@ -20,6 +19,8 @@ class Service(models.Model):
         return dict(values, api_version=version)
 
     def _normalize_wa_id(self, value):
+        if _BRIDGE.get() and isinstance(value, str) and 1 <= len(value) <= 256 and value.isascii() and all(33 <= ord(char) <= 126 for char in value):
+            return value
         if not isinstance(value, str) or not value.isascii() or not value.isdecimal():
             raise UserError(_('Unsupported WhatsApp identity requires review.'))
         return value
@@ -271,11 +272,10 @@ class Service(models.Model):
         if accounts:
             return [
                 self._serialize_template(template)
-                for template in accounts.whatsapp_template_ids
-                if template_language(template.language) == template_language(self.env.user.lang)
+                for account in accounts
+                for template in account._available_whatsapp_templates()
             ]
-        return [row for row in super().api_list_templates()
-                if template_language(row['language']) == template_language(self.env.user.lang)]
+        return super().api_list_templates()
 
     def _serialize_contact(self, contact, latest_message=None):
         if latest_message is None:
