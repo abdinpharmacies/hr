@@ -8,6 +8,7 @@ from prepared_importer import META, WORK, ident
 from prepared_snapshot import SCHEMA
 from table_resume import ResumeState
 from relationship_policy import RawReferencePolicy
+from standard_protection import StandardProtection
 import prepared_progress as progress
 
 
@@ -54,6 +55,8 @@ class TableMigration:
         self.raw = getattr(engine,'relationship_policy',None)==RawReferencePolicy.name
         self.accepted = {} if self.raw else validate_exceptions(engine.rules)
         self.blocked = set()
+        self.guard=StandardProtection(engine) if self.raw else None
+        self.protected_constraints=[]
         self.committed = []
         self.report_errors = set()
         self.resume = ResumeState(engine, checkpoint)
@@ -102,8 +105,11 @@ class TableMigration:
             return True
         progress.begin(operation, table=table, operation=operation, monitor=True)
         try:
+            if self.raw and operation!='validation':
+                actual='ir_model_data' if operation=='xmlids' else table
+                self.guard.require_write(actual,operation)
             if self.raw and operation!='validation' and (table in self.blocked or (operation=='xmlids' and 'ir_model_data' in self.blocked)):
-                raise MigrationError('Required foreign key could not be removed safely')
+                raise MigrationError('Protected reference or foreign-key lock prevents safe modification')
             rows = action()
             entry = dict(table=table, operation=operation, rows=rows, success=True, coverage=coverage, policy=getattr(self.engine,'relationship_policy','mapped_references_v1'))
             self.resume.remember(table, operation)
@@ -127,6 +133,12 @@ class TableMigration:
             self.resume.records = records(self.con)
             self.resume.state = self.resume.records.get('resume_state', self.resume.state)
             entry = dict(table=table, operation=operation, success=False, **safe_error(exc))
+            if self.raw and operation!='validation':
+                actual='ir_model_data' if operation=='xmlids' else table
+                if not self.guard.can_alter(actual) and operation not in self.guard.technical_data.get(actual,set()):
+                    entry['reason']='Protected public table: records and definitions must remain unchanged'
+                elif table in self.blocked:
+                    entry['reason']='Protected incoming reference or unavailable FK lock prevents safe modification'
             self.failed_tables.append(entry)
             self.resume.history(operation, table, entry)
             self.checkpoint(self.con, 'failure:' + operation + ':' + table, entry)
@@ -221,10 +233,20 @@ class TableMigration:
         save_json(e.stage / 'table-setup.json', setup)
         previous = self.resume.records.get('table_result')
         needs_writes = not previous or bool(previous.get('failed_tables')) or self.resume.original_models != self.all_models
+        if self.raw:
+            protection=self.guard.protect_incoming(self.constraints)
+            self.protected_constraints=[x for x in self.constraints if x.get('protected')]
+            self.blocked.update(protection)
+            for table,details in protection.items():
+                e.audit.add('protected_standard_reference',table=table,references=details)
         if needs_writes:
             for item in current:
+                if self.raw and not self.guard.can_alter(item['table']):
+                    item['protected']=True
+                    continue
                 e.execute('SAVEPOINT drop_relationship_constraint')
                 try:
+                    e.execute("SET LOCAL lock_timeout='5s'")
                     e.execute(sql.SQL('ALTER TABLE public.{} DROP CONSTRAINT {}').format(
                         ident(item['table']), ident(item['constraint'])))
                     item['removed_this_attempt']=True
@@ -303,9 +325,16 @@ class TableMigration:
                                     "JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname='public' AND t.relname=%s AND k.conname=%s",
                                     [item['table'],item['constraint']])
                 existing = self.engine.cr.fetchone()
+                if self.raw and not self.guard.can_alter(item['table']):
+                    item.update(protected=True,restored=bool(existing),definition_unchanged=True)
+                    if not existing:
+                        self.engine.audit.add('protected_constraint_previously_missing',table=item['table'],constraint=item['constraint'])
+                    self.con.commit()
+                    continue
                 if existing and existing[0] != item['definition']:
                     raise MigrationError('Existing FK definition differs from saved restoration definition')
                 if not existing:
+                    self.engine.execute("SET LOCAL lock_timeout='5s'")
                     self.engine.execute(sql.SQL(item['restore_sql']))
                 item['restored']=True
                 self.resume.history('fk', item['table'] + ':' + item['constraint'], dict(success=True))

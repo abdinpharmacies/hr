@@ -7,6 +7,18 @@ from pathlib import Path
 from common import MigrationError, save_json, loads
 
 
+def wait_for_import(rollback, clear_cache, backend_pid, input_stream=None, output_stream=None):
+    """Wait with an open connection, but no transaction or cached record values."""
+    rollback()
+    clear_cache()
+    source=sys.stdin if input_stream is None else input_stream
+    output=sys.stdout if output_stream is None else output_stream
+    print('@PREPARED_READY@'+json.dumps({'pid':backend_pid()}),file=output,flush=True)
+    if source.readline().strip()!='GO':
+        raise MigrationError('Smoke worker cancelled before exclusive access')
+    clear_cache()
+
+
 def main():
     p = argparse.ArgumentParser()
     for name in ('config', 'database', 'server', 'output'):
@@ -46,9 +58,8 @@ def main():
                     raise MigrationError('Configured branch manager group is absent: '+xmlid)
         if args.manifest:
             if args.wait:
-                print('@PREPARED_READY@'+json.dumps({'pid':cr._cnx.get_backend_pid()}),flush=True)
-                if sys.stdin.readline().strip()!='GO':
-                    raise MigrationError('Smoke worker cancelled before exclusive access')
+                wait_for_import(cr.rollback,lambda:env.invalidate_all(flush=False),cr._cnx.get_backend_pid)
+                env=odoo.api.Environment(cr,odoo.SUPERUSER_ID,{'active_test':False,'lang':'en_US'})
             from psycopg2 import sql
             manifest = loads(Path(args.manifest).read_text())
             for model in manifest['selected']:

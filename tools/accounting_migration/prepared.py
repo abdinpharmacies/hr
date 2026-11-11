@@ -66,8 +66,10 @@ def metadata(args, stage, smoke=False):
 
 
 class SmokeWorker:
-    """Open a read-only ORM cursor online, execute the probe only after gating."""
+    """Connect online; wait transaction-free; validate after committed imports."""
     def __init__(self,args,stage):
+        self.config=args.target_config
+        self.database=args.target_db
         self.output=Path(stage)/'orm-validation.json'
         self.log=open(Path(stage)/'orm-validation.log','a')
         self.proc=subprocess.Popen([sys.executable,str(HERE/'prepared_metadata.py'),
@@ -81,6 +83,7 @@ class SmokeWorker:
                     line=self.proc.stdout.readline()
                     if line.startswith('@PREPARED_READY@'):
                         self.pid=loads(line[len('@PREPARED_READY@'):])['pid']
+                        self.verify_idle()
                         return
                     self.log.write(line)
                 if self.proc.poll() is not None:
@@ -89,6 +92,20 @@ class SmokeWorker:
         except BaseException:
             self.close()
             raise
+
+    def verify_idle(self):
+        connection=connect(self.config,'postgres',readonly=True)
+        try:
+            with connection.cursor() as cr:
+                cr.execute('SELECT state,xact_start,backend_xmin FROM pg_stat_activity '
+                    'WHERE pid=%s AND datname=%s',[self.pid,self.database])
+                row=cr.fetchone()
+                cr.execute("SELECT EXISTS(SELECT 1 FROM pg_locks WHERE pid=%s AND locktype='relation')",[self.pid])
+                locks=cr.fetchone()[0]
+            if not row or row[0]!='idle' or row[1] is not None or row[2] is not None or locks:
+                raise MigrationError('Validation worker retained a transaction/lock before import; target was not gated')
+        finally:
+            connection.close()
 
     def run(self):
         stdout,_=self.proc.communicate('GO\n')

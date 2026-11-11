@@ -80,6 +80,7 @@ def registry_metadata(env):
         fields = {}
         for fn, f in model._fields.items():
             fields[fn] = {'type': f.type, 'store': bool(f.store), 'required': bool(f.required),
+                          'module': getattr(f, '_module', None),
                           'readonly': bool(f.readonly), 'compute': bool(f.compute), 'related': bool(f.related),
                           'model_field': getattr(f, 'model_field', None), 'relation': getattr(f, 'comodel_name', None), 'translate': bool(f.translate), 'company_dependent': bool(f.company_dependent),
                           'relation_table': getattr(f, 'relation', None) if f.type == 'many2many' else None,

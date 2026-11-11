@@ -1,5 +1,24 @@
 # Prepared-target migration validation
 
+## Worker locks and standard-table protection (2026-11-11)
+
+**229 tests: 219 passed, 10 skipped**, with disposable PostgreSQL fixtures enabled.
+No application database was migrated, reset, stopped, or had its availability
+changed. Optional real-Odoo clone acceptance remains disabled.
+
+- A real PostgreSQL validation connection releases metadata transactions and
+  relation locks before READY; custom FK DDL then succeeds while the worker waits.
+  After GO, the worker observes newly committed values with cleared caches.
+- The controller rejects workers that retain an open transaction before gating.
+- Standard rows and FK definitions remain unchanged with CASCADE, SET NULL,
+  NO ACTION, and composite incoming constraints. Affected custom replacements
+  are reported as failed operations; independent custom copies still commit.
+- Custom aliases of standard tables and native M2M tables cannot bypass the write
+  guard. Attachment/XML-ID operations permit only scoped technical data writes.
+- Previously missing protected FK definitions are reported without ALTER, also
+  on resume. Existing staging and completed-operation checks remain covered.
+- Permitted FK DROP/ADD operations use a five-second PostgreSQL lock timeout.
+
 ## Global report-only relationship validation (2026-11-11)
 
 **223 tests: 213 passed, 10 skipped**, with disposable PostgreSQL fixtures enabled.

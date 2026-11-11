@@ -1061,8 +1061,8 @@ with target_offline(gate,con,sys.argv[4]):
                     run(args,root)
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
                 finished=run(args,root)
-            self.assertTrue(finished['passed'])
-            self.assertEqual(finished['status'],'complete_with_warnings')
+            self.assertFalse(finished['passed'])
+            self.assertEqual(finished['status'],'finished_with_errors')
             with self.admin.cursor() as cr:
                 cr.execute('SELECT datallowconn FROM pg_database WHERE datname=%s',[source_db])
                 self.assertTrue(cr.fetchone()[0])
@@ -1071,14 +1071,14 @@ with target_offline(gate,con,sys.argv[4]):
             self.con=connect(self.config,self.database,readonly=False)
             self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
             self.assertEqual(self.scalar('SELECT currency_id FROM ab_record'),4)
-            self.assertEqual(self.scalar('SELECT name FROM ab_group'),'live update after snapshot 1')
+            self.assertEqual(self.scalar('SELECT name FROM ab_group'),'old group')
             with self.con.cursor() as cr:
                 cr.execute("DELETE FROM prepared_custom_migration.checkpoint WHERE name='table_result'")
             self.con.commit()
             self.con.close()
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
                 continued=run(args,root)
-            self.assertEqual(continued['status'],'complete_with_warnings')
+            self.assertEqual(continued['status'],'finished_with_errors')
             self.con=connect(self.config,self.database,readonly=False)
             with patch('builtins.input') as prompt:
                 with self.assertRaisesRegex(MigrationError,'checkpoints'):

@@ -2,6 +2,31 @@
 
 ## Current changes before commit:
 
+- Release validation-worker transactions and record caches before import; verify idle/no-lock state before gating the target, and read a fresh snapshot after import.
+- Bound custom FK DDL lock waits to five seconds and report affected operations instead of waiting indefinitely.
+- Protect standard business rows, native relation tables, aliases, and definitions from migration writes/ALTER; retain scoped attachment/XML-ID data operations only.
+- Report protected incoming dependencies and safely skip affected custom replacements, including CASCADE, SET NULL, and composite constraints; continue independent tables.
+- Preserve resume fingerprints and clearly label private user/partner ID staging; add real PostgreSQL worker-lock and protected-record/definition regressions.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `prepared.py`
+- `prepared_metadata.py`
+- `prepared_progress.py`
+- `standard_protection.py`
+- `table_checkpoints.py`
+- `table_resume.py`
+- `worker.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_raw_relationships.py`
+- `tests/test_standard_protection.py`
+
+## 5df1dcb2e — emadco88 — 2026-11-11
+
+Original commit subject: `tools/accounting_migration/ FIX missing integer mapping`
+
 - Apply a global raw-reference/report-only policy to the public migration CLI; preserve custom source IDs and standard target records without reference remapping.
 - Convert current and future integer/polymorphic declarations into audit-only hints; report missing relationships and identity IDs >= 7 instead of blocking copies.
 - Remove relevant FKs before live writes and report restoration failures as nonblocking warnings, including required and composite FKs; isolate genuine SQL failures per operation.

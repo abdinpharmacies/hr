@@ -11,6 +11,8 @@ _active=None
 
 def format_status(event):
     text=format_event(event)
+    if event.get('table') in ('res_users','res_partner') and event.get('phase') in ('staging COPY','index staging','validate staging','verify staging'):
+        text+=' scope=private-ID-staging-only'
     total=event.get('total')
     processed=event.get('processed')
     if total and processed is not None and event.get('operation')=='COPY FROM':

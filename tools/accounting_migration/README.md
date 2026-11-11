@@ -28,9 +28,13 @@ rules and no CLI switch to enable strict relationship mapping.
   are not replaced with NULL, guessed IDs, or placeholders.
 - Standard records keep their existing primary keys. Users, partners, companies,
   credentials, memberships, and other prepared standard business records are not
-  imported or overwritten. Prepared incoming references remain unchanged.
-- The exception is **imported attachments**: allocate collision-free target IDs
-  and map imported attachment fields/M2M links to those allocated IDs.
+  imported or overwritten. Their table definitions and native M2M tables also
+  remain unchanged, including foreign keys. Prepared incoming references remain
+  unchanged. Custom model aliases cannot bypass this protection.
+- Scoped technical writes are allowed for **imported attachments** and custom
+  XML-ID repair in `ir_model_data`. Allocate collision-free attachment IDs and
+  map imported attachment fields/M2M links. Neither technical table has its
+  definition or foreign keys changed.
 - User/partner identity comparisons check source IDs **>= 7**, including inactive
   records. IDs below 7 are excluded from comparisons but remain in reference
   metadata and copied values. Missing checked IDs are reported, not rejected.
@@ -75,10 +79,12 @@ processing. There is no incremental source synchronization.
 4. Require all staging tables to be ready. Build field plans and report relationship
    declarations without enforcing them. Actual conversion-plan failures become
    individual table errors rather than global relationship blockers.
-5. Save/remove relevant FKs, including incoming, outgoing, composite, circular,
-   self-referencing, relation-table, and attachment constraints. If a constraint
-   cannot be removed, report the technical failure and skip affected operations
-   that could cascade or change other records; continue independent tables.
+5. Save relevant FKs and remove only constraints owned by selected custom tables
+   and eligible custom relation tables. Standard/public tables outside this scope
+   keep all definitions unchanged. If protected rows reference a custom table,
+   skip its replacement and report the dependency, including CASCADE/SET NULL and
+   composite keys. Continue independent operations. FK DDL waits at most five
+   seconds for a lock; unavailable locks become reported operation failures.
 6. Copy each custom table in its own transaction. Its DELETE, adapted INSERT,
    ID/count verification, sequence adjustment, and success marker commit together.
    A failed table retains its previous rows; earlier commits remain durable.
@@ -87,11 +93,22 @@ processing. There is no incremental source synchronization.
    alias models without undoing copied tables. Skip `__export__` aliases.
 8. Import attachments/links and relation tables independently. Preserve existing
    associations in shared prepared standard/target-only relation tables.
-9. Attempt each original FK restoration in its own transaction. Leave failed
-   constraints absent and report their original definitions and repair SQL.
+9. Attempt each removed custom-owned FK restoration in its own transaction. Leave
+   failed constraints absent and report their original definitions and repair SQL.
+   Previously missing protected standard constraints are reported without ALTER.
 10. Audit relationships, M2M/company-property values, incoming references, metadata
     conflicts, and a fresh read-only registry. Save the final reports and reopen
     the target, including runs with missing constraints or technical failures.
+
+The read-only validation worker rolls back metadata reads and clears record
+caches before announcing readiness. The controller verifies its backend is idle
+with no transaction or relation locks before gating the target. After import,
+validation uses a fresh read-only snapshot. This prevents the worker from blocking
+the importer while waiting for its completion signal.
+
+`res_users` and `res_partner` staging progress is labelled
+`scope=private-ID-staging-only`: these private tables contain identity IDs, not
+public business-record copies.
 
 There is one overall processing approval, not one prompt per table. A failed
 preflight/attempt cannot undo committed staging. Progress distinguishes COPY

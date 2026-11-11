@@ -21,7 +21,16 @@ class RawRelationshipTests(unittest.TestCase):
     setUp=fixtures.PreparedPostgresTests.setUp
     tearDown=fixtures.PreparedPostgresTests.tearDown
     scalar=fixtures.PreparedPostgresTests.scalar
-    fixture=fixtures.PreparedPostgresTests.fixture
+    def fixture(self):
+        engine=fixtures.PreparedPostgresTests.fixture(self)
+        # Ordinary raw-policy cases do not require replacing parents protected
+        # by prepared standard/target-only rows. Protection cases seed them below.
+        with self.con.cursor() as cr:
+            cr.execute('UPDATE res_users SET accounting_auth_group_id=NULL')
+            cr.execute('UPDATE ab_target_only SET group_id=NULL')
+            cr.execute('DELETE FROM user_group_link')
+        self.con.commit()
+        return engine
 
     def run_raw(self, callback=None):
         engine=RawImporter(*self.arguments)
@@ -38,7 +47,7 @@ class RawRelationshipTests(unittest.TestCase):
         self.assertEqual(self.scalar('SELECT id FROM ab_record'),42)
 
         self.assertEqual(self.scalar('SELECT currency_id FROM ab_record'),4)
-        self.assertEqual(self.scalar('SELECT accounting_auth_group_id FROM res_users WHERE id=1'),7)
+        self.assertIsNone(self.scalar('SELECT accounting_auth_group_id FROM res_users WHERE id=1'))
         self.assertEqual(self.scalar('SELECT res_id FROM ir_attachment WHERE id=1'),9)
         self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
         self.assertNotEqual(self.scalar('SELECT attachment_id FROM ab_record'),1)
@@ -141,7 +150,7 @@ class RawRelationshipTests(unittest.TestCase):
         self.fixture()
         target=copy.deepcopy(self.arguments[3])
         target['res.users']['fields']['record_ids']=dict(type='many2many',relation='ab_record',
-            relation_table='ab_record_user_rel',column1='user_id',column2='record_id')
+            relation_table='ab_record_user_rel',column1='user_id',column2='record_id',module='ab_test')
         self.arguments=(*self.arguments[:3],target,*self.arguments[4:])
         with self.con.cursor() as cr:
             cr.execute("UPDATE ir_model_data SET model='res.users' WHERE module='custom' AND name='record'")

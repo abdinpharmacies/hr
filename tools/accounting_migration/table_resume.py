@@ -46,7 +46,7 @@ class ResumeState:
         fields = set().union(*(e.plans[model][k] for k in ('expressions', 'deferred', 'attachments')))
         return fingerprint(dict(table=metadata[model]['table'], fields={name: {
             k: v for k, v in metadata[model]['fields'].get(name, {}).items()
-            if k not in ('default', 'selection', 'string', 'help')}
+            if k not in ('default', 'selection', 'string', 'help', 'module')}
             for name in sorted(fields)}))
 
     def digest(self, table, descriptor):
