@@ -1,6 +1,39 @@
 # Prepared-target migration validation
 
-## Durable staging validation (2026-11-11)
+## Global report-only relationship validation (2026-11-11)
+
+**223 tests: 213 passed, 10 skipped**, with disposable PostgreSQL fixtures enabled.
+Compilation and diff checks passed. No application database was migrated or reset.
+Optional real Odoo clone acceptance and optional legacy checks were not enabled.
+
+The public CLI now uses `RawImporter` with `raw_references_report_only_v1`.
+Historical strict importer tests remain to protect isolated legacy primitives;
+their mapping expectations do not describe the public workflow.
+
+New disposable cases verify:
+
+- Raw scalar, Many2one, future integer-rule, and polymorphic IDs commit despite
+  missing records/models; real FK restoration failures are nonblocking warnings.
+- Required/composite foreign keys do not force NULL placeholders; real NOT NULL
+  violations still roll back the affected table while later copies proceed.
+- Existing standard records, incoming values, shared associations, and conflicting
+  XML-ID models are preserved while custom source IDs are copied.
+- Attachments receive collision-free IDs and imported links are remapped without
+  duplicate imports on resume.
+- User/partner IDs below 7 are excluded from identity comparisons; missing higher
+  IDs and actual low-ID FK failures appear in reports without stopping copies.
+- Company-property JSON retains raw company/reference IDs and record-specific
+  values override defaults.
+- Prior mapped-policy commits remain unchanged on adoption of the raw policy.
+- ORM audit failures and XML-ID conflicts remain report-only on repeated runs.
+- Complete human/JSON/JSONL reports and failed-FK repair SQL are generated.
+
+The controller fixture continues to exercise read-only consistent extraction,
+durable staging after preflight failure, resumed copying, target reopening, and
+lost post-commit JSON. The registry subprocess is mocked in that fixture.
+
+
+## Earlier durable staging validation (2026-11-11)
 
 **214 tests: 204 passed, 10 skipped**, with disposable PostgreSQL tests enabled.
 The skipped cases require optional legacy settings or an explicitly selected Odoo

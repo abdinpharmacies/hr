@@ -110,13 +110,14 @@ class PreparedTests(unittest.TestCase):
         cr.execute.assert_called_once_with('SELECT oid FROM pg_database WHERE datname=%s',['source'])
         connection.close.assert_called_once()
 
-    def test_users_cannot_use_stable_keys_or_extract_passwords(self):
+    def test_user_stable_key_declaration_does_not_block_raw_policy(self):
         args=SimpleNamespace(source_db='source',target_db='target',source_config='unused',target_config='unused')
         with patch('prepared.loads',side_effect=[{'format':1,'stable_keys':{'res.users':'password'}},{}]), \
-                patch('prepared.DatabaseGate') as gate:
-            with self.assertRaisesRegex(MigrationError,'Stable-key override forbidden'):
+                patch('prepared.settings',return_value={'data_dir':'/tmp/raw-policy-test'}), \
+                patch('prepared.DatabaseGate',side_effect=MigrationError('reached database gate')) as gate:
+            with self.assertRaisesRegex(MigrationError,'reached database gate'):
                 run(args,'unused')
-        gate.assert_not_called()
+        gate.assert_called_once()
 
 
 if __name__=='__main__':

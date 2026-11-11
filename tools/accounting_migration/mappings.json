@@ -7,7 +7,7 @@
     "base.group_private_addresses": "ab_migration_compat.group_private_addresses"
   },
   "ignore_fields": {},
-  "polymorphic": {
+  "reference_audit_hints": {
     "ab_accounting_je_header": {
       "res_header_id": "res_header_ref"
     },
@@ -26,7 +26,7 @@
     "Mappings are explicit overrides; identical stored field names and types use identity mapping.",
     "Every ignored business field requires a documented reason in ignore_fields."
   ],
-  "integer_links": {
+  "integer_reference_audit_hints": {
     "ab_inventory": {
       "header_id": "ab_inventory_header"
     }

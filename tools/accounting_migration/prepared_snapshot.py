@@ -59,7 +59,7 @@ def export(connection, config, database, stage, target, rules, conversions=None)
             tables[table] = None
     for model, key in rules.get('stable_keys', {}).items():
         if model in ('res.users','res.partner','res.groups','ir.attachment'):
-            raise MigrationError(f'Stable-key override forbidden: {model}')
+            continue  # Relationship declarations never block public extraction.
         meta = info['models'].get(model)
         if meta and model not in selected and key in physical.get(meta['table'], {}):
             table = meta['table']

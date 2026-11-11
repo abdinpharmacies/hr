@@ -2,6 +2,33 @@
 
 ## Current changes before commit:
 
+- Apply a global raw-reference/report-only policy to the public migration CLI; preserve custom source IDs and standard target records without reference remapping.
+- Convert current and future integer/polymorphic declarations into audit-only hints; report missing relationships and identity IDs >= 7 instead of blocking copies.
+- Remove relevant FKs before live writes and report restoration failures as nonblocking warnings, including required and composite FKs; isolate genuine SQL failures per operation.
+- Preserve prepared incoming references/shared associations and isolate XML-ID conflicts from committed custom copies.
+- Retain collision-free attachment allocation and imported-link mapping; preserve source company/reference IDs in company-property JSON.
+- Persist policy-aware resume, complete relationship detail/audit reports, constraint definitions/repair SQL, and warning status/exit behavior.
+- Add disposable PostgreSQL coverage and update the runbook/validation evidence without migrating an application database.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `mappings.json`
+- `prepared.py`
+- `prepared_snapshot.py`
+- `raw_importer.py`
+- `relationship_policy.py`
+- `table_checkpoints.py`
+- `table_resume.py`
+- `tests/test_prepared.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_raw_relationships.py`
+
+## 2deddac7f — emadco88 — 2026-11-11
+
+Original commit subject: `tools/accounting_migration/ UPD commit staging too`
+
 - Commit each staging COPY, required index, validation, and success marker independently; continue other staging tables after an individual failure.
 - Reuse verified staging checkpoints after interruptions or preflight failures; reject changed staging or extraction and adopt retained format-2 staging without recopying it.
 - Preserve initial identity checks separately and require every staging table to be ready before preflight or live-table copying.

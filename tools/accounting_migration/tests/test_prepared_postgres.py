@@ -1044,7 +1044,7 @@ with target_offline(gate,con,sys.argv[4]):
             # Global preflight failure must retain the staging checkpoints.
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke), \
                     patch('prepared.confirm',return_value=True), \
-                    patch.object(PreparedImporter,'preflight',side_effect=MigrationError('injected preflight failure')):
+                    patch('prepared.PreparedImporter.preflight',side_effect=MigrationError('injected preflight failure')):
                 with self.assertRaisesRegex(MigrationError,'injected preflight failure'):
                     run(args,root)
             probe=connect(configs[1],self.database,readonly=True)
@@ -1062,7 +1062,7 @@ with target_offline(gate,con,sys.argv[4]):
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
                 finished=run(args,root)
             self.assertTrue(finished['passed'])
-            self.assertEqual(finished['status'],'complete')
+            self.assertEqual(finished['status'],'complete_with_warnings')
             with self.admin.cursor() as cr:
                 cr.execute('SELECT datallowconn FROM pg_database WHERE datname=%s',[source_db])
                 self.assertTrue(cr.fetchone()[0])
@@ -1070,7 +1070,7 @@ with target_offline(gate,con,sys.argv[4]):
                 self.assertTrue(cr.fetchone()[0])
             self.con=connect(self.config,self.database,readonly=False)
             self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
-            self.assertEqual(self.scalar('SELECT currency_id FROM ab_record'),900)
+            self.assertEqual(self.scalar('SELECT currency_id FROM ab_record'),4)
             self.assertEqual(self.scalar('SELECT name FROM ab_group'),'live update after snapshot 1')
             with self.con.cursor() as cr:
                 cr.execute("DELETE FROM prepared_custom_migration.checkpoint WHERE name='table_result'")
@@ -1078,7 +1078,7 @@ with target_offline(gate,con,sys.argv[4]):
             self.con.close()
             with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
                 continued=run(args,root)
-            self.assertEqual(continued['status'],'complete')
+            self.assertEqual(continued['status'],'complete_with_warnings')
             self.con=connect(self.config,self.database,readonly=False)
             with patch('builtins.input') as prompt:
                 with self.assertRaisesRegex(MigrationError,'checkpoints'):

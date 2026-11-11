@@ -111,6 +111,8 @@ class ResumeState:
         e.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} s FULL JOIN {} t USING(id) '
                       'WHERE s.id IS NULL OR t.id IS NULL OR {})').format(e.src(model), e.dst(model), conditions),
                f'Resume would change committed data or mappings: {model}; fix pending work without altering this table')
+        if getattr(e,'relationship_policy',None):
+            return  # XML-ID relationship conflicts belong in the audit report.
         e.fail(sql.SQL("SELECT EXISTS(SELECT 1 FROM {} s LEFT JOIN public.ir_model_data t USING(module,name) "
                       "WHERE s.model=%s AND s.module<>'__export__' "
                       'AND (t.id IS NULL OR t.model<>s.model OR t.res_id<>s.res_id))').format(ident('prepared_migration_source','ir_model_data')),
@@ -124,7 +126,8 @@ class ResumeState:
             if model not in e.target or e.target[model]['table'] != table:
                 raise MigrationError(f'Resume cannot change physical table identity: {model}')
         original = self.records.get('run', {}).get('rules')
-        if self.original_models and not self.records.get('resume_state') and original and original != fingerprint([e.rules, e.conversions]):
+        raw=bool(getattr(e,'relationship_policy',None))
+        if not raw and self.original_models and not self.records.get('resume_state') and original and original != fingerprint([e.rules, e.conversions]):
             raise MigrationError('Existing format-2 run has no saved mapping baseline. Rerun once with its original '
                                  'mapping files to establish resume metadata, then apply failed-table corrections; no reset is needed')
         for key, descriptor in self.state['checks'].items():
@@ -134,6 +137,9 @@ class ResumeState:
             if self.digest(table, descriptor) != descriptor['hash']:
                 raise MigrationError(f'Committed table data changed outside migration: {table}; refusing to overwrite it')
         for model in sorted(self.original_models):
+            if raw and self.marker(e.target[model]['table'],'copy').get('policy','mapped_references_v1') != e.relationship_policy:
+                e.audit.add('previous_policy_preserved',model=model,table=e.target[model]['table'])
+                continue
             definition = self.definition(model)
             old = self.state['definitions'].get(model)
             original_metadata = e.stage / 'target-schema.json'
@@ -147,6 +153,8 @@ class ResumeState:
             self.check_values(model)
             self.state['definitions'][model] = definition
         # Completed relation mappings must still produce the same associations.
+        if raw:
+            return
         previous = e.selected, e.relations
         try:
             e.selected = set(self.original_models)
@@ -180,7 +188,7 @@ class ResumeState:
 
     def begin(self):
         self.validate()
-        if self.setup:
+        if self.setup and not getattr(self.e,'relationship_policy',None):
             self.remap_incoming()
         self.save()
         self.checkpoint(self.e.con, 'attempt:' + str(self.attempt), dict(status='running'))

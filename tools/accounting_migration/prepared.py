@@ -15,7 +15,8 @@ from common import MigrationError, connect, loads, save_json, settings, ensure_b
 from resume import endpoint, fingerprint
 import prepared_snapshot as snapshot
 import prepared_progress as progress
-from prepared_importer import PreparedImporter, META, WORK, MIN_MATCHED_ID, missing_identity_query
+from prepared_importer import META, WORK, MIN_MATCHED_ID, missing_identity_query
+from raw_importer import RawImporter as PreparedImporter
 from prepared_checkpoints import read_checkpoint, write_checkpoint
 
 HERE=Path(__file__).resolve().parent
@@ -163,7 +164,7 @@ def target_signature(target):
     return schema_digest({m:{k:v for k,v in meta.items() if k!='defaults'} for m,meta in target.items()})
 
 
-def identity_checkpoint(connection, ids, stage):
+def identity_checkpoint(connection, ids, stage, report_only=False):
     report={}
     with connection.cursor() as cr:
         cr.execute(sql.SQL('CREATE SCHEMA IF NOT EXISTS {}').format(sql.Identifier(snapshot.SCHEMA)))
@@ -180,7 +181,7 @@ def identity_checkpoint(connection, ids, stage):
             report[table]=dict(source_count=len(values),checked_count=checked,skipped_count=len(values)-checked,
                                missing_count=len(missing),missing_ids=missing)
     save_json(Path(stage)/'id-validation.json',report)
-    if any(v['missing_ids'] for v in report.values()):
+    if not report_only and any(v['missing_ids'] for v in report.values()):
         raise MigrationError('Source user/partner IDs >= 7 missing from target; see id-validation.json. IDs below 7 are skipped; extra target IDs are allowed.')
     return dict(identity=fingerprint(ids),report=report)
 
@@ -191,13 +192,9 @@ def run(args, root):
         raise MigrationError('Source and target database names must differ')
     rules=loads((HERE/'prepared_rules.json').read_text())
     conversions=loads((HERE/'mappings.json').read_text())
-    from table_checkpoints import TableMigration, validate_exceptions
-    validate_exceptions(rules)
+    from table_checkpoints import TableMigration
     if rules.get('format')!=RULE_FORMAT:
         raise MigrationError('Unsupported prepared rules version')
-    for model in rules.get('stable_keys',{}):
-        if model in ('res.users','res.partner','res.groups','ir.attachment'):
-            raise MigrationError(f'Stable-key override forbidden: {model}')
     for config in (args.source_config,args.target_config):
         if not settings(config).get('data_dir'):
             raise MigrationError('Both configs must specify data_dir for unambiguous filestore paths')
@@ -280,7 +277,7 @@ def run(args, root):
             with target_offline(tg,target_con,stage):
                 progress.begin('validate identities',operation='Check source IDs >= 7',monitor=True)
                 initialize(target_con,identity)
-                report=identity_checkpoint(target_con,ids,stage)
+                report=identity_checkpoint(target_con,ids,stage,report_only=True)
                 write_checkpoint(target_con,'identities',report)
                 write_checkpoint(target_con,'status',dict(complete=False))
                 target_con.commit()

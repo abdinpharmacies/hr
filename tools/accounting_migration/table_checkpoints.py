@@ -7,6 +7,7 @@ from resume import fingerprint
 from prepared_importer import META, WORK, ident
 from prepared_snapshot import SCHEMA
 from table_resume import ResumeState
+from relationship_policy import RawReferencePolicy
 import prepared_progress as progress
 
 
@@ -50,7 +51,9 @@ class TableMigration:
         self.failed_fks = []
         self.constraints = []
         self.captures = []
-        self.accepted = validate_exceptions(engine.rules)
+        self.raw = getattr(engine,'relationship_policy',None)==RawReferencePolicy.name
+        self.accepted = {} if self.raw else validate_exceptions(engine.rules)
+        self.blocked = set()
         self.committed = []
         self.report_errors = set()
         self.resume = ResumeState(engine, checkpoint)
@@ -59,7 +62,7 @@ class TableMigration:
         for name in ('missing_files', 'copied_files'):
             if name in previous_report:
                 engine.report[name] = previous_report[name]
-        if self.resume.setup:
+        if self.resume.setup and not self.raw:
             self.captures = self.resume.setup['captures']
             engine.incoming_scalars = {x['table']: x['columns'] for x in self.captures}
             engine.dynamic = self.resume.setup.get('dynamic', self.discover_dynamic())
@@ -99,12 +102,15 @@ class TableMigration:
             return True
         progress.begin(operation, table=table, operation=operation, monitor=True)
         try:
+            if self.raw and operation!='validation' and (table in self.blocked or (operation=='xmlids' and 'ir_model_data' in self.blocked)):
+                raise MigrationError('Required foreign key could not be removed safely')
             rows = action()
-            entry = dict(table=table, operation=operation, rows=rows, success=True, coverage=coverage)
+            entry = dict(table=table, operation=operation, rows=rows, success=True, coverage=coverage, policy=getattr(self.engine,'relationship_policy','mapped_references_v1'))
             self.resume.remember(table, operation)
             for model in self.all_models:
                 if operation == 'copy' and self.engine.target[model]['table'] == table:
                     self.resume.state['definitions'][model] = self.resume.definition(model)
+                    self.resume.state.setdefault('policies',{})[model]=entry['policy']
             self.resume.history(operation, table, entry)
             self.resume.save()
             with self.con.cursor() as cr:
@@ -154,7 +160,8 @@ class TableMigration:
         """Inspect current relevant constraints without touching live data."""
         e = self.engine
         tables = sorted({e.target[m]['table'] for m in self.all_models} |
-                        {p['table'] for p in self.all_relations})
+                        {p['table'] for p in self.all_relations} |
+                        ({'ir_attachment','ir_model_data'} & e.physical.keys() if self.raw else set()))
         e.execute("SELECT s.relname,k.conname,pg_get_constraintdef(k.oid),t.relname,"
                   "ARRAY(SELECT a.attname FROM unnest(k.conkey) WITH ORDINALITY u(n,o) "
                   "JOIN pg_attribute a ON a.attrelid=s.oid AND a.attnum=u.n ORDER BY u.o),"
@@ -216,14 +223,29 @@ class TableMigration:
         needs_writes = not previous or bool(previous.get('failed_tables')) or self.resume.original_models != self.all_models
         if needs_writes:
             for item in current:
-                e.execute(sql.SQL('ALTER TABLE public.{} DROP CONSTRAINT {}').format(
-                    ident(item['table']), ident(item['constraint'])))
+                e.execute('SAVEPOINT drop_relationship_constraint')
+                try:
+                    e.execute(sql.SQL('ALTER TABLE public.{} DROP CONSTRAINT {}').format(
+                        ident(item['table']), ident(item['constraint'])))
+                    item['removed_this_attempt']=True
+                except Exception as exc:
+                    e.execute('ROLLBACK TO SAVEPOINT drop_relationship_constraint')
+                    if not self.raw:
+                        raise
+                    self.blocked.update((item['table'],item['referenced_table']))
+                    self.failed_tables.append(dict(table=item['table'],operation='drop_foreign_key',success=False,
+                                                  constraint=item['constraint'],**safe_error(exc)))
+                    e.audit.add('foreign_key_removal_failed',table=item['table'],constraint=item['constraint'],**safe_error(exc))
+                finally:
+                    e.execute('RELEASE SAVEPOINT drop_relationship_constraint')
         self.checkpoint(self.con, 'table_setup', setup)
         self.con.commit()
         self.resume.setup = setup
 
     def copy_model(self, model):
         e = self.engine
+        if self.raw and model in e.plan_errors:
+            raise MigrationError('Field conversion plan is unavailable for this table')
         expressions = e.plans[model]['expressions']
         e.execute(sql.SQL('DELETE FROM {}').format(e.dst(model)))
         e.execute(sql.SQL('INSERT INTO {} ({}) SELECT {} FROM {} s').format(
@@ -234,7 +256,8 @@ class TableMigration:
             raise MigrationError('Custom table row count mismatch')
         with self.scope([model]):
             e.validate_custom()
-            e.repair_xmlids()
+            if not self.raw:
+                e.repair_xmlids()
         e.reset_sequence(e.target[model]['table'])
         return rows
 
@@ -284,6 +307,7 @@ class TableMigration:
                     raise MigrationError('Existing FK definition differs from saved restoration definition')
                 if not existing:
                     self.engine.execute(sql.SQL(item['restore_sql']))
+                item['restored']=True
                 self.resume.history('fk', item['table'] + ':' + item['constraint'], dict(success=True))
                 self.checkpoint(self.con, 'fk:' + item['table'] + ':' + item['constraint'], dict(success=True))
                 self.con.commit()
@@ -291,7 +315,12 @@ class TableMigration:
                 self.con.rollback()
                 reason = self.accepted.get((item['table'], item['constraint']))
                 failure = dict(item, **safe_error(exc), accepted=reason is not None, accepted_reason=reason)
+                if self.raw:
+                    failure.update(severity='warning',blocking=False)
+                item['restored']=False
                 self.failed_fks.append(failure)
+                if self.raw:
+                    self.engine.audit.add('foreign_key_not_restored',table=item['table'],constraint=item['constraint'],**safe_error(exc))
                 self.checkpoint(self.con, 'fk:' + item['table'] + ':' + item['constraint'], failure)
                 self.con.commit()
                 self.write_reports()
@@ -300,6 +329,8 @@ class TableMigration:
         self.write_reports()
 
     def eligible_relations(self):
+        if self.raw:
+            return list(self.all_relations)
         result = []
         tables = {p['table'] for p in self.all_relations}
         for table in sorted(tables):
@@ -315,11 +346,20 @@ class TableMigration:
 
     def copy_relation(self, table, plans):
         e = self.engine
-        e.execute(sql.SQL('DELETE FROM public.{}').format(ident(table)))
-        with self.scope(self.successful, plans):
+        if not self.raw or not self.shared_relation(table):
+            e.execute(sql.SQL('DELETE FROM public.{}').format(ident(table)))
+        with self.scope(self.all_models if self.raw else self.successful, plans):
             for phase in ('custom', 'external', 'attachments'):
                 e.load_relations(phase)
         return e.scalar(sql.SQL('SELECT count(*) FROM public.{}').format(ident(table)))
+
+    def shared_relation(self, table):
+        for model,meta in self.engine.target.items():
+            if model in self.all_models:
+                continue
+            if any(f.get('type')=='many2many' and f.get('relation_table')==table for f in meta['fields'].values()):
+                return True
+        return False
 
     def run(self, source_root, target_root, validate_orm=None):
         e = self.engine
@@ -330,6 +370,14 @@ class TableMigration:
             for model in sorted(self.all_models):
                 if self.unit(e.target[model]['table'], 'copy', lambda m=model: self.copy_model(m)):
                     self.successful.add(model)
+            if self.raw:
+                self.failed_tables.extend(e.relation_errors)
+                for model in sorted(self.successful):
+                    def aliases(model=model):
+                        with self.scope([model]):
+                            e.repair_xmlids()
+                        return None
+                    self.unit(e.target[model]['table'],'xmlids',aliases)
             for item in self.captures:
                 covered = self.successful & set(item['columns'].values())
                 self.unit(item['table'], 'incoming', lambda item=item: self.restore_incoming(item), coverage=dict(models=sorted(covered)))
@@ -344,12 +392,13 @@ class TableMigration:
                     return None
                 self.unit(e.target[model]['table'], 'external', external)
             relations = self.eligible_relations()
-            with self.scope(self.successful, relations):
-                e.prepare_attachment_scope(excluded_owners=self.all_models - self.successful)
+            owners=self.all_models if self.raw else self.successful
+            with self.scope(owners, relations):
+                e.prepare_attachment_scope(excluded_owners=() if self.raw else self.all_models - self.successful)
                 self.con.commit()
                 attached = self.unit('ir_attachment', 'attachments', lambda: e.attachments(
                     source_root, target_root, restore_links=False, incremental=True),
-                    coverage=dict(models=sorted(self.successful)))
+                    coverage=dict(models=sorted(owners)))
             if attached:
                 for model in sorted(self.successful):
                     self.unit(e.target[model]['table'], 'attachment_links', lambda m=model: e.restore_attachment_links(m))
@@ -366,7 +415,9 @@ class TableMigration:
                 def validate(model=model):
                     with self.scope([model]):
                         e.validate_custom()
-                        e.validate_values()
+                        previous_policy=self.resume.marker(e.target[model]['table'],'copy').get('policy','mapped_references_v1')
+                        if not self.raw or previous_policy==e.relationship_policy:
+                            e.validate_values()
                     return None
                 self.unit(e.target[model]['table'], 'validation', validate, force=True)
             for table in sorted({p['table'] for p in loaded_relations}):
@@ -378,13 +429,27 @@ class TableMigration:
         finally:
             # Controlled interruption still attempts every original constraint.
             self.restore_constraints()
+        if self.raw:
+            e.audit.run(self.successful,self.constraints)
+            self.con.commit()
         if validate_orm:
-            self.unit('registry', 'validation', lambda: validate_orm(sorted(self.successful)), force=True)
-        errors = bool(self.failed_tables or self.report_errors or any(not f['accepted'] for f in self.failed_fks))
-        status = 'finished_with_errors' if errors else 'finished_with_exceptions' if self.failed_fks else 'complete'
+            def orm():
+                try:
+                    validate_orm(sorted(self.successful))
+                except Exception as exc:
+                    if not self.raw:
+                        raise
+                    e.audit.add('orm_audit_failed',error_type=type(exc).__name__,report='orm-validation.log')
+                return None
+            self.unit('registry', 'validation', orm, force=True)
+        errors = bool(self.failed_tables or self.report_errors or (not self.raw and any(not f['accepted'] for f in self.failed_fks)))
+        warnings = e.audit.count() if self.raw else 0
+        status = ('finished_with_errors' if errors else 'complete_with_warnings' if warnings else 'complete') if self.raw else (
+            'finished_with_errors' if errors else 'finished_with_exceptions' if self.failed_fks else 'complete')
         result = dict(passed=not errors, status=status, complete=True, committed=self.committed,
                       successful_models=sorted(self.successful), skipped=self.skipped, attempt=self.resume.attempt, failed_tables=self.failed_tables,
-                      failed_foreign_keys=self.failed_fks, report=e.report,
+                      failed_foreign_keys=self.failed_fks, report=e.report, relationship_warnings=warnings,
+                      policy=getattr(e,'relationship_policy','mapped_references_v1'), constraints=self.constraints,
                       report_errors=sorted(self.report_errors), source_access='read_only', stage=str(e.stage))
         self.resume.finish(result)
         self.checkpoint(self.con, 'table_result', result)
@@ -392,6 +457,8 @@ class TableMigration:
         self.write_reports()
         save_json(e.stage / ('attempt-' + str(self.resume.attempt) + '.json'), result)
         save_json(e.stage / 'verification.json', result)
+        if self.raw:
+            e.audit.write(result)
         print(f'{status}: {len(self.successful)} custom tables committed; '
               f'{len(self.failed_tables)} failed operations; {len(self.failed_fks)} missing foreign keys. '
               f'Reports: {e.stage}/failed_tables.json and {e.stage}/failed_foreign_keys.json', flush=True)
