@@ -574,11 +574,18 @@ class EplusStockSnapshot(models.Model):
 
     @api.model
     def _fetch_eplus_stock_rows(self):
-        with self.connect_eplus(charset="CP1256", propagate_error=True) as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(EPLUS_STOCK_SQL)
-                columns = [column[0] for column in (cursor.description or [])]
-                return [self._normalize_eplus_row(row, columns=columns) for row in cursor.fetchall()]
+        try:
+            with self.connect_eplus(charset="CP1256", propagate_error=True) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(EPLUS_STOCK_SQL)
+                    columns = [column[0] for column in (cursor.description or [])]
+                    return [self._normalize_eplus_row(row, columns=columns) for row in cursor.fetchall()]
+        except Exception as error:
+            _logger.exception("Eplus stock refresh failed")
+            raise UserError(self.env._(
+                "Could not refresh Eplus stock. The connection or source query failed. "
+                "The previous snapshot has been kept. Please try again or contact support."
+            )) from error
 
     @api.model
     def _fetch_eplus_stock_store_rows(self):

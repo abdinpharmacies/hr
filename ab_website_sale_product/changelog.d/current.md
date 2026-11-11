@@ -2,16 +2,34 @@
 
 ## Current changes before commit
 
-- Retry Eplus catalog import jobs after a temporary connection timeout instead of failing after the first attempt.
-- Cover the retry behavior for connection errors.
+- Show a clear error when an Eplus stock refresh cannot connect or query the source, while keeping the previous snapshot.
+- Translate the new error into both supported Arabic languages and cover the failure path.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
+
+## Recent commits
+
+Commit: `796d2bcd`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/FIX: retry Eplus catalog imports after connection timeouts`
+
+User-facing changes:
+
+- Retry catalog import jobs when the Eplus connection times out, up to the configured limit.
 
 Files changed:
 
 - `ab_website_sale_product/changelog.d/current.md`
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/tests/test_eplus_catalog_import.py`
-
-## Recent commits
 
 Commit: `fc7b8062`
 Author: Mohamed Fawzy

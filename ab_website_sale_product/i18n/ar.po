@@ -5466,6 +5466,16 @@ msgstr ""
 "الاحتفاظ بآخر صورة ناجحة للمخزون. حاول مرة أخرى أو تواصل مع الدعم."
 
 #. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid ""
+"Could not refresh Eplus stock. The connection or source query failed. The "
+"previous snapshot has been kept. Please try again or contact support."
+msgstr ""
+"تعذّر تحديث مخزون Eplus بسبب فشل الاتصال أو الاستعلام من المصدر. تم الاحتفاظ "
+"بآخر صورة ناجحة للمخزون. حاول مرة أخرى أو تواصل مع الدعم."
+
+#. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__eligible_count
 msgid "Eligible for New Codes"
 msgstr "الصالحون لإنشاء أكواد جديدة"

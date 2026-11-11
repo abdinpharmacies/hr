@@ -106,3 +106,11 @@ class TestEplusCatalogImport(TransactionCase):
                 self.Snapshot._fetch_eplus_catalog_names([99177009])
 
         self.assertEqual(raised.exception.seconds, 60)
+
+    def test_stock_refresh_shows_safe_error_when_eplus_is_offline(self):
+        with patch.object(type(self.Snapshot), "connect_eplus", side_effect=RuntimeError("connection timed out")):
+            with self.assertRaises(UserError) as raised:
+                self.Snapshot._refresh_from_eplus()
+
+        self.assertIn("Could not refresh Eplus stock", str(raised.exception))
+        self.assertNotIn("connection timed out", str(raised.exception))

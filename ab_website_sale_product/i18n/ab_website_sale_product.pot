@@ -1104,6 +1104,14 @@ msgid ""
 msgstr ""
 
 #. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid ""
+"Could not refresh Eplus stock. The connection or source query failed. The "
+"previous snapshot has been kept. Please try again or contact support."
+msgstr ""
+
+#. module: ab_website_sale_product
 #. odoo-javascript
 #: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
 msgid ""
