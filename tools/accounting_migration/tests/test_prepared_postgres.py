@@ -126,7 +126,10 @@ class PreparedPostgresTests(unittest.TestCase):
             'res.partner':dict(table='res_partner',fields={}),
             'res.currency':dict(table='res_currency',fields={'name':field('char')}),
             'ab_target_only':dict(table='ab_target_only',fields={'group_id':field('many2one','ab_group')}),
-            'ir.attachment':dict(table='ir_attachment',fields={})}
+            'ir.attachment':dict(table='ir_attachment',fields={
+                n:field(t,'res.users' if n=='create_uid' else None) for n,t in (
+                    ('id','integer'),('name','char'),('type','selection'),('res_model','char'),('res_id','integer'),
+                    ('store_fname','char'),('checksum','char'),('file_size','integer'),('db_datas','binary'),('create_uid','many2one'))})}
         source_models={m:dict(table=v['table'],fields=v['fields']) for m,v in target.items()}
         relations=[]
         for fieldname,table,column2,related in [('users','ab_record_user_rel','user_id','res.users'),('attachments','ab_record_att_rel','attachment_id','ir.attachment')]:
@@ -205,6 +208,84 @@ class PreparedPostgresTests(unittest.TestCase):
         self.assertEqual(self.scalar("SELECT count(*) FROM information_schema.columns WHERE table_schema='prepared_migration_work' "
                                     "AND table_name LIKE 'incoming_%' AND column_name='password'"),0)
         self.con.rollback()
+
+    def test_cached_source_only_fields_and_attachment_links_are_skipped(self):
+        self.fixture()
+        manifest,target=self.arguments[2:4]
+        manifest['models']['ab_record']['fields']=copy.deepcopy(manifest['models']['ab_record']['fields'])
+        sf=manifest['models']['ab_record']['fields']
+        sf['vendor_id']=dict(ttype='many2one',relation='abdin_eplus.vendor',store=True)
+        sf['legacy_attachment_id']=dict(ttype='many2one',relation='ir.attachment',store=True)
+        sf['legacy_attachments']=dict(ttype='many2many',relation='ir.attachment',relation_table='legacy_attachment_rel',
+                                      column1='record_id',column2='attachment_id')
+        with self.con.cursor() as cr:
+            cr.execute(sql.SQL('ALTER TABLE {} ADD vendor_id integer, ADD legacy_attachment_id integer').format(sql.Identifier(SCHEMA,'ab_record')))
+            cr.execute(sql.SQL('UPDATE {} SET vendor_id=887,legacy_attachment_id=3').format(sql.Identifier(SCHEMA,'ab_record')))
+            cr.execute(sql.SQL('ALTER TABLE {} ADD legacy_vendor_id integer').format(sql.Identifier(SCHEMA,'ir_attachment')))
+            cr.execute(sql.SQL('UPDATE {} SET legacy_vendor_id=887').format(sql.Identifier(SCHEMA,'ir_attachment')))
+            cr.execute(sql.SQL("INSERT INTO {}(id,name,type,res_model,res_id) VALUES(3,'source-only link','binary','res.users',999)").format(
+                sql.Identifier(SCHEMA,'ir_attachment')))
+            cr.execute(sql.SQL('CREATE TABLE {}(record_id integer,attachment_id integer)').format(sql.Identifier(SCHEMA,'legacy_attachment_rel')))
+            cr.execute(sql.SQL('INSERT INTO {} VALUES(42,3)').format(sql.Identifier(SCHEMA,'legacy_attachment_rel')))
+        for name in ('vendor_id','legacy_attachment_id'):
+            manifest['tables']['ab_record']['columns'][name]=dict(type='integer',required=False,default=None)
+        manifest['tables']['ir_attachment']['columns']['legacy_vendor_id']=dict(type='integer',required=False,default=None)
+        manifest['relations'].append(dict(model='ab_record',field='legacy_attachments',related='ir.attachment',
+            table='legacy_attachment_rel',column1='record_id',column2='attachment_id'))
+        self.con.commit()
+        engine=PreparedImporter(*self.arguments)
+        engine.preflight()
+        skipped={(f['model'],f['field']) for f in engine.report['skipped_fields']}
+        self.assertIn(('ab_record','vendor_id'),skipped)
+        self.assertIn(('ab_record','legacy_attachments'),skipped)
+        self.assertIn(('ir.attachment','legacy_vendor_id'),skipped)
+        self.assertNotIn('vendor_id',engine.plans['ab_record']['expressions'])
+        self.assertEqual(engine.scalar(sql.SQL('SELECT count(*) FROM {}').format(engine.attachment_source())),2)
+        engine.replace()
+        engine.external()
+        engine.attachments(self.source_files,self.target_files)
+        self.con.commit()
+        self.assertEqual(self.scalar('SELECT id FROM ab_record'),42)
+        self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
+        self.assertEqual(self.scalar('SELECT count(*) FROM prepared_custom_migration.attachment_map WHERE source_id=3'),0)
+        self.assertEqual(self.scalar('SELECT vendor_id FROM prepared_migration_source.ab_record'),887)
+        engine=PreparedImporter(*self.arguments)
+        engine.preflight(replacing=False)
+        engine.validate_values()
+
+    def test_new_extraction_ignores_source_only_m2m(self):
+        engine=self.fixture()
+        info=dict(source_version='15.0',models=copy.deepcopy(engine.models))
+        for m,meta in info['models'].items():
+            meta.update(transient=False,table_kind='r')
+            for field in meta['fields'].values():
+                field.setdefault('ttype',field.get('type'))
+        info['models']['ab_record']['fields']['legacy_vendor_ids']=dict(ttype='many2many',relation='missing_vendor',
+            relation_table='legacy_vendor_rel',column1='record_id',column2='vendor_id')
+        with self.con.cursor() as cr:
+            cr.execute('CREATE TABLE legacy_vendor_rel(record_id integer,vendor_id integer)')
+            cr.execute('INSERT INTO legacy_vendor_rel VALUES(9,887)')
+            cr.execute('CREATE TABLE mail_activity(id integer,res_model varchar)')
+        self.con.commit()
+        directory=self.stage/'extract'
+        directory.mkdir()
+        from prepared_snapshot import export
+        with patch('prepared_snapshot.inventory',return_value=info):
+            exported=export(self.con,self.config,self.database,directory,engine.target,engine.rules)
+        self.assertNotIn('legacy_vendor_rel',exported['tables'])
+        self.assertFalse(any(r['field']=='legacy_vendor_ids' for r in exported['relations']))
+
+    def test_required_target_only_field_still_blocks_shared_field_import(self):
+        self.fixture()
+        with self.con.cursor() as cr:
+            cr.execute("ALTER TABLE ab_record ADD required_new varchar NOT NULL DEFAULT 'setup'")
+            cr.execute('ALTER TABLE ab_record ALTER COLUMN required_new DROP DEFAULT')
+        self.arguments[3]['ab_record']['fields']['required_new']=dict(type='char',store=True,required=True)
+        engine=PreparedImporter(*self.arguments)
+        with self.assertRaisesRegex(MigrationError,'Required target-only field'):
+            engine.preflight()
+        self.con.rollback()
+        self.assertEqual(self.scalar('SELECT id FROM ab_record'),9)
 
     def test_missing_source_ids_and_required_deferred_fields_stop(self):
         engine=self.fixture()
@@ -358,6 +439,14 @@ class PreparedPostgresTests(unittest.TestCase):
         try:
             with self.assertRaisesRegex(RuntimeError,'failure'):
                 with target_offline(gate,self.con,self.stage):
+                    self.assertFalse(gate.online())
+                    from resume import endpoint
+                    from watch_progress import observe
+                    save_json(self.stage/'prepared-run.json',dict(target_endpoint=endpoint(self.config),
+                        target_db=self.database,target_oid=gate.oid))
+                    messages=observe(self.config,self.stage)
+                    self.assertTrue(any('backend' in message for message in messages))
+                    self.assertFalse(any('unavailable' in message for message in messages))
                     self.assertFalse(gate.online())
                     raise RuntimeError('failure')
             self.assertTrue(gate.online())

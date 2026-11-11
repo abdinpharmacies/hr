@@ -14,6 +14,7 @@ from availability import DatabaseGate, recover_target, target_offline
 from common import MigrationError, connect, loads, save_json, settings, ensure_backup, schema_digest
 from resume import endpoint, fingerprint
 import prepared_snapshot as snapshot
+import prepared_progress as progress
 from prepared_importer import PreparedImporter, META, WORK, MIN_MATCHED_ID, missing_identity_query
 
 HERE=Path(__file__).resolve().parent
@@ -22,6 +23,7 @@ CHECKPOINTS=('identities','custom_and_xmlids','external','attachments','validati
 
 
 def confirm(summary):
+    progress.pause()
     print('\n'+summary,flush=True)
     try:
         return input('Continue? [y/N] ').strip().lower() in ('y','yes')
@@ -224,6 +226,7 @@ def run(args, root):
             source_endpoint=endpoint(args.source_config),target_endpoint=endpoint(args.target_config),
             source_oid=source_database_oid(args.source_config,args.source_db),target_oid=tg.oid,rules=fingerprint([rules,conversions]))
         stage=find_stage(root,identity)
+        progress.start(stage,args.target_config)
         print(f'Prepared custom migration: {args.source_db} -> {args.target_db}\nRun: {stage}',flush=True)
         recover_target(tg,stage)
         tg.check_sessions([])
@@ -234,6 +237,7 @@ def run(args, root):
         print('Source access: read-only. Source availability and sessions are not managed.',flush=True)
         target=metadata(args,stage)
         target_con=connect(args.target_config,args.target_db,readonly=False)
+        progress.bind(target_con,tg)
         existing_run=read_checkpoint(target_con,'run')
         if existing_run is not None and existing_run!=identity:
             raise MigrationError('Target database belongs to a different prepared migration run')
@@ -283,11 +287,13 @@ def run(args, root):
             if not confirm('Checkpoint 1: validate source user/partner IDs >= 7. IDs below 7 are skipped; extra target IDs are allowed.'):
                 return dict(passed=False,status='cancelled',source_access='read_only')
             with target_offline(tg,target_con,stage):
+                progress.begin('validate identities',operation='Check source IDs >= 7',monitor=True)
                 initialize(target_con,identity)
                 report=identity_checkpoint(target_con,ids,stage)
                 write_checkpoint(target_con,'identities',report)
                 write_checkpoint(target_con,'status',dict(complete=False))
                 target_con.commit()
+                progress.finish('identity checkpoint committed')
         if not manifest or not manifest.get('complete'):
             if source_con is None:
                 raise MigrationError('Read-only source connection required for extraction')
@@ -335,7 +341,7 @@ def run(args, root):
             if not confirm(summaries[phase]):
                 return dict(passed=False,status='cancelled',source_access='read_only')
             if phase=='custom_and_xmlids':
-                ensure_backup(args.target_config,args.target_db,stage)
+                ensure_backup(args.target_config,args.target_db,stage,progress=progress)
                 save_json(stage/'filestore-baseline.json',dict(path=str(target_root),exists=target_root.exists()))
             smoke=SmokeWorker(args,stage) if phase=='validation' else None
             try:
@@ -355,6 +361,7 @@ def run(args, root):
               f'{len(result["report"].get("missing_files",[]))}; activities skipped: {manifest["activities"]}.',flush=True)
         return dict(passed=True,source_access='read_only',stage=str(stage))
     except BaseException as exc:
+        progress.finish('failed; unfinished checkpoint rolled back or recovery required')
         if stage:
             diagnostics=dict(error_type=type(exc).__name__,complete=False,source_policy='read_only')
             if getattr(exc,'diag',None):
@@ -373,10 +380,12 @@ def run(args, root):
             target_con.close()
         if tg is not None:
             tg.close()
+        progress.stop()
 
 
 def process_checkpoint(args,stage,identity,manifest,target,rules,conversions,target_con,tg,
                        phase,source_root,target_root,smoke=None):
+    progress.begin(phase,operation='Acquire exclusive target access')
     with target_offline(tg,target_con,stage,workers=[smoke.pid] if smoke else []):
         initialize(target_con,identity)
         if phase=='custom_and_xmlids':
@@ -384,6 +393,7 @@ def process_checkpoint(args,stage,identity,manifest,target,rules,conversions,tar
             with target_con.cursor() as cr:
                 cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
                 cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
+        progress.begin('inspect schema',operation='Read target columns and constraints',monitor=True)
         engine=PreparedImporter(target_con,stage,manifest,target,rules,conversions)
         engine.validate_ids()
         engine.preflight(replacing=phase=='custom_and_xmlids')
@@ -414,7 +424,10 @@ def process_checkpoint(args,stage,identity,manifest,target,rules,conversions,tar
         report=dict(snapshot=fingerprint(manifest),fingerprints=engine.fingerprints(),mapping_fingerprint=engine.mapping_fingerprint(),
                     report=engine.report,complete=phase=='validation')
         if phase=='validation':
+            progress.begin('ORM validation',operation='Read records in fresh registry',monitor=True)
             report['orm']=smoke.run()
             write_checkpoint(target_con,'status',dict(complete=True))
         write_checkpoint(target_con,phase,report)
+        progress.begin('commit',operation='Commit '+phase,monitor=True)
         target_con.commit()
+        progress.finish('checkpoint committed')

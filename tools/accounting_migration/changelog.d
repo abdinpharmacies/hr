@@ -2,19 +2,40 @@
 
 ## Current changes before commit:
 
-- Replace the public initializer with approved checkpoints for existing prepared targets; isolate the retired controller and disable its CLI.
-- Leave source availability and sessions untouched; read a consistent source snapshot while other clients can continue writing. Restore target access after checkpoint success, rollback, or controller failure.
-- Check source user/partner IDs >= 7, skip lower IDs only for validation, and allow extra target records. Retain low-ID metadata for audit/reference mapping.
-- Preserve custom IDs, repair XML IDs atomically, and validate external mappings and incoming references.
-- Resume existing failed-ID runs with fresh read-only inputs, revalidate changed source IDs before extraction, and retain completed snapshots unchanged.
-- Import scoped attachment records/files while retaining missing-file records and resumable mappings.
-- Add read-only Odoo registry validation, disposable PostgreSQL/Odoo acceptance fixtures, reviewed mapping configuration, and recovery documentation.
-- Keep historical regression fixtures separate and use valid SQL composables in their mocked adaptation path.
+- Import shared stored fields across all copied models; report source-only/nonstored fields instead of requiring an adapter for each omitted field.
+- Apply the same policy to cached/new M2M metadata and attachment fields; retain raw extraction and scope attachments to copied owners/shared links.
+- Add asynchronous five-second progress for backup, staging COPY, indexing, validation, replacement, mapping, attachments, and commits.
+- Add a read-only watcher using maintenance statistics while target access is blocked; keep logging/monitoring failures nonfatal.
+- Validate field filtering, attachment scope, unchanged payloads, prompt pauses, and progress isolation with disposable fixtures.
+- Update the runbook and validation reference.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `common.py`
+- `prepared.py`
+- `prepared_importer.py`
+- `prepared_progress.py`
+- `prepared_snapshot.py`
+- `tests/test_prepared_odoo.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_prepared_progress.py`
+- `watch_progress.py`
+
+## a0ad32130 — emadco88 — 2026-11-11
+
+Original commit subject: `tools/ FIX migration code trial 1`
+
+- Introduce prepared-target checkpoints, preserved custom IDs, XML-ID repair, native-reference mapping, attachment importing, and recovery.
+- Leave source availability unchanged and validate only source user/partner IDs >= 7 while retaining low-ID reference metadata.
+- Isolate the retired initializer and add disposable PostgreSQL/Odoo regression fixtures.
 
 Files changed:
 - `README.md`
 - `VALIDATION.md`
 - `availability.py`
+- `bulk_importer.py`
 - `changelog.d`
 - `legacy_migrate.py`
 - `migrate.py`

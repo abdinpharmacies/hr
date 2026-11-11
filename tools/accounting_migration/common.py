@@ -136,15 +136,21 @@ def property_blockers(con, models):
         return {f'Company-dependent property needs an explicit adapter: {model}.{name}' for model, name in cr}
 
 
-def ensure_backup(config, database, stage):
+def ensure_backup(config, database, stage, progress=None):
     """Backup the owned initialized destination before the isolated worker starts."""
     import subprocess
     path = Path(stage) / 'before_import.dump'
     if path.exists():
+        if progress:
+            progress.begin('backup',operation='Verify existing backup checksum',file_path=str(path))
         expected = loads((Path(stage) / 'backup.json').read_text())
         if expected['database'] != database or digest(path) != expected['sha256']:
             raise MigrationError('Destination backup identity/checksum mismatch')
+        if progress:
+            progress.finish('existing backup verified')
         return
+    if progress:
+        progress.begin('backup',operation='Create target backup',file_path=str(path))
     options = settings(config)
     environ = os.environ.copy()
     for name, key in [('PGHOST','db_host'), ('PGPORT','db_port'), ('PGUSER','db_user'), ('PGPASSWORD','db_password')]:
@@ -156,3 +162,6 @@ def ensure_backup(config, database, stage):
         path.unlink(missing_ok=True)
         raise MigrationError('Destination backup failed; no import started')
     save_json(Path(stage) / 'backup.json', {'database': database, 'sha256': digest(path)})
+    if progress:
+        progress.update(bytes=path.stat().st_size)
+        progress.finish('backup complete and verified')

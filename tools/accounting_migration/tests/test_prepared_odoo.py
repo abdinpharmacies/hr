@@ -69,6 +69,10 @@ class PreparedOdooAcceptance(unittest.TestCase):
                 models={m:dict(table=v['table'],fields={n:{**f,'ttype':f['type']} for n,f in v['fields'].items()}) for m,v in target.items()}
                 table=target[selected[0]]['table']
                 with connection.cursor() as cr:
+                    # The template may already contain a real migration's private
+                    # staging/checkpoints. Reset them only inside this disposable clone.
+                    for namespace in (WORK,SCHEMA,'prepared_custom_migration'):
+                        cr.execute(sql.SQL('DROP SCHEMA IF EXISTS {} CASCADE').format(sql.Identifier(namespace)))
                     cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(SCHEMA)))
                     cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
                     for name in (table,'ir_model_data','ir_model_fields','ir_model','res_currency'):

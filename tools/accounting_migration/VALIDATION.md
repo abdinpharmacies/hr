@@ -9,7 +9,7 @@ its historical tests still exercise the old primitives independently.
 Validation performed during implementation:
 
 - Python compilation and `git diff --check`.
-- Entire regression suite: **167 tests, 158 passed and 9 optional legacy checks
+- Entire regression suite: **177 tests, 168 passed and 9 optional legacy checks
   skipped**, with both new PostgreSQL and Odoo acceptance suites enabled.
 - Offline discovery also passes without any database access; the opt-in
   database-backed suites are skipped unless explicitly enabled.
@@ -66,6 +66,23 @@ The prepared workflow tests cover:
   its probe inside the offline window. The real Odoo acceptance fixture replaces
   `ab_customer_contact_way` IDs and verifies reads from a fresh registry.
 
+## Shared fields and progress coverage
+
+- Populated source-only scalar fields (including vendor-like references) and cached
+  M2M fields are skipped before reference resolution. Raw values remain in staging.
+- Source-only attachment metadata is skipped; attachments referenced exclusively
+  by skipped fields are excluded while owned/shared-linked attachments are retained.
+- New extraction skips source-only M2M tables; cached extraction filtering requires
+  no file rewrite. Required target-only fields still stop before replacement.
+- Byte wrappers preserve COPY payloads exactly. COPY percentages require measured
+  totals; INSERT SELECT operations do not invent a percentage.
+- Slow console output does not block producer updates or file output. Logging
+  exceptions remain nonfatal; approval pauses and completed phases reject stale
+  monitor samples.
+- Statistics are scoped to database/PID/start time. The watcher reads through
+  `postgres` while a disposable target is blocked and leaves its availability
+  unchanged. No raw SQL values are emitted.
+
 ## Running tests
 
 Offline only:
@@ -112,10 +129,11 @@ fields. They are not proof of every module's security policy. Reviewed manager
 exceptions are configured through `branch_manager_xmlids`; unexpected broad access
 blocks final validation for review.
 
-Some populated source-only fields, missing custom prerequisites, retired report
-fields, unsupported reference formats, or required external fields can require a
-reviewed adapter/preparation change before replacement. The tool stops instead of
-inventing a value, weakening required constraints, or dropping records silently.
+Source-only/nonstored target fields are skipped and reported. Incompatible shared
+fields, missing custom prerequisites used by shared references, retired report
+references in shared fields, unsupported shared reference formats, or required
+external fields can still require reviewed preparation. The tool never invents a
+value or weakens required constraints.
 
 Missing source user/partner IDs >= 7 must still be prepared separately; additional
 target IDs and missing IDs below 7 are permitted. Source availability is never

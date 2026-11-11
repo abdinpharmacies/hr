@@ -9,6 +9,7 @@ from bulk import catalog
 from common import MigrationError, digest, save_json, safe_attachment_path
 from importer import FRAMEWORK_FIELDS
 from prepared_snapshot import SCHEMA
+import prepared_progress as progress
 
 META = 'prepared_custom_migration'
 WORK = 'prepared_migration_work'
@@ -28,10 +29,13 @@ def ident(*parts):
 class HashWriter:
     def __init__(self):
         self.hash = hashlib.sha256()
+        self.bytes=0
     def write(self, value):
         if isinstance(value, str):
             value = value.encode()
         self.hash.update(value)
+        self.bytes+=len(value)
+        progress.update(bytes=self.bytes)
         return len(value)
 
 
@@ -43,9 +47,18 @@ class PreparedImporter:
         self.selected = set(manifest['selected'])
         self.models = manifest['models']
         self.physical = catalog(connection)
-        self.report = dict(omitted_models=manifest['omitted'], ignored_fields=[], missing_files=[],
+        self.report = dict(omitted_models=manifest['omitted'], ignored_fields=[], skipped_fields=[],missing_files=[],
                            activities='skipped', activity_count=manifest['activities'])
         self.plans = {}
+
+    def skip_field(self, model, name, target_name=None, reason='No stored target field/column'):
+        entry=dict(model=model,field=name,target_field=target_name or name,reason=reason)
+        if entry not in self.report['skipped_fields']:
+            self.report['skipped_fields'].append(entry)
+
+    def stored_destination(self, model, name):
+        f=self.target[model]['fields'].get(name,{})
+        return bool(f) and f.get('store') is not False and name in self.physical[self.target[model]['table']]
 
     def execute(self, query, params=None):
         self.cr.execute(query, params)
@@ -182,6 +195,7 @@ class PreparedImporter:
                 f'Mapped target record absent: {related}')
 
     def plan_model(self, model):
+        progress.begin('preflight',model=model,operation='Validate shared fields and references',monitor=True)
         meta = self.models[model]
         source = self.manifest['tables'][meta['table']]['columns']
         target = self.target[model]
@@ -199,13 +213,8 @@ class PreparedImporter:
                 continue
             if name in FRAMEWORK_FIELDS and name != 'message_main_attachment_id':
                 continue
-            if target_name not in physical:
-                if name in ('display_name', '__last_update') or (name == 'message_main_attachment_id' and not tf):
-                    continue
-                if (sf.get('related') or (tf.get('compute') and not tf.get('store'))):
-                    continue
-                self.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} WHERE {} IS NOT NULL)').format(
-                    self.src(model), ident(name)), f'Populated source-only field needs adapter: {model}.{name}')
+            if not self.stored_destination(model,target_name):
+                self.skip_field(model,name,target_name)
                 continue
             value = sql.SQL('s.{}').format(ident(name))
             selections=self.conversions.get('selections',{}).get(model,{}).get(name,{})
@@ -287,8 +296,8 @@ class PreparedImporter:
             if name in expressions:
                 continue
             tf = target['fields'].get(name, {})
-            if tf.get('company_dependent'):
-                source_name=next((old for old,new in self.conversions.get('fields',{}).get(model,{}).items() if new==name),name)
+            source_name=next((old for old,new in self.conversions.get('fields',{}).get(model,{}).items() if new==name),name)
+            if tf.get('company_dependent') and source_name in meta.get('fields',{}):
                 deferred[name] = self.property_value(model, source_name, tf)
                 if col['required']:
                     raise MigrationError(f'Required company field cannot be deferred: {model}.{name}')
@@ -306,6 +315,13 @@ class PreparedImporter:
         for discriminator in self.conversions.get('polymorphic',{}).get(model,{}).values():
             if discriminator in expressions:
                 expressions[discriminator]=self.normalize_model(expressions[discriminator])
+        for name,sf in meta.get('fields',{}).items():
+            if sf.get('ttype')=='many2many' and name not in FRAMEWORK_FIELDS:
+                dest=self.conversions.get('fields',{}).get(model,{}).get(name,name)
+                tf=target['fields'].get(dest,{})
+                if not tf or tf.get('store') is False or tf.get('related'):
+                    self.skip_field(model,name,dest)
+        progress.finish('shared fields validated')
         return dict(expressions=expressions, deferred=deferred, attachments=attachments)
 
     def property_value(self, model, name, field):
@@ -365,7 +381,12 @@ class PreparedImporter:
     def relation_plans(self):
         plans = []
         for r in self.manifest['relations']:
-            f = self.target[r['model']]['fields'][r['field']]
+            f = self.target[r['model']]['fields'].get(r['field'],{})
+            if not f or f.get('store') is False or f.get('related'):
+                self.skip_field(r['model'],r['field'])
+                continue
+            if f.get('type')!='many2many':
+                raise MigrationError(f'Incompatible shared M2M field: {r["model"]}.{r["field"]}')
             if f.get('relation')!=r['related']:
                 self.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {})').format(ident(SCHEMA,r['table'])),
                           f'M2M relationship model changed: {r["model"]}.{r["field"]}')
@@ -391,17 +412,21 @@ class PreparedImporter:
         return plans
 
     def fingerprint_table(self, table):
+        progress.begin('fingerprint',table=table,operation='Verify imported table contents',monitor=True)
         columns = list(self.physical[table])
         order = ['id'] if 'id' in columns else columns
         writer = HashWriter()
         self.cr.copy_expert(sql.SQL('COPY (SELECT * FROM public.{} ORDER BY {}) TO STDOUT').format(
             ident(table),sql.SQL(',').join(map(ident,order))).as_string(self.con),writer)
+        progress.finish('table fingerprinted')
         return writer.hash.hexdigest()
 
     def mapping_fingerprint(self):
+        progress.begin('fingerprint',operation='Verify lookup identities',monitor=True)
         writer=HashWriter()
         self.cr.copy_expert(sql.SQL("COPY (SELECT model,source_id,target_id FROM {} WHERE model<>'ir.attachment' "
             'ORDER BY model,source_id) TO STDOUT').format(ident(META,'record_map')).as_string(self.con),writer)
+        progress.finish('lookup map fingerprinted')
         return writer.hash.hexdigest()
 
     def fingerprints(self):
@@ -416,6 +441,7 @@ class PreparedImporter:
             raise MigrationError('Target changed between checkpoints: ' + ', '.join(changed))
 
     def preflight(self, replacing=True):
+        progress.begin('mapping',operation='Resolve existing target identities',monitor=True)
         self.build_maps()
         self.plans = {m:self.plan_model(m) for m in sorted(self.selected)}
         for model in sorted(self.selected):
@@ -424,12 +450,41 @@ class PreparedImporter:
                     ident(SCHEMA,'ir_model_data'),self.src(model)),
                     f'Source XML ID points to a missing custom record: {model}',[model,'__export__'])
         self.relations = self.relation_plans()
+        self.prepare_attachment_scope()
         if replacing:
+            progress.begin('preflight',operation='Validate incoming target references',monitor=True)
             self.prepare_incoming()
         save_json(self.stage/'preflight.json', dict(passed=True, selected=sorted(self.selected),
-            omitted=self.manifest['omitted'], ignored_fields=self.report['ignored_fields'],
+            omitted=self.manifest['omitted'], ignored_fields=self.report['ignored_fields'],skipped_fields=self.report['skipped_fields'],
             deferred={m:sorted(p['deferred']) for m,p in self.plans.items()},
             attachment_fields={m:sorted(p['attachments']) for m,p in self.plans.items()}))
+        progress.log(f'Shared-field preflight: {len(self.report["skipped_fields"])} source-only/nonstored fields skipped; see preflight.json')
+        progress.finish('preflight passed')
+
+    def attachment_source(self):
+        return ident(WORK,'selected_attachments')
+
+    def prepare_attachment_scope(self):
+        """Filter cached snapshots too; raw extraction is never rewritten."""
+        owners=self.normalize_model(sql.SQL('a.res_model'))
+        owner=sql.SQL('({}=ANY({}) AND {} IS NOT NULL)').format(owners,sql.Literal(sorted(self.selected)),
+                    self.mapped(owners,sql.SQL('a.res_id')))
+        links=[]
+        for model,plan in self.plans.items():
+            for name in self.manifest['tables'][self.models[model]['table']]['columns']:
+                dest=self.conversions.get('fields',{}).get(model,{}).get(name,name)
+                if dest in plan['attachments']:
+                    links.append(sql.SQL('SELECT {} FROM {}').format(ident(name),self.src(model)))
+        for p in self.relations:
+            if p['phase']=='attachments':
+                links.append(sql.SQL('SELECT {} FROM {}').format(ident(p['source']['column2']),ident(SCHEMA,p['source']['table'])))
+        if links:
+            owner=sql.SQL('{} OR a.id IN ({})').format(owner,sql.SQL(' UNION ').join(links))
+        self.execute(sql.SQL('CREATE OR REPLACE VIEW {} AS SELECT a.* FROM {} a WHERE {}').format(
+            self.attachment_source(),ident(SCHEMA,'ir_attachment'),owner))
+        for name in self.manifest['tables']['ir_attachment']['columns']:
+            if name!='id' and not self.stored_destination('ir.attachment',name):
+                self.skip_field('ir.attachment',name)
 
     def incoming_value(self, model, value):
         return sql.SQL('(SELECT new_id FROM {} WHERE model={} AND old_id={})').format(
@@ -572,6 +627,7 @@ class PreparedImporter:
         # All incoming FKs are restored verbatim and validated before COMMIT.
         # Dropping them transactionally prevents ON DELETE actions on standard data.
         for table,name,_ in self.incoming_fks:
+            progress.begin('constraints',table=table,operation='Temporarily remove incoming FK',monitor=True)
             self.execute(sql.SQL('ALTER TABLE public.{} DROP CONSTRAINT {}').format(ident(table),ident(name)))
         pending=[]
         for table,columns in self.incoming_scalars.items():
@@ -588,15 +644,20 @@ class PreparedImporter:
         for table in sorted({p['table'] for p in self.relations}):
             self.execute(sql.SQL('DELETE FROM public.{}').format(ident(table)))
         for model in sorted(self.selected):
+            progress.begin('delete custom',model=model,operation='DELETE selected custom records',monitor=True)
             self.execute(sql.SQL('DELETE FROM {}').format(self.dst(model)))
         for model in sorted(self.selected):
             print(f'Load custom model {model}',flush=True)
             expressions=self.plans[model]['expressions']
+            expected=self.manifest['tables'][self.models[model]['table']]['rows']
+            progress.begin('load custom',model=model,operation='INSERT SELECT',monitor=True,expected_rows=expected)
             self.execute(sql.SQL('INSERT INTO {} ({}) SELECT {} FROM {} s').format(self.dst(model),
                 sql.SQL(',').join(map(ident,expressions)),sql.SQL(',').join(expressions.values()),self.src(model)))
             expected=self.manifest['tables'][self.models[model]['table']]['rows']
             if self.cr.rowcount!=expected:
                 raise MigrationError(f'Custom row count mismatch: {model}')
+            progress.update(processed=self.cr.rowcount,total=expected)
+            progress.finish('loaded; pending commit')
         self.load_relations('custom')
         for table,temp,columns in pending:
             expressions={c:(self.incoming_value(columns[c],sql.SQL('s.{}').format(ident(c))) if c in columns else
@@ -617,8 +678,10 @@ class PreparedImporter:
             expression=mapped if discriminator else sql.SQL("{}||','||{}::text").format(model,mapped)
             self.execute(sql.SQL('UPDATE public.{} t SET {}={} WHERE {}=ANY(%s) AND {} IS NOT NULL').format(
                 ident(table),ident(column),expression,model,value),[sorted(self.selected)])
+        progress.begin('XML IDs',operation='Repair custom XML-ID destinations',monitor=True)
         self.repair_xmlids()
         for table,name,definition in self.incoming_fks:
+            progress.begin('constraints',table=table,operation='Restore and validate incoming FK',monitor=True)
             self.execute(sql.SQL('ALTER TABLE public.{} ADD CONSTRAINT {} {}').format(ident(table),ident(name),sql.SQL(definition)))
         for model in sorted(self.selected):
             self.reset_sequence(self.target[model]['table'])
@@ -645,6 +708,7 @@ class PreparedImporter:
             if key in visited:
                 continue
             visited.add(key)
+            progress.begin('relationships',model=r['model'],table=p['table'],operation='Insert '+phase+' links',monitor=True)
             self.execute(sql.SQL('INSERT INTO public.{} ({}) SELECT DISTINCT {},{} FROM {} s ON CONFLICT DO NOTHING').format(
                 ident(p['table']),sql.SQL(',').join(map(ident,p['columns'])),*p['values'],ident(SCHEMA,r['table'])))
 
@@ -664,6 +728,7 @@ class PreparedImporter:
         for model in sorted(self.selected):
             fields=self.plans[model]['deferred']
             if fields:
+                progress.begin('map references',model=model,operation='Update shared external fields',monitor=True)
                 self.execute(sql.SQL('UPDATE {} t SET {} FROM {} s WHERE t.id=s.id').format(self.dst(model),
                     sql.SQL(',').join(sql.SQL('{}={}').format(ident(n),v) for n,v in fields.items()),self.src(model)))
         self.load_relations('external')
@@ -697,12 +762,13 @@ class PreparedImporter:
                 'LEFT JOIN public.ir_attachment t ON t.id=m.target_id WHERE t.id IS NULL OR '
                 't.res_id IS DISTINCT FROM CASE WHEN s.res_model IS NULL OR s.res_id=0 THEN s.res_id ELSE {} END '
                 'OR t.res_model IS DISTINCT FROM {} OR t.store_fname IS DISTINCT FROM s.store_fname '
-                'OR t.db_datas IS DISTINCT FROM s.db_datas)').format(ident(SCHEMA,'ir_attachment'),
+                'OR t.db_datas IS DISTINCT FROM s.db_datas)').format(self.attachment_source(),
                     ident(META,'attachment_map'),self.mapped(self.normalize_model(sql.SQL('s.res_model')),sql.SQL('s.res_id')),
                     self.normalize_model(sql.SQL('s.res_model'))),'Attachment payload/owner/link validation failed')
 
     def attachments(self, source_root, target_root):
-        source=ident(SCHEMA,'ir_attachment')
+        progress.begin('attachments',operation='Import scoped attachment metadata',monitor=True)
+        source=self.attachment_source()
         cols=self.manifest['tables']['ir_attachment']['columns']
         target_cols=self.physical['ir_attachment']
         self.execute(sql.SQL('CREATE TABLE IF NOT EXISTS {} (source_id bigint PRIMARY KEY,target_id bigint UNIQUE NOT NULL)').format(
@@ -723,11 +789,8 @@ class PreparedImporter:
         for name in cols:
             if name=='id':
                 continue
-            if name not in target_cols:
-                if name in ('res_name','access_token','public'):
-                    continue
-                self.fail(sql.SQL('SELECT EXISTS(SELECT 1 FROM {} WHERE {} IS NOT NULL)').format(source,ident(name)),
-                          f'Populated source attachment field needs adapter: {name}')
+            if not self.stored_destination('ir.attachment',name):
+                self.skip_field('ir.attachment',name)
                 continue
             if name=='access_token':
                 continue
@@ -758,16 +821,21 @@ class PreparedImporter:
         self.execute(sql.SQL('INSERT INTO public.ir_attachment ({}) SELECT {} FROM {} s').format(
             sql.SQL(',').join(map(ident,expressions)),sql.SQL(',').join(expressions.values()),source))
         copied=set()
+        examined,copied_bytes=0,0
+        progress.begin('attachment files',operation='Copy and verify available files')
         cursor=self.con.cursor(name='prepared_attachment_files')
         cursor.itersize=1000
         cursor.execute(sql.SQL('SELECT id,store_fname,checksum,file_size FROM {} WHERE store_fname IS NOT NULL ORDER BY id').format(source))
         for source_id,name,checksum,size in cursor:
+            examined+=1
+            progress.update(files_examined=examined)
             if name in copied:
                 continue
             src=safe_attachment_path(source_root,name)
             dst=safe_attachment_path(target_root,name)
             if not src.is_file():
                 self.report['missing_files'].append(dict(source_id=source_id,path=name))
+                progress.update(missing=len(self.report['missing_files']))
                 continue
             sha=digest(src,'sha1')
             if (checksum and sha!=checksum) or (size is not None and src.stat().st_size!=size):
@@ -799,6 +867,8 @@ class PreparedImporter:
                 finally:
                     temp.unlink(missing_ok=True)
             copied.add(name)
+            copied_bytes+=src.stat().st_size
+            progress.update(copied=len(copied),bytes=copied_bytes)
         cursor.close()
         for model in sorted(self.selected):
             fields=self.plans[model]['attachments']
@@ -818,3 +888,4 @@ class PreparedImporter:
         self.reset_sequence('ir_attachment')
         self.report['copied_files']=len(copied)
         save_json(self.stage/'attachments.json',dict(missing_files=self.report['missing_files'],copied_files=len(copied)))
+        progress.finish('attachments imported; pending commit')

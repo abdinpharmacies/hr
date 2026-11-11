@@ -6,6 +6,7 @@ from bulk import catalog, CopyWriter, copy_column_order
 from common import MigrationError, save_json, digest, settings
 from importer import FRAMEWORK_FIELDS
 from source import inventory
+import prepared_progress as progress
 
 FORMAT = 1
 SCHEMA = 'prepared_migration_source'
@@ -38,14 +39,10 @@ def export(connection, config, database, stage, target, rules, conversions=None)
             if f['ttype'] == 'many2many' and f.get('relation_table') in physical:
                 target_name=conversions.get('fields',{}).get(model,{}).get(name,name)
                 tf = target[model]['fields'].get(target_name, {})
-                if tf.get('type') != 'many2many':
-                    # Populated source-only M2M must not disappear silently.
-                    with connection.cursor() as cr:
-                        cr.execute(sql.SQL('SELECT EXISTS(SELECT 1 FROM {})').format(
-                            sql.Identifier(f['relation_table'])))
-                        if cr.fetchone()[0]:
-                            raise MigrationError(f'Populated M2M needs adapter: {model}.{name}')
+                if not tf or tf.get('store') is False or tf.get('related'):
                     continue
+                if tf.get('type') != 'many2many':
+                    raise MigrationError(f'Incompatible shared M2M field: {model}.{name}')
                 related=conversions.get('source_aliases',{}).get(f['relation'],f['relation'])
                 relations.append(dict(model=model, field=target_name, related=related,
                     table=f['relation_table'], column1=f['column1'], column2=f['column2']))
@@ -75,7 +72,10 @@ def export(connection, config, database, stage, target, rules, conversions=None)
     for model in selected:
         meta = info['models'][model]
         for name, f in meta.get('fields', {}).items():
-            if f.get('relation') == 'ir.attachment' and name in physical[meta['table']]:
+            dest=conversions.get('fields',{}).get(model,{}).get(name,name)
+            tf=target[model]['fields'].get(dest,{})
+            if (tf and tf.get('store') is not False and tf.get('relation')=='ir.attachment'
+                    and name in physical[meta['table']]):
                 links.append(sql.SQL('SELECT {} id FROM public.{} WHERE {} IS NOT NULL').format(
                     sql.Identifier(name), sql.Identifier(meta['table']), sql.Identifier(name)))
     for r in relations:
@@ -97,6 +97,7 @@ def export(connection, config, database, stage, target, rules, conversions=None)
     directory = stage / 'tables'
     directory.mkdir(mode=0o700)
     for table in sorted(tables):
+        progress.begin('extract',table=table,operation='Read source into retained COPY file')
         columns = physical[table]
         query = queries.get(table)
         if query is not None:
@@ -110,12 +111,13 @@ def export(connection, config, database, stage, target, rules, conversions=None)
         copy_column_order(table, meta)
         print(f'Extract {table}', flush=True)
         with connection.cursor() as cr, open(directory / (table + '.copy'), 'xb') as file:
-            writer = CopyWriter(file, table)
+            writer = progress.OutputCounter(CopyWriter(file, table))
             cr.copy_expert(sql.SQL("COPY ({}) TO STDOUT WITH (FORMAT text, ENCODING 'UTF8')").format(
                 query).as_string(connection), writer)
             file.flush()
             os.fsync(file.fileno())
-            meta.update(rows=cr.rowcount, bytes=writer.bytes, sha256=writer.hash.hexdigest())
+            meta.update(rows=cr.rowcount, bytes=writer.wrapped.bytes, sha256=writer.wrapped.hash.hexdigest())
+        progress.finish('extracted; file durable')
         manifest['tables'][table] = meta
         save_json(stage / 'snapshot.json', manifest)
     manifest['complete'] = True
@@ -124,6 +126,7 @@ def export(connection, config, database, stage, target, rules, conversions=None)
 
 
 def verify(stage, manifest):
+    progress.begin('verify extraction',operation='Verify retained COPY checksums')
     if manifest.get('format') != FORMAT or not manifest.get('complete'):
         raise MigrationError('Prepared extraction incomplete or incompatible')
     for table, meta in manifest['tables'].items():
@@ -131,6 +134,7 @@ def verify(stage, manifest):
         path = Path(stage) / 'tables' / (table + '.copy')
         if not path.is_file() or path.stat().st_size != meta['bytes'] or digest(path) != meta['sha256']:
             raise MigrationError(f'Extraction checksum mismatch: {table}')
+    progress.finish('extraction verified')
 
 
 def stage_tables(connection, stage, manifest):
@@ -138,7 +142,7 @@ def stage_tables(connection, stage, manifest):
     with connection.cursor() as cr:
         cr.execute(sql.SQL('CREATE SCHEMA IF NOT EXISTS {}').format(sql.Identifier(SCHEMA)))
         cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(SCHEMA)))
-        for table, meta in manifest['tables'].items():
+        for index,(table, meta) in enumerate(manifest['tables'].items(),1):
             columns = meta['column_order']
             if table in ('res_users','res_partner'):
                 cr.execute(sql.SQL('DROP TABLE IF EXISTS {}').format(sql.Identifier(SCHEMA,table)))
@@ -146,10 +150,18 @@ def stage_tables(connection, stage, manifest):
                 sql.SQL(',').join(sql.SQL('{} {}').format(sql.Identifier(c), sql.SQL(meta['columns'][c]['type']))
                                  for c in columns)))
             with open(Path(stage) / 'tables' / (table + '.copy'), 'rb') as file:
+                progress.begin('staging COPY',table=table,total=meta['rows'],operation='COPY FROM',monitor=True,
+                               table_index=index,table_count=len(manifest['tables']),bytes_total=meta['bytes'])
                 cr.copy_expert(sql.SQL('COPY {} ({}) FROM STDIN').format(sql.Identifier(SCHEMA, table),
-                    sql.SQL(',').join(map(sql.Identifier, columns))).as_string(connection), file)
+                    sql.SQL(',').join(map(sql.Identifier, columns))).as_string(connection), progress.InputCounter(file))
+            progress.update(processed=meta['rows'],bytes=meta['bytes'])
+            progress.finish('copied; pending commit')
             if 'id' in columns:
+                progress.begin('index',table=table,operation='Create staging primary key',monitor=True)
                 cr.execute(sql.SQL('ALTER TABLE {} ADD PRIMARY KEY (id)').format(sql.Identifier(SCHEMA, table)))
+                progress.finish('indexed; pending commit')
+            progress.begin('validate staging',table=table,operation='Validate COPY row count',monitor=True)
             cr.execute(sql.SQL('SELECT count(*) FROM {}').format(sql.Identifier(SCHEMA, table)))
             if cr.fetchone()[0] != meta['rows']:
                 raise MigrationError(f'Staging COPY count mismatch: {table}')
+            progress.finish('row count verified; pending commit')

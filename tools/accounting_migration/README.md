@@ -87,9 +87,20 @@ lookup metadata, user/partner IDs, translations, and property values. Metadata m
 be staged privately but is not copied into public standard tables. No source
 passwords or user credentials are extracted.
 
-Before deleting, validate populated fields, conversions, required values,
-relationships, incoming references, and XML-ID identities. Unsupported populated
-fields stop rather than disappearing silently. Required external fields that
+Only shared stored fields are imported into public target models. Existing
+explicit rename mappings are honored. Source-only or nonstored target fields are
+skipped even when populated, across every copied model, M2M field, and attachment
+metadata field. Skipped fields and reasons appear in `preflight.json` and checkpoint
+reports. This is generic, not a special case for `vendor_id`.
+
+Raw extraction files remain unchanged and retain source-only values. Cached
+snapshots use the same filtering policy; no re-extraction or target reset is needed.
+Attachment owner records remain eligible, but links existing only in skipped fields
+cannot pull unrelated attachments into the import.
+
+Before deleting, validate shared-field conversions, required values, relationships,
+incoming references, and XML-ID identities. Incompatible shared fields or unresolved
+shared references still stop safely. Required external fields that
 cannot remain empty also stop; required constraints are not weakened and no
 placeholder IDs are invented. Historical prices and inventory quantities are not
 recalculated.
@@ -217,3 +228,34 @@ The retired controller is isolated in `legacy_migrate.py`, whose CLI is disabled
 Legacy initialization/seed-relocation libraries remain for historical regression
 tests; the public `migrate.py` entry point never dispatches to that workflow.
 See `VALIDATION.md` for fixture coverage and remaining rehearsal limitations.
+
+## Progress and live observation
+
+The runner emits stage labels and periodic updates every five seconds. Staging
+COPY shows server rows processed against the retained manifest total, bytes, table
+number, percentage, and elapsed time. File bytes read are labelled separately from
+server rows loaded. Index stages show PostgreSQL counters when available. Backup
+shows file size/elapsed time; validation and INSERT SELECT operations use phase
+heartbeats rather than invented percentages. Rows remain pending commit until the
+checkpoint commits.
+
+Output is asynchronous and bounded. Slow/broken output or unavailable statistics
+cannot stop the migration. Monitoring uses its own read-only connection to
+`postgres`, so it works during target offline windows without sharing the writer
+cursor or changing source availability. Periodic console output pauses for approval
+prompts. Private `progress.json`, `progress.jsonl`, and `migration.log` files are
+written inside the run directory. SQL parameters and business values are not logged.
+
+Observe an already running migration from a second terminal without restarting it:
+
+```bash
+/opt/odoo19/venv19/bin/python tools/accounting_migration/watch_progress.py \
+  --target-config /opt/odoo19/config/migrate19.conf \
+  --stage /opt/odoo19/migration-runs/YOUR_RUN_DIRECTORY
+```
+
+Use `--once` for one observation. The observer verifies database/PID/start-time
+identity, reads PostgreSQL statistics and retained metadata only, and never changes
+data or availability. No registered backend does not mean migration succeeded;
+check the migration terminal and verification report. Integrated logs apply on the
+next launch; the watcher can observe older active processes.
