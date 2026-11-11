@@ -1,0 +1,47 @@
+.o_ab_accounting_header_form .o_form_sheet {
+    .o_ab_accounting_line_table {
+        display: block;
+        max-width: 100%;
+        min-width: 0;
+
+        .o_list_view,
+        .o_list_renderer.table-responsive {
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .o_list_renderer.table-responsive {
+            overflow-x: auto;
+            overflow-y: visible;
+        }
+
+        .o_list_table {
+            table-layout: auto !important;
+            width: max-content;
+            min-width: 100%;
+        }
+
+        .o_list_table th[data-name] {
+            width: auto !important;
+        }
+
+        .o_list_table th,
+        .o_list_table td {
+            white-space: nowrap;
+        }
+
+        th[data-name="account_id"],
+        th[data-name="linked_account_id"],
+        th[data-name="with_account_id"],
+        th[data-name="explain"] { min-width: 240px; }
+        th[data-name="costcenter_id"] { min-width: 180px; }
+        th[data-name="store_id"] { min-width: 150px; }
+        th[data-name="doc_no"] { min-width: 165px; }
+        th[data-name="due_date"],
+        th[data-name="settlement_date"],
+        th[data-name="debit_val"],
+        th[data-name="credit_val"],
+        th[data-name="net_val"],
+        th[data-name="available_balance"] { min-width: 130px; }
+    }
+}

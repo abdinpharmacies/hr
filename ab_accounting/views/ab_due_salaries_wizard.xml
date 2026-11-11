@@ -50,7 +50,7 @@
 
                                 <field name="payment_redirect_to_ids"
                                        context="{
-                                       'tree_view_ref':'ab_accounting.ab_due_salaries_payment_redirect_to_view_tree'
+                                       'list_view_ref':'ab_accounting.ab_due_salaries_payment_redirect_to_view_tree'
                                        }"/>
                             </page>
                             <page string="Forbidden Deductions">

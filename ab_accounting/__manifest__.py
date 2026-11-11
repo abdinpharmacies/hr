@@ -45,5 +45,10 @@
         'report_wizard/templates/template_due_salaries_details.xml',
         'report_wizard/account_statement_view.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_accounting/static/src/scss/x2many_tables.scss',
+        ],
+    },
 }
 # -*- coding: utf-8 -*-

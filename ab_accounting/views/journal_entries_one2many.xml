@@ -12,6 +12,27 @@
                     <attribute name="create">1</attribute>
                     <attribute name="default_order">id</attribute>
                 </xpath>
+                <xpath expr="//list/field[@name='active']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='is_header']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='allow_confirm']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='allow_reverse']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='reconcile']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='has_due_date']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='is_frozen']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
                 <xpath expr="//field[@name='account_id']" position="attributes">
                     <attribute name="readonly">0</attribute>
                 </xpath>
@@ -35,9 +56,9 @@
                 </xpath>
 
                 <xpath expr="//field[@name='is_confirmed']" position="after">
-                    <field name="balance" invisible="1"/>
+                    <field name="balance" column_invisible="True"/>
                     <field name="negative_balance" optional="hide"/>
-                    <field name="pre_balance" invisible="1"/>
+                    <field name="pre_balance" column_invisible="True"/>
                     <field name="available_balance" optional="show" class="h6"
                            widget="monetary"
                            decoration-danger="negative_balance"
@@ -46,7 +67,7 @@
 
                 </xpath>
                 <xpath expr="//field[@name='header_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="column_invisible">True</attribute>
                 </xpath>
 
 

@@ -33,7 +33,7 @@
             <field name="name">ab_accounting_je_header_view_form</field>
             <field name="model">ab_accounting_je_header</field>
             <field name="arch" type="xml">
-                <form string="ab_accounting_je_header_form">
+                <form string="ab_accounting_je_header_form" class="o_ab_accounting_header_form">
                     <header>
                         <button name="btn_post_je"
                                 invisible="0"
@@ -107,11 +107,12 @@
                                 </group>
                                 <field name="line_ids"
                                        widget="one2many_search"
+                                       class="o_ab_responsive_x2many_table o_ab_accounting_line_table"
                                        nolabel="1"
                                        force_save="1"
 
                                        context="{
-                                       'tree_view_ref':'ab_accounting.ab_accounting_je_line_view_tree_one2many',
+                                       'list_view_ref':'ab_accounting.ab_accounting_je_line_view_tree_one2many',
                                        'default_costcenter_id':costcenter_id}" invisible="(doctype_id == False or account_id == False)">
                                 </field>
 
@@ -144,10 +145,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" groups="base.group_user"/>
-                        <field name="message_ids"/>
-                    </div>
+                    <chatter/>
                 </form>
             </field>
         </record>
