@@ -371,6 +371,9 @@ class EplusStockSnapshot(models.Model):
                     new_drafts |= product
                     candidates_by_serial.setdefault(row.itm_id, set()).add(product.id)
                     candidates_by_code.setdefault(row.itm_code, set()).add(product.id)
+            except AccessError:
+                _logger.warning("Eplus item %s requires import on the product master before replication", row.itm_id)
+                skipped += 1
             except (IntegrityError, ValidationError):
                 _logger.exception("Eplus catalog draft import failed for itm_id=%s", row.itm_id)
                 skipped += 1
@@ -387,7 +390,7 @@ class EplusStockSnapshot(models.Model):
     def _fetch_eplus_catalog_names(self, itm_ids):
         names_by_id = {}
         try:
-            with self.connect_eplus(param_str="?", charset="CP1256", propagate_error=True) as conn:
+            with self._connect_eplus_read(param_str="?", charset="CP1256", propagate_error=True) as conn:
                 with conn.cursor() as cursor:
                     for offset in range(0, len(itm_ids), 200):
                         batch = itm_ids[offset:offset + 200]
@@ -580,7 +583,7 @@ class EplusStockSnapshot(models.Model):
     @api.model
     def _fetch_eplus_stock_rows(self):
         try:
-            with self.connect_eplus(charset="CP1256", propagate_error=True) as conn:
+            with self._connect_eplus_read(charset="CP1256", propagate_error=True) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute(EPLUS_STOCK_SQL)
                     columns = [column[0] for column in (cursor.description or [])]

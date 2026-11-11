@@ -189,7 +189,7 @@ class AbProduct(models.Model):
     _inherit = "ab_product"
 
     website_sync_pending = fields.Boolean(
-        string="Website Sync Pending", compute="_compute_website_sync_pending", store=True,
+        string="Website Sync Pending", compute="_compute_website_sync_pending", store=True, readonly=False,
     )
     website_sync_template_ids = fields.One2many(
         "product.template", "ab_product_id", string="Website Sync Templates", readonly=True,

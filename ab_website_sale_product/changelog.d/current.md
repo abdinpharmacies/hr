@@ -2,10 +2,34 @@
 
 ## Current changes before commit:
 
-- Create unpublished website products after Eplus refresh for matched catalog products that have no website product, as well as newly imported drafts.
-- Reuse existing product links and serialize catalog creation with website synchronization to avoid duplicate products.
-- Keep existing website products, publication status, and prices unchanged by the draft import.
-- Show the queued item count in English and both Arabic languages; cover the refresh-to-queue flow, repeated execution, and administrator access.
+- Retry temporary B-Connect connection failures before reading stock or catalog names through the bounded read connector.
+- Make the local website sync status selectable in explicit replica write rules; product-master fields remain protected.
+- Skip product creation denied by replica protection without rolling back website drafts for other matched items in the batch.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+
+Validation:
+
+- Targeted upgrade and optional replica integration install on `ecom19_storefront_validation_20261109`, ports `5069/5072`: 25 tests passed, 0 failures/errors (12 catalog, 9 connector, 4 replica integration).
+- External connections were mocked. The replica integration tests enforce real replica restrictions with install mode disabled.
+- No new user-facing strings; existing English and Arabic messages are preserved.
+- Log: `/tmp/eplus_replica_recovery_validation.log`. Existing validation-copy attachment warnings are unrelated.
+
+## Recent commits
+
+Commit: `b3af5683`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/FIX: create unpublished products for matched Eplus items`
+
+User-facing changes:
+
+- Create unpublished website products for Eplus-linked catalog items without website products.
+- Show the queued item count and preserve existing publication status.
 
 Files changed:
 
@@ -15,14 +39,6 @@ Files changed:
 - `ab_website_sale_product/i18n/ar_001.po`
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/tests/test_eplus_catalog_import.py`
-
-Validation:
-
-- Targeted upgrade on `ecom19_storefront_validation_20261109`, ports `5069/5072`: 12 catalog import tests passed, 0 failures/errors; B-Connect reads were mocked.
-- Both Arabic catalogs passed `msgfmt --check-format`; the confirmation message and stock action were verified at runtime in `en_US` and `ar_001`.
-- Logs: `/tmp/eplus_unpublished_validation_final.log` and `/tmp/eplus_unpublished_translation_runtime.log`. The existing validation copy has missing attachment files; no live B-Connect import or deployment was performed.
-
-## Recent commits
 
 Commit: `a701a554`
 Author: Mohamed Fawzy
