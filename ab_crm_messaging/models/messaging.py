@@ -115,7 +115,9 @@ class Account(models.Model):
         return False, False
 
     def _valid_incoming_identity(self, value):
-        return self.provider in ('telegram', 'whatsapp') and value.isascii() and value.isdecimal()
+        if self.provider == 'whatsapp':
+            return bool(value) and value.isascii() and all(33 <= ord(char) <= 126 for char in value)
+        return self.provider == 'telegram' and value.isascii() and value.isdecimal()
 
     def _eligible(self, conversation, body):
         code, reason = self._queue_eligibility(conversation)
@@ -537,6 +539,7 @@ class MessagingAPI(models.AbstractModel):
             'reaction',
             'location',
             'edit',
+            'whatsapp',
         } != {
             'id',
             'sender',
@@ -635,6 +638,8 @@ class MessagingAPI(models.AbstractModel):
                         )
                     )
                 )
+            if not conversation.active:
+                conversation.write({'active': True})
             body = (
                 _('Unsupported attachment received. Staff review is required.')
                 if event['unsupported']

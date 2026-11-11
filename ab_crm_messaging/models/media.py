@@ -151,6 +151,8 @@ class Media(models.Model):
     size = fields.Integer(required=True)
     duration = fields.Float()
     provider_file_id = fields.Char()
+    source_metadata = fields.Json(readonly=True)
+    failure_reason = fields.Char(readonly=True)
     data = fields.Binary(attachment=False)
     state = fields.Selection(
         [
@@ -238,6 +240,9 @@ class Operation(models.Model):
 class MessagingAPI(models.AbstractModel):
     _inherit = 'ab_crm_messaging_api'
 
+    def _validate_incoming_media(self, account, metadata, data=None):
+        return validate_media(metadata, data, translate=self.env._)
+
     def _receive_event_extra(self, account, event, message):
         result = super()._receive_event_extra(account, event, message)
         reference = event.get('reply_reference', '')
@@ -252,7 +257,7 @@ class MessagingAPI(models.AbstractModel):
             message._internal_write({'reaction': reaction})
         metadata = event.get('media')
         if metadata:
-            validate_media(metadata, translate=self.env._)
+            self._validate_incoming_media(account, metadata)
             if (
                 not isinstance(metadata.get('file_id'), str)
                 or not 1 <= len(metadata['file_id']) <= 512
@@ -269,6 +274,7 @@ class MessagingAPI(models.AbstractModel):
                     'size': metadata['size'],
                     'duration': metadata.get('duration', 0),
                     'provider_file_id': metadata['file_id'],
+                    'source_metadata': metadata,
                 }
             )
         return result
@@ -303,7 +309,7 @@ class MessagingAPI(models.AbstractModel):
                 raise ValidationError(_('Media content cannot be replaced.'))
             return True
         if failed:
-            media._internal_write({'state': 'failed'})
+            media._internal_write({'state': 'failed', 'failure_reason': str(failed)[:80]})
             return True
         try:
             size = (
@@ -314,13 +320,14 @@ class MessagingAPI(models.AbstractModel):
         except (ValueError, binascii.Error):
             raise ValidationError(_('Invalid media content or size.')) from None
         metadata = {
+            **(media.source_metadata or {}),
             'kind': media.kind,
             'name': media.name,
             'mimetype': media.mimetype,
             'size': size,
             'duration': media.duration,
         }
-        validate_media(metadata, data, translate=self.env._)
+        self._validate_incoming_media(account, metadata, data)
         media._internal_write(
             {'data': data, 'size': metadata['size'], 'state': 'ready'}
         )

@@ -951,3 +951,13 @@ msgstr "التوقيت الأصلي"
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message__timeline_at
 msgid "Timeline Timestamp"
 msgstr "توقيت سجل المحادثة"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__failure_reason
+msgid "Failure Reason"
+msgstr "سبب الفشل"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__source_metadata
+msgid "Source Metadata"
+msgstr "بيانات المصدر الوصفية"
