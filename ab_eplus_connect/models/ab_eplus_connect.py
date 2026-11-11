@@ -8,7 +8,7 @@ from odoo import models, api
 from odoo.tools.translate import _
 from odoo.exceptions import UserError
 from .check_port_mssql import is_port_open
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from cryptography.fernet import Fernet
 from odoo.tools import config
 
@@ -30,7 +30,11 @@ except ImportError:
     pyodbc = None
 
 
-def _get_main_server():
+class EplusConnectionError(UserError):
+    pass
+
+
+def _get_main_server(port_timeout=2):
     global SERVER
     if SERVER:
         return SERVER
@@ -41,10 +45,10 @@ def _get_main_server():
 
     for value in conf_bconnect_ips:
         _logger.info(f"######## Trying IP {value} #########")
-        if is_port_open(value, port=1433):
+        if is_port_open(value, port=1433, timeout=port_timeout):
             SERVER = value
             return SERVER
-    raise UserError(_("All BConnect Server IPs may be Offline."))
+    raise EplusConnectionError(_("All BConnect Server IPs may be Offline."))
 
 
 USER = config.get('bconnect_user')
@@ -321,6 +325,32 @@ class EPlusConnect(models.AbstractModel):
         return False
 
     @contextmanager
+    def _connect_eplus_read(self, **kwargs):
+        options = {
+            "validation_timeout": 5,
+            "connect_timeout": 5,
+            "port_timeout": 5,
+            **kwargs,
+            "use_validation_cache": False,
+        }
+        for attempt in range(3):
+            stack = ExitStack()
+            try:
+                connection = stack.enter_context(self.connect_eplus(**options))
+            except Exception as error:
+                stack.close()
+                if attempt == 2 or not (
+                    isinstance(error, EplusConnectionError) or self._is_disconnect_error(error)
+                ):
+                    raise
+                _logger.warning("Retrying Eplus read connection after attempt %s", attempt + 1)
+                time.sleep(attempt + 1)
+            else:
+                break
+        with stack:
+            yield connection
+
+    @contextmanager
     def connect_eplus(self, server=None,
                       db=DB, user=USER,
                       password=None,
@@ -331,14 +361,16 @@ class EPlusConnect(models.AbstractModel):
                       propagate_error=False,
                       validation_timeout=None,
                       connect_timeout=None,
+                      port_timeout=2,
+                      use_validation_cache=True,
                       ):
         if server is None:
-            server = _get_main_server()
+            server = _get_main_server(port_timeout=port_timeout)
         elif not server:  # server is given server even if None or ''
             raise UserError(_("You pass empty server %s") % (server,))
 
-        if not is_port_open(server, port):
-            raise UserError(_("No MSSQL at ip %s port %s") % (server, port))
+        if not is_port_open(server, port, timeout=port_timeout):
+            raise EplusConnectionError(_("No MSSQL at ip %s port %s") % (server, port))
 
         user_id = (self.env.uid, server, param_str, charset, autocommit)
         if validation_timeout is None:
@@ -362,6 +394,7 @@ class EPlusConnect(models.AbstractModel):
                 param_str=param_str,
                 charset=charset,
                 port=port,
+                use_cache=use_validation_cache,
         ):
             raise UserError(_("Server %s is offline or too slow") % server)
 
@@ -378,6 +411,7 @@ class EPlusConnect(models.AbstractModel):
                     param_str=param_str,
                     charset=charset,
                     port=port,
+                    use_cache=use_validation_cache,
             ):
                 _logger.info(f"Connection for user {user_id} is no longer valid. Creating a new connection.")
                 self._connection_pool.pop(user_id, None)
@@ -452,7 +486,7 @@ class EPlusConnect(models.AbstractModel):
                 except Exception as ee:
                     _logger.info(repr(ee))
                     pass
-                raise UserError(_("Connection is too slow or unavailable."))
+                raise EplusConnectionError(_("Connection is too slow or unavailable."))
             if not self.is_connection_valid(
                     conn,
                     max_seconds=validation_timeout,
@@ -465,7 +499,7 @@ class EPlusConnect(models.AbstractModel):
                 except Exception as ee:
                     _logger.info(repr(ee))
                     pass
-                raise UserError(_("Connection is too slow or unavailable."))
+                raise EplusConnectionError(_("Connection is too slow or unavailable."))
 
         # Use the existing connection
         conn = self._connection_pool[user_id]
