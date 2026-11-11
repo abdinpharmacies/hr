@@ -82,7 +82,7 @@ class CentralOperation(models.Model):
     def _param(self, key, default=False):
         if key == 'role':
             return 'branch'
-        return self.env['ir.config_parameter'].sudo().get_param('ab_branch_sync.' + key, default)
+        return self.env['ir.config_parameter'].sudo().get_param('ab_central_branch_connection.' + key, default)
 
     @api.model
     def _uses_central(self, store, role=None):
@@ -191,7 +191,7 @@ class CentralOperation(models.Model):
                       history=((self.history or []) + [{'at': str(now), 'state': values['state']}])[-50:])
         self.sudo().write(values)
         if values['state'] == 'uncertain':
-            self.env['ir.config_parameter'].sudo().set_param('ab_branch_sync.connection_status', 'attention')
+            self.env['ir.config_parameter'].sudo().set_param('ab_central_branch_connection.connection_status', 'attention')
         if values['state'] == 'accepted' and self.kind in ('sale', 'return', 'sale_cancel'):
             document = self.env[self.document_model].sudo().browse(self.document_id).exists()
             codes = document.line_ids.product_id.mapped('code') if document else []
@@ -297,10 +297,10 @@ class CentralOperation(models.Model):
         self._check_enrollment_integrity(new_stores)
         params = self.env['ir.config_parameter'].sudo()
         if not self._param('authorized') or new_stores:
-            params.set_param('ab_branch_sync.ready', False)
-        params.set_param('ab_branch_sync.stores', json.dumps(codes))
-        params.set_param('ab_branch_sync.origin', info['origin'])
-        params.set_param('ab_branch_sync.authorized', True)
+            params.set_param('ab_central_branch_connection.ready', False)
+        params.set_param('ab_central_branch_connection.stores', json.dumps(codes))
+        params.set_param('ab_central_branch_connection.origin', info['origin'])
+        params.set_param('ab_central_branch_connection.authorized', True)
 
     @api.model
     def _refresh_snapshots(self, store_ids=None, product_codes=None):
@@ -335,8 +335,8 @@ class CentralOperation(models.Model):
                               'central_watermark': snapshot['watermark'],
                               'central_accepted_serials': snapshot.get('accepted_serials', []), 'last_sync_at': snapshot['at']})
             if product_codes is None and store_ids is None:
-                self.env['ir.config_parameter'].sudo().set_param('ab_branch_sync.ready', True)
-                self.env['ir.config_parameter'].sudo().set_param('ab_branch_sync.connection_status', 'connected')
+                self.env['ir.config_parameter'].sudo().set_param('ab_central_branch_connection.ready', True)
+                self.env['ir.config_parameter'].sudo().set_param('ab_central_branch_connection.connection_status', 'connected')
 
     @api.model
     def _try_refresh_snapshots(self, **kwargs):
@@ -344,7 +344,7 @@ class CentralOperation(models.Model):
             with self.env.cr.savepoint():
                 self._refresh_snapshots(**kwargs)
         except (requests.RequestException, ValueError, ValidationError):
-            self.env['ir.config_parameter'].sudo().set_param('ab_branch_sync.connection_status', 'stock_error')
+            self.env['ir.config_parameter'].sudo().set_param('ab_central_branch_connection.connection_status', 'stock_error')
 
     @api.model
     def _sync_now(self):

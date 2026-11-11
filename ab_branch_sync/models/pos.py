@@ -13,7 +13,7 @@ class BranchSyncPOS(models.TransientModel):
     @api.model
     def pos_central_sync(self, store_id, session_token=False, synchronize=False):
         try:
-            interval = int(self.env['ir.config_parameter'].sudo().get_param('ab_branch_sync.pos_sync_interval_seconds', '10'))
+            interval = int(self.env['ir.config_parameter'].sudo().get_param('ab_central_branch_connection.pos_sync_interval_seconds', '10'))
             if not 1 <= interval <= 86400:
                 interval = 10
         except (ValueError, TypeError):

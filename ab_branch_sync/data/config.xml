@@ -1,1 +1,1 @@
-<odoo noupdate="1"><record id="pos_sync_interval" model="ir.config_parameter"><field name="key">ab_branch_sync.pos_sync_interval_seconds</field><field name="value">10</field></record></odoo>
+<odoo noupdate="1"><record id="pos_sync_interval" model="ir.config_parameter"><field name="key">ab_central_branch_connection.pos_sync_interval_seconds</field><field name="value">10</field></record></odoo>

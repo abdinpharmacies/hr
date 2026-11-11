@@ -39,9 +39,9 @@ System Parameters. Configure these existing keys directly:
 
 | Key | Value |
 | --- | --- |
-| `ab_branch_sync.url` | Central HTTP or HTTPS URL |
-| `ab_branch_sync.database` | Central Odoo database name |
-| `ab_branch_sync.api_key` | Inventory Writer's standard Odoo user API key |
+| `ab_central_branch_connection.url` | Central HTTP or HTTPS URL |
+| `ab_central_branch_connection.database` | Central Odoo database name |
+| `ab_central_branch_connection.api_key` | Inventory Writer's standard Odoo user API key |
 
 Then open Branch Synchronization → Operations and click **Connect to Central**.
 The button reads the saved parameters, verifies access, and downloads the initial
@@ -63,10 +63,28 @@ using native cancellation/reversal workflows on the affected installations.
 Changing, creating, renaming or deleting a connection parameter clears connection
 authorization and stock readiness. Click Connect to Central again after editing
 the target or API key. Unchanged values and unrelated parameters do not reset the
-connection. The module maintains `ab_branch_sync.authorized`, `ready`, `origin`,
-`stores` and `connection_status`; do not configure these manually. The optional
-`ab_branch_sync.pos_sync_interval_seconds` controls the POS refresh timer (default
-10 seconds). Existing parameter values, snapshots and operation records are retained.
+connection. The module maintains these parameters; do not configure them manually:
+
+| Key | Purpose |
+| --- | --- |
+| `ab_central_branch_connection.authorized` | Central connection authorization |
+| `ab_central_branch_connection.ready` | Initial stock snapshot readiness |
+| `ab_central_branch_connection.origin` | Connected branch database identity |
+| `ab_central_branch_connection.stores` | Authorized store codes |
+| `ab_central_branch_connection.connection_status` | Connection and stock synchronization status |
+
+The optional `ab_central_branch_connection.pos_sync_interval_seconds` controls the
+POS refresh timer (default 10 seconds). Changing this interval or internal state
+does not clear authorization.
+
+For an existing development installation, rename the old `ab_branch_sync.url`,
+`ab_branch_sync.database`, and `ab_branch_sync.api_key` keys in System Parameters
+to the corresponding `ab_central_branch_connection.*` keys, preserving their values.
+If a custom `ab_branch_sync.pos_sync_interval_seconds` exists, rename it too to
+preserve the interval. Then click **Connect to Central** to regenerate the five
+module-maintained parameters and download stock. Old parameter names are no longer
+read; no automatic migration or fallback is provided. Renaming keys does not
+change database UUIDs, replica serials, snapshots, or operation records.
 
 There is no pairing code, per-replica secret, service-user login, CA bundle, or
 certificate verification step. HTTP and HTTPS are supported; HTTPS certificate
@@ -111,7 +129,7 @@ authorized stores, user access, or employee authorization.
 
 The tag reports syncing, online, offline, or needs attention. A connection check and full store resync run through setInterval every 10 seconds
 while the POS is open. The system parameter
-`ab_branch_sync.pos_sync_interval_seconds` controls the interval in seconds
+`ab_central_branch_connection.pos_sync_interval_seconds` controls the interval in seconds
 (default 10; invalid/nonpositive values fall back to 10). Active requests do not
 overlap. The response updates the timer if the parameter changes. Recovery from an
 offline/failed sync installs a fresh snapshot; clicking the tag retries manually.

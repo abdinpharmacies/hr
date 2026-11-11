@@ -1,7 +1,7 @@
 from odoo import api, models
 
 
-CONNECTION_KEYS = frozenset('ab_branch_sync.' + key for key in ('url', 'database', 'api_key'))
+CONNECTION_KEYS = frozenset('ab_central_branch_connection.' + key for key in ('url', 'database', 'api_key'))
 
 
 class IrConfigParameter(models.Model):
@@ -14,9 +14,9 @@ class IrConfigParameter(models.Model):
     @api.model
     def _invalidate_branch_sync_connection(self):
         params = self.sudo()
-        params.set_param('ab_branch_sync.authorized', False)
-        params.set_param('ab_branch_sync.ready', False)
-        params.set_param('ab_branch_sync.connection_status', 'attention')
+        params.set_param('ab_central_branch_connection.authorized', False)
+        params.set_param('ab_central_branch_connection.ready', False)
+        params.set_param('ab_central_branch_connection.connection_status', 'attention')
 
     @api.model_create_multi
     def create(self, vals_list):
