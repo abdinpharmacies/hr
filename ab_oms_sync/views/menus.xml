@@ -1,4 +1,0 @@
-<odoo>
-<menuitem id="menu_ab_oms_sync_event" name="Website Events" parent="ab_crm_core.menu_root" action="action_ab_oms_sync_event"/>
-<menuitem id="menu_ab_oms_sync_update" name="Website Updates" parent="ab_crm_core.menu_root" action="action_ab_oms_sync_update"/>
-</odoo>
