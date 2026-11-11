@@ -1,8 +1,9 @@
 from unittest.mock import patch
 
 from odoo.addons.integration_queue_job.exception import RetryableJobError
+from odoo.addons.integration_queue_job.tests.common import trap_jobs
 from odoo.exceptions import AccessError, UserError
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, new_test_user
 
 
 class TestEplusCatalogImport(TransactionCase):
@@ -70,6 +71,88 @@ class TestEplusCatalogImport(TransactionCase):
         self.assertEqual(row.matched_by, "barcode")
         self.assertEqual(product.eplus_serial, row.itm_id)
         self.assertFalse(product.eplus_catalog_draft)
+        self.assertTrue(product.website_product_tmpl_id)
+        self.assertFalse(product.website_product_tmpl_id.is_published)
+
+    def test_matched_catalog_product_gets_unpublished_website_product(self):
+        product = self.Product.create({
+            "product_card_name": "Existing catalog product", "code": "99177010",
+            "eplus_serial": 99177010, "default_price": 42.5,
+            "website_sale_available": True,
+        })
+        row = self.snapshot(99177010, product.code)
+        row.write({"product_id": product.id, "matched_by": "eplus_serial"})
+
+        with patch.object(type(self.Snapshot), "_fetch_eplus_catalog_names") as fetch:
+            self.assertEqual(row._import_eplus_catalog_batch(), 0)
+            fetch.assert_not_called()
+        template = product.website_product_tmpl_id
+        self.assertTrue(template)
+        self.assertFalse(template.is_published)
+        self.assertEqual(template.list_price, 42.5)
+        self.assertEqual(template.default_code, product.code)
+        self.assertTrue(product.allow_sale)
+        self.assertTrue(product.website_sale_available)
+        self.assertFalse(product.eplus_catalog_draft)
+        self.assertEqual(row._import_eplus_catalog_batch(), 0)
+        self.assertEqual(product.website_product_tmpl_id, template)
+
+    def test_delayed_import_preserves_product_published_after_queueing(self):
+        product = self.Product.create({
+            "product_card_name": "Published catalog product", "code": "99177011",
+            "eplus_serial": 99177011, "website_sale_available": True,
+        })
+        row = self.snapshot(99177011, product.code)
+        row.write({"product_id": product.id, "matched_by": "eplus_serial"})
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
+        template.write({"list_price": 89.0})
+
+        self.assertEqual(row._import_eplus_catalog_batch(), 0)
+        self.assertTrue(template.is_published)
+        self.assertEqual(template.list_price, 89.0)
+
+    def test_refresh_queues_unmatched_and_matched_products_without_websites(self):
+        product = self.Product.create({
+            "product_card_name": "Matched product", "code": "99177012",
+            "eplus_serial": 99177012, "website_sale_available": True,
+        })
+        source_rows = [
+            {"itm_id": 99177012, "itm_code": "99177012", "itm_qty": 2.0, "extra_data": {}},
+            {"itm_id": 99177013, "itm_code": "99177013", "itm_qty": 3.0, "extra_data": {}},
+        ]
+        with (
+            patch.object(type(self.Snapshot), "_fetch_eplus_stock_rows", return_value=source_rows),
+            patch.object(type(self.Snapshot), "_fetch_eplus_catalog_names", return_value={
+                99177013: [("99177013", "New Arabic Name", "New English Name", True)],
+            }),
+            trap_jobs() as trap,
+        ):
+            action = self.Snapshot.action_refresh_from_eplus()
+            self.assertIn("Queued 2 items", action["params"]["message"])
+            trap.assert_jobs_count(1)
+            self.assertFalse(product.website_product_tmpl_id)
+            trap.perform_enqueued_jobs()
+        products = self.Product.search([("eplus_serial", "in", [99177012, 99177013])])
+        self.assertEqual(len(products), 2)
+        templates = products.mapped("website_product_tmpl_id")
+        self.assertEqual(len(templates), 2)
+        self.assertFalse(any(templates.mapped("is_published")))
+        with trap_jobs() as trap:
+            self.assertEqual(self.Snapshot._enqueue_eplus_catalog_import(), 0)
+            trap.assert_jobs_count(0)
+
+    def test_internal_user_cannot_refresh_or_enqueue_catalog_import(self):
+        user = new_test_user(
+            self.env, login="eplus_catalog_reader", groups="base.group_user",
+            partner_id=self.env.ref("base.public_partner").id,
+        )
+        snapshot = self.Snapshot.with_user(user)
+        with patch.object(type(self.Snapshot), "_fetch_eplus_stock_rows") as fetch:
+            with self.assertRaises(AccessError):
+                snapshot.action_refresh_from_eplus()
+            with self.assertRaises(AccessError):
+                snapshot._enqueue_eplus_catalog_import()
+            fetch.assert_not_called()
 
     def test_skips_missing_name_inactive_and_duplicate_codes(self):
         missing_name = self.snapshot(99177003, "99177003")

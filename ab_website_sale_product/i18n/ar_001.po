@@ -6334,3 +6334,11 @@ msgstr "استيراد مسودات أصناف Eplus"
 #: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "The website product draft could not be created safely."
 msgstr "تعذر إنشاء مسودة منتج الموقع بأمان."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Queued %(count)s items for unpublished website product creation."
+msgstr ""
+"تمت إضافة %(count)s صنف إلى قائمة الانتظار لإنشاء منتجات غير منشورة على "
+"الموقع."

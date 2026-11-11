@@ -1,9 +1,11 @@
 # Website Sale Product change log
 
-## Current changes before commit
+## Current changes before commit:
 
-- Show a clear error when an Eplus stock refresh cannot connect or query the source, while keeping the previous snapshot.
-- Translate the new error into both supported Arabic languages and cover the failure path.
+- Create unpublished website products after Eplus refresh for matched catalog products that have no website product, as well as newly imported drafts.
+- Reuse existing product links and serialize catalog creation with website synchronization to avoid duplicate products.
+- Keep existing website products, publication status, and prices unchanged by the draft import.
+- Show the queued item count in English and both Arabic languages; cover the refresh-to-queue flow, repeated execution, and administrator access.
 
 Files changed:
 
@@ -14,7 +16,31 @@ Files changed:
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/tests/test_eplus_catalog_import.py`
 
+Validation:
+
+- Targeted upgrade on `ecom19_storefront_validation_20261109`, ports `5069/5072`: 12 catalog import tests passed, 0 failures/errors; B-Connect reads were mocked.
+- Both Arabic catalogs passed `msgfmt --check-format`; the confirmation message and stock action were verified at runtime in `en_US` and `ar_001`.
+- Logs: `/tmp/eplus_unpublished_validation_final.log` and `/tmp/eplus_unpublished_translation_runtime.log`. The existing validation copy has missing attachment files; no live B-Connect import or deployment was performed.
+
 ## Recent commits
+
+Commit: `a701a554`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/FIX: show safe error when Eplus stock refresh fails`
+
+User-facing changes:
+
+- Show a translated connection error and preserve the previous Eplus snapshot when refresh fails.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
 
 Commit: `796d2bcd`
 Author: Mohamed Fawzy
