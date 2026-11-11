@@ -2,11 +2,31 @@
 
 ## Current changes before commit
 
-- Import unmatched active Eplus stock items into Abdin Products as archived, unpublished drafts using their real names from `m_name`.
-- Link an existing Abdin product by Eplus ID, item code, or barcode before creating a draft.
-- Add an Eplus Draft website status and filter, and protect automatic import behind administrator access and background jobs.
-- Restore missing translation template entries so the Arabic website statuses load at runtime.
-- Test draft creation, matching, invalid source rows, and import access.
+- Include active Abdin products without website templates in the image synchronization scan.
+- Create an unpublished website product only when a valid matching image is synchronized.
+- Require administrator access in the image synchronization service, including direct method calls.
+- Cover unpublished template creation and unauthorized service calls.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/product_image_sync.py`
+- `ab_website_sale_product/tests/test_website_category_mapping.py`
+
+## Recent commits
+
+Commit: `e95e0803`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/IMP: import unmatched Eplus items as catalog drafts`
+
+User-facing changes:
+
+- Add Eplus draft status and queue-based catalog import from stock snapshots.
+- Link existing Abdin products before attempting draft creation.
 
 Files changed:
 
@@ -21,7 +41,7 @@ Files changed:
 - `ab_website_sale_product/views/ab_product_kanban_views.xml`
 - `ab_website_sale_product/views/ab_product_views.xml`
 
-## Recent commits
+## Earlier catalog commit
 
 Commit: `f4a3129c`
 Author: Mohamed Fawzy

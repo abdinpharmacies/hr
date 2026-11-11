@@ -6054,3 +6054,9 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_catalog_status
 msgid "Website Status"
 msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The website product draft could not be created safely."
+msgstr ""

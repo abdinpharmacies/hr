@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
+from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase
 
 
@@ -129,6 +130,38 @@ class TestWebsiteCategoryMapping(TransactionCase):
         self.assertEqual(line["status"], "matched")
         self.assertEqual(line["match_method"], "code")
         self.assertEqual(line["relative_path"], "IMG-FLAT.jpg")
+
+    def test_image_sync_creates_unpublished_template_for_unlinked_product(self):
+        product = self.env["ab_product"].create({
+            "name": "Unlinked image product",
+            "product_card_name": "Unlinked image product",
+            "code": "IMG-UNLINKED",
+            "active": True,
+            "allow_sale": True,
+            "website_sale_available": False,
+        })
+        Service = self.env["ab.website.product.image.sync.service"]
+        self.assertIn(product, Service._get_website_products([("id", "=", product.id)]))
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "IMG-UNLINKED.png")
+            plan = self._plan_for(root, product)
+            self.assertEqual(self._single_product_line(plan, product)["status"], "matched")
+            result = Service.apply_sync_plan(plan)
+
+        template = product.website_product_tmpl_id
+        self.assertEqual(result["summary"]["updated"], 1)
+        self.assertTrue(template)
+        self.assertFalse(template.is_published)
+        self.assertEqual(template.image_1920, base64.b64encode(PNG_1X1))
+
+    def test_non_admin_cannot_call_image_sync_service(self):
+        Service = self.env["ab.website.product.image.sync.service"].with_user(
+            self.env.ref("base.public_user")
+        )
+        with self.assertRaises(AccessError):
+            Service.prepare_sync_plan("/tmp")
+        with self.assertRaises(AccessError):
+            Service.apply_sync_plan({"summary": {}, "report": []})
 
     def test_external_serial_cannot_match_another_products_image(self):
         owner = self._create_website_product("98520001")

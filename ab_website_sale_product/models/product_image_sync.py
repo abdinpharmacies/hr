@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from psycopg2.errors import DeadlockDetected, SerializationFailure
 
-from odoo import _, api, models
+from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
 
 from .ab_product import (
@@ -59,6 +59,7 @@ class ProductImageSyncService(models.AbstractModel):
 
     @api.model
     def scan_image_root(self, directory_path=None):
+        self.check_image_sync_access()
         image_root = self.normalize_image_root(directory_path)
         _logger.info("Product image scan started", extra={"image_root": image_root})
         entries = []
@@ -174,13 +175,14 @@ class ProductImageSyncService(models.AbstractModel):
 
     @api.model
     def _get_website_products(self, product_domain=None):
-        domain = [("website_product_tmpl_id", "!=", False)]
+        domain = ["|", ("active", "=", True), ("website_product_tmpl_id", "!=", False)]
         if product_domain:
-            domain += product_domain
+            domain = list(fields.Domain.AND([domain, product_domain]))
         return self.env["ab_product"].sudo().with_context(active_test=False).search(domain)
 
     @api.model
     def prepare_sync_plan(self, directory_path=None, products=None, product_domain=None):
+        self.check_image_sync_access()
         scan = self.scan_image_root(directory_path)
         image_index = self.build_image_index(scan["entries"])
         products = products.sudo() if products is not None else self._get_website_products(product_domain)
@@ -260,7 +262,8 @@ class ProductImageSyncService(models.AbstractModel):
         template = product.website_product_tmpl_id
         current_checksum = self._template_image_sha256(template)
         if current_checksum == image_entry["checksum"] or (
-            template.website_image_source_checksum == image_entry["checksum"]
+            template
+            and template.website_image_source_checksum == image_entry["checksum"]
             and template.website_image_applied_checksum == current_checksum
         ):
             return self._report_line(
@@ -401,6 +404,7 @@ class ProductImageSyncService(models.AbstractModel):
 
     @api.model
     def apply_sync_plan(self, plan, batch_size=100, replace_existing=True):
+        self.check_image_sync_access()
         report = []
         summary = dict(plan["summary"])
         updates = [line for line in plan["report"] if line["status"] == "matched" and line.get("product_id")]
@@ -431,6 +435,13 @@ class ProductImageSyncService(models.AbstractModel):
                     image_payload = base64.b64encode(image_file.read())
                 with self.env.cr.savepoint():
                     template = product.website_product_tmpl_id.sudo()
+                    if not template:
+                        template = product._sync_website_products(
+                            create_missing=True,
+                            publish_requested=False,
+                        )
+                        if len(template) != 1 or template.is_published:
+                            raise UserError(_("The website product draft could not be created safely."))
                     if not template._apply_website_sync_image(
                         image_payload,
                         source_checksum=source_checksum,

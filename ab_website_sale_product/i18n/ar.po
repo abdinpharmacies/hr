@@ -6318,3 +6318,9 @@ msgstr "يمكن للمسؤولين فقط استيراد أصناف Eplus."
 #: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
 msgid "Import Eplus product drafts"
 msgstr "استيراد مسودات أصناف Eplus"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The website product draft could not be created safely."
+msgstr "تعذر إنشاء مسودة منتج الموقع بأمان."
