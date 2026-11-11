@@ -2,6 +2,16 @@
 
 ## Results
 
+Optional reset validation (2026-11-11): **184 tests, 174 passed and 10 skipped**,
+with disposable PostgreSQL tests enabled. Odoo clone acceptance and optional
+legacy checks were not enabled for this CLI/reset change. Compilation and
+`git diff --check` passed. No application database was reset or migrated.
+
+Reset coverage includes startup help, default resume dispatch, help-only behavior,
+error recovery commands, directory identity/symlink checks, cancellation, active
+lock rejection, committed-checkpoint rejection, preservation of public records and
+unrelated directories, partial filesystem cleanup/retry, and repeat reset.
+
 The public entry point now selects only the prepared-target workflow. The retired
 initializer is isolated in `legacy_migrate.py`, with direct CLI execution disabled;
 its historical tests still exercise the old primitives independently.

@@ -258,7 +258,8 @@ class MigrationTests(unittest.TestCase):
                                     '--target-config', '/target.conf', '--target-db', 'chosen_target'])
         self.assertEqual(args.source_db, 'chosen_source')
         self.assertEqual(args.target_db, 'chosen_target')
-        self.assertEqual(set(vars(args)), {'source_config', 'source_db', 'target_config', 'target_db'})
+        self.assertEqual(set(vars(args)), {'source_config', 'source_db', 'target_config', 'target_db', 'reset'})
+        self.assertFalse(args.reset)
 
 
 

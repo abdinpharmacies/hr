@@ -2,6 +2,25 @@
 
 ## Current changes before commit:
 
+- Add optional confirmed `--reset` for private pre-import schemas and matching run directories; exit after cleanup so the next normal run starts fresh.
+- Preserve public records and unrelated runs; refuse active migrations, committed imports, identity changes, and unsafe paths. Support retry after partial directory cleanup.
+- Print usage/options at startup and a complete reset recovery command on errors.
+- Add CLI and disposable PostgreSQL reset coverage; document behavior and validation.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `migrate.py`
+- `reset_migration.py`
+- `tests/test_migration.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_reset_migration.py`
+
+## 3343d652c — emadco88 — 2026-11-11
+
+Original commit subject: `tools/ UPD shared columns only + progressbar`
+
 - Import shared stored fields across all copied models; report source-only/nonstored fields instead of requiring an adapter for each omitted field.
 - Apply the same policy to cached/new M2M metadata and attachment fields; retain raw extraction and scope attachments to copied owners/shared links.
 - Add asynchronous five-second progress for backup, staging COPY, indexing, validation, replacement, mapping, attachments, and commits.

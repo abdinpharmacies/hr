@@ -17,6 +17,7 @@ import tempfile
 import time
 import unittest
 import uuid
+from types import SimpleNamespace
 from unittest.mock import patch
 from psycopg2 import sql
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -25,6 +26,8 @@ from availability import DatabaseGate,target_offline
 from prepared_importer import PreparedImporter,META,WORK
 from prepared import initialize,identity_checkpoint,write_checkpoint,read_checkpoint
 from prepared_snapshot import SCHEMA
+from reset_migration import reset,SCHEMAS
+from resume import endpoint
 
 
 @unittest.skipUnless(os.environ.get('MIGRATION_PREPARED_TEST_CONFIG'),'requires disposable-database maintenance config')
@@ -60,6 +63,70 @@ class PreparedPostgresTests(unittest.TestCase):
         with self.con.cursor() as cr:
             cr.execute(query)
             return cr.fetchone()[0]
+
+    def reset_fixture(self):
+        args=SimpleNamespace(source_db='unused_source',target_db=self.database,
+                             source_config=self.config,target_config=self.config)
+        with self.admin.cursor() as cr:
+            cr.execute('SELECT oid FROM pg_database WHERE datname=%s',[self.database])
+            oid=cr.fetchone()[0]
+        identity=dict(source_db=args.source_db,target_db=args.target_db,target_oid=oid,
+                      source_endpoint=endpoint(self.config),target_endpoint=endpoint(self.config),rules='old')
+        initialize(self.con,identity)
+        with self.con.cursor() as cr:
+            cr.execute('CREATE TABLE public.preserved(id integer PRIMARY KEY)')
+            cr.execute('INSERT INTO public.preserved VALUES(42)')
+            cr.execute('CREATE SCHEMA prepared_migration_source')
+            cr.execute('CREATE TABLE prepared_migration_source.res_users(id integer)')
+        self.con.commit()
+        directory=self.stage/'matching'
+        directory.mkdir()
+        save_json(directory/'prepared-run.json',identity)
+        (directory/'backup.dump').write_bytes(b'backup')
+        unrelated=self.stage/'unrelated'
+        unrelated.mkdir()
+        save_json(unrelated/'prepared-run.json',{**identity,'target_db':'other'})
+        return args,directory,unrelated
+
+    def test_reset_cancel_cleanup_retry_and_idempotency(self):
+        args,directory,unrelated=self.reset_fixture()
+        with patch('builtins.input',return_value='n'):
+            self.assertFalse(reset(args,self.stage)['reset'])
+        self.assertTrue(directory.exists())
+        self.assertEqual(self.scalar('SELECT count(*) FROM prepared_custom_migration.checkpoint'),1)
+        self.con.commit()
+        with patch('builtins.input',return_value='y'),patch('reset_migration.shutil.rmtree',side_effect=OSError('test')):
+            with self.assertRaisesRegex(MigrationError,'cleanup incomplete'):
+                reset(args,self.stage)
+        self.assertTrue(directory.exists())
+        for schema in SCHEMAS:
+            self.assertIsNone(self.scalar("SELECT to_regnamespace('"+schema+"')"))
+        self.assertEqual(self.scalar('SELECT id FROM public.preserved'),42)
+        self.con.commit()
+        for _ in range(2):
+            with patch('builtins.input',return_value='yes'):
+                self.assertTrue(reset(args,self.stage)['reset'])
+        self.assertFalse(directory.exists())
+        self.assertTrue(unrelated.exists())
+
+    def test_reset_refuses_active_lock_and_committed_import(self):
+        args,directory,_=self.reset_fixture()
+        gate=DatabaseGate(self.config,self.database)
+        try:
+            with patch('builtins.input') as prompt:
+                with self.assertRaisesRegex(MigrationError,'Another migration'):
+                    reset(args,self.stage)
+                prompt.assert_not_called()
+        finally:
+            gate.close()
+        write_checkpoint(self.con,'custom_and_xmlids',{})
+        self.con.commit()
+        with patch('builtins.input') as prompt:
+            with self.assertRaisesRegex(MigrationError,'checkpoints'):
+                reset(args,self.stage)
+            prompt.assert_not_called()
+        self.assertTrue(directory.exists())
+        self.assertEqual(self.scalar('SELECT count(*) FROM prepared_custom_migration.checkpoint'),2)
 
     def fixture(self):
         with self.con.cursor() as cr:

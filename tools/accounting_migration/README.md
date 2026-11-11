@@ -10,7 +10,8 @@ Run with the Odoo 19 virtual environment. Both database names are arguments:
   --target-db YOUR_PREPARED_TARGET_DB
 ```
 
-These four arguments are required. `--help` never connects to a database.
+These four arguments are required. Usage and all options, including optional
+`--reset`, are printed at startup before connecting. `--help` never connects to a database.
 There are no automatic-confirmation, database-creation, or installation options.
 
 **Source access is read-only.** The script never enables/disables the source,
@@ -190,6 +191,25 @@ activities for custom models; reports retain the actual extraction count and mar
 activity import skipped. Chatter messages/followers are not imported.
 
 ## Resume
+
+To start fresh after installing modules or changing the target schema, append
+`--reset` to the same four-argument command. Errors also print the exact reset
+command for the supplied databases/configurations. Without this flag, normal
+resume behavior is unchanged.
+
+Reset prints its scope and asks `Reset migration state? [y/N]`. Enter, no, or EOF
+preserves state. Confirming drops only `prepared_migration_work`,
+`prepared_migration_source`, and `prepared_custom_migration` in the selected
+target, then permanently removes matching run directories, including their
+extraction files, logs, and backups. It preserves public records and installed
+modules. Reset exits when finished; rerun without `--reset` to start fresh.
+
+Reset is limited to pre-import state: it refuses committed data-copy/later
+checkpoints, completed runs, evidence of committed staging, database identity
+changes, unsafe directory links, or another active migration/recovery. An offline
+target requires normal recovery first. Source access/availability is never
+changed by reset. If directory cleanup fails after the schema transaction commits,
+the error lists remaining directories; repeat `--reset` to finish cleanup.
 
 Repeat the same four-argument command to resume the same target. Run directories
 are private under `/opt/odoo19/migration-runs/`; the command prints its exact path.
