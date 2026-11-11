@@ -1,0 +1,49 @@
+<odoo>
+    <record id="operation_list" model="ir.ui.view">
+        <field name="name">ab_branch_api_operation.list</field>
+        <field name="model">ab_branch_api_operation</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="create_date"/><field name="token"/><field name="user_id"/>
+                <field name="store_id"/><field name="kind"/><field name="state"/>
+                <field name="record_id"/><field name="message"/>
+            </list>
+        </field>
+    </record>
+    <record id="guarded_operation_list" model="ir.ui.view">
+        <field name="name">ab_branch_api_operation.guarded_list</field>
+        <field name="model">ab_branch_api_operation</field>
+        <field name="inherit_id" ref="operation_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='token']" position="after">
+                <field name="request_revision" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="operation_action" model="ir.actions.act_window">
+        <field name="name">Branch API Operations</field><field name="res_model">ab_branch_api_operation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="api_menu" name="Branch API" parent="ab_sales.config_sub_menu" groups="base.group_system"/>
+    <menuitem id="operation_menu" name="Operations" parent="api_menu" action="operation_action"/>
+    <record id="sale_callcenter_origin_view" model="ir.ui.view">
+        <field name="name">ab_sales_header.callcenter_origin</field>
+        <field name="model">ab_sales_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='store_id']" position="after">
+                <field name="is_callcenter_order" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="return_callcenter_origin_view" model="ir.ui.view">
+        <field name="name">ab_sales_return_header.callcenter_origin</field>
+        <field name="model">ab_sales_return_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_return_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='store_id']" position="after">
+                <field name="is_callcenter_order" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

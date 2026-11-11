@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-inherit="web.ControlPanel" t-inherit-mode="extension">
+        <xpath expr="//Pager/.." position="before">
+            <div 
+                t-if="this.checkRefreshAvailability()"
+                class="d-inline-flex align-items-center gap-1 align-self-center"
+            >
+                <button
+                    t-if="!env.isSmall"
+                    class="btn btn-link p-0 d-inline-flex align-items-center justify-content-center o_muk_web_refresh_button"
+                    type="button"
+                    title="Refresh"
+                    aria-label="Refresh"
+                    t-on-click.stop="this.onRefreshClick"
+                >
+                    <i class="fa fa-refresh fa-fw"/>
+                </button>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

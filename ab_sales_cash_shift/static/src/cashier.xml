@@ -1,0 +1,9 @@
+<templates xml:space="preserve">
+    <t t-name="ab_sales_cash_shift.CashierExtension" t-inherit="ab_sales.CashierAction" t-inherit-mode="extension">
+        <xpath expr="//button[@t-on-click='openCloseCashierDialog']" position="replace">
+            <button class="btn btn-outline-light btn-sm" type="button" t-on-click="openCloseCashierDialog">
+                Hand Over and Close Wallet
+            </button>
+        </xpath>
+    </t>
+</templates>

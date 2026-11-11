@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="category_ab_stock_recycling" model="ir.module.category">
+            <field name="name">Stock Recycling</field>
+            <field name="sequence" eval="1"/>
+        </record>
+
+        <record id="privilege_ab_stock_recycling" model="res.groups.privilege">
+            <field name="name">Stock Recycling</field>
+            <field name="sequence">100</field>
+            <field name="category_id" ref="category_ab_stock_recycling"/>
+        </record>
+
+        <record id="group_ab_stock_recycling_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="sequence">10</field>
+            <field name="privilege_id" ref="privilege_ab_stock_recycling"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_ab_stock_recycling_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="sequence">20</field>
+            <field name="privilege_id" ref="privilege_ab_stock_recycling"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_stock_recycling_user'))]"/>
+        </record>
+
+        <record id="group_ab_stock_recycling_admin" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="sequence">30</field>
+            <field name="privilege_id" ref="privilege_ab_stock_recycling"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_stock_recycling_manager'))]"/>
+        </record>
+        
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('group_ab_stock_recycling_admin'))]"/>
+        </record>
+
+
+    </data>
+</odoo>

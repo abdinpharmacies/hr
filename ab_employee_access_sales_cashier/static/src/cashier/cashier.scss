@@ -1,0 +1,32 @@
+.ab_cashier_window_body {
+    position: relative;
+}
+
+.ab_cashier_login_overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background:
+        radial-gradient(circle at top, rgba(29, 78, 137, 0.18), transparent 55%),
+        rgba(22, 36, 55, 0.24);
+    backdrop-filter: blur(10px);
+}
+
+.ab_cashier_login_overlay .ab_employee_access_login_panel {
+    animation: abCashierLoginPopupIn 160ms ease-out;
+}
+
+@keyframes abCashierLoginPopupIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

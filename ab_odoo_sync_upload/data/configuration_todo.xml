@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="todo_ab_odoo_sync_upload_configuration" model="ir.actions.todo">
+        <field name="name">Configure Branch Upload Connection</field>
+        <field name="action_id" ref="ab_odoo_sync_upload.action_ab_odoo_sync_upload_configuration"/>
+        <field name="sequence">10</field>
+    </record>
+</odoo>

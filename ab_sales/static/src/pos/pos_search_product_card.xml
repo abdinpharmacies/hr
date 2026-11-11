@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.PosSearchBalanceAge" t-inherit="ab_sales.ProductCard" t-inherit-mode="extension">
+        <xpath expr="//small[@t-if='p.pos_balance_unavailable']" position="before">
+            <small t-if="showPosBalanceAge and p.pos_balance_unavailable and p.pos_balance_age_label"
+                   class="ab_pos_balance_age text-danger text-nowrap"
+                   t-esc="p.pos_balance_age_label"/>
+        </xpath>
+    </t>
+</templates>

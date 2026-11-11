@@ -1,0 +1,38 @@
+.o_ab_sales_pos_doctor_group {
+  min-width: 260px;
+}
+
+.ab_pos_doctor_prescription_row {
+  gap: 8px;
+}
+
+.ab_pos_doctor_prescription_toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.ab_pos_doctor_prescription_toggle_label {
+  color: #334155;
+  font-weight: 600;
+}
+
+.ab_pos_doctor_btn_add {
+  white-space: nowrap;
+}
+
+.ab_sales_doctor_create_dialog {
+  width: 80vw;
+  max-width: 520px;
+}
+
+.ab_pos_line_cell_doctor_prescription,
+.ab_pos_lines_head_doctor_prescription {
+  width: 44px;
+  min-width: 44px;
+}
+
+.ab_pos_line_doctor_prescription_input {
+  cursor: pointer;
+}

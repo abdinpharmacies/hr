@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="auto_logout_idle_user_odoo.Countdown">
+        <div t-if="timer.enabled" class="d-flex align-items-center px-2" t-att-title="label" t-att-aria-label="label" t-att-class="{'text-danger fw-bold': timer.seconds &lt;= 50}">
+            <i class="fa fa-clock-o me-1" aria-hidden="true"/>
+            <span t-esc="countdown"/>
+        </div>
+    </t>
+</templates>

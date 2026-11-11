@@ -1,0 +1,631 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_stock_update
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-24 09:41+0000\n"
+"PO-Revision-Date: 2026-08-24 12:00+0200\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Another stock update is already applying for this store."
+msgstr "توجد عملية تحديث مخزون أخرى قيد التطبيق لهذا المخزن."
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__status__applied
+msgid "Applied"
+msgstr "تم التطبيق"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__applied_at
+msgid "Applied At"
+msgstr "وقت التطبيق"
+
+#. module: ab_stock_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_confirm_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_form
+msgid "Apply Update"
+msgstr "تطبيق التحديث"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_run__state__applying
+msgid "Applying"
+msgstr "جارٍ التطبيق"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__attempt
+msgid "Attempt"
+msgstr "المحاولة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__attempt_count
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: ab_stock_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_form
+msgid "Audit"
+msgstr "سجل التدقيق"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__operation__blocked
+msgid "Blocked"
+msgstr "محظور"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__blocker_count
+msgid "Blocking Issues"
+msgstr "مشكلات مانعة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__branch_ip
+msgid "Branch IP"
+msgstr "عنوان IP للفرع"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__branch_qty
+msgid "Branch Stock"
+msgstr "مخزون الفرع"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Branch and main quantities still differ after verification."
+msgstr "لا تزال كميات الفرع والمركز الرئيسي مختلفة بعد التحقق."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Branch primary key %(key)s has more than one positive row."
+msgstr "يحتوي المفتاح الأساسي للفرع %(key)s على أكثر من صف موجب."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Branch server %(branch_ip)s is not a valid IP address."
+msgstr "خادم الفرع %(branch_ip)s ليس عنوان IP صالحًا."
+
+#. module: ab_stock_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_confirm_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__c_id
+msgid "Class ID"
+msgstr "معرف الفئة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+#: model:ir.model,name:ab_stock_update.model_ab_stock_update_confirm_wizard
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_confirm_wizard_form
+msgid "Confirm Stock Update"
+msgstr "تأكيد تحديث المخزون"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/wizard/ab_stock_update_confirm.py:0
+msgid "Confirm the live-stock warning before applying the update."
+msgstr "أكد تحذير المخزون المباشر قبل تطبيق التحديث."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__create_uid
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__create_date
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__create_date
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Delete %(count)s extra main rows before updating stock."
+msgstr "حذف %(count)s من الصفوف الزائدة في المركز الرئيسي قبل تحديث المخزون."
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__operation__delete_duplicate
+msgid "Delete Duplicate"
+msgstr "حذف التكرار"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__status__deleted
+msgid "Deleted"
+msgstr "تم الحذف"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__deleted_count
+msgid "Deleted Rows"
+msgstr "الصفوف المحذوفة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Deleted an extra main row for this compound key."
+msgstr "تم حذف صف زائد في المركز الرئيسي لهذا المفتاح المركب."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__details
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_form
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__difference
+msgid "Difference"
+msgstr "الفرق"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__display_name
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__display_name
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__display_name
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_store__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_run__state__done
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_search
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_run__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_run__state__drifted
+msgid "Drifted"
+msgstr "فروقات لاحقة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__duplicate_group_count
+msgid "Duplicate Groups"
+msgstr "مجموعات مكررة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid ""
+"Duplicate cleanup for key %(key)s deleted %(actual)s rows; expected "
+"%(expected)s."
+msgstr ""
+"حذف تنظيف التكرار للمفتاح %(key)s عدد %(actual)s من الصفوف؛ المتوقع "
+"%(expected)s."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Duplicate main key %(key)s has conflicting business metadata."
+msgstr ""
+"يحتوي المفتاح المكرر %(key)s في المركز الرئيسي على بيانات أعمال متعارضة."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Duplicate main rows have different business metadata."
+msgstr "تحتوي الصفوف المكررة في المركز الرئيسي على بيانات أعمال مختلفة."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_store.py:0
+msgid "EPlus Serial %(sto_id)s is assigned to more than one Odoo store."
+msgstr "رقم EPlus %(sto_id)s معين لأكثر من مخزن في Odoo."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__sto_id
+msgid "EPlus Store ID"
+msgstr "معرف مخزن EPlus"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "EPlus Store ID %(sto_id)s does not have sto_ip1 configured."
+msgstr "معرف مخزن EPlus %(sto_id)s لا يحتوي على إعداد sto_ip1."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "EPlus Store ID %(sto_id)s must match exactly one main Store row."
+msgstr ""
+"يجب أن يطابق معرف مخزن EPlus %(sto_id)s صفًا واحدًا فقط في جدول المخازن "
+"الرئيسي."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__error_message
+msgid "Error"
+msgstr "الخطأ"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_run__state__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__acknowledge_live
+msgid "I understand that live branch activity may cause stock drift"
+msgstr "أتفهم أن نشاط الفرع المباشر قد يسبب فروقات في المخزون"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__id
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__id
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__id
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_store__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__operation__insert
+msgid "Insert"
+msgstr "إضافة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Insert the missing branch stock row on main."
+msgstr "إضافة صف مخزون الفرع المفقود إلى المركز الرئيسي."
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__status__inserted
+msgid "Inserted"
+msgstr "تمت الإضافة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__inserted_count
+msgid "Inserted Rows"
+msgstr "الصفوف المضافة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Inserted the complete missing branch row on main."
+msgstr "تمت إضافة صف الفرع المفقود كاملًا إلى المركز الرئيسي."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__itm_id
+msgid "Item ID"
+msgstr "معرف الصنف"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__write_uid
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__write_date
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__write_date
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid ""
+"Live branch activity prevented stock convergence after %(attempts)s "
+"attempts."
+msgstr "منع نشاط الفرع المباشر تطابق المخزون بعد %(attempts)s محاولات."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__main_row_count
+msgid "Main Row Count"
+msgstr "عدد صفوف المركز الرئيسي"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__main_qty
+msgid "Main Stock"
+msgstr "مخزون المركز الرئيسي"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Main still contains duplicate rows for this key."
+msgstr "لا يزال المركز الرئيسي يحتوي على صفوف مكررة لهذا المفتاح."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Main still contains duplicate stock keys."
+msgstr "لا يزال المركز الرئيسي يحتوي على مفاتيح مخزون مكررة."
+
+#. module: ab_stock_update
+#: model:res.groups,name:ab_stock_update.group_ab_stock_update_manager
+msgid "Manager"
+msgstr "مدير"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__mismatch_count
+msgid "Mismatched Keys"
+msgstr "المفاتيح غير المتطابقة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Missing main key %(key)s has no unique positive branch row."
+msgstr "لا يحتوي المفتاح الرئيسي المفقود %(key)s على صف فرع موجب وفريد."
+
+#. module: ab_stock_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_search
+msgid "Needs Attention"
+msgstr "يحتاج إلى مراجعة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+#: code:addons/ab_stock_update/models/ab_store.py:0
+#: code:addons/ab_stock_update/wizard/ab_stock_update_confirm.py:0
+msgid "Only Stock Update Managers can update branch stock."
+msgstr "يمكن لمديري تحديث المخزون فقط تحديث مخزون الفروع."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Only draft stock update runs can be previewed."
+msgstr "يمكن معاينة عمليات تحديث المخزون المسودة فقط."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Only previewed stock update runs can be applied."
+msgstr "يمكن تطبيق عمليات تحديث المخزون التي تمت معاينتها فقط."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Pending main stock did not match the stable branch snapshot."
+msgstr "لم يطابق مخزون المركز الرئيسي المعلق لقطة الفرع المستقرة."
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__status__preview
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__preview_hash
+msgid "Preview Hash"
+msgstr "بصمة المعاينة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_run__state__previewed
+msgid "Previewed"
+msgstr "تمت المعاينة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__previewed_at
+msgid "Previewed At"
+msgstr "وقت المعاينة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__requested_by_id
+msgid "Requested By"
+msgstr "طلب بواسطة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__status__residual
+msgid "Residual"
+msgstr "متبقٍ"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__operation__residual
+msgid "Residual Difference"
+msgstr "فرق متبقٍ"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__residual_count
+msgid "Residual Differences"
+msgstr "الفروقات المتبقية"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Resolve all blocking issues before applying this run."
+msgstr "عالج جميع المشكلات المانعة قبل تطبيق هذه العملية."
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__status__rolled_back
+msgid "Rolled Back"
+msgstr "تم التراجع"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Rolled back because branch stock changed during synchronization."
+msgstr "تم التراجع لأن مخزون الفرع تغير أثناء المزامنة."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__row_snapshot
+msgid "Row Snapshot"
+msgstr "لقطة الصف"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__run_id
+msgid "Run"
+msgstr "العملية"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Set the retained main row quantity from the branch."
+msgstr "تعيين كمية الصف المحتفظ به في المركز الرئيسي من الفرع."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Set the retained main row quantity to zero."
+msgstr "تعيين كمية الصف المحتفظ به في المركز الرئيسي إلى صفر."
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__operation__zero
+msgid "Set to Zero"
+msgstr "تعيين إلى صفر"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__status
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_stock_update
+#: model:ir.module.category,name:ab_stock_update.category_ab_stock_update
+#: model:ir.ui.menu,name:ab_stock_update.menu_ab_stock_update_root
+#: model:res.groups.privilege,name:ab_stock_update.privilege_ab_stock_update
+msgid "Stock Update"
+msgstr "تحديث المخزون"
+
+#. module: ab_stock_update
+#: model:ir.model,name:ab_stock_update.model_ab_stock_update_line
+msgid "Stock Update Detail"
+msgstr "تفاصيل تحديث المخزون"
+
+#. module: ab_stock_update
+#: model:ir.model,name:ab_stock_update.model_ab_stock_update_run
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_confirm_wizard__run_id
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_form
+msgid "Stock Update Run"
+msgstr "عملية تحديث المخزون"
+
+#. module: ab_stock_update
+#: model:ir.actions.act_window,name:ab_stock_update.action_ab_stock_update_run
+#: model:ir.ui.menu,name:ab_stock_update.menu_ab_stock_update_runs
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_list
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_search
+msgid "Stock Update Runs"
+msgstr "عمليات تحديث المخزون"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Stock insert for key %(key)s did not affect exactly one row."
+msgstr "لم تؤثر إضافة المخزون للمفتاح %(key)s على صف واحد فقط."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Stock update audit records cannot be modified."
+msgstr "لا يمكن تعديل سجلات تدقيق تحديث المخزون."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Stock update failed: %s"
+msgstr "فشل تحديث المخزون: %s"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Stock update for key %(key)s did not affect exactly one row."
+msgstr "لم يؤثر تحديث المخزون للمفتاح %(key)s على صف واحد فقط."
+
+#. module: ab_stock_update
+#: model:ir.model,name:ab_stock_update.model_ab_store
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__store_id
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_search
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_line__sto_id
+msgid "Store ID"
+msgstr "معرف المخزن"
+
+#. module: ab_stock_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_stock_update_run_form
+msgid "Summary"
+msgstr "الملخص"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "The Odoo store EPlus Serial changed before preview. Create a new run."
+msgstr "تغير رقم EPlus لمخزن Odoo قبل المعاينة. أنشئ عملية جديدة."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "The branch IP changed after preview. Create a new stock update run."
+msgstr "تغير عنوان IP للفرع بعد المعاينة. أنشئ عملية تحديث مخزون جديدة."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "The branch IP changed during final verification."
+msgstr "تغير عنوان IP للفرع أثناء التحقق النهائي."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "The branch contains more than one positive row for this primary key."
+msgstr "يحتوي الفرع على أكثر من صف موجب لهذا المفتاح الأساسي."
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_store.py:0
+msgid "The store must have a valid EPlus Serial before updating stock."
+msgstr "يجب أن يحتوي المخزن على رقم EPlus صالح قبل تحديث المخزون."
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__name
+msgid "Transaction Reference"
+msgstr "مرجع العملية"
+
+#. module: ab_stock_update
+#: model:ir.model.fields.selection,name:ab_stock_update.selection__ab_stock_update_line__operation__update
+msgid "Update"
+msgstr "تحديث"
+
+#. module: ab_stock_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_update.view_ab_store_list_stock_update
+msgid "Update Stock"
+msgstr "تحديث المخزون"
+
+#. module: ab_stock_update
+#: model:ir.model.fields,field_description:ab_stock_update.field_ab_stock_update_run__updated_count
+msgid "Updated Rows"
+msgstr "الصفوف المحدثة"
+
+#. module: ab_stock_update
+#. odoo-python
+#: code:addons/ab_stock_update/models/ab_stock_update_run.py:0
+msgid "Updated the retained main row from branch stock."
+msgstr "تم تحديث الصف المحتفظ به في المركز الرئيسي من مخزون الفرع."

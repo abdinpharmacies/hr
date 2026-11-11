@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ab_odoo_sync_root" name="Odoo Sync"
+              parent="base.menu_custom" sequence="50"
+              groups="base.group_system"/>
+</odoo>

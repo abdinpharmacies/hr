@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_employee_access_sales.PosActionPatch" t-inherit="ab_sales.PosAction" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_window_controls')]" position="before">
+            <div class="ab_pos_hr_header_start">
+                <t t-if="state.abSalesHr &amp;&amp; state.abSalesHr.session">
+                    <div class="ab_pos_hr_header_actions o_ab_sales_pos_window_controls">
+                        <button class="btn btn-light btn-sm ab_pos_hr_logout_btn"
+                                type="button"
+                                title="Logout"
+                                t-on-click="abSalesHrLogout">
+                            <i class="fa fa-sign-out" aria-hidden="true"/>
+                        </button>
+                        <button class="btn btn-light btn-sm ab_pos_hr_lock_btn"
+                                type="button"
+                                title="Lock"
+                                t-if="state.abSalesHr.session.state === 'active'"
+                                t-on-click="() => abSalesHrLock('manual')">
+                            <i class="fa fa-lock" aria-hidden="true"/>
+                        </button>
+                    </div>
+                    <div class="ab_pos_hr_header_identity">
+                        <div class="ab_pos_hr_identity_name o_ab_sales_pos_window_title"
+                             t-esc="state.abSalesHr.session.employee.name || '-'"/>
+                        <div class="ab_pos_hr_identity_meta">
+                            <span t-esc="state.abSalesHr.session.employee.role_name || 'No role'"/>
+                            <span>&#8226;</span>
+                            <span t-esc="state.abSalesHr.session.store.code || '-'"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+
+        <xpath expr="//main[contains(@class, 'o_ab_sales_pos_main')]" position="inside">
+
+            <div class="ab_pos_hr_overlay"
+                 t-if="state.abSalesHr &amp;&amp; (state.abSalesHr.loading || !state.abSalesHr.session || state.abSalesHr.session.state === 'locked')">
+                <AbEmployeeAccessLoginPanel
+                        title="'Employee Login'"
+                        subtitle="abSalesHrLoginPanelSubtitle()"
+                        showClose="true"
+                        onClose.bind="abSalesHrClosePopup"
+                        showScreen="!state.abSalesHr.loading"
+                        loadingMessage="'Loading POS HR...'"
+                        employee="abSalesHrLoginPanelEmployeeValue()"
+                        employeeRelation="'ab_employee_access'"
+                        employeeDomain="abSalesHrEmployeeDomain()"
+                        pin="abSalesHrLoginPanelPinValue()"
+                        error="state.abSalesHr.error"
+                        loading="false"
+                        showEmployee="abSalesHrLoginPanelShowEmployee()"
+                        showCancel="false"
+                        required="true"
+                        submitLabel="abSalesHrLoginPanelSubmitLabel()"
+                        loadingLabel="abSalesHrLoginPanelLoadingLabel()"
+                        employeeLabel="'Employee'"
+                        pinLabel="'PIN'"
+                        employeePlaceholder="'Select employee...'"
+                        pinPlaceholder="'Enter PIN'"
+                        pinInputName="abSalesHrLoginPanelInputName()"
+                        onSubmit.bind="abSalesHrLoginPanelSubmit"
+                        onEmployeeUpdate.bind="onAbSalesHrEmployeeUpdate"
+                        onPinInput.bind="abSalesHrLoginPanelPinInput"
+                        onPinKeydown.bind="abSalesHrLoginPanelPinKeydown"
+                />
+            </div>
+        </xpath>
+    </t>
+
+</templates>

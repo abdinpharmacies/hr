@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ab_stock_update_root"
+              name="Stock Update"
+              sequence="95"
+              groups="ab_stock_update.group_ab_stock_update_manager"/>
+    <menuitem id="menu_ab_stock_update_runs"
+              name="Stock Update Runs"
+              parent="menu_ab_stock_update_root"
+              action="action_ab_stock_update_run"
+              sequence="10"
+              groups="ab_stock_update.group_ab_stock_update_manager"/>
+</odoo>

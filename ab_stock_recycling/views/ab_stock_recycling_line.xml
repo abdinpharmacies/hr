@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_stock_recycling_view_tree" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_line_view_tree</field>
+            <field name="model">ab_stock_recycling_line</field>
+            <field name="arch" type="xml">
+                <list string="ab_stock_recycling_line_tree">
+                    <field name="header_id" optional="hide"/>
+                    <field name="store_id" optional="show"/>
+                    <field name="item_code" optional="show"/>
+                    <field name="item_id" optional="show"/>
+                    <field name="item_price" optional="show"/>
+                    <field name="sales_qty"/>
+                    <field name="sales_x_qty"/>
+                    <field name="balance"/>
+                    <field name="qty" optional="show"/>
+                    <field name="distributed_qty" optional="show"/>
+                    <field name="over_need_qty" optional="show"/>
+                    <field name="target_qty" optional="show"/>
+                    <field name="last_trans_date" optional="show"/>
+                    <field name="exp_date" optional="show"/>
+                    <field name="file_source" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_line_view_form" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_line_view_form</field>
+            <field name="model">ab_stock_recycling_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_stock_recycling_form">
+                    <sheet>
+                        <group>
+                            <field name="store_id"/>
+                            <field name="item_id"/>
+                            <field name="qty"/>
+                            <field name="sales_qty"/>
+                            <field name="balance"/>
+                            <field name="last_trans_date"/>
+                            <field name="exp_date"/>
+                            <field name="file_source"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_line_view_pivot</field>
+            <field name="model">ab_stock_recycling_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_stock_recycling_pivot">
+                </pivot>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_line_search" model="ir.ui.view">
+            <field name="name"></field>
+            <field name="model">ab_stock_recycling_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_stock_recycling_line_search">
+                    <field name="item_id"/>
+                    <field name="store_id"/>
+                    <field name="header_id"/>
+                    <field name="file_source"/>
+                    <field name="qty"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_stock_recycling_line_action" model="ir.actions.act_window">
+            <field name="name">Over Stock Recycling</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_stock_recycling_line</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_stock_recycling_line_menu"
+                  name="Stock Recycling Details"
+                  parent="ab_stock_recycling_data_sub_menu"
+                  action="ab_stock_recycling_line_action"
+                  sequence="1"/>
+
+    </data>
+</odoo>

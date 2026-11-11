@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_sales_test_case_user,access_ab_sales_test_case_user,model_ab_sales_test_case,base.group_user,1,1,0,0
+access_ab_sales_test_case_system,access_ab_sales_test_case_system,model_ab_sales_test_case,base.group_system,1,1,1,1

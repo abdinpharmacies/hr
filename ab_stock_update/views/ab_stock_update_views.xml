@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_stock_update_run_search" model="ir.ui.view">
+        <field name="name">ab_stock_update_run_search</field>
+        <field name="model">ab_stock_update_run</field>
+        <field name="arch" type="xml">
+            <search string="Stock Update Runs">
+                <field name="name"/>
+                <field name="store_id"/>
+                <field name="sto_id"/>
+                <field name="requested_by_id"/>
+                <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                <filter name="needs_attention" string="Needs Attention"
+                        domain="[('state', 'in', ['drifted', 'failed'])]"/>
+                <group>
+                    <filter name="group_store" string="Store" context="{'group_by': 'store_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_ab_stock_update_run_list" model="ir.ui.view">
+        <field name="name">ab_stock_update_run_list</field>
+        <field name="model">ab_stock_update_run</field>
+        <field name="arch" type="xml">
+            <list string="Stock Update Runs" create="false" delete="false"
+                  decoration-success="state == 'done'"
+                  decoration-warning="state == 'drifted'"
+                  decoration-danger="state == 'failed'">
+                <field name="name"/>
+                <field name="store_id"/>
+                <field name="sto_id"/>
+                <field name="branch_ip"/>
+                <field name="requested_by_id"/>
+                <field name="previewed_at"/>
+                <field name="applied_at" optional="show"/>
+                <field name="mismatch_count" optional="show"/>
+                <field name="duplicate_group_count" optional="show"/>
+                <field name="blocker_count" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state == 'drifted'"
+                       decoration-danger="state == 'failed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ab_stock_update_run_form" model="ir.ui.view">
+        <field name="name">ab_stock_update_run_form</field>
+        <field name="model">ab_stock_update_run</field>
+        <field name="arch" type="xml">
+            <form string="Stock Update Run" create="false" delete="false">
+                <header>
+                    <button name="action_open_apply_confirmation"
+                            type="object"
+                            string="Apply Update"
+                            icon="fa-check"
+                            class="oe_highlight"
+                            groups="ab_stock_update.group_ab_stock_update_manager"
+                            invisible="state != 'previewed' or blocker_count != 0"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,previewed,applying,done,drifted,failed"/>
+                </header>
+                <sheet>
+                    <field name="active" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="store_id"/>
+                            <field name="sto_id"/>
+                            <field name="branch_ip"/>
+                        </group>
+                        <group>
+                            <field name="requested_by_id"/>
+                            <field name="previewed_at"/>
+                            <field name="applied_at"/>
+                            <field name="attempt_count"/>
+                        </group>
+                    </group>
+                    <group string="Summary" col="4">
+                        <field name="mismatch_count"/>
+                        <field name="duplicate_group_count"/>
+                        <field name="blocker_count"/>
+                        <field name="residual_count"/>
+                        <field name="deleted_count"/>
+                        <field name="updated_count"/>
+                        <field name="inserted_count"/>
+                    </group>
+                    <field name="error_message" invisible="not error_message"/>
+                    <notebook>
+                        <page name="details" string="Details">
+                            <field name="line_ids" nolabel="1" readonly="1">
+                                <list create="false" edit="false" delete="false"
+                                      decoration-danger="operation == 'blocked' or status == 'residual'"
+                                      decoration-muted="status == 'rolled_back'"
+                                      decoration-success="status in ('applied', 'inserted', 'deleted')">
+                                    <field name="attempt" optional="show"/>
+                                    <field name="operation" widget="badge"/>
+                                    <field name="status" widget="badge"/>
+                                    <field name="c_id"/>
+                                    <field name="itm_id"/>
+                                    <field name="sto_id" optional="hide"/>
+                                    <field name="branch_qty"/>
+                                    <field name="main_qty"/>
+                                    <field name="difference"/>
+                                    <field name="main_row_count" optional="show"/>
+                                    <field name="details" optional="show"/>
+                                    <field name="row_snapshot" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="audit" string="Audit">
+                            <group>
+                                <field name="preview_hash"/>
+                                <field name="error_message"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ab_stock_update_run" model="ir.actions.act_window">
+        <field name="name">Stock Update Runs</field>
+        <field name="res_model">ab_stock_update_run</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ab_stock_update_run_search"/>
+        <field name="context">{'create': False}</field>
+    </record>
+</odoo>

@@ -1,0 +1,294 @@
+.o_ab_transfer_dashboard {
+    --ab-transfer-dashboard-bg: #f5f7fa;
+    --ab-transfer-dashboard-panel: #ffffff;
+    --ab-transfer-dashboard-border: #d9e1ea;
+    --ab-transfer-dashboard-text: #17202a;
+    --ab-transfer-dashboard-muted: #64748b;
+    --ab-transfer-dashboard-primary: #2563eb;
+    --ab-transfer-dashboard-teal: #0f766e;
+    --ab-transfer-dashboard-amber: #b45309;
+    --ab-transfer-dashboard-blue: #0369a1;
+    --ab-transfer-dashboard-slate: #475569;
+    --ab-transfer-dashboard-success: #15803d;
+    --ab-transfer-dashboard-danger: #b91c1c;
+    --ab-transfer-dashboard-warning: #b45309;
+    min-height: 100%;
+    padding: 22px;
+    background: var(--ab-transfer-dashboard-bg);
+    color: var(--ab-transfer-dashboard-text);
+}
+
+.o_ab_transfer_dashboard_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.o_ab_transfer_dashboard_header h2 {
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 700;
+}
+
+.o_ab_transfer_dashboard_header_meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    color: var(--ab-transfer-dashboard-muted);
+    font-size: 0.9rem;
+}
+
+.o_ab_transfer_dashboard_header_meta strong {
+    min-width: 28px;
+    padding: 1px 8px;
+    border-radius: 8px;
+    background: #e8eef7;
+    color: var(--ab-transfer-dashboard-text);
+    text-align: center;
+}
+
+.o_ab_transfer_dashboard_refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.o_ab_transfer_dashboard_loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 260px;
+    color: var(--ab-transfer-dashboard-muted);
+}
+
+.o_ab_transfer_dashboard_actions {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.o_ab_transfer_dashboard_action,
+.o_ab_transfer_dashboard_metric,
+.o_ab_transfer_dashboard_execution_item {
+    border: 1px solid var(--ab-transfer-dashboard-border);
+    border-radius: 8px;
+    background: var(--ab-transfer-dashboard-panel);
+    color: var(--ab-transfer-dashboard-text);
+    text-align: left;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.o_ab_transfer_dashboard_action:hover,
+.o_ab_transfer_dashboard_metric:hover,
+.o_ab_transfer_dashboard_execution_item:hover {
+    border-color: #aebbd0;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+    transform: translateY(-1px);
+}
+
+.o_ab_transfer_dashboard_action {
+    min-height: 86px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.o_ab_transfer_dashboard_action_icon,
+.o_ab_transfer_dashboard_metric_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: #e8eef7;
+    color: var(--ab-transfer-dashboard-primary);
+}
+
+.o_ab_transfer_dashboard_action_text,
+.o_ab_transfer_dashboard_metric_text,
+.o_ab_transfer_dashboard_execution_label {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.o_ab_transfer_dashboard_action_text strong,
+.o_ab_transfer_dashboard_execution_label strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+}
+
+.o_ab_transfer_dashboard_action_text small,
+.o_ab_transfer_dashboard_metric_text small,
+.o_ab_transfer_dashboard_execution_label small {
+    color: var(--ab-transfer-dashboard-muted);
+    font-size: 0.84rem;
+}
+
+.o_ab_transfer_dashboard_action_arrow {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.o_ab_transfer_dashboard_action.is-teal .o_ab_transfer_dashboard_action_icon {
+    color: var(--ab-transfer-dashboard-teal);
+    background: #dcefed;
+}
+
+.o_ab_transfer_dashboard_action.is-amber .o_ab_transfer_dashboard_action_icon {
+    color: var(--ab-transfer-dashboard-amber);
+    background: #f8ead2;
+}
+
+.o_ab_transfer_dashboard_action.is-blue .o_ab_transfer_dashboard_action_icon {
+    color: var(--ab-transfer-dashboard-blue);
+    background: #deedf7;
+}
+
+.o_ab_transfer_dashboard_action.is-slate .o_ab_transfer_dashboard_action_icon {
+    color: var(--ab-transfer-dashboard-slate);
+    background: #e7ebf0;
+}
+
+.o_ab_transfer_dashboard_metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.o_ab_transfer_dashboard_metric {
+    min-height: 92px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.o_ab_transfer_dashboard_metric_text strong {
+    font-size: 1.65rem;
+    line-height: 1;
+}
+
+.o_ab_transfer_dashboard_metric.is-warning .o_ab_transfer_dashboard_metric_icon {
+    color: var(--ab-transfer-dashboard-warning);
+    background: #f8ead2;
+}
+
+.o_ab_transfer_dashboard_metric.is-danger .o_ab_transfer_dashboard_metric_icon {
+    color: var(--ab-transfer-dashboard-danger);
+    background: #f8dddd;
+}
+
+.o_ab_transfer_dashboard_metric.is-success .o_ab_transfer_dashboard_metric_icon {
+    color: var(--ab-transfer-dashboard-success);
+    background: #dff0e3;
+}
+
+.o_ab_transfer_dashboard_report {
+    padding-top: 4px;
+}
+
+.o_ab_transfer_dashboard_report_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.o_ab_transfer_dashboard_report_head h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.o_ab_transfer_dashboard_report_head span {
+    color: var(--ab-transfer-dashboard-muted);
+    font-size: 0.9rem;
+}
+
+.o_ab_transfer_dashboard_execution {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.o_ab_transfer_dashboard_execution_item {
+    padding: 14px;
+}
+
+.o_ab_transfer_dashboard_execution_label {
+    margin-bottom: 12px;
+}
+
+.o_ab_transfer_dashboard_execution_bar {
+    display: block;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #e2e8f0;
+}
+
+.o_ab_transfer_dashboard_execution_bar span {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    background: var(--ab-transfer-dashboard-primary);
+}
+
+.o_ab_transfer_dashboard_execution_item.is-danger .o_ab_transfer_dashboard_execution_bar span {
+    background: var(--ab-transfer-dashboard-danger);
+}
+
+.o_ab_transfer_dashboard_execution_item.is-warning .o_ab_transfer_dashboard_execution_bar span {
+    background: var(--ab-transfer-dashboard-warning);
+}
+
+.o_ab_transfer_dashboard_execution_item.is-success .o_ab_transfer_dashboard_execution_bar span {
+    background: var(--ab-transfer-dashboard-success);
+}
+
+@media (max-width: 1200px) {
+    .o_ab_transfer_dashboard_actions {
+        grid-template-columns: repeat(3, minmax(170px, 1fr));
+    }
+
+    .o_ab_transfer_dashboard_metrics {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .o_ab_transfer_dashboard {
+        padding: 14px;
+    }
+
+    .o_ab_transfer_dashboard_header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .o_ab_transfer_dashboard_refresh {
+        justify-content: center;
+    }
+
+    .o_ab_transfer_dashboard_actions,
+    .o_ab_transfer_dashboard_metrics,
+    .o_ab_transfer_dashboard_execution {
+        grid-template-columns: 1fr;
+    }
+}

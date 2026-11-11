@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_header_view_form_unavailable_reason_required" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_form_unavailable_reason_required</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='line_ids']/list/field[@name='unavailable_reason']" position="attributes">
+                    <attribute name="optional">show</attribute>
+                    <attribute name="required">(qty - balance) &gt; 0.025</attribute>
+                    <attribute name="invisible">(qty - balance) &lt;= 0.025</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']/list/field[@name='unavailable_reason_other']"
+                       position="attributes">
+                    <attribute name="optional">show</attribute>
+                    <attribute name="required">(qty - balance) &gt; 0.025 and unavailable_reason == 'other'</attribute>
+                    <attribute name="invisible">(qty - balance) &lt;= 0.025 or unavailable_reason != 'other'</attribute>
+                    <attribute name="placeholder">Required when qty exceeds balance</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

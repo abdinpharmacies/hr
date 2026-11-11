@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_pos_draft_limit" model="ir.config_parameter">
+        <field name="key">ab_sales.pos_draft_limit</field>
+        <field name="value">10</field>
+    </record>
+</odoo>

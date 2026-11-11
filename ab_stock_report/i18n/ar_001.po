@@ -1,0 +1,674 @@
+# -*- coding: utf-8 -*-
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"POT-Creation-Date: 2026-08-13 00:00+0000\n"
+"PO-Revision-Date: 2026-08-13 00:00+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_stock_report
+#: model:ir.actions.act_window,name:ab_stock_report.action_ab_stock_report_wizard
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Stock Movements"
+msgstr "حركات المخزون"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Last Movements"
+msgstr "آخر الحركات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Load Movements"
+msgstr "تحميل الحركات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Click Load Movements to fetch the latest rows from BConnect."
+msgstr "اضغط تحميل الحركات لجلب أحدث السجلات من BConnect."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_product_view_tree_inherit_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Movements"
+msgstr "الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__product_id
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__product_eplus_serial
+msgid "EPlus Serial"
+msgstr "رقم إى بلس"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__line_count
+msgid "Movement Count"
+msgstr "عدد الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__last_refresh
+msgid "Last Refresh"
+msgstr "آخر تحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__movement_datetime
+msgid "Movement Date"
+msgstr "تاريخ الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__movement_type
+msgid "Movement Type"
+msgstr "نوع الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__movement_group
+msgid "Movement Group"
+msgstr "مجموعة الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__sale
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Sales / Return"
+msgstr "المبيعات / المرتجعات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__purchase
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Purchase / Return"
+msgstr "الشراء / المرتجعات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__transfer
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Transfer / From / To"
+msgstr "التحويل / من / إلى"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__sale_price
+msgid "Sale Price"
+msgstr "سعر البيع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__qty_large
+msgid "Quantity in Large Unit"
+msgstr "الكمية بالكبرى"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__store_name
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__supplier_name
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__customer_name
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__employee_name
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__purchase
+msgid "Purchase"
+msgstr "المشتريات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__purchase_return
+msgid "Purchase Return"
+msgstr "مرتجع شراء"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__sale
+msgid "Sale"
+msgstr "بيع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__sale_return
+msgid "Sale Return"
+msgstr "مرتجع بيع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__transfer_out
+msgid "Transfer Out"
+msgstr "صرف"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__transfer_in
+msgid "Transfer In"
+msgstr "استلام"
+
+#. module: ab_stock_report
+#: model:ir.model,name:ab_stock_report.model_ab_stock_report_wizard
+msgid "Stock Movement Report Wizard"
+msgstr "معالج تقرير حركات المخزون"
+
+#. module: ab_stock_report
+#: model:ir.model,name:ab_stock_report.model_ab_stock_report_wizard_line
+msgid "Stock Movement Report Line"
+msgstr "سطر تقرير حركات المخزون"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "This product is not linked to an EPlus item serial."
+msgstr "هذا الصنف غير مرتبط برقم إى بلس."
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "Could not resolve a required BConnect column from: %s"
+msgstr "تعذر تحديد عمود مطلوب من BConnect من: %s"
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_state
+msgid "Cache State"
+msgstr "حالة الكاش"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh Cache"
+msgstr "تحديث الكاش"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Now"
+msgstr "جلب الآن"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Cached rows are shown immediately. Use Refresh Cache to update in the background or Fetch Now for the first direct pull from BConnect."
+msgstr "تظهر الصفوف المخزنة فوراً. استخدم تحديث الكاش للتحديث في الخلفية أو جلب الآن لأول جلب مباشر من BConnect."
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__cache_limit
+msgid "Cache Limit"
+msgstr "حد الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__source_table
+msgid "Source Table"
+msgstr "جدول المصدر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__source_line_id
+msgid "Source Line ID"
+msgstr "معرف سطر المصدر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__source_updated_at
+msgid "Source Updated At"
+msgstr "آخر تحديث للمصدر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__cache_generated_at
+msgid "Cache Generated At"
+msgstr "تاريخ إنشاء الكاش"
+
+#. module: ab_stock_report
+msgid "Refresh queued"
+msgstr "تمت جدولة التحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_source_display__bconnect
+msgid "Fetched from BConnect"
+msgstr "تم الجلب من BConnect"
+
+#. module: ab_stock_report
+msgid "Cached %s"
+msgstr "مخزن %s"
+
+#. module: ab_stock_report
+msgid "No %s cache"
+msgstr "لا توجد ذاكرة مؤقتة لـ%s"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__none
+msgid "No cached movements yet"
+msgstr "لا توجد حركات مخزنة بعد"
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Sales"
+msgstr "جلب المبيعات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Purchase"
+msgstr "جلب المشتريات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Transfers"
+msgstr "جلب التحويلات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Cached rows are shown immediately. Use Refresh Cache to update in the background, Fetch Now for a full direct pull from BConnect, or the family buttons to test one movement group at a time."
+msgstr "تظهر الصفوف المخزنة فوراً. استخدم تحديث الكاش للتحديث في الخلفية، وجلب الآن لجلب كل البيانات مباشرة من BConnect، أو أزرار الأصناف لتجربة مجموعة حركات واحدة في كل مرة."
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_payload
+msgid "Wizard Cache"
+msgstr "ذاكرة wizard المؤقتة"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Transfer"
+msgstr "التحويلات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__active_tab
+msgid "Active Tab"
+msgstr "التبويب النشط"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select Sales, Purchase, or Transfer to fetch only that movement group from BConnect and load its JSON cache."
+msgstr "اختر المبيعات أو المشتريات أو التحويلات لجلب مجموعة الحركة المحددة فقط من BConnect وتحميل ذاكرة JSON المؤقتة الخاصة بها."
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__from_date
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "From Date"
+msgstr "من تاريخ"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__can_load_more
+msgid "Can Load More"
+msgstr "يمكن تحميل المزيد"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Load More"
+msgstr "تحميل المزيد"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select Sales, Purchase, or Transfer to fetch that movement group. Use From Date for batched loading and Load More."
+msgstr "اختر المبيعات أو المشتريات أو التحويلات لجلب مجموعة الحركة. استخدم من تاريخ للتحميل على دفعات وزر تحميل المزيد."
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_source_display__wizard_cache
+msgid "Loaded from Wizard Cache"
+msgstr "تم التحميل من كاش المعالج"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__more
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "More movements available"
+msgstr "توجد حركات أخرى متاحة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__all
+msgid "All movements loaded"
+msgstr "تم تحميل كل الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__empty
+msgid "No movements found"
+msgstr "لا توجد حركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__latest
+msgid "Latest movements loaded"
+msgstr "تم تحميل أحدث الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__has_loaded_lines
+msgid "Has Loaded Lines"
+msgstr "يحتوي على سطور محملة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__is_empty_result
+msgid "Is Empty Result"
+msgstr "نتيجة فارغة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__active_tab_label
+msgid "Movement Family"
+msgstr "مجموعة الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_source_label
+msgid "Cache Source"
+msgstr "مصدر الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_progress_label
+msgid "Cache Progress"
+msgstr "تقدم الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_source_display
+msgid "Cache Source Display"
+msgstr "عرض مصدر الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_progress_display
+msgid "Cache Progress Display"
+msgstr "عرض تقدم الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__loaded_rows_label
+msgid "Loaded Rows"
+msgstr "السطور المحملة"
+
+#. module: ab_stock_report
+msgid "%s movements loaded"
+msgstr "تم تحميل %s حركة"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "movements loaded"
+msgstr "حركة محملة"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Product / Serial:"
+msgstr "الصنف / الرقم:"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Updated"
+msgstr "آخر تحديث"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "View Movement History"
+msgstr "عرض سجل الحركات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select Sales, Purchase, or Transfer to view the product's movement history."
+msgstr "اختر المبيعات أو المشتريات أو التحويلات لعرض سجل حركات الصنف."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "No movements were found for this product with the selected filters."
+msgstr "لم يتم العثور على حركات لهذا الصنف بالفلاتر المحددة."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Track sales, purchases, and transfers for this product."
+msgstr "تابع المبيعات والمشتريات والتحويلات لهذا الصنف."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "No activity was found for this product and selected date."
+msgstr "لم يتم العثور على نشاط لهذا الصنف والتاريخ المحدد."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Load more movements"
+msgstr "تحميل حركات إضافية"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Track all stock activity for this product across sales, purchases and transfers."
+msgstr "تابع كل نشاط المخزون لهذا الصنف عبر المبيعات والمشتريات والتحويلات."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select a movement type above to view activity."
+msgstr "اختر نوع حركة أعلاه لعرض النشاط."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "There is no movement activity for this product with the selected filters."
+msgstr "لا يوجد نشاط حركات لهذا الصنف بالفلاتر المحددة."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Clear From Date"
+msgstr "مسح من تاريخ"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__store_balance
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Store Balances & Sales"
+msgstr "أرصدة ومبيعات الفروع"
+
+#. module: ab_stock_report
+msgid "Stores"
+msgstr "الفروع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__main_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__main_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__main_balance_display
+msgid "Main Server Balance"
+msgstr "رصيد السيرفر الرئيسي"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__direct_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_balance_display
+msgid "Direct Store Balance"
+msgstr "رصيد الفرع المباشر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__difference
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__difference
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__difference_display
+msgid "Difference"
+msgstr "الفرق"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_days_61_90
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_61_90
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_61_90_display
+msgid "Days 61-90"
+msgstr "الأيام 61-90"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_days_31_60
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_31_60
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_31_60_display
+msgid "Days 31-60"
+msgstr "الأيام 31-60"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_last_30_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_last_30_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_last_30_days_display
+msgid "Last 30 Days"
+msgstr "آخر 30 يوم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_total_90_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_total_90_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_total_90_days_display
+msgid "Total 90 Days"
+msgstr "إجمالي 90 يوم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__direct_status
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_status
+msgid "Direct Status"
+msgstr "حالة الاتصال المباشر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__direct_updated_at
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_updated_at
+msgid "Direct Updated At"
+msgstr "وقت تحديث الاتصال المباشر"
+
+#. module: ab_stock_report
+msgid "Refresh Direct Balance"
+msgstr "تحديث الرصيد المباشر"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__store_balance_filter_store_id
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "All Branches"
+msgstr "كل الفروع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Clear Branch"
+msgstr "مسح الفرع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh Main Server"
+msgstr "تحديث السيرفر الرئيسي"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Update All Stores"
+msgstr "تحديث كل الفروع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Cancel Update"
+msgstr "إلغاء التحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__store_balance_progress_label
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh Progress"
+msgstr "تحديث التقدم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__main_updated_at
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__store_balance_last_main_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Main Updated At"
+msgstr "وقت تحديث الرئيسي"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__latest_error
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__latest_error
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Latest Error"
+msgstr "آخر خطأ"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__not_checked
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__not_checked
+msgid "Not Checked"
+msgstr "لم يتم الفحص"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__pending
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__pending
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__running
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__running
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__running
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__success
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__success
+msgid "Success"
+msgstr "ناجح"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__failed
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__failed
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__missing_ip
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__missing_ip
+msgid "Missing IP"
+msgstr "IP غير مسجل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__cancelled
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__cancelled
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__cancel_requested
+msgid "Cancel Requested"
+msgstr "تم طلب الإلغاء"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__done
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__done_with_errors
+msgid "Done with Errors"
+msgstr "تم مع وجود أخطاء"
+
+#. module: ab_stock_report
+msgid "Store balances loaded from cache."
+msgstr "تم تحميل أرصدة الفروع من الكاش."
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "No direct update is running."
+msgstr "لا يوجد تحديث مباشر قيد التشغيل."
+
+#. module: ab_stock_report
+msgid "%(state)s: %(done)s/%(total)s %(stores)s, %(ok)s %(succeeded)s, %(bad)s %(failed)s"
+msgstr "%(state)s: %(done)s/%(total)s %(stores)s، %(ok)s %(succeeded)s، %(bad)s %(failed)s"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "stores"
+msgstr "فرع"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "succeeded"
+msgstr "ناجح"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "failed"
+msgstr "فشل"
+
+#. module: ab_stock_report
+msgid "Store has no direct IP configured."
+msgstr "لا يوجد IP مباشر مسجل لهذا الفرع."
+
+#. module: ab_stock_report
+msgid "Direct balance update was cancelled."
+msgstr "تم إلغاء تحديث الرصيد المباشر."
+
+#. module: ab_stock_report
+msgid "This store is already being refreshed for the selected product."
+msgstr "يتم تحديث هذا الفرع بالفعل للمنتج المحدد."
+
+#. module: ab_stock_report
+msgid "A direct balance update is already pending or running for this product."
+msgstr "يوجد تحديث رصيد مباشر قيد الانتظار أو التشغيل لهذا المنتج بالفعل."

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_store_fair_store_view_search" model="ir.ui.view">
+        <field name="name">ab_store.fair_store.search</field>
+        <field name="model">ab_store</field>
+        <field name="active" eval="False"/>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"
+                       filter_domain="['|', ('name', 'ilike', self), ('code', '=', self)]"/>
+            </search>
+        </field>
+    </record>
+</odoo>

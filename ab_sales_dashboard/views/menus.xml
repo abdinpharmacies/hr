@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_ab_sales_dashboard_client" model="ir.actions.client">
+            <field name="name">Sales Dashboard</field>
+            <field name="tag">ab_sales_dashboard.dashboard</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_snapshot" model="ir.actions.act_window">
+            <field name="name">Sales Dashboard Reports</field>
+            <field name="res_model">ab.sales.dashboard.snapshot</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_daily_store_fact" model="ir.actions.act_window">
+            <field name="name">Daily Store Facts</field>
+            <field name="res_model">ab.sales.dashboard.daily.store.fact</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_daily_collection_fact" model="ir.actions.act_window">
+            <field name="name">Daily Collection Facts</field>
+            <field name="res_model">ab.sales.dashboard.daily.collection.fact</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_daily_user_fact" model="ir.actions.act_window">
+            <field name="name">Daily User Facts</field>
+            <field name="res_model">ab_sales_dashboard_daily_user_fact</field>
+            <field name="view_mode">list,pivot,graph</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_daily_item_fact" model="ir.actions.act_window">
+            <field name="name">Daily Item Facts</field>
+            <field name="res_model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="view_mode">list,pivot,graph</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_product_sales_report" model="ir.actions.act_window">
+            <field name="name">Product Sales Report</field>
+            <field name="res_model">ab.sales.dashboard.product.sales.report</field>
+            <field name="view_mode">list,pivot,graph</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_report_archive" model="ir.actions.act_window">
+            <field name="name">Archived Sales Reports</field>
+            <field name="res_model">ab.sales.dashboard.report.archive</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_reconciliation_job" model="ir.actions.act_window">
+            <field name="name">Reconciliation Jobs</field>
+            <field name="res_model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_report_telemetry" model="ir.actions.act_window">
+            <field name="name">Reporting Analytics</field>
+            <field name="res_model">ab.sales.dashboard.report.telemetry</field>
+            <field name="view_mode">list,pivot,graph</field>
+        </record>
+
+        <record id="action_ab_sales_dashboard_fact_decision" model="ir.actions.act_window">
+            <field name="name">Fact-Grain Decision</field>
+            <field name="res_model">ab.sales.dashboard.fact.decision</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_ab_sales_dashboard_root"
+                  name="Sales Dashboard"
+                  sequence="35"
+                  web_icon="ab_sales_dashboard,static/description/icon.png"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_user"/>
+
+        <menuitem id="menu_ab_sales_dashboard"
+                  name="Dashboard"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_client"
+                  sequence="10"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_user"/>
+
+        <menuitem id="menu_ab_sales_dashboard_snapshots"
+                  name="Reports"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_snapshot"
+                  sequence="20"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_report_archives"
+                  name="Archived Sales Reports"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_report_archive"
+                  sequence="25"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_reconciliation_jobs"
+                  name="Reconciliation Jobs"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_reconciliation_job"
+                  sequence="27"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_product_sales_report"
+                  name="Product Sales Report"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_product_sales_report"
+                  sequence="28"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_reporting_analytics"
+                  name="Reporting Analytics"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_report_telemetry"
+                  sequence="29"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_fact_decision"
+                  name="Fact-Grain Decision"
+                  parent="menu_ab_sales_dashboard_root"
+                  action="action_ab_sales_dashboard_fact_decision"
+                  sequence="30"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_report_data"
+                  name="Report Data"
+                  parent="menu_ab_sales_dashboard_root"
+                  sequence="40"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_daily_store_fact"
+                  name="Daily Store Facts"
+                  parent="menu_ab_sales_dashboard_report_data"
+                  action="action_ab_sales_dashboard_daily_store_fact"
+                  sequence="10"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_daily_collection_fact"
+                  name="Daily Collection Facts"
+                  parent="menu_ab_sales_dashboard_report_data"
+                  action="action_ab_sales_dashboard_daily_collection_fact"
+                  sequence="20"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_daily_user_fact"
+                  name="Daily User Facts"
+                  parent="menu_ab_sales_dashboard_report_data"
+                  action="action_ab_sales_dashboard_daily_user_fact"
+                  sequence="25"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_daily_item_fact"
+                  name="Daily Item Facts"
+                  parent="menu_ab_sales_dashboard_report_data"
+                  action="action_ab_sales_dashboard_daily_item_fact"
+                  sequence="30"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+    </data>
+</odoo>

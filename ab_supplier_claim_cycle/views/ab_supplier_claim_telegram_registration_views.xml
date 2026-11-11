@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_ab_supplier_claim_telegram_registration" model="ir.actions.act_window">
+        <field name="name">Telegram Senders</field>
+        <field name="res_model">ab_supplier_claim_telegram_registration</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p>All senders connected to the Supplier Claim Telegram bot.</p>
+        </field>
+    </record>
+
+    <record id="action_ab_supplier_claim_telegram_managers" model="ir.actions.act_window">
+        <field name="name">Managers</field>
+        <field name="res_model">ab_supplier_claim_telegram_registration</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('manager_department', '!=', False)]</field>
+        <field name="help" type="html">
+            <p>Managers assigned to a department role via the Telegram bot.</p>
+        </field>
+    </record>
+
+    <record id="view_ab_supplier_claim_telegram_registration_list" model="ir.ui.view">
+        <field name="name">ab_supplier_claim_telegram_registration.list</field>
+        <field name="model">ab_supplier_claim_telegram_registration</field>
+        <field name="arch" type="xml">
+            <list string="Telegram Management" class="scc-list-view">
+                <field name="eplus_code" string="E-Plus Code" optional="show"/>
+                <field name="employee_id" string="Employee"/>
+                <field name="work_phone" string="Work Phone" optional="show"/>
+                <field name="department_id" string="Department" optional="hide"/>
+                <field name="job_id" string="Job" optional="show"/>
+                <field name="is_working" string="Is Working" optional="hide"/>
+                <field name="telegram_connected" string="Telegram Connected" optional="show"/>
+                <field name="telegram_username" string="Telegram Username" optional="show"/>
+                <field name="telegram_chat_id" string="Chat ID" optional="hide"/>
+                <field name="manager_department" string="Manager at" optional="show"/>
+                <field name="linked_at" string="Linked At" optional="hide"/>
+                <field name="superior_department_id" string="Superior Department" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ab_supplier_claim_telegram_registration_form" model="ir.ui.view">
+        <field name="name">ab_supplier_claim_telegram_registration.form</field>
+        <field name="model">ab_supplier_claim_telegram_registration</field>
+        <field name="arch" type="xml">
+            <form string="Telegram Registration" class="scc-form-container">
+                <sheet>
+                    <div class="scc-supplier-card scc-animate-in">
+                        <div class="scc-supplier-card-header">
+                            <div class="scc-supplier-avatar">📱</div>
+                            <div style="flex:1;">
+                                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                    <span class="scc-supplier-name">
+                                        <field name="employee_id" required="1" options="{'open_form': True}"/>
+                                    </span>
+                                    <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:#e8f5e9;color:#2e7d32;"
+                                          invisible="not telegram_connected">
+                                        <i class="fa fa-check-circle" aria-hidden="true" style="font-size:14px;"/> Telegram Connected
+                                    </span>
+                                    <button name="action_open_bot" type="object" string="Not Connected to Telegram"
+                                            style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:#fce4ec;color:#c62828;border:none;cursor:pointer;"
+                                            invisible="telegram_connected"/>
+                                </div>
+                                <div class="scc-supplier-sub">
+                                    <field name="eplus_code" string="E-Plus Code" class="o_inline_modifier"/>
+                                    <t> • </t>
+                                    <field name="job_id" class="o_inline_modifier"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scc-supplier-grid">
+                            <div class="scc-supplier-info">
+                                <div class="scc-supplier-info-icon">👤</div>
+                                <div>
+                                    <div class="scc-supplier-info-label">User</div>
+                                    <div class="scc-supplier-info-value">
+                                        <field name="user_id" readonly="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scc-supplier-info">
+                                <div class="scc-supplier-info-icon">📞</div>
+                                <div>
+                                    <div class="scc-supplier-info-label">Work Phone</div>
+                                    <div class="scc-supplier-info-value">
+                                        <field name="work_phone" readonly="1" widget="phone"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scc-supplier-info">
+                                <div class="scc-supplier-info-icon">🏢</div>
+                                <div>
+                                    <div class="scc-supplier-info-label">Department</div>
+                                    <div class="scc-supplier-info-value">
+                                        <field name="department_id" readonly="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scc-supplier-info">
+                                <div class="scc-supplier-info-icon">⬆</div>
+                                <div>
+                                    <div class="scc-supplier-info-label">Superior Department</div>
+                                    <div class="scc-supplier-info-value">
+                                        <field name="superior_department_id" readonly="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scc-supplier-info">
+                                <div class="scc-supplier-info-icon">💼</div>
+                                <div>
+                                    <div class="scc-supplier-info-label">Is Working</div>
+                                    <div class="scc-supplier-info-value">
+                                        <field name="is_working" readonly="1" widget="boolean_faicon"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scc-supplier-info">
+                                <div class="scc-supplier-info-icon">📛</div>
+                                <div>
+                                    <div class="scc-supplier-info-label">Employee Name</div>
+                                    <div class="scc-supplier-info-value">
+                                        <field name="employee_name" readonly="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scc-form-section scc-animate-in scc-animate-in-delay-1">
+                        <div class="scc-form-section-title">
+                            <span class="scc-form-section-title-icon">📡</span>
+                            <span>Telegram Connection</span>
+                        </div>
+                        <div class="scc-stage-grid">
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label">Telegram Connected</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="telegram_connected"/>
+                                </div>
+                            </div>
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label">Chat ID</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="telegram_chat_id"/>
+                                </div>
+                            </div>
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label">Telegram Username</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="telegram_username"/>
+                                </div>
+                            </div>
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label">Linked At</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="linked_at" readonly="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
+                        <div class="scc-form-section-title">
+                            <span class="scc-form-section-title-icon">⚙</span>
+                            <span>Role Assignment</span>
+                        </div>
+                        <div class="scc-stage-grid">
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label">Manager at</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="manager_department" options="{'no_create': True}" placeholder="Select role..."/>
+                                </div>
+                            </div>
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label">Active</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="active"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ab_supplier_claim_telegram_registration_search" model="ir.ui.view">
+        <field name="name">ab_supplier_claim_telegram_registration.search</field>
+        <field name="model">ab_supplier_claim_telegram_registration</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="eplus_code" string="E-Plus Code"/>
+                <field name="telegram_chat_id"/>
+                <field name="telegram_username"/>
+                <field name="manager_department"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="menu_ab_supplier_claim_telegram_registration" name="Telegram Management"
+              parent="claim_menu_root" sequence="200"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+
+    <menuitem id="menu_ab_supplier_claim_telegram_senders" name="Telegram Senders"
+              parent="menu_ab_supplier_claim_telegram_registration" sequence="100"
+              action="action_ab_supplier_claim_telegram_registration"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+
+    <menuitem id="menu_ab_supplier_claim_telegram_managers" name="Managers"
+              parent="menu_ab_supplier_claim_telegram_registration" sequence="200"
+              action="action_ab_supplier_claim_telegram_managers"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+</odoo>

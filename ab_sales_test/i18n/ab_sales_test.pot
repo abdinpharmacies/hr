@@ -1,0 +1,634 @@
+﻿# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_test
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-23 13:43+0000\n"
+"PO-Revision-Date: 2026-08-23 13:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s is missing %(column)s."
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__active
+msgid "Active"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Archived"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__last_status__blocked
+msgid "BLOCKED"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__configuration_state__blocked
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Blocked"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "Invalid JSON in test_cases.json: %s"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "JSON scenario %s"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s has no code."
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__workflow_type__cash
+msgid "Cash"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__configuration_state
+msgid "Configuration State"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__workflow_type__contract
+msgid "Contract"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__json_line_count
+msgid "Json Line Count"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Diagnostics"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__workflow_type__doctor
+msgid "Doctor"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__enabled
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Enabled"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/models/test_case.py:0
+msgid "Executed %s enabled scenario(s)."
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__expected_total_bill
+msgid "Expected Total Bill"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__expected_total_bill_after_disc
+msgid "Expected Total Bill After Disc"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__expected_total_bill_net
+msgid "Expected Total Bill Net"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Expected Totals"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__last_status__fail
+msgid "FAIL"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Failed"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__last_result_details
+msgid "Last Result Details"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__last_result_summary
+msgid "Last Result Summary"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__last_run_date
+msgid "Last Run Date"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__last_status
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Last Status"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing %s for promo scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "Missing ab_sales_test/data/test_cases.json."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing contract_paid_percentage."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing doctor_name for doctor prescription scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing promo_in_product_scope on at least one line."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing source_sth_id."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing source_sto_id."
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__workflow_type__mixed
+msgid "Mixed"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__last_status__not_run
+msgid "Not Run"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__configuration_state__not_validated
+msgid "Not Validated"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__workflow_type__other
+msgid "Other"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__last_status__pass
+msgid "PASS"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Passed"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__workflow_type__promo
+msgid "Promotion"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields.selection,name:ab_sales_test.selection__ab_sales_test_case__configuration_state__ready
+msgid "Ready"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.ui.menu,name:ab_sales_test.ab_sales_test_menu
+msgid "Regression Tests"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Run All Enabled"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Run Test"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.ui.menu,name:ab_sales_test.ab_sales_test_case_menu
+msgid "Sales Cases"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Sales Regression Case"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/models/test_case.py:0
+#: model:ir.actions.act_window,name:ab_sales_test.ab_sales_test_case_action
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Sales Regression Cases"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model,name:ab_sales_test.model_ab_sales_test_case
+msgid "Sales Regression Test Case"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Scenario %s is not present in test_cases.json."
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__scenario_code
+msgid "Scenario Code"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__scenario_name
+msgid "Scenario Name"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.constraint,message:ab_sales_test.constraint_ab_sales_test_case_uniq_scenario_code
+msgid "Scenario code must be unique."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Scenario has no lines."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Scenario passed."
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Source"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__source_cust_id
+msgid "Source Cust"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__source_sth_id
+msgid "Source Sth"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__source_sto_id
+msgid "Source Sto"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.ui.menu,name:ab_sales_test.ab_sales_test_sync_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_form
+msgid "Sync JSON"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.actions.server,name:ab_sales_test.ab_sales_test_case_sync_action
+msgid "Sync Sales Regression JSON"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/models/test_case.py:0
+msgid "Synchronized %s scenario(s) from JSON."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/fake_eplus.py:0
+msgid "Unsupported fake E-Plus SQL: %s"
+msgstr ""
+
+#. module: ab_sales_test
+#: model_terms:ir.ui.view,arch_db:ab_sales_test.ab_sales_test_case_view_search
+msgid "Workflow"
+msgstr ""
+
+#. module: ab_sales_test
+#: model:ir.model.fields,field_description:ab_sales_test.field_ab_sales_test_case__workflow_type
+msgid "Workflow Type"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s is missing source.%(field)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s is missing inputs.%(field)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%s is missing expected.expected_itm_dis_per."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "JSON scenario %(scenario)s line %(line)s"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing source.sto_id."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing source.sth_id."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.contract.paid_percentage."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid ""
+"Missing deterministic contract discount configuration. Provide "
+"inputs.contract origin discounts or line inputs.contract.product_card_discount "
+"in test_cases.json."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo.%s for promo scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo.in_product_scope on at least one line."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.doctor.name for doctor prescription scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "test_cases.json root must be an object."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "test_cases.json must contain a scenarios list."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "Duplicate scenario code in JSON: %s"
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s must be an object."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s is missing %s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s %s must be an object."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s must contain a lines list."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s source is missing %s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %s expected is missing %s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s must be an object."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s is missing %(key)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s %(key)s must be an object."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s source is missing %(key)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s inputs is missing %(key)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s expected is missing expected_itm_dis_per."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/json_loader.py:0
+msgid "JSON scenario %(code)s line %(line)s expected is missing %(key)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s has a product_card_discount that conflicts with another line for itm_id %(itm_id)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s has unsupported inputs.product.origin: %(origin)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s has an origin that conflicts with another line for itm_id %(itm_id)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s expects a contract discount but has no product-card rule and no inputs.product.origin for the production origin discount lookup."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "%(prefix)s expects a contract discount but inputs.contract has no discount value for product origin %(origin)s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo configuration for promo scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Unsupported inputs.promo.apply_disc_on: %s."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo.in_discount_scope on at least one line."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing promotion product scope. Provide line inputs.promo.in_product_scope or inputs.promo.rule_products_domain."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo.disc_percent for promo scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo.fixed_price for fixed-price promo scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "Missing inputs.promo.rule_min_qty for cheapest-product promo scenario."
+msgstr ""
+
+#. module: ab_sales_test
+#. odoo-python
+#: code:addons/ab_sales_test/services/test_runner.py:0
+msgid "inputs.promo.rule_min_qty must be at least 2 for cheapest-product promos."
+msgstr ""

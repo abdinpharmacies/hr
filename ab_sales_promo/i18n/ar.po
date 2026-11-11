@@ -1,0 +1,58 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_promo
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-13 00:00+0000\n"
+"PO-Revision-Date: 2026-08-13 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Invalid contract."
+msgstr "العقد غير صالح."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Store is required."
+msgstr "الفرع مطلوب."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Store %s is not allowed for sales."
+msgstr "الفرع %s غير مسموح له بالمبيعات."
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js:0
+msgid "Failed to load promotions."
+msgstr "تعذر تحميل العروض."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "The selected promotion is no longer available for this invoice."
+msgstr "العرض المحدد لم يعد متاحًا لهذه الفاتورة."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid ""
+"Promotion %(promotion)s requires an allowed existing customer. Select an "
+"allowed customer or remove the promotion."
+msgstr ""
+"العرض %(promotion)s يتطلب عميلًا مسجلًا ومسموحًا له. اختر عميلًا مسموحًا له "
+"أو أزل العرض."

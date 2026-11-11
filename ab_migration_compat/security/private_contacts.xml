@@ -1,0 +1,15 @@
+<odoo>
+    <record id="private_address_privilege" model="res.groups.privilege">
+        <field name="name">Private Addresses</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+    <record id="group_private_addresses" model="res.groups">
+        <field name="name">Access to Private Addresses</field>
+        <field name="privilege_id" ref="private_address_privilege"/>
+    </record>
+    <record id="private_address_rule" model="ir.rule">
+        <field name="name">Private contact confidentiality</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_migration_compat.group_private_addresses') else [('type', '!=', 'private')]</field>
+    </record>
+</odoo>

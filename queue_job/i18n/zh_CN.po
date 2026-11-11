@@ -59,19 +59,6 @@ msgid "Activity Type Icon"
 msgstr "活动类型图标"
 
 #. module: queue_job
-#: model:ir.model.fields,field_description:queue_job.field_queue_job_function__allow_commit
-msgid "Allow Commit"
-msgstr ""
-
-#. module: queue_job
-#: model:ir.model.fields,help:queue_job.field_queue_job_function__allow_commit
-msgid ""
-"Allows the job to commit transactions during execution. Under the hood, this "
-"executes the job in a new database cursor, which incurs an overhead as it "
-"requires an extra connection to the database. "
-msgstr ""
-
-#. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__args
 msgid "Args"
 msgstr "位置参数"
@@ -80,6 +67,11 @@ msgstr "位置参数"
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__message_attachment_count
 msgid "Attachment Count"
 msgstr "附件数量"
+
+#. module: queue_job
+#: model:ir.actions.server,name:queue_job.ir_cron_autovacuum_queue_jobs_ir_actions_server
+msgid "AutoVacuum Job Queue"
+msgstr "自动清空作业队列"
 
 #. module: queue_job
 #: model:ir.model,name:queue_job.model_base
@@ -117,15 +109,9 @@ msgstr "已取消"
 
 #. module: queue_job
 #. odoo-python
-#: code:addons/queue_job/job.py:0
-msgid "Cancelled because a job it depends on was cancelled"
-msgstr ""
-
-#. module: queue_job
-#. odoo-python
 #: code:addons/queue_job/models/queue_job.py:0
-msgid "Cancelled by %s"
-msgstr "被%s取消"
+msgid "Cancelled by {}"
+msgstr ""
 
 #. module: queue_job
 #. odoo-python
@@ -236,22 +222,11 @@ msgid "Dependency Graph"
 msgstr "依赖关系图"
 
 #. module: queue_job
-#: model:ir.model.fields,field_description:queue_job.field_queue_job__dependency_ids
-msgid "Dependency Jobs"
-msgstr ""
-
-#. module: queue_job
-#: model:ir.model.fields,field_description:queue_job.field_queue_job__dependent_ids
-msgid "Dependent Jobs"
-msgstr ""
-
-#. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__name
 msgid "Description"
 msgstr "说明"
 
 #. module: queue_job
-#: model:ir.model.fields,field_description:queue_job.field_ir_model_fields__display_name
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__display_name
 #: model:ir.model.fields,field_description:queue_job.field_queue_job_channel__display_name
 #: model:ir.model.fields,field_description:queue_job.field_queue_job_function__display_name
@@ -372,12 +347,17 @@ msgid "Graph UUID"
 msgstr "图表唯一标识符（UUID）"
 
 #. module: queue_job
+#: model_terms:ir.ui.view,arch_db:queue_job.view_queue_job_function_search
+#: model_terms:ir.ui.view,arch_db:queue_job.view_queue_job_search
+msgid "Group By"
+msgstr "分组"
+
+#. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__has_message
 msgid "Has Message"
 msgstr "有消息"
 
 #. module: queue_job
-#: model:ir.model.fields,field_description:queue_job.field_ir_model_fields__id
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__id
 #: model:ir.model.fields,field_description:queue_job.field_queue_job_channel__id
 #: model:ir.model.fields,field_description:queue_job.field_queue_job_function__id
@@ -416,8 +396,8 @@ msgstr "如果勾选此项， 某些消息将会产生传递错误。"
 #. module: queue_job
 #. odoo-python
 #: code:addons/queue_job/models/queue_job_function.py:0
-msgid "Invalid job function: %s"
-msgstr ""
+msgid "Invalid job function: {}"
+msgstr "无效的作业函数：{}"
 
 #. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__message_is_follower
@@ -448,7 +428,6 @@ msgstr "作业函数"
 #. module: queue_job
 #: model:ir.module.category,name:queue_job.module_category_queue_job
 #: model:ir.ui.menu,name:queue_job.menu_queue_job_root
-#: model:res.groups.privilege,name:queue_job.privilege_queue_job
 msgid "Job Queue"
 msgstr "作业队列"
 
@@ -481,20 +460,10 @@ msgid "Jobs"
 msgstr "作业"
 
 #. module: queue_job
-#: model:ir.model.fields,help:queue_job.field_queue_job__dependent_ids
-msgid "Jobs depending on this job."
-msgstr ""
-
-#. module: queue_job
 #. odoo-python
 #: code:addons/queue_job/models/queue_job.py:0
 msgid "Jobs for graph %s"
 msgstr "图表 %s 的作业"
-
-#. module: queue_job
-#: model:ir.model.fields,help:queue_job.field_queue_job__dependency_ids
-msgid "Jobs this job depends on."
-msgstr ""
 
 #. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__kwargs
@@ -537,8 +506,8 @@ msgstr "最后更新时间"
 #. module: queue_job
 #. odoo-python
 #: code:addons/queue_job/models/queue_job.py:0
-msgid "Manually set to done by %s"
-msgstr "由%s手动设置为完成"
+msgid "Manually set to done by {}"
+msgstr ""
 
 #. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__max_retries
@@ -575,14 +544,8 @@ msgstr "模型"
 #. module: queue_job
 #. odoo-python
 #: code:addons/queue_job/models/queue_job_function.py:0
-msgid "Model %s not found"
-msgstr ""
-
-#. module: queue_job
-#: model:ir.model.fields,help:queue_job.field_queue_job_function__on_fail_method
-msgid ""
-"Model function to be called if the job is failed and will not be retried."
-msgstr ""
+msgid "Model {} not found"
+msgstr "模型 {} 未找到"
 
 #. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__my_activity_date_deadline
@@ -619,8 +582,8 @@ msgstr "此作业无法执行任何操作"
 #. module: queue_job
 #. odoo-python
 #: code:addons/queue_job/models/queue_job.py:0
-msgid "Not allowed to change field(s): %s"
-msgstr ""
+msgid "Not allowed to change field(s): {}"
+msgstr "不允许更改字段：{}"
 
 #. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job__message_needaction_counter
@@ -641,11 +604,6 @@ msgstr "需要处理的消息数量"
 #: model:ir.model.fields,help:queue_job.field_queue_job__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "递送错误消息数量"
-
-#. module: queue_job
-#: model:ir.model.fields,field_description:queue_job.field_queue_job_function__on_fail_method
-msgid "On Fail Method"
-msgstr ""
 
 #. module: queue_job
 #: model:ir.model.fields,field_description:queue_job.field_queue_job_channel__parent_id
@@ -926,17 +884,21 @@ msgstr "UUID"
 #. odoo-python
 #: code:addons/queue_job/models/queue_job_function.py:0
 msgid ""
-"Unexpected format of Related Action for %s.\n"
+"Unexpected format of Related Action for {}.\n"
 "Example of valid format:\n"
-"{{\"enable\": True, \"func_name\": \"related_action_foo\", \"kwargs\" "
-"{{\"limit\": 10}}}}"
+"{{\"enable\": True, \"func_name\": \"related_action_foo\", "
+"\"kwargs\" {{\"limit\": 10}}}}"
 msgstr ""
+"对于 {}，关联操作的格式不符合预期。 \n"
+"有效格式的示例：\n"
+"{{\"enable\": True, \"func_name\": \"related_action_foo\", "
+"\"kwargs\" {{\"limit\": 10}}}}"
 
 #. module: queue_job
 #. odoo-python
 #: code:addons/queue_job/models/queue_job_function.py:0
 msgid ""
-"Unexpected format of Retry Pattern for %s.\n"
+"Unexpected format of Retry Pattern for {}.\n"
 "Example of valid formats:\n"
 "{{1: 300, 5: 600, 10: 1200, 15: 3000}}\n"
 "{{1: (1, 10), 5: (11, 20), 10: (21, 30), 15: (100, 300)}}"
@@ -963,38 +925,6 @@ msgstr "重新排队向导所选的作业"
 msgid "Worker Pid"
 msgstr "工作进程PID"
 
-#. module: queue_job
-#. odoo-python
-#: code:addons/queue_job/models/queue_job.py:0
-msgid "id"
-msgstr ""
-
-#~ msgid "AutoVacuum Job Queue"
-#~ msgstr "自动清空作业队列"
-
-#~ msgid "Group By"
-#~ msgstr "分组"
-
-#~ msgid "Invalid job function: {}"
-#~ msgstr "无效的作业函数：{}"
-
-#~ msgid "Model {} not found"
-#~ msgstr "模型 {} 未找到"
-
-#~ msgid "Not allowed to change field(s): {}"
-#~ msgstr "不允许更改字段：{}"
-
-#~ msgid ""
-#~ "Unexpected format of Related Action for {}.\n"
-#~ "Example of valid format:\n"
-#~ "{{\"enable\": True, \"func_name\": \"related_action_foo\", \"kwargs\" "
-#~ "{{\"limit\": 10}}}}"
-#~ msgstr ""
-#~ "对于 {}，关联操作的格式不符合预期。 \n"
-#~ "有效格式的示例：\n"
-#~ "{{\"enable\": True, \"func_name\": \"related_action_foo\", \"kwargs\" "
-#~ "{{\"limit\": 10}}}}"
-
 #~ msgid "If both parameters are 0, ALL jobs will be requeued!"
 #~ msgstr "如果两个参数都为0，所有任务都将被重新排队！"
 
@@ -1008,8 +938,16 @@ msgstr ""
 #~ msgstr "短信传递错误"
 
 #, python-format
+#~ msgid "Cancelled by %s"
+#~ msgstr "被%s取消"
+
+#, python-format
 #~ msgid "Job interrupted and set to Done: nothing to do."
 #~ msgstr "作业中断并设置为已完成：无需执行任何操作。"
+
+#, python-format
+#~ msgid "Manually set to done by %s"
+#~ msgstr "由%s手动设置为完成"
 
 #~ msgid "Record"
 #~ msgstr "记录"

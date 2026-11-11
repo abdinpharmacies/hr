@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <delete model="ir.ui.view"
+                search="[('name', 'in', [
+                    'ab_transfer_request_load_wizard_view_form',
+                    'ab_transfer_header_view_form_request_loader',
+                    'ab_transfer_line_view_list_request_loader',
+                    'ab_transfer_line_view_form_request_loader'
+                ])]"/>
+        <delete model="ir.model.access"
+                search="[('name', 'in', [
+                    'access_ab_transfer_request_load_wizard_admin',
+                    'access_ab_transfer_request_load_wizard_line_admin'
+                ])]"/>
+    </data>
+</odoo>

@@ -1,0 +1,27 @@
+{
+    'name': 'Abdin Purchase Accounting',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'AbdinAccounting',
+    'author': 'Abdin Pharmacies',
+    'developer': 'Alhassan Hossny',
+    'application': False,
+    'depends': [
+        'ab_stock_integration',
+        'base',
+        'mail',
+        'ab_purchase',
+        'ab_purchase_ob',
+        'ab_accounting',
+        'ab_taxes',
+    ],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/security_rules.xml',
+        'views/configuration.xml',
+        'views/purchase_views.xml',
+        'views/review.xml',
+    ],
+    'installable': True,
+    'auto_install': False,
+}

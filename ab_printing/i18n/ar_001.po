@@ -1,0 +1,125 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-20 08:02+0000\n"
+"PO-Revision-Date: 2026-09-20 08:02+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid ""
+"CUPS returned no job ID. Check its jobs before retrying to avoid duplicate "
+"printing."
+msgstr ""
+"لم يُرجع CUPS رقم مهمة. تحقق من المهام قبل إعادة المحاولة لتجنب تكرار "
+"الطباعة."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Configure a valid CUPS server in ab_printing.server."
+msgstr "اضبط خادم CUPS صالحًا في ab_printing.server."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Copies must be an integer between 1 and 99."
+msgstr "يجب أن يكون عدد النسخ عددًا صحيحًا بين 1 و99."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Could not execute the printing command."
+msgstr "تعذر تنفيذ أمر الطباعة."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Could not generate a valid PDF for printing."
+msgstr "تعذر إنشاء ملف PDF صالح للطباعة."
+
+#. module: ab_printing
+#: model:ir.model.fields,field_description:ab_printing.field_ab_printing_service__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_printing
+#: model:ir.model.fields,field_description:ab_printing.field_ab_printing_service__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_printing
+#: model:ir.model,name:ab_printing.model_ab_printing_service
+msgid "Printing Service"
+msgstr "خدمة الطباعة"
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid ""
+"Printing command failed. Check the printer configuration and CUPS jobs "
+"before retrying."
+msgstr ""
+"فشل أمر الطباعة. تحقق من إعدادات الطابعة ومهام CUPS قبل إعادة المحاولة."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid ""
+"Printing timed out. Check CUPS jobs before retrying to avoid duplicate "
+"printing."
+msgstr ""
+"انتهت مهلة الطباعة. تحقق من مهام CUPS قبل إعادة المحاولة لتجنب تكرار "
+"الطباعة."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Provide receipt content and a supported paper format."
+msgstr "حدد محتوى الإيصال ومقاس ورق مدعومًا."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Required printing command is missing: %s"
+msgstr "أمر الطباعة المطلوب غير موجود: %s"
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Select a valid CUPS queue name."
+msgstr "حدد اسم قائمة طباعة CUPS صالحًا."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "Select records to print."
+msgstr "حدد السجلات المطلوب طباعتها."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "The report does not match the selected records."
+msgstr "التقرير لا يتوافق مع السجلات المحددة."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "This queue requires raw printer data. Select a PDF-capable CUPS queue."
+msgstr ""
+"تتطلب قائمة الطباعة هذه بيانات طابعة خام. حدد قائمة CUPS تدعم ملفات PDF."
+
+#. module: ab_printing
+#. odoo-python
+#: code:addons/ab_printing/models/printing_service.py:0
+msgid "You do not have access to this report."
+msgstr "ليس لديك صلاحية الوصول إلى هذا التقرير."

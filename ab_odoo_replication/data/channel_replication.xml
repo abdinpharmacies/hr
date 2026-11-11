@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_odoo_replication_channel" model="mail.channel">
+            <field name="name">Main Server Notifications</field>
+            <field name="description">This channel is used for system-wide server alerts and replication issues.</field>
+            <field name="public">groups</field> <!-- Only visible to specified groups -->
+            <field name="group_public_id" ref="base.group_user"/> <!-- Allow all internal users to join -->
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/> <!-- Auto-add all internal users -->
+        </record>
+    </data>
+</odoo>

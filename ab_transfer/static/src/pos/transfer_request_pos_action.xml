@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_transfer.TransferRequestPosAction">
+        <t t-if="!state.windowClosed">
+            <div class="ab_pos_window_root o_ab_sales_pos_window o_ab_transfer_pos_window o_ab_transfer_request_pos_window is-maximized">
+                <div class="o_ab_sales_pos_window_header ab_pos_window_header">
+                    <div class="o_ab_sales_pos_window_controls ab_pos_window_controls">
+                        <button class="btn btn-light btn-sm"
+                                type="button"
+                                title="Close"
+                                t-on-click="closeWindow">
+                            <i class="fa fa-times" aria-hidden="true"/>
+                        </button>
+                    </div>
+                </div>
+                <div class="o_ab_sales_pos_window_body ab_pos_window_body">
+                    <div class="o_ab_sales_pos_app o_ab_transfer_pos_app o_ab_transfer_request_pos_app ab_pos_app_shell">
+                        <aside class="ab_pos_sidebar o_ab_sales_pos_sidebar o_ab_transfer_pos_sidebar o_ab_transfer_request_pos_sidebar">
+                            <div class="o_ab_sales_pos_sidebar_header ab_pos_sidebar_header o_ab_transfer_pos_sidebar_header">
+                                <div class="o_ab_sales_pos_sidebar_top ab_pos_sidebar_top">
+                                    <div class="o_ab_sales_pos_brand ab_pos_sidebar_brand">
+                                        <div class="o_ab_sales_pos_brand_text">
+                                            <div class="o_ab_transfer_pos_brand_title">Transfer Request POS</div>
+                                            <div class="o_ab_transfer_pos_brand_subtitle">Branch demand entry</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary o_ab_sales_pos_new_btn ab_pos_sidebar_btn_new_bill"
+                                        type="button"
+                                        t-on-click="createNewRequest">
+                                    <span class="o_ab_sales_pos_new_text">New Request</span>
+                                    <span class="o_ab_sales_pos_new_icon" aria-hidden="true">+</span>
+                                </button>
+                            </div>
+                            <div class="o_ab_transfer_request_pos_sidebar_summary">
+                                <div class="o_ab_transfer_pos_draft_title">
+                                    <span t-esc="state.requestNumber"/>
+                                    <span class="badge text-bg-light" t-esc="summary.items_count"/>
+                                </div>
+                                <div class="o_ab_transfer_pos_draft_meta">
+                                    <span t-esc="state.header.from_store_name || 'No requesting store'"/>
+                                    <span>-></span>
+                                    <span t-esc="state.header.to_store_name || 'No destination'"/>
+                                </div>
+                                <div class="o_ab_transfer_pos_draft_meta">
+                                    <span t-esc="formatQty(summary.total_qty)"/>
+                                    <span>qty</span>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <main class="o_ab_transfer_pos_main o_ab_transfer_request_pos_main">
+                            <t t-if="state.loaded">
+                                <section class="o_ab_transfer_pos_topbar">
+                                    <div class="o_ab_transfer_pos_top_head">
+                                        <div>
+                                            <h2 t-esc="state.requestNumber"/>
+                                            <div class="o_ab_transfer_pos_muted">Transfer Request</div>
+                                        </div>
+                                        <div class="o_ab_transfer_pos_top_actions">
+                                            <button class="btn btn-outline-secondary"
+                                                    type="button"
+                                                    t-on-click="openRequestList">
+                                                Requests
+                                            </button>
+                                            <button class="btn btn-primary"
+                                                    type="button"
+                                                    t-on-click="submitCurrentRequest"
+                                                    t-att-disabled="state.submitting">
+                                                <t t-esc="state.submitting ? 'Creating...' : 'Create Request'"/>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="o_ab_transfer_pos_header_grid">
+                                        <div class="o_ab_transfer_pos_field">
+                                            <label>Requesting Store</label>
+                                            <ABMany2one relation="'ab_store'"
+                                                        value="sourceValue()"
+                                                        update="(value) => this.updateSource(value)"
+                                                        placeholder="'Requesting Store...'"
+                                                        domain="fromStoreDomain"
+                                                        canCreate="false"
+                                                        canCreateEdit="false"
+                                                        canQuickCreate="false"
+                                                        canOpen="false"
+                                                        canWrite="true"
+                                                        string="'Requesting Store'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_pos_field">
+                                            <label>Destination Branch</label>
+                                            <ABMany2one relation="'ab_store'"
+                                                        value="destinationValue()"
+                                                        update="(value) => this.updateDestination(value)"
+                                                        placeholder="'Destination Branch...'"
+                                                        domain="toStoreDomain"
+                                                        canCreate="false"
+                                                        canCreateEdit="false"
+                                                        canQuickCreate="false"
+                                                        canOpen="false"
+                                                        canWrite="true"
+                                                        string="'Destination Branch'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_pos_field">
+                                            <label>User</label>
+                                            <input class="form-control"
+                                                   readonly="readonly"
+                                                   t-att-value="state.header.user_name || ''"/>
+                                        </div>
+                                        <div class="o_ab_transfer_pos_totals">
+                                            <div class="o_ab_transfer_pos_total">
+                                                <span class="o_ab_transfer_pos_total_label">Items</span>
+                                                <span class="o_ab_transfer_pos_total_value" t-esc="summary.items_count"/>
+                                            </div>
+                                            <div class="o_ab_transfer_pos_total">
+                                                <span class="o_ab_transfer_pos_total_label">Requested Qty</span>
+                                                <span class="o_ab_transfer_pos_total_value" t-esc="formatQty(summary.total_qty)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="o_ab_transfer_pos_transfer_notes_grid o_ab_transfer_request_pos_notes">
+                                        <div class="o_ab_transfer_pos_field">
+                                            <label>Notes</label>
+                                            <textarea class="form-control"
+                                                      rows="2"
+                                                      t-att-value="state.header.notes || ''"
+                                                      t-on-input="onNotesInput"/>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="o_ab_transfer_pos_body">
+                                    <div class="o_ab_transfer_pos_product_grid">
+                                        <div class="o_ab_transfer_pos_product_column o_ab_transfer_pos_product_column_search">
+                                            <div class="o_ab_transfer_pos_product_search">
+                                                <label class="form-label mb-0 d-flex align-items-center gap-2"
+                                                       title="Search">
+                                                    <i class="fa fa-search text-muted" aria-hidden="true"/>
+                                                </label>
+                                                <input class="form-control o_ab_transfer_pos_product_search_input"
+                                                       placeholder="Type name/code..."
+                                                       t-att-value="state.productQuery"
+                                                       t-on-input="onProductSearch"/>
+                                                <t t-if="state.loadingProducts">
+                                                    <span class="o_ab_transfer_pos_loading">Loading...</span>
+                                                </t>
+                                                <span class="o_ab_transfer_pos_search_count"
+                                                      t-esc="state.productResults.length"/>
+                                            </div>
+                                            <div class="o_ab_transfer_pos_product_hint">
+                                                <span class="badge text-bg-light">Products</span>
+                                            </div>
+                                            <t t-if="state.productResults.length">
+                                                <div class="o_ab_transfer_pos_product_results row row-cols-1 g-2">
+                                                    <t t-foreach="state.productResults" t-as="product" t-key="product.id">
+                                                        <div class="col">
+                                                            <div role="button"
+                                                                 class="card o_ab_transfer_pos_product_card"
+                                                                 t-on-click="() => this.addProduct(product)">
+                                                                <div class="card-body p-2 h-100 d-flex flex-column justify-content-between">
+                                                                    <div class="d-inline-flex align-items-center gap-1 text-muted o_ab_transfer_pos_product_code">
+                                                                        <i class="fa fa-barcode" aria-hidden="true"/>
+                                                                        <small class="text-truncate" t-esc="product.code || ''"/>
+                                                                    </div>
+                                                                    <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-center px-2">
+                                                                        <div class="fw-bold small text-truncate w-100"
+                                                                             t-esc="productLabel(product)"/>
+                                                                        <small class="text-muted" t-esc="product.uom_name || ''"/>
+                                                                    </div>
+                                                                    <div class="d-flex justify-content-end">
+                                                                        <button type="button"
+                                                                                class="btn btn-sm btn-outline-primary"
+                                                                                t-on-click.stop="() => this.addProduct(product)">
+                                                                            Add
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                            <t t-elif="!state.loadingProducts">
+                                                <div class="o_ab_transfer_pos_empty">No products found.</div>
+                                            </t>
+                                        </div>
+
+                                        <div class="o_ab_transfer_pos_product_column o_ab_transfer_pos_lines_panel">
+                                            <div class="o_ab_transfer_pos_card_header">
+                                                <h4>Request Lines</h4>
+                                                <div class="o_ab_transfer_pos_muted">
+                                                    <span t-esc="summary.items_count"/> items
+                                                    <span>|</span>
+                                                    <span t-esc="formatQty(summary.total_qty)"/> qty
+                                                </div>
+                                            </div>
+                                            <div class="table-responsive o_ab_transfer_pos_lines_table">
+                                                <table class="table table-sm align-middle o_ab_transfer_pos_table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Product</th>
+                                                            <th>Qty</th>
+                                                            <th>UOM</th>
+                                                            <th>Notes</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-if="!state.lines.length">
+                                                            <tr>
+                                                                <td colspan="5" class="text-center text-muted">No lines yet.</td>
+                                                            </tr>
+                                                        </t>
+                                                        <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="o_ab_transfer_pos_result_name" t-esc="line.product_name"/>
+                                                                    <div class="o_ab_transfer_pos_result_meta" t-esc="line.product_code || '-'"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control form-control-sm"
+                                                                           type="text"
+                                                                           inputmode="decimal"
+                                                                           t-att-value="line.requested_qty_str"
+                                                                           t-on-input="(ev) => this.onLineQtyInput(line, ev)"/>
+                                                                </td>
+                                                                <td>
+                                                                    <ABMany2one relation="'ab_product_uom'"
+                                                                                value="lineUomValue(line)"
+                                                                                update="(value) => this.updateLineUom(line, value)"
+                                                                                domain="() => line.uom_category_id ? [['category_id', '=', line.uom_category_id]] : [['id', '=', false]]"
+                                                                                placeholder="'UOM...'"
+                                                                                canCreate="false"
+                                                                                canCreateEdit="false"
+                                                                                canQuickCreate="false"
+                                                                                canOpen="false"
+                                                                                canWrite="true"
+                                                                                string="'UOM'"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control form-control-sm"
+                                                                           type="text"
+                                                                           t-att-value="line.notes || ''"
+                                                                           t-on-input="(ev) => this.onLineNotesInput(line, ev)"/>
+                                                                </td>
+                                                                <td class="text-end">
+                                                                    <button class="btn btn-sm btn-outline-danger"
+                                                                            type="button"
+                                                                            title="Remove"
+                                                                            t-on-click="() => this.removeLine(line.id)">
+                                                                        <i class="fa fa-trash" aria-hidden="true"/>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </t>
+                            <t t-else="">
+                                <div class="o_ab_transfer_pos_empty">Loading...</div>
+                            </t>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+</templates>

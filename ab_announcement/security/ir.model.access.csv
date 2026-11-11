@@ -1,0 +1,4 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_announcement_user,access_ab_announcement_user,model_ab_announcement,base.group_user,1,0,0,0
+access_ab_announcement_sys,access_ab_announcement_sys,model_ab_announcement,base.group_system,1,1,1,1
+access_ab_announcement_hr_co,access_ab_announcement_hr_co,model_ab_announcement,ab_hr.group_ab_hr_co,1,1,1,1

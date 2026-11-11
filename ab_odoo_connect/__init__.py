@@ -1,0 +1,1 @@
+from .ab_odoo_connect import OdooConnectionSingleton

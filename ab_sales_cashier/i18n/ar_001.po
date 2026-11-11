@@ -1,0 +1,910 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_cashier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-21 14:09+0000\n"
+"PO-Revision-Date: 2026-10-21 14:09+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "All (Newest)"
+msgstr "الكل (الأحدث)"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Back to List"
+msgstr "العودة إلى القائمة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales_cashier.ab_sales_cashier_close_wizard_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Cannot save invoice: current status is %s."
+msgstr "لا يمكن حفظ الفاتورة: حالتها الحالية %s."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Cash counts are recorded through the cashier closing screen."
+msgstr "تُسجل عمليات جرد النقدية من شاشة إغلاق الصندوق."
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__cashier_id
+#: model:ir.ui.menu,name:ab_sales_cashier.ab_sales_cashier_menu
+msgid "Cashier"
+msgstr "أمين الصندوق"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__employee_id
+msgid "Cashier Employee"
+msgstr "موظف أمين الصندوق"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Cashier PIN login is not available in the base cashier module."
+msgstr "تسجيل دخول أمين الصندوق بالرقم السري غير متاح في إضافة أمين الصندوق الأساسية."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Cashier PIN login is required."
+msgstr "يلزم تسجيل دخول أمين الصندوق بالرقم السري."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Cashier PIN login requires the Employee Access Sales module."
+msgstr "يتطلب تسجيل دخول أمين الصندوق بالرقم السري إضافة صلاحيات موظفي المبيعات."
+
+#. module: ab_sales_cashier
+#: model:ir.actions.client,name:ab_sales_cashier.ab_sales_cashier_action
+msgid "Cashier Window"
+msgstr "نافذة أمين الصندوق"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Cashier counts must use the current user and store wallet."
+msgstr "يجب تسجيل جرد النقدية للمستخدم الحالي وخزينة الفرع."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Clear Selection (Esc)"
+msgstr "إلغاء الاختيار (Esc)"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales_cashier.ab_sales_cashier_close_wizard_view_form
+msgid "Close Cashier"
+msgstr "إغلاق الصندوق"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__close_time
+msgid "Close Time"
+msgstr "وقت الإغلاق"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_sales_cashier
+#: model_terms:ir.ui.view,arch_db:ab_sales_cashier.ab_sales_cashier_close_wizard_view_form
+msgid "Confirm Close"
+msgstr "تأكيد الإغلاق"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__counted_amount
+msgid "Counted Amount"
+msgstr "المبلغ المجرد"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_api__create_date
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__create_date
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__user_id
+msgid "Current User"
+msgstr "المستخدم الحالي"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Customer:"
+msgstr "العميل:"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__difference
+msgid "Difference"
+msgstr "الفرق"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Direct print failed."
+msgstr "فشلت الطباعة المباشرة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Discovery completed. Available printers: %s."
+msgstr "اكتمل البحث. الطابعات المتاحة: %s."
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__native_cashier_pin
+msgid "Employee PIN"
+msgstr "الرقم السري للموظف"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Enter Select"
+msgstr "Enter للاختيار"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Enter a finite counted cash amount."
+msgstr "أدخل مبلغ جرد نقدية صالحاً ومحدوداً."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Enter the active cashier employee PIN to record the cash count."
+msgstr "أدخل الرقم السري لموظف الخزينة صاحب الجلسة النشطة لتسجيل جرد النقدية."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Error happened."
+msgstr "حدث خطأ."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Esc Clear Selection"
+msgstr "Esc لإلغاء الاختيار"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__expected_amount
+msgid "Expected Amount"
+msgstr "المبلغ المتوقع"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "F10 Save"
+msgstr "F10 للحفظ"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "F9 or Ctrl+P Print"
+msgstr "F9 أو Ctrl+P للطباعة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to load invoice details."
+msgstr "تعذر تحميل تفاصيل الفاتورة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to load printer options."
+msgstr "تعذر تحميل خيارات الطابعة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to load stores."
+msgstr "تعذر تحميل الفروع."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to load wallets."
+msgstr "تعذر تحميل الخزائن."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to refresh pending invoices."
+msgstr "تعذر تحديث الفواتير المعلقة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to save invoice due to an unexpected status."
+msgstr "تعذر حفظ الفاتورة بسبب حالة غير متوقعة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to save invoice."
+msgstr "تعذر حفظ الفاتورة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Failed to save print preferences."
+msgstr "تعذر حفظ تفضيلات الطباعة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Full Screen"
+msgstr "ملء الشاشة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Fullscreen not available."
+msgstr "وضع ملء الشاشة غير متاح."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Highest Amount"
+msgstr "الأعلى قيمة"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_api__id
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__id
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__id
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Invalid invoice id."
+msgstr "معرف الفاتورة غير صالح."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Invalid store selection."
+msgstr "اختيار الفرع غير صالح."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Invoice #"
+msgstr "فاتورة رقم #"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Invoice Saved"
+msgstr "تم حفظ الفاتورة"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Invoice not found."
+msgstr "لم يتم العثور على الفاتورة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Invoice saved successfully."
+msgstr "تم حفظ الفاتورة بنجاح."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Item"
+msgstr "الصنف"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Items:"
+msgstr "الأصناف:"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Last Sync:"
+msgstr "آخر مزامنة:"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_api__write_date
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__write_date
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Loading invoices..."
+msgstr "جاري تحميل الفواتير..."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Lock"
+msgstr "قفل"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Maximize"
+msgstr "تكبير"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Minimize"
+msgstr "تصغير"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__native_backend
+msgid "Native Backend"
+msgstr "نظام المخزون المحلي"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Native Cash"
+msgstr "النقدية الداخلية"
+
+#. module: ab_sales_cashier
+#: model:ir.actions.act_window,name:ab_sales_cashier.native_cash_count_action
+#: model:ir.ui.menu,name:ab_sales_cashier.native_cash_count_menu
+msgid "Native Cash Counts"
+msgstr "جرد النقدية الداخلي"
+
+#. module: ab_sales_cashier
+#: model:ir.model,name:ab_sales_cashier.model_ab_sales_native_cash_close
+msgid "Native Cashier Count"
+msgstr "جرد الصندوق الداخلي"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__net_balance
+msgid "Net Balance"
+msgstr "صافي الرصيد"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "No items to print."
+msgstr "لا توجد أصناف للطباعة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "No pending invoices match the current search."
+msgstr "لا توجد فواتير معلقة تطابق البحث الحالي."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "No sales store is available for cashier."
+msgstr "لا يوجد فرع مبيعات متاح لأمين الصندوق."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "No sales stores are available for this cashier."
+msgstr "لا توجد فروع مبيعات متاحة لأمين الصندوق هذا."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "No stores available."
+msgstr "لا توجد فروع متاحة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "No wallets found for this store."
+msgstr "لم يتم العثور على خزائن لهذا الفرع."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Note:"
+msgstr "ملاحظة:"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Nothing to preview."
+msgstr "لا يوجد محتوى للمعاينة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Oldest First"
+msgstr "الأقدم أولًا"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__opening_balance
+msgid "Opening Balance"
+msgstr "الرصيد الافتتاحي"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Payment Method:"
+msgstr "طريقة الدفع:"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Pending Invoices"
+msgstr "فواتير معلقة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Pending Return"
+msgstr "مرتجع معلق"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Phone:"
+msgstr "الهاتف:"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_close_wizard.py:0
+msgid "Please select cashier employee."
+msgstr "يرجى اختيار موظف أمين الصندوق."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Pop-up blocked. Allow popups to print."
+msgstr "حُظرت النافذة المنبثقة. اسمح بالنوافذ المنبثقة للطباعة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Post Return (F10)"
+msgstr "ترحيل المرتجع (F10)"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Preview failed."
+msgstr "فشلت المعاينة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Print Receipt"
+msgstr "طباعة الإيصال"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Print Receipt (F9)"
+msgstr "طباعة الإيصال (F9)"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Print command sent to '%s'."
+msgstr "أُرسل أمر الطباعة إلى «%s»."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Print command sent to default system printer."
+msgstr "أُرسل أمر الطباعة إلى طابعة النظام الافتراضية."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Printer discovery failed."
+msgstr "فشل البحث عن الطابعات."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Recorded cash counts cannot be changed."
+msgstr "لا يمكن تغيير عمليات جرد النقدية المسجلة."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Recorded cash counts cannot be deleted."
+msgstr "لا يمكن حذف عمليات جرد النقدية المسجلة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Refresh Details"
+msgstr "تحديث التفاصيل"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Refresh List"
+msgstr "تحديث القائمة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Refreshing..."
+msgstr "جاري التحديث..."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Return #"
+msgstr "مرتجع رقم #"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Return Posted"
+msgstr "تم ترحيل المرتجع"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Return document not found."
+msgstr "لم يتم العثور على مستند المرتجع."
+
+#. module: ab_sales_cashier
+#: model:ir.model,name:ab_sales_cashier.model_ab_sales_cashier_api
+msgid "Sales Cashier API"
+msgstr "واجهة أمين صندوق المبيعات"
+
+#. module: ab_sales_cashier
+#: model:ir.model,name:ab_sales_cashier.model_ab_sales_cashier_close_wizard
+msgid "Sales Cashier Close Wizard"
+msgstr "معالج إغلاق صندوق المبيعات"
+
+#. module: ab_sales_cashier
+#: model:ir.model,name:ab_sales_cashier.model_ab_sales_cashier_close_wizard_line
+msgid "Sales Cashier Close Wizard Line"
+msgstr "بند معالج إغلاق صندوق المبيعات"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Sales Receipt"
+msgstr "إيصال مبيعات"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Sales Return"
+msgstr "مرتجع مبيعات"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Sales collection for invoice #%s"
+msgstr "تحصيل مبيعات للفاتورة رقم %s"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Sales invoice close #%s"
+msgstr "إغلاق فاتورة مبيعات رقم %s"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Save Invoice (F10)"
+msgstr "حفظ الفاتورة (F10)"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Saved"
+msgstr "محفوظ"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Saving..."
+msgstr "جاري الحفظ..."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Search by invoice number, customer, or phone"
+msgstr "البحث برقم الفاتورة أو العميل أو الهاتف"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Select a store first."
+msgstr "اختر فرعًا أولًا."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Select a store from the header field to load pending invoices."
+msgstr "اختر فرعًا من الحقل العلوي لتحميل الفواتير المعلقة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Select an Invoice"
+msgstr "اختر فاتورة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Select invoice first for printing."
+msgstr "اختر فاتورة أولًا للطباعة."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/native_inventory.py:0
+msgid "Select this store's native cash wallet."
+msgstr "اختر خزينة النقدية الداخلية لهذا الفرع."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Selected wallet was not found for this store."
+msgstr "لم يتم العثور على الخزينة المحددة لهذا الفرع."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Show New"
+msgstr "عرض الجديد"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Snapshot:"
+msgstr "اللقطة:"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Start IP and End IP are required."
+msgstr "عنوانا IP للبداية والنهاية مطلوبان."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__store_id
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_native_cash_close__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_close_wizard.py:0
+msgid "Store %s has no IP configured."
+msgstr "الفرع %s ليس له عنوان IP مُعد."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Store %s has no eplus serial configured."
+msgstr "الفرع %s ليس له رقم إي بلس مُعد."
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Store is required."
+msgstr "الفرع مطلوب."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.js:0
+msgid "Thank you."
+msgstr "شكرًا لك."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "The current selection will not change when new invoices arrive."
+msgstr "لن يتغير الاختيار الحالي عند وصول فواتير جديدة."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "This invoice has no items."
+msgstr "لا تحتوي هذه الفاتورة على أصناف."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "This invoice is no longer pending. Refresh the details or clear the selection."
+msgstr "لم تعد هذه الفاتورة معلقة. حدّث التفاصيل أو ألغِ الاختيار."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Total invoices:"
+msgstr "إجمالي الفواتير:"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Total:"
+msgstr "الإجمالي:"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Unexpected return save response."
+msgstr "استجابة غير متوقعة عند حفظ المرتجع."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__wallet_name
+msgid "Wallet"
+msgstr "الخزينة"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_close_wizard.py:0
+msgid "Wallet %s was not found."
+msgstr "لم يتم العثور على الخزينة %s."
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard__line_ids
+msgid "Wallet Balances"
+msgstr "أرصدة الخزائن"
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__wallet_id
+msgid "Wallet ID"
+msgstr "معرف الخزينة"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Wallet is required."
+msgstr "الخزينة مطلوبة."
+
+#. module: ab_sales_cashier
+#: model:ir.model.fields,field_description:ab_sales_cashier.field_ab_sales_cashier_close_wizard_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: ab_sales_cashier
+#. odoo-python
+#: code:addons/ab_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "You do not have access to the cashier screen."
+msgstr "ليس لديك صلاحية الوصول إلى شاشة أمين الصندوق."
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "is"
+msgstr "بحالة"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "new invoices arrived"
+msgstr "فاتورة جديدة وصلت"
+
+#. module: ab_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_sales_cashier/static/src/cashier/cashier_action.xml:0
+msgid "↑ ↓ Navigate"
+msgstr "↑ ↓ للتنقل"

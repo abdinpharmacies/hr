@@ -1,0 +1,20 @@
+<odoo>
+<record id="ab_inventory_header_legacy_reference_form" model="ir.ui.view">
+<field name="name">ab_inventory_header.legacy.reference</field><field name="model">ab_inventory_header</field>
+<field name="inherit_id" ref="ab_inventory.ab_inventory_header_view_form"/>
+<field name="arch" type="xml"><xpath expr="//sheet" position="inside">
+<field name="migration_reference_missing" invisible="1"/>
+<group string="Unresolved Source Reference" invisible="not migration_reference_missing">
+<div class="alert alert-warning" role="alert" colspan="2">The source reference no longer exists. Historical values are preserved. Resolve the reference before editing this record.</div>
+<field name="migration_source_references"/>
+</group></xpath></field></record>
+<record id="ab_accounting_tracking_legacy_reference_form" model="ir.ui.view">
+<field name="name">ab_accounting_tracking.legacy.reference</field><field name="model">ab_accounting_tracking</field>
+<field name="inherit_id" ref="ab_accounting_tracking.ab_accounting_tracking_view_form"/>
+<field name="arch" type="xml"><xpath expr="//sheet" position="inside">
+<field name="migration_reference_missing" invisible="1"/>
+<group string="Unresolved Source Reference" invisible="not migration_reference_missing">
+<div class="alert alert-warning" role="alert" colspan="2">The source reference no longer exists. Historical values are preserved. Resolve the reference before editing this record.</div>
+<field name="migration_source_references"/>
+</group></xpath></field></record>
+</odoo>

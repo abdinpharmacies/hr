@@ -1,0 +1,1256 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_branch_api
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-07 13:41+0000\n"
+"PO-Revision-Date: 2026-09-07 13:41+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "A request token between 16 and 128 characters is required."
+msgstr "يلزم رمز طلب يتراوح طوله بين 16 و128 حرفاً."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "A stable record reference is required."
+msgstr "يلزم مرجع ثابت للسجل."
+
+#. module: ab_branch_api
+#: model:res.groups,name:ab_branch_api.group_branch_api
+msgid "API User"
+msgstr "مستخدم واجهة البرمجة"
+
+#. module: ab_branch_api
+#: model:ir.ui.menu,name:ab_branch_api.access_menu
+msgid "Access"
+msgstr "صلاحيات الوصول"
+
+#. module: ab_branch_api
+#: model:ir.model.constraint,message:ab_branch_api.constraint_ab_branch_api_access_unique_access
+msgid "Access already exists for this user and store."
+msgstr "صلاحية الوصول موجودة بالفعل لهذا المستخدم والفرع."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__active
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__allow_cost
+msgid "Allow Cost"
+msgstr "السماح بعرض التكلفة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__allow_post
+msgid "Allow Posting"
+msgstr "السماح بالترحيل"
+
+#. module: ab_branch_api
+#: model:ir.model.constraint,message:ab_branch_api.constraint_ab_branch_api_operation_unique_reservation
+msgid "Another return for this invoice needs completion or reconciliation."
+msgstr "يوجد مرتجع آخر لهذه الفاتورة يحتاج إلى الإكمال أو المطابقة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "At most 200 products may be requested."
+msgstr "يمكن طلب 200 صنف كحد أقصى."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api
+#: model:ir.module.category,name:ab_branch_api.category_branch_api
+#: model:ir.ui.menu,name:ab_branch_api.api_menu
+#: model:res.groups.privilege,name:ab_branch_api.privilege_branch_api
+msgid "Branch API"
+msgstr "واجهة برمجة الفرع"
+
+#. module: ab_branch_api
+#: model:ir.actions.act_window,name:ab_branch_api.access_action
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api_access
+msgid "Branch API Access"
+msgstr "صلاحيات واجهة برمجة الفرع"
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api_operation
+msgid "Branch API Operation"
+msgstr "عملية واجهة برمجة الفرع"
+
+#. module: ab_branch_api
+#: model:ir.actions.act_window,name:ab_branch_api.operation_action
+msgid "Branch API Operations"
+msgstr "عمليات واجهة برمجة الفرع"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Branch API access is required."
+msgstr "يلزم الحصول على صلاحية واجهة برمجة الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Branch module does not support field: %s"
+msgstr "وحدة الفرع لا تدعم الحقل: %s"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Branch product unit is missing or ambiguous."
+msgstr "وحدة الصنف في الفرع غير موجودة أو غير محددة بشكل فريد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Branch reference is missing or ambiguous: %s"
+msgstr "مرجع الفرع غير موجود أو غير محدد بشكل فريد: %s"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Branch sale submitted."
+msgstr "تم إرسال فاتورة البيع إلى الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Branch sale was not pushed to E-Plus."
+msgstr "لم يتم ترحيل فاتورة الفرع إلى إي بلس."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__create_uid
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__create_date
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api__display_name
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__display_name
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__display_name
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_header__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__done
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api__id
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__id
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__id
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_header__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid product unit conversion in E-Plus."
+msgstr "تحويل وحدة الصنف في إي بلس غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Invalid return line or quantity."
+msgstr "بند المرتجع أو الكمية غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Invoice does not belong to this branch."
+msgstr "الفاتورة لا تخص هذا الفرع."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__kind
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__write_uid
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__write_date
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__message
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__uncertain
+msgid "Needs Reconciliation"
+msgstr "بحاجة إلى المطابقة"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Operation outcome needs reconciliation. Check the branch before retrying."
+msgstr "نتيجة العملية تحتاج إلى المطابقة. تحقق من الفرع قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#: model:ir.ui.menu,name:ab_branch_api.operation_menu
+msgid "Operations"
+msgstr "العمليات"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__payload_hash
+msgid "Payload Hash"
+msgstr "بصمة بيانات الطلب"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__processing
+msgid "Processing"
+msgstr "قيد التنفيذ"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Product is required."
+msgstr "الصنف مطلوب."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__record_id
+msgid "Record"
+msgstr "السجل"
+
+#. module: ab_branch_api
+#: model:ir.model.constraint,message:ab_branch_api.constraint_ab_branch_api_operation_unique_token
+msgid "Request token already exists."
+msgstr "رمز الطلب موجود بالفعل."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Request token belongs to another operation."
+msgstr "رمز الطلب يخص عملية أخرى."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__reservation_key
+msgid "Reservation Key"
+msgstr "مفتاح الحجز"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__result
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__kind__return
+msgid "Return"
+msgstr "مرتجع"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Return invoice does not match the request."
+msgstr "فاتورة المرتجع لا تطابق الطلب."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Return outcome needs reconciliation. Check the branch operation before "
+"retrying."
+msgstr ""
+"نتيجة المرتجع تحتاج إلى المطابقة. تحقق من عملية الفرع قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Return product does not match the original invoice line."
+msgstr "صنف المرتجع لا يطابق بند الفاتورة الأصلية."
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__kind__sale
+msgid "Sale"
+msgstr "بيع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Source invoice must be saved before posting a return."
+msgstr "يجب حفظ الفاتورة الأصلية قبل ترحيل المرتجع."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__store_id
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "The branch E-Plus server is not configured."
+msgstr "لم يتم إعداد خادم إي بلس للفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "The request token was already used with different data."
+msgstr "تم استخدام رمز الطلب مسبقاً مع بيانات مختلفة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "This branch operation is not allowed."
+msgstr "عملية الفرع هذه غير مسموح بها."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__token
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__token
+msgid "Token"
+msgstr "الرمز"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Unsupported record reference."
+msgstr "مرجع السجل غير مدعوم."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Unsupported sale field: %s"
+msgstr "حقل البيع غير مدعوم: %s"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_access__user_id
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "فواتير المبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "A bearer credential is required."
+msgstr "يلزم استخدام بيانات اعتماد من نوع Bearer."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid ""
+"Choose an active non-administrator internal user with the Branch API User "
+"role."
+msgstr ""
+"اختر مستخدماً داخلياً نشطاً غير مسؤول، لديه دور مستخدم واجهة برمجة الفرع."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Configure the service user's business permissions first. Enabling "
+"programmatic key management applies to all eligible users in this database."
+msgstr ""
+"اضبط صلاحيات العمل لمستخدم الخدمة أولاً. يسري تفعيل إدارة المفاتيح برمجياً "
+"على جميع المستخدمين المؤهلين في قاعدة البيانات هذه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Confirm database-wide programmatic API key management."
+msgstr "أكد تفعيل إدارة مفاتيح API برمجياً على مستوى قاعدة البيانات."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Copy this key into the callcenter connection now. It is valid for 90 days "
+"and will not be displayed again after closing."
+msgstr ""
+"انسخ هذا المفتاح إلى اتصال الكول سنتر الآن. صلاحيته 90 يوماً ولن يظهر مرة "
+"أخرى بعد الإغلاق."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_enrollment__database_name
+msgid "Database Name"
+msgstr "اسم قاعدة البيانات"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_enrollment__enable_programmatic
+msgid "Enable database-wide programmatic API key management"
+msgstr "تفعيل إدارة مفاتيح API برمجياً على مستوى قاعدة البيانات"
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid "Generate Credential"
+msgstr "إنشاء بيانات اعتماد"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_enrollment__generated_key
+msgid "Generated Key"
+msgstr "المفتاح المنشأ"
+
+#. module: ab_branch_api
+#: model:ir.actions.act_window,name:ab_branch_api.enrollment_action
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api_enrollment
+#: model:ir.ui.menu,name:ab_branch_api.enrollment_menu
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid "Prepare Callcenter Connection"
+msgstr "إعداد اتصال الكول سنتر"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Settings administrator access is required."
+msgstr "يلزم امتلاك صلاحية مسؤول الإعدادات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "The credential does not belong to this integration user."
+msgstr "بيانات الاعتماد لا تخص مستخدم التكامل هذا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Use a dedicated non-administrator integration user."
+msgstr "استخدم مستخدم تكامل مخصصاً لا يملك صلاحيات المسؤول."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Configure the service user's business permissions first. The generated API "
+"key has no expiration date."
+msgstr ""
+"قم بإعداد صلاحيات العمل لمستخدم التكامل أولاً. مفتاح واجهة البرمجة الذي يتم "
+"إنشاؤه ليس له تاريخ انتهاء."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Copy this permanent key into the callcenter connection now. It will not be "
+"displayed again after closing."
+msgstr ""
+"انسخ هذا المفتاح الدائم إلى اتصال مركز الاتصال الآن. لن يتم عرضه مرة أخرى "
+"بعد الإغلاق."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "An active replica is required for this DB serial."
+msgstr ""
+"يلزم وجود قاعدة بيانات متماثلة نشطة لهذا الرقم التسلسلي لقاعدة البيانات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Configure an active default sales store within the replica allowed stores."
+msgstr ""
+"قم بإعداد مخزن مبيعات افتراضي نشط ضمن المخازن المسموح بها لقاعدة البيانات "
+"المتماثلة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "DB serial does not match this branch server."
+msgstr "الرقم التسلسلي لقاعدة البيانات لا يطابق خادم هذا الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "DB serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيانات عدداً صحيحاً موجباً."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Requested products are not accessible."
+msgstr "لا تملك صلاحية الوصول إلى المنتجات المطلوبة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Use an active internal non-administrator user."
+msgstr "استخدم مستخدماً داخلياً نشطاً لا يملك صلاحيات المسؤول."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"A return employee is required. Log in to the callcenter POS or select a "
+"return employee in the Administrator return form."
+msgstr ""
+"يجب تحديد موظف المرتجع. سجّل الدخول إلى نقطة بيع مركز الاتصال أو اختر موظف "
+"المرتجع في نموذج المرتجع الخاص بالمسؤول."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "An authorized API SQL request is required."
+msgstr "يلزم طلب معتمد لواجهة برمجة تطبيقات الفرع للاتصال بقاعدة البيانات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "An unambiguous active sales store is required for this E-Plus serial."
+msgstr "يجب أن يطابق الرقم التسلسلي لإي بلس مخزن مبيعات نشطًا واحدًا فقط."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة برمجة تطبيقات نقطة البيع"
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة برمجة تطبيقات شاشة المبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "Select a store or configure a default sales store for this operation."
+msgstr "اختر مخزنًا أو اضبط مخزن مبيعات افتراضيًا لهذه العملية."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Store E-Plus serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي للمخزن في إي بلس عددًا صحيحًا موجبًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "The API SQL request belongs to another database or user."
+msgstr ""
+"طلب قاعدة البيانات لواجهة برمجة التطبيقات يخص قاعدة بيانات أو مستخدمًا آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "The SQL store does not match the authorized API store."
+msgstr ""
+"مخزن استعلام قاعدة البيانات لا يطابق المخزن المعتمد لطلب واجهة برمجة "
+"التطبيقات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The return employee and employee cost center must be active on this branch."
+msgstr "يجب أن يكون موظف المرتجع ومركز تكلفته نشطين في هذا الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The return employee has no valid E-Plus mapping on this branch. Configure "
+"the employee cost center E-Plus serial before retrying."
+msgstr ""
+"لا يوجد ربط صالح لموظف المرتجع مع إي بلس في هذا الفرع. اضبط الرقم التسلسلي "
+"لإي بلس في مركز تكلفة الموظف قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The return employee is missing or ambiguous on this branch. Check the "
+"employee cost center code."
+msgstr ""
+"موظف المرتجع غير موجود أو يوجد أكثر من سجل مطابق له في هذا الفرع. تحقق من "
+"كود مركز تكلفة الموظف."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "The selected store E-Plus endpoint is unreachable."
+msgstr "تعذر الوصول إلى خادم إي بلس للمخزن المحدد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "The selected store has no E-Plus server address."
+msgstr "لم يتم ضبط عنوان خادم إي بلس للمخزن المحدد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "The selected store is not in the replica Allowed Sales Stores."
+msgstr "المخزن المحدد غير مدرج ضمن مخازن المبيعات المسموح بها في قاعدة الفرع."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_eplus_connect
+msgid "ab_eplus_connect"
+msgstr "موصل إي بلس"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "An active sales store with an E-Plus serial is required."
+msgstr "يلزم اختيار مخزن مبيعات نشط له رقم تسلسلي في إي بلس."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Can not get data for multiple headers"
+msgstr "لا يمكن جلب البيانات لعدة فواتير في الوقت نفسه."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "فاتورة مرتجع مبيعات إي بلس"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "E-Plus returned invalid stock values."
+msgstr "أعاد إي بلس قيم مخزون غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Please enter sth_id (Original Invoice) first."
+msgstr "يرجى إدخال رقم الفاتورة الأصلية أولًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid ""
+"Return invoice lines changed. Review the source invoice before retrying."
+msgstr "تغيرت بنود فاتورة المرتجع. راجع الفاتورة الأصلية قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Return product is missing or ambiguous on this branch."
+msgstr "صنف المرتجع غير موجود أو توجد له سجلات متطابقة متعددة في هذا الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Saved returns cannot be modified."
+msgstr "لا يمكن تعديل المرتجعات المحفوظة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Stock rows do not belong to the selected store and products."
+msgstr "بيانات المخزون لا تخص المخزن والأصناف المحددة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "The source invoice has no returnable lines."
+msgstr "لا تحتوي الفاتورة الأصلية على بنود قابلة للإرجاع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Unsupported return invoice query. Update the Branch API integration."
+msgstr ""
+"استعلام فاتورة المرتجع غير مدعوم. حدّث تكامل واجهة برمجة تطبيقات الفرع."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "بنود المبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "At most 200 invoices may be requested."
+msgstr "يمكن طلب 200 فاتورة كحد أقصى."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api_snapshot
+msgid "Branch API Snapshot"
+msgstr "لقطة بيانات واجهة الفرع"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__kind__customer
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid branch bill reference."
+msgstr "مرجع فاتورة الفرع غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid page offset."
+msgstr "موضع الصفحة غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid print format."
+msgstr "تنسيق الطباعة غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Only completed sales days can be requested."
+msgstr "يمكن طلب أيام المبيعات المكتملة فقط."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__owner_id
+msgid "Owner"
+msgstr "المالك"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__payload
+msgid "Payload"
+msgstr "البيانات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Start the snapshot at the first page."
+msgstr "ابدأ لقطة البيانات من الصفحة الأولى."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "The bill does not belong to the selected branch."
+msgstr "الفاتورة لا تخص الفرع المحدد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "The branch returned invalid sales data."
+msgstr "أعاد الفرع بيانات مبيعات غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "The snapshot expired or belongs to another request."
+msgstr "انتهت صلاحية لقطة البيانات أو أنها تخص طلباً آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Provide at most 200 valid sale request tokens."
+msgstr "أرسل 200 رمز طلب بيع صالح كحد أقصى."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_header__is_callcenter_order
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_return_header__is_callcenter_order
+msgid "Created by Call Center"
+msgstr "تم إنشاؤه بواسطة مركز الاتصال"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_origin.py:0
+msgid "The call-center origin cannot be changed."
+msgstr "لا يمكن تغيير مصدر إنشاء فاتورة مركز الاتصال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Only call-center invoices can be returned."
+msgstr "يمكن إرجاع فواتير مركز الاتصال فقط."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__commit_evidence
+msgid "Commit Evidence"
+msgstr "أدلة تأكيد الحفظ"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__retryable
+msgid "Ready to Retry"
+msgstr "جاهز لإعادة المحاولة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__recovery_enabled
+msgid "Recovery Enabled"
+msgstr "الاستعادة التلقائية مفعلة"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The branch could not record the posting identifiers. Retry using the same "
+"bill."
+msgstr ""
+"تعذر على الفرع تسجيل معرفات ترحيل الفاتورة. أعد المحاولة باستخدام الفاتورة "
+"نفسها."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The branch found conflicting or incomplete posting evidence. Automatic retry"
+" is paused to prevent a duplicate bill; contact support with this bill "
+"reference."
+msgstr ""
+"وجد الفرع أدلة ترحيل متعارضة أو غير مكتملة. تم إيقاف إعادة المحاولة "
+"التلقائية لمنع تكرار الفاتورة؛ تواصل مع الدعم وأرسل مرجع هذه الفاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The branch is still processing this request. Retry shortly using the same "
+"bill."
+msgstr ""
+"لا يزال الفرع يعالج هذا الطلب. أعد المحاولة بعد قليل باستخدام الفاتورة "
+"نفسها."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid "The stored bill does not match the authorized branch operation."
+msgstr "الفاتورة المحفوظة لا تطابق عملية الفرع المصرح بها."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid "More than one invoice matches the stored request."
+msgstr "توجد أكثر من فاتورة تطابق الطلب المحفوظ."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The invoice identifier or request marker does not match the stored bill."
+msgstr "معرف الفاتورة أو علامة الطلب لا يطابق الفاتورة المحفوظة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"Invoice %(invoice)s has %(header)s declared lines but %(details)s stored "
+"detail rows."
+msgstr ""
+"الفاتورة %(invoice)s مسجل بها عدد بنود %(header)s، بينما عدد صفوف التفاصيل "
+"المحفوظة هو %(details)s."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The invoice does not match the transaction identifier recorded before "
+"commit."
+msgstr "الفاتورة لا تطابق معرف العملية المسجل قبل تأكيد الحفظ."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The legacy bill has an invoice identifier, but no matching branch invoice "
+"was found."
+msgstr ""
+"الفاتورة القديمة لها معرف، ولكن لم يتم العثور على فاتورة مطابقة في الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"This older return has no commit journal to establish whether it was posted."
+msgstr ""
+"هذا المرتجع القديم ليس له سجل لتأكيد الحفظ يمكن من خلاله تحديد ما إذا كان قد"
+" تم ترحيله."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The return, cash transaction and payment records do not form one complete "
+"transaction."
+msgstr "سجلات المرتجع والحركة النقدية والدفع لا تشكل عملية واحدة مكتملة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"This older request is still marked as processing and has no recovery "
+"journal."
+msgstr "هذا الطلب القديم لا يزال مسجلاً كقيد المعالجة وليس له سجل استعادة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"Branch operation %(operation)s could not be reconciled: %(reason)s No bill "
+"was resubmitted."
+msgstr ""
+"تعذر التحقق من نتيجة عملية الفرع %(operation)s: %(reason)s لم تتم إعادة "
+"إرسال أي فاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Callcenter sale transport selection is no longer supported. Upgrade the "
+"callcenter module."
+msgstr ""
+"لم يعد اختيار مسار إرسال مبيعات مركز الاتصال مدعومًا. يرجى ترقية وحدة مركز "
+"الاتصال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "A positive request revision is required."
+msgstr "يجب تحديد رقم مراجعة طلب موجب."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__attempt_history
+msgid "Attempt History"
+msgstr "سجل المحاولات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "Branch submission could not be confirmed. Retry the original bill."
+msgstr ""
+"تعذر تأكيد إرسال الفاتورة إلى الفرع. أعد المحاولة باستخدام الفاتورة الأصلية."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "Invalid sale payload."
+msgstr "بيانات فاتورة البيع غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "Only a confirmed rejected bill can accept the next corrected revision."
+msgstr "يمكن إرسال المراجعة المصححة التالية فقط لفاتورة تأكد رفضها."
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__rejected
+msgid "Rejected"
+msgstr "مرفوضة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__request_payload
+msgid "Request Payload"
+msgstr "بيانات الطلب"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__request_revision
+msgid "Request Revision"
+msgstr "مراجعة الطلب"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__sale_guard_version
+msgid "Sale Guard Version"
+msgstr "إصدار حماية إرسال البيع"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__sale_prepared_revision
+msgid "Sale Prepared Revision"
+msgstr "مراجعة البيع التي تم تجهيزها"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "The branch invoice is incomplete; the original bill remains Unknown."
+msgstr "فاتورة الفرع غير مكتملة؛ تظل الفاتورة الأصلية غير مؤكدة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "The first request revision must be one."
+msgstr "يجب أن يكون رقم مراجعة الطلب الأول واحدًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Use an active internal user."
+msgstr "استخدم مستخدمًا داخليًا نشطًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"%(product)s: requested %(requested).3f, available %(available).3f %(unit)s"
+msgstr "%(product)s: المطلوب %(requested).3f، المتاح %(available).3f %(unit)s"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"Current branch stock is insufficient. Select a reason for every affected line; Other requires details.\n"
+"%s"
+msgstr ""
+"رصيد الفرع الحالي غير كافٍ. اختر سبباً لكل سطر متأثر؛ ويتطلب اختيار «أخرى» إدخال التفاصيل.\n"
+"%s"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid "Invalid quantity in a line (<= 0)."
+msgstr "كمية غير صالحة في أحد السطور (أقل من أو تساوي صفر)."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid "Line with missing product E-Plus serial."
+msgstr "يوجد سطر لصنف بدون رقم مرجعي في إي بلس."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Phone is required."
+msgstr "رقم الهاتف مطلوب."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"Some invoice products are inactive or missing from branch stock data. Review"
+" the products before submitting."
+msgstr ""
+"بعض أصناف الفاتورة غير نشطة أو غير موجودة في بيانات رصيد الفرع. راجع الأصناف"
+" قبل الإرسال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid "The branch returned invalid stock data."
+msgstr "أعاد الفرع بيانات رصيد غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The selected contract is missing, inactive or duplicated on this branch. "
+"Synchronize contracts or select another contract."
+msgstr ""
+"التعاقد المحدد غير موجود أو غير نشط أو مكرر في هذا الفرع. زامن التعاقدات أو "
+"اختر تعاقداً آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The selected customer has no E-Plus reference. Synchronize customers before "
+"submitting."
+msgstr "العميل المحدد ليس لديه مرجع في إي بلس. زامن العملاء قبل الإرسال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The selected customer is missing, inactive or duplicated on this branch. "
+"Synchronize customers or select another customer."
+msgstr ""
+"العميل المحدد غير موجود أو غير نشط أو مكرر في هذا الفرع. زامن العملاء أو "
+"اختر عميلاً آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"Unable to verify current branch stock. Retry before submitting this invoice."
+msgstr ""
+"تعذر التحقق من رصيد الفرع الحالي. أعد المحاولة قبل إرسال هذه الفاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid "A valid customer E-Plus reference is required."
+msgstr "يجب تحديد مرجع صالح للعميل في إي بلس."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The branch customer is inactive or incomplete. Review the customer before "
+"using it."
+msgstr ""
+"بيانات العميل في الفرع غير مكتملة أو العميل غير نشط. راجع بياناته قبل "
+"استخدامه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The customer does not exist in this branch. Search by phone in the customer "
+"dialog and create the customer if not found."
+msgstr ""
+"العميل غير موجود في هذا الفرع. ابحث برقم الهاتف في نافذة العميل، ثم أنشئ "
+"العميل إذا لم يتم العثور عليه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The customer is archived on this branch. Review the customer before using "
+"it."
+msgstr "العميل مؤرشف في هذا الفرع. راجع بياناته قبل استخدامه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The customer reference is duplicated on this branch. Review the customer "
+"records before retrying."
+msgstr "مرجع العميل مكرر في هذا الفرع. راجع سجلات العميل قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#: model:ir.module.module,description:base.module_ab_branch_api
+msgid ""
+"Authenticated branch API for sales, returns, stock and customer operations."
+msgstr ""
+"واجهة برمجة تطبيقات الفرع مع المصادقة لعمليات المبيعات والمرتجعات والمخزون "
+"والعملاء."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid "Invalid sale field descriptor."
+msgstr "وصف حقل المبيعات غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid "Invalid sale metadata context."
+msgstr "سياق البيانات الوصفية للمبيعات غير صالح."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_sale_metadata__metadata
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_header__metadata
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_line__metadata
+msgid "Metadata"
+msgstr "البيانات الوصفية"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid ""
+"Missing source metadata for %s. Correct and resubmit the rejected bill from "
+"the updated callcenter."
+msgstr ""
+"البيانات الوصفية للمصدر مفقودة للحقل %s. صحح الفاتورة المرفوضة وأعد إرسالها "
+"من مركز الاتصال بعد تحديثه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid "Sale metadata is server-managed."
+msgstr "تتم إدارة البيانات الوصفية للمبيعات بواسطة الخادم."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_branch_sale_metadata
+msgid "Technical Sale Metadata"
+msgstr "البيانات الوصفية الفنية للمبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid ""
+"A positive source serial and valid database UUID are required together."
+msgstr "يجب إدخال رقم مصدر موجب ومعرّف UUID صالح لقاعدة البيانات معًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Submission source identity is invalid or unauthorized."
+msgstr "هوية مصدر الإرسال غير صالحة أو غير مصرح بها."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_res_users__ab_branch_source_db_serial
+msgid "Branch Source DB Serial"
+msgstr "الرقم التسلسلي لقاعدة بيانات المصدر"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_res_users__ab_branch_source_database_uuid
+msgid "Branch Source Database UUID"
+msgstr "معرّف UUID لقاعدة بيانات المصدر"
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.view_users_source_identity
+msgid "Submission Source"
+msgstr "مصدر الإرسال"
+
+#. module: ab_branch_api
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "The submitted promotion is not eligible for this invoice."
+msgstr "العرض المرسل غير مؤهل لهذه الفاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Promotion %(promotion)s is not eligible: source %(source)s, destination "
+"%(destination)s."
+msgstr ""
+"العرض %(promotion)s غير مؤهل: المصدر %(source)s، الوجهة %(destination)s."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Only a Call Center user can submit source identity."
+msgstr "يمكن لمستخدم مركز الاتصال فقط إرسال هوية المصدر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Source DB serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة بيانات المصدر عددًا صحيحًا موجبًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Source DB serial must identify exactly one active replica."
+msgstr ""
+"يجب أن يحدد الرقم التسلسلي للمصدر قاعدة بيانات متماثلة نشطة واحدة فقط."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Invalid source database UUID metadata."
+msgstr "بيانات معرّف UUID لقاعدة بيانات المصدر غير صالحة."

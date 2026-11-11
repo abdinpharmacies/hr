@@ -80,7 +80,7 @@ class UserAccountAuth(models.Model):
 
     parent_path = fields.Char(related='account_id.parent_path')
     account_serial = fields.Integer(related='account_id.id', string="Account ID")
-    group_id = fields.Many2one('ab_accounting_auth_group', required=True, index=True)
+    group_id = fields.Many2one('ab_accounting_auth_group', index=True)
     own_account = fields.Boolean(default=False, index=True)
     allow_account = fields.Boolean(default=False, index=True)
     prevent_enquiry = fields.Boolean(default=False, index=True)
@@ -95,7 +95,7 @@ class AllowedFieldsAuth(models.Model):
     _rec_name = 'allowed_field_id'
 
     allowed_field_id = fields.Many2one('ab_accounting_allowed_field', required=True)
-    group_id = fields.Many2one('ab_accounting_auth_group', required=True, index=True)
+    group_id = fields.Many2one('ab_accounting_auth_group', index=True)
     allow_entry = fields.Boolean(default=True)
     allow_review = fields.Boolean(default=False)
 

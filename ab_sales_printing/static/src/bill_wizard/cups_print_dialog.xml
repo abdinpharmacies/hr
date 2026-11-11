@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_printing.CupsPrintDialog" t-inherit="ab_sales.BillWizardPrintDialog" t-inherit-mode="primary">
+        <xpath expr="//select[@t-on-change='onFormatInput']" position="attributes">
+            <attribute name="t-att-disabled">state.saving or state.loadingPrinters</attribute>
+        </xpath>
+        <xpath expr="//select[@t-on-change='onPrinterInput']" position="attributes">
+            <attribute name="t-att-disabled">state.saving or state.loadingPrinters</attribute>
+        </xpath>
+        <xpath expr="//select[@t-on-change='onPrinterInput']/option[@value='0']" position="before">
+            <option t-if="state.missingPrinter" value="-1" selected="selected" disabled="disabled">Select a printer</option>
+        </xpath>
+        <xpath expr="//button[@t-on-click='refreshPrinters']" position="attributes">
+            <attribute name="t-att-disabled">state.saving or state.loadingPrinters</attribute>
+        </xpath>
+        <xpath expr="//button[@t-on-click='confirm']" position="attributes">
+            <attribute name="t-att-disabled">state.saving or state.loadingPrinters or state.missingPrinter</attribute>
+        </xpath>
+        <xpath expr="//button[@t-on-click='cancel']" position="attributes">
+            <attribute name="t-att-disabled">state.saving</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('form-text')]" position="replace">
+            <div class="form-text">Lists printers available to the server. Use System dialog for printers connected to your computer.</div>
+            <div t-if="state.missingPrinter" class="alert alert-warning">The selected printer is unavailable. Choose another printer or select System dialog again.</div>
+        </xpath>
+    </t>
+</templates>

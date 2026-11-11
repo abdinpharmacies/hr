@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_doctor_sys,access_ab_doctor_sys,model_ab_doctor,base.group_system,1,1,1,0
+access_ab_doctor_user,access_ab_doctor_user,model_ab_doctor,base.group_user,1,0,0,0
+access_ab_product_doctor_prescription_user,access_ab_product_doctor_prescription_user,model_ab_product_doctor_prescription,base.group_user,1,1,1,1
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_doctor.BillWizardDoctorFilterInherit"
+       t-inherit="ab_sales.BillWizardAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_bill_wizard_filter_product')]" position="after">
+            <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_doctor">
+                <label class="form-label mb-1">Doctor</label>
+                <ABMany2many
+                        relation="'ab_doctor'"
+                        value="state.filters.doctorSelection"
+                        onUpdate="onDoctorSelectionUpdate"
+                        placeholder="'Doctor...'"
+                        domain="doctorSelectionDomain"
+                        context="{active_test: false}"
+                        canCreate="false"
+                        canCreateEdit="false"
+                        canQuickCreate="false"
+                        canOpen="false"
+                        canWrite="false"
+                        string="'Doctors'"
+                />
+            </div>
+        </xpath>
+    </t>
+</templates>

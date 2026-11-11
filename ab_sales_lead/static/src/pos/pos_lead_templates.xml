@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_lead.PosActionLeadHook"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'ab_pos_product_cards')]//t[@t-call='ab_sales.ProductCard']"
+               position="inside">
+            <t t-set="onLead" t-value="openSalesLeadDialog"/>
+        </xpath>
+    </t>
+
+    <t t-name="ab_sales_lead.AddProductsLeadHook"
+       t-inherit="ab_sales.AddProductsAction"
+       t-inherit-mode="extension">
+        <xpath expr="//t[@t-call='ab_sales.ProductCard']" position="inside">
+            <t t-set="onLead" t-value="false"/>
+        </xpath>
+    </t>
+
+    <t t-name="ab_sales_lead.BarcodeQtyLeadHook"
+       t-inherit="ab_sales.BarcodeQtyDialog"
+       t-inherit-mode="extension">
+        <xpath expr="//t[@t-call='ab_sales.ProductCard']" position="inside">
+            <t t-set="onLead" t-value="false"/>
+        </xpath>
+    </t>
+
+    <t t-name="ab_sales_lead.ProductCardLeadButton"
+       t-inherit="ab_sales.ProductCard"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'card-body')]/div[contains(@class, 'justify-content-between')][last()]/div[1]"
+               position="after">
+            <t t-if="onLead">
+                <button type="button"
+                        class="btn btn-warning btn-sm ab_pos_product_lead_btn"
+                        title="Lost sale, special order, and item report"
+                        t-on-click.stop="() => onLead(p)">
+                    <i class="fa fa-flag me-1" aria-hidden="true"/>
+                    <span>Lead&amp;Report</span>
+                </button>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="ab_sales_lead.PosLeadDialog">
+        <Dialog title="state.leadType === 'item_report' ? 'Item Report' : state.leadType === 'special_order' ? 'Special Order' : 'Lost Sale'" size="'lg'">
+            <div class="ab_sales_lead_pos_dialog">
+                <div class="ab_sales_lead_product_summary">
+                    <div class="ab_sales_lead_product_name" t-esc="productTitle()"/>
+                    <div class="ab_sales_lead_product_meta">
+                        <span t-esc="props.product.code || '-'"/>
+                        <span>|</span>
+                        <span t-esc="'Balance: ' + props.formatQty(props.product.balance || 0)"/>
+                        <span>|</span>
+                        <span t-esc="'Store: ' + props.formatQty(props.product.pos_balance || 0)"/>
+                    </div>
+                </div>
+
+                <div class="btn-group w-100 ab_sales_lead_type_switch" role="group">
+                    <button type="button"
+                            t-attf-class="btn #{state.leadType === 'lost_sales' ? 'btn-warning' : 'btn-outline-warning'}"
+                            t-on-click="() => setLeadType('lost_sales')">
+                        Lost Sale
+                    </button>
+                    <button type="button"
+                            t-attf-class="btn #{state.leadType === 'special_order' ? 'btn-primary' : 'btn-outline-primary'}"
+                            t-on-click="() => setLeadType('special_order')">
+                        Special Order
+                    </button>
+                    <button type="button"
+                            t-attf-class="btn #{state.leadType === 'item_report' ? 'btn-info' : 'btn-outline-info'}"
+                            t-on-click="() => setLeadType('item_report')">
+                        Item Report
+                    </button>
+                </div>
+
+                <t t-if="state.leadType !== 'item_report'">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Quantity</label>
+                            <input class="form-control"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   t-att-value="state.quantity"
+                                   t-on-input="(ev) => onFieldInput('quantity', ev.target.value)"/>
+                            <div t-if="state.errors.quantity" class="text-danger small" t-esc="state.errors.quantity"/>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Customer Phone</label>
+                            <input class="form-control"
+                                   type="text"
+                                   t-att-value="state.customerPhone"
+                                   t-on-input="(ev) => onFieldInput('customerPhone', ev.target.value)"/>
+                            <div t-if="state.errors.customerPhone" class="text-danger small" t-esc="state.errors.customerPhone"/>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label">Customer Name</label>
+                            <input class="form-control"
+                                   type="text"
+                                   t-att-value="state.customerName"
+                                   t-on-input="(ev) => onFieldInput('customerName', ev.target.value)"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Customer Address</label>
+                            <input class="form-control"
+                                   type="text"
+                                   t-att-value="state.customerAddress"
+                                   t-on-input="(ev) => onFieldInput('customerAddress', ev.target.value)"/>
+                        </div>
+                    </div>
+
+                    <t t-if="state.leadType === 'lost_sales'">
+                        <div>
+                            <label class="form-label">Lost Reason</label>
+                            <select class="form-select"
+                                    t-att-value="state.lostReason"
+                                    t-on-change="(ev) => onFieldInput('lostReason', ev.target.value)">
+                                <option value="not_available">Product not available</option>
+                                <option value="insufficient_quantity">Insufficient quantity</option>
+                                <option value="price_too_high">Price too high</option>
+                                <option value="customer_found_alternative">Customer found alternative</option>
+                                <option value="customer_refused_wait">Customer refused to wait</option>
+                                <option value="missing_product_info">Missing product information</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div t-if="state.errors.lostReason" class="text-danger small" t-esc="state.errors.lostReason"/>
+                        </div>
+                    </t>
+
+                    <t t-if="state.leadType === 'special_order'">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Needed Date</label>
+                                <input class="form-control"
+                                       type="date"
+                                       t-att-value="state.neededDate"
+                                       t-on-input="(ev) => onFieldInput('neededDate', ev.target.value)"/>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Contact Preference</label>
+                                <select class="form-select"
+                                        t-att-value="state.contactPreference"
+                                        t-on-change="(ev) => onFieldInput('contactPreference', ev.target.value)">
+                                    <option value="phone">Phone</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="in_store">In Store</option>
+                                </select>
+                            </div>
+                        </div>
+                    </t>
+
+                    <div>
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control"
+                                  rows="3"
+                                  t-att-value="state.notes"
+                                  t-on-input="(ev) => onFieldInput('notes', ev.target.value)"/>
+                    </div>
+                </t>
+
+                <t t-if="state.leadType === 'item_report'">
+                    <div class="ab_sales_lead_report">
+                        <div class="ab_sales_lead_report_header">
+                            <div class="ab_sales_lead_report_totals">
+                                <span>
+                                    <strong t-esc="props.formatQty(state.reportTotals.total_balance || 0)"/>
+                                    <small>Total Balance</small>
+                                </span>
+                                <span>
+                                    <strong t-esc="props.formatQty(state.reportTotals.total_last_30_days_sales || 0)"/>
+                                    <small>Last 30 Days Sales</small>
+                                </span>
+                            </div>
+                            <input class="form-control ab_sales_lead_report_store_filter"
+                                   type="text"
+                                   placeholder="Filter store"
+                                   t-att-value="state.reportStoreFilter"
+                                   t-on-input="(ev) => onFieldInput('reportStoreFilter', ev.target.value)"/>
+                        </div>
+                        <t t-if="state.reportLoading">
+                            <div class="ab_sales_lead_report_empty">
+                                <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
+                                <span>Loading report</span>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <t t-if="state.reportMessage">
+                                <div class="ab_sales_lead_report_empty" t-esc="state.reportMessage"/>
+                            </t>
+                            <t t-else="">
+                                <div class="table-responsive ab_sales_lead_report_table_wrap">
+                                    <table class="table table-sm table-hover ab_sales_lead_report_table">
+                                        <thead>
+                                            <tr>
+                                                <th>Store</th>
+                                                <th class="text-end">Balance</th>
+                                                <th class="text-end">Last 30 Days Sales</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="!reportRows().length">
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted">No stores found</td>
+                                                </tr>
+                                            </t>
+                                            <t t-foreach="reportRows()" t-as="row" t-key="row.store_id">
+                                                <tr t-att-class="row.balance &gt; 0 ? 'has-balance' : 'no-balance'">
+                                                    <td>
+                                                        <strong t-esc="row.store_name"/>
+                                                        <small t-if="row.store_code" t-esc="row.store_code"/>
+                                                    </td>
+                                                    <td class="text-end" t-esc="props.formatQty(row.balance || 0)"/>
+                                                    <td class="text-end" t-esc="props.formatQty(row.last_30_days_sales || 0)"/>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+                </t>
+
+                <div class="ab_sales_lead_dialog_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">
+                        <t t-if="state.leadType === 'item_report'">Close</t>
+                        <t t-else="">Cancel</t>
+                    </button>
+                    <button class="btn btn-primary"
+                            type="button"
+                            t-if="state.leadType !== 'item_report'"
+                            t-att-disabled="state.saving"
+                            t-on-click="save">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

@@ -1,0 +1,430 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_test_sync
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-16 13:33+0000\n"
+"PO-Revision-Date: 2026-08-16 13:33+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_category__sync
+msgid "AB Sync Test Category Mirror"
+msgstr "نسخة فئة اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_header__sync
+msgid "AB Sync Test Header Mirror"
+msgstr "نسخة رأس اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_line__sync
+msgid "AB Sync Test Line Mirror"
+msgstr "نسخة سطر اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:res.groups.privilege,name:ab_test_sync.privilege_ab_test_sync_access
+msgid "AB Sync Test Mirror Access"
+msgstr "صلاحية نسخ اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_sync_mixin
+msgid "AB Sync Test Mirror Mixin"
+msgstr "مكوّن نسخ اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.module.category,name:ab_test_sync.module_category_ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_sync_root
+msgid "AB Sync Test Mirrors"
+msgstr "نسخ اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_tag__sync
+msgid "AB Sync Test Tag Mirror"
+msgstr "نسخة وسم اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__active
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__active
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__active
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__active
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_category__sync__source_operation__archive
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__source_operation__archive
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_line__sync__source_operation__archive
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_sync_mixin__source_operation__archive
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_tag__sync__source_operation__archive
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__attributes_json
+msgid "Attributes JSON"
+msgstr "خصائص JSON"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__category_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__category_id
+msgid "Category"
+msgstr "الفئة"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_category__sync_uniq_branch_source
+msgid "Category mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة الفئة فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__child_ids
+msgid "Child Categories"
+msgstr "الفئات الفرعية"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__code
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__color
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__color
+msgid "Color"
+msgstr "اللون"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__state__confirmed
+msgid "Confirmed"
+msgstr "مؤكد"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__create_uid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__create_uid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__create_uid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__create_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__create_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__create_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__db_serial
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__db_serial
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__db_serial
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__db_serial
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__db_serial
+msgid "DB Serial"
+msgstr "الرقم التسلسلي لقاعدة البيانات"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__display_name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__display_name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__display_name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__display_name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__event_uuid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__event_uuid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__event_uuid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__event_uuid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__event_uuid
+msgid "Event UUID"
+msgstr "معرّف UUID للحدث"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__payload_json
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__payload_json
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__payload_json
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__payload_json
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__payload_json
+msgid "Full Source Payload"
+msgstr "حمولة المصدر الكاملة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__header_id
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_header__sync_uniq_branch_source
+msgid "Header mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة الرأس فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__priority__high
+msgid "High"
+msgstr "مرتفع"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__write_uid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__write_uid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__write_uid
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__line_count
+msgid "Line Count"
+msgstr "عدد السطور"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_line__sync_uniq_branch_source
+msgid "Line mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة السطر فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_test_sync.view_ab_test_header_sync_form
+msgid "Lines"
+msgstr "السطور"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__name
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__priority__normal
+msgid "Normal"
+msgstr "عادي"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__parent_id
+msgid "Parent Category"
+msgstr "الفئة الأصلية"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__planned_date
+msgid "Planned Date"
+msgstr "التاريخ المخطط"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__priority
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_test_sync
+#: model_terms:ir.ui.view,arch_db:ab_test_sync.view_ab_test_header_sync_form
+msgid "Raw Payload"
+msgstr "الحمولة الخام"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__reference
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__settings_json
+msgid "Settings JSON"
+msgstr "إعدادات JSON"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__source_operation
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__source_operation
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__source_operation
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__source_operation
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__source_operation
+msgid "Source Operation"
+msgstr "عملية المصدر"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__rec_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__rec_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__rec_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__rec_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__rec_id
+msgid "Source Record ID"
+msgstr "معرّف سجل المصدر"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__source_revision
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__source_revision
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__source_revision
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__source_revision
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__source_revision
+msgid "Source Revision"
+msgstr "مراجعة المصدر"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__source_write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__source_write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__source_write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__source_write_date
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__source_write_date
+msgid "Source Write Date"
+msgstr "تاريخ كتابة المصدر"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__subtotal
+msgid "Subtotal"
+msgstr "الإجمالي الفرعي"
+
+#. module: ab_test_sync
+#: model:res.groups,name:ab_test_sync.group_ab_test_sync_manager
+msgid "Sync Test Manager"
+msgstr "مدير اختبار المزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_category_sync
+msgid "Synced Categories"
+msgstr "الفئات المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_header_sync
+msgid "Synced Headers"
+msgstr "الرؤوس المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_line_sync
+msgid "Synced Lines"
+msgstr "السطور المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_tag_sync
+msgid "Synced Tags"
+msgstr "الوسوم المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_category_sync
+msgid "Synced Test Categories"
+msgstr "فئات الاختبار المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_header_sync
+msgid "Synced Test Headers"
+msgstr "رؤوس الاختبار المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_line_sync
+msgid "Synced Test Lines"
+msgstr "سطور الاختبار المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_tag_sync
+msgid "Synced Test Tags"
+msgstr "وسوم الاختبار المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_category__sync__synced_at
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__synced_at
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__synced_at
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_sync_mixin__synced_at
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_tag__sync__synced_at
+msgid "Synchronized At"
+msgstr "تمت المزامنة في"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_tag__sync_uniq_branch_source
+msgid "Tag mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة الوسم فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__tag_ids
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__tag_ids
+msgid "Tags"
+msgstr "الوسوم"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__total_amount
+msgid "Total Amount"
+msgstr "المبلغ الإجمالي"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_header__sync__transaction_date
+msgid "Transaction Date"
+msgstr "تاريخ المعاملة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_line__sync__unit_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_category__sync__source_operation__upsert
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__source_operation__upsert
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_line__sync__source_operation__upsert
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_sync_mixin__source_operation__upsert
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_tag__sync__source_operation__upsert
+msgid "Upsert"
+msgstr "إنشاء أو تحديث"
+
+#. module: ab_test_sync
+#: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__priority__urgent
+msgid "Urgent"
+msgstr "عاجل"

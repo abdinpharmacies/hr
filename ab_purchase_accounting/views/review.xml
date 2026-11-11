@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_accounting_review_list" model="ir.ui.view">
+        <field name="name">ab_purchase_accounting_review.list</field>
+        <field name="model">ab_purchase_accounting_review</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0" decoration-warning="review_state == 'needs_attention'">
+                <field name="document_reference"/>
+                <field name="branch_id"/>
+                <field name="document_date"/>
+                <field name="event_type"/>
+                <field name="total_amount"/>
+                <field name="tax_amount"/>
+                <field name="review_state" widget="badge"/>
+                <field name="captured_by" optional="hide"/>
+                <field name="captured_at"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_purchase_accounting_review_form" model="ir.ui.view">
+        <field name="name">ab_purchase_accounting_review.form</field>
+        <field name="model">ab_purchase_accounting_review</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0" duplicate="0">
+                <header>
+                    <button name="action_open_document" type="object" string="Open Document"/>
+                    <button name="action_mark_reviewed" type="object" string="Mark Reviewed"
+                            groups="ab_accounting.group_ab_accounting_reviewer" invisible="review_state == 'reviewed'"/>
+                    <button name="action_needs_attention" type="object" string="Needs Attention"
+                            groups="ab_accounting.group_ab_accounting_reviewer" invisible="review_state == 'needs_attention'"/>
+                    <field name="review_state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert">For manual review only. No accounting journal is posted by this log or its review actions.</div>
+                    <group>
+                        <group>
+                            <field name="document_reference"/>
+                            <field name="document_date"/>
+                            <field name="branch_id"/>
+                            <field name="event_type"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="total_amount"/>
+                            <field name="tax_amount"/>
+                            <field name="inventory_amount"/>
+                            <field name="captured_by"/>
+                            <field name="captured_at"/>
+                        </group>
+                    </group>
+                    <group invisible="not issues"><field name="issues"/></group>
+                    <notebook>
+                        <page string="Proposed Entries"><field name="proposed_entries" nolabel="1"/></page>
+                        <page string="Invoice Snapshot"><field name="invoice_details" nolabel="1"/></page>
+                        <page string="Review">
+                            <group>
+                                <field name="review_note"/>
+                                <field name="reviewed_by"/>
+                                <field name="reviewed_at"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_purchase_accounting_review_search" model="ir.ui.view">
+        <field name="name">ab_purchase_accounting_review.search</field>
+        <field name="model">ab_purchase_accounting_review</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="document_reference"/>
+                <field name="branch_id"/>
+                <field name="event_type"/>
+                <filter name="pending" string="Pending Review" domain="[('review_state', '=', 'pending')]"/>
+                <filter name="attention" string="Needs Attention" domain="[('review_state', '=', 'needs_attention')]"/>
+                <group>
+                    <filter name="branch" string="Branch" context="{'group_by': 'branch_id'}"/>
+                    <filter name="status" string="Review Status" context="{'group_by': 'review_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_purchase_accounting_review" model="ir.actions.act_window">
+        <field name="name">Accounting Review Logs</field>
+        <field name="res_model">ab_purchase_accounting_review</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_purchase_accounting_review_search"/>
+    </record>
+    <menuitem id="menu_purchase_accounting_review" name="Accounting Review Logs"
+              parent="ab_accounting.root_menu" action="action_purchase_accounting_review" sequence="7"
+              groups="ab_accounting.group_ab_accounting_accountant,ab_purchase.group_ab_purchase_read_user"/>
+</odoo>

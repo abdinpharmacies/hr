@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_root"
+                  name="Test Module"
+                  sequence="100"/>
+    </data>
+</odoo>

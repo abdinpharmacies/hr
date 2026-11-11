@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ab_sales_channel_whatsapp" model="ab_sales_channel">
+        <field name="name">WhatsApp</field>
+        <field name="code">whatsapp</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="ab_sales_channel_instagram" model="ab_sales_channel">
+        <field name="name">Instagram</field>
+        <field name="code">instagram</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="ab_sales_channel_messenger" model="ab_sales_channel">
+        <field name="name">Messenger</field>
+        <field name="code">messenger</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="ab_sales_channel_tiktok" model="ab_sales_channel">
+        <field name="name">TikTok</field>
+        <field name="code">tiktok</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="ab_sales_channel_cosmo_care" model="ab_sales_channel">
+        <field name="name">Cosmo Care</field>
+        <field name="code">cosmo_care</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="ab_sales_channel_eva_psp" model="ab_sales_channel">
+        <field name="name">Eva PSP</field>
+        <field name="code">eva_psp</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="ab_sales_channel_hot_line" model="ab_sales_channel">
+        <field name="name">Hot Line</field>
+        <field name="code">hot_line</field>
+        <field name="sequence">70</field>
+    </record>
+
+    <record id="ab_sales_channel_whatsapp_ad" model="ab_sales_channel">
+        <field name="name">WhatsApp AD</field>
+        <field name="code">whatsapp_ad</field>
+        <field name="sequence">80</field>
+    </record>
+
+    <record id="ab_sales_channel_mobile_call" model="ab_sales_channel">
+        <field name="name">Mobile Call</field>
+        <field name="code">mobile_call</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <record id="ab_sales_channel_website" model="ab_sales_channel">
+        <field name="name">Website</field>
+        <field name="code">website</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="ab_sales_channel_telegram" model="ab_sales_channel">
+        <field name="name">Telegram</field>
+        <field name="code">telegram</field>
+        <field name="sequence">110</field>
+    </record>
+</odoo>

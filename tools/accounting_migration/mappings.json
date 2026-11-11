@@ -1,0 +1,74 @@
+{
+  "format_version": 1,
+  "models": {},
+  "fields": {},
+  "selections": {},
+  "xmlids": {
+    "base.group_private_addresses": "ab_migration_compat.group_private_addresses"
+  },
+  "ignore_fields": {},
+  "polymorphic": {
+    "ab_accounting_je_header": {
+      "res_header_id": "res_header_ref"
+    },
+    "ir.attachment": {
+      "res_id": "res_model"
+    },
+    "ab_inventory": {
+      "res_id": "model_ref"
+    },
+    "ab_inventory_header": {
+      "res_id": "model_ref"
+    }
+  },
+  "notes": [
+    "Current source already contains the accounting-base and HR/payroll splits; technical model names are unchanged.",
+    "Mappings are explicit overrides; identical stored field names and types use identity mapping.",
+    "Every ignored business field requires a documented reason in ignore_fields."
+  ],
+  "integer_links": {
+    "ab_accounting_tracking": {
+      "je_line": "ab_accounting_je_line"
+    },
+    "ab_inventory": {
+      "header_id": "ab_inventory_header"
+    }
+  },
+  "inverse_links": {
+    "res.users": {
+      "ab_hr_department": "user_id",
+      "ab_hr_employee": "user_id"
+    },
+    "resource.calendar": {
+      "resource.calendar.attendance": "calendar_id",
+      "resource.calendar.leaves": "calendar_id"
+    }
+  },
+  "source_aliases": {
+    "ab_account_header": "ab_accounting_je_header"
+  },
+  "retired_report_fields": {
+    "ab_accounting.field_ab_accounting_je_line_qry____last_update": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_purchase_inventory_cycle.field_ab_purchase_order_header__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_purchase_inventory_cycle.field_ab_po_invoice_qry__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_purchase_inventory_cycle.field_ab_invoice_entry_qry__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_stock_recycling.field_ab_stock_recycling_line__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_stock_recycling.field_ab_stock_recycling_need__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "abdin_cust.field_abdin_cust_bills_actions__explain": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "abdin_cust.field_abdin_cust_deduction__explain": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "abdin_cust.field_abdin_cust_bills_collection__explain": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_crm_complain.field_ab_crm_customer__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_stock_recycling.field_ab_stock_recycling_to_cycle__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_inventory_adjust.field_ab_inventory_adjust_header__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_inventory_adjust.field_ab_inventory_adjust_line__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_inventory_adjust.field_ab_inventory_eplus__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_inventory_committee.field_ab_committee_violation__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_pending_invoices.field_ab_pending_invoices__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "ab_visit_report.field_ab_visit_report_report__store_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "analytic.field_account_analytic_distribution__account_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json.",
+    "analytic.field_account_analytic_line__account_id": "Retired Odoo 15 field; remove only from saved report column selections and retain original metadata in the export and retired-report-fields.json."
+  },
+  "unidentified_groups": {
+    "All HR History": "ab_migration_compat.group_legacy_hr_history"
+  }
+}

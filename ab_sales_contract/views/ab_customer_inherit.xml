@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_customer_form_contract_view_inherit" model="ir.ui.view">
+            <field name="name">ab_customer_form_contract_view_inherit</field>
+            <field name="model">ab_customer</field>
+            <field name="inherit_id" ref="ab_customer.ab_customer_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                 <xpath expr="//sheet" position="inside">
+                      <notebook>
+                          <page name="contract_data" string="Contact Data">
+                              <group>
+                                  <field name="customer_type"/>
+                                  <field name="parent_id"/>
+                                  <field name="max_credit"/>
+                                  <field name="branch_id"/>
+                                  <field name="default_branch_id"/>
+                                  <field name="current_points"/>
+                              </group>
+                          </page>
+                      </notebook>
+                 </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

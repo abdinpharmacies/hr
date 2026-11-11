@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_stock_recycling_dist_view_tree" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_dist_view_tree</field>
+            <field name="model">ab_stock_recycling_dist</field>
+            <field name="arch" type="xml">
+                <list string="ab_stock_recycling_dist_tree">
+                    <field name="item_code" optional="show"/>
+                    <field name="item_id" optional="show"/>
+                    <field name="item_price" optional="show"/>
+                    <field name="file_source" optional="show"/>
+                    <field name="from_store_id" optional="show"/>
+                    <field name="stock_line_id" optional="show"/>
+                    <field name="to_store_id" optional="show"/>
+                    <field name="need_line_id" optional="show"/>
+                    <field name="qty" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_dist_view_form" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_dist_view_form</field>
+            <field name="model">ab_stock_recycling_dist</field>
+            <field name="arch" type="xml">
+                <form string="ab_stock_recycling_dist_form">
+                    <sheet>
+                        <group>
+                            <field name="item_code"/>
+                            <field name="item_id"/>
+                            <field name="file_source"/>
+                            <field name="from_store_id"/>
+                            <field name="stock_line_id"/>
+                            <field name="to_store_id"/>
+                            <field name="need_line_id"/>
+                            <field name="qty"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_dist_view_pivot" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_dist_view_pivot</field>
+            <field name="model">ab_stock_recycling_dist</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_stock_recycling_dist_pivot">
+                </pivot>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_dist_search" model="ir.ui.view">
+            <field name="name"></field>
+            <field name="model">ab_stock_recycling_dist</field>
+            <field name="arch" type="xml">
+                <search string="ab_stock_recycling_dist_search">
+                    <field name="item_id"/>
+                    <field name="from_store_id"/>
+                    <field name="file_source"/>
+                    <field name="to_store_id"/>
+                    <field name="header_id"/>
+                    <field name="qty"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_dist_action" model="ir.actions.act_window">
+            <field name="name">Stock dist</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_stock_recycling_dist</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_stock_recycling_dist_menu"
+                  name="Distribution"
+                  parent="ab_stock_recycling_data_sub_menu"
+                  action="ab_stock_recycling_dist_action"
+                  sequence="3"/>
+
+    </data>
+</odoo>

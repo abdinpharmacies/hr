@@ -1,0 +1,34 @@
+<odoo>
+    <!-- Exact read-only ACLs of the manually created Odoo 15 All HR History role.
+         No implied roles or permissive record rules are added. -->
+    <record id="group_legacy_hr_history" model="res.groups">
+        <field name="name">All HR History (Legacy)</field>
+    </record>
+    <record id="access_legacy_hr_history" model="ir.model.access">
+        <field name="name">Legacy HR history read access</field>
+        <field name="model_id" ref="ab_hr.model_ab_hr_emp_history"/>
+        <field name="group_id" ref="group_legacy_hr_history"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="access_legacy_hr_insurance" model="ir.model.access">
+        <field name="name">Legacy HR insurance read access</field>
+        <field name="model_id" ref="ab_hr.model_ab_hr_insurance_info"/>
+        <field name="group_id" ref="group_legacy_hr_history"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="access_legacy_hr_report" model="ir.model.access">
+        <field name="name">Legacy HR history report read access</field>
+        <field name="model_id" ref="ab_hr.model_ab_hr_history_report"/>
+        <field name="group_id" ref="group_legacy_hr_history"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>

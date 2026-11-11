@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_test_category_sync_manager,ab_test_category_sync manager,model_ab_test_category__sync,group_ab_test_sync_manager,1,0,0,0
+access_ab_test_tag_sync_manager,ab_test_tag_sync manager,model_ab_test_tag__sync,group_ab_test_sync_manager,1,0,0,0
+access_ab_test_header_sync_manager,ab_test_header_sync manager,model_ab_test_header__sync,group_ab_test_sync_manager,1,0,0,0
+access_ab_test_line_sync_manager,ab_test_line_sync manager,model_ab_test_line__sync,group_ab_test_sync_manager,1,0,0,0

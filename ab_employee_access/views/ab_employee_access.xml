@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_employee_access_view_list" model="ir.ui.view">
+            <field name="name">ab_employee_access_view_list</field>
+            <field name="model">ab_employee_access</field>
+            <field name="arch" type="xml">
+                <list string="ab_employee_access_list" multi_edit="1">
+                    <field name="employee_id" force_save="1"/>
+                    <field name="costcenter_id" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="job_id" optional="show"/>
+                    <field name="pos_role_id" optional="show"/>
+                    <field name="pos_allow_login" optional="show"/>
+                    <field name="pos_pin_expired" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_employee_access_view_form" model="ir.ui.view">
+            <field name="name">ab_employee_access_view_form</field>
+            <field name="model">ab_employee_access</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="costcenter_id"/>
+                                <field name="employee_id" force_save="1"/>
+                                <field name="department_id"/>
+                                <field name="job_id"/>
+                            </group>
+                            <group string="Login">
+                                <field name="pos_allow_login"/>
+                                <field name="pos_pin"
+                                       class="ab_masked_pin_input"
+                                       placeholder="PIN"/>
+                                <field name="pos_pin_last_changed"/>
+                                <field name="pos_pin_expired"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Role">
+                                <field name="pos_role_id"/>
+                                <field name="pos_use_custom_permissions"/>
+                                <field name="pos_allowed_store_ids" widget="many2many_tags"/>
+                            </group>
+                            <group string="Security Limits">
+                                <field name="pos_pin_rotation_days"/>
+                            </group>
+                        </group>
+                        <group>
+                            <button name="action_generate_pos_pin" type="object" string="Generate PIN"
+                                    class="btn-primary"/>
+                        </group>
+                        <group invisible="pos_use_custom_permissions == False">
+                            <group string="Custom Screens">
+                                <field name="pos_allow_pos_screen"/>
+                                <field name="pos_allow_cashier_screen"/>
+                                <field name="pos_allow_return_screen"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_employee_access_view_search" model="ir.ui.view">
+            <field name="name">ab_employee_access_view_search</field>
+            <field name="model">ab_employee_access</field>
+            <field name="arch" type="xml">
+                <search string="ab_employee_access_search">
+                    <field name="employee_id"/>
+                    <field name="pos_role_id"/>
+                    <filter name="login_enabled" string="Login Enabled" domain="[('pos_allow_login', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_employee_access_view_pivot" model="ir.ui.view">
+            <field name="name">ab_employee_access_view_pivot</field>
+            <field name="model">ab_employee_access</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_employee_access_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_employee_access_action" model="ir.actions.act_window">
+            <field name="name">Ab employee access</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_employee_access</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+
+        <record id="action_ab_employee_access_sales_employee" model="ir.actions.act_window">
+            <field name="name">POS Salespeople</field>
+            <field name="res_model">ab_employee_access</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_employee_access.ab_employee_access_view_search"/>
+        </record>
+
+    </data>
+</odoo>

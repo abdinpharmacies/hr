@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_job_role_mapping_list" model="ir.ui.view">
+        <field name="name">ab.employee.access.sales.job.role.mapping.list</field>
+        <field name="model">ab_employee_access_sales_job_role_mapping</field>
+        <field name="arch" type="xml">
+            <list><field name="job_id"/><field name="role_id"/></list>
+        </field>
+    </record>
+    <record id="view_job_role_mapping_form" model="ir.ui.view">
+        <field name="name">ab.employee.access.sales.job.role.mapping.form</field>
+        <field name="model">ab_employee_access_sales_job_role_mapping</field>
+        <field name="arch" type="xml">
+            <form><sheet><group><field name="job_id"/><field name="role_id"/></group></sheet></form>
+        </field>
+    </record>
+    <record id="view_job_role_mapping_search" model="ir.ui.view">
+        <field name="name">ab.employee.access.sales.job.role.mapping.search</field>
+        <field name="model">ab_employee_access_sales_job_role_mapping</field>
+        <field name="arch" type="xml">
+            <search><field name="job_id"/><field name="role_id"/></search>
+        </field>
+    </record>
+    <record id="action_job_role_mapping" model="ir.actions.act_window">
+        <field name="name">Job Role Mappings</field>
+        <field name="res_model">ab_employee_access_sales_job_role_mapping</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_job_role_mapping_search"/>
+    </record>
+</odoo>

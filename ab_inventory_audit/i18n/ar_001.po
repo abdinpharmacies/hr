@@ -1,0 +1,2947 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_inventory_audit
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-01 12:56+0000\n"
+"PO-Revision-Date: 2026-11-01 12:56+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.results
+msgid ""
+"<span>Central ledger movements only. Excluded and uncounted groups are shown"
+" explicitly. Expired stock remains included in physical counting.</span>"
+msgstr ""
+"<span>حركات السجل المركزي فقط. تظهر المجموعات المستبعدة وغير المعدودة "
+"صراحةً. تبقى الأصناف المنتهية الصلاحية ضمن العد الفعلي.</span>"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid ""
+"<span>Reference sheet only. Start Count or export an Excel count sheet "
+"before physical counting.</span>"
+msgstr ""
+"<span>ورقة مرجعية فقط. ابدأ العد أو صدّر ورقة عد إكسيل قبل العد "
+"الفعلي.</span>"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "A corrective audit must reference a posted audit in the same branch."
+msgstr "يجب أن يشير الجرد التصحيحي إلى جرد مرحّل في الفرع نفسه."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "A manager who performed an accepted count cannot approve this audit."
+msgstr "لا يمكن للمدير الذي أجرى عدّاً معتمداً الموافقة على هذا الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "A manager who performed an accepted count cannot post this audit."
+msgstr "لا يمكن للمدير الذي أجرى عدّاً معتمداً ترحيل هذا الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "A reason is required."
+msgstr "يجب إدخال سبب."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "A shortage cannot exceed the source reference balance."
+msgstr "لا يجوز أن يتجاوز العجز الرصيد المرجعي للمصدر."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__review
+msgid "Accept Count"
+msgstr "قبول العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Accept a surplus count before selecting its source."
+msgstr "اقبل عدّ الزيادة قبل اختيار مصدرها."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__accepted
+msgid "Accepted"
+msgstr "مقبول"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__accepted_count_id
+msgid "Accepted Count"
+msgstr "العد المقبول"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "Accounting configuration history cannot be deleted."
+msgstr "لا يمكن حذف سجل إعدادات المحاسبة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "Accounting configuration requires financial administration permission."
+msgstr "تتطلب إعدادات المحاسبة صلاحية الإدارة المالية."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Acknowledge that the new source cost was supplied."
+msgstr "أكد إدخال تكلفة المصدر الجديد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__action
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__active
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__state__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "علامة استثناء النشاط"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__actor_id
+msgid "Actor"
+msgstr "المستخدم المنفذ"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Add evidence using the attachment button in the chatter."
+msgstr "أضف المستندات باستخدام زر المرفقات في المحادثة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__adjustment_ids
+msgid "Adjustment"
+msgstr "التسوية"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Adjustments"
+msgstr "التسويات"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "After"
+msgstr "بعد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__allocation_qty
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__allocation_qty
+msgid "Allocation Qty"
+msgstr "كمية التوزيع"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__allocation_reason
+msgid "Allocation Reason"
+msgstr "سبب التوزيع"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Allocation direction must match the discrepancy."
+msgstr "يجب أن يطابق اتجاه التوزيع اتجاه الفرق."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "An active audit already covers this branch and product scope."
+msgstr "يوجد جرد نشط يغطي هذا الفرع ونطاق المنتجات بالفعل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "An audit manager is required."
+msgstr "يلزم مدير جرد."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__approval_digest
+msgid "Approval Digest"
+msgstr "بصمة الموافقة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__approval_revision
+msgid "Approval Revision"
+msgstr "مراجعة الموافقة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Approval and Accounting"
+msgstr "الموافقة والمحاسبة"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Approve"
+msgstr "موافقة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__source
+msgid "Approve Surplus Source"
+msgstr "اعتماد مصدر الزيادة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Approve the current revision before posting."
+msgstr "وافق على المراجعة الحالية قبل الترحيل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Approve the new surplus source before approval."
+msgstr "اعتمد مصدر الزيادة الجديد قبل الموافقة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__state__approved
+msgid "Approved"
+msgstr "تمت الموافقة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__approved_at
+msgid "Approved At"
+msgstr "وقت الموافقة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__approved_by
+msgid "Approved By"
+msgstr "الموافق"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Approver"
+msgstr "الموافق"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__assign
+msgid "Assign Counters"
+msgstr "تعيين القائمين بالعد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Assign the branch to every team member first."
+msgstr "عيّن الفرع لكل أعضاء الفريق أولاً."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__assigned_ids
+msgid "Assigned Counters"
+msgstr "القائمون بالعد المعيّنون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Attach files to an authorized audit record."
+msgstr "أرفق الملفات بسجل جرد مصرح لك به."
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ir_attachment
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__attachment_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__attachment_ids
+msgid "Attachment"
+msgstr "المرفق"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Attachments"
+msgstr "المرفقات"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Attempt %(number)s: %(counter)s"
+msgstr "المحاولة %(number)s: %(counter)s"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Attempt cancelled"
+msgstr "تم إلغاء محاولة العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_accounting_je_header__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_child__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__audit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__audit_id
+msgid "Audit"
+msgstr "الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.act_window,name:ab_inventory_audit.action_config
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_config
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_config
+msgid "Audit Accounting Configuration"
+msgstr "إعدادات محاسبة الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_count
+msgid "Audit Count Attempt"
+msgstr "محاولة عد الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_line
+msgid "Audit Count Group"
+msgstr "مجموعة عد الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_report_ab_inventory_audit_count_sheet
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Audit Count Sheet"
+msgstr "ورقة عد الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.report,name:ab_inventory_audit.report_count_sheet
+msgid "Audit Count Sheet (PDF)"
+msgstr "ورقة عد الجرد (PDF)"
+
+#. module: ab_inventory_audit
+#: model:res.groups,name:ab_inventory_audit.group_counter
+msgid "Audit Counter"
+msgstr "القائم بعد الجرد"
+
+#. module: ab_inventory_audit
+#: model:res.groups,name:ab_inventory_audit.group_config
+msgid "Audit Financial Configuration Administrator"
+msgstr "مسؤول الإعدادات المالية للجرد"
+
+#. module: ab_inventory_audit
+#: model:res.groups,name:ab_inventory_audit.group_financial
+msgid "Audit Financial Reader"
+msgstr "قارئ البيانات المالية للجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_event
+msgid "Audit History"
+msgstr "سجل الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_adjustment
+msgid "Audit Inventory Adjustment"
+msgstr "تسوية مخزون الجرد"
+
+#. module: ab_inventory_audit
+#: model:res.groups,name:ab_inventory_audit.group_manager
+msgid "Audit Manager"
+msgstr "مدير الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_product_source__audit_movement_ids
+msgid "Audit Movement"
+msgstr "حركة الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_product_source__audit_origin_id
+msgid "Audit Origin"
+msgstr "الجرد الأصلي"
+
+#. module: ab_inventory_audit
+#: model:res.groups,name:ab_inventory_audit.group_reviewer
+msgid "Audit Read-only Reviewer"
+msgstr "مراجع الجرد للقراءة فقط"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.act_window,name:ab_inventory_audit.action_results
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_results
+msgid "Audit Results and Adjustments"
+msgstr "نتائج الجرد والتسويات"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.report,name:ab_inventory_audit.report_pdf
+msgid "Audit Results and History (PDF)"
+msgstr "نتائج الجرد والسجل (PDF)"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.report,name:ab_inventory_audit.report_xlsx
+msgid "Audit Results and History (XLSX)"
+msgstr "نتائج الجرد والسجل (XLSX)"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.act_window,name:ab_inventory_audit.action_audits
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_sessions
+msgid "Audit Sessions"
+msgstr "جلسات الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__audit_source_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__audit_source_id
+msgid "Audit Source"
+msgstr "مصدر الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_source
+msgid "Audit Source Allocation"
+msgstr "توزيع مصادر الجرد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+#: code:addons/ab_inventory_audit/models/counting.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_wizard
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.wizard_form
+msgid "Audit Workflow"
+msgstr "إجراءات الجرد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit attachments cannot be moved to another record."
+msgstr "لا يمكن نقل مرفقات الجرد إلى سجل آخر."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit attachments cannot be shared publicly."
+msgstr "لا يمكن مشاركة مرفقات الجرد بصورة عامة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Audit history cannot be deleted."
+msgstr "لا يمكن حذف سجل الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Audit history cannot be rewritten."
+msgstr "لا يمكن إعادة كتابة سجل الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit inventory history must be preserved."
+msgstr "يجب الحفاظ على سجل حركات مخزون الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit journals are immutable. Create a corrective audit."
+msgstr "قيود الجرد غير قابلة للتعديل. أنشئ جرداً تصحيحياً."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit journals can only be created by audit posting."
+msgstr "لا يمكن إنشاء قيود الجرد إلا من خلال ترحيل الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit journals cannot be deleted."
+msgstr "لا يمكن حذف قيود الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit source links are maintained by posting."
+msgstr "تتم إدارة روابط مصادر الجرد من خلال الترحيل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit source links cannot be changed."
+msgstr "لا يمكن تغيير روابط مصادر الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Audit stock sources cannot be deleted."
+msgstr "لا يمكن حذف مصادر مخزون الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Available"
+msgstr "المتاح"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__available_qty
+msgid "Available Qty"
+msgstr "الكمية المتاحة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__balance_before
+msgid "Balance Before"
+msgstr "الرصيد قبل التسوية"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__input_method__barcode
+msgid "Barcode"
+msgstr "الباركود"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Before"
+msgstr "قبل"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__boundary
+msgid "Boundary"
+msgstr "لقطة حدود العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__cancel_attempt
+msgid "Cancel Attempt"
+msgstr "إلغاء محاولة العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__cancel
+msgid "Cancel Audit"
+msgstr "إلغاء الجرد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Cancel active attempts before changing assignments."
+msgstr "ألغِ المحاولات النشطة قبل تغيير التكليفات."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Cancel or archive audits instead of deleting them."
+msgstr "ألغِ الجرد أو أرشفه بدلاً من حذفه."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__state__cancelled
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__state__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__category_id
+msgid "Category"
+msgstr "الفئة"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.wizard_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__product_code
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_child__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__company_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__comparison_price
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Comparison Price"
+msgstr "سعر المقارنة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__config_id
+msgid "Config"
+msgstr "الإعدادات"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__config_snapshot
+msgid "Config Snapshot"
+msgstr "لقطة الإعدادات"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Configure audit accounting for this branch and date."
+msgstr "اضبط محاسبة الجرد لهذا الفرع والتاريخ."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Configure valid unit conversions."
+msgstr "اضبط تحويلات وحدات صحيحة."
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.wizard_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__count
+msgid "Confirm Count"
+msgstr "تأكيد العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__correction_of_id
+msgid "Correction Of"
+msgstr "تصحيح للجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__cost_supplied
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__cost_supplied
+msgid "Cost Supplied"
+msgstr "تم إدخال التكلفة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__costcenter_id
+msgid "Costcenter"
+msgstr "مركز التكلفة"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__count_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__count_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__count_id
+msgid "Count"
+msgstr "العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Count Attempts"
+msgstr "محاولات العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Count Groups"
+msgstr "مجموعات العد"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.wizard_form
+msgid "Count Quantities"
+msgstr "كميات العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Count accepted"
+msgstr "تم قبول العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Count assignments changed"
+msgstr "تم تغيير تكليفات العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Count confirmed"
+msgstr "تم تأكيد العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Count invalidated"
+msgstr "تم إبطال العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Count quantities must be nonnegative."
+msgstr "يجب ألا تكون كميات العد سالبة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Count sheet exported"
+msgstr "تم تصدير ورقة العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Count started"
+msgstr "بدأ العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__counted
+msgid "Counted"
+msgstr "تم العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__counted_qty
+msgid "Counted Qty"
+msgstr "الكمية المعدودة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__counter_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__counter_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__counter_ids
+msgid "Counter"
+msgstr "القائم بالعد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__team_ids
+msgid "Counters"
+msgstr "القائمون بالعد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__state__counting
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__counting
+msgid "Counting"
+msgstr "قيد العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Counting opened"
+msgstr "تم فتح العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Counting permission is required."
+msgstr "تلزم صلاحية العد."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__coverage_complete
+msgid "Coverage Complete"
+msgstr "التغطية مكتملة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Coverage can only change in an active audit."
+msgstr "لا يمكن تغيير التغطية إلا في جرد نشط."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Coverage included"
+msgstr "تم إدراج التغطية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "Create a new configuration version for future audits."
+msgstr "أنشئ إصداراً جديداً من الإعدادات للجرد المستقبلي."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Created"
+msgstr "تم الإنشاء"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__create_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__create_uid
+msgid "Created by"
+msgstr "أُنشئ بواسطة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__create_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Current stock or reservations prevent the approved shortage."
+msgstr "المخزون الحالي أو الحجوزات تمنع ترحيل العجز المعتمد."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__date_from
+msgid "Date From"
+msgstr "من تاريخ"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__date_to
+msgid "Date To"
+msgstr "إلى تاريخ"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__discount
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__discount
+msgid "Discount"
+msgstr "الخصم"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__discrepancy
+msgid "Discrepancy"
+msgstr "الفرق"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.act_window,name:ab_inventory_audit.action_review
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_review
+msgid "Discrepancy Review"
+msgstr "مراجعة الفروق"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_accounting_je_header__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_accounting_je_line__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_child__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_product_source__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ir_attachment__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_report_ab_inventory_audit_count_sheet__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_report_ab_inventory_audit_results__display_name
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_report_ab_inventory_audit_results_xlsx__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__doctype_id
+msgid "Doctype"
+msgstr "نوع المستند"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Document the reason for accepting a discrepancy."
+msgstr "وثّق سبب قبول الفرق."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__download
+msgid "Download Count Sheet"
+msgstr "تنزيل ورقة العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Duplicate count row."
+msgstr "صف عد مكرر."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__ended_at
+msgid "Ended At"
+msgstr "وقت الانتهاء"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Enter a count; use explicit zero for empty stock."
+msgstr "أدخل كمية العد؛ استخدم صفراً صريحاً للمخزون الخالي."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Enter a finite numeric quantity."
+msgstr "أدخل كمية رقمية محدودة."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__event_ids
+msgid "Event"
+msgstr "الحدث"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__input_method__excel
+msgid "Excel"
+msgstr "إكسيل"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__exclude
+msgid "Exclude New Coverage"
+msgstr "استبعاد التغطية الجديدة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__decision__excluded
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__state__excluded
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__excluded
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_observation__state__excluded
+msgid "Excluded"
+msgstr "مستبعد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__exclusion_reason
+msgid "Exclusion Reason"
+msgstr "سبب الاستبعاد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__exp_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__exp_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__exp_date
+msgid "Exp Date"
+msgstr "تاريخ الصلاحية"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__expired
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Expired"
+msgstr "منتهي الصلاحية"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Expiry"
+msgstr "الصلاحية"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Export Count Sheet"
+msgstr "تصدير ورقة العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__export
+msgid "Export Selected Groups"
+msgstr "تصدير المجموعات المحددة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__export_token
+msgid "Export Token"
+msgstr "رمز التصدير"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Fast Count"
+msgstr "العد السريع"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__file
+msgid "File"
+msgstr "الملف"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__filename
+msgid "Filename"
+msgstr "اسم الملف"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Finished"
+msgstr "انتهى"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Foreign audit or attempt identifier."
+msgstr "معرّف الجرد أو محاولة العد لا يخص هذا السجل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Formulas are not allowed."
+msgstr "الصيغ غير مسموح بها."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__frozen_cost
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__frozen_cost
+msgid "Frozen Cost"
+msgstr "التكلفة المثبتة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__frozen_value
+msgid "Frozen Value"
+msgstr "القيمة المثبتة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__scope__full
+msgid "Full Branch"
+msgstr "الفرع بالكامل"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__group_key
+msgid "Group Key"
+msgstr "مفتاح المجموعة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__has_message
+msgid "Has Message"
+msgstr "توجد رسالة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "History"
+msgstr "السجل"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_accounting_je_header__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_accounting_je_line__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_child__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_product_source__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ir_attachment__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_report_ab_inventory_audit_count_sheet__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_report_ab_inventory_audit_results__id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_report_ab_inventory_audit_results_xlsx__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى استثناء نشاط."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، تتطلب الرسائل الجديدة انتباهك."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__message_has_error
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، توجد أخطاء في تسليم بعض الرسائل."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__import
+msgid "Import Count Sheet"
+msgstr "استيراد ورقة العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__import_digest
+msgid "Import Digest"
+msgstr "بصمة الاستيراد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__include
+msgid "Include New Coverage"
+msgstr "إدراج التغطية الجديدة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__input_method
+msgid "Input Method"
+msgstr "طريقة الإدخال"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__state__invalid
+msgid "Invalid"
+msgstr "غير صالح"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__inventory_account_id
+msgid "Inventory Account"
+msgstr "حساب المخزون"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory__model_ref__ab_inventory_audit_adjustment
+#: model:ir.module.category,name:ab_inventory_audit.category_audit
+#: model:res.groups.privilege,name:ab_inventory_audit.privilege_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.results
+msgid "Inventory Audit"
+msgstr "جرد المخزون"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_report_ab_inventory_audit_results
+msgid "Inventory Audit Report"
+msgstr "تقرير جرد المخزون"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_report_ab_inventory_audit_results_xlsx
+msgid "Inventory Audit XLSX Report"
+msgstr "تقرير جرد المخزون XLSX"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Inventory Audit: Fast Count"
+msgstr "جرد المخزون: العد السريع"
+
+#. module: ab_inventory_audit
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_audit
+msgid "Inventory Audits"
+msgstr "عمليات جرد المخزون"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory
+msgid "Inventory Movement"
+msgstr "حركة المخزون"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__large_qty
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__large_qty
+msgid "Large Qty"
+msgstr "كمية الوحدة الكبيرة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__write_uid
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__write_date
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__latest_attempt_id
+msgid "Latest Attempt"
+msgstr "آخر محاولة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__line_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__line_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__line_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__line_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__line_id
+msgid "Line"
+msgstr "السطر"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__manager_id
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__input_method__manual
+msgid "Manual"
+msgstr "يدوي"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__medium_qty
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__medium_qty
+msgid "Medium Qty"
+msgstr "كمية الوحدة المتوسطة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ تسليم الرسالة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__movement_id
+msgid "Movement"
+msgstr "الحركة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__movement_history
+msgid "Movement History"
+msgstr "سجل الحركات"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Movements After Accepted Count"
+msgstr "الحركات بعد العد المقبول"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "موعد نشاطي النهائي"
+
+#. module: ab_inventory_audit
+#: model:ir.actions.act_window,name:ab_inventory_audit.action_assignments
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_assignments
+msgid "My Count Assignments"
+msgstr "تكليفات العد الخاصة بي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "New Audit"
+msgstr "جرد جديد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__new
+msgid "New Coverage"
+msgstr "تغطية جديدة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "New Source"
+msgstr "مصدر جديد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__new_source_approved
+msgid "New Source Approved"
+msgstr "تم اعتماد المصدر الجديد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "New groups require a coverage decision."
+msgstr "المجموعات الجديدة تتطلب قراراً بشأن التغطية."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "موعد النشاط التالي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__no_expiry
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__no_expiry
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__no_expiry
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "No Expiry"
+msgstr "بلا صلاحية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "No assigned groups are available for export."
+msgstr "لا توجد مجموعات مكلّف بها متاحة للتصدير."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.js:0
+msgid "No product matches this barcode."
+msgstr "لا يوجد منتج يطابق هذا الباركود."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "No-expiry stock cannot have an expiry date."
+msgstr "لا يمكن أن يكون للمخزون بلا صلاحية تاريخ انتهاء."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ تسليم"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__occurred_at
+msgid "Occurred At"
+msgstr "وقت الحدث"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Only a counting audit can enter review."
+msgstr "لا يمكن فتح المراجعة إلا لجرد قيد العد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Only a reviewed audit can be approved."
+msgstr "لا يمكن الموافقة إلا على جرد قيد المراجعة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Only approved surplus sources can be created."
+msgstr "لا يمكن إنشاء سوى مصادر الزيادة المعتمدة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Only draft audits can be prepared."
+msgstr "لا يمكن تجهيز سوى الجرد في حالة المسودة."
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid ""
+"Only movements available in the central ledger are monitored. Exclusions "
+"reduce audit coverage."
+msgstr ""
+"تتم مراقبة الحركات المتاحة في السجل المركزي فقط. تقلل الاستبعادات تغطية "
+"الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Only newly discovered coverage may be included or excluded."
+msgstr "لا يمكن إدراج أو استبعاد سوى التغطية المكتشفة حديثاً."
+
+#. module: ab_inventory_audit
+#: model:ir.model.constraint,message:ab_inventory_audit.constraint_ab_inventory_audit_count_one_active
+msgid "Only one count may be active per group."
+msgstr "لا يُسمح إلا بمحاولة عد نشطة واحدة لكل مجموعة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Only posted or cancelled audits can be archived."
+msgstr "لا يمكن أرشفة سوى الجرد المرحّل أو الملغى."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Only the counter may cancel an active attempt, with a reason."
+msgstr "يمكن للقائم بالعد فقط إلغاء محاولة نشطة مع ذكر السبب."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Only the counter who started this attempt can confirm it."
+msgstr "يمكن للقائم بالعد الذي بدأ المحاولة فقط تأكيدها."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__opened_at
+msgid "Opened At"
+msgstr "وقت الفتح"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__origin
+msgid "Origin"
+msgstr "المصدر الأصلي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__allocate
+msgid "Override Allocation"
+msgstr "تعديل التوزيع"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Physical"
+msgstr "الفعلي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__physical_quantity
+msgid "Physical Quantity"
+msgstr "الكمية الفعلية"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__post
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Post Approved Audit"
+msgstr "ترحيل الجرد المعتمد"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__state__posted
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Posted"
+msgstr "مرحّل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__posted_at
+msgid "Posted At"
+msgstr "وقت الترحيل"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__posted_by
+msgid "Posted By"
+msgstr "المرحل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__posted_qty
+msgid "Posted Qty"
+msgstr "الكمية المرحلة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/integration.py:0
+msgid "Posted audit attachments cannot be changed or deleted."
+msgstr "لا يمكن تغيير مرفقات الجرد المرحّل أو حذفها."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Posting Reconciliation"
+msgstr "مطابقة الترحيل"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Prepare and Open"
+msgstr "تجهيز وفتح"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__preview
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__preview_cost
+msgid "Preview Cost"
+msgstr "معاينة التكلفة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__preview_digest
+msgid "Preview Digest"
+msgstr "بصمة المعاينة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__preview_value
+msgid "Preview Value"
+msgstr "معاينة القيمة"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.wizard_form
+msgid "Preview Workbook"
+msgstr "معاينة ملف إكسيل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Preview this exact workbook and resolve every row error first."
+msgstr "عاين هذا الملف بعينه وعالج جميع أخطاء الصفوف أولاً."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__product_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__product_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__product_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__product_id
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_product_source
+msgid "Products Source For Purchasing And Opening Balance"
+msgstr "مصادر المنتجات للشراء والأرصدة الافتتاحية"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__progress
+msgid "Progress"
+msgstr "التقدم"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_child
+msgid "Protected Audit Record"
+msgstr "سجل جرد محمي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__purchase_price
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__purchase_price
+msgid "Purchase Price"
+msgstr "سعر الشراء"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__qty
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__quantity
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Quantity must convert exactly to whole smallest units."
+msgstr "يجب أن تتحول الكمية بدقة إلى وحدات صحيحة من أصغر وحدة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__reason
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__reason
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__reason
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__invalid
+msgid "Recount Required"
+msgstr "إعادة العد مطلوبة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__reference_qty
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__reference_qty
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__reference_qty
+msgid "Reference Qty"
+msgstr "الكمية المرجعية"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Refresh Coverage"
+msgstr "تحديث التغطية"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__reopen
+msgid "Reopen Approval"
+msgstr "إعادة فتح الموافقة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Reopen the approval before changing reviewed data."
+msgstr "أعد فتح الموافقة قبل تغيير البيانات المراجعة."
+
+#. module: ab_inventory_audit
+#: model:ir.ui.menu,name:ab_inventory_audit.menu_reports
+msgid "Reports"
+msgstr "التقارير"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__recount
+msgid "Request Recount"
+msgstr "طلب إعادة العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Request a recount before replacing an accepted result."
+msgstr "اطلب إعادة العد قبل استبدال نتيجة مقبولة."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Reserved"
+msgstr "المحجوز"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__reserved_qty
+msgid "Reserved Qty"
+msgstr "الكمية المحجوزة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__resolution_reason
+msgid "Resolution Reason"
+msgstr "سبب معالجة المحاولة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Resolve active count attempts before approval."
+msgstr "عالج محاولات العد النشطة قبل الموافقة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Resolve every count and coverage decision before approval."
+msgstr "احسم كل عد وقرار تغطية قبل الموافقة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Resolve later invalid or active attempts before accepting this count."
+msgstr "عالج المحاولات اللاحقة غير الصالحة أو النشطة قبل قبول هذا العد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Resolved by an accepted recount."
+msgstr "تمت المعالجة بإعادة عد مقبولة."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Results and Coverage"
+msgstr "النتائج والتغطية"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__state__review
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Review"
+msgstr "مراجعة"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.line_form
+msgid "Review / Assign"
+msgstr "مراجعة / تكليف"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Review / Exclusion"
+msgstr "المراجعة / الاستبعاد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__review_reason
+msgid "Review Reason"
+msgstr "سبب المراجعة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Review opened"
+msgstr "تم فتح المراجعة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__revision
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__revision
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__revision
+msgid "Revision"
+msgstr "المراجعة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Row %(row)s: %(error)s"
+msgstr "الصف %(row)s: %(error)s"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ تسليم الرسالة النصية"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid ""
+"Scan to select a product, then choose its expiry and price group. Scanning "
+"never increments quantities."
+msgstr ""
+"امسح الباركود لاختيار منتج، ثم اختر مجموعة الصلاحية والسعر. المسح لا يزيد "
+"الكميات مطلقاً."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__scope
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Select Product"
+msgstr "اختيار المنتج"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__products
+msgid "Select Products by Category"
+msgstr "اختيار المنتجات حسب الفئة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Select a branch in an allowed company."
+msgstr "اختر فرعاً ضمن شركة مسموح بها."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select a category on a draft audit."
+msgstr "اختر فئة في جرد مسودة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Select a configured product unit."
+msgstr "اختر وحدة مضبوطة للمنتج."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select a count group."
+msgstr "اختر مجموعة عد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select a product and document the unidentified stock."
+msgstr "اختر منتجاً ووثّق المخزون غير المحدد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Select a source explicitly for a zero-reference surplus."
+msgstr "اختر مصدراً صراحةً للزيادة ذات الرصيد المرجعي الصفري."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select a source from this count group."
+msgstr "اختر مصدراً من مجموعة العد هذه."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Select a supported counting method."
+msgstr "اختر طريقة عد مدعومة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Select a valid count attempt from this group."
+msgstr "اختر محاولة عد صالحة من هذه المجموعة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Select an authorized audit manager."
+msgstr "اختر مدير جرد مخولاً."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select available count groups from this audit."
+msgstr "حدد مجموعات عد متاحة من هذا الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select count groups to export."
+msgstr "حدد مجموعات العد لتصديرها."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select counters from this audit team."
+msgstr "اختر القائمين بالعد من فريق هذا الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Select products for the partial audit."
+msgstr "اختر منتجات الجرد الجزئي."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select the active count attempt."
+msgstr "اختر محاولة العد النشطة."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__group_ids
+msgid "Selected Count Groups"
+msgstr "مجموعات العد المحددة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__product_ids
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit__scope__partial
+msgid "Selected Products"
+msgstr "المنتجات المحددة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__selling_price
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__selling_price
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__selling_price
+msgid "Selling Price"
+msgstr "سعر البيع"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Selling price must be nonnegative."
+msgstr "يجب ألا يكون سعر البيع سالباً."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__shortage_account_id
+msgid "Shortage Account"
+msgstr "حساب العجز"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__shortage_journal_id
+msgid "Shortage Journal"
+msgstr "قيد العجز"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__shortage_value
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__shortage_value
+msgid "Shortage Value"
+msgstr "قيمة العجز"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Show All"
+msgstr "عرض الكل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__small_qty
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__small_qty
+msgid "Small Qty"
+msgstr "كمية الوحدة الصغيرة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Smallest Unit Cost"
+msgstr "تكلفة أصغر وحدة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__source_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__source_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__source_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Source Allocation and Valuation"
+msgstr "توزيع المصادر والتقييم"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory__model_ref
+msgid "Source Type"
+msgstr "نوع المصدر"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Source allocations must equal the accepted discrepancy."
+msgstr "يجب أن يساوي مجموع توزيعات المصادر الفرق المقبول."
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.wizard_form
+msgid "Source and Allocation"
+msgstr "المصدر والتوزيع"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid ""
+"Source costs include the source model's tax components. No separate tax "
+"journal is generated."
+msgstr ""
+"تتضمن تكلفة المصدر مكونات الضرائب في نموذج المصدر. لا يتم إنشاء قيد ضريبي "
+"منفصل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Source grouping changed. Recount the affected group."
+msgstr "تغير تجميع المصادر. أعد عد المجموعة المتأثرة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Specify expiry or explicitly select no expiry."
+msgstr "حدد تاريخ الصلاحية أو اختر بلا صلاحية صراحةً."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.line_list
+msgid "Start Count"
+msgstr "بدء العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Started"
+msgstr "بدأ"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__started_at
+msgid "Started At"
+msgstr "وقت البدء"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__state
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__state
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__state
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__state
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بناءً على الأنشطة\n"
+"متأخر: تجاوز تاريخ الاستحقاق\n"
+"اليوم: تاريخ النشاط اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Stock Movement"
+msgstr "حركة المخزون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Stock movements or source membership changed during counting."
+msgstr "تغيرت حركات المخزون أو مصادر المجموعة أثناء العد."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_child__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_event__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__store_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__state__superseded
+msgid "Superseded"
+msgstr "مستبدل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Supply the new source cost before approval."
+msgstr "أدخل تكلفة المصدر الجديد قبل الموافقة."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_config__surplus_account_id
+msgid "Surplus Account"
+msgstr "حساب الزيادة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__surplus_journal_id
+msgid "Surplus Journal"
+msgstr "قيد الزيادة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__surplus_value
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__surplus_value
+msgid "Surplus Value"
+msgstr "قيمة الزيادة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__tax_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__tax_ids
+msgid "Tax"
+msgstr "الضريبة"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Team"
+msgstr "الفريق"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Team members must be active internal users in this company."
+msgstr "يجب أن يكون أعضاء الفريق مستخدمين داخليين نشطين في هذه الشركة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "The accounting configuration is outside its effective period."
+msgstr "إعدادات المحاسبة خارج فترة سريانها."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "The approval revision is stale."
+msgstr "مراجعة الموافقة قديمة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The attempt belongs to another group."
+msgstr "تنتمي محاولة العد إلى مجموعة أخرى."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The count sheet identity is invalid."
+msgstr "هوية ورقة العد غير صالحة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The count sheet revision is stale. Export a new sheet."
+msgstr "مراجعة ورقة العد قديمة. صدّر ورقة جديدة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "The effective period is invalid."
+msgstr "فترة السريان غير صالحة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The group belongs to another audit."
+msgstr "تنتمي المجموعة إلى جرد آخر."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The new source must match the comparison price."
+msgstr "يجب أن يطابق المصدر الجديد سعر المقارنة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "The new source price must cover its nonnegative cost."
+msgstr "يجب أن يغطي سعر المصدر الجديد تكلفته غير السالبة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "The new source valuation differs from approval."
+msgstr "يختلف تقييم المصدر الجديد عن الموافقة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The selected source belongs to another branch."
+msgstr "ينتمي المصدر المحدد إلى فرع آخر."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The selected source must match product and expiry."
+msgstr "يجب أن يطابق المصدر المحدد المنتج والصلاحية."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The selected source must match the comparison price."
+msgstr "يجب أن يطابق المصدر المحدد سعر المقارنة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The workbook contains no count rows."
+msgstr "لا يحتوي الملف على صفوف عد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "This attempt is no longer active."
+msgstr "لم تعد محاولة العد نشطة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "This audit is not open for review."
+msgstr "هذا الجرد غير مفتوح للمراجعة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "This branch is not assigned to you."
+msgstr "هذا الفرع غير معيّن لك."
+
+#. module: ab_inventory_audit
+#: model:ir.model.constraint,message:ab_inventory_audit.constraint_ab_inventory_audit_line_key_unique
+msgid "This count group already exists."
+msgstr "مجموعة العد موجودة بالفعل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "This group already exists. Count the existing group."
+msgstr "هذه المجموعة موجودة بالفعل. عدّ المجموعة الموجودة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "This group already has an active count attempt."
+msgstr "توجد محاولة عد نشطة لهذه المجموعة بالفعل."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "This group is not assigned to you."
+msgstr "مجموعة العد هذه غير معيّنة لك."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "This group is not open for counting."
+msgstr "مجموعة العد هذه غير مفتوحة للعد."
+
+#. module: ab_inventory_audit
+#: model:ir.model.constraint,message:ab_inventory_audit.constraint_ab_inventory_audit_adjustment_source_unique
+msgid "This source adjustment has already been posted."
+msgstr "تم ترحيل تسوية هذا المصدر بالفعل."
+
+#. module: ab_inventory_audit
+#: model:ir.model.constraint,message:ab_inventory_audit.constraint_ab_inventory_audit_source_source_unique
+msgid "This source is already allocated to this group."
+msgstr "هذا المصدر موزع بالفعل على هذه المجموعة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Time"
+msgstr "الوقت"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,help:ab_inventory_audit.field_ab_inventory_audit__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع استثناء النشاط في السجل."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_line__state__uncounted
+msgid "Uncounted"
+msgstr "غير معدود"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__unidentified
+msgid "Unidentified Physical Stock"
+msgstr "مخزون فعلي غير محدد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Unidentified stock recorded"
+msgstr "تم تسجيل مخزون غير محدد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__uom_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__uom_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__uom_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__uom_id
+msgid "Uom"
+msgstr "وحدة القياس"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Up to 200 groups are shown. Use a barcode to narrow the selection."
+msgstr "يتم عرض حتى 200 مجموعة. استخدم الباركود لتضييق الاختيار."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Upload an exported count workbook."
+msgstr "ارفع ملف عد مُصدّراً من النظام."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+#: code:addons/ab_inventory_audit/models/common.py:0
+msgid "Use the audit workflow actions."
+msgstr "استخدم إجراءات الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Use the original count workbook format within the size limit."
+msgstr "استخدم تنسيق ملف العد الأصلي ضمن حد الحجم."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_count__state__valid
+msgid "Valid"
+msgstr "صالح"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Validated rows: %s"
+msgstr "الصفوف الصحيحة: %s"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__valuation_snapshot
+msgid "Valuation Snapshot"
+msgstr "لقطة التقييم"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Valuation or accounting inputs changed. Reapprove the audit."
+msgstr "تغيرت مدخلات التقييم أو المحاسبة. أعد الموافقة على الجرد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_adjustment__value
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Workflow"
+msgstr "سير العمل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "You are not authorized for this document type."
+msgstr "لست مخولاً لهذا النوع من المستندات."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_source__zero_cost_reason
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__zero_cost_reason
+msgid "Zero Cost Reason"
+msgstr "سبب التكلفة الصفرية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid ""
+"Zero cost requires an acknowledgement reason; negative cost is forbidden."
+msgstr "تتطلب التكلفة الصفرية سبب إقرار؛ التكلفة السالبة ممنوعة."
+
+#. module: ab_inventory_audit
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "____________"
+msgstr "____________"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_accounting_je_header
+msgid "ab_accounting_je_header"
+msgstr "رأس القيد المحاسبي"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_accounting_je_line
+msgid "ab_accounting_je_line"
+msgstr "سطر القيد المحاسبي"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Accepted Attempt"
+msgstr "المحاولة المعتمدة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__origin__additional
+msgid "Additional Scope"
+msgstr "نطاق إضافي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__allocation_issue
+msgid "Allocation Issue"
+msgstr "مشكلة التوزيع"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__allocation_resolution
+msgid "Allocation Resolution"
+msgstr "معالجة التوزيع"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Allocation Review"
+msgstr "مراجعة التوزيع"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__allocation_unresolved
+msgid "Allocation Unresolved"
+msgstr "توزيع غير محسوم"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Allocation blocked"
+msgstr "تعذر التوزيع"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Approve the unit and expiry details before counting discovered stock."
+msgstr "اعتمد الوحدة وبيانات الصلاحية قبل عد المخزون المكتشف."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Attempt ID"
+msgstr "معرّف المحاولة"
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_coverage
+msgid "Audit Product Coverage"
+msgstr "تغطية منتجات الجرد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__barcodes
+msgid "Barcodes"
+msgstr "الباركودات"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__state__complete
+msgid "Complete"
+msgstr "مكتمل"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Confirmed quantities cannot change. Request a new count attempt."
+msgstr "لا يمكن تغيير الكميات المؤكدة. اطلب محاولة عد جديدة."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__count_notes
+msgid "Count Notes"
+msgstr "ملاحظات العد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid ""
+"Count the existing product groups, using explicit zero for empty stock."
+msgstr "عد مجموعات المنتج الحالية، وأدخل صفرًا صريحًا للمخزون الفارغ."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__counting_revision
+msgid "Counting Revision"
+msgstr "إصدار العد"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__coverage_ids
+msgid "Coverage"
+msgstr "التغطية"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid ""
+"Current stock or reservations prevent the approved shortage. Resolve the "
+"blocked allocations."
+msgstr ""
+"المخزون الحالي أو الحجوزات تمنع العجز المعتمد. عالج التوزيعات المتعذرة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid ""
+"Current stock prevents the allocation for group %s. Review the source "
+"quantities."
+msgstr "المخزون الحالي يمنع توزيع المجموعة %s. راجع كميات المصادر."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__decided_at
+msgid "Decided At"
+msgstr "وقت القرار"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__decided_by
+msgid "Decided By"
+msgstr "صاحب القرار"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__decision
+msgid "Decision"
+msgstr "القرار"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_coverage__decision_reason
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__decision_reason
+msgid "Decision Reason"
+msgstr "سبب القرار"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__exclude_observation
+msgid "Exclude Stock Observation"
+msgstr "استبعاد ملاحظة مخزون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Group %(group)s: %(message)s"
+msgstr "المجموعة %(group)s: %(message)s"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Group %(group)s: %(product)s / %(expiry)s / %(price)s"
+msgstr "المجموعة %(group)s: %(product)s / %(expiry)s / %(price)s"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid ""
+"Group %s changed. Cancel the attempt with a reason, request a recount and "
+"export again."
+msgstr ""
+"تغيرت المجموعة %s. ألغِ المحاولة مع ذكر السبب، ثم اطلب إعادة العد وصدّر "
+"مجددًا."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Group ID"
+msgstr "معرّف المجموعة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__include_observation
+msgid "Include Stock Observation"
+msgstr "إدراج ملاحظة مخزون"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__decision__included
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_observation__state__included
+msgid "Included"
+msgstr "مدرج"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/config.py:0
+msgid "Inventory audit approval validation"
+msgstr "التحقق من اعتماد محاسبة الجرد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Movement changes invalidated groups: %s. Request a recount."
+msgstr "أبطلت تغيرات الحركات المجموعات: %s. اطلب إعادة العد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__notes
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit__observation_ids
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__observation_id
+msgid "Observation"
+msgstr "ملاحظة مخزون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Observation ID"
+msgstr "معرّف الملاحظة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_observation__observed_at
+msgid "Observed At"
+msgstr "وقت الملاحظة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__observed_qty
+msgid "Observed Qty"
+msgstr "الكمية المرصودة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Only assigned team members may confirm physical absence."
+msgstr "أعضاء الفريق المكلّفون فقط يمكنهم تأكيد الغياب الفعلي."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Only assigned team members may record stock observations."
+msgstr "أعضاء الفريق المكلّفون فقط يمكنهم تسجيل ملاحظات المخزون."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__origin__opening
+msgid "Opening Scope"
+msgstr "النطاق الافتتاحي"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__decision__pending
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_observation__state__pending
+msgid "Pending Decision"
+msgstr "بانتظار القرار"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__physical_absence
+msgid "Physical Absence"
+msgstr "الغياب الفعلي"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid "Physical absence requires independent manager review."
+msgstr "يتطلب الغياب الفعلي مراجعة مستقلة من مدير."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Product Coverage"
+msgstr "تغطية المنتجات"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__quantity_fingerprint
+msgid "Quantity Fingerprint"
+msgstr "بصمة الكميات"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Record a positive quantity with an exact smallest-unit conversion."
+msgstr "سجّل كمية موجبة تتحول بدقة إلى أصغر وحدة."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid ""
+"Request a recount of the existing group before including discovered stock."
+msgstr "اطلب إعادة عد المجموعة الحالية قبل إدراج المخزون المكتشف."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Resolution"
+msgstr "المعالجة"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__resolve_allocation
+msgid "Resolve Blocked Allocation"
+msgstr "معالجة التوزيع المتعذر"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid "Resolve every product coverage and stock observation before approval."
+msgstr "احسم تغطية كل منتج وكل ملاحظة مخزون قبل الاعتماد."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/audit.py:0
+msgid ""
+"Resolve the blocked allocation for group %s with a documented decision."
+msgstr "عالج التوزيع المتعذر للمجموعة %s بقرار موثق."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.count_sheet
+msgid "Scope Origin"
+msgstr "أصل النطاق"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select a pending stock observation and document the decision."
+msgstr "اختر ملاحظة مخزون معلقة ووثّق القرار."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select an accepted group with a blocked allocation."
+msgstr "اختر مجموعة معتمدة ذات توزيع متعذر."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Select an included product for physical absence confirmation."
+msgstr "اختر منتجًا مدرجًا لتأكيد الغياب الفعلي."
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Selected Attempt"
+msgstr "المحاولة المختارة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid ""
+"Source %(source)s: approved %(allocation)s; posted %(posted)s; reserved "
+"%(reserved)s; available %(available)s."
+msgstr ""
+"المصدر %(source)s: المعتمد %(allocation)s؛ المرحّل %(posted)s؛ المحجوز "
+"%(reserved)s؛ المتاح %(available)s."
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_wizard__operation__absence
+msgid "Start Physical Absence Count"
+msgstr "بدء عد الغياب الفعلي"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Stock Conflict"
+msgstr "تعارض المخزون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model_terms:ir.ui.view,arch_db:ab_inventory_audit.audit_form
+msgid "Stock Observations"
+msgstr "ملاحظات المخزون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Stock observation reviewed"
+msgstr "تمت مراجعة ملاحظة المخزون"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Stock or reservations still prevent this allocation."
+msgstr "لا يزال المخزون أو الحجوزات يمنع هذا التوزيع."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "The observation belongs to another audit."
+msgstr "الملاحظة تخص جردًا آخر."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid ""
+"The workbook contains no completed quantities. Enter explicit zero for empty"
+" stock."
+msgstr "لا يحتوي الملف على كميات مكتملة. أدخل صفرًا صريحًا للمخزون الفارغ."
+
+#. module: ab_inventory_audit
+#: model:ir.model.constraint,message:ab_inventory_audit.constraint_ab_inventory_audit_coverage_product_unique
+msgid "This product already has coverage."
+msgstr "هذا المنتج له تغطية بالفعل."
+
+#. module: ab_inventory_audit
+#: model:ir.model,name:ab_inventory_audit.model_ab_inventory_audit_observation
+msgid "Unidentified Stock Observation"
+msgstr "ملاحظة مخزون غير محدد"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__large_unit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__large_unit_id
+msgid "Unit L"
+msgstr "الوحدة الكبيرة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__medium_unit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__medium_unit_id
+msgid "Unit M"
+msgstr "الوحدة المتوسطة"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_line__small_unit_id
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_wizard__small_unit_id
+msgid "Unit S"
+msgstr "الوحدة الصغيرة"
+
+#. module: ab_inventory_audit
+#. odoo-javascript
+#: code:addons/ab_inventory_audit/static/src/fast_count.xml:0
+msgid "Units"
+msgstr "الوحدات"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+#: model:ir.model.fields.selection,name:ab_inventory_audit.selection__ab_inventory_audit_coverage__state__unresolved
+msgid "Unresolved"
+msgstr "غير محسوم"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/models/counting.py:0
+msgid ""
+"Use a stock observation for discovered stock instead of an absence count."
+msgstr "استخدم ملاحظة مخزون للمخزون المكتشف بدلًا من عد الغياب."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid ""
+"Use workbook format version 2 within the size limit. Older workbooks are "
+"incompatible; cancel their attempts with a reason and export again."
+msgstr ""
+"استخدم تنسيق الملف الإصدار 2 ضمن حد الحجم. الملفات الأقدم غير متوافقة؛ ألغِ "
+"محاولاتها مع ذكر السبب ثم صدّر مجددًا."
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/wizard/workflow.py:0
+msgid "Workbook Format"
+msgstr "تنسيق الملف"
+
+#. module: ab_inventory_audit
+#: model:ir.model.fields,field_description:ab_inventory_audit.field_ab_inventory_audit_count__workbook_version
+msgid "Workbook Version"
+msgstr "إصدار الملف"
+
+#. module: ab_inventory_audit
+#. odoo-python
+#: code:addons/ab_inventory_audit/report/audit_report.py:0
+msgid "Yes"
+msgstr "نعم"
+
+#. module: ab_inventory_audit
+#: code:addons/ab_inventory_audit/models:0
+msgid "Quantity exceeds eight decimal places in the reference unit."
+msgstr "تتجاوز الكمية ثماني منازل عشرية في الوحدة المرجعية."
+
+#. module: ab_inventory_audit
+#: code:addons/ab_inventory_audit/models:0
+msgid "Record a positive quantity in the reference unit."
+msgstr "سجل كمية موجبة بالوحدة المرجعية."

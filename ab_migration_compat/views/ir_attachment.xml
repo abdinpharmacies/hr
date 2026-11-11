@@ -1,0 +1,18 @@
+<odoo>
+    <record id="attachment_missing_file_form" model="ir.ui.view">
+        <field name="name">ir.attachment.missing.source.file</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="base.view_attachment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <field name="migration_file_missing" invisible="1"/>
+                <group string="Original File Unavailable" invisible="not migration_file_missing">
+                    <div class="alert alert-warning" role="alert" colspan="2">The original file was unavailable during migration. Its metadata is preserved; restore the file from the source backup.</div>
+                    <field name="migration_source_path"/>
+                    <field name="migration_source_checksum"/>
+                    <field name="migration_source_size"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

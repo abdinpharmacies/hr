@@ -1,0 +1,224 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_migration_compat
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-10 05:05+0000\n"
+"PO-Revision-Date: 2026-11-10 05:05+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: ab_migration_compat
+#: model:res.groups,name:ab_migration_compat.group_private_addresses
+msgid "Access to Private Addresses"
+msgstr "الوصول إلى العناوين الخاصة"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_res_partner__type
+#: model:ir.model.fields,field_description:ab_migration_compat.field_res_users__type
+msgid "Address Type"
+msgstr "نوع العنوان"
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_res_partner
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields.selection,name:ab_migration_compat.selection__ab_accounting_account_guide__internal_type__contract_deduction
+msgid "Contract Deduction"
+msgstr "خصم التعاقد"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_account_guide__display_name
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_tracking__display_name
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory__display_name
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory_header__display_name
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_migration_reference__display_name
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ir_attachment__display_name
+#: model:ir.model.fields,field_description:ab_migration_compat.field_res_partner__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_account_guide__id
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_tracking__id
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory__id
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory_header__id
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_migration_reference__id
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ir_attachment__id
+#: model:ir.model.fields,field_description:ab_migration_compat.field_res_partner__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_account_guide__internal_type
+msgid "Internal Type"
+msgstr "النوع الداخلي"
+
+#. module: ab_migration_compat
+#. odoo-python
+#: code:addons/ab_migration_compat/models/account_guide.py:0
+msgid ""
+"Legacy account classifications must be migrated before removing this module."
+msgstr "يجب ترحيل تصنيفات الحسابات القديمة قبل إزالة هذه الوحدة."
+
+#. module: ab_migration_compat
+#: model:ir.model.fields.selection,name:ab_migration_compat.selection__res_partner__type__private
+msgid "Private Address"
+msgstr "عنوان خاص"
+
+#. module: ab_migration_compat
+#: model:res.groups.privilege,name:ab_migration_compat.private_address_privilege
+msgid "Private Addresses"
+msgstr "العناوين الخاصة"
+
+#. module: ab_migration_compat
+#. odoo-python
+#: code:addons/ab_migration_compat/models/res_partner.py:0
+msgid ""
+"Private addresses must be securely migrated before removing this module."
+msgstr "يجب ترحيل العناوين الخاصة بأمان قبل إزالة هذه الوحدة."
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,help:ab_migration_compat.field_ab_accounting_account_guide__internal_type
+msgid ""
+"The 'Internal Type' is used for features available on different types of "
+"accounts: cash bank accounts, payable/receivable is for vendor/customer "
+"accounts."
+msgstr ""
+"يستخدم النوع الداخلي لتحديد خصائص الحسابات النقدية والبنكية وحسابات الموردين"
+" والعملاء."
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_ab_accounting_account_guide
+msgid "ab_accounting_account_guide"
+msgstr "دليل الحسابات"
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_ir_attachment
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_ab_migration_reference
+msgid "Legacy Source Reference"
+msgstr "مرجع المصدر القديم"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ir_attachment__migration_source_checksum
+msgid "Original File Checksum"
+msgstr "بصمة الملف الأصلي"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ir_attachment__migration_source_size
+msgid "Original File Size"
+msgstr "حجم الملف الأصلي"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ir_attachment__migration_file_missing
+#: model_terms:ir.ui.view,arch_db:ab_migration_compat.attachment_missing_file_form
+msgid "Original File Unavailable"
+msgstr "الملف الأصلي غير متاح"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ir_attachment__migration_source_path
+msgid "Original Filestore Path"
+msgstr "مسار تخزين الملف الأصلي"
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_tracking__migration_source_references
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory__migration_source_references
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory_header__migration_source_references
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_migration_reference__migration_source_references
+msgid "Original Source References"
+msgstr "مراجع المصدر الأصلية"
+
+#. module: ab_migration_compat
+#. odoo-python
+#: code:addons/ab_migration_compat/models/legacy_references.py:0
+msgid "Records with unresolved source references must be preserved."
+msgstr "يجب الاحتفاظ بالسجلات ذات مراجع المصدر غير المحلولة."
+
+#. module: ab_migration_compat
+#. odoo-python
+#: code:addons/ab_migration_compat/models/legacy_references.py:0
+msgid ""
+"Resolve the original source reference before editing this record. Its "
+"historical values are preserved."
+msgstr ""
+"يجب معالجة مرجع المصدر الأصلي قبل تعديل هذا السجل. تم الاحتفاظ بقيمه "
+"التاريخية."
+
+#. module: ab_migration_compat
+#. odoo-python
+#: code:addons/ab_migration_compat/models/ir_attachment.py:0
+msgid ""
+"The original attachment file was unavailable during migration. Restore it "
+"from the source backup."
+msgstr ""
+"لم يكن ملف المرفق الأصلي متاحًا أثناء الترحيل. استعده من النسخة الاحتياطية "
+"للمصدر."
+
+#. module: ab_migration_compat
+#: model_terms:ir.ui.view,arch_db:ab_migration_compat.attachment_missing_file_form
+msgid ""
+"The original file was unavailable during migration. Its metadata is "
+"preserved; restore the file from the source backup."
+msgstr ""
+"لم يكن الملف الأصلي متاحًا أثناء الترحيل. تم الاحتفاظ ببياناته الوصفية؛ "
+"استعد الملف من النسخة الاحتياطية للمصدر."
+
+#. module: ab_migration_compat
+#. odoo-python
+#: code:addons/ab_migration_compat/models/legacy_references.py:0
+msgid "The original source document no longer exists."
+msgstr "مستند المصدر الأصلي لم يعد موجودًا."
+
+#. module: ab_migration_compat
+#: model_terms:ir.ui.view,arch_db:ab_migration_compat.ab_accounting_tracking_legacy_reference_form
+#: model_terms:ir.ui.view,arch_db:ab_migration_compat.ab_inventory_header_legacy_reference_form
+msgid ""
+"The source reference no longer exists. Historical values are preserved. "
+"Resolve the reference before editing this record."
+msgstr ""
+"مرجع المصدر لم يعد موجودًا. تم الاحتفاظ بالقيم التاريخية. عالج المرجع قبل "
+"تعديل هذا السجل."
+
+#. module: ab_migration_compat
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_accounting_tracking__migration_reference_missing
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory__migration_reference_missing
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_inventory_header__migration_reference_missing
+#: model:ir.model.fields,field_description:ab_migration_compat.field_ab_migration_reference__migration_reference_missing
+#: model_terms:ir.ui.view,arch_db:ab_migration_compat.ab_accounting_tracking_legacy_reference_form
+#: model_terms:ir.ui.view,arch_db:ab_migration_compat.ab_inventory_header_legacy_reference_form
+msgid "Unresolved Source Reference"
+msgstr "مرجع مصدر غير محلول"
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_ab_accounting_tracking
+msgid "ab_accounting_tracking"
+msgstr "سجل تتبع الحسابات"
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_ab_inventory
+msgid "ab_inventory"
+msgstr "المخزون"
+
+#. module: ab_migration_compat
+#: model:ir.model,name:ab_migration_compat.model_ab_inventory_header
+msgid "ab_inventory_header"
+msgstr "رأس مستند المخزون"
+
+#. module: ab_migration_compat
+#: model:res.groups,name:ab_migration_compat.group_legacy_hr_history
+msgid "All HR History (Legacy)"
+msgstr "كل سجل الموارد البشرية (قديم)"

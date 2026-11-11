@@ -1,0 +1,15 @@
+.o_muk_web_refresh_button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: var(--bs-secondary-color, #6c757d);
+    transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--o-action, #017e84);
+        background-color: rgba(1, 126, 132, 0.12);
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+}

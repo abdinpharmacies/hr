@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_employee_access.LoginScreen">
+        <div class="ab_employee_access_login_screen d-flex flex-column gap-3">
+            <t t-if="props.showEmployee !== false">
+                <div class="ab_employee_access_login_row">
+                    <label class="form-label" t-esc="props.employeeLabel || 'Employee'"/>
+                    <ABMany2one
+                            relation="props.employeeRelation || 'ab_employee_access'"
+                            value="props.employee || false"
+                            update="onEmployeeUpdate"
+                            placeholder="props.employeePlaceholder || 'Select employee...'"
+                            domain="() => employeeDomain()"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="props.employeeLabel || 'Employee'"
+                    />
+                </div>
+            </t>
+            <div class="ab_employee_access_login_row">
+                <label class="form-label" t-esc="props.pinLabel || 'PIN'"/>
+                <input class="form-control ab_masked_pin_input"
+                       type="text"
+                       t-att-name="props.pinInputName || 'ab_employee_access_pin'"
+                       autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       spellcheck="false"
+                       data-lpignore="true"
+                       data-1p-ignore="true"
+                       data-bwignore="true"
+                       data-form-type="other"
+                       inputmode="numeric"
+                       maxlength="4"
+                       t-att-value="props.pin || ''"
+                       t-on-input="onPinInput"
+                       t-on-keydown="onPinKeydown"
+                       t-att-placeholder="props.pinPlaceholder || 'Enter PIN'"/>
+            </div>
+            <div class="alert alert-danger py-2 mb-0" t-if="props.error">
+                <t t-esc="props.error"/>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-secondary"
+                        type="button"
+                        t-if="props.showCancel &amp;&amp; !props.required"
+                        t-on-click="cancel">
+                    <t t-esc="props.cancelLabel || 'Cancel'"/>
+                </button>
+                <button class="btn btn-primary"
+                        type="button"
+                        t-on-click="submit"
+                        t-att-disabled="props.loading">
+                    <t t-if="props.loading" t-esc="props.loadingLabel || 'Signing in...'"/>
+                    <t t-else="" t-esc="props.submitLabel || 'Login'"/>
+                </button>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="ab_employee_access.LoginPanel">
+        <div class="ab_employee_access_login_panel">
+            <button class="btn btn-light ab_employee_access_login_close"
+                    type="button"
+                    title="Close"
+                    t-if="props.showClose"
+                    t-on-click="close">
+                <i class="fa fa-times" aria-hidden="true"/>
+            </button>
+            <h3 class="ab_employee_access_login_title" t-esc="props.title || 'Employee Login'"/>
+            <p class="ab_employee_access_login_subtitle mb-3" t-if="props.subtitle"
+               t-esc="props.subtitle"/>
+            <t t-if="props.showScreen !== false">
+                <AbEmployeeAccessLoginScreen
+                        employee="props.employee || false"
+                        employeeRelation="props.employeeRelation || 'ab_employee_access'"
+                        employeeDomain="props.employeeDomain || [['pos_allow_login', '=', true]]"
+                        pin="props.pin || ''"
+                        error="props.error || ''"
+                        loading="props.loading || false"
+                        showEmployee="props.showEmployee !== false"
+                        showCancel="props.showCancel || false"
+                        required="props.required || false"
+                        submitLabel="props.submitLabel || 'Login'"
+                        loadingLabel="props.loadingLabel || 'Signing in...'"
+                        cancelLabel="props.cancelLabel || 'Cancel'"
+                        employeeLabel="props.employeeLabel || 'Employee'"
+                        pinLabel="props.pinLabel || 'PIN'"
+                        employeePlaceholder="props.employeePlaceholder || 'Select employee...'"
+                        pinPlaceholder="props.pinPlaceholder || 'Enter PIN'"
+                        pinInputName="props.pinInputName || 'ab_employee_access_pin'"
+                        onSubmit="props.onSubmit"
+                        onCancel="props.onCancel"
+                        onEmployeeUpdate="props.onEmployeeUpdate"
+                        onPinInput="props.onPinInput"
+                        onPinKeydown="props.onPinKeydown"
+                />
+            </t>
+            <t t-else="">
+                <div class="ab_employee_access_login_loading" t-esc="props.loadingMessage || 'Loading...'"/>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="ab_employee_access.LoginDialog">
+        <Dialog size="'md'">
+            <div class="ab_employee_access_login_dialog">
+                <AbEmployeeAccessLoginPanel
+                        title="props.title || 'Employee Login'"
+                        subtitle="props.subtitle || ''"
+                        showClose="false"
+                        showScreen="true"
+                        employee="state.employee"
+                        employeeRelation="props.employeeRelation || 'ab_employee_access'"
+                        employeeDomain="props.employeeDomain || [['pos_allow_login', '=', true]]"
+                        pin="state.pin"
+                        error="state.error"
+                        loading="state.loading"
+                        showEmployee="props.showEmployee !== false"
+                        showCancel="true"
+                        required="props.required"
+                        submitLabel="props.submitLabel || 'Login'"
+                        loadingLabel="props.loadingLabel || 'Signing in...'"
+                        cancelLabel="props.cancelLabel || 'Cancel'"
+                        employeeLabel="props.employeeLabel || 'Employee'"
+                        pinLabel="props.pinLabel || 'PIN'"
+                        employeePlaceholder="props.employeePlaceholder || 'Select employee...'"
+                        pinPlaceholder="props.pinPlaceholder || 'Enter PIN'"
+                        pinInputName="props.pinInputName || 'ab_employee_access_pin'"
+                        onSubmit.bind="submit"
+                        onCancel.bind="cancel"
+                        onEmployeeUpdate.bind="onEmployeeUpdate"
+                        onPinInput.bind="onPinInput"
+                        onPinKeydown.bind="onPinKeydown"
+                />
+            </div>
+        </Dialog>
+    </t>
+</templates>

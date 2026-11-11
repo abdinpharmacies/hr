@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+config_read,cash config read,model_ab_accounting_cash_config,ab_accounting.group_ab_accounting_accountant,1,0,0,0
+config_manager,cash config manager,model_ab_accounting_cash_config,ab_accounting.group_ab_accounting_manager,1,1,1,0
+entry_read,cash entry read,model_ab_accounting_cash_entry,ab_accounting.group_ab_accounting_accountant,1,0,0,0

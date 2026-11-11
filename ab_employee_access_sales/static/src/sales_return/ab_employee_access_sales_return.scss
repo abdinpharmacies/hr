@@ -1,0 +1,16 @@
+.o_ab_sales_return_ui_action {
+    position: relative;
+    min-height: 70vh;
+}
+
+.ab_sales_return_login_overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: rgba(235, 240, 246, 0.34);
+    backdrop-filter: blur(9px);
+}

@@ -1,0 +1,17 @@
+<odoo>
+    <record id="stock_lock_company" model="ir.rule">
+        <field name="name">Stock lock company scope</field>
+        <field name="model_id" ref="model_ab_stock_integration_lock"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="inventory_company" model="ir.rule">
+        <field name="name">Inventory company scope</field>
+        <field name="model_id" ref="ab_inventory.model_ab_inventory"/>
+        <field name="domain_force">[('store_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="source_company" model="ir.rule">
+        <field name="name">Stock source company scope</field>
+        <field name="model_id" ref="ab_product_source.model_ab_product_source"/>
+        <field name="domain_force">['|', ('integration_store_id', '=', False), ('integration_store_id.company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

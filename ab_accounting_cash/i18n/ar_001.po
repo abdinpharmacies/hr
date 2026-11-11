@@ -1,0 +1,376 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_accounting_cash
+#: model:ir.model.constraint,message:ab_accounting_cash.constraint_ab_accounting_cash_config_branch_unique
+msgid "A branch has one cash accounting configuration per company."
+msgstr "للفرع إعداد واحد لمحاسبة النقدية لكل شركة."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid ""
+"Accounting manager access is required to configure branch cash accounts."
+msgstr "يلزم صلاحية مدير الحسابات لإعداد حسابات نقدية الفرع."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__shortage_account_id
+msgid "Approved Cash Shortages Account"
+msgstr "حساب العجز النقدي المعتمد"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__surplus_account_id
+msgid "Approved Cash Surpluses Account"
+msgstr "حساب الزيادة النقدية المعتمدة"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Archive unused cash accounting configuration instead of deleting it."
+msgstr "أرشف إعداد محاسبة النقدية غير المستخدم بدلاً من حذفه."
+
+#. module: ab_accounting_cash
+#: model:ir.model,name:ab_accounting_cash.model_ab_accounting_cash_config
+msgid "Branch Cash Accounting Configuration"
+msgstr "إعداد محاسبة نقدية الفرع"
+
+#. module: ab_accounting_cash
+#: model:ir.model,name:ab_accounting_cash.model_ab_accounting_cash_entry
+msgid "Branch Cash Accounting Entry"
+msgstr "قيد محاسبة نقدية الفرع"
+
+#. module: ab_accounting_cash
+#: model:ir.actions.act_window,name:ab_accounting_cash.config_action
+#: model:ir.ui.menu,name:ab_accounting_cash.config_menu
+msgid "Branch Cash Accounts"
+msgstr "حسابات نقدية الفروع"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__branch_code
+msgid "Branch Code"
+msgstr "كود الفرع"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__replica_db_id
+msgid "Branch Database"
+msgstr "قاعدة بيانات الفرع"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__card_account_id
+msgid "Card Clearing Account"
+msgstr "حساب تسوية البطاقات"
+
+#. module: ab_accounting_cash
+#: model:ir.actions.act_window,name:ab_accounting_cash.entry_action
+#: model:ir.ui.menu,name:ab_accounting_cash.entry_menu
+msgid "Cash Accounting Entries"
+msgstr "قيود محاسبة النقدية"
+
+#. module: ab_accounting_cash
+#: model_terms:ir.ui.view,arch_db:ab_accounting_cash.config_form
+msgid "Cash Difference Accounts"
+msgstr "حسابات فروق النقدية"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__doctype_id
+msgid "Cash Document Type"
+msgstr "نوع مستند النقدية"
+
+#. module: ab_accounting_cash
+#: model:ir.ui.menu,name:ab_accounting_cash.cash_management_menu
+msgid "Cash Management"
+msgstr "إدارة النقدية"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Cash accounting accounts must not require cost centers or due dates."
+msgstr "يجب ألا تتطلب حسابات النقدية مراكز تكلفة أو تواريخ استحقاق."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Cash accounting configuration with posted history cannot be changed."
+msgstr "لا يمكن تغيير إعداد محاسبة النقدية الذي له قيود مرحلة."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Cash accounting entries are created by validated business operations."
+msgstr "تُنشأ قيود محاسبة النقدية من خلال العمليات المعتمدة."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Cash accounting must belong to an allowed company."
+msgstr "يجب أن تتبع محاسبة النقدية شركة مسموحاً بها."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Cash accounting requires a currency with two decimal places."
+msgstr "تتطلب محاسبة النقدية عملة ذات منزلتين عشريتين."
+
+#. module: ab_accounting_cash
+#: model_terms:ir.ui.view,arch_db:ab_accounting_cash.config_form
+msgid "Cash and Payment Accounts"
+msgstr "حسابات النقدية وطرق الدفع"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__transit_account_id
+msgid "Cash in Transit Account"
+msgstr "حساب النقدية بالطريق"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid ""
+"Choose an active branch and a cash document type before enabling accounting."
+msgstr "اختر فرعاً نشطاً ونوع مستند النقدية قبل تفعيل المحاسبة."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__company_id
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__config_id
+msgid "Config"
+msgstr "الإعداد"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid ""
+"Configure active final accounts with branch balances for every cash "
+"accounting role."
+msgstr "حدد حسابات نهائية نشطة بأرصدة حسب الفرع لكل دور محاسبي للنقدية."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__cost_account_id
+msgid "Cost of Sales Account"
+msgstr "حساب تكلفة المبيعات"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__create_uid
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__create_date
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__db_serial
+msgid "Database Serial"
+msgstr "مسلسل قاعدة البيانات"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__drawer_account_id
+msgid "Drawer Account"
+msgstr "حساب الدرج"
+
+#. module: ab_accounting_cash
+#: model:ir.model.constraint,message:ab_accounting_cash.constraint_ab_accounting_cash_entry_operation_unique
+msgid "Each cash operation has one accounting entry."
+msgstr "لكل عملية نقدية قيد محاسبي واحد."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__enabled
+msgid "Enable Automatic Cash Accounting"
+msgstr "تفعيل المحاسبة الآلية للنقدية"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Enable cash accounting before posting."
+msgstr "فعّل محاسبة النقدية قبل الترحيل."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Invalid cash accounting amount or account role."
+msgstr "مبلغ محاسبة النقدية أو دور الحساب غير صالح."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__inventory_account_id
+msgid "Inventory Account"
+msgstr "حساب المخزون"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__journal_id
+msgid "Journal"
+msgstr "القيد"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__write_uid
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__write_date
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__lines_snapshot
+msgid "Lines Snapshot"
+msgstr "نسخة محفوظة من بنود القيد"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__operation_key
+msgid "Operation Key"
+msgstr "مفتاح العملية"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__other_account_id
+msgid "Other Payments Account"
+msgstr "حساب المدفوعات الأخرى"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__difference_account_id
+msgid "Pending Cash Differences Account"
+msgstr "حساب فروق النقدية قيد المراجعة"
+
+#. module: ab_accounting_cash
+#: model_terms:ir.ui.view,arch_db:ab_accounting_cash.config_form
+msgid "Posted Balances"
+msgstr "الأرصدة المرحلة"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__transit_balance
+msgid "Posted Cash in Transit"
+msgstr "النقدية المرحلة بالطريق"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__drawer_balance
+msgid "Posted Drawer Balance"
+msgstr "رصيد الدرج المرحل"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__treasury_balance
+msgid "Posted Treasury Balance"
+msgstr "رصيد الخزينة المرحل"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Posted cash accounting links cannot be changed."
+msgstr "لا يمكن تغيير روابط محاسبة النقدية المرحلة."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "Posted cash accounting links cannot be deleted."
+msgstr "لا يمكن حذف روابط محاسبة النقدية المرحلة."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__posting_user_id
+msgid "Posting User"
+msgstr "مستخدم الترحيل"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__reference
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__sales_account_id
+msgid "Sales Account"
+msgstr "حساب المبيعات"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__sales_return_account_id
+msgid "Sales Returns Account"
+msgstr "حساب مردودات المبيعات"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__tax_account_id
+msgid "Sales Tax Account"
+msgstr "حساب ضريبة المبيعات"
+
+#. module: ab_accounting_cash
+#: model_terms:ir.ui.view,arch_db:ab_accounting_cash.config_form
+msgid "Sales and Stock Accounts"
+msgstr "حسابات المبيعات والمخزون"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__source_model
+msgid "Source Model"
+msgstr "نموذج المصدر"
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__store_id
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_entry__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "The account type does not match its cash accounting role."
+msgstr "نوع الحساب لا يتوافق مع دوره في محاسبة النقدية."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "The branch must belong to the selected database."
+msgstr "يجب أن يتبع الفرع قاعدة البيانات المحددة."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "The cash accounting company must match the branch company."
+msgstr "يجب أن تتطابق شركة محاسبة النقدية مع شركة الفرع."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "The cash accounting entry must balance."
+msgstr "يجب أن يكون قيد محاسبة النقدية متوازناً."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid ""
+"The posting user must be an active accountant in the configured company."
+msgstr "يجب أن يكون مستخدم الترحيل محاسباً نشطاً في الشركة المحددة."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "The posting user must be authorized for this branch and document type."
+msgstr "يجب أن يكون مستخدم الترحيل مخولاً لهذا الفرع ونوع المستند."
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid "This operation already has a different accounting entry."
+msgstr "لهذه العملية قيد محاسبي مختلف بالفعل."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__treasury_account_id
+msgid "Treasury Account"
+msgstr "حساب الخزينة"
+
+#. module: ab_accounting_cash
+#: code:addons/ab_accounting_cash/models/cash_accounting.py:0
+msgid ""
+"Use separate accounts for drawer, treasury, clearing, revenue, cost, tax and"
+" differences."
+msgstr ""
+"استخدم حسابات منفصلة للدرج والخزينة والتسوية والإيرادات والتكلفة والضريبة "
+"والفروق."
+
+#. module: ab_accounting_cash
+#: model:ir.model.fields,field_description:ab_accounting_cash.field_ab_accounting_cash_config__wallet_account_id
+msgid "Wallet Clearing Account"
+msgstr "حساب تسوية المحافظ الإلكترونية"

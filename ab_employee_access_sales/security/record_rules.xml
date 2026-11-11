@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_employee_access_sales_manager_role_all" model="ir.rule">
+            <field name="name">POS HR roles all for managers</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_role"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_manager_employee_all" model="ir.rule">
+            <field name="name">POS HR employee profiles all for managers</field>
+            <field name="model_id" ref="model_ab_employee_access"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_manager_shift_all" model="ir.rule">
+            <field name="name">POS HR shifts all for managers</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_shift"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_manager_session_all" model="ir.rule">
+            <field name="name">POS HR sessions all for managers</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_pos_session"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_manager_log_all" model="ir.rule">
+            <field name="name">POS HR logs all for managers</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_operation_log"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_auditor_employee_all" model="ir.rule">
+            <field name="name">POS HR employee profiles read for auditors</field>
+            <field name="model_id" ref="model_ab_employee_access"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_auditor'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_auditor_shift_all" model="ir.rule">
+            <field name="name">POS HR shifts read for auditors</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_shift"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_auditor'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_auditor_session_all" model="ir.rule">
+            <field name="name">POS HR sessions read for auditors</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_pos_session"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_auditor'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_employee_access_sales_auditor_log_all" model="ir.rule">
+            <field name="name">POS HR logs read for auditors</field>
+            <field name="model_id" ref="model_ab_employee_access_sales_operation_log"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_auditor'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>

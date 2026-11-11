@@ -16,7 +16,111 @@ How does it work?
 * It maintains an in-memory priority queue of jobs that
   is populated from the queue_job tables in all databases.
 * It does not run jobs itself, but asks Odoo to run them through an
-  anonymous ``/queue_job/runjob`` HTTP request.
+  anonymous ``/queue_job/runjob`` HTTP request. [1]_
+
+How to use it?
+--------------
+
+* Optionally adjust your configuration through environment variables:
+
+  - ``ODOO_QUEUE_JOB_CHANNELS=root:4`` (or any other channels
+    configuration), default ``root:1``.
+  - ``ODOO_QUEUE_JOB_SCHEME=https``, default ``http``.
+  - ``ODOO_QUEUE_JOB_HOST=load-balancer``, default ``http_interface``
+    or ``localhost`` if unset.
+  - ``ODOO_QUEUE_JOB_PORT=443``, default ``http_port`` or 8069 if unset.
+  - ``ODOO_QUEUE_JOB_HTTP_AUTH_USER=jobrunner``, default empty.
+  - ``ODOO_QUEUE_JOB_HTTP_AUTH_PASSWORD=s3cr3t``, default empty.
+  - ``ODOO_QUEUE_JOB_JOBRUNNER_DB_HOST=master-db``, default ``db_host``
+    or ``False`` if unset.
+  - ``ODOO_QUEUE_JOB_JOBRUNNER_DB_PORT=5432``, default ``db_port``
+    or ``False`` if unset.
+  - ``ODOO_QUEUE_JOB_JOBRUNNER_DB_USER=userdb``, default ``db_user``
+    or ``False`` if unset.
+  - ``ODOO_QUEUE_JOB_JOBRUNNER_DB_PASSWORD=passdb``, default ``db_password``
+    or ``False`` if unset.
+
+* Alternatively, configure the channels through the Odoo configuration
+  file, like:
+
+.. code-block:: ini
+
+  [queue_job]
+  channels = root:4
+  scheme = https
+  host = load-balancer
+  port = 443
+  http_auth_user = jobrunner
+  http_auth_password = s3cr3t
+  jobrunner_db_host = master-db
+  jobrunner_db_port = 5432
+  jobrunner_db_user = userdb
+  jobrunner_db_password = passdb
+
+* Or, if using ``anybox.recipe.odoo``, add this to your buildout configuration:
+
+.. code-block:: ini
+
+  [odoo]
+  recipe = anybox.recipe.odoo
+  (...)
+  queue_job.channels = root:4
+  queue_job.scheme = https
+  queue_job.host = load-balancer
+  queue_job.port = 443
+  queue_job.http_auth_user = jobrunner
+  queue_job.http_auth_password = s3cr3t
+
+* Start Odoo with ``--load=web,web_kanban,queue_job``
+  and ``--workers`` greater than 1 [2]_, or set the ``server_wide_modules``
+  option in The Odoo configuration file:
+
+.. code-block:: ini
+
+  [options]
+  (...)
+  workers = 4
+  server_wide_modules = web,web_kanban,queue_job
+  (...)
+
+* Or, if using ``anybox.recipe.odoo``:
+
+.. code-block:: ini
+
+  [odoo]
+  recipe = anybox.recipe.odoo
+  (...)
+  options.workers = 4
+  options.server_wide_modules = web,web_kanban,queue_job
+
+* Confirm the runner is starting correctly by checking the odoo log file:
+
+.. code-block:: none
+
+  ...INFO...queue_job.jobrunner.runner: starting
+  ...INFO...queue_job.jobrunner.runner: initializing database connections
+  ...INFO...queue_job.jobrunner.runner: queue job runner ready for db <dbname>
+  ...INFO...queue_job.jobrunner.runner: database connections ready
+
+* Create jobs (eg using base_import_async) and observe they
+  start immediately and in parallel.
+
+* Tip: to enable debug logging for the queue job, use
+  ``--log-handler=odoo.addons.queue_job:DEBUG``
+
+Caveat
+------
+
+* After creating a new database or installing queue_job on an
+  existing database, Odoo must be restarted for the runner to detect it.
+
+.. rubric:: Footnotes
+
+.. [1] From a security standpoint, it is safe to have an anonymous HTTP
+       request because this request only accepts to run jobs that are
+       enqueued.
+.. [2] It works with the threaded Odoo server too, although this way
+       of running Odoo is obviously not for production purposes.
 """
 
 import logging
@@ -90,7 +194,7 @@ def _async_http_get(scheme, host, port, user, password, db_name, job_uuid):
     #       if this was python3 I would be doing this with
     #       asyncio, aiohttp and aiopg
     def urlopen():
-        url = f"{scheme}://{host}:{port}/queue_job/runjob?job_uuid={job_uuid}"
+        url = f"{scheme}://{host}:{port}/queue_job/runjob?db={db_name}&job_uuid={job_uuid}"
         # pylint: disable=except-pass
         try:
             auth = None
@@ -98,9 +202,7 @@ def _async_http_get(scheme, host, port, user, password, db_name, job_uuid):
                 auth = (user, password)
             # we are not interested in the result, so we set a short timeout
             # but not too short so we trap and log hard configuration errors
-            response = requests.get(
-                url, timeout=1, auth=auth, headers={"X-Odoo-Database": db_name}
-            )
+            response = requests.get(url, timeout=1, auth=auth)
 
             # raise_for_status will result in either nothing, a Client Error
             # for HTTP Response codes between 400 and 500 or a Server Error
@@ -335,7 +437,6 @@ class QueueJobRunner:
         self.channel_manager.simple_configure(channel_config_string)
         self.db_by_name = {}
         self._stop = False
-        self._stop_event = threading.Event()
         self._stop_pipe = os.pipe()
 
     def __del__(self):
@@ -487,18 +588,9 @@ class QueueJobRunner:
                             continue
                         key.fileobj.poll()
 
-    def sleep(self, seconds):
-        """Wait for ``seconds``, or less if :meth:`stop` is called meanwhile.
-
-        A plain ``time.sleep`` would hold the thread, and so the server
-        shutdown that joins it, for up to the whole delay.
-        """
-        self._stop_event.wait(seconds)
-
     def stop(self):
         _logger.info("graceful stop requested")
         self._stop = True
-        self._stop_event.set()
         # wakeup the select() in wait_notification
         os.write(self._stop_pipe[1], b".")
 
@@ -530,12 +622,12 @@ class QueueJobRunner:
                     ERROR_RECOVERY_DELAY,
                 )
                 self.close_databases()
-                self.sleep(ERROR_RECOVERY_DELAY)
+                time.sleep(ERROR_RECOVERY_DELAY)
             except Exception:
                 _logger.exception(
                     "exception: sleeping %ds and retrying", ERROR_RECOVERY_DELAY
                 )
                 self.close_databases()
-                self.sleep(ERROR_RECOVERY_DELAY)
+                time.sleep(ERROR_RECOVERY_DELAY)
         self.close_databases(remove_jobs=False)
         _logger.info("stopped")

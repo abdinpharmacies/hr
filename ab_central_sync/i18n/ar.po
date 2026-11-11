@@ -1,0 +1,1299 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_central_sync
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 11:49+0000\n"
+"PO-Revision-Date: 2026-11-03 11:49+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid ""
+"A synchronized master record requires a stable code or external reference."
+msgstr "يتطلب السجل الأساسي المتزامن رمزاً ثابتاً أو مرجعاً خارجياً."
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__state__accepted
+msgid "Accepted"
+msgstr "مقبول"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__accepted_at
+msgid "Accepted At"
+msgstr "تاريخ القبول"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Archive synchronization operations instead of deleting them."
+msgstr "أرشف عمليات المزامنة بدلاً من حذفها."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__attempts
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+#: model:ir.actions.act_window,name:ab_central_sync.operation_action
+#: model:ir.module.category,name:ab_central_sync.category
+#: model:ir.ui.menu,name:ab_central_sync.menu_root
+#: model:res.groups.privilege,name:ab_central_sync.privilege
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.replica_enrollment_form
+msgid "Central Synchronization"
+msgstr "المزامنة المركزية"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_central_sync_operation
+msgid "Central Synchronization Operation"
+msgstr "عملية مزامنة مركزية"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Central allocations differ from the original branch allocations."
+msgstr "تخصيصات المخزون المركزية تختلف عن تخصيصات الفرع الأصلية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Central refund differs from the agreed branch refund."
+msgstr "قيمة المرتجع المركزية تختلف عن القيمة المعتمدة في الفرع."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Central rejected the synchronization request."
+msgstr "رفض الخادم المركزي طلب المزامنة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Central sale lines differ from the agreed branch sale."
+msgstr "بنود البيع المركزية تختلف عن البيع المعتمد في الفرع."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Central synchronization requires native inventory for this store."
+msgstr "تتطلب المزامنة المركزية مخزون أودو لهذا المخزن."
+
+#. module: ab_central_sync
+#: model:ir.actions.server,name:ab_central_sync.cron_retry_ir_actions_server
+msgid "Central synchronization retry"
+msgstr "إعادة محاولة المزامنة المركزية"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Central totals differ from the agreed branch totals."
+msgstr "الإجماليات المركزية تختلف عن الإجماليات المعتمدة في الفرع."
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+msgid "Check Missing Serials"
+msgstr "فحص الأرقام التسلسلية المفقودة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Configure the central HTTPS URL, database, and API key."
+msgstr "اضبط عنوان HTTPS المركزي وقاعدة البيانات ومفتاح واجهة البرمجة."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__create_uid
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__create_date
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Delivery could not be confirmed; status will be checked before replay."
+msgstr "تعذر تأكيد التسليم؛ سيتم التحقق من الحالة قبل إعادة الإرسال."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__direction
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_inventory_process__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_odoo_replication__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_backend__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_return_header__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_allocation__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_reversal__display_name
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_users__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__document_id
+msgid "Document"
+msgstr "المستند"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__document_model
+msgid "Document Model"
+msgstr "نموذج المستند"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "رأس مرتجع مبيعات إي بلس"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Earlier process serials must be accepted first."
+msgstr "يجب قبول الأرقام التسلسلية السابقة أولاً."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__error
+msgid "Error"
+msgstr "الخطأ"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__history
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+msgid "History"
+msgstr "السجل"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_inventory_process__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_odoo_replication__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_backend__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_return_header__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_allocation__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_reversal__id
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_users__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__direction__in
+msgid "Incoming"
+msgstr "وارد"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Invalid central acknowledgment."
+msgstr "تأكيد الاستلام المركزي غير صالح."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Invalid master reference."
+msgstr "مرجع السجل الأساسي غير صالح."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Invalid or unauthorized synchronization request"
+msgstr "طلب مزامنة غير صالح أو غير مصرح به"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Invalid request size"
+msgstr "حجم الطلب غير صالح"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__kind
+msgid "Kind"
+msgstr "نوع العملية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__write_uid
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__write_date
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Master reference is missing or ambiguous."
+msgstr "مرجع السجل الأساسي مفقود أو غير محدد بشكل فريد."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__next_retry
+msgid "Next Retry"
+msgstr "المحاولة التالية"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Only accepted operations can be archived."
+msgstr "يمكن أرشفة العمليات المقبولة فقط."
+
+#. module: ab_central_sync
+#: model:ir.model.constraint,message:ab_central_sync.constraint_ab_central_sync_operation_identity
+msgid "Operation identity already exists."
+msgstr "هوية العملية موجودة بالفعل."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Operation payloads and identities are immutable."
+msgstr "لا يمكن تغيير محتوى العمليات أو هوياتها."
+
+#. module: ab_central_sync
+#: model:ir.ui.menu,name:ab_central_sync.menu_operations
+msgid "Operations"
+msgstr "العمليات"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__origin
+msgid "Origin"
+msgstr "المصدر"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__direction__out
+msgid "Outgoing"
+msgstr "صادر"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__payload
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+msgid "Payload"
+msgstr "محتوى العملية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__payload_hash
+msgid "Payload Hash"
+msgstr "بصمة محتوى العملية"
+
+#. module: ab_central_sync
+#: model:ir.model.constraint,message:ab_central_sync.constraint_ab_central_sync_operation_serial
+msgid "Process serial already exists."
+msgstr "الرقم التسلسلي للعملية موجود بالفعل."
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__state__processing
+msgid "Processing"
+msgstr "قيد المعالجة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__state__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+msgid "Reconciliation"
+msgstr "المطابقة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__result
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Retry transaction"
+msgstr "أعد محاولة المعاملة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__state__retryable
+msgid "Retryable"
+msgstr "قابل لإعادة المحاولة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__kind__return
+msgid "Return"
+msgstr "مرتجع"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__kind__return_settle
+msgid "Return Settle"
+msgstr "تسوية المرتجع"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Return allocation or unit does not match the original sale."
+msgstr "تخصيص المرتجع أو وحدته لا يطابق البيع الأصلي."
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__kind__sale
+msgid "Sale"
+msgstr "بيع"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__kind__sale_cancel
+msgid "Sale Cancel"
+msgstr "إلغاء البيع"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__kind__sale_settle
+msgid "Sale Settle"
+msgstr "تسوية البيع"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__serial
+msgid "Serial"
+msgstr "الرقم التسلسلي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__source_document
+msgid "Source Document"
+msgstr "المستند الأصلي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__store_id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__store_id
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_central_sync
+#: model:res.groups,name:ab_central_sync.group_manager
+msgid "Synchronization Manager"
+msgstr "مدير المزامنة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Synchronization manager access is required."
+msgstr "يلزم الحصول على صلاحية مدير المزامنة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Synchronized sale lines must have distinct original references."
+msgstr "يجب أن تكون مراجع بنود البيع الأصلية المتزامنة فريدة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The agreed promotion is no longer eligible."
+msgstr "العرض المعتمد لم يعد مستوفياً للشروط."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The original operation must be accepted first."
+msgstr "يجب قبول العملية الأصلية أولاً."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The original sale and originating replica must be available."
+msgstr "يجب توفر البيع الأصلي ونسخة الفرع المصدر."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The originating replica must be configured on central."
+msgstr "يجب إعداد نسخة الفرع المصدر على الخادم المركزي."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The return exceeds the originating branch return period."
+msgstr "يتجاوز المرتجع مدة الإرجاع المسموح بها في الفرع المصدر."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "The synchronization service maintains the journal."
+msgstr "تتولى خدمة المزامنة إدارة سجل العمليات."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The synchronized unit is missing or ambiguous."
+msgstr "الوحدة المتزامنة مفقودة أو غير محددة بشكل فريد."
+
+#. module: ab_central_sync
+#: model:ir.model.constraint,message:ab_central_sync.constraint_ab_central_sync_operation_business_event
+msgid "This business event already has a synchronization operation."
+msgstr "توجد عملية مزامنة لهذا الحدث بالفعل."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__token
+msgid "Token"
+msgstr "رمز العملية"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Unavailable endpoint"
+msgstr "نقطة الاتصال غير متاحة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__ab_central_sync_operation__state__uncertain
+msgid "Uncertain"
+msgstr "غير مؤكد"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Unsupported master reference."
+msgstr "مرجع السجل الأساسي غير مدعوم."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Unsupported synchronization operation."
+msgstr "عملية المزامنة غير مدعومة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Unsupported synchronized fields."
+msgstr "حقول المزامنة غير مدعومة."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "رأس فاتورة المبيعات"
+
+#. module: ab_central_sync
+#: model:ir.model.constraint,message:ab_central_sync.constraint_ab_replica_db_central_origin_unique
+msgid "A branch installation can enroll only once."
+msgstr "يمكن ربط نسخة الفرع مرة واحدة فقط."
+
+#. module: ab_central_sync
+#: model:ir.model.constraint,message:ab_central_sync.constraint_ab_sales_inventory_store_product_unique
+msgid "A product can have only one inventory record per branch."
+msgstr "يمكن أن يكون للصنف سجل مخزون واحد فقط لكل فرع."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Administrative actor is not assigned to this store."
+msgstr "المستخدم الإداري غير مخصص لهذا المخزن."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid ""
+"An enrolled installation with synchronization history cannot change its "
+"role."
+msgstr "لا يمكن تغيير دور نسخة مرتبطة لها سجل مزامنة."
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__res_config_settings__central_role__branch
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_central_sync
+#: model:ir.ui.menu,name:ab_central_sync.menu_branches
+msgid "Branches"
+msgstr "الفروع"
+
+#. module: ab_central_sync
+#: model:ir.model.fields.selection,name:ab_central_sync.selection__res_config_settings__central_role__central
+msgid "Central"
+msgstr "المركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_backlog
+msgid "Central Backlog"
+msgstr "العمليات المركزية المتأخرة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_inventory__central_batches
+msgid "Central Batches"
+msgstr "دفعات المخزون المركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_database
+msgid "Central Database"
+msgstr "قاعدة البيانات المركزية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_error
+msgid "Central Error"
+msgstr "خطأ المزامنة المركزية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_inventory__central_initialized
+msgid "Central Initialized"
+msgstr "تم تحميل المخزون المركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_key_hash
+msgid "Central Key Hash"
+msgstr "بصمة مفتاح الربط المركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_last_seen
+msgid "Central Last Seen"
+msgstr "آخر اتصال بالمركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_origin
+msgid "Central Origin"
+msgstr "هوية مصدر الفرع"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_pair_expires
+msgid "Central Pair Expires"
+msgstr "انتهاء صلاحية رمز الربط"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_pair_hash
+msgid "Central Pair Hash"
+msgstr "بصمة رمز الربط"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_inventory__central_revision
+msgid "Central Revision"
+msgstr "إصدار المخزون المركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_role
+msgid "Central Role"
+msgstr "دور النسخة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_url
+msgid "Central URL"
+msgstr "عنوان الخادم المركزي"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_inventory__central_watermark
+msgid "Central Watermark"
+msgstr "آخر مسلسل مشمول بالمخزون المركزي"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid "Central server"
+msgstr "الخادم المركزي"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Complete open sales and returns before connecting."
+msgstr "أكمل المبيعات والمرتجعات المفتوحة قبل الربط."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Configure this installation as central first."
+msgstr "اضبط دور هذه النسخة كمركزي أولاً."
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid ""
+"Connect once per branch installation. Sessions and restarts reconnect "
+"automatically."
+msgstr ""
+"اربط كل نسخة فرع مرة واحدة. يُستأنف الاتصال تلقائياً بعد الدخول أو إعادة "
+"التشغيل."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Connect this branch and download its stock snapshot before selling."
+msgstr "اربط هذا الفرع وحمّل صورة مخزونه قبل البيع."
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid "Connect to Central"
+msgstr "الربط بالمركزي"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Connected"
+msgstr "متصل"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Connected. This installation reconnects automatically after restarts."
+msgstr "تم الاتصال. تستأنف هذه النسخة الاتصال تلقائياً بعد إعادة التشغيل."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_connection
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid "Connection"
+msgstr "الاتصال"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Connection or initial stock download needs attention"
+msgstr "يلزم مراجعة الاتصال أو التحميل الأول للمخزون"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid ""
+"Connection or stock download is incomplete. Check the central address, "
+"catalog, and pairing code, then retry."
+msgstr ""
+"لم يكتمل الاتصال أو تحميل المخزون. راجع عنوان المركزي ودليل الأصناف ورمز "
+"الربط ثم أعد المحاولة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "Download the central stock snapshot before selling this product."
+msgstr "حمّل صورة المخزون المركزي قبل بيع هذا الصنف."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Employee profile does not permit this store."
+msgstr "ملف صلاحيات الموظف لا يسمح بهذا المخزن."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Enter a pairing code generated on central."
+msgstr "أدخل رمز ربط تم إنشاؤه على المركزي."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Every assigned store requires a stable code."
+msgstr "يلزم وجود كود ثابت لكل مخزن مخصص."
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.replica_enrollment_form
+msgid "Generate Pairing Code"
+msgstr "إنشاء رمز ربط"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid "Installation role"
+msgstr "دور النسخة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Invalid branch credentials."
+msgstr "بيانات اعتماد الفرع غير صحيحة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "Invalid central stock snapshot."
+msgstr "صورة المخزون المركزي غير صحيحة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Invalid enrollment response."
+msgstr "استجابة الربط غير صحيحة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Invalid enrollment."
+msgstr "طلب الربط غير صحيح."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Invalid product snapshot request."
+msgstr "طلب صورة مخزون الأصناف غير صحيح."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Invalid snapshot continuation."
+msgstr "بيانات متابعة تحميل المخزون غير صحيحة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Invalid stock snapshot request."
+msgstr "طلب صورة المخزون غير صحيح."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Not connected"
+msgstr "غير متصل"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Only system administrators can manage enrollment."
+msgstr "يمكن لمسؤولي النظام فقط إدارة الربط."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "Only the synchronization service can replace stock snapshots."
+msgstr "يمكن لخدمة المزامنة فقط استبدال صور المخزون."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_ready
+msgid "Opening balances and return history reviewed"
+msgstr "تمت مراجعة الأرصدة الافتتاحية وسجل المرتجعات"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_pairing_code
+msgid "Pairing Code"
+msgstr "رمز الربط"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Pairing code (valid for 15 minutes)"
+msgstr "رمز الربط (صالح لمدة 15 دقيقة)"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_replica_db
+msgid "Replica Database"
+msgstr "قاعدة بيانات الفرع"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Replicate the branch identity and store assignments before connecting."
+msgstr "زامن هوية الفرع وتخصيص المخازن قبل الربط."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Replicated actor required."
+msgstr "يلزم وجود مستخدم متزامن."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Replicated employee required."
+msgstr "يلزم وجود موظف متزامن."
+
+#. modules: ab_branch_api, ab_central_sync
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "Requested products are not accessible."
+msgstr "الأصناف المطلوبة غير متاحة للمستخدم."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid ""
+"Review opening balances, return history, and assigned stores before "
+"enrollment."
+msgstr "راجع الأرصدة الافتتاحية وسجل المرتجعات والمخازن المخصصة قبل الربط."
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.replica_enrollment_form
+msgid "Revoke Connection"
+msgstr "إلغاء اعتماد الاتصال"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid ""
+"Revoke the connection before changing an enrolled branch store assignment."
+msgstr "ألغِ اعتماد الاتصال قبل تغيير مخازن فرع مرتبط."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_backend
+msgid "Sales Inventory Backend"
+msgstr "مصدر مخزون المبيعات"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة برمجة نقاط البيع"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_stock_allocation
+msgid "Sales Stock Allocation"
+msgstr "تخصيص مخزون المبيعات"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Select the branch role before connecting."
+msgstr "حدد دور الفرع قبل الربط."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Stock refresh needs attention"
+msgstr "يلزم مراجعة تحديث المخزون"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid "Sync Now"
+msgstr "مزامنة الآن"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid "Synchronize assigned stores before connecting."
+msgstr "زامن المخازن المخصصة قبل الربط."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "Synchronize the customer catalog before using this reference."
+msgstr "زامن دليل العملاء قبل استخدام هذا المرجع."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "Synchronize the product catalog before stock snapshots."
+msgstr "زامن دليل الأصناف قبل تحميل صور المخزون."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "The branch approval does not match its cached stock reservation."
+msgstr "اعتماد الفرع لا يطابق حجز المخزون المحفوظ محلياً."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "The pairing code has expired."
+msgstr "انتهت صلاحية رمز الربط."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "The replicated store service user is required."
+msgstr "يلزم مستخدم خدمة المخزن المتزامن."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid "The return exceeds the original sold quantity."
+msgstr "كمية المرتجع تتجاوز الكمية المباعة الأصلية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "This replica belongs to another branch installation."
+msgstr "هذا السجل مرتبط بنسخة فرع أخرى."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Upgrade this branch to central synchronization version 2."
+msgstr "حدّث هذا الفرع إلى الإصدار الثاني من المزامنة المركزية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/cache.py:0
+msgid ""
+"Use native invoice references for this branch. Historical invoices require "
+"review."
+msgstr ""
+"استخدم مراجع فواتير النظام لهذا الفرع. تتطلب الفواتير التاريخية مراجعة."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_odoo_replication
+msgid "ab_odoo_replication"
+msgstr "مزامنة أودو"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_inventory
+msgid "ab_sales_inventory"
+msgstr "مخزون المبيعات"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.settings_form
+msgid "https://central.example.com"
+msgstr "https://central.example.com"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Historical returns require a reviewed original transaction import."
+msgstr "تتطلب المرتجعات التاريخية استيراد المعاملة الأصلية بعد مراجعتها."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_per_day
+msgid "Sales Per Store/Product/Day"
+msgstr "المبيعات حسب المخزن والصنف واليوم"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_store_ids
+msgid "Synchronization Stores"
+msgstr "مخازن المزامنة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_default_store_id
+msgid "Synchronization Default Store"
+msgstr "المخزن الافتراضي للمزامنة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Synchronization stores must belong to the replica."
+msgstr "يجب أن تكون مخازن المزامنة ضمن مخازن النسخة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Select a default store within the synchronization scope."
+msgstr "اختر مخزنًا افتراضيًا ضمن نطاق المزامنة."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_ca_bundle
+msgid "Central CA Bundle"
+msgstr "ملف شهادات الخادم المركزي"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid ""
+"Reconcile existing local native stock movements before enabling central "
+"synchronization."
+msgstr "يجب تسوية حركات المخزون المحلية الأصلية قبل تفعيل المزامنة المركزية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid ""
+"Confirmed native transactions require reconciliation before enabling central"
+" synchronization."
+msgstr "تتطلب المعاملات الأصلية المؤكدة تسوية قبل تفعيل المزامنة المركزية."
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.sale_reconciliation_form
+msgid "Accept Reconciled Sale"
+msgstr "اعتماد البيع الذي تمت تسويته"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.sale_reconciliation_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Enter a reconciliation reason of at most 2,000 characters."
+msgstr "أدخل سبب التسوية بما لا يتجاوز ٢٬٠٠٠ حرف."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Only system administrators can reconcile rejected sales."
+msgstr "يمكن لمسؤولي النظام فقط تسوية عمليات البيع المرفوضة."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__sale_id
+msgid "Posted Central Sale"
+msgstr "عملية البيع المرحّلة في المركزي"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.sale_reconciliation_form
+msgid ""
+"Products, line order, quantities, prices, discounts, customer and promotions"
+" must match the branch operation. Explain any batch or cost differences in "
+"the reason."
+msgstr ""
+"يجب أن تتطابق المنتجات وترتيب البنود والكميات والأسعار والخصومات والعميل "
+"والعروض مع عملية الفرع. وضّح أي اختلافات في التشغيلات أو التكلفة ضمن سبب "
+"التسوية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+#: model:ir.model,name:ab_central_sync.model_ab_central_sync_sale_reconciliation
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.operation_form
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.sale_reconciliation_form
+msgid "Reconcile Rejected Sale"
+msgstr "تسوية عملية بيع مرفوضة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__resolved_at
+msgid "Reconciled At"
+msgstr "تاريخ التسوية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__resolved_by_id
+msgid "Reconciled By"
+msgstr "تمت التسوية بواسطة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid ""
+"Reconciled lines must preserve products, units, quantities, prices, "
+"discounts and stock deductions."
+msgstr ""
+"يجب أن تحافظ بنود التسوية على المنتجات والوحدات والكميات والأسعار والخصومات "
+"وكميات الخصم من المخزون."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__resolution_evidence
+msgid "Reconciliation Evidence"
+msgstr "مستندات إثبات التسوية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_operation__resolution_reason
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__reason
+msgid "Reconciliation Reason"
+msgstr "سبب التسوية"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_central_sync_sale_reconciliation__operation_id
+msgid "Rejected Operation"
+msgstr "العملية المرفوضة"
+
+#. module: ab_central_sync
+#: model_terms:ir.ui.view,arch_db:ab_central_sync.sale_reconciliation_form
+msgid ""
+"Review and post the matching sale on central first. Leave it pending for the"
+" branch settlement or cancellation. This action links existing stock "
+"movements; it does not post stock again."
+msgstr ""
+"راجع عملية البيع المطابقة ورحّلها في المركزي أولاً. اتركها معلّقة حتى يتم "
+"تحصيلها أو إلغاؤها من الفرع. يربط هذا الإجراء حركات المخزون الموجودة دون "
+"ترحيل المخزون مرة أخرى."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة برمجة شاشة المبيعات"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Select a posted, unsettled native sale in the same store."
+msgstr "اختر عملية بيع بمخزون أودو مرحّلة وغير محصّلة في المخزن نفسه."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Select a rejected incoming sale on central."
+msgstr "اختر عملية بيع واردة مرفوضة في المركزي."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid ""
+"The reconciliation sale must contain the original lines in the original "
+"order."
+msgstr "يجب أن تحتوي عملية بيع التسوية على البنود الأصلية بالترتيب الأصلي."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "The reconciliation sale must have no payments or returns."
+msgstr "يجب ألا توجد مدفوعات أو مرتجعات لعملية بيع التسوية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid ""
+"The reconciliation sale must match the original customer, header and "
+"promotions."
+msgstr ""
+"يجب أن تتطابق عملية بيع التسوية مع العميل وبيانات الفاتورة والعروض الأصلية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "This central sale already belongs to a synchronization operation."
+msgstr "عملية البيع المركزية هذه مرتبطة بالفعل بعملية مزامنة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/product.py:0
+msgid "Product packaging data is incomplete or inconsistent."
+msgstr "بيانات تعبئة الصنف غير مكتملة أو غير متسقة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "A user API key is required."
+msgstr "يلزم مفتاح واجهة برمجة التطبيقات للمستخدم."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_product
+msgid "Abdin Product"
+msgstr "منتج عابدين"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "An active Inventory Writer user is required."
+msgstr "يلزم مستخدم نشط بدور كاتب المخزون."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Assign inventory stores to the Inventory Writer user."
+msgstr "حدد مخازن المخزون لمستخدم كاتب المخزون."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/sales.py:0
+msgid "Invalid product unit identity."
+msgstr "هوية وحدة المنتج غير صالحة."
+
+#. module: ab_central_sync
+#: model:res.groups,name:ab_central_sync.group_inventory_writer
+msgid "Inventory Writer"
+msgstr "كاتب المخزون"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Legacy operations require reconciliation before retry."
+msgstr "تتطلب العمليات القديمة التسوية قبل إعادة المحاولة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Replicate the bill employee and profile before synchronization."
+msgstr "قم بمزامنة موظف الفاتورة وملفه قبل مزامنة الفاتورة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/product.py:0
+msgid "Stock conversion requires a product unit of measure."
+msgstr "يتطلب تحويل المخزون وحدة قياس المنتج."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+#: code:addons/ab_central_sync/models/cache.py:0
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "The API user has no inventory access to this branch."
+msgstr "ليس لدى مستخدم الواجهة صلاحية الوصول إلى مخزون هذا الفرع."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "The branch replica is missing or ambiguous."
+msgstr "نسخة الفرع غير موجودة أو غير محددة بوضوح."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "The user API key is invalid or expired."
+msgstr "مفتاح واجهة المستخدم غير صالح أو منتهي الصلاحية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/controllers/main.py:0
+msgid "Upgrade this branch to inventory protocol 3."
+msgstr "قم بترقية هذا الفرع إلى بروتوكول المخزون 3."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_res_users
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/product.py:0
+msgid "The product requires one active reference unit with factor 1."
+msgstr "يتطلب المنتج وحدة مرجعية نشطة واحدة بمعامل 1."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/product.py:0
+msgid "Select an active unit from the product unit category."
+msgstr "اختر وحدة نشطة من فئة وحدات المنتج."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_allocation__stock_uom_id
+msgid "Inventory Product Unit"
+msgstr "وحدة مخزون المنتج"
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_inventory_process
+msgid "Inventory Integration Helper"
+msgstr "مساعد تكامل المخزون"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/inventory_units.py:0
+msgid "Inventory direction must be +1 or -1."
+msgstr "يجب أن يكون اتجاه حركة المخزون +1 أو -1."
+
+#. module: ab_central_sync
+#: model:ir.model,name:ab_central_sync.model_ab_sales_stock_reversal
+msgid "Sales Stock Reversal"
+msgstr "عكس مخزون المبيعات"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_allocation__uom_id
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_sales_stock_reversal__uom_id
+msgid "Uom"
+msgstr "وحدة القياس"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/inventory_units.py:0
+msgid "The stock source has invalid unit or price values."
+msgstr "تحتوي دفعة المخزون على قيم وحدات أو أسعار غير صالحة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/product.py:0
+msgid "Unit conversion factors must be positive and finite."
+msgstr "يجب أن تكون معاملات تحويل الوحدات موجبة ومحدودة."

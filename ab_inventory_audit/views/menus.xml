@@ -1,0 +1,14 @@
+<odoo>
+    <record id="action_audits" model="ir.actions.act_window"><field name="name">Audit Sessions</field><field name="res_model">ab_inventory_audit</field><field name="view_mode">list,form</field></record>
+    <record id="action_assignments" model="ir.actions.act_window"><field name="name">My Count Assignments</field><field name="res_model">ab_inventory_audit_line</field><field name="view_mode">list,form</field><field name="domain">[('assigned_ids', 'in', [uid]), ('audit_id.state', 'in', ['counting', 'review'])]</field></record>
+    <record id="action_review" model="ir.actions.act_window"><field name="name">Discrepancy Review</field><field name="res_model">ab_inventory_audit_line</field><field name="view_mode">list,form</field><field name="domain">[('state', 'in', ['counted', 'invalid', 'new'])]</field></record>
+    <record id="action_results" model="ir.actions.act_window"><field name="name">Audit Results and Adjustments</field><field name="res_model">ab_inventory_audit</field><field name="view_mode">list,form</field><field name="domain">[('state', '=', 'posted')]</field></record>
+    <record id="action_config" model="ir.actions.act_window"><field name="name">Audit Accounting Configuration</field><field name="res_model">ab_inventory_audit_config</field><field name="view_mode">list,form</field></record>
+    <menuitem id="menu_audit" name="Inventory Audits" parent="ab_inventory.menu_root" sequence="30" groups="group_counter,group_reviewer"/>
+    <menuitem id="menu_sessions" name="Audit Sessions" parent="menu_audit" action="action_audits" sequence="10"/>
+    <menuitem id="menu_assignments" name="My Count Assignments" parent="menu_audit" action="action_assignments" sequence="20"/>
+    <menuitem id="menu_review" name="Discrepancy Review" parent="menu_audit" action="action_review" groups="group_manager" sequence="30"/>
+    <menuitem id="menu_results" name="Audit Results and Adjustments" parent="menu_audit" action="action_results" sequence="40"/>
+    <menuitem id="menu_reports" name="Reports" parent="menu_audit" action="action_audits" sequence="50"/>
+    <menuitem id="menu_config" name="Audit Accounting Configuration" parent="menu_audit" action="action_config" groups="group_config" sequence="60"/>
+</odoo>

@@ -1,0 +1,5038 @@
+/** @odoo-module **/
+
+import {_t} from "@web/core/l10n/translation";
+import {registry} from "@web/core/registry";
+import {Component, onMounted, onWillStart, onWillUnmount, useEffect, useExternalListener, useRef, useState} from "@odoo/owl";
+import {Dialog} from "@web/core/dialog/dialog";
+import {ConfirmationDialog} from "@web/core/confirmation_dialog/confirmation_dialog";
+import {useService} from "@web/core/utils/hooks";
+import {FormViewDialog} from "@web/views/view_dialogs/form_view_dialog";
+import {session} from "@web/session";
+import {user} from "@web/core/user";
+import {ABMany2one} from "@ab_widgets/ab_many2one";
+import {bindPrinterActions, printerStateDefaults} from "./pos_printer";
+import {AbSalesPosBarcodeLinkDialog} from "./pos_barcode_link";
+import {refreshPosBalances} from "./pos_balance_refresh";
+
+const CACHE_PREFIX = "ab_sales_pos_cache_v1";
+const DEFAULT_QTY = "1";
+const SAFE_QTY_RE = /^[0-9+\-*/().\s]+$/;
+const MIN_WINDOW_WIDTH = 720;
+const MIN_WINDOW_HEIGHT = 520;
+const POS_SCALE_BREAKPOINT = 1000;
+const POS_SCALE_VALUE = 0.8;
+const BARCODE_START_KEY = "F12";
+const BARCODE_END_KEY = "Enter";
+const POS_UI_SETTINGS_PREFIX = "ab_sales_pos_ui_settings_v1";
+const POS_PRODUCT_COL_DEFAULT = 30;
+const POS_PRODUCT_COL_MIN = 20;
+const POS_PRODUCT_COL_MAX = 80;
+
+const getViewportRect = () => {
+    if (typeof window === "undefined") {
+        return {width: 1280, height: 720};
+    }
+    if (window.visualViewport) {
+        return {
+            width: window.visualViewport.width || window.innerWidth || 1280,
+            height: window.visualViewport.height || window.innerHeight || 720,
+        };
+    }
+    return {width: window.innerWidth || 1280, height: window.innerHeight || 720};
+};
+
+const generateId = (prefix) => {
+    const rand = Math.random().toString(36).slice(2, 8);
+    return `${prefix}_${Date.now()}_${rand}`;
+};
+
+const _uuidv4 = () => {
+    if (typeof crypto !== "undefined") {
+        if (typeof crypto.randomUUID === "function") {
+            return crypto.randomUUID();
+        }
+        if (typeof crypto.getRandomValues === "function") {
+            const bytes = new Uint8Array(16);
+            crypto.getRandomValues(bytes);
+            bytes[6] = (bytes[6] & 0x0f) | 0x40;
+            bytes[8] = (bytes[8] & 0x3f) | 0x80;
+            const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0"));
+            return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+        }
+    }
+    const rand = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).slice(1);
+    return `${rand()}${rand()}-${rand()}-${rand()}-${rand()}-${rand()}${rand()}${rand()}`;
+};
+
+const generatePosToken = (userId, storeId) => {
+    const uid = Number.isFinite(userId) ? userId : parseInt(userId || 0, 10) || 0;
+    const sid = Number.isFinite(storeId) ? storeId : parseInt(storeId || 0, 10) || 0;
+    return `pos_token_${uid}_${sid}_${_uuidv4()}`;
+};
+
+const parseQtyExpression = (value) => {
+    const raw = String(value || "").trim();
+    if (!raw) {
+        return 0;
+    }
+    if (!SAFE_QTY_RE.test(raw)) {
+        const parsed = parseFloat(raw);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+    try {
+        const result = Function(`"use strict"; return (${raw});`)();
+        return Number.isFinite(result) ? result : 0;
+    } catch {
+        const parsed = parseFloat(raw);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+};
+
+
+class AbSalesPosStoreDialog extends Component {
+    static template = "ab_sales.PosStoreDialog";
+    static components = {Dialog, ABMany2one};
+    static props = {
+        stores: Array,
+        defaultStoreCode: {type: String, optional: true},
+        domain: {type: Array, optional: true},
+        onSelect: Function,
+        draftManager: Object,
+        close: Function,
+    };
+
+    setup() {
+        this.state = useState({store: false, tab: "new", busy: false, bills: [], revision: 0, error: ""});
+        this.dialog = useService("dialog");
+        this.restore = this.restore.bind(this);
+        this.deleteDrafts = this.deleteDrafts.bind(this);
+        this._closed = false;
+        onWillUnmount(() => { this._closed = true; });
+        this.onStoreUpdate = this.onStoreUpdate.bind(this);
+        const defaultCode = (this.props.defaultStoreCode || "").trim();
+        if (defaultCode) {
+            const store = (this.props.stores || []).find((row) => row.code === defaultCode);
+            if (store) {
+                this.state.store = {
+                    id: store.id,
+                    display_name: store.name || store.code || "",
+                };
+            }
+        }
+        this.storeDomain = this.storeDomain.bind(this);
+    }
+
+    get title() {
+        return _t("Draft Slot");
+    }
+
+    storeDomain() {
+        return this.props.domain || [["allow_sale", "=", true]];
+    }
+
+    onStoreUpdate(value) {
+        if (value && value.id) {
+            this.state.store = value;
+        } else {
+            this.state.store = false;
+        }
+    }
+
+    async confirm() {
+        if (this.state.busy || !this.state.store?.id) return;
+        this.state.busy = true;
+        try {
+            if (await this.props.onSelect(this.state.store.id)) this.props.close();
+        } finally { this.state.busy = false; }
+    }
+
+    async showDrafts() {
+        if (this.state.busy) return;
+        this.state.tab = "restore";
+        this.state.busy = true;
+        this.state.error = "";
+        try {
+            const result = await this.props.draftManager.list();
+            if (this._closed) return;
+            this.state.bills = result.bills;
+            this.state.revision = result.revision;
+        } catch (error) {
+            this.state.error = this.props.draftManager.error(error);
+        } finally { this.state.busy = false; }
+    }
+
+    draftState(bill) {
+        if (this.props.draftManager.isOpen(bill.id)) return _t("Already open");
+        return this.props.draftManager.locked(bill) ? _t("Locked") : _t("Draft");
+    }
+
+    canRestore(bill) {
+        return !this.state.busy && !this.props.draftManager.isOpen(bill.id) &&
+            !this.props.draftManager.locked(bill);
+    }
+
+    async restore(bill) {
+        if (!this.canRestore(bill)) return;
+        this.state.busy = true;
+        this.state.error = "";
+        try {
+            await this.props.draftManager.restore(bill.id);
+            this.props.close();
+        } catch (error) {
+            this.state.error = this.props.draftManager.error(error);
+        } finally { this.state.busy = false; }
+    }
+
+    deleteDrafts(bill = null) {
+        if (this.state.busy) return;
+        const ids = bill ? [bill.id] : this.state.bills.map((item) => item.id);
+        if (!ids.length) return;
+        const revision = this.state.revision;
+        this.dialog.add(ConfirmationDialog, {
+            title: bill ? _t("Delete Draft") : _t("Delete All Drafts"),
+            body: bill ? _t("Delete this saved draft? This cannot be undone.") :
+                _t("Delete all eligible saved drafts for this employee, including open drafts? Protected invoices will be retained."),
+            confirm: async () => {
+                if (this._closed || this.state.busy) return;
+                this.state.busy = true;
+                this.state.error = "";
+                try {
+                    const result = await this.props.draftManager.remove(ids, revision);
+                    if (this._closed) return;
+                    this.state.bills = result.bills;
+                    this.state.revision = result.revision;
+                } catch (error) {
+                    const message = this.props.draftManager.error(error);
+                    this.state.busy = false;
+                    await this.showDrafts();
+                    this.state.error = message;
+                } finally { this.state.busy = false; }
+            },
+        });
+    }
+
+    cancel() {
+        if (this.props.close) {
+            this.props.close();
+        }
+    }
+}
+
+class AbSalesPosSubmitDialog extends Component {
+    static template = "ab_sales.PosSubmitDialog";
+    static components = {Dialog, ABMany2one};
+    static props = {
+        bill: Object,
+        preferredBillName: {type: String, optional: true},
+        preferredBillAddress: {type: String, optional: true},
+        defaultEmployee: {type: Object, optional: true},
+        onSubmit: Function,
+        onDraft: {type: Function, optional: true},
+        onCustomerApply: {type: Function, optional: true},
+        close: Function,
+    };
+
+    setup() {
+        this.orm = useService("orm");
+        this.dialog = useService("dialog");
+        const header = this.props.bill?.header || {};
+        const preferredBillName = (this.props.preferredBillName || "").trim();
+        const preferredBillAddress = (this.props.preferredBillAddress || "").trim();
+        const billCustomerName = preferredBillName || header.bill_customer_name || header.customer_name || "";
+        const billCustomerPhone =
+            header.bill_customer_phone || header.customer_phone || header.customer_mobile || "";
+        const billCustomerAddress =
+            preferredBillAddress || header.bill_customer_address || header.invoice_address || header.customer_address || "";
+        const defaultEmployee = this.props.defaultEmployee || {};
+        const defaultEmployeeId = parseInt(defaultEmployee.id || 0, 10) || 0;
+        const defaultEmployeeName = (defaultEmployee.name || defaultEmployee.display_name || "").trim();
+        const employeeId = parseInt(header.employee_id || header.eplus_employee_id || defaultEmployeeId || 0, 10);
+        const employeeName = (header.employee_name || header.eplus_employee_name || defaultEmployeeName || "").trim();
+        const deliveryEmployeeId = parseInt(header.employee_delivery_id || 0, 10) || 0;
+        const deliveryEmployeeName = (header.employee_delivery_name || "").trim();
+        this.state = useState({
+            invoice_address: billCustomerAddress || "",
+            new_customer_name: header.new_customer_name || "",
+            new_customer_phone: header.new_customer_phone || "",
+            new_customer_address: header.new_customer_address || "",
+            bill_customer_name: billCustomerName,
+            bill_customer_phone: billCustomerPhone,
+            bill_customer_address: billCustomerAddress,
+            customer_insurance_name: header.customer_insurance_name || "",
+            customer_insurance_number: header.customer_insurance_number || "",
+            description: header.description || "",
+            is_delivery: !!header.customer_id && (this.props.bill?.lines || []).some(
+                (line) => String(line.product_code || "").trim().startsWith("00")
+            ),
+            eplus_employee: Number.isFinite(employeeId) && employeeId > 0
+                ? {id: employeeId, display_name: employeeName || ""}
+                : false,
+            employee_delivery: Number.isFinite(deliveryEmployeeId) && deliveryEmployeeId > 0
+                ? {id: deliveryEmployeeId, display_name: deliveryEmployeeName || ""}
+                : false,
+            last_delivery_employee: Number.isFinite(deliveryEmployeeId) && deliveryEmployeeId > 0
+                ? {id: deliveryEmployeeId, display_name: deliveryEmployeeName || ""}
+                : false,
+            errors: {},
+            message: "",
+            submitting: false,
+            hasCustomer: !!header.customer_id,
+        });
+        this.descriptionRef = useRef("billDescription");
+        this.onBillCustomerNameInput = this.onBillCustomerNameInput.bind(this);
+        this.onBillCustomerPhoneInput = this.onBillCustomerPhoneInput.bind(this);
+        this.onBillCustomerAddressInput = this.onBillCustomerAddressInput.bind(this);
+        this.onNewCustomerNameInput = this.onNewCustomerNameInput.bind(this);
+        this.onNewCustomerPhoneInput = this.onNewCustomerPhoneInput.bind(this);
+        this.onNewCustomerAddressInput = this.onNewCustomerAddressInput.bind(this);
+        this.openCustomerLookup = this.openCustomerLookup.bind(this);
+        this.onInsuranceNameInput = this.onInsuranceNameInput.bind(this);
+        this.onInsuranceNumberInput = this.onInsuranceNumberInput.bind(this);
+        this.onDescriptionInput = this.onDescriptionInput.bind(this);
+        this.onDeliveryToggleChange = this.onDeliveryToggleChange.bind(this);
+        this.onEmployeeDeliveryUpdate = this.onEmployeeDeliveryUpdate.bind(this);
+        this.employeeDomain = this.employeeDomain.bind(this);
+        this.onEmployeeUpdate = this.onEmployeeUpdate.bind(this);
+        this.submit = this.submit.bind(this);
+        this._onKeydown = this._onKeydown.bind(this);
+
+        useExternalListener(window, "keydown", this._onKeydown, {capture: true});
+        onWillStart(async () => {
+            if (this.state.eplus_employee?.id) {
+                return;
+            }
+            try {
+                const employee = await this.orm.call(
+                    "ab_sales_pos_api",
+                    "pos_default_employee",
+                    [],
+                    {}
+                );
+                if (employee?.id) {
+                    this.state.eplus_employee = {
+                        id: employee.id,
+                        display_name: employee.name || employee.display_name || "",
+                    };
+                }
+            } catch {
+                this.state.eplus_employee = false;
+            }
+        });
+
+        onMounted(() => {
+            const target = this.descriptionRef.el;
+            if (target) {
+                target.focus();
+                if (typeof target.select === "function") {
+                    target.select();
+                }
+            }
+        });
+    }
+
+    _onKeydown(ev) {
+        if (ev.key !== "F10") {
+            return;
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.submit();
+    }
+
+    onBillCustomerNameInput(ev) {
+        this.state.bill_customer_name = ev.target.value || "";
+    }
+
+    onBillCustomerPhoneInput(ev) {
+        this.state.bill_customer_phone = ev.target.value || "";
+    }
+
+    onBillCustomerAddressInput(ev) {
+        const value = ev.target.value || "";
+        this.state.bill_customer_address = value;
+        this.state.invoice_address = value;
+    }
+
+    onNewCustomerNameInput(ev) {
+        this.state.new_customer_name = ev.target.value || "";
+    }
+
+    onNewCustomerPhoneInput(ev) {
+        this.state.new_customer_phone = ev.target.value || "";
+    }
+
+    onNewCustomerAddressInput(ev) {
+        this.state.new_customer_address = ev.target.value || "";
+    }
+
+    openCustomerLookup() {
+        this.dialog.add(AbSalesPosCustomerLookupDialog, {
+            defaultPhone: this.state.new_customer_phone,
+            defaultName: this.state.new_customer_name,
+            defaultAddress: this.state.new_customer_address,
+            onSelect: (customer) => {
+                if (!customer) {
+                    return;
+                }
+                if (this.props.onCustomerApply) {
+                    this.props.onCustomerApply(customer);
+                }
+                this.state.bill_customer_name = customer.name || "";
+                this.state.bill_customer_phone = customer.work_phone || customer.mobile_phone || "";
+                this.state.bill_customer_address = customer.address || "";
+                this.state.invoice_address = this.state.bill_customer_address || "";
+                this.state.hasCustomer = true;
+                this.state.new_customer_name = "";
+                this.state.new_customer_phone = "";
+                this.state.new_customer_address = "";
+                this.state.message = "Customer selected.";
+            },
+        });
+    }
+
+    onInsuranceNameInput(ev) {
+        this.state.customer_insurance_name = ev.target.value || "";
+    }
+
+    onInsuranceNumberInput(ev) {
+        this.state.customer_insurance_number = ev.target.value || "";
+    }
+
+    onDescriptionInput(ev) {
+        this.state.description = ev.target.value || "";
+    }
+
+    onDeliveryToggleChange(ev) {
+        const nextValue = !!ev.target.checked;
+        this.state.is_delivery = nextValue;
+        if (!nextValue && this.state.employee_delivery?.id) {
+            this.state.last_delivery_employee = this.state.employee_delivery;
+        }
+        if (nextValue && !this.state.employee_delivery?.id && this.state.last_delivery_employee?.id) {
+            this.state.employee_delivery = this.state.last_delivery_employee;
+        }
+        this.state.message = "";
+    }
+
+    employeeDomain() {
+        const uid = parseInt(session.user_id || 0, 10) || 0;
+        if (uid) {
+            return [
+                "|",
+                ["user_id", "=", uid],
+                "&",
+                ["user_id", "!=", false],
+                ["costcenter_id.eplus_serial", "!=", false],
+            ];
+        }
+        return [
+            ["user_id", "!=", false],
+            ["costcenter_id.eplus_serial", "!=", false],
+        ];
+    }
+
+    onEmployeeUpdate(value) {
+        if (value && value.id) {
+            this.state.eplus_employee = value;
+            return;
+        }
+        this.state.eplus_employee = false;
+    }
+
+    onEmployeeDeliveryUpdate(value) {
+        if (value && value.id) {
+            this.state.employee_delivery = value;
+            this.state.last_delivery_employee = value;
+            return;
+        }
+        this.state.employee_delivery = false;
+    }
+
+    _validate() {
+        const header = this.props.bill?.header || {};
+        const errors = {};
+        const hasCustomer = !!header.customer_id;
+        const hasContract = !!header.contract_id;
+        const newName = (this.state.new_customer_name || "").trim();
+        const newPhone = (this.state.new_customer_phone || "").trim();
+        const newAddress = (this.state.new_customer_address || "").trim();
+        const hasAnyNew = !!(newName || newPhone || newAddress);
+
+        if (!hasCustomer && hasAnyNew) {
+            if (!newName) {
+                errors.new_customer_name = true;
+            }
+            if (!newPhone) {
+                errors.new_customer_phone = true;
+            }
+            if (!newAddress) {
+                errors.new_customer_address = true;
+            }
+        }
+        if (hasContract) {
+            if (!(this.state.customer_insurance_name || "").trim()) {
+                errors.customer_insurance_name = true;
+            }
+            if (!(this.state.customer_insurance_number || "").trim()) {
+                errors.customer_insurance_number = true;
+            }
+        }
+        // if (this.state.is_delivery && !this.state.employee_delivery?.id) {
+        //     errors.employee_delivery = true;
+        // }
+        this.state.errors = errors;
+        this.state.message = Object.keys(errors).length
+            ? "Please fill the required fields."
+            : "";
+        return !Object.keys(errors).length;
+    }
+
+    async submit() {
+        if (this.state.submitting) {
+            return;
+        }
+        const header = this.props.bill?.header || {};
+        const hasCustomer = this.state.hasCustomer || !!header.customer_id;
+        const newPhone = (this.state.new_customer_phone || "").trim();
+        if (this.state.is_delivery && !hasCustomer) {
+            this.openCustomerLookup();
+            return;
+        }
+        if (!hasCustomer && newPhone) {
+            this.openCustomerLookup();
+            return;
+        }
+        if (!this._validate()) {
+            return;
+        }
+        this.state.submitting = true;
+        try {
+            if (this.props.onSubmit) {
+                await this.props.onSubmit(this._payload());
+            }
+            if (this.props.close) {
+                this.props.close();
+            }
+        } finally {
+            this.state.submitting = false;
+        }
+    }
+
+    cancel() {
+        if (this.props.onDraft) {
+            this.props.onDraft(this._payload());
+        }
+        if (this.props.close) {
+            this.props.close();
+        }
+    }
+
+    _payload() {
+        return {
+            invoice_address: this.state.invoice_address,
+            new_customer_name: this.state.new_customer_name,
+            new_customer_phone: this.state.new_customer_phone,
+            new_customer_address: this.state.new_customer_address,
+            bill_customer_name: this.state.bill_customer_name,
+            bill_customer_phone: this.state.bill_customer_phone,
+            bill_customer_address: this.state.bill_customer_address,
+            customer_insurance_name: this.state.customer_insurance_name,
+            customer_insurance_number: this.state.customer_insurance_number,
+            description: this.state.description,
+            is_delivery: !!this.state.is_delivery,
+            employee_delivery_id: this.state.employee_delivery?.id || false,
+            employee_delivery_name: this.state.employee_delivery?.display_name || "",
+            employee_id: this.state.eplus_employee?.id || false,
+            employee_name: this.state.eplus_employee?.display_name || "",
+        };
+    }
+}
+
+class AbSalesPosCustomerLookupDialog extends Component {
+    static template = "ab_sales.PosCustomerLookupDialog";
+    static components = {Dialog, ABMany2one};
+    static props = {
+        domain: {type: Array, optional: true},
+        defaultPhone: {type: String, optional: true},
+        defaultName: {type: String, optional: true},
+        defaultAddress: {type: String, optional: true},
+        onSelect: {type: Function, optional: true},
+        close: Function,
+    };
+
+    setup() {
+        this.orm = useService("orm");
+        this.state = useState({
+            mode: "search",
+            phone: (this.props.defaultPhone || "").trim(),
+            name: (this.props.defaultName || "").trim(),
+            address: (this.props.defaultAddress || "").trim(),
+            branch: false,
+            customer: null,
+            message: "",
+            loading: false,
+            errors: {},
+            pendingBconnect: false,
+        });
+
+        this.phoneRef = useRef("customerPhone");
+
+        this.branchDomain = this.branchDomain.bind(this);
+        this.onBranchUpdate = this.onBranchUpdate.bind(this);
+        this.onPhoneInput = this.onPhoneInput.bind(this);
+        this.onPhoneKeydown = this.onPhoneKeydown.bind(this);
+        this.onNameInput = this.onNameInput.bind(this);
+        this.onAddressInput = this.onAddressInput.bind(this);
+        this.search = this.search.bind(this);
+        this.create = this.create.bind(this);
+        this.useCustomer = this.useCustomer.bind(this);
+        this.close = this.close.bind(this);
+
+        onMounted(() => {
+            if (this.phoneRef.el) {
+                this.phoneRef.el.focus();
+                if (typeof this.phoneRef.el.select === "function") {
+                    this.phoneRef.el.select();
+                }
+            }
+            if ((this.state.phone || "").trim()) {
+                this.search();
+            }
+        });
+    }
+
+    branchDomain() {
+        return this.props.domain || [["allow_sale", "=", true]];
+    }
+
+    onBranchUpdate(value) {
+        if (value && value.id) {
+            this.state.branch = value;
+        } else {
+            this.state.branch = false;
+        }
+        if (this.state.errors.branch) {
+            this.state.errors = {...this.state.errors, branch: false};
+        }
+        if (value && value.id && this.state.pendingBconnect && this.state.phone && !this.state.loading) {
+            this.search();
+        }
+    }
+
+    _branchId() {
+        const branchId = parseInt(this.state.branch?.id, 10);
+        if (!Number.isFinite(branchId)) {
+            return null;
+        }
+        return branchId;
+    }
+
+    onPhoneInput(ev) {
+        this.state.phone = ev.target.value || "";
+    }
+
+    onPhoneKeydown(ev) {
+        if (ev.key !== "Enter") {
+            return;
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.search();
+    }
+
+    _getRpcErrorMessage(err, fallback) {
+        const fallbackMessage = fallback || "Request failed.";
+        if (!err) {
+            return fallbackMessage;
+        }
+        const data = err.data || err?.response?.data || {};
+        const rpcArgs = data?.["arguments"];
+        return (
+            data?.message ||
+            (Array.isArray(rpcArgs) && rpcArgs[0]) ||
+            err.message ||
+            fallbackMessage
+        );
+    }
+
+    onNameInput(ev) {
+        this.state.name = ev.target.value || "";
+    }
+
+    onAddressInput(ev) {
+        this.state.address = ev.target.value || "";
+    }
+
+    async search() {
+        if (this.state.loading) {
+            return;
+        }
+        const phone = (this.state.phone || "").trim();
+        if (!phone) {
+            this.state.errors = {phone: true};
+            this.state.message = "Enter a phone number.";
+            return;
+        }
+        const branchId = this._branchId();
+        this.state.loading = true;
+        this.state.errors = {};
+        this.state.message = "";
+        this.state.pendingBconnect = false;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_customer_lookup", [], {
+                phone,
+                store_id: branchId,
+            });
+            if (result?.status === "found" && result.customer) {
+                this.state.customer = result.customer;
+                this.state.mode = "found";
+                this.state.name = result.customer.name || "";
+                this.state.address = result.customer.address || "";
+            } else if (result?.status === "need_store") {
+                this.state.mode = "search";
+                this.state.customer = null;
+                this.state.message = result?.message || "Select a branch to search BConnect.";
+                this.state.errors = {branch: true};
+                this.state.pendingBconnect = true;
+            } else if (result?.status === "not_found") {
+                this.state.mode = "create";
+                this.state.customer = null;
+                this.state.message = "Customer not found. Enter details to create.";
+            } else {
+                this.state.message = result?.message || "No customer found.";
+            }
+        } catch (err) {
+            this.state.message = this._getRpcErrorMessage(err, "Lookup failed.");
+        } finally {
+            this.state.loading = false;
+        }
+    }
+
+    async create() {
+        if (this.state.loading) {
+            return;
+        }
+        const phone = (this.state.phone || "").trim();
+        const name = (this.state.name || "").trim();
+        const address = (this.state.address || "").trim();
+        const errors = {};
+        const branchId = this._branchId();
+        if (!branchId) {
+            errors.branch = true;
+        }
+        if (!name) {
+            errors.name = true;
+        }
+        if (!phone) {
+            errors.phone = true;
+        }
+        if (!address) {
+            errors.address = true;
+        }
+        if (Object.keys(errors).length) {
+            this.state.errors = errors;
+            this.state.message = errors.branch && Object.keys(errors).length === 1
+                ? "Select a branch."
+                : "Please fill the required fields.";
+            return;
+        }
+        this.state.loading = true;
+        this.state.errors = {};
+        this.state.message = "";
+        try {
+            await this.orm.call("ab_sales_pos_api", "pos_validate_new_customer", [], {
+                phone,
+                name,
+                address,
+            });
+            const result = await this.orm.call("ab_sales_pos_api", "pos_customer_create", [], {
+                phone,
+                name,
+                address,
+                store_id: branchId,
+            });
+            if (result?.customer) {
+                this.state.customer = result.customer;
+                this.state.mode = "found";
+                this.state.message = result?.status === "created"
+                    ? "Customer created in BConnect."
+                    : "Customer already exists in BConnect.";
+            } else {
+                this.state.message = result?.message || "Customer creation failed.";
+            }
+        } catch (err) {
+            this.state.message = this._getRpcErrorMessage(err, "Customer creation failed.");
+        } finally {
+            this.state.loading = false;
+        }
+    }
+
+    useCustomer() {
+        if (this.props.onSelect && this.state.customer) {
+            this.props.onSelect(this.state.customer);
+        }
+        this.close();
+    }
+
+    close() {
+        if (this.props.close) {
+            this.props.close();
+        }
+    }
+}
+
+
+class AbSalesPosAllInvoicesDialog extends Component {
+    static template = "ab_sales.PosAllInvoicesDialog";
+    static components = {Dialog};
+    static props = {
+        invoices: {type: Array, optional: true},
+        onAddAll: Function,
+        close: Function,
+    };
+
+    setup() {
+        this.state = useState({
+            searchQuery: "",
+            appliedQuery: "",
+            selectedInvoiceId: null,
+        });
+        this.onSearchInput = this.onSearchInput.bind(this);
+        this.searchInvoices = this.searchInvoices.bind(this);
+        this.clearSearch = this.clearSearch.bind(this);
+        this.selectInvoice = this.selectInvoice.bind(this);
+        this.addAll = this.addAll.bind(this);
+        this.close = this.close.bind(this);
+    }
+
+    formatMoney2(value) {
+        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
+        if (!Number.isFinite(numberValue)) {
+            return "0.00";
+        }
+        return numberValue.toFixed(2);
+    }
+
+    formatDateTime(value) {
+        if (!value) {
+            return "-";
+        }
+        try {
+            const dt = new Date(value);
+            return `${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}`;
+        } catch {
+            return value;
+        }
+    }
+
+    get invoices() {
+        const rows = Array.isArray(this.props.invoices) ? [...this.props.invoices] : [];
+        rows.sort((a, b) => {
+            const aTime = new Date(a?.date || 0).getTime() || 0;
+            const bTime = new Date(b?.date || 0).getTime() || 0;
+            return bTime - aTime;
+        });
+        return rows;
+    }
+
+    get filteredInvoices() {
+        const query = (this.state.appliedQuery || "").trim().toLowerCase();
+        const rows = this.invoices;
+        if (!query) {
+            return rows;
+        }
+        return rows.filter((inv) =>
+            (inv?.lines || []).some((line) =>
+                String(line?.product_name || "").toLowerCase().includes(query)
+            )
+        );
+    }
+
+    get selectedInvoice() {
+        const rows = this.filteredInvoices;
+        if (!rows.length) {
+            return null;
+        }
+        const selectedId = parseInt(this.state.selectedInvoiceId || 0, 10);
+        if (selectedId) {
+            const found = rows.find((inv) => inv.id === selectedId);
+            if (found) {
+                return found;
+            }
+        }
+        return rows[0];
+    }
+
+    formatQty(value) {
+        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
+        if (!Number.isFinite(numberValue)) {
+            return "0";
+        }
+        const fixed = numberValue.toFixed(2);
+        return fixed.replace(/(?:\.0+|(\.\d*?)0+)$/, "$1");
+    }
+
+    onSearchInput(ev) {
+        this.state.searchQuery = ev?.target?.value || "";
+    }
+
+    searchInvoices() {
+        this.state.appliedQuery = (this.state.searchQuery || "").trim();
+        const first = this.filteredInvoices[0];
+        this.state.selectedInvoiceId = first ? first.id : null;
+    }
+
+    clearSearch() {
+        this.state.searchQuery = "";
+        this.state.appliedQuery = "";
+        const first = this.filteredInvoices[0];
+        this.state.selectedInvoiceId = first ? first.id : null;
+    }
+
+    selectInvoice(invoice) {
+        if (!invoice?.id) {
+            return;
+        }
+        this.state.selectedInvoiceId = invoice.id;
+    }
+
+    addAll(invoice) {
+        if (this.props.onAddAll) {
+            this.props.onAddAll(invoice || {});
+        }
+    }
+
+    close() {
+        if (this.props.close) {
+            this.props.close();
+        }
+    }
+}
+
+class AbSalesPosAction extends Component {
+    static template = "ab_sales.PosAction";
+    static components = {
+        Dialog,
+        ABMany2one,
+        AbSalesPosSubmitDialog,
+        AbSalesPosCustomerLookupDialog,
+        AbSalesPosBarcodeLinkDialog,
+        AbSalesPosAllInvoicesDialog,
+    };
+
+    setup() {
+        this.orm = useService("orm");
+        this.notification = useService("notification");
+        this.dialog = useService("dialog");
+        this.action = useService("action");
+
+        this.cacheKey = `${CACHE_PREFIX}_${session.user_id || 0}`;
+        this.posUiSettingsKey = `${POS_UI_SETTINGS_PREFIX}_${session.user_id || 0}`;
+        const initialPosUiSettings = this._loadPosUiSettingsLocal();
+        const initialProductColumnPercentRaw = Number(initialPosUiSettings.productColumnPercent);
+        const initialProductColumnPercent = Number.isFinite(initialProductColumnPercentRaw)
+            ? Math.max(POS_PRODUCT_COL_MIN, Math.min(POS_PRODUCT_COL_MAX, initialProductColumnPercentRaw))
+            : POS_PRODUCT_COL_DEFAULT;
+        const viewport = getViewportRect();
+        const defaultRect = {
+            left: Math.round(viewport.width * 0.05),
+            top: Math.round(viewport.height * 0.05),
+            width: Math.round(viewport.width * 0.9),
+            height: Math.round(viewport.height * 0.9),
+        };
+
+        this.state = useState({
+            bills: [],
+            draftLimit: 10,
+            draftSlotBranches: {},
+            draftCacheReady: false,
+            draftBackupMessage: "",
+            draftConflicts: {},
+            draftCreating: false,
+            draftManaging: false,
+            draftDeleting: false,
+            draftDiscardEligibility: {},
+            selectedId: null,
+            stores: [],
+            storeById: {},
+            allowedStoreCodes: [],
+            defaultStoreCode: "",
+            storeQuery: "",
+            storeResults: [],
+            productResults: [],
+            productQuery: "",
+            productMinPrice: "",
+            productMaxPrice: "",
+            productHasBalanceOnly: !!initialPosUiSettings.productHasBalanceOnly,
+            productHasPosBalanceOnly: !!initialPosUiSettings.productHasPosBalanceOnly,
+            productItemType: "all",
+            productColumnPercent: initialProductColumnPercent,
+            posSettingsSaving: false,
+            selectionIndex: -1,
+            qtyBuffer: "",
+            qtyBufferProductId: null,
+            customerResults: [],
+            customerQuery: "",
+            customerInsights: null,
+            loadingCustomerInsights: false,
+            storeOnline: null,
+            showStoreDetails: false,
+            showCustomerDetails: false,
+            showBillDetails: false,
+            sidebarCollapsed: true,
+            loadingProducts: false,
+            loadingCustomers: false,
+            lastCustomerInput: "",
+            lastCustomerInputFallback: "",
+            submitting: false,
+            windowRect: defaultRect,
+            windowMinimized: false,
+            windowMaximized: true,
+            windowClosed: false,
+            ...printerStateDefaults(),
+        });
+
+        this._lastWindowRect = {...defaultRect};
+        this._dragState = null;
+        this._resizeState = null;
+
+        this.searchInputRef = useRef("searchInput");
+        this.cardsContainerRef = useRef("cardsContainer");
+        this.productGridRef = useRef("productGrid");
+        this.customerM2ORef = useRef("customerM2O");
+
+        this._productSearchTimer = null;
+        this._productSearchRequestId = 0;
+        this._customerSearchTimer = null;
+        this._promoTimer = null;
+        this._promoRequestId = 0;
+        this._promoDisabled = false;
+        this._posBalanceRequestId = 0;
+        this._customerInsightsRequestId = 0;
+        this._posBalanceTimer = null;
+        this._linePosBalanceRequestId = 0;
+        this._linePosBalanceTimer = null;
+        this._storeStatusRequestId = 0;
+        this._viewportCheckTimer = null;
+        this._lastViewport = {width: 0, height: 0, ratio: 1};
+        this._cacheSaveTimer = null;
+        this._cacheSaveInFlight = false;
+        this._cacheSaveQueued = false;
+        this._cacheSaveStopped = false;
+        this._acknowledgedDrafts = new Map();
+        this._skippedDrafts = new Map();
+        this._removedDraftIds = new Set();
+        this._barcodeActive = false;
+        this._barcodeBuffer = "";
+        this._lineFocusObserver = null;
+        this._lineFocusTimer = null;
+        this._uomFactorCache = new Map();
+        this._posUiSettingsExtra = {};
+
+        bindPrinterActions(this, {parseQtyExpression});
+
+        this.addProduct = this.addProduct.bind(this);
+        this.addProductAndFocus = this.addProductAndFocus.bind(this);
+        this.storeValue = this.storeValue.bind(this);
+        this.storeDomain = this.storeDomain.bind(this);
+        this.customerValue = this.customerValue.bind(this);
+        this.onStoreM2OUpdate = this.onStoreM2OUpdate.bind(this);
+        this.onCustomerM2OUpdate = this.onCustomerM2OUpdate.bind(this);
+        this.selectBill = this.selectBill.bind(this);
+        this.removeBill = this.removeBill.bind(this);
+        this.removeCurrentBill = this.removeCurrentBill.bind(this);
+        this.removeAllBills = this.removeAllBills.bind(this);
+        this.openNewBillDialog = this.openNewBillDialog.bind(this);
+        this.openCustomerLookup = this.openCustomerLookup.bind(this);
+        this.applyCustomerLookup = this.applyCustomerLookup.bind(this);
+        this.onCustomerInput = this.onCustomerInput.bind(this);
+        this.captureCustomerInput = this.captureCustomerInput.bind(this);
+        this.onCustomerPointerDown = this.onCustomerPointerDown.bind(this);
+        this.updateHeaderField = this.updateHeaderField.bind(this);
+        this._openSubmitDialog = this._openSubmitDialog.bind(this);
+        this._applySubmitDialog = this._applySubmitDialog.bind(this);
+        this._openDuplicateTokenDialog = this._openDuplicateTokenDialog.bind(this);
+        this._submitBillInternal = this._submitBillInternal.bind(this);
+        this._buildSubmitHeader = this._buildSubmitHeader.bind(this);
+        this.toggleStoreDetails = this.toggleStoreDetails.bind(this);
+        this.toggleCustomerDetails = this.toggleCustomerDetails.bind(this);
+        this.toggleBillDetails = this.toggleBillDetails.bind(this);
+        this.toggleSidebar = this.toggleSidebar.bind(this);
+        this.setCustomerMode = this.setCustomerMode.bind(this);
+        this.onProductSearch = this.onProductSearch.bind(this);
+        this.onProductSearchKeydown = this.onProductSearchKeydown.bind(this);
+        this.onProductHasBalanceChange = this.onProductHasBalanceChange.bind(this);
+        this.onProductHasPosBalanceChange = this.onProductHasPosBalanceChange.bind(this);
+        this.onProductItemTypeChange = this.onProductItemTypeChange.bind(this);
+        this.updateLineQty = this.updateLineQty.bind(this);
+        this.updateLineSellPrice = this.updateLineSellPrice.bind(this);
+        this.updateLineTargetPrice = this.updateLineTargetPrice.bind(this);
+        this.loadLineDetails = this.loadLineDetails.bind(this);
+        this.removeLine = this.removeLine.bind(this);
+        this.submitCurrentBill = this.submitCurrentBill.bind(this);
+        this.retryCurrentBill = this.retryCurrentBill.bind(this);
+        this.openBillWizard = this.openBillWizard.bind(this);
+        this.openStoresBalance = this.openStoresBalance.bind(this);
+        this.scheduleLinePosBalanceRefresh = this.scheduleLinePosBalanceRefresh.bind(this);
+        this._refreshPosBalancesForLines = this._refreshPosBalancesForLines.bind(this);
+        this.refreshLinePosBalance = this.refreshLinePosBalance.bind(this);
+        this.refreshProductPosBalance = this.refreshProductPosBalance.bind(this);
+        this.onAvailablePriceSelect = this.onAvailablePriceSelect.bind(this);
+        this._openBarcodeLinkDialog = this._openBarcodeLinkDialog.bind(this);
+        this._openBarcodeRegisterDialog = this._openBarcodeRegisterDialog.bind(this);
+        this._linkBarcodeProducts = this._linkBarcodeProducts.bind(this);
+        this.formatPrice = this.formatPrice.bind(this);
+        this.formatQty = this.formatQty.bind(this);
+        this.formatMoney2 = this.formatMoney2.bind(this);
+        this.lineUomValue = this.lineUomValue.bind(this);
+        this.lineUomDomain = this.lineUomDomain.bind(this);
+        this.onLineUomUpdate = this.onLineUomUpdate.bind(this);
+        this._extractUomInfo = this._extractUomInfo.bind(this);
+        this._getUomFactor = this._getUomFactor.bind(this);
+        this._syncAvailablePricesForUom = this._syncAvailablePricesForUom.bind(this);
+        this.productLabel = this.productLabel.bind(this);
+        this.onResizeStart = this.onResizeStart.bind(this);
+        this.onSidebarResizeStart = this.onSidebarResizeStart.bind(this);
+        this.onKeydown = this.onKeydown.bind(this);
+        this.onWindowDragStart = this.onWindowDragStart.bind(this);
+        this.onWindowResizeStart = this.onWindowResizeStart.bind(this);
+        this.toggleWindowMinimize = this.toggleWindowMinimize.bind(this);
+        this.toggleWindowMaximize = this.toggleWindowMaximize.bind(this);
+        this.toggleFullScreen = this.toggleFullScreen.bind(this);
+        this.closeWindow = this.closeWindow.bind(this);
+        this.windowStyle = this.windowStyle.bind(this);
+        this._applyPosScale = this._applyPosScale.bind(this);
+        this.refreshPromotions = this.refreshPromotions.bind(this);
+        this.schedulePromoRefresh = this.schedulePromoRefresh.bind(this);
+        this.selectPromotion = this.selectPromotion.bind(this);
+        this.clearPromotion = this.clearPromotion.bind(this);
+        this._extractPhoneCandidate = this._extractPhoneCandidate.bind(this);
+        this.schedulePosBalanceRefresh = this.schedulePosBalanceRefresh.bind(this);
+        this._refreshPosBalancesForResults = this._refreshPosBalancesForResults.bind(this);
+        this.refreshStoreStatus = this.refreshStoreStatus.bind(this);
+        this.refreshCustomerInsights = this.refreshCustomerInsights.bind(this);
+        this.openCustomerInvoicesDialog = this.openCustomerInvoicesDialog.bind(this);
+        this.addLastInvoiceItems = this.addLastInvoiceItems.bind(this);
+        this.copyLastAddress = this.copyLastAddress.bind(this);
+        this.activeCustomerPhone = this.activeCustomerPhone.bind(this);
+        this.pinnedResultsCount = this.pinnedResultsCount.bind(this);
+        this.savePosUiSettings = this.savePosUiSettings.bind(this);
+        this.loadPosUiSettings = this.loadPosUiSettings.bind(this);
+        this.loadCache = this.loadCache.bind(this);
+        this.persistCache = this.persistCache.bind(this);
+        this.retryDraftBackup = this.retryDraftBackup.bind(this);
+        this.resolveDraftConflict = this.resolveDraftConflict.bind(this);
+        this._saveCacheToServer = this._saveCacheToServer.bind(this);
+        this._posDraftEmployeeId = this._posDraftEmployeeId.bind(this);
+        this._posDraftSessionToken = this._posDraftSessionToken.bind(this);
+        this._localCacheKey = this._localCacheKey.bind(this);
+        this._defaultPosUiSettings = this._defaultPosUiSettings.bind(this);
+        this._normalizePosUiSettings = this._normalizePosUiSettings.bind(this);
+        this._loadPosUiSettingsLocal = this._loadPosUiSettingsLocal.bind(this);
+        this._savePosUiSettingsLocal = this._savePosUiSettingsLocal.bind(this);
+        this._currentPosUiSettings = this._currentPosUiSettings.bind(this);
+        this._applyPosUiSettings = this._applyPosUiSettings.bind(this);
+        this._getFocusedLine = this._getFocusedLine.bind(this);
+        this._getLineIndex = this._getLineIndex.bind(this);
+        this._getLineFocusTargetAfterRemoval = this._getLineFocusTargetAfterRemoval.bind(this);
+        this._handleRemoveFocusedLineShortcut = this._handleRemoveFocusedLineShortcut.bind(this);
+        this._handleSalesLineArrowNavigation = this._handleSalesLineArrowNavigation.bind(this);
+        this._clampProductColumnPercent = this._clampProductColumnPercent.bind(this);
+        this._readProductColumnPercent = this._readProductColumnPercent.bind(this);
+        this._applyProductColumnPercent = this._applyProductColumnPercent.bind(this);
+
+        this.shortcutHandlers = new Map([
+            ["ArrowDown", this._onHotkeyArrowDown.bind(this)],
+            ["ArrowUp", this._onHotkeyArrowUp.bind(this)],
+            ["Enter", this._onHotkeyEnter.bind(this)],
+        ]);
+
+        useEffect(() => {
+            if (!this.state.abSalesHr) return;
+            if (!this._posDraftSessionToken()) {
+                this._draftLoadScope = null;
+                this.state.draftCacheReady = false;
+                clearTimeout(this._cacheSaveTimer);
+                return;
+            }
+            this.loadCache().catch((error) => {
+                this.state.draftBackupMessage = this._getRpcErrorMessage(error);
+            });
+        }, () => [this._posDraftSessionToken()]);
+
+        useExternalListener(window, "keydown", (ev) => this.onKeydown(ev), {capture: true});
+        useExternalListener(window, "resize", () => this._syncWindowToViewport());
+        useExternalListener(window, "pagehide", () => this._saveCacheToServer());
+        useExternalListener(window, "focus", () => {
+            this.retryDraftBackup();
+            this.refreshSubmissionStates();
+        });
+        useExternalListener(window, "online", () => this.retryDraftBackup());
+        useExternalListener(window, "storage", (ev) => {
+            if (ev.key === `${this._localCacheKey()}_removed`) {
+                try {
+                    const ids = new Set(JSON.parse(ev.newValue || "[]"));
+                    if (this.state.bills.some((bill) => ids.has(bill.id))) {
+                        for (const id of ids) this._removedDraftIds.add(id);
+                        for (const bill of this.state.bills.filter((item) => ids.has(item.id))) {
+                            this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
+                        }
+                        this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
+                    }
+                } catch { /* Invalid signals cannot alter the workspace. */ }
+                return;
+            }
+            if (ev.key !== this._localCacheKey()) return;
+            // Other tabs may signal submission danger, but never pull their drafts.
+            try {
+                const incoming = JSON.parse(ev.newValue || "[]");
+                let changed = false;
+                for (const bill of this.state.bills) {
+                    const other = incoming.find((item) => item.id === bill.id);
+                    if (other && !bill.submission_checking && (other.submission_in_progress ||
+                        ["unknown", "pending", "saved"].includes(other.submission_status) ||
+                        (other.submission_attempted && !other.submission_validation_failed && !other.odoo_header_id))) {
+                        bill.submission_attempted = true;
+                        bill.submission_checking = true;
+                        changed = true;
+                    }
+                }
+                if (changed) {
+                    this._submissionRevision = (this._submissionRevision || 0) + 1;
+                    this.refreshSubmissionStates();
+                }
+            } catch { /* Invalid fallback data cannot alter the workspace. */ }
+        });
+        useExternalListener(document, "visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                this._saveCacheToServer();
+            }
+        });
+        if (window.visualViewport) {
+            useExternalListener(window.visualViewport, "resize", () => this._syncWindowToViewport());
+        }
+
+        onWillStart(async () => {
+            await this.loadStores();
+            await this.loadPrinterSettings();
+            await this.loadCache();
+            await this.loadPosUiSettings();
+        });
+
+        onMounted(() => {
+            if (!this.state.selectedId && this.state.bills.length) {
+                this.state.selectedId = this.state.bills[0].id;
+            }
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.scheduleLinePosBalanceRefresh(this.currentBill);
+            this.refreshStoreStatus(this.currentBill?.header?.store_id);
+            this.refreshCustomerInsights(this.currentBill);
+            this.searchProducts((this.state.productQuery || "").trim());
+            this._syncWindowToViewport();
+            this._applyPosScale();
+            this._applyProductColumnPercent(this.state.productColumnPercent);
+            requestAnimationFrame(() => this._applyPosScale());
+            setTimeout(() => this._applyPosScale(), 150);
+            const rect = getViewportRect();
+            this._lastViewport = {
+                width: rect.width,
+                height: rect.height,
+                ratio: window.devicePixelRatio || 1,
+            };
+            this._viewportCheckTimer = setInterval(() => {
+                const next = getViewportRect();
+                const ratio = window.devicePixelRatio || 1;
+                if (
+                    next.width !== this._lastViewport.width ||
+                    next.height !== this._lastViewport.height ||
+                    ratio !== this._lastViewport.ratio
+                ) {
+                    this._lastViewport = {width: next.width, height: next.height, ratio};
+                    this._syncWindowToViewport();
+                }
+            }, 250);
+        });
+
+        onWillUnmount(() => {
+            this._balanceRefreshUnmounted = true;
+            if (this._viewportCheckTimer) {
+                clearInterval(this._viewportCheckTimer);
+                this._viewportCheckTimer = null;
+            }
+            if (this._posBalanceTimer) {
+                clearTimeout(this._posBalanceTimer);
+                this._posBalanceTimer = null;
+            }
+            if (this._linePosBalanceTimer) {
+                clearTimeout(this._linePosBalanceTimer);
+                this._linePosBalanceTimer = null;
+            }
+            this._cacheSaveStopped = true;
+            if (this._cacheSaveTimer) {
+                clearTimeout(this._cacheSaveTimer);
+                this._cacheSaveTimer = null;
+                this._saveCacheToServer({allowRetry: false});
+            }
+        });
+    }
+
+    get currentBill() {
+        return this.state.bills.find((b) => b.id === this.state.selectedId) || null;
+    }
+
+    _posDraftEmployeeId() {
+        const sessionPayload = this.state.abSalesHr?.session;
+        if (!sessionPayload?.token) {
+            return 0;
+        }
+        return parseInt(sessionPayload?.employee?.id || 0, 10) || 0;
+    }
+
+    _posDraftSessionToken() {
+        return String(this.state.abSalesHr?.session?.token || "").trim();
+    }
+
+    _localCacheKey() {
+        const employeeId = this._posDraftEmployeeId();
+        // Odoo 19 moves uid from session into the user service.
+        // Never share fallback bill JSON between browser logins.
+        const userKey = `${this.cacheKey}_user_${user.userId}`;
+        return employeeId ? `${userKey}_employee_${employeeId}` : userKey;
+    }
+
+    _readLocalCache() {
+        try {
+            const raw = sessionStorage.getItem(`${this._localCacheKey()}_workspace`);
+            const bills = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(bills)) {
+                return bills;
+            }
+        } catch {
+            return [];
+        }
+        return [];
+    }
+
+    _draftFingerprint(bill) {
+        // Live stock/display refreshes are not cashier edits and must not compete
+        // with another window's quantity/customer changes.
+        const transient = new Set(["submission_checking", "draft_revision", "backup_status", "updated_at",
+            "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html", "inventory_json",
+            "show_details", "loading_details", "balance", "balance_total", "available", "loading",
+            "slot_locked", "slot_protected", "slot_number", "slot_waiting", "previous_slot_number"]);
+        return JSON.stringify(bill, (key, value) => transient.has(key) || key.startsWith("pos_balance_") || key === "pos_balance"
+            ? undefined : value);
+    }
+
+    _writeLocalCache() {
+        try {
+            const key = this._localCacheKey();
+            sessionStorage.setItem(`${key}_workspace`, JSON.stringify(this.state.bills || []));
+            sessionStorage.setItem(`${key}_selection`, this.state.selectedId || "");
+            // Shared fallback doubles as a safety signal, not a workspace source.
+            const previous = localStorage.getItem(key);
+            const shared = JSON.parse(previous || "[]");
+            const bills = this._mergeBillCaches(Array.isArray(shared) ? shared : [], this.state.bills)
+                .filter((bill) => !this._removedDraftIds.has(bill.id));
+            const text = JSON.stringify(bills);
+            if (text !== previous) localStorage.setItem(key, text);
+            const removed = JSON.stringify([...this._removedDraftIds].sort());
+            if (removed !== localStorage.getItem(`${key}_removed`)) localStorage.setItem(`${key}_removed`, removed);
+        } catch {
+            // Server persistence still works when browser storage is unavailable.
+        }
+    }
+
+    _billCacheIdentity(bill) {
+        return String(
+            bill?.id ||
+            bill?.header?.pos_client_token ||
+            bill?.local_number ||
+            ""
+        ).trim();
+    }
+
+    _billCacheUpdatedAt(bill) {
+        const raw = bill?.updated_at || bill?.created_at || "";
+        const ts = Date.parse(raw);
+        return Number.isFinite(ts) ? ts : 0;
+    }
+
+    _mergeBillCaches(...cacheLists) {
+        const byKey = new Map();
+        for (const cacheList of cacheLists) {
+            for (const bill of Array.isArray(cacheList) ? cacheList : []) {
+                if (!bill || typeof bill !== "object") {
+                    continue;
+                }
+                const key = this._billCacheIdentity(bill);
+                if (!key) {
+                    continue;
+                }
+                const existing = byKey.get(key);
+                if (!existing || this._billCacheUpdatedAt(bill) >= this._billCacheUpdatedAt(existing)) {
+                    byKey.set(key, bill);
+                }
+            }
+        }
+        return [...byKey.values()].sort((a, b) => {
+            const difference = this._billCacheUpdatedAt(b) - this._billCacheUpdatedAt(a);
+            if (difference) return difference;
+            const first = this._billCacheIdentity(a), second = this._billCacheIdentity(b);
+            return first < second ? -1 : first > second ? 1 : 0;
+        });
+    }
+
+    _cachePayloadSnapshot() {
+        const local = (this.state.bills || []).filter((bill) =>
+            (this.draftSlotState(bill) === "used" || bill.draft_revision || this._slotBillLocked(bill) || bill.odoo_header_id) &&
+            this._draftFingerprint(bill) !== this._acknowledgedDrafts.get(bill.id) &&
+            this._draftFingerprint(bill) !== this._skippedDrafts?.get(bill.id) &&
+            !this.state.draftConflicts[bill.id]);
+        const fingerprints = new Map(local.map((bill) => [bill.id, this._draftFingerprint(bill)]));
+        const bills = JSON.parse(JSON.stringify(local));
+        return {payload: {bills}, fingerprints};
+    }
+
+    _draftRequestScope() {
+        return `${this._localCacheKey()}:${this._posDraftSessionToken()}`;
+    }
+
+    retryDraftBackup() {
+        this._draftRetryCount = 0;
+        this._scheduleCacheSaveToServer(0);
+    }
+
+    resolveDraftConflict(token) {
+        const conflict = this.state.draftConflicts[token];
+        const bill = this.state.bills.find((item) => item.id === token);
+        if (!conflict || !bill) return;
+        const scope = this._draftRequestScope();
+        this.dialog.add(ConfirmationDialog, {
+            title: _t("Draft changed in another window"),
+            body: _t("Reloading replaces your local edits with the saved version. Keep local changes instead to save your version against the reviewed revision."),
+            confirmLabel: _t("Reload saved version"),
+            cancelLabel: _t("Keep local changes"),
+            dismiss: () => {},
+            confirm: () => {
+                if (scope !== this._draftRequestScope()) return;
+                const restored = this._normalizeBill({...conflict.bill, draft_revision: conflict.revision});
+                restored.slot_number = bill.slot_number;
+                this.state.bills.splice(this.state.bills.indexOf(bill), 1, restored);
+                this._acknowledgedDrafts.set(token, this._draftFingerprint(restored));
+                delete this.state.draftConflicts[token];
+                this._syncInputsForBill(this.currentBill);
+                this.persistCache();
+            },
+            cancel: () => {
+                if (scope !== this._draftRequestScope()) return;
+                bill.draft_revision = conflict.revision;
+                delete this.state.draftConflicts[token];
+                this.retryDraftBackup();
+            },
+        });
+    }
+
+    _draftScopeArgs() {
+        return {
+            cache_key: this.cacheKey,
+            employee_id: this._posDraftEmployeeId() || false,
+            pos_hr_session_token: this._posDraftSessionToken(),
+        };
+    }
+
+    _slotBillLocked(bill) {
+        return !!bill && (bill.submission_checking || bill.submission_in_progress ||
+            bill.submission_can_edit === false || bill.submission_status === "unknown");
+    }
+
+    _assignLocalDraftSlots() {
+        const used = new Set();
+        const editable = this.state.bills.filter((bill) =>
+            !this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission_status));
+        for (const bill of this.state.bills) {
+            if (!editable.includes(bill)) {
+                if (bill.slot_number) bill.previous_slot_number = bill.slot_number;
+                bill.slot_number = null;
+            }
+        }
+        for (const bill of editable) {
+            if (!Number.isInteger(bill.slot_number) || bill.slot_number < 1 ||
+                bill.slot_number > this.state.draftLimit || used.has(bill.slot_number)) {
+                bill.slot_number = null;
+            } else {
+                used.add(bill.slot_number);
+            }
+        }
+        for (const bill of editable) {
+            if (!bill.slot_number) {
+                for (let number = 1; number <= this.state.draftLimit; number++) {
+                    if (!used.has(number)) {
+                        bill.slot_number = number;
+                        used.add(number);
+                        break;
+                    }
+                }
+            }
+            bill.slot_waiting = !bill.slot_number;
+        }
+    }
+
+    get draftSlots() {
+        const slots = Array.from({length: this.state.draftLimit}, (_, index) => ({number: index + 1, bill: null, branch: this.state.draftSlotBranches[String(index + 1)] || null}));
+        for (const bill of this.state.bills) {
+            if (!this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission_status) &&
+                Number.isInteger(bill.slot_number) && slots[bill.slot_number - 1]) {
+                slots[bill.slot_number - 1].bill = bill;
+            }
+        }
+        return slots;
+    }
+
+    get emptyDraftSlots() {
+        return this.draftSlots.filter((slot) => this.draftSlotState(slot.bill) === "empty");
+    }
+
+    get availableDraftSlots() {
+        return this.emptyDraftSlots.length;
+    }
+
+    draftSlotState(bill) {
+        if (!bill) return "empty";
+        const defaults = new Set(["store_id", "store_name", "store_code", "store_ip", "pos_client_token",
+            "customer_mode",
+            "contract_total_invoice_discount_source", "delivery_ui_version"]);
+        const hasData = bill.lines?.length || bill.promo?.applied_id || bill.promo?.selected_id ||
+            Object.entries(bill.header || {}).some(([key, value]) => !defaults.has(key) &&
+                (typeof value === "string" ? value.trim().length : !!value));
+        return hasData ? "used" : (bill.header?.store_id ? "ready" : "empty");
+    }
+
+    draftSlotStateLabel(bill) {
+        const state = this.draftSlotState(bill);
+        return state === "ready" ? _t("Ready") : state === "used" ? _t("Used") : _t("Empty");
+    }
+
+    get readyDraftSlots() {
+        return this.draftSlots.filter((slot) => slot.bill && this.draftSlotState(slot.bill) === "ready").length;
+    }
+
+    get usedDraftSlots() {
+        return this.draftSlots.filter((slot) => slot.bill && this.draftSlotState(slot.bill) === "used").length;
+    }
+
+    get lockedDraftBills() {
+        return this.state.bills.filter((bill) => this._slotBillLocked(bill));
+    }
+
+    get waitingDraftBills() {
+        return this.state.bills.filter((bill) => !this._slotBillLocked(bill) && !bill.slot_number &&
+            !["pending", "saved"].includes(bill.submission_status));
+    }
+
+    _draftSlotLabel(number) {
+        return _t("Slot %s: Empty. Create or restore a draft.", number);
+    }
+
+    _draftLimitWarning() {
+        this.notification.add(_t("All %s local bill slots are occupied. Remove a Ready bill or an eligible draft to free a slot.",
+            this.state.draftLimit), {type: "warning"});
+    }
+
+    _applyDraftCacheResult(result, snapshot = null) {
+        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : this.state.draftLimit;
+        const server = new Map((result.bills || []).map((bill) => [bill.id, bill]));
+        const outcomes = result.outcomes || [];
+        this._lastDraftOutcomes = outcomes;
+        for (const outcome of outcomes) {
+            const bill = this.state.bills.find((item) => item.id === outcome.token);
+            if (!bill) continue;
+            if (["saved", "unchanged"].includes(outcome.status)) {
+                bill.draft_revision = outcome.revision;
+                const fingerprint = snapshot?.fingerprints.get(bill.id);
+                if (fingerprint) this._acknowledgedDrafts.set(bill.id, fingerprint);
+            } else if (outcome.status === "skipped") {
+                // Suppress retries for this exact payload without claiming it was backed up.
+                this._skippedDrafts ||= new Map();
+                const fingerprint = snapshot?.fingerprints.get(bill.id);
+                if (fingerprint) this._skippedDrafts.set(bill.id, fingerprint);
+            } else if (outcome.status === "conflict") {
+                this.state.draftConflicts[bill.id] = outcome;
+            } else if (["retired", "ready"].includes(outcome.status) &&
+                       this.draftSlotState(bill) !== "used" && !this._slotBillLocked(bill) && !bill.odoo_header_id) {
+                const oldId = bill.id;
+                bill.header.pos_client_token = generatePosToken(user.userId, bill.header.store_id);
+                bill.id = bill.header.pos_client_token;
+                delete bill.draft_revision;
+                if (this.state.selectedId === oldId) this.state.selectedId = bill.id;
+            }
+        }
+        const completed = new Set([...(result.completed_ids || []), ...outcomes.filter((o) => o.status === "completed").map((o) => o.token)]);
+        const removed = new Set(result.removed_ids || []);
+        for (const bill of [...this.state.bills]) {
+            const remote = server.get(bill.id);
+            if (remote && this._slotBillLocked(remote)) {
+                for (const key of ["submission_status", "submission_checking", "submission_in_progress",
+                    "submission_can_edit", "submission_attempted", "odoo_header_id", "eplus_serial"]) {
+                    if (key in remote) bill[key] = remote[key];
+                }
+            }
+            if (completed.has(bill.id)) {
+                const oldId = bill.id;
+                const token = generatePosToken(user.userId, bill.header.store_id);
+                const replacement = this._normalizeBill({id: token, header: {
+                    store_id: bill.header.store_id, store_name: bill.header.store_name,
+                    store_code: bill.header.store_code, store_ip: bill.header.store_ip, pos_client_token: token},
+                    lines: [], submission_status: "draft", slot_number: bill.slot_number || bill.previous_slot_number});
+                this.state.bills.splice(this.state.bills.indexOf(bill), 1, replacement);
+                if (this.state.selectedId === oldId) this.state.selectedId = token;
+            } else if (removed.has(bill.id)) {
+                // A stale window must not erase its own unsaved edits or revive a tombstone.
+                this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
+            }
+        }
+        if (outcomes.some((o) => o.status === "capacity")) {
+            this.state.draftBackupMessage = _t("Not backed up: saved draft limit reached.");
+        } else if (outcomes.some((o) => o.status === "error")) {
+            this.state.draftBackupMessage = outcomes.find((o) => o.status === "error").message;
+        } else if (Object.keys(this.state.draftConflicts).length) {
+            this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
+        } else if (outcomes.some((o) => o.status === "busy")) {
+            this.state.draftBackupMessage = _t("Draft backup is busy. Local edits are retained.");
+        } else {
+            this.state.draftBackupMessage = "";
+        }
+        this._assignLocalDraftSlots();
+        this._writeLocalCache();
+    }
+
+    async loadCache() {
+        // PIN bootstrap calls this again when the employee identity is available.
+        if (this.state.abSalesHr && !this._posDraftSessionToken()) return;
+        const scope = this._draftRequestScope();
+        if (this._draftLoadScope === scope) return this._draftLoadPromise;
+        this._draftLoadScope = scope;
+        this._draftLoadPromise = this._loadDraftWorkspace(scope);
+        return this._draftLoadPromise;
+    }
+
+    async _loadDraftWorkspace(scope) {
+        this._acknowledgedDrafts = new Map();
+        this._removedDraftIds = new Set();
+        this.state.draftConflicts = {};
+        this.state.draftDiscardEligibility = {};
+        this.state.bills = this._readLocalCache().map((bill) => this._normalizeBill(bill));
+        let selected;
+        try { selected = sessionStorage.getItem(`${this._localCacheKey()}_selection`); } catch { /* Optional. */ }
+        this.state.selectedId = this.state.bills.some((bill) => bill.id === selected)
+            ? selected : (this.state.bills[0]?.id || null);
+        this._assignLocalDraftSlots();
+        this.state.draftCacheReady = true;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_draft_workspace", [], {...this._draftScopeArgs(), tokens: this.state.bills.map((bill) => bill.id)});
+            if (scope !== this._draftRequestScope()) return;
+            this._applyDraftCacheResult(result);
+        } catch (error) {
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftBackupMessage = this._getRpcErrorMessage(error);
+        }
+        if (scope !== this._draftRequestScope()) return;
+        this.retryDraftBackup();
+        await this.refreshSubmissionStates();
+    }
+
+    async _flushDraftSaves() {
+        clearTimeout(this._cacheSaveTimer);
+        this._cacheSaveTimer = null;
+        if (this._cacheSavePromise) await this._cacheSavePromise;
+        await this._saveCacheToServer({throwOnError: true, force: true});
+        if (this._cachePayloadSnapshot().payload.bills.length) {
+            throw new Error(_t("Drafts could not be saved. Please retry before restoring or deleting drafts."));
+        }
+    }
+
+    async _manageDrafts(operation) {
+        if (this.state.draftManaging || this.state.submitting || this.state.draftDeleting || this.state.draftCreating) {
+            throw new Error(_t("Draft cache is busy. Please try again."));
+        }
+        this.state.draftManaging = true;
+        this._submissionRevision = (this._submissionRevision || 0) + 1;
+        const scope = this._draftRequestScope();
+        const checkScope = () => {
+            if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog."));
+        };
+        try {
+            if (this._cacheSavePromise) await this._cacheSavePromise;
+            checkScope();
+            return await operation(checkScope);
+        } finally { this.state.draftManaging = false; if (this._cacheSaveQueued) this._scheduleCacheSaveToServer(0); }
+    }
+
+    async _listSavedDrafts() {
+        return this._manageDrafts(async (checkScope) => {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
+            checkScope();
+            this._applyDraftCacheResult(result);
+            return result;
+        });
+    }
+
+    async _restoreSavedDraft(id, slotNumber) {
+        return this._manageDrafts(async (checkScope) => {
+            if (this.state.bills.some((bill) => bill.id === id)) return this.selectBill(id);
+            if (this.draftSlots[slotNumber - 1]?.bill) throw new Error(_t("This slot is no longer empty. Choose another slot."));
+            const result = await this.orm.call("ab_sales_pos_api", "pos_restore_draft_cache", [], {
+                ...this._draftScopeArgs(), bill_id: id,
+            });
+            checkScope();
+            this._applyDraftCacheResult(result);
+            const bill = this._normalizeBill(result.bills[0]);
+            bill.slot_number = slotNumber;
+            this.state.bills.push(bill);
+            this._acknowledgedDrafts.set(bill.id, this._draftFingerprint(bill));
+            this.selectBill(id);
+        });
+    }
+
+    async _removeSavedDrafts(ids, revision) {
+        return this._manageDrafts(async (checkScope) => {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
+                ...this._draftScopeArgs(), bill_ids: ids, revision,
+            });
+            checkScope();
+            this._removeCachedBills(new Set(result.deleted_ids || []));
+            this._applyDraftCacheResult(result);
+            this.notification.add(_t("Deleted %s drafts; retained %s bills.", result.deleted_ids.length, result.retained_count), {type: "info"});
+            return result;
+        });
+    }
+
+    _defaultPosUiSettings() {
+        return {
+            productHasBalanceOnly: true,
+            productHasPosBalanceOnly: true,
+            productColumnPercent: POS_PRODUCT_COL_DEFAULT,
+        };
+    }
+
+    _clampProductColumnPercent(value) {
+        const pct = Number(value);
+        if (!Number.isFinite(pct)) {
+            return POS_PRODUCT_COL_DEFAULT;
+        }
+        return Math.max(POS_PRODUCT_COL_MIN, Math.min(POS_PRODUCT_COL_MAX, pct));
+    }
+
+    _readProductColumnPercent() {
+        const rootEl = this.el || this.productGridRef?.el;
+        let raw = rootEl?.style?.getPropertyValue?.("--pos-product-col") || "";
+        if (!raw && typeof window !== "undefined" && rootEl) {
+            raw = window.getComputedStyle(rootEl).getPropertyValue("--pos-product-col") || "";
+        }
+        const parsed = parseFloat(String(raw || "").replace("%", "").trim());
+        if (Number.isFinite(parsed)) {
+            return this._clampProductColumnPercent(parsed);
+        }
+        return this._clampProductColumnPercent(this.state.productColumnPercent);
+    }
+
+    _applyProductColumnPercent(value) {
+        const pct = this._clampProductColumnPercent(value);
+        const rootEl = this.el || this.productGridRef?.el;
+        if (rootEl?.style?.setProperty) {
+            rootEl.style.setProperty("--pos-product-col", `${pct}%`);
+        }
+        return pct;
+    }
+
+    _normalizePosUiSettings(payload) {
+        const defaults = this._defaultPosUiSettings();
+        const raw = payload && typeof payload === "object" ? payload : {};
+        return {
+            ...raw,
+            productHasBalanceOnly:
+                typeof raw.productHasBalanceOnly === "boolean"
+                    ? raw.productHasBalanceOnly
+                    : defaults.productHasBalanceOnly,
+            productHasPosBalanceOnly:
+                typeof raw.productHasPosBalanceOnly === "boolean"
+                    ? raw.productHasPosBalanceOnly
+                    : defaults.productHasPosBalanceOnly,
+            productColumnPercent: this._clampProductColumnPercent(
+                Number.isFinite(Number(raw.productColumnPercent))
+                    ? Number(raw.productColumnPercent)
+                    : defaults.productColumnPercent
+            ),
+        };
+    }
+
+    _loadPosUiSettingsLocal() {
+        try {
+            const raw = localStorage.getItem(this.posUiSettingsKey);
+            if (!raw) {
+                return this._defaultPosUiSettings();
+            }
+            return this._normalizePosUiSettings(JSON.parse(raw));
+        } catch {
+            return this._defaultPosUiSettings();
+        }
+    }
+
+    _savePosUiSettingsLocal(payload) {
+        try {
+            const settings = this._normalizePosUiSettings(payload);
+            localStorage.setItem(this.posUiSettingsKey, JSON.stringify(settings));
+        } catch {
+            // Ignore localStorage write failures.
+        }
+    }
+
+    _currentPosUiSettings() {
+        return this._normalizePosUiSettings({
+            ...this._posUiSettingsExtra,
+            productHasBalanceOnly: !!this.state.productHasBalanceOnly,
+            productHasPosBalanceOnly: !!this.state.productHasPosBalanceOnly,
+            productColumnPercent: this._readProductColumnPercent(),
+        });
+    }
+
+    _applyPosUiSettings(payload, persistLocal = true) {
+        const raw = payload && typeof payload === "object" ? payload : {};
+        const settings = this._normalizePosUiSettings(raw);
+        const extras = {};
+        for (const [key, value] of Object.entries(raw)) {
+            if (key === "productHasBalanceOnly" || key === "productHasPosBalanceOnly") {
+                continue;
+            }
+            extras[key] = value;
+        }
+        this._posUiSettingsExtra = extras;
+        this.state.productHasBalanceOnly = !!settings.productHasBalanceOnly;
+        this.state.productHasPosBalanceOnly = !!settings.productHasPosBalanceOnly;
+        this.state.productColumnPercent = this._applyProductColumnPercent(settings.productColumnPercent);
+        if (persistLocal) {
+            this._savePosUiSettingsLocal(settings);
+        }
+        return settings;
+    }
+
+    async loadPosUiSettings() {
+        let settings = null;
+        try {
+            const result = await this.orm.call("ab_sales_ui_api", "get_pos_ui_settings", [], {});
+            settings = result?.settings || result || null;
+        } catch {
+            settings = null;
+        }
+        if (!settings) {
+            settings = this._loadPosUiSettingsLocal();
+        }
+        this._applyPosUiSettings(settings, true);
+    }
+
+    async savePosUiSettings() {
+        if (this.state.posSettingsSaving) {
+            return;
+        }
+        this.state.posSettingsSaving = true;
+        const payload = this._currentPosUiSettings();
+        try {
+            const result = await this.orm.call("ab_sales_ui_api", "save_pos_ui_settings", [], {
+                settings: payload,
+            });
+            this._applyPosUiSettings(result?.settings || payload, true);
+            this.notification.add("Settings saved.", {type: "success"});
+        } catch (err) {
+            this.notification.add(err?.message || "Failed to save settings.", {type: "danger"});
+        } finally {
+            this.state.posSettingsSaving = false;
+        }
+    }
+
+    _syncInputsForBill(bill) {
+        if (!bill) {
+            this.state.storeQuery = "";
+            this.state.customerQuery = "";
+            this.state.storeResults = [];
+            this.state.customerResults = [];
+            return;
+        }
+        this.state.storeQuery = bill.header.store_name || "";
+        if (bill.header.customer_mode === "new") {
+            this.state.customerQuery = "";
+        } else {
+            this.state.customerQuery = bill.header.customer_name || "";
+        }
+        this.state.storeResults = [];
+        this.state.customerResults = [];
+    }
+
+    persistCache() {
+        this._assignLocalDraftSlots();
+        this._writeLocalCache();
+        this._scheduleCacheSaveToServer();
+    }
+
+    _scheduleCacheSaveToServer(delay = 350) {
+        if (this._cacheSaveStopped) {
+            return;
+        }
+        if (this._cacheSaveTimer) {
+            clearTimeout(this._cacheSaveTimer);
+        }
+        this._cacheSaveTimer = setTimeout(() => {
+            this._cacheSaveTimer = null;
+            this._saveCacheToServer();
+        }, delay);
+    }
+
+    async _saveCacheToServer(options = {}) {
+        const scope = this._draftRequestScope();
+        if (this._cacheSavePromise) {
+            if (this._cacheSaveScope === scope) return this._cacheSavePromise;
+            await this._cacheSavePromise;
+            if (scope !== this._draftRequestScope()) return;
+        }
+        this._cacheSaveScope = scope;
+        this._cacheSavePromise = this._performCacheSave(options);
+        try { return await this._cacheSavePromise; }
+        finally { this._cacheSavePromise = null; }
+    }
+
+    async _performCacheSave({allowRetry = true, throwOnError = false, force = false} = {}) {
+        if (!force && (this.state.draftDeleting || this.state.draftManaging)) {
+            this._cacheSaveQueued = true;
+            return;
+        }
+        this._cacheSaveQueued = false;
+        if (!this.state.draftCacheReady || (this.state.abSalesHr && !this._posDraftSessionToken())) return;
+        const scope = this._draftRequestScope();
+        const snapshot = this._cachePayloadSnapshot();
+        if (!snapshot.payload.bills.length) return;
+        this._cacheSaveInFlight = true;
+        let transient = false;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
+                ...this._draftScopeArgs(), ...snapshot.payload,
+            });
+            if (scope !== this._draftRequestScope()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            transient = (result.outcomes || []).some((o) => o.status === "busy");
+            const rejected = (result.outcomes || []).some((o) => !["saved", "unchanged", "ready", "retired", "completed", "skipped"].includes(o.status));
+            if (throwOnError && rejected) throw new Error(this.state.draftBackupMessage);
+            if (!rejected && this._cachePayloadSnapshot().payload.bills.length) this._cacheSaveQueued = true;
+            if (!rejected) this._draftRetryCount = 0;
+            return result;
+        } catch (error) {
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftBackupMessage = error?.data ? this._getRpcErrorMessage(error) :
+                _t("Draft backup is unavailable. Your local edits are retained. Retry when connected.");
+            // RPC business errors require user action; transport errors may recover.
+            transient = !error?.data;
+            if (throwOnError) throw error;
+        } finally {
+            this._cacheSaveInFlight = false;
+            if (scope === this._draftRequestScope() && allowRetry && transient && !this._cacheSaveStopped) {
+                const delays = [1000, 2000, 5000];
+                const count = this._draftRetryCount || 0;
+                if (count < delays.length) {
+                    this._draftRetryCount = count + 1;
+                    this._scheduleCacheSaveToServer(delays[count]);
+                }
+            } else if (this._cacheSaveQueued && !this._cacheSaveStopped) {
+                this._cacheSaveQueued = false;
+                this._scheduleCacheSaveToServer(0);
+            }
+        }
+    }
+
+    async loadStores() {
+        // A failed settings request must not expand the list of usable stores.
+        // Let the normal RPC error surface so the user can reload and retry.
+        const settings = await this.orm.call("ab_sales_ui_api", "get_sales_store_settings", [], {});
+        const allowedCodes = settings.allowed_store_codes || [];
+        const defaultCode = (settings.default_store_code || "").trim();
+        const domain = [["allow_sale", "=", true], ["id", "in", settings.available_store_ids || []]];
+        const stores = await this.orm.searchRead("ab_store", domain, ["name", "code", "ip1"]);
+        this.state.stores = stores || [];
+        this.state.allowedStoreCodes = allowedCodes;
+        const byId = {};
+        for (const store of this.state.stores) {
+            byId[store.id] = store;
+        }
+        this.state.storeById = byId;
+        if (defaultCode && this.state.stores.some((store) => store.code === defaultCode)) {
+            this.state.defaultStoreCode = defaultCode;
+        } else {
+            this.state.defaultStoreCode = this.state.stores[0]?.code || "";
+        }
+    }
+
+    async openNewBillDialog(slotNumber = null) {
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this.state.draftManaging) return;
+        if (!this.availableDraftSlots) {
+            this._draftLimitWarning();
+            return;
+        }
+        this._requestedDraftSlot = Number.isInteger(slotNumber) ? slotNumber : this.emptyDraftSlots[0]?.number;
+        this.state.draftCreating = true;
+        const scope = this._draftRequestScope();
+        try {
+            const options = await this.orm.call("ab_sales_pos_api", "pos_draft_store_options", [], {
+                pos_hr_session_token: this._posDraftSessionToken() || false,
+            });
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftLimit = options.draft_limit || this.state.draftLimit;
+            const stores = options.stores || [];
+            this.state.draftStoreIds = stores.map((store) => store.id);
+            this.state.stores = stores;
+            this.state.storeById = Object.fromEntries(stores.map((store) => [store.id, store]));
+            if (!stores.length) {
+                this.notification.add(_t("No stores available."), {type: "warning"});
+                return;
+            }
+            this.dialog.add(AbSalesPosStoreDialog, {
+                stores,
+                defaultStoreCode: stores.find((store) => store.id === options.default_store_id)?.code || stores[0]?.code || "",
+                domain: this.storeDomain(),
+                onSelect: (storeId) => scope === this._draftRequestScope() && this.createNewBill(storeId),
+                draftManager: {
+                    list: () => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._listSavedDrafts(); },
+                    restore: (id) => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._restoreSavedDraft(id, this._requestedDraftSlot); },
+                    remove: (ids, revision) => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._removeSavedDrafts(ids, revision); },
+                    isOpen: (id) => this.state.bills.some((bill) => bill.id === id),
+                    locked: (bill) => this._slotBillLocked(bill),
+                    error: (error) => this._getRpcErrorMessage(error),
+                    formatPrice: (value) => this.formatPrice(value),
+                    formatDate: (value) => this.formatDateTime(value),
+                },
+            });
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        } finally {
+            this.state.draftCreating = false;
+        }
+    }
+
+    openCustomerLookup() {
+        if (!this.billEditable(this.currentBill)) return;
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        const typedValue = this.state.lastCustomerInputFallback || this.state.lastCustomerInput || "";
+        const typedPhone = this._extractPhoneCandidate(typedValue);
+        const fallbackPhone = this._extractPhoneCandidate(
+            bill.header.customer_mobile || bill.header.customer_phone || ""
+        );
+        const defaultPhone = typedPhone || fallbackPhone || "";
+        this.dialog.add(AbSalesPosCustomerLookupDialog, {
+            defaultPhone,
+            domain: this.storeDomain(),
+            onSelect: (customer) => this.applyCustomerLookup(customer),
+        });
+    }
+
+    async applyCustomerLookup(customer) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        if (!customer || !customer.id) {
+            return;
+        }
+        this.selectCustomer(customer);
+        await this.onCustomerM2OUpdate({
+            id: customer.id,
+            display_name: customer.name || customer.code || "",
+        });
+    }
+
+    onCustomerInput(ev) {
+        const target = ev?.target;
+        if (!target || target.tagName !== "INPUT") {
+            return;
+        }
+        const value = target.value || "";
+        this.state.lastCustomerInput = value;
+        if (/\d/.test(value)) {
+            this.state.lastCustomerInputFallback = value;
+        }
+    }
+
+    captureCustomerInput() {
+        const inputEl = this.customerM2ORef.el?.querySelector?.("input");
+        if (inputEl) {
+            const value = inputEl.value || "";
+            this.state.lastCustomerInput = value;
+            if (/\d/.test(value)) {
+                this.state.lastCustomerInputFallback = value;
+            }
+        }
+    }
+
+    onCustomerPointerDown(ev) {
+        const target = ev?.target;
+        if (!target || !target.closest) {
+            return;
+        }
+        if (target.closest(".o_ab_many2one_clear")) {
+            this.state.lastCustomerInput = "";
+            this.state.lastCustomerInputFallback = "";
+        }
+    }
+
+    _extractPhoneCandidate(value) {
+        let digits = String(value || "").replace(/\D/g, "");
+        if (!digits) {
+            return "";
+        }
+        if (digits.startsWith("0020") && digits.length >= 14) {
+            digits = `0${digits.slice(4)}`;
+        } else if (digits.startsWith("20") && digits.length >= 12) {
+            digits = `0${digits.slice(2)}`;
+        } else if (digits.length === 10 && digits.startsWith("1")) {
+            digits = `0${digits}`;
+        }
+        if (digits.length > 11 && digits.startsWith("0")) {
+            digits = digits.slice(-11);
+        }
+        if (digits.length !== 11 || !digits.startsWith("01")) {
+            return "";
+        }
+        return digits;
+    }
+
+    activeCustomerPhone(billArg = null) {
+        const bill = billArg || this.currentBill;
+        if (!bill?.header) {
+            return "";
+        }
+        return this._extractPhoneCandidate(
+            bill.header.bill_customer_phone || bill.header.customer_phone || bill.header.customer_mobile || ""
+        );
+    }
+
+    pinnedResultsCount() {
+        return (this.state.productResults || []).filter((row) => !!row?.is_pinned).length;
+    }
+
+    async refreshCustomerInsights(billArg = null) {
+        const bill = billArg || this.currentBill;
+        const requestId = ++this._customerInsightsRequestId;
+        if (!bill?.header?.store_id) {
+            this.state.customerInsights = null;
+            this.state.loadingCustomerInsights = false;
+            return;
+        }
+        const phone = this.activeCustomerPhone(bill);
+        if (!phone) {
+            this.state.customerInsights = null;
+            this.state.loadingCustomerInsights = false;
+            return;
+        }
+        this.state.loadingCustomerInsights = true;
+        try {
+            const result = await this.orm.call("ab_sales_ui_api", "pos_customer_insights", [], {
+                customer_phone: phone,
+            });
+            if (requestId !== this._customerInsightsRequestId) {
+                return;
+            }
+            this.state.customerInsights = result || null;
+        } catch {
+            if (requestId !== this._customerInsightsRequestId) {
+                return;
+            }
+            this.state.customerInsights = null;
+        } finally {
+            if (requestId === this._customerInsightsRequestId) {
+                this.state.loadingCustomerInsights = false;
+            }
+        }
+    }
+
+    async copyLastAddress() {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const text = this.state.customerInsights?.customer?.last_address || "";
+        if (!text) {
+            this.notification.add("No address to copy.", {type: "warning"});
+            return;
+        }
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+            }
+            this.notification.add("Address copied.", {type: "success"});
+        } catch {
+            this.notification.add("Copy failed.", {type: "danger"});
+        }
+    }
+
+    async openCustomerInvoicesDialog() {
+        const bill = this.currentBill;
+        const phone = this.activeCustomerPhone(bill);
+        if (!phone) {
+            this.notification.add("Select a customer with phone number first.", {type: "warning"});
+            return;
+        }
+        try {
+            const invoices = await this.orm.call("ab_sales_ui_api", "pos_customer_invoices", [], {
+                customer_phone: phone,
+                limit: 20,
+            });
+            if (!Array.isArray(invoices) || !invoices.length) {
+                this.notification.add("No invoices found for this customer.", {type: "warning"});
+                return;
+            }
+            this.dialog.add(AbSalesPosAllInvoicesDialog, {
+                invoices,
+                onAddAll: (payload) => this.addLastInvoiceItems(payload),
+            });
+        } catch (err) {
+            this.notification.add(err?.message || "Failed to load invoices.", {type: "danger"});
+        }
+    }
+
+    addLastInvoiceItems(invoice) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const lines = invoice?.lines || [];
+        if (!lines.length) {
+            this.notification.add("No items in selected invoice.", {type: "warning"});
+            return;
+        }
+        let addedLines = 0;
+        let firstLine = null;
+        for (const row of lines) {
+            const productId = parseInt(row?.product_id || 0, 10);
+            const qty = parseFloat(row?.qty || 0) || 0;
+            if (!productId || qty <= 0) {
+                continue;
+            }
+            const line = this.addProduct(
+                {
+                    id: productId,
+                    name: row.product_name || "",
+                    code: row.product_code || "",
+                    default_price: parseFloat(row.sell_price || 0) || 0,
+                },
+                qty
+            );
+            if (!firstLine && line) {
+                firstLine = line;
+            }
+            addedLines += 1;
+        }
+        if (!addedLines) {
+            this.notification.add("No valid items to add.", {type: "warning"});
+            return;
+        }
+        if (firstLine) {
+            this._focusLineQty(firstLine);
+        }
+        this.notification.add(`Added ${addedLines} item(s) from selected invoice.`, {type: "success"});
+    }
+
+    storeDomain() {
+        const domain = [["allow_sale", "=", true], ["id", "in", this.state.stores.map((store) => store.id)]];
+        if (Array.isArray(this.state.draftStoreIds)) {
+            domain.push(["id", "in", this.state.draftStoreIds]);
+        }
+        return domain;
+    }
+
+    async createNewBill(storeId) {
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this.state.draftManaging) return;
+        this._assignLocalDraftSlots();
+        const available = this.emptyDraftSlots;
+        if (!available.length) {
+            this._draftLimitWarning();
+            return;
+        }
+        const slotNumber = available.find((slot) => slot.number === this._requestedDraftSlot)?.number || available[0].number;
+        const store = this.state.storeById[storeId];
+        if (!store) {
+            return;
+        }
+        const emptyBill = available.find((slot) => slot.number === slotNumber)?.bill;
+        if (emptyBill) {
+            this.selectBill(emptyBill.id);
+            await this.onStoreM2OUpdate({ id: store.id, display_name: store.name });
+            return true;
+        }
+        const bill = {
+            id: generateId("bill"),
+            slot_number: slotNumber,
+            submission_status: "draft",
+            local_number: `${Date.now()}`,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            header: {
+                store_id: store.id,
+                store_name: store.name,
+                store_code: store.code,
+                store_ip: store.ip1,
+                description: "",
+                customer_id: null,
+                customer_name: "",
+                customer_address: "",
+                customer_mobile: "",
+                customer_phone: "",
+                customer_code: "",
+                invoice_address: "",
+                bill_customer_name: "",
+                bill_customer_phone: "",
+                bill_customer_address: "",
+                pos_client_token: generatePosToken(user.userId, store.id),
+                new_customer_name: "",
+                new_customer_phone: "",
+                new_customer_address: "",
+                customer_insurance_name: "",
+                customer_insurance_number: "",
+                employee_id: false,
+                employee_name: "",
+                customer_mode: "current",
+            },
+            lines: [],
+            number_of_products: 0,
+            total_price: 0,
+            total_net_amount: 0,
+            promo: this._defaultPromo(),
+        };
+        bill.id = bill.header.pos_client_token;
+        this.state.bills.push(this._normalizeBill(bill));
+        this.selectBill(bill.id);
+        return true;
+    }
+
+    _defaultPromo() {
+        return {
+            available: [],
+            applied_id: null,
+            applied_name: "",
+            selected_id: null,
+            selected_name: "",
+            manual_clear: false,
+            total_net_amount: 0,
+            message: "",
+            discount_amount: 0,
+            total_after: 0,
+            loading: false,
+        };
+    }
+
+    _normalizePromo(promo) {
+        const normalized = this._defaultPromo();
+        const raw = promo || {};
+        normalized.available = Array.isArray(raw.available) ? raw.available : [];
+        const appliedId = parseInt(raw.applied_id, 10);
+        const selectedId = parseInt(raw.selected_id, 10);
+        normalized.applied_id = Number.isFinite(appliedId) ? appliedId : null;
+        normalized.applied_name = raw.applied_name || "";
+        normalized.selected_id = Number.isFinite(selectedId) ? selectedId : null;
+        normalized.selected_name = raw.selected_name || "";
+        normalized.manual_clear = !!raw.manual_clear;
+        normalized.total_net_amount = parseFloat(raw.total_net_amount || 0) || 0;
+        normalized.message = raw.message || "";
+        normalized.discount_amount = parseFloat(raw.discount_amount || 0) || 0;
+        normalized.total_after = parseFloat(raw.total_after || 0) || 0;
+        return normalized;
+    }
+
+    _normalizeBill(bill) {
+        const normalized = bill || {};
+        normalized.header = normalized.header || {};
+        normalized.lines = Array.isArray(normalized.lines) ? normalized.lines : [];
+        normalized.promo = this._normalizePromo(normalized.promo);
+        normalized.header.customer_mode = normalized.header.customer_mode || "current";
+        normalized.header.description = normalized.header.description || "";
+        normalized.header.invoice_address = normalized.header.invoice_address || "";
+        normalized.header.new_customer_name = normalized.header.new_customer_name || "";
+        normalized.header.new_customer_phone = normalized.header.new_customer_phone || "";
+        normalized.header.new_customer_address = normalized.header.new_customer_address || "";
+        normalized.header.bill_customer_name = normalized.header.bill_customer_name || "";
+        normalized.header.bill_customer_phone = normalized.header.bill_customer_phone || "";
+        normalized.header.bill_customer_address = normalized.header.bill_customer_address || "";
+        normalized.header.customer_insurance_name = normalized.header.customer_insurance_name || "";
+        normalized.header.customer_insurance_number = normalized.header.customer_insurance_number || "";
+        normalized.header.employee_id = normalized.header.employee_id || normalized.header.eplus_employee_id || false;
+        normalized.header.employee_name = normalized.header.employee_name || normalized.header.eplus_employee_name || "";
+        normalized.header.customer_name = normalized.header.customer_name || "";
+        normalized.header.customer_address = normalized.header.customer_address || "";
+        normalized.header.customer_mobile = normalized.header.customer_mobile || "";
+        normalized.header.customer_phone = normalized.header.customer_phone || "";
+        normalized.header.customer_code = normalized.header.customer_code || "";
+        normalized.header.pos_client_token =
+            normalized.header.pos_client_token || (normalized.submission_attempted
+                ? "" : generatePosToken(user.userId, normalized.header.store_id));
+        normalized.updated_at = normalized.updated_at || new Date().toISOString();
+        normalized.local_number = normalized.local_number || String(Date.now());
+        normalized.id = normalized.header.pos_client_token || normalized.id || generateId("bill");
+        for (const line of normalized.lines) {
+            line.id = line.id || generateId("line");
+            line.qty_str = line.qty_str || DEFAULT_QTY;
+            line.sell_price = Number.isFinite(line.sell_price) ? line.sell_price : parseFloat(line.sell_price || 0) || 0;
+            line.sell_price_str = line.sell_price_str !== undefined && line.sell_price_str !== null
+                ? String(line.sell_price_str)
+                : String(line.sell_price || 0);
+            line.cost = Number.isFinite(line.cost) ? line.cost : parseFloat(line.cost || 0) || 0;
+            line.target_sell_price =
+                Number.isFinite(line.target_sell_price) ? line.target_sell_price : parseFloat(line.target_sell_price || 0) || 0;
+            line.balance = Number.isFinite(line.balance) ? line.balance : parseFloat(line.balance || 0) || 0;
+            line.balance_total = Number.isFinite(line.balance_total)
+                ? line.balance_total
+                : Number.isFinite(line.balance)
+                    ? line.balance
+                    : parseFloat(line.balance || 0) || 0;
+            line.pos_balance = Number.isFinite(line.pos_balance)
+                ? line.pos_balance
+                : parseFloat(line.pos_balance || 0) || 0;
+            line.pos_balance_unavailable = !!line.pos_balance_unavailable;
+            line.pos_balance_refreshing = false;
+            line.available_prices = Array.isArray(line.available_prices) ? line.available_prices : [];
+            line.available_prices_base = Array.isArray(line.available_prices_base)
+                ? line.available_prices_base
+                : line.available_prices;
+            const productIsPriced = line.product_is_priced ?? line.is_priced;
+            line.product_is_priced = productIsPriced === undefined || productIsPriced === null
+                ? true
+                : !!productIsPriced;
+            line.available_prices_html = "";
+            line.inventory_table_html = line.inventory_table_html || "";
+            line.show_details = !!line.show_details;
+            line.loading_details = false;
+            if (Array.isArray(line.uom_id)) {
+                line.uom_name = line.uom_id[1] || line.uom_name || "";
+                line.uom_id = line.uom_id[0] || null;
+            }
+            if (Array.isArray(line.uom_category_id)) {
+                line.uom_category_id = line.uom_category_id[0] || null;
+            }
+            line.uom_id = line.uom_id || null;
+            line.uom_name = line.uom_name || "";
+            line.uom_category_id = line.uom_category_id || null;
+            line.uom_factor = Number.isFinite(line.uom_factor) ? line.uom_factor : parseFloat(line.uom_factor || 0) || 0;
+            line.default_uom_id = line.default_uom_id || line.uom_id || null;
+            line.default_uom_name = line.default_uom_name || (line.default_uom_id === line.uom_id ? line.uom_name : "");
+            line.default_uom_factor = Number.isFinite(line.default_uom_factor)
+                ? line.default_uom_factor
+                : parseFloat(line.default_uom_factor || 0) || line.uom_factor || 1;
+            if (line.default_uom_id && line.default_uom_factor > 0) {
+                this._uomFactorCache.set(line.default_uom_id, line.default_uom_factor);
+            }
+            line.only_default_sales_uom = !!line.only_default_sales_uom;
+            if (line.only_default_sales_uom && line.default_uom_id) {
+                line.uom_id = line.default_uom_id;
+                line.uom_name = line.default_uom_name || line.uom_name;
+                line.uom_factor = line.default_uom_factor || line.uom_factor;
+            }
+            line.default_sell_price = Number.isFinite(line.default_sell_price)
+                ? line.default_sell_price
+                : parseFloat(line.default_sell_price || 0) || line.sell_price || 0;
+            line.base_sell_price = Number.isFinite(line.base_sell_price)
+                ? line.base_sell_price
+                : parseFloat(line.base_sell_price || 0) || line.default_sell_price || line.sell_price || 0;
+            this._syncAvailablePricesForUom(line);
+            this._recomputeLine(line);
+        }
+        this._recomputeBill(normalized, {persist: false});
+        return normalized;
+    }
+
+    selectBill(billId) {
+        this.state.selectedId = billId;
+        this.persistCache();
+        this._syncInputsForBill(this.currentBill);
+        this.refreshPromotions(this.currentBill);
+        this.scheduleLinePosBalanceRefresh(this.currentBill);
+        this.refreshStoreStatus(this.currentBill?.header?.store_id);
+        this.refreshCustomerInsights(this.currentBill);
+        this.searchProducts((this.state.productQuery || "").trim());
+    }
+
+    async removeBill(billId, completed = false) {
+        const bill = this.state.bills.find((item) => item.id === billId);
+        if (completed) {
+            await this._syncCompletedDrafts();
+            return;
+        }
+        if (bill) await this._deleteDrafts([bill]);
+    }
+
+    async removeCurrentBill() {
+        if (this.currentBill) await this.removeBill(this.currentBill.id);
+    }
+
+    async removeAllBills() {
+        try {
+            const scope = this._draftRequestScope();
+            const result = await this._listSavedDrafts();
+            const ids = result.bills.map((bill) => bill.id);
+            if (!ids.length) return;
+            this.dialog.add(ConfirmationDialog, {
+                title: _t("Delete All Drafts"),
+                body: _t("Delete all eligible saved drafts for this employee, including open drafts? Protected invoices will be retained."),
+                confirm: async () => {
+                    if (scope !== this._draftRequestScope()) return;
+                    try { await this._removeSavedDrafts(ids, result.revision); }
+                    catch (error) { this.notification.add(this._getRpcErrorMessage(error), {type: "warning"}); }
+                },
+            });
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        }
+    }
+
+    async _syncCompletedDrafts() {
+        const scope = this._draftRequestScope();
+        try {
+            await this._flushDraftSaves();
+            if (scope !== this._draftRequestScope()) return;
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.refreshCustomerInsights(this.currentBill);
+            this.refreshStoreStatus(this.currentBill?.header?.store_id);
+        } catch {
+            // The invoice is already confirmed. Retry cache persistence,
+            // never replay submission or report the sale as failed.
+            this.persistCache();
+        }
+    }
+
+    _removeCachedBills(ids) {
+        if (!ids.has(this.state.selectedId)) {
+            this.state.bills = this.state.bills.filter((bill) => !ids.has(bill.id));
+            this.persistCache();
+            return;
+        }
+        for (const name of ["_productSearchTimer", "_promoTimer", "_posBalanceTimer", "_linePosBalanceTimer"]) {
+            clearTimeout(this[name]);
+            this[name] = null;
+        }
+        this._promoRequestId += 1;
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
+        this._storeStatusRequestId += 1;
+        this.state.showStoreDetails = false;
+        this.state.showCustomerDetails = false;
+        this.state.showBillDetails = false;
+        this.state.bills = this.state.bills.filter((bill) => !ids.has(bill.id));
+        if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+            this.state.selectedId = this.state.bills[0]?.id || null;
+        }
+        this._syncInputsForBill(this.currentBill);
+        this.refreshPromotions(this.currentBill);
+        this.refreshCustomerInsights(this.currentBill);
+        this.searchProducts((this.state.productQuery || "").trim());
+        this.persistCache();
+    }
+
+    async _deleteDrafts(bills) {
+        if (!bills.length || this.state.submitting || this.state.draftDeleting) return;
+        const local = bills.filter((bill) => !bill.draft_revision && this.draftSlotState(bill) !== "used" && !bill.odoo_header_id && !this._slotBillLocked(bill));
+        this._removeCachedBills(new Set(local.map((bill) => bill.id)));
+        const saved = bills.filter((bill) => !local.includes(bill));
+        if (!saved.length) return;
+        this.state.draftDeleting = true;
+        const scope = this._draftRequestScope();
+        try {
+            await this._flushDraftSaves();
+            if (scope !== this._draftRequestScope()) return;
+            const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
+                ...this._draftScopeArgs(), bill_ids: saved.map((bill) => bill.id),
+                revision: Object.fromEntries(saved.map((bill) => [bill.id, bill.draft_revision])),
+            });
+            if (scope !== this._draftRequestScope()) return;
+            this._removeCachedBills(new Set(result.deleted_ids || []));
+            this._applyDraftCacheResult(result);
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        } finally { this.state.draftDeleting = false; if (this._cacheSaveQueued) this._scheduleCacheSaveToServer(0); }
+    }
+
+    updateHeaderField(field, value) {
+        if (["pos_client_token", "status", "eplus_serial"].includes(field) ||
+            (field === "store_id" && this.currentBill?.submission_attempted)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        bill.header[field] = value;
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.refreshCustomerInsights(bill);
+        this.searchProducts((this.state.productQuery || "").trim());
+    }
+
+    _openSubmitDialog(bill) {
+        if (!this.billEditable(bill)) {
+            return;
+        }
+        if (!bill) {
+            return;
+        }
+        if (!bill.lines.length) {
+            this.notification.add(_t("No lines to send."), {type: "warning"});
+            return;
+        }
+        const defaultEmployee = this._submitDialogDefaultEmployee(bill);
+        this.dialog.add(AbSalesPosSubmitDialog, {
+            bill,
+            preferredBillName: this.state.customerInsights?.customer?.name || "",
+            preferredBillAddress: this.state.customerInsights?.customer?.last_address || "",
+            defaultEmployee,
+            onSubmit: async (payload) => {
+                await this._applySubmitDialog(bill, payload);
+                await this._submitBillInternal(bill);
+            },
+            onDraft: (payload) => {
+                this._applySubmitDialog(bill, payload);
+            },
+            onCustomerApply: (customer) => this.applyCustomerLookup(customer),
+        });
+    }
+
+    _submitDialogDefaultEmployee(bill) {
+        const header = bill?.header || {};
+        const headerEmployeeId = parseInt(header.employee_id || header.eplus_employee_id || 0, 10) || 0;
+        if (headerEmployeeId) {
+            return {
+                id: headerEmployeeId,
+                name: (header.employee_name || header.eplus_employee_name || "").trim(),
+            };
+        }
+
+        const hrState = this.state && this.state.abSalesHr ? this.state.abSalesHr : null;
+        const sessionInfo = hrState && hrState.session ? hrState.session : null;
+        const sessionEmployee = sessionInfo && sessionInfo.employee ? sessionInfo.employee : false;
+        const sessionEmployeeId = parseInt((sessionEmployee && sessionEmployee.id) || 0, 10) || 0;
+        if (sessionEmployeeId) {
+            return {
+                id: sessionEmployeeId,
+                name: ((sessionEmployee && (sessionEmployee.name || sessionEmployee.display_name)) || "").trim(),
+            };
+        }
+        return false;
+    }
+
+    _openDuplicateTokenDialog(bill, payload) {
+        if (bill && payload?.existing_header?.id) {
+            this._applySubmissionState(bill, payload.existing_header);
+            this.persistCache();
+        }
+    }
+
+    _notifySubmissionError(message, title, type = "danger") {
+        this.notification.add(message || _t("Submit failed"), {
+            title: title || _t("Submit failed"),
+            type,
+            sticky: true,
+        });
+    }
+
+    _applySubmitDialog(bill, payload) {
+        if (!this.billEditable(bill)) {
+            return;
+        }
+        if (!bill) {
+            return;
+        }
+        const header = bill.header || {};
+        const hasCustomer = !!header.customer_id;
+        const billCustomerName = (payload?.bill_customer_name || "").trim();
+        const billCustomerPhone = (payload?.bill_customer_phone || "").trim();
+        const billCustomerAddress = (payload?.bill_customer_address || "").trim();
+
+        if (hasCustomer) {
+            header.customer_mode = "current";
+            header.bill_customer_name = billCustomerName;
+            header.bill_customer_phone = billCustomerPhone;
+            header.bill_customer_address = billCustomerAddress;
+            header.invoice_address = billCustomerAddress || (payload?.invoice_address || "").trim();
+            header.new_customer_name = "";
+            header.new_customer_phone = "";
+            header.new_customer_address = "";
+        } else {
+            header.customer_mode = "new";
+            const newName = (payload?.new_customer_name || "").trim();
+            const newPhone = (payload?.new_customer_phone || "").trim();
+            const newAddress = (payload?.new_customer_address || "").trim();
+            header.new_customer_name = newName;
+            header.new_customer_phone = newPhone;
+            header.new_customer_address = newAddress;
+            header.bill_customer_name = newName;
+            header.bill_customer_phone = newPhone;
+            header.bill_customer_address = newAddress;
+            header.invoice_address = newAddress;
+        }
+
+        header.customer_insurance_name = (payload?.customer_insurance_name || "").trim();
+        header.customer_insurance_number = (payload?.customer_insurance_number || "").trim();
+        header.description = (payload?.description || "").trim();
+        header.is_delivery = !!payload?.is_delivery;
+        const deliveryEmployeeId = parseInt(payload?.employee_delivery_id || 0, 10);
+        header.employee_delivery_id = Number.isFinite(deliveryEmployeeId) && deliveryEmployeeId > 0
+            ? deliveryEmployeeId
+            : false;
+        header.employee_delivery_name = (payload?.employee_delivery_name || "").trim();
+        const employeeId = parseInt(payload?.employee_id || 0, 10);
+        header.employee_id = Number.isFinite(employeeId) && employeeId > 0 ? employeeId : false;
+        header.employee_name = (payload?.employee_name || "").trim();
+
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+    }
+
+    _buildSubmitHeader(bill) {
+        const header = {
+            store_id: bill.header.store_id,
+            description: bill.header.description,
+            customer_id: bill.header.customer_id,
+            invoice_address: bill.header.invoice_address,
+            new_customer_name: bill.header.new_customer_name,
+            new_customer_phone: bill.header.new_customer_phone,
+            new_customer_address: bill.header.new_customer_address,
+            bill_customer_name: bill.header.bill_customer_name,
+            bill_customer_phone: bill.header.bill_customer_phone,
+            bill_customer_address: bill.header.bill_customer_address,
+            customer_insurance_name: bill.header.customer_insurance_name,
+            customer_insurance_number: bill.header.customer_insurance_number,
+            pos_client_token: bill.header.pos_client_token,
+            is_delivery: !!bill.header.is_delivery,
+            employee_delivery_id: bill.header.employee_delivery_id || false,
+        };
+        const employeeId = parseInt(bill.header.employee_id || 0, 10);
+        if (Number.isFinite(employeeId) && employeeId > 0) {
+            header.employee_id = employeeId;
+        }
+        return header;
+    }
+
+    storeValue() {
+        const bill = this.currentBill;
+        if (!bill?.header?.store_id) {
+            return false;
+        }
+        return {
+            id: bill.header.store_id,
+            display_name: bill.header.store_name || "",
+        };
+    }
+
+    customerValue() {
+        const bill = this.currentBill;
+        if (!bill || bill.header.customer_mode !== "current" || !bill.header.customer_id) {
+            return false;
+        }
+        return {
+            id: bill.header.customer_id,
+            display_name: bill.header.customer_name || "",
+        };
+    }
+
+    lineUomValue(line) {
+        if (!line?.uom_id) {
+            return false;
+        }
+        return {
+            id: line.uom_id,
+            display_name: line.uom_name || "",
+        };
+    }
+
+    lineUomDomain(line) {
+        if (line?.only_default_sales_uom) {
+            return line.default_uom_id ? [["id", "=", line.default_uom_id]] : [["id", "=", false]];
+        }
+        return line?.uom_category_id ? [["category_id", "=", line.uom_category_id]] : [["id", "=", false]];
+    }
+
+    async _getUomFactor(uomId) {
+        const id = parseInt(uomId, 10);
+        if (!Number.isFinite(id) || id <= 0) {
+            return 0;
+        }
+        if (this._uomFactorCache.has(id)) {
+            return this._uomFactorCache.get(id) || 0;
+        }
+        try {
+            const [uom] = await this.orm.read("ab_product_uom", [id], ["factor"]);
+            const factor = parseFloat(uom?.factor || 0) || 0;
+            if (factor > 0) {
+                this._uomFactorCache.set(id, factor);
+            }
+            return factor;
+        } catch {
+            return 0;
+        }
+    }
+
+    async onLineUomUpdate(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill || !line) {
+            return;
+        }
+        if (line.only_default_sales_uom && line.default_uom_id) {
+            value = {
+                id: line.default_uom_id,
+                display_name: line.default_uom_name || line.uom_name || "",
+            };
+        }
+        if (!value || !value.id) {
+            line.uom_id = null;
+            line.uom_name = "";
+        } else {
+            line.uom_id = value.id;
+            line.uom_name = value.display_name || "";
+        }
+        if (line.uom_id) {
+            const selectedFactor = await this._getUomFactor(line.uom_id);
+            const defaultUomId = line.default_uom_id || line.uom_id;
+            const defaultFactor = defaultUomId ? await this._getUomFactor(defaultUomId) : 0;
+            if (!this.billEditable(bill) || this.currentBill !== bill) {
+                return;
+            }
+            if (defaultFactor > 0) {
+                line.default_uom_factor = defaultFactor;
+            }
+            if (selectedFactor > 0) {
+                line.uom_factor = selectedFactor;
+            }
+            if (selectedFactor > 0 && defaultFactor > 0) {
+                const ratio = selectedFactor / defaultFactor;
+                const basePrice =
+                    parseFloat(line.base_sell_price || 0) ||
+                    parseFloat(line.default_sell_price || 0) ||
+                    parseFloat(line.sell_price || 0) ||
+                    0;
+                if (!line.base_sell_price && basePrice > 0) {
+                    line.base_sell_price = basePrice;
+                }
+                line.sell_price = basePrice * ratio;
+            }
+        }
+        this._syncAvailablePricesForUom(line);
+        this._recomputeLine(line);
+        this._recomputeBill(this.currentBill);
+        this.schedulePromoRefresh(this.currentBill);
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+    }
+
+    async onStoreM2OUpdate(value) {
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
+        if (this.currentBill?.submission_attempted) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        this._productSearchRequestId += 1;
+        this.state.productResults = [];
+        if (!value || !value.id) {
+            bill.header.store_id = null;
+            bill.header.store_name = "";
+            bill.header.store_code = "";
+            bill.header.store_ip = "";
+        } else {
+            const store = this.state.storeById[value.id];
+            bill.header.store_id = value.id;
+            bill.header.store_name = store?.name || value.display_name || "";
+            bill.header.store_code = store?.code || "";
+            bill.header.store_ip = store?.ip1 || "";
+        }
+        // Search cards belong to the previous branch until a new search returns.
+        this._productSearchRequestId += 1;
+        this.state.productResults = [];
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.schedulePromoRefresh(bill);
+        await this.refreshLineInventories(bill);
+        if (this.state.productResults && this.state.productResults.length) {
+            this.schedulePosBalanceRefresh(this.state.productResults, bill.header.store_id);
+        }
+        this.refreshStoreStatus(bill.header.store_id);
+        this.refreshCustomerInsights(bill);
+        this.searchProducts((this.state.productQuery || "").trim());
+    }
+
+    async onCustomerM2OUpdate(value) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        if (!value || !value.id) {
+            bill.header.customer_id = null;
+            bill.header.customer_name = "";
+            bill.header.customer_address = "";
+            bill.header.customer_mobile = "";
+            bill.header.customer_phone = "";
+            bill.header.customer_code = "";
+            bill.header.invoice_address = "";
+            bill.header.bill_customer_name = "";
+            bill.header.bill_customer_phone = "";
+            bill.header.bill_customer_address = "";
+            bill.updated_at = new Date().toISOString();
+            this.persistCache();
+            this.refreshCustomerInsights(bill);
+            this.searchProducts((this.state.productQuery || "").trim());
+            return;
+        }
+        this.state.lastCustomerInput = "";
+        this.state.lastCustomerInputFallback = "";
+        try {
+            const [cust] = await this.orm.read("ab_customer", [value.id], [
+                "name",
+                "code",
+                "mobile_phone",
+                "work_phone",
+                "address",
+            ]);
+            bill.header.customer_id = value.id;
+            bill.header.customer_name = cust?.name || value.display_name || "";
+            bill.header.customer_address = cust?.address || "";
+            bill.header.customer_mobile = cust?.mobile_phone || "";
+            bill.header.customer_phone = cust?.work_phone || "";
+            bill.header.customer_code = cust?.code || "";
+            bill.header.invoice_address = cust?.address || "";
+            bill.header.bill_customer_name = bill.header.customer_name || "";
+            bill.header.bill_customer_phone =
+                bill.header.customer_phone || bill.header.customer_mobile || "";
+            bill.header.bill_customer_address = bill.header.invoice_address || "";
+            bill.header.customer_mode = "current";
+        } catch (err) {
+            this.notification.add(err?.message || "Failed to load customer.", {type: "danger"});
+        }
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.refreshCustomerInsights(bill);
+        this.searchProducts((this.state.productQuery || "").trim());
+    }
+
+    toggleStoreDetails() {
+        this.state.showStoreDetails = !this.state.showStoreDetails;
+    }
+
+    toggleCustomerDetails() {
+        this.state.showCustomerDetails = !this.state.showCustomerDetails;
+    }
+
+    toggleBillDetails() {
+        this.state.showBillDetails = !this.state.showBillDetails;
+    }
+
+    toggleSidebar() {
+        this.state.sidebarCollapsed = !this.state.sidebarCollapsed;
+    }
+
+    setCustomerMode(mode) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        bill.header.customer_mode = mode;
+        if (mode === "current") {
+            bill.header.new_customer_name = "";
+            bill.header.new_customer_phone = "";
+            bill.header.new_customer_address = "";
+            this.state.customerQuery = bill.header.customer_name || "";
+        } else {
+            bill.header.customer_id = null;
+            bill.header.customer_name = "";
+            bill.header.customer_address = "";
+            bill.header.customer_mobile = "";
+            bill.header.customer_phone = "";
+            bill.header.customer_code = "";
+            bill.header.invoice_address = "";
+            bill.header.bill_customer_name = "";
+            bill.header.bill_customer_phone = "";
+            bill.header.bill_customer_address = "";
+            this.state.customerQuery = "";
+        }
+        this.state.customerResults = [];
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.refreshCustomerInsights(bill);
+        this.searchProducts((this.state.productQuery || "").trim());
+    }
+
+    onCustomerSearch(ev) {
+        this.state.customerQuery = ev.target.value || "";
+        if (this._customerSearchTimer) {
+            clearTimeout(this._customerSearchTimer);
+        }
+        const query = this.state.customerQuery.trim();
+        if (!query) {
+            this.state.customerResults = [];
+            return;
+        }
+        this._customerSearchTimer = setTimeout(async () => {
+            await this.searchCustomers(query);
+        }, 200);
+    }
+
+    async searchCustomers(query) {
+        this.state.loadingCustomers = true;
+        try {
+            const domain = [
+                "|",
+                "|",
+                ["name", "ilike", query],
+                ["mobile_phone", "ilike", query],
+                ["work_phone", "ilike", query],
+            ];
+            this.state.customerResults = await this.orm.searchRead("ab_customer", domain, [
+                "name",
+                "code",
+                "mobile_phone",
+                "work_phone",
+                "address",
+            ]);
+        } catch (err) {
+            this.notification.add(err?.message || "Failed to search customers.", {type: "danger"});
+        } finally {
+            this.state.loadingCustomers = false;
+        }
+    }
+
+    selectCustomer(cust) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill || !cust) {
+            return;
+        }
+        this.state.lastCustomerInput = "";
+        this.state.lastCustomerInputFallback = "";
+        bill.header.customer_id = cust.id;
+        bill.header.customer_name = cust.name || "";
+        bill.header.customer_address = cust.address || "";
+        bill.header.customer_mobile = cust.mobile_phone || "";
+        bill.header.customer_phone = cust.work_phone || "";
+        bill.header.customer_code = cust.code || "";
+        bill.header.invoice_address = cust.address || "";
+        bill.header.bill_customer_name = bill.header.customer_name || "";
+        bill.header.bill_customer_phone = bill.header.customer_phone || bill.header.customer_mobile || "";
+        bill.header.bill_customer_address = bill.header.invoice_address || "";
+        bill.header.customer_mode = "current";
+        this.state.customerResults = [];
+        this.state.customerQuery = cust.name || "";
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.refreshCustomerInsights(bill);
+        this.searchProducts((this.state.productQuery || "").trim());
+    }
+
+    onProductHasBalanceChange(ev) {
+        this.state.productHasBalanceOnly = !!ev.target.checked;
+        this._savePosUiSettingsLocal(this._currentPosUiSettings());
+        this.searchProducts(this.state.productQuery.trim());
+    }
+
+    onProductHasPosBalanceChange(ev) {
+        this.state.productHasPosBalanceOnly = !!ev.target.checked;
+        this._savePosUiSettingsLocal(this._currentPosUiSettings());
+        this.searchProducts(this.state.productQuery.trim());
+    }
+
+    onProductItemTypeChange(itemType) {
+        this.state.productItemType = ["medicine", "non_medicine"].includes(itemType) ? itemType : "all";
+        this.searchProducts(this.state.productQuery.trim());
+    }
+
+    isProductMinPriceValid() {
+        const value = this.state.productMinPrice.trim();
+        return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(value) && Number.isFinite(Number(value));
+    }
+
+    onProductMinPriceInput(ev) {
+        this.state.productMinPrice = ev.target.value || "";
+        if (!this.isProductMinPriceValid()) {
+            this.state.productMaxPrice = "";
+        }
+        this.queueProductSearch();
+    }
+
+    onProductMaxPriceInput(ev) {
+        this.state.productMaxPrice = this.isProductMinPriceValid() ? ev.target.value || "" : "";
+        this.queueProductSearch();
+    }
+
+    onProductSearch(ev) {
+        this.state.productQuery = ev.target.value || "";
+        this.queueProductSearch();
+    }
+
+    queueProductSearch() {
+        clearTimeout(this._productSearchTimer);
+        this._productSearchRequestId += 1;
+        this.state.selectionIndex = -1;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+        this.state.productResults = [];
+        this.state.loadingProducts = true;
+        this._productSearchTimer = setTimeout(() => {
+            this._productSearchTimer = null;
+            this.searchProducts(this.state.productQuery.trim());
+        }, 200);
+    }
+
+    onProductSearchKeydown(ev) {
+        const key = ev.key;
+        if (this.state.loadingProducts || this.state.submitting) {
+            return;
+        }
+        if (key === "ArrowDown") {
+            const products = this.state.productResults || [];
+            if (products.length) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this._selectNextCard();
+            }
+            return;
+        }
+        if (key === "Enter") {
+            ev.preventDefault();
+            ev.stopPropagation();
+            return;
+        }
+        if (ev.ctrlKey || ev.metaKey || ev.altKey) {
+            return;
+        }
+        if ((key && key.length === 1) || key === "Backspace" || key === "Delete") {
+            ev.stopPropagation();
+        }
+    }
+
+    async searchProducts(query) {
+        const requestId = ++this._productSearchRequestId;
+        const bill = this.currentBill;
+        if (!bill || !bill.header?.store_id) {
+            this.state.productResults = [];
+            this.state.selectionIndex = -1;
+            this.state.loadingProducts = false;
+            return;
+        }
+        const storeId = bill?.header?.store_id || null;
+        if (this._productResultsStoreId !== storeId) {
+            this.state.productResults = [];
+            this._productResultsStoreId = storeId;
+        }
+        const customerPhone = this.activeCustomerPhone(bill);
+        this.state.loadingProducts = true;
+        try {
+            const ctx = storeId ? {pos_store_id: storeId} : {};
+            // First, fetch products as before
+            const productResults = await this.orm.call(
+                "ab_sales_ui_api",
+                "search_products",
+                [],
+                {
+                    query,
+                    limit: 24,
+                    has_balance: this.state.productHasBalanceOnly,
+                    has_pos_balance: this.state.productHasPosBalanceOnly,
+                    store_id: storeId,
+                    customer_phone: customerPhone,
+                    item_type: this.state.productItemType || "all",
+                    min_price: this.state.productMinPrice,
+                    max_price: this.state.productMaxPrice,
+                    context: ctx,
+                }
+            );
+
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
+
+            // Fetch promotion information for these products
+            if (productResults && productResults.length > 0) {
+                const productIds = productResults.map(p => p.id);
+                try {
+                    const promoData = await this.orm.call(
+                        "ab_sales_ui_api",
+                        "get_products_promo_status",
+                        [],
+                        {
+                            product_ids: productIds,
+                            store_id: storeId,
+                        }
+                    );
+
+                    // Merge promotion data into product results
+                    productResults.forEach(product => {
+                        if (promoData && promoData[product.id]) {
+                            product.has_promo = true;
+                            product.promo_info = promoData[product.id];
+                            console.log(`Product ${product.id} has promo:`, promoData[product.id]);
+                        } else {
+                            product.has_promo = false;
+                            product.promo_info = null;
+                        }
+                    });
+                } catch (promoErr) {
+                    // If promo fetch fails, continue without promo data
+                    console.warn("Failed to fetch promotion data:", promoErr);
+                    // Check if the error is because the method doesn't exist
+                    if (promoErr.message && promoErr.message.includes("does not exist")) {
+                        console.log("Promo method not implemented, disabling promo feature");
+                        this._promoDisabled = true;
+                    }
+                    productResults.forEach(product => {
+                        product.has_promo = false;
+                        product.promo_info = null;
+                    });
+                }
+            }
+
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
+            this.state.productResults = productResults;
+            this.state.selectionIndex = -1;
+            this.state.qtyBuffer = "";
+            this.state.qtyBufferProductId = null;
+            this.schedulePosBalanceRefresh(this.state.productResults, storeId);
+        } catch (err) {
+            if (requestId === this._productSearchRequestId) {
+                this.state.productResults = [];
+                this.notification.add(err?.data?.message || err?.message || _t("Failed to search products."), {type: "danger"});
+            }
+        } finally {
+            if (requestId === this._productSearchRequestId) {
+                this.state.loadingProducts = false;
+            }
+        }
+    }
+
+    schedulePosBalanceRefresh(results, storeId) {
+        if (this._posBalanceTimer) {
+            clearTimeout(this._posBalanceTimer);
+        }
+        const requestId = ++this._posBalanceRequestId;
+        this._posBalanceTimer = setTimeout(() => {
+            this._posBalanceTimer = null;
+            this._refreshPosBalancesForResults(results, storeId, requestId);
+        }, 400);
+    }
+
+    _refreshPosBalancesForResults(results, storeId, requestId, targets = results, manual = false) {
+        const bill = this.currentBill;
+        const searchId = this._productSearchRequestId;
+        return refreshPosBalances(this.orm, targets || [], storeId, "id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._posBalanceRequestId &&
+            searchId === this._productSearchRequestId && this.currentBill === bill &&
+            bill?.header?.store_id === storeId && this.state.productResults === results,
+            {showAge: true, manual});
+    }
+
+    refreshProductPosBalance(product) {
+        if (product.pos_balance_refreshing) return;
+        return this._refreshPosBalancesForResults(
+            this.state.productResults, this.currentBill?.header?.store_id, this._posBalanceRequestId,
+            [product], true);
+    }
+
+    scheduleLinePosBalanceRefresh(bill) {
+        if (this._linePosBalanceTimer) {
+            clearTimeout(this._linePosBalanceTimer);
+        }
+        const requestId = ++this._linePosBalanceRequestId;
+        this._linePosBalanceTimer = setTimeout(() => {
+            this._linePosBalanceTimer = null;
+            this._refreshPosBalancesForLines(bill || this.currentBill, requestId);
+        }, 400);
+    }
+
+    _refreshPosBalancesForLines(bill, requestId) {
+        const target = bill || this.currentBill;
+        const storeId = target?.header?.store_id;
+        return refreshPosBalances(this.orm, target?.lines || [], storeId, "product_id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
+            this.currentBill === target && target?.header?.store_id === storeId,
+            {isRowCurrent: (line) => target.lines.includes(line),
+                onInventory: (line, details) => this._applyRefreshedLineInventory(line, details)});
+    }
+
+    refreshLinePosBalance(line) {
+        if (line.pos_balance_refreshing) return;
+        const bill = this.currentBill;
+        const storeId = bill?.header?.store_id;
+        const requestId = this._linePosBalanceRequestId;
+        return refreshPosBalances(this.orm, [line], storeId, "product_id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
+            this.currentBill === bill && bill?.header?.store_id === storeId && bill.lines.includes(line),
+            {onInventory: (row, details) => this._applyRefreshedLineInventory(row, details)});
+    }
+
+    _applyRefreshedLineInventory(line, details) {
+        line.inventory_json = details.inventory_json;
+        line.available_prices_base = details.available_prices;
+        line.product_is_priced = !!details.is_priced;
+        this._syncAvailablePricesForUom(line);
+        // Display refreshes must not edit the chosen selling price or bill revision.
+    }
+
+    refreshStoreStatus(storeId) {
+        if (!storeId) {
+            this.state.storeOnline = null;
+            return;
+        }
+        const requestId = ++this._storeStatusRequestId;
+        this.state.storeOnline = null;
+        this.orm
+            .call("ab_sales_ui_api", "pos_store_status", [], {store_id: storeId})
+            .then((status) => {
+                if (requestId !== this._storeStatusRequestId) {
+                    return;
+                }
+                this.state.storeOnline = !!status;
+            })
+            .catch(() => {
+                if (requestId !== this._storeStatusRequestId) {
+                    return;
+                }
+                this.state.storeOnline = false;
+            });
+    }
+
+    _extractUomInfo(product) {
+        let uomId = null;
+        let uomName = "";
+        let uomFactor = parseFloat(product?.uom_factor || product?.default_uom_factor || 0) || 0;
+        const rawUom = product?.uom_id;
+        if (Array.isArray(rawUom)) {
+            uomId = rawUom[0] || null;
+            uomName = rawUom[1] || "";
+        } else if (rawUom && typeof rawUom === "object") {
+            uomId = rawUom.id || null;
+            uomName = rawUom.display_name || rawUom.name || "";
+        } else if (Number.isFinite(rawUom)) {
+            uomId = rawUom;
+        }
+
+        let uomCategoryId = null;
+        const rawCategory = product?.uom_category_id;
+        if (Array.isArray(rawCategory)) {
+            uomCategoryId = rawCategory[0] || null;
+        } else if (rawCategory && typeof rawCategory === "object") {
+            uomCategoryId = rawCategory.id || null;
+        } else if (Number.isFinite(rawCategory)) {
+            uomCategoryId = rawCategory;
+        }
+
+        if (uomId && uomFactor > 0) {
+            this._uomFactorCache.set(uomId, uomFactor);
+        }
+        return {uomId, uomName, uomCategoryId, uomFactor};
+    }
+
+    _syncAvailablePricesForUom(line) {
+        if (!line) {
+            return;
+        }
+        const baseList = Array.isArray(line.available_prices_base)
+            ? line.available_prices_base
+            : Array.isArray(line.available_prices)
+                ? line.available_prices
+                : [];
+        const defaultFactor = parseFloat(line.default_uom_factor || 0) || 0;
+        const selectedFactor = parseFloat(line.uom_factor || 0) || 0;
+        let ratio = 1;
+        if (defaultFactor > 0 && selectedFactor > 0) {
+            ratio = selectedFactor / defaultFactor;
+        }
+        const availablePrices = baseList.map((row, index) => {
+            const price = parseFloat(row?.price || 0) || 0;
+            return {
+                ...row,
+                badge_key: row?.badge_key || `price-${index}`,
+                price: price * ratio,
+            };
+        });
+        if (line.product_is_priced === false && availablePrices.length) {
+            const highestPrice = Math.max(
+                ...availablePrices.map((row) => parseFloat(row?.price || 0) || 0)
+            );
+            line.available_prices = availablePrices.map((row) => ({
+                ...row,
+                price: highestPrice,
+            }));
+            return;
+        }
+        line.available_prices = availablePrices;
+    }
+
+    addProduct(product, qty = 1) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill || !product?.id) {
+            return null;
+        }
+        const existing = bill.lines.find((l) => l.product_id === product.id);
+        if (existing) {
+            if ("is_priced" in product) {
+                existing.product_is_priced = product.is_priced !== false;
+                this._syncAvailablePricesForUom(existing);
+            }
+            const {uomId, uomName, uomFactor} = this._extractUomInfo(product);
+            if (uomId) {
+                existing.default_uom_id = uomId;
+                existing.default_uom_name = uomName;
+                existing.default_uom_factor = uomFactor || 1;
+            }
+            if ("only_default_sales_uom" in product) {
+                existing.only_default_sales_uom = !!product.only_default_sales_uom;
+            }
+            if (existing.only_default_sales_uom && existing.default_uom_id) {
+                existing.uom_id = existing.default_uom_id;
+                existing.uom_name = existing.default_uom_name || existing.uom_name || "";
+                existing.uom_factor = existing.default_uom_factor || existing.uom_factor || 0;
+            }
+            const currentQty = parseQtyExpression(existing.qty_str);
+            existing.qty_str = String((currentQty || 0) + qty);
+            this._recomputeLine(existing);
+            this._recomputeBill(bill);
+            this.schedulePromoRefresh(bill);
+            this.scheduleLinePosBalanceRefresh(bill);
+            return existing;
+        } else {
+            const {uomId, uomName, uomCategoryId, uomFactor} = this._extractUomInfo(product);
+            const defaultPrice = product.default_price || 0;
+            const line = {
+                id: generateId("line"),
+                product_id: product.id,
+                product_name: product.name || product.product_card_name || "",
+                product_code: product.code || "",
+                qty_str: String(qty),
+                qty,
+                sell_price: defaultPrice,
+                sell_price_str: String(defaultPrice),
+                balance: product.balance || 0,
+                balance_total: product.balance || 0,
+                pos_balance: product.pos_balance || 0,
+                pos_balance_unavailable: !!product.pos_balance_unavailable,
+                cost: 0,
+                target_sell_price: 0,
+                net_amount: defaultPrice * qty,
+                available_prices: [],
+                available_prices_base: [],
+                product_is_priced: product.is_priced !== false,
+                inventory_table_html: "",
+                show_details: false,
+                loading_details: false,
+                uom_id: uomId,
+                uom_name: uomName,
+                uom_category_id: uomCategoryId,
+                uom_factor: uomFactor || 0,
+                default_uom_id: uomId,
+                default_uom_name: uomName,
+                default_uom_factor: uomFactor || 1,
+                only_default_sales_uom: !!product.only_default_sales_uom,
+                default_sell_price: defaultPrice,
+                base_sell_price: defaultPrice,
+            };
+            bill.lines.push(line);
+            this.loadLineDetails(line);
+            this._recomputeBill(bill);
+            this.schedulePromoRefresh(bill);
+            this.scheduleLinePosBalanceRefresh(bill);
+            return line;
+        }
+    }
+
+    addProductAndFocus(product, qty = 1) {
+        const line = this.addProduct(product, qty);
+        if (this.searchInputRef.el) {
+            this.searchInputRef.el.blur();
+        }
+        if (document.activeElement && document.activeElement !== document.body) {
+            document.activeElement.blur?.();
+        }
+        this._focusLineQty(line);
+        setTimeout(() => {
+            const active = document.activeElement;
+            if (active?.matches?.('input[data-field="qty_str"]')) {
+                try {
+                    active.focus();
+                    if (typeof active.select === "function") {
+                        active.select();
+                    }
+                    if (typeof active.setSelectionRange === "function") {
+                        active.setSelectionRange(0, active.value?.length || 0);
+                    }
+                } catch {
+                    // Ignore selection errors for non-text inputs.
+                }
+            }
+        }, 60);
+    }
+
+    _focusSearchSelectAll() {
+        const el = this.searchInputRef.el;
+        if (!el) {
+            return;
+        }
+        setTimeout(() => {
+            el.focus();
+            if (typeof el.select === "function") {
+                el.select();
+            }
+        }, 0);
+        this.state.selectionIndex = -1;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+    }
+
+    _selectPreviousCard() {
+        const products = this.state.productResults || [];
+        if (!products.length) {
+            return;
+        }
+        if (this.state.selectionIndex <= 0) {
+            this._focusSearchSelectAll();
+            return;
+        }
+        this._setSelectionIndex(this.state.selectionIndex - 1);
+    }
+
+    _selectNextCard() {
+        const products = this.state.productResults || [];
+        if (!products.length) {
+            return;
+        }
+        if (this.state.selectionIndex < 0) {
+            this._setSelectionIndex(0);
+            return;
+        }
+        this._setSelectionIndex(Math.min(this.state.selectionIndex + 1, products.length - 1));
+    }
+
+    _getSelectedProduct(products) {
+        if (this.state.selectionIndex < 0) {
+            return null;
+        }
+        return (products || [])[this.state.selectionIndex] || null;
+    }
+
+    _consumeQtyForProduct(product) {
+        let qty = 1;
+        if (this.state.qtyBufferProductId === product.id && this.state.qtyBuffer) {
+            const parsed = parseQtyExpression(this.state.qtyBuffer);
+            if (Number.isFinite(parsed) && parsed > 0) {
+                qty = parsed;
+            }
+        }
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+        return qty;
+    }
+
+    _isQtyInputKey(key) {
+        const isDigit = key.length === 1 && key >= "0" && key <= "9";
+        const isOp = key === "." || key === "/" || key === "*" || key === "+" || key === "-" || key === "(" || key === ")";
+        return isDigit || isOp || key === "Backspace" || key === "Escape";
+    }
+
+    _handleQtyInputKey(ev, key, products, isSearchFocused) {
+        if (isSearchFocused) {
+            return false;
+        }
+        if (this.state.selectionIndex < 0) {
+            return false;
+        }
+        if (!this._isQtyInputKey(key)) {
+            return false;
+        }
+        const product = this._getSelectedProduct(products);
+        if (!product) {
+            return true;
+        }
+
+        ev.preventDefault();
+
+        if (key === "Escape") {
+            this.state.qtyBuffer = "";
+            this.state.qtyBufferProductId = null;
+            return true;
+        }
+        if (key === "Backspace") {
+            if (this.state.qtyBufferProductId === product.id) {
+                this.state.qtyBuffer = (this.state.qtyBuffer || "").slice(0, -1);
+                if (!this.state.qtyBuffer) {
+                    this.state.qtyBufferProductId = null;
+                }
+            }
+            return true;
+        }
+        if (key === ".") {
+            if ((this.state.qtyBufferProductId === product.id ? this.state.qtyBuffer : "").includes(".")) {
+                return true;
+            }
+        }
+
+        if (this.state.qtyBufferProductId !== product.id) {
+            this.state.qtyBuffer = "";
+            this.state.qtyBufferProductId = product.id;
+        }
+        this.state.qtyBuffer = `${this.state.qtyBuffer || ""}${key}`;
+        return true;
+    }
+
+    _onHotkeyArrowDown(ev, {isSearchFocused} = {}) {
+        if (isSearchFocused) {
+            return;
+        }
+        ev.preventDefault();
+        this._selectNextCard();
+    }
+
+    _onHotkeyArrowUp(ev, {isSearchFocused} = {}) {
+        if (isSearchFocused) {
+            return;
+        }
+        ev.preventDefault();
+        this._selectPreviousCard();
+    }
+
+    _onHotkeyEnter(ev, {isSearchFocused, products} = {}) {
+        if (isSearchFocused) {
+            return;
+        }
+        if (this.state.selectionIndex < 0) {
+            return;
+        }
+        ev.preventDefault();
+        const product = this._getSelectedProduct(products);
+        if (!product) {
+            return;
+        }
+        const qty = this._consumeQtyForProduct(product);
+        this.addProductAndFocus(product, qty);
+
+        const container = this.cardsContainerRef.el;
+        const card = container?.querySelector?.(`[data-product-id="${product.id}"]`);
+        card?.focus?.();
+    }
+
+    _setSelectionIndex(index) {
+        const products = this.state.productResults || [];
+        if (!products.length) {
+            this.state.selectionIndex = -1;
+            this.state.qtyBuffer = "";
+            this.state.qtyBufferProductId = null;
+            return;
+        }
+        const next = Math.max(-1, Math.min(index, products.length - 1));
+        this.state.selectionIndex = next;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+        if (next >= 0) {
+            const product = products[next];
+            const container = this.cardsContainerRef.el;
+            if (container && product) {
+                const card = container.querySelector(`[data-product-id="${product.id}"]`);
+                card?.scrollIntoView?.({block: "nearest"});
+                card?.focus?.();
+            }
+        }
+    }
+
+    _isEditableElement(el) {
+        if (!el) {
+            return false;
+        }
+        const tag = el.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") {
+            return true;
+        }
+        return el.isContentEditable === true;
+    }
+
+    _resetBarcodeBuffer() {
+        this._barcodeActive = false;
+        this._barcodeBuffer = "";
+    }
+
+    _handleBarcodeKeydown(ev) {
+        const key = ev.key;
+        if (key === BARCODE_START_KEY) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            ev.stopImmediatePropagation();
+            if (document.body.classList.contains("modal-open")) {
+                this._resetBarcodeBuffer();
+                return true;
+            }
+            this._barcodeActive = true;
+            this._barcodeBuffer = "";
+            return true;
+        }
+        if (!this._barcodeActive) {
+            return false;
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        if (key === BARCODE_END_KEY) {
+            const barcode = (this._barcodeBuffer || "").trim();
+            this._resetBarcodeBuffer();
+            if (barcode) {
+                this._handleBarcodeScan(barcode);
+            }
+            return true;
+        }
+        if (key === "Escape") {
+            this._resetBarcodeBuffer();
+            return true;
+        }
+        if (key && key.length === 1) {
+            this._barcodeBuffer += key;
+            return true;
+        }
+        return true;
+    }
+
+    async _handleBarcodeScan(barcode) {
+        if (this.state.submitting) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            this.notification.add("Create a bill before scanning.", {type: "warning"});
+            return;
+        }
+        this.state.loadingProducts = true;
+        try {
+            const storeId = bill.header?.store_id || false;
+            const products = await this._fetchBarcodeProducts(barcode, storeId);
+            this._applyBarcodeResults(barcode, products);
+            if (!products.length) {
+                this._openBarcodeLinkDialog(barcode);
+                return;
+            }
+            if (products.length === 1) {
+                this.addProductAndFocus(products[0], 1);
+            }
+        } catch (err) {
+            this.notification.add(err?.message || "Barcode scan failed.", {type: "danger"});
+        } finally {
+            this.state.loadingProducts = false;
+        }
+    }
+
+    async _fetchBarcodeProducts(barcode, storeId) {
+        const products = await this.orm.call("ab_sales_pos_api", "pos_barcode_products", [], {
+            barcode,
+            store_id: storeId || false,
+        });
+        return Array.isArray(products) ? products : [];
+    }
+
+    _applyBarcodeResults(barcode, products) {
+        this.state.productQuery = barcode || "";
+        this.state.productResults = Array.isArray(products) ? products : [];
+        this.state.selectionIndex = -1;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+    }
+
+    _openBarcodeLinkDialog(barcode) {
+        if (!barcode) {
+            return;
+        }
+        this.dialog.add(AbSalesPosBarcodeLinkDialog, {
+            barcode,
+            allowEdit: false,
+            onSave: async ({barcode: linkBarcode, productIds}) => {
+                await this._linkBarcodeProducts(linkBarcode, productIds);
+            },
+        });
+    }
+
+    _openBarcodeRegisterDialog() {
+        this.dialog.add(AbSalesPosBarcodeLinkDialog, {
+            barcode: "",
+            allowEdit: true,
+            onSave: async ({barcode: linkBarcode, productIds}) => {
+                await this._linkBarcodeProducts(linkBarcode, productIds);
+            },
+        });
+    }
+
+    async _linkBarcodeProducts(barcode, productIds) {
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_link_barcode_temp", [], {
+                barcode,
+                product_ids: productIds,
+            });
+            const count = Array.isArray(result?.product_ids) ? result.product_ids.length : 0;
+            this.notification.add(`Barcode links saved (${count} product(s)).`, {type: "success"});
+            const bill = this.currentBill;
+            if (bill) {
+                const storeId = bill.header?.store_id || false;
+                const products = await this._fetchBarcodeProducts(barcode, storeId);
+                this._applyBarcodeResults(barcode, products);
+                if (products.length === 1) {
+                    this.addProductAndFocus(products[0], 1);
+                }
+            }
+        } catch (err) {
+            this.notification.add(err?.message || "Failed to save barcode links.", {type: "danger"});
+        }
+    }
+
+    _clearLineFocusObserver() {
+        if (this._lineFocusObserver) {
+            this._lineFocusObserver.disconnect();
+            this._lineFocusObserver = null;
+        }
+        if (this._lineFocusTimer) {
+            clearTimeout(this._lineFocusTimer);
+            this._lineFocusTimer = null;
+        }
+    }
+
+    _focusLineQty(line) {
+        const lineId = line?.id;
+        const productId = line?.product_id;
+        if (!lineId && !productId) {
+            return;
+        }
+        this._clearLineFocusObserver();
+        const findInput = () => {
+            const root = this.el || document.querySelector(".o_ab_sales_pos_window");
+            if (!root) {
+                return null;
+            }
+            let row = null;
+            if (lineId) {
+                row = root.querySelector(`tr[data-line-id="${lineId}"]`);
+            }
+            if (!row && productId) {
+                row = root.querySelector(`tr[data-product-id="${productId}"]`);
+            }
+            return row?.querySelector?.('input[data-field="qty_str"]') || null;
+        };
+        const focusInput = (input) => {
+            if (!input) {
+                return false;
+            }
+            const selectAll = () => {
+                try {
+                    if (typeof input.select === "function") {
+                        input.select();
+                    }
+                    if (typeof input.setSelectionRange === "function") {
+                        input.setSelectionRange(0, input.value?.length || 0);
+                    }
+                } catch {
+                    // Ignore selection errors for non-text inputs.
+                }
+            };
+            input.focus();
+            selectAll();
+            requestAnimationFrame(selectAll);
+            setTimeout(selectAll, 0);
+            input.scrollIntoView?.({block: "nearest"});
+            return true;
+        };
+
+        const immediate = findInput();
+        if (focusInput(immediate)) {
+            return;
+        }
+
+        const observerTarget =
+            document.querySelector(".o_ab_sales_pos_lines_table tbody") || document.body;
+        this._lineFocusObserver = new MutationObserver(() => {
+            const next = findInput();
+            if (focusInput(next)) {
+                this._clearLineFocusObserver();
+            }
+        });
+        this._lineFocusObserver.observe(observerTarget, {childList: true, subtree: true});
+        this._lineFocusTimer = setTimeout(() => {
+            this._clearLineFocusObserver();
+        }, 2500);
+    }
+
+    _getFocusedLine() {
+        const active = document.activeElement;
+        const row = active?.closest?.(".ab_pos_line_row");
+        const root = this.el || document.querySelector(".o_ab_sales_pos_window");
+        if (!row || (root && !root.contains(row))) {
+            return null;
+        }
+        const lineId = row.dataset.lineId || "";
+        const bill = this.currentBill;
+        if (!lineId || !bill) {
+            return null;
+        }
+        return (bill.lines || []).find((line) => String(line.id) === String(lineId)) || null;
+    }
+
+    _getLineIndex(line) {
+        const bill = this.currentBill;
+        if (!line || !bill) {
+            return -1;
+        }
+        return (bill.lines || []).findIndex((candidate) => String(candidate.id) === String(line.id));
+    }
+
+    _getLineFocusTargetAfterRemoval(line) {
+        const bill = this.currentBill;
+        const lines = bill?.lines || [];
+        const index = this._getLineIndex(line);
+        if (index < 0) {
+            return null;
+        }
+        return lines[index - 1] || lines[index + 1] || null;
+    }
+
+    _handleRemoveFocusedLineShortcut(ev) {
+        if (ev.key !== "Delete" || !ev.ctrlKey || ev.altKey || ev.metaKey) {
+            return false;
+        }
+        const line = this._getFocusedLine();
+        if (!line) {
+            return false;
+        }
+        const focusTarget = this._getLineFocusTargetAfterRemoval(line);
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation?.();
+        this.removeLine(line);
+        if (focusTarget) {
+            this._focusLineQty(focusTarget);
+        }
+        return true;
+    }
+
+    _handleSalesLineArrowNavigation(ev) {
+        if (
+            (ev.key !== "ArrowUp" && ev.key !== "ArrowDown") ||
+            ev.ctrlKey ||
+            ev.altKey ||
+            ev.metaKey ||
+            ev.shiftKey
+        ) {
+            return false;
+        }
+        if (document.activeElement?.closest?.(".o_ab_many2one_wrapper")) {
+            return false;
+        }
+        const line = this._getFocusedLine();
+        const bill = this.currentBill;
+        if (!line || !bill) {
+            return false;
+        }
+        const lines = bill.lines || [];
+        const index = this._getLineIndex(line);
+        if (index < 0) {
+            return false;
+        }
+        const nextIndex = ev.key === "ArrowUp" ? index - 1 : index + 1;
+        const nextLine = lines[nextIndex] || null;
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation?.();
+        if (nextLine) {
+            this._focusLineQty(nextLine);
+        }
+        return true;
+    }
+
+    onKeydown(ev) {
+        if (this._handleBarcodeKeydown(ev)) {
+            return;
+        }
+        if (ev.key === "F2") {
+            if (!document.body.classList.contains("modal-open")) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                const input = this.searchInputRef.el;
+                if (input) {
+                    input.focus();
+                    if (typeof input.select === "function") {
+                        input.select();
+                    }
+                    if (typeof input.setSelectionRange === "function") {
+                        input.setSelectionRange(0, input.value?.length || 0);
+                    }
+                }
+            }
+            return;
+        }
+        if (ev.key === "F9") {
+            if (!document.body.classList.contains("modal-open")) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this._openBarcodeRegisterDialog();
+            }
+            return;
+        }
+        if (ev.key === "F10") {
+            if (!this.state.submitting && !document.body.classList.contains("modal-open")) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.submitCurrentBill();
+            }
+            return;
+        }
+        if (this.state.loadingProducts || this.state.submitting) {
+            return;
+        }
+        if (document.body.classList.contains("modal-open")) {
+            return;
+        }
+        const key = ev.key;
+        if (this._handleRemoveFocusedLineShortcut(ev)) {
+            return;
+        }
+        if (this._handleSalesLineArrowNavigation(ev)) {
+            return;
+        }
+        const isSearchFocused = document.activeElement === this.searchInputRef.el;
+        if (this._isEditableElement(document.activeElement) && !isSearchFocused) {
+            return;
+        }
+        const products = this.state.productResults || [];
+
+        if (isSearchFocused) {
+            return;
+        }
+
+        if (this._handleQtyInputKey(ev, key, products, isSearchFocused)) {
+            return;
+        }
+
+        const handler = this.shortcutHandlers.get(key);
+        if (!handler) {
+            return;
+        }
+        handler(ev, {isSearchFocused, products});
+    }
+
+    updateLineQty(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        line.qty_str = value;
+        this._recomputeLine(line);
+        this._recomputeBill(this.currentBill);
+        this.schedulePromoRefresh(this.currentBill);
+    }
+
+    updateLineSellPrice(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        line.sell_price_str = value;
+        const price = parseFloat(value || 0) || 0;
+        line.sell_price = price;
+        if (line.default_uom_id && line.uom_id === line.default_uom_id) {
+            line.base_sell_price = price;
+        }
+        this._recomputeLine(line);
+        this._recomputeBill(this.currentBill);
+        this.schedulePromoRefresh(this.currentBill);
+    }
+
+    updateLineTargetPrice(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        line.target_sell_price = parseFloat(value || 0) || 0;
+        this._recomputeBill(this.currentBill);
+    }
+
+    onAvailablePriceSelect(line, priceValue) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const price = parseFloat(priceValue || "");
+        if (!Number.isFinite(price)) {
+            return;
+        }
+        line.sell_price = price;
+        line.sell_price_str = String(price);
+        if (line.default_uom_id && line.uom_id === line.default_uom_id) {
+            line.base_sell_price = price;
+        }
+        this._recomputeLine(line);
+        this._recomputeBill(this.currentBill);
+    }
+
+    removeLine(line) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        bill.lines = bill.lines.filter((l) => l.id !== line.id);
+        this.scheduleLinePosBalanceRefresh(bill);
+        this._recomputeBill(bill);
+        this.schedulePromoRefresh(bill);
+    }
+
+    schedulePromoRefresh(bill) {
+        if (this._promoDisabled) {
+            return;
+        }
+        const target = bill || this.currentBill;
+        if (!this.billEditable(target)) {
+            return;
+        }
+        if (this._promoTimer) {
+            clearTimeout(this._promoTimer);
+        }
+        this._promoTimer = setTimeout(() => {
+            this.refreshPromotions(target);
+        }, 350);
+    }
+
+    _resetPromotions(bill) {
+        if (!bill) {
+            return;
+        }
+        bill.promo = this._defaultPromo();
+        bill.total_net_amount = bill.total_price || 0;
+        this.persistCache();
+    }
+
+    _promoPayloadLines(bill) {
+        const lines = bill?.lines || [];
+        return lines
+            .filter((line) => line.product_id)
+            .map((line) => ({
+                product_id: line.product_id,
+                qty_str: line.qty_str || DEFAULT_QTY,
+                sell_price: line.sell_price,
+                uom_id: line.uom_id || false,
+            }));
+    }
+
+    _findPromoName(promos, promoId) {
+        if (!promoId) {
+            return "";
+        }
+        const match = (promos || []).find((promo) => promo.id === promoId);
+        return match?.display_name || match?.name || "";
+    }
+
+    async refreshPromotions(bill) {
+        if (this._promoDisabled) {
+            return;
+        }
+        const target = bill || this.currentBill;
+        if (!target) {
+            return;
+        }
+        if (!target.promo) {
+            target.promo = this._defaultPromo();
+        }
+        this._promoTimer = null;
+        const storeId = target.header?.store_id;
+        const payloadLines = this._promoPayloadLines(target);
+        if (!storeId || !payloadLines.length) {
+            this._resetPromotions(target);
+            return;
+        }
+        const requestId = ++this._promoRequestId;
+        target.promo.loading = true;
+        this.persistCache();
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_promotions", [], {
+                store_id: storeId,
+                lines: payloadLines,
+                applied_program_id: target.promo.selected_id || false,
+                manual_clear: !!target.promo.manual_clear,
+            });
+            if (requestId !== this._promoRequestId || !this.billEditable(target)) {
+                return;
+            }
+            target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];
+            const appliedId = parseInt(result?.applied_program_id, 10);
+            const selectedId = parseInt(result?.selected_program_id, 10);
+            target.promo.applied_id = Number.isFinite(appliedId) ? appliedId : null;
+            target.promo.applied_name =
+                result?.applied_program_name || this._findPromoName(target.promo.available, target.promo.applied_id);
+            target.promo.selected_id = Number.isFinite(selectedId) ? selectedId : null;
+            target.promo.selected_name =
+                result?.selected_program_name || this._findPromoName(target.promo.available, target.promo.selected_id);
+            target.promo.message = result?.promo_message || "";
+            target.promo.discount_amount = parseFloat(result?.promo_discount_amount || 0) || 0;
+            target.promo.total_after = parseFloat(result?.amount_total_after_promo || 0) || 0;
+            const totalNetAmount = parseFloat(result?.total_net_amount);
+            if (Number.isFinite(totalNetAmount)) {
+                target.promo.total_net_amount = totalNetAmount;
+                target.total_net_amount = totalNetAmount;
+            } else {
+                target.promo.total_net_amount = target.total_price || 0;
+                target.total_net_amount = target.total_price || 0;
+            }
+        } catch (err) {
+            const message = err?.message || "";
+            if (message.includes("does not exist")) {
+                this._promoDisabled = true;
+                this._resetPromotions(target);
+            } else {
+                this.notification.add(message || "Failed to load promotions.", {type: "warning"});
+            }
+        } finally {
+            if (requestId === this._promoRequestId) {
+                target.promo.loading = false;
+                this.persistCache();
+            }
+        }
+    }
+
+    selectPromotion(program) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill || !program) {
+            return;
+        }
+        const programId = parseInt(program.id, 10);
+        if (!Number.isFinite(programId)) {
+            return;
+        }
+        if (bill.promo.selected_id === programId) {
+            bill.promo.selected_id = null;
+            bill.promo.selected_name = "";
+        } else {
+            bill.promo.selected_id = programId;
+            bill.promo.selected_name = program.display_name || program.name || "";
+        }
+        bill.promo.manual_clear = false;
+        if (bill.promo.applied_id !== bill.promo.selected_id) {
+            bill.promo.applied_id = null;
+            bill.promo.applied_name = "";
+        }
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.refreshPromotions(bill);
+    }
+
+    clearPromotion() {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
+        const bill = this.currentBill;
+        if (!bill) {
+            return;
+        }
+        bill.promo.applied_id = null;
+        bill.promo.applied_name = "";
+        bill.promo.selected_id = null;
+        bill.promo.selected_name = "";
+        bill.promo.manual_clear = true;
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
+        this.refreshPromotions(bill);
+    }
+
+    async refreshLineInventories(bill) {
+        const target = bill || this.currentBill;
+        const storeId = target?.header?.store_id;
+        const lines = target?.lines || [];
+        if (!storeId || !lines.length) {
+            return;
+        }
+        for (const line of lines) {
+            if (!line?.product_id) {
+                continue;
+            }
+            await this.loadLineDetails(line, {silent: true});
+        }
+        this.scheduleLinePosBalanceRefresh(target);
+    }
+
+    async loadLineDetails(line, options = {}) {
+        const bill = this.currentBill;
+        if (!this.billEditable(bill) || !bill.lines.includes(line)) return;
+        const storeId = bill?.header?.store_id;
+        if (!storeId || !line?.product_id) {
+            return;
+        }
+        line.loading_details = true;
+        try {
+            const details = await this.orm.call("ab_sales_pos_api", "pos_product_details", [], {
+                store_id: storeId,
+                product_id: line.product_id,
+            });
+            if (!this.billEditable(bill) || this.currentBill !== bill || !bill.lines.includes(line)) return;
+            line.balance = details.balance || 0;
+            const totalBalance = Number.isFinite(details?.total_balance)
+                ? details.total_balance
+                : parseFloat(details?.total_balance || NaN);
+            if (Number.isFinite(totalBalance)) {
+                line.balance_total = totalBalance;
+            } else if (!Number.isFinite(line.balance_total)) {
+                line.balance_total = line.balance;
+            }
+            const posBalance = Number.isFinite(details?.pos_balance)
+                ? details.pos_balance
+                : parseFloat(details?.pos_balance || NaN);
+            if (Number.isFinite(posBalance)) {
+                line.pos_balance = posBalance;
+            }
+            line.cost = details.cost || 0;
+            if ("is_priced" in details) {
+                line.product_is_priced = !!details.is_priced;
+            }
+            const defaultUomId = details.default_uom_id || details.uom_id || null;
+            const defaultUomFactor = parseFloat(details.default_uom_factor || details.uom_factor || 0) || 0;
+            if (defaultUomId && defaultUomFactor > 0) {
+                this._uomFactorCache.set(defaultUomId, defaultUomFactor);
+            }
+            line.only_default_sales_uom = !!details.only_default_sales_uom;
+            line.default_uom_id = line.only_default_sales_uom ? defaultUomId : (line.default_uom_id || defaultUomId);
+            line.default_uom_name = line.only_default_sales_uom
+                ? (details.uom_name || "")
+                : (line.default_uom_name || details.uom_name || "");
+            if (defaultUomFactor > 0) {
+                line.default_uom_factor = defaultUomFactor;
+            } else if (!line.default_uom_factor) {
+                line.default_uom_factor = 1;
+            }
+            if (line.default_uom_id && line.default_uom_factor > 0) {
+                this._uomFactorCache.set(line.default_uom_id, line.default_uom_factor);
+            }
+            const shouldSyncPrice = !line.uom_id || line.uom_id === defaultUomId || !line.base_sell_price;
+            if (shouldSyncPrice && Number.isFinite(details.sell_price)) {
+                line.sell_price = details.sell_price;
+                line.sell_price_str = String(details.sell_price);
+            }
+            if (Number.isFinite(details.default_price)) {
+                line.default_sell_price = details.default_price;
+            }
+            if (!line.base_sell_price) {
+                line.base_sell_price = line.default_sell_price || line.sell_price || 0;
+            }
+            line.available_prices_base = Array.isArray(details.available_prices) ? details.available_prices : [];
+            line.inventory_table_html = details.inventory_table_html || "";
+            if (details.uom_id) {
+                if (line.only_default_sales_uom) {
+                    line.uom_id = details.uom_id;
+                    line.uom_name = details.uom_name || line.uom_name || "";
+                    line.uom_factor = parseFloat(details.uom_factor || 0) || line.uom_factor || 0;
+                }
+                if (!line.uom_id || line.uom_id === details.uom_id) {
+                    line.uom_id = details.uom_id;
+                    line.uom_name = details.uom_name || line.uom_name || "";
+                }
+                if (details.uom_factor) {
+                    const uomFactor = parseFloat(details.uom_factor || 0) || 0;
+                    this._uomFactorCache.set(details.uom_id, uomFactor);
+                    if (uomFactor > 0 && line.uom_id === details.uom_id) {
+                        line.uom_factor = uomFactor;
+                    }
+                }
+            }
+            if (details.uom_category_id && !line.uom_category_id) {
+                line.uom_category_id = details.uom_category_id;
+            }
+            this._syncAvailablePricesForUom(line);
+            this._recomputeLine(line);
+            this._recomputeBill(this.currentBill);
+            this.schedulePromoRefresh(this.currentBill);
+        } catch (err) {
+            if (!options?.silent) {
+                this.notification.add(err?.message || "Failed to load line details.", {type: "danger"});
+            }
+        } finally {
+            line.loading_details = false;
+        }
+    }
+
+    _recomputeLine(line) {
+        line.qty = parseQtyExpression(line.qty_str);
+        line.net_amount = (line.qty || 0) * (line.sell_price || 0);
+    }
+
+    _recomputeBill(bill, {persist = true} = {}) {
+        if (!bill) {
+            return;
+        }
+        let total = 0;
+        for (const line of bill.lines) {
+            total += line.net_amount || 0;
+        }
+        bill.number_of_products = bill.lines.length;
+        bill.total_price = total;
+        bill.total_net_amount = total;
+        if (persist) {
+            bill.updated_at = new Date().toISOString();
+            this.persistCache();
+        }
+    }
+
+    formatPrice(value) {
+        return this._formatCompactNumber(value, 2);
+    }
+
+    formatQty(value) {
+        return this._formatCompactNumber(value, 2);
+    }
+
+    formatMoney2(value) {
+        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
+        if (!Number.isFinite(numberValue)) {
+            return "0.00";
+        }
+        return numberValue.toFixed(2);
+    }
+
+    _formatCompactNumber(value, decimals = 2) {
+        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
+        if (!Number.isFinite(numberValue)) {
+            return "0";
+        }
+        const fixed = numberValue.toFixed(decimals);
+        return fixed.replace(/(?:\.0+|(\.\d*?)0+)$/, "$1");
+    }
+
+    formatDateTime(value) {
+        if (!value) {
+            return "-";
+        }
+        try {
+            const dt = new Date(value);
+            return `${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}`;
+        } catch {
+            return value;
+        }
+    }
+
+    _getRpcErrorMessage(err) {
+        if (!err) {
+            return "Submit failed.";
+        }
+        const data = err.data || err?.response?.data || {};
+        const rpcArgs = data?.["arguments"];
+        return (
+            (Array.isArray(rpcArgs) && rpcArgs[0]) ||
+            data?.message ||
+            err.message ||
+            "Submit failed."
+        );
+    }
+
+    productLabel(product) {
+        return product.name || product.product_card_name || `${product.code || ""}`.trim() || `#${product.id}`;
+    }
+
+    openStoresBalance(product) {
+        if (!product?.id) {
+            return;
+        }
+        this.dialog.add(FormViewDialog, {
+            resModel: "ab_product_balance_wizard",
+            title: "Store Balances",
+            context: {
+                default_product_id: product.id,
+            },
+            readonly: true,
+            size: "lg",
+        });
+    }
+
+    async openBillWizard() {
+        this.action.doAction({
+            type: "ir.actions.client",
+            name: "Bill Wizard",
+            tag: "ab_sales.bill_wizard",
+        });
+    }
+
+    billEditable(bill = this.currentBill) {
+        return !!bill && !this.state.submitting && !this.state.draftManaging && !this.state.draftDeleting && !this.state.draftCreating && !bill.submission_checking &&
+            !bill.submission_in_progress && bill.submission_can_edit !== false &&
+            ["draft", "prepending", "rejected"].includes(bill.submission_status || "draft");
+    }
+
+    _plainDraftRemovable(bill) {
+        return !!bill && !bill.submission_checking && !bill.submission_in_progress && !bill.submission_attempted &&
+            !bill.odoo_header_id && !bill.eplus_serial &&
+            ["draft", "prepending", "rejected"].includes(bill.submission_status || "draft");
+    }
+
+    _draftDiscardCandidate(bill) {
+        return !!bill && !bill.submission_checking && !bill.submission_in_progress && !bill.lines.length && !bill.eplus_serial &&
+            ["draft", "prepending", "rejected", "unknown"].includes(bill.submission_status || "draft") &&
+            (!bill.submission_payload || (Array.isArray(bill.submission_payload.lines) &&
+                !bill.submission_payload.lines.length)) &&
+            !!bill.header?.pos_client_token && !!bill.header?.store_id;
+    }
+
+    _draftDiscardFingerprint(bill) {
+        return JSON.stringify(bill, (key, value) => key === "submission_checking" ? undefined : value);
+    }
+
+    billRemovable(bill = this.currentBill) {
+        return !this.state.submitting && !this.state.draftManaging && !this.state.draftDeleting &&
+            (this._plainDraftRemovable(bill) || (this._draftDiscardCandidate(bill) &&
+                this.state.draftDiscardEligibility[bill.header.pos_client_token] ===
+                    this._draftDiscardFingerprint(bill)));
+    }
+
+    async _verifyDraftDiscard(bills) {
+        const revision = this._submissionRevision || 0;
+        const candidates = bills.filter((bill) => this._draftDiscardCandidate(bill) &&
+            !this._plainDraftRemovable(bill)).map((bill) => ({
+                bill, fingerprint: this._draftDiscardFingerprint(bill),
+                token: bill.header.pos_client_token, store_id: bill.header.store_id,
+            }));
+        const verified = new Set();
+        for (let offset = 0; offset < candidates.length; offset += 200) {
+            const batch = candidates.slice(offset, offset + 200);
+            try {
+                const result = await this.orm.call("ab_sales_pos_api", "pos_check_draft_discard", [], {
+                    drafts: batch.map(({token, store_id}) => ({token, store_id})),
+                });
+                if (revision !== (this._submissionRevision || 0) || this.state.submitting) return new Set();
+                for (const {bill, fingerprint, token} of batch) {
+                    if (result[token] === true && this.state.bills.includes(bill) &&
+                        this._draftDiscardCandidate(bill) && fingerprint === this._draftDiscardFingerprint(bill)) {
+                        verified.add(bill.id);
+                    }
+                }
+            } catch {
+                // Failed verification retains the bill, including while offline.
+            }
+        }
+        // A later batch can outlive a change to an earlier candidate.
+        if (revision !== (this._submissionRevision || 0) || this.state.submitting) return new Set();
+        return new Set(candidates.filter(({bill, fingerprint}) => verified.has(bill.id) &&
+            this.state.bills.includes(bill) && this._draftDiscardCandidate(bill) &&
+            fingerprint === this._draftDiscardFingerprint(bill))
+            .map(({bill}) => bill.id));
+    }
+
+    async _refreshDraftDiscardEligibility(bills) {
+        const request = this._draftDiscardRequest = (this._draftDiscardRequest || 0) + 1;
+        this.state.draftDiscardEligibility = {};
+        const verified = await this._verifyDraftDiscard(bills);
+        if (request !== this._draftDiscardRequest) return;
+        this.state.draftDiscardEligibility = Object.fromEntries(bills.filter((bill) => verified.has(bill.id))
+            .map((bill) => [bill.header.pos_client_token, this._draftDiscardFingerprint(bill)]));
+    }
+
+    submissionStatusLabel(bill) {
+        const status = bill?.submission_status || "draft";
+        if (bill?.submission_checking) return _t("Checking submission...");
+        if (bill?.submission_in_progress) return _t("Submitting...");
+        if (status === "draft") return _t("Draft");
+        if (status === "unknown") return _t("Unknown");
+        if (status === "rejected") return _t("Rejected");
+        if (status === "pending") return _t("Pending");
+        if (status === "saved") return _t("Saved");
+        return _t("PrePending");
+    }
+
+    _applySubmissionState(bill, result) {
+        bill.odoo_header_id = result.id || result.recovery_header_id || bill.odoo_header_id || false;
+        bill.submission_status = result.status || bill.submission_status || "draft";
+        bill.submission_in_progress = !!result.submission_in_progress;
+        bill.submission_can_edit = result.can_edit === true;
+        bill.submission_message = result.message || "";
+        bill.submission_checking = false;
+        bill.submission_attempted = !!bill.odoo_header_id || bill.submission_attempted;
+        bill.eplus_serial = result.eplus_serial || false;
+        bill.submission_draft_discardable = !!result.can_discard_draft;
+    }
+
+    async refreshSubmissionStates() {
+        const bills = [...this.state.bills];
+        if (!bills.length || this._submissionRefreshInFlight || this.state.submitting || this.state.draftManaging || this.state.draftDeleting) return;
+        // Checking is local UI state. Persisting its reset echoes storage
+        // events between tabs even when the actual draft has not changed.
+        const cacheSnapshot = () => JSON.stringify({
+            bills: this.state.bills,
+            selected_id: this.state.selectedId,
+        }, (key, value) => key === "submission_checking" ? undefined : value);
+        const previousCache = cacheSnapshot();
+        this._submissionRefreshInFlight = true;
+        const revision = this._submissionRevision || 0;
+        try {
+            const states = await this.orm.call("ab_sales_pos_api", "pos_submission_status", [], {
+                tokens: bills.map((bill) => bill.header.pos_client_token),
+            });
+            if (revision !== (this._submissionRevision || 0)) return;
+            for (const bill of bills) {
+                const result = states[bill.header.pos_client_token];
+                if (result) {
+                    this._applySubmissionState(bill, result);
+                } else {
+                    // Absence during a lost RPC can race an uncommitted create.
+                    // Keep checking until a saved record or a definite local
+                    // validation failure establishes the outcome.
+                    const unresolved = bill.submission_attempted && !bill.submission_validation_failed;
+                    bill.submission_checking = !!unresolved || !!bill.odoo_header_id;
+                    if (!bill.submission_checking) {
+                        bill.submission_status = "draft";
+                        bill.submission_in_progress = false;
+                        bill.submission_can_edit = true;
+                        bill.submission_attempted = false;
+                    }
+                }
+            }
+            if (this.state.bills.some((bill) => ["pending", "saved"].includes(bill.submission_status))) {
+                await this._syncCompletedDrafts();
+            }
+            if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+                this.state.selectedId = this.state.bills[0]?.id || null;
+            }
+            this._assignLocalDraftSlots();
+            await this._refreshDraftDiscardEligibility(this.state.bills);
+            if (revision !== (this._submissionRevision || 0)) return;
+            if (cacheSnapshot() !== previousCache) {
+                this.persistCache();
+            }
+        } catch {
+            // Preserve the lock until the server can authoritatively answer.
+            if (revision === (this._submissionRevision || 0)) {
+                for (const bill of bills) bill.submission_checking = true;
+            }
+        } finally {
+            this._submissionRefreshInFlight = false;
+            if (revision !== (this._submissionRevision || 0) && !this.state.submitting) {
+                await this.refreshSubmissionStates();
+            }
+        }
+    }
+
+    async retryCurrentBill() {
+        const bill = this.currentBill;
+        if (!bill || this.state.submitting || this.state.draftManaging || this.state.draftDeleting) return;
+        if (bill.submission_checking || bill.submission_in_progress) {
+            await this.refreshSubmissionStates();
+            if (bill.submission_checking || bill.submission_in_progress || !this.state.bills.includes(bill)) return;
+        }
+        if (["draft", "prepending", "rejected"].includes(bill.submission_status || "draft")) {
+            this._openSubmitDialog(bill);
+        } else {
+            await this._sendBillSubmission(bill);
+        }
+    }
+
+    async submitCurrentBill() {
+        const bill = this.currentBill;
+        if (!bill || this.state.submitting || this.state.draftManaging || this.state.draftDeleting || document.body.classList.contains("modal-open")) return;
+        if (bill.submission_status === "unknown" || bill.submission_checking || bill.submission_in_progress) {
+            return this.retryCurrentBill();
+        }
+        this._openSubmitDialog(bill);
+    }
+
+    async _submitBillInternal(bill) {
+        if (!this.billEditable(bill)) return;
+        return this._sendBillSubmission(bill);
+    }
+
+    _buildSubmitLine(line) {
+        return {
+            product_id: line.product_id,
+            qty_str: line.qty_str || DEFAULT_QTY,
+            sell_price: line.sell_price,
+            target_sell_price: line.target_sell_price,
+            uom_id: line.uom_id || false,
+            unavailable_reason: line.unavailable_reason || false,
+            unavailable_reason_other: line.unavailable_reason_other || false,
+        };
+    }
+
+    async _sendBillSubmission(bill) {
+        if (!bill || this.state.submitting || this.state.draftManaging || this.state.draftDeleting) return;
+        if (!bill.lines.length && !bill.submission_attempted && !bill.odoo_header_id) {
+            this.notification.add(_t("No lines to send."), {type: "warning"});
+            return;
+        }
+        this._submissionRevision = (this._submissionRevision || 0) + 1;
+        const wasUnknown = bill.submission_status === "unknown";
+        const payload = wasUnknown && bill.submission_payload ? bill.submission_payload : {
+            header: this._buildSubmitHeader(bill),
+            lines: bill.lines.map((line) => this._buildSubmitLine(line)),
+            applied_program_id: bill.promo?.applied_id || false,
+        };
+        payload.submission_ui_version = "1";
+        bill.submission_payload = JSON.parse(JSON.stringify(payload));
+        bill.submission_in_progress = true;
+        bill.submission_can_edit = false;
+        bill.submission_attempted = true;
+        bill.submission_draft_discardable = false;
+        bill.submission_checking = false;
+        bill.submission_validation_failed = false;
+        this.state.draftDiscardEligibility = {};
+        this._draftDiscardRequest = (this._draftDiscardRequest || 0) + 1;
+        this.state.submitting = true;
+        this._promoRequestId += 1;
+        this.persistCache();
+        try {
+            const result = bill.odoo_header_id
+                ? await this.orm.call("ab_sales_pos_api", "pos_retry", [], {
+                    header_id: bill.odoo_header_id, token: bill.header.pos_client_token,
+                    payload: wasUnknown ? null : payload,
+                    pos_hr_session_token: this._posDraftSessionToken() || false,
+                })
+                : await this.orm.call("ab_sales_pos_api", "pos_submit", [], payload);
+            if (result?.type === "ir.actions.act_window") {
+                bill.odoo_header_id = result.pos_header_id;
+                bill.submission_status = "prepending";
+                bill.submission_in_progress = false;
+                bill.submission_can_edit = true;
+                if (!result.views) result.views = [[result.view_id || false, "form"]];
+                this.action.doAction(result, {onClose: () => this.refreshSubmissionStates()});
+                return;
+            }
+            this._applySubmissionState(bill, result || {});
+            if (["pending", "saved"].includes(bill.submission_status)) {
+                this.notification.add(bill.eplus_serial ? _t("Submitted invoice #%s", bill.eplus_serial)
+                    : _t("Bill submitted."), {type: "success"});
+                await this.removeBill(bill.id, true);
+            } else if (bill.submission_message) {
+                this._notifySubmissionError(bill.submission_message,
+                    bill.submission_status === "unknown" ? _t("Unknown") : _t("Submit failed"),
+                    bill.submission_status === "unknown" ? "warning" : "danger");
+            }
+        } catch (err) {
+            const data = err?.data || err?.response?.data || {};
+            const name = data.name || "";
+            bill.submission_validation_failed = name.includes("UserError") || name.includes("ValidationError");
+            bill.submission_checking = true;
+            bill.submission_message = this._getRpcErrorMessage(err);
+            this._notifySubmissionError(bill.submission_message, _t("Submit failed"));
+        } finally {
+            this.state.submitting = false;
+            this.persistCache();
+            if (bill.submission_checking) await this.refreshSubmissionStates();
+        }
+    }
+
+    onResizeStart(ev) {
+        const grid = this.productGridRef.el;
+        if (!grid) {
+            return;
+        }
+        ev.preventDefault();
+        const rect = grid.getBoundingClientRect();
+        const minPct = POS_PRODUCT_COL_MIN;
+        const maxPct = POS_PRODUCT_COL_MAX;
+        const rootEl = this.el || grid;
+        const onMove = (moveEv) => {
+            const clientX = moveEv.clientX;
+            if (!clientX) {
+                return;
+            }
+            const min = (minPct / 100) * rect.width;
+            const max = (maxPct / 100) * rect.width;
+            let offset = clientX - rect.left;
+            if (offset < min) {
+                offset = min;
+            }
+            if (offset > max) {
+                offset = max;
+            }
+            const pct = (offset / rect.width) * 100;
+            rootEl.style.setProperty("--pos-product-col", `${pct}%`);
+            document.body.style.cursor = "col-resize";
+        };
+        const onUp = () => {
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+            window.removeEventListener("pointercancel", onUp);
+            document.body.style.cursor = "";
+            this.state.productColumnPercent = this._readProductColumnPercent();
+            this._savePosUiSettingsLocal(this._currentPosUiSettings());
+        };
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+    }
+
+    onSidebarResizeStart(ev) {
+        if (this.state.sidebarCollapsed) {
+            return;
+        }
+        const sidebar = this.el?.querySelector?.(".o_ab_sales_pos_sidebar");
+        const rootEl = this.el?.querySelector?.(".o_ab_sales_pos_app") || this.el;
+        if (!sidebar || !rootEl) {
+            return;
+        }
+        ev.preventDefault();
+        const rect = sidebar.getBoundingClientRect();
+        const startX = ev.clientX;
+        const startWidth = rect.width;
+        const minWidth = 220;
+        const maxWidth = 420;
+        const onMove = (moveEv) => {
+            const clientX = moveEv.clientX;
+            if (!clientX) {
+                return;
+            }
+            let nextWidth = startWidth + (clientX - startX);
+            if (nextWidth < minWidth) {
+                nextWidth = minWidth;
+            }
+            if (nextWidth > maxWidth) {
+                nextWidth = maxWidth;
+            }
+            rootEl.style.setProperty("--pos-sidebar-width", `${Math.round(nextWidth)}px`);
+            document.body.style.cursor = "col-resize";
+        };
+        const onUp = () => {
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+            window.removeEventListener("pointercancel", onUp);
+            document.body.style.cursor = "";
+        };
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+    }
+
+    windowStyle() {
+        if (this.state.windowMaximized) {
+            return "";
+        }
+        const rect = this.state.windowRect;
+        if (!rect) {
+            return "";
+        }
+        if (this.state.windowMinimized) {
+            return `left:${rect.left}px; top:${rect.top}px;`;
+        }
+        return `left:${rect.left}px; top:${rect.top}px; width:${rect.width}px; height:${rect.height}px;`;
+    }
+
+    toggleWindowMinimize() {
+        if (this.state.windowMinimized) {
+            this.state.windowMinimized = false;
+            return;
+        }
+        if (this.state.windowMaximized) {
+            this.state.windowMaximized = false;
+            this.state.windowRect = {...this._lastWindowRect};
+        }
+        this.state.windowMinimized = true;
+    }
+
+    toggleWindowMaximize() {
+        if (this.state.windowMaximized) {
+            this.state.windowMaximized = false;
+            this.state.windowMinimized = false;
+            this.state.windowRect = {...this._lastWindowRect};
+            return;
+        }
+        const rect = this.state.windowRect;
+        if (rect) {
+            this._lastWindowRect = {...rect};
+        }
+        this.state.windowMaximized = true;
+        this.state.windowMinimized = false;
+    }
+
+    async toggleFullScreen() {
+        if (typeof document === "undefined") {
+            return;
+        }
+        try {
+            if (!document.fullscreenElement) {
+                await document.documentElement.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch {
+            this.notification.add("Fullscreen not available.", {type: "warning"});
+        }
+    }
+
+    closeWindow() {
+        try {
+            this.action.doAction({type: "ir.actions.act_window_close"});
+        } finally {
+            this.state.windowClosed = true;
+        }
+    }
+
+    _syncWindowToViewport() {
+        const viewport = getViewportRect();
+        if (this.state.windowMaximized) {
+            this.state.windowRect = {
+                left: 0,
+                top: 0,
+                width: viewport.width,
+                height: viewport.height,
+            };
+        }
+        this._applyPosScale();
+    }
+
+    _applyPosScale() {
+        const elements = document.querySelectorAll(
+            ".o_ab_sales_pos_header_row, .o_ab_sales_pos_layout, .o_ab_sales_pos_topbar"
+        );
+        elements.forEach((el) => {
+            if (window.innerWidth <= POS_SCALE_BREAKPOINT) {
+                el.style.transform = `scale(${POS_SCALE_VALUE})`;
+                el.style.transformOrigin = "top left";
+            } else {
+                el.style.transform = "scale(1)";
+                el.style.transformOrigin = "";
+            }
+        });
+    }
+
+    onWindowDragStart(ev) {
+        if (this.state.windowMaximized) {
+            return;
+        }
+        if (ev.target?.closest?.(".o_ab_sales_pos_window_controls")) {
+            return;
+        }
+        if (ev.button !== 0) {
+            return;
+        }
+        const rect = this.state.windowRect;
+        if (!rect) {
+            return;
+        }
+        ev.preventDefault();
+        this._dragState = {
+            startX: ev.clientX,
+            startY: ev.clientY,
+            startLeft: rect.left,
+            startTop: rect.top,
+        };
+        const onMove = (moveEv) => {
+            if (!this._dragState) {
+                return;
+            }
+            const viewport = getViewportRect();
+            const nextLeft = this._dragState.startLeft + (moveEv.clientX - this._dragState.startX);
+            const nextTop = this._dragState.startTop + (moveEv.clientY - this._dragState.startY);
+            const maxLeft = Math.max(0, viewport.width - rect.width);
+            const maxTop = Math.max(0, viewport.height - rect.height);
+            this.state.windowRect = {
+                ...rect,
+                left: Math.min(Math.max(0, nextLeft), maxLeft),
+                top: Math.min(Math.max(0, nextTop), maxTop),
+            };
+            document.body.style.cursor = "move";
+        };
+        const onUp = () => {
+            this._dragState = null;
+            if (!this.state.windowMaximized) {
+                this._lastWindowRect = {...this.state.windowRect};
+            }
+            document.body.style.cursor = "";
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+            window.removeEventListener("pointercancel", onUp);
+        };
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+    }
+
+    onWindowResizeStart(ev) {
+        if (this.state.windowMaximized || this.state.windowMinimized) {
+            return;
+        }
+        if (ev.button !== 0) {
+            return;
+        }
+        const rect = this.state.windowRect;
+        if (!rect) {
+            return;
+        }
+        ev.preventDefault();
+        this._resizeState = {
+            startX: ev.clientX,
+            startY: ev.clientY,
+            startWidth: rect.width,
+            startHeight: rect.height,
+        };
+        const onMove = (moveEv) => {
+            if (!this._resizeState) {
+                return;
+            }
+            const viewport = getViewportRect();
+            const nextWidth = Math.min(
+                Math.max(MIN_WINDOW_WIDTH, this._resizeState.startWidth + (moveEv.clientX - this._resizeState.startX)),
+                viewport.width - rect.left
+            );
+            const nextHeight = Math.min(
+                Math.max(MIN_WINDOW_HEIGHT, this._resizeState.startHeight + (moveEv.clientY - this._resizeState.startY)),
+                viewport.height - rect.top
+            );
+            this.state.windowRect = {
+                ...rect,
+                width: nextWidth,
+                height: nextHeight,
+            };
+            document.body.style.cursor = "nwse-resize";
+        };
+        const onUp = () => {
+            this._resizeState = null;
+            if (!this.state.windowMaximized) {
+                this._lastWindowRect = {...this.state.windowRect};
+            }
+            document.body.style.cursor = "";
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+            window.removeEventListener("pointercancel", onUp);
+        };
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+        window.addEventListener("pointercancel", onUp);
+    }
+}
+
+registry.category("actions").add("ab_sales.pos", AbSalesPosAction);

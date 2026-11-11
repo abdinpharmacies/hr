@@ -1,0 +1,15 @@
+<odoo>
+    <record id="view_users_form_idle" model="ir.ui.view">
+        <field name="name">res.users.form.idle.logout</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='other_preferences']" position="inside">
+                <group string="Idle Logout" groups="base.group_system">
+                    <field name="enable_idle"/>
+                    <field name="idle_time" invisible="not enable_idle"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

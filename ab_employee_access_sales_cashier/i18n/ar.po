@@ -1,0 +1,94 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_employee_access_sales_cashier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-21 14:09+0000\n"
+"PO-Revision-Date: 2026-10-21 14:09+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Cashier PIN login is required."
+msgstr "يلزم تسجيل دخول أمين الصندوق بالرقم السري."
+
+#. module: ab_employee_access_sales_cashier
+#: model:ir.model.fields,field_description:ab_employee_access_sales_cashier.field_ab_sales_cashier_api__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Employee POS profile is missing."
+msgstr "ملف نقطة البيع للموظف غير موجود."
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+#: code:addons/ab_employee_access_sales_cashier/static/src/cashier/cashier_patch.js:0
+msgid "Employee and PIN are required."
+msgstr "الموظف والرقم السري مطلوبان."
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Employee is invalid or POS login is disabled."
+msgstr "الموظف غير صالح أو تسجيل دخول نقطة البيع معطل."
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Employee role does not allow cashier screen access."
+msgstr "دور الموظف لا يسمح بالوصول إلى شاشة أمين الصندوق."
+
+#. module: ab_employee_access_sales_cashier
+#: model:ir.model.fields,field_description:ab_employee_access_sales_cashier.field_ab_sales_cashier_api__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales_cashier/static/src/cashier/cashier_patch.js:0
+msgid "PIN login failed."
+msgstr "فشل تسجيل الدخول بالرقم السري."
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "POS HR module is required for cashier PIN access."
+msgstr "إضافة موارد بشرية نقطة البيع مطلوبة للوصول بالرقم السري لأمين الصندوق."
+
+#. module: ab_employee_access_sales_cashier
+#: model:ir.model,name:ab_employee_access_sales_cashier.model_ab_sales_cashier_api
+msgid "Sales Cashier API"
+msgstr "واجهة أمين صندوق المبيعات"
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales_cashier/static/src/cashier/cashier_patch.js:0
+msgid "Select employee and enter PIN to access cashier screen."
+msgstr "اختر الموظف وأدخل الرقم السري للوصول إلى شاشة أمين الصندوق."
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Selected employee has no POS profile."
+msgstr "الموظف المحدد ليس لديه ملف نقطة بيع."
+
+#. module: ab_employee_access_sales_cashier
+#. odoo-python
+#: code:addons/ab_employee_access_sales_cashier/models/ab_sales_cashier_api.py:0
+msgid "Store is required."
+msgstr "الفرع مطلوب."

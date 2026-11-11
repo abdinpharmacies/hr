@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_sync_next_sales_dashboard_day" model="ir.cron">
+            <field name="name">Sales Dashboard: Reinsert Next Day</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number" eval="30"/>
+            <field name="interval_type">minutes</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_sync_state"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_sync_next_dashboard_day()</field>
+        </record>
+
+        <record id="ir_cron_refresh_sales_dashboard_last_90_days" model="ir.cron">
+            <field name="name">Sales Dashboard: Refresh Last 90 Days</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">days</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_sync_wizard"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_sync_last_90_dashboard_days()</field>
+        </record>
+    </data>
+</odoo>

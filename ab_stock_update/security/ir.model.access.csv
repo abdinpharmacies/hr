@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_stock_update_run_manager,ab_stock_update_run manager,model_ab_stock_update_run,group_ab_stock_update_manager,1,1,0,0
+access_ab_stock_update_line_manager,ab_stock_update_line manager,model_ab_stock_update_line,group_ab_stock_update_manager,1,0,0,0
+access_ab_stock_update_confirm_manager,ab_stock_update_confirm manager,model_ab_stock_update_confirm_wizard,group_ab_stock_update_manager,1,1,1,1

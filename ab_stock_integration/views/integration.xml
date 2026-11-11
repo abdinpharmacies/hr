@@ -1,0 +1,3 @@
+<odoo>
+    <delete id="product_stock_unit_mapping" model="ir.ui.view"/>
+</odoo>

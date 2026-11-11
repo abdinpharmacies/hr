@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="cash_wallet_report_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Cashier Wallet Closing Report</h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Branch:</strong>
+                                <span t-field="o.store_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Cashier:</strong>
+                                <span t-field="o.employee_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Opened At:</strong>
+                                <span t-field="o.start_at"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Closed At:</strong>
+                                <span t-field="o.closed_at"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Payment Method</th>
+                                    <th class="text-end">Collections</th>
+                                    <th class="text-end">Refunds</th>
+                                    <th class="text-end">Net</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.drawer_id.method_ids" t-as="method">
+                                    <t t-set="method_tenders" t-value="o.event_ids.tender_ids.filtered(lambda tender: tender.method_id == method)"/>
+                                    <t t-set="collections" t-value="sum(method_tenders.filtered(lambda tender: tender.amount &gt; 0).mapped('amount'))"/>
+                                    <t t-set="refunds" t-value="-sum(method_tenders.filtered(lambda tender: tender.amount &lt; 0).mapped('amount'))"/>
+                                    <td><span t-field="method.name"/></td>
+                                    <td class="text-end"><span t-out="collections" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><span t-out="refunds" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><span t-out="collections - refunds" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-sm table-bordered">
+                            <tbody>
+                                <tr><th>Opening Balance</th><td class="text-end"><span t-field="o.opening_amount"/></td></tr>
+                                <tr><th>Expected Physical Cash</th><td class="text-end"><span t-field="o.cash_amount"/></td></tr>
+                                <tr><th>Counted Physical Cash</th><td class="text-end"><span t-field="o.counted_amount"/></td></tr>
+                                <tr><th>Cash Difference</th><td class="text-end"><span t-field="o.variance"/></td></tr>
+                                <tr><th>Treasury Amount</th><td class="text-end"><span t-out="o.counted_amount - o.carry_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><th>Next Opening Balance</th><td class="text-end"><span t-field="o.carry_amount"/></td></tr>
+                                <tr>
+                                    <th>Next Cashier</th>
+                                    <td><span t-out="o.next_ids[:1].employee_id.display_name or '-'"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-3">
+                            <p><strong>Wallet Reference:</strong> <span t-out="o.id"/></p>
+                            <p><strong>Receipt Confirmation:</strong> <span t-field="o.accepted_at"/></p>
+                            <p><strong>Handover Reference:</strong> <span t-out="', '.join(str(item.id) for item in o.transfer_ids.filtered(lambda transfer: transfer.direction == 'closing')) or '-'"/></p>
+                            <p><strong>Treasury Receipt:</strong> <span t-out="', '.join(str(item.id) for item in o.transfer_ids.filtered(lambda transfer: transfer.state == 'received')) or '-'"/></p>
+                            <p t-if="o.variance_note"><strong>Difference Note:</strong> <span t-field="o.variance_note"/></p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="cash_wallet_report_action" model="ir.actions.report">
+        <field name="name">Cashier Wallet Closing Report</field>
+        <field name="model">ab_sales_cash_shift</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ab_sales_cash_shift.cash_wallet_report_document</field>
+        <field name="report_file">ab_sales_cash_shift.cash_wallet_report_document</field>
+        <field name="binding_model_id" ref="model_ab_sales_cash_shift"/>
+        <field name="binding_type">report</field>
+        <field name="attachment">'Cashier-Wallet-%s.pdf' % object.id</field>
+        <field name="attachment_use" eval="True"/>
+        <field name="print_report_name">'Cashier Wallet - %s' % object.id</field>
+    </record>
+</odoo>

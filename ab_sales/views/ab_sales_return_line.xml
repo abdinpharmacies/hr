@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_sales_return_line_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_return_line_view_list</field>
+            <field name="model">ab_sales_return_line</field>
+            <field name="arch" type="xml">
+                <list string="ab_sales_return_line_list" multi_edit="1">
+                    <field name="id" class="text-muted" optional="show"/>
+                    <field name="header_id" optional="show"/>
+                    <field name="sale_line_id" optional="show"/>
+                    <field name="qty_str" optional="show"/>
+                    <field name="product_id" optional="show"/>
+                    <field name="product_uom_category_id" optional="show"/>
+                    <field name="uom_id" optional="show"/>
+                    <field name="source_itm_unit" optional="show"/>
+                    <field name="source_uom_factor" optional="show"/>
+                    <field name="item_unit1_unit2" optional="show"/>
+                    <field name="item_unit1_unit3" optional="show"/>
+                    <field name="qty_sold" optional="show"/>
+                    <field name="qty_sold_source" optional="show"/>
+                    <field name="max_returnable_qty" optional="show"/>
+                    <field name="max_returnable_source" optional="show"/>
+                    <field name="qty_to_return" optional="show"/>
+                    <field name="sell_price" optional="show"/>
+                    <field name="cost" optional="show"/>
+                    <field name="line_value" optional="show"/>
+                    <field name="itm_eplus_id" optional="show"/>
+                    <field name="sth_id" optional="show"/>
+                    <field name="sto_id" optional="show"/>
+                    <field name="c_id" optional="show"/>
+                    <field name="std_id" optional="show"/>
+                    <field name="itm_nexist" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_return_line_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_return_line_view_form</field>
+            <field name="model">ab_sales_return_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_sales_return_line_form">
+                    <sheet>
+                        <group>
+                            <field name="header_id"/>
+                            <field name="sale_line_id"/>
+                            <field name="qty_str"/>
+                            <field name="product_id"/>
+                            <field name="product_uom_category_id"/>
+                            <field name="uom_id"/>
+                            <field name="source_itm_unit"/>
+                            <field name="source_uom_factor"/>
+                            <field name="item_unit1_unit2"/>
+                            <field name="item_unit1_unit3"/>
+                            <field name="qty_sold"/>
+                            <field name="qty_sold_source"/>
+                            <field name="max_returnable_qty"/>
+                            <field name="max_returnable_source"/>
+                            <field name="qty_to_return"/>
+                            <field name="sell_price"/>
+                            <field name="cost"/>
+                            <field name="line_value"/>
+                            <field name="itm_eplus_id"/>
+                            <field name="sth_id"/>
+                            <field name="sto_id"/>
+                            <field name="c_id"/>
+                            <field name="std_id"/>
+                            <field name="itm_nexist"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_sales_return_line_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_return_line_view_search</field>
+            <field name="model">ab_sales_return_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_sales_return_line_search">
+                    <field name="header_id"/>
+                    <field name="sale_line_id"/>
+                    <field name="qty_str"/>
+                    <field name="product_id"/>
+                    <field name="product_uom_category_id"/>
+                    <field name="uom_id"/>
+                    <field name="source_itm_unit"/>
+                    <field name="source_uom_factor"/>
+                    <field name="item_unit1_unit2"/>
+                    <field name="item_unit1_unit3"/>
+                    <field name="qty_sold"/>
+                    <field name="qty_sold_source"/>
+                    <field name="max_returnable_qty"/>
+                    <field name="max_returnable_source"/>
+                    <field name="qty_to_return"/>
+                    <field name="sell_price"/>
+                    <field name="cost"/>
+                    <field name="line_value"/>
+                    <field name="itm_eplus_id"/>
+                    <field name="sth_id"/>
+                    <field name="sto_id"/>
+                    <field name="c_id"/>
+                    <field name="std_id"/>
+                    <field name="itm_nexist"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_sales_return_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_sales_return_line_view_pivot</field>
+            <field name="model">ab_sales_return_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_sales_return_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_sales_return_line_action" model="ir.actions.act_window">
+            <field name="name">Ab sales return line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_return_line</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_sales_return_line_menu"
+                  name="Sales Return Lines"
+                  parent="ab_sales_reports_menu"
+                  action="ab_sales_return_line_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

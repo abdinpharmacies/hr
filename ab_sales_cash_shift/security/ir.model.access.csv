@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drawer_read,ab_sales_cash_drawer read,model_ab_sales_cash_drawer,base.group_user,1,0,0,0
+access_drawer_system,ab_sales_cash_drawer system,model_ab_sales_cash_drawer,base.group_system,1,1,1,0
+access_drawer_manager,ab_sales_cash_drawer manager,model_ab_sales_cash_drawer,group_cash_manager,1,1,1,0
+access_treasury_read,ab_sales_cash_treasury read,model_ab_sales_cash_treasury,base.group_user,1,0,0,0
+access_treasury_system,ab_sales_cash_treasury system,model_ab_sales_cash_treasury,base.group_system,1,1,1,0
+access_treasury_manager,ab_sales_cash_treasury manager,model_ab_sales_cash_treasury,group_cash_manager,1,1,1,0
+access_method_read,ab_sales_cash_method read,model_ab_sales_cash_method,base.group_user,1,0,0,0
+access_method_system,ab_sales_cash_method system,model_ab_sales_cash_method,base.group_system,1,1,1,0
+access_method_manager,ab_sales_cash_method manager,model_ab_sales_cash_method,group_cash_manager,1,1,1,0
+access_shift_read,ab_sales_cash_shift read,model_ab_sales_cash_shift,base.group_user,1,0,0,0
+access_event_read,ab_sales_cash_event read,model_ab_sales_cash_event,base.group_user,1,0,0,0
+access_tender_read,ab_sales_cash_tender read,model_ab_sales_cash_tender,base.group_user,1,0,0,0
+access_transfer_read,ab_sales_cash_transfer read,model_ab_sales_cash_transfer,base.group_user,1,0,0,0
+access_operation,operation,model_ab_sales_cash_operation,base.group_user,1,1,1,1
+access_operation_line,operation_line,model_ab_sales_cash_operation_line,base.group_user,1,1,1,1

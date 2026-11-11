@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_channel.PosSubmitDialogSalesChannel"
+       t-inherit="ab_sales.PosSubmitDialog"
+       t-inherit-mode="extension">
+        <xpath expr="//textarea[@t-ref='billDescription']/ancestor::div[contains(@class, 'o_ab_sales_pos_submit_section')][1]"
+               position="before">
+            <div class="o_ab_sales_pos_submit_section o_ab_sales_channel_submit_section">
+                <label class="form-label">Sales Channel</label>
+                <ABMany2one
+                        relation="'ab_sales_channel'"
+                        value="state.sales_channel"
+                        update="onSalesChannelUpdate"
+                        domain="() => salesChannelDomain()"
+                        placeholder="salesChannelPlaceholder()"
+                        canCreate="false"
+                        canCreateEdit="false"
+                        canQuickCreate="false"
+                        canOpen="false"
+                        canWrite="true"
+                        string="salesChannelLabel()"
+                />
+                <t t-if="state.errors.sales_channel">
+                    <div class="invalid-feedback d-block">Sales channel is required.</div>
+                </t>
+            </div>
+        </xpath>
+    </t>
+</templates>

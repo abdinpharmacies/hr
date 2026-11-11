@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_metadata_view_list" model="ir.ui.view">
+            <field name="name">ab_product_metadata_view_list</field>
+            <field name="model">ab_product_metadata</field>
+            <field name="arch" type="xml">
+                <list string="Priced Products" multi_edit="1">
+                    <field name="product_code"/>
+                    <field name="product_id" context="{'active_test': False}"/>
+                    <field name="is_priced" widget="boolean_toggle"/>
+                    <field name="notes" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_product_metadata_view_form" model="ir.ui.view">
+            <field name="name">ab_product_metadata_view_form</field>
+            <field name="model">ab_product_metadata</field>
+            <field name="arch" type="xml">
+                <form string="Priced Product">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="product_id"/>
+                            <h1>
+                                <field name="product_id"
+                                       placeholder="Product"
+                                       context="{'active_test': False}"
+                                       options="{'no_create_edit': True}"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="product_code"/>
+                            <field name="is_priced"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="notes" placeholder="Optional notes..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_product_metadata_view_search" model="ir.ui.view">
+            <field name="name">ab_product_metadata_view_search</field>
+            <field name="model">ab_product_metadata</field>
+            <field name="arch" type="xml">
+                <search string="Priced Products">
+                    <field name="product_code"/>
+                    <field name="product_id" context="{'active_test': False}"/>
+                    <field name="notes"/>
+                    <filter name="filter_priced" string="Priced" domain="[('is_priced', '=', True)]"/>
+                    <filter name="filter_not_priced" string="Not Priced" domain="[('is_priced', '=', False)]"/>
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_product_metadata_action" model="ir.actions.act_window">
+            <field name="name">Product Pricing Flags</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product_metadata</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_product_metadata_view_search"/>
+            <field name="context">{'search_default_filter_active': 1}</field>
+        </record>
+
+        <menuitem id="ab_product_metadata_menu"
+                  name="Product Access Management"
+                  parent="config_sub_menu"
+                  action="ab_product.ab_product_management_field_rule_action"
+                  sequence="310"
+                  groups="base.group_system"/>
+    </data>
+</odoo>

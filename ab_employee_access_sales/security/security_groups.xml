@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="category_ab_employee_access_sales" model="ir.module.category">
+            <field name="name">Ab Sales HR</field>
+            <field name="sequence">35</field>
+        </record>
+
+        <record id="privilege_ab_employee_access_sales_ops" model="res.groups.privilege">
+            <field name="name">POS HR Operations</field>
+            <field name="category_id" ref="category_ab_employee_access_sales"/>
+        </record>
+
+        <record id="privilege_ab_employee_access_sales_audit" model="res.groups.privilege">
+            <field name="name">POS HR Audit</field>
+            <field name="category_id" ref="category_ab_employee_access_sales"/>
+        </record>
+
+        <record id="group_ab_employee_access_sales_manager" model="res.groups">
+            <field name="name">POS HR Manager</field>
+            <field name="privilege_id" ref="privilege_ab_employee_access_sales_ops"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_ab_employee_access_sales_auditor" model="res.groups">
+            <field name="name">POS HR Auditor</field>
+            <field name="privilege_id" ref="privilege_ab_employee_access_sales_audit"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('ab_employee_access_sales.group_ab_employee_access_sales_manager'))]"/>
+        </record>
+    </data>
+</odoo>

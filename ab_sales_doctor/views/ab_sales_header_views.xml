@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_header_view_form_inherit_doctor" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_form_inherit_doctor</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='description']" position="after">
+                    <field name="is_doctor_prescription"
+                           readonly="status in ('saved', 'pending')"/>
+                    <field name="doctor_id"
+                           invisible="not is_doctor_prescription"
+                           required="is_doctor_prescription"
+                           readonly="status in ('saved', 'pending')"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']//list//field[@name='product_id']" position="after">
+                    <field name="is_doctor_prescription_product"
+                           optional="show"
+                           column_invisible="not parent.is_doctor_prescription"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_view_list_inherit_doctor" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_list_inherit_doctor</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='customer_id']" position="after">
+                    <field name="is_doctor_prescription" optional="show"/>
+                    <field name="doctor_id" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_view_search_inherit_doctor" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_search_inherit_doctor</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='customer_id']" position="after">
+                    <field name="doctor_id"/>
+                    <filter name="doctor_prescription"
+                            string="Doctor Prescription"
+                            domain="[('is_doctor_prescription', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

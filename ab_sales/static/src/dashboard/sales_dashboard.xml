@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.SalesDashboardAction">
+        <div class="o_ab_sales_dashboard">
+            <div class="o_ab_sales_dashboard_header">
+                <div>
+                    <h2>Sales</h2>
+                </div>
+                <button type="button"
+                        class="btn btn-outline-primary o_ab_sales_dashboard_refresh"
+                        t-on-click="loadDashboard"
+                        t-att-disabled="state.loading">
+                    <i class="fa fa-refresh" aria-hidden="true"/>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="o_ab_sales_dashboard_loading">
+                    <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
+                    <span>Loading</span>
+                </div>
+            </t>
+            <t t-else="">
+                <section class="o_ab_sales_dashboard_actions">
+                    <t t-foreach="state.payload.quick_actions" t-as="item" t-key="item.key">
+                        <button type="button"
+                                t-att-class="actionTileClass(item)"
+                                t-on-click="() => this.openAction(item.action)">
+                            <span class="o_ab_sales_dashboard_action_icon">
+                                <i t-att-class="iconClass(item.icon)" aria-hidden="true"/>
+                            </span>
+                            <span class="o_ab_sales_dashboard_action_text">
+                                <strong t-esc="item.title"/>
+                            </span>
+                            <i class="fa fa-chevron-right o_ab_sales_dashboard_action_arrow" aria-hidden="true"/>
+                        </button>
+                    </t>
+                </section>
+
+                <section class="o_ab_sales_dashboard_metrics">
+                    <t t-foreach="state.payload.metrics" t-as="metric" t-key="metric.key">
+                        <button type="button"
+                                t-att-class="metricClass(metric)"
+                                t-on-click="() => this.openAction(metric.action)">
+                            <span class="o_ab_sales_dashboard_metric_icon">
+                                <i t-att-class="iconClass(metric.icon)" aria-hidden="true"/>
+                            </span>
+                            <span class="o_ab_sales_dashboard_metric_text">
+                                <strong t-esc="formatNumber(metric.value)"/>
+                                <small t-esc="metric.label"/>
+                            </span>
+                        </button>
+                    </t>
+                </section>
+            </t>
+        </div>
+    </t>
+</templates>
