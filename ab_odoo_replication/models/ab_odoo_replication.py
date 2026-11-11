@@ -537,7 +537,14 @@ class OdooReplication(models.AbstractModel):
                         ('last_update_date',
                         'message_main_attachment_id')
                     """, (model_name,))
-        return self.env.cr.fetchall()
+        model_fields = self.env[model_name]._fields
+        return [
+            (name, field.type, field.comodel_name)
+            for name, _, _ in self.env.cr.fetchall()
+            if (field := model_fields.get(name))
+            and field.store
+            and field.type not in {'binary', 'many2many', 'one2many'}
+        ]
 
     def _replicate_main_fields(self, rec):
         """
