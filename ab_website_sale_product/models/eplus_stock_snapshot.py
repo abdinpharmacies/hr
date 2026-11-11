@@ -2,8 +2,10 @@ import logging
 from datetime import date, datetime
 from decimal import Decimal
 
+from psycopg2 import IntegrityError
+
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import float_compare
 from odoo.tools.translate import _
 
@@ -66,6 +68,7 @@ class EplusStockSnapshot(models.Model):
         selection=[
             ("eplus_serial", "Eplus ID"),
             ("code", "Item Code"),
+            ("barcode", "Barcode"),
             ("none", "Not Matched"),
         ],
         default="none",
@@ -81,7 +84,10 @@ class EplusStockSnapshot(models.Model):
     )
 
     def action_refresh_from_eplus(self):
+        if not self.env.user.has_group("base.group_system"):
+            raise AccessError(_("Only administrators can import Eplus products."))
         result = self.sudo()._refresh_from_eplus()
+        self._enqueue_eplus_catalog_import()
         message = _("Eplus stock refreshed: %(total)s rows, %(matched)s matched, %(unmatched)s unmatched.") % {
             "total": result["total"],
             "matched": result["matched"],
@@ -233,6 +239,144 @@ class EplusStockSnapshot(models.Model):
             "unmatched": unmatched_count,
             "stale": len(stale_records),
         }
+
+    @api.model
+    def _enqueue_eplus_catalog_import(self):
+        if not self.env.user.has_group("base.group_system"):
+            raise AccessError(_("Only administrators can import Eplus products."))
+        unmatched = self.sudo().search([
+            ("active", "=", True),
+            ("product_id", "=", False),
+            ("itm_code", "!=", False),
+        ])
+        for offset in range(0, len(unmatched), 100):
+            batch = unmatched[offset:offset + 100].with_user(self.env.user)
+            batch.with_delay(
+                identity_key="eplus-catalog-import:%s:%s" % (batch[0].id, batch[-1].id),
+                description=_("Import Eplus product drafts"),
+                max_retries=5,
+            )._import_eplus_catalog_batch()
+
+    def _import_eplus_catalog_batch(self):
+        if not self.env.user.has_group("base.group_system"):
+            raise AccessError(_("Only administrators can import Eplus products."))
+        snapshots = self.sudo().filtered(lambda row: row.active and not row.product_id and row.itm_code)
+        if not snapshots:
+            return 0
+
+        names_by_id = self._fetch_eplus_catalog_names(snapshots.mapped("itm_id"))
+        source_codes = set(snapshots.mapped("itm_code"))
+        all_rows_with_codes = self.sudo().search([
+            ("active", "=", True), ("itm_code", "in", list(source_codes)),
+        ])
+        source_ids_by_code = {}
+        for row in all_rows_with_codes:
+            source_ids_by_code.setdefault(row.itm_code, set()).add(row.itm_id)
+
+        Product = self.env["ab_product"].sudo().with_context(active_test=False)
+        existing = Product.search(
+            fields.Domain("eplus_serial", "in", snapshots.mapped("itm_id"))
+            | fields.Domain("code", "in", list(source_codes))
+            | fields.Domain("barcode_ids.name", "in", list(source_codes))
+        )
+        candidates_by_serial = {}
+        candidates_by_code = {}
+        for product in existing:
+            if product.eplus_serial:
+                candidates_by_serial.setdefault(product.eplus_serial, set()).add(product.id)
+            if product.code:
+                candidates_by_code.setdefault(product.code, set()).add(product.id)
+            for barcode in product.barcode_ids:
+                if barcode.name in source_codes:
+                    candidates_by_code.setdefault(barcode.name, set()).add(product.id)
+
+        created = 0
+        linked = 0
+        skipped = 0
+        for row in snapshots:
+            source = names_by_id.get(row.itm_id, [])
+            if (
+                len(source) != 1
+                or source[0][0] != row.itm_code
+                or not (source[0][1] or source[0][2])
+                or not source[0][3]
+            ):
+                skipped += 1
+                continue
+            if len(source_ids_by_code.get(row.itm_code, ())) != 1:
+                skipped += 1
+                continue
+            candidates = (
+                candidates_by_serial.get(row.itm_id, set())
+                | candidates_by_code.get(row.itm_code, set())
+            )
+            if len(candidates) > 1:
+                skipped += 1
+                continue
+            if candidates:
+                product = Product.browse(next(iter(candidates)))
+                if product.eplus_serial and product.eplus_serial != row.itm_id:
+                    skipped += 1
+                    continue
+                matched_by = (
+                    "eplus_serial" if product.eplus_serial == row.itm_id
+                    else "code" if product.code == row.itm_code
+                    else "barcode"
+                )
+                if not product.eplus_serial:
+                    product.write({"eplus_serial": row.itm_id})
+                row.write({"product_id": product.id, "matched_by": matched_by})
+                linked += 1
+                continue
+            name = source[0][2] or source[0][1]
+            try:
+                with self.env.cr.savepoint():
+                    product = Product.create({
+                        "name": name,
+                        "product_card_name": name,
+                        "code": row.itm_code,
+                        "eplus_serial": row.itm_id,
+                        "active": False,
+                        "allow_sale": False,
+                        "allow_purchase": False,
+                        "website_sale_available": False,
+                        "eplus_catalog_draft": True,
+                    })
+                    row.write({"product_id": product.id, "matched_by": "eplus_serial"})
+                    created += 1
+                    candidates_by_serial.setdefault(row.itm_id, set()).add(product.id)
+                    candidates_by_code.setdefault(row.itm_code, set()).add(product.id)
+            except (IntegrityError, ValidationError):
+                _logger.exception("Eplus catalog draft import failed for itm_id=%s", row.itm_id)
+                skipped += 1
+        _logger.info(
+            "Eplus catalog draft import: created=%s linked=%s skipped=%s",
+            created, linked, skipped,
+        )
+        return created
+
+    @api.model
+    def _fetch_eplus_catalog_names(self, itm_ids):
+        names_by_id = {}
+        with self.connect_eplus(param_str="?", charset="CP1256", propagate_error=True) as conn:
+            with conn.cursor() as cursor:
+                for offset in range(0, len(itm_ids), 200):
+                    batch = itm_ids[offset:offset + 200]
+                    placeholders = ",".join(["?"] * len(batch))
+                    cursor.execute(
+                        "SELECT n.itm_id, n.itm_code, n.itm_name_ar, n.itm_name_en, ic.itm_active "
+                        "FROM m_name n JOIN Item_Catalog ic ON ic.itm_id = n.itm_id "
+                        "WHERE n.itm_id IN (%s)" % placeholders,
+                        tuple(batch),
+                    )
+                    for itm_id, code, name_ar, name_en, active in cursor.fetchall():
+                        names_by_id.setdefault(int(itm_id), []).append((
+                            str(code or "").strip(),
+                            str(name_ar or "").strip(),
+                            str(name_en or "").strip(),
+                            bool(active),
+                        ))
+        return names_by_id
 
     @api.model
     def _refresh_branch_stock_from_eplus(self):

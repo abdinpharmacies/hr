@@ -2,9 +2,36 @@
 
 ## Current changes before commit
 
+- Import unmatched active Eplus stock items into Abdin Products as archived, unpublished drafts using their real names from `m_name`.
+- Link an existing Abdin product by Eplus ID, item code, or barcode before creating a draft.
+- Add an Eplus Draft website status and filter, and protect automatic import behind administrator access and background jobs.
+- Restore missing translation template entries so the Arabic website statuses load at runtime.
+- Test draft creation, matching, invalid source rows, and import access.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/tests/__init__.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
+- `ab_website_sale_product/views/ab_product_kanban_views.xml`
+- `ab_website_sale_product/views/ab_product_views.xml`
+
+## Recent commits
+
+Commit: `f4a3129c`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/IMP: show archived products and website status in catalog`
+
+User-facing changes:
+
 - Show active and archived Abdin products together in the Website catalog list.
-- Add a translated website status column and archived filter, and distinguish archived cards from ready or synced cards.
-- Cover catalog visibility and status transitions in the website product sync test.
+- Add a website status column and archived filter.
 
 Files changed:
 
@@ -17,7 +44,7 @@ Files changed:
 - `ab_website_sale_product/views/ab_product_views.xml`
 - `ab_website_sale_product/views/website_sale_menus.xml`
 
-## Recent commits
+## Earlier commits
 
 Commit: `d0265c08`
 Author: Mohamed Fawzy
@@ -136,14 +163,3 @@ Files changed:
 - `ab_website_sale_product/changelog.d/current.md`
 - `ab_website_sale_product/models/product_classification.py`
 - `ab_website_sale_product/tests/test_product_classification.py`
-
-## Current changes before commit:
-
-- Keep later uploads in the same customer review table while the previous batch awaits code creation.
-
-Files changed:
-
-- `ab_website_sale_product/changelog.d/current.md`
-- `ab_website_sale_product/docs/legacy-customers.md`
-- `ab_website_sale_product/models/legacy_activation_batch.py`
-- `ab_website_sale_product/tests/test_legacy_staging_rows.py`

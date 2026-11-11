@@ -53,6 +53,10 @@
                                       t-if="record.website_catalog_status.raw_value === 'archived'">
                                     Archived
                                 </span>
+                                <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_new"
+                                      t-if="record.website_catalog_status.raw_value === 'eplus_draft'">
+                                    Eplus Draft
+                                </span>
                                 <div class="abdin_ecommerce_dropdown_container">
                                     <div class="o_dropdown_kanban dropdown">
                                         <span class="o_kanban_dropdown_arrow" role="button" tabindex="0" aria-label="Actions">

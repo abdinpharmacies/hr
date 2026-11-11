@@ -38,6 +38,9 @@
                 <filter name="filter_website_archived"
                         string="Archived"
                         domain="[('active', '=', False)]"/>
+                <filter name="filter_eplus_catalog_draft"
+                        string="Eplus Draft"
+                        domain="[('eplus_catalog_draft', '=', True)]"/>
             </xpath>
         </field>
     </record>

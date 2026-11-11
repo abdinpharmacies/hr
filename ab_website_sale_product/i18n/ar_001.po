@@ -6293,3 +6293,28 @@ msgstr "غير متاح للموقع"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_catalog_status
 msgid "Website Status"
 msgstr "حالة الموقع"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__eplus_catalog_draft
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__eplus_draft
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+msgid "Eplus Draft"
+msgstr "مسودة من Eplus"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot__matched_by__barcode
+msgid "Barcode"
+msgstr "الباركود"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Only administrators can import Eplus products."
+msgstr "يمكن للمسؤولين فقط استيراد أصناف Eplus."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Import Eplus product drafts"
+msgstr "استيراد مسودات أصناف Eplus"

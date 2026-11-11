@@ -244,8 +244,15 @@ class AbProduct(models.Model):
         compute_sudo=True,
         groups="base.group_user",
     )
+    eplus_catalog_draft = fields.Boolean(
+        string="Eplus Draft",
+        readonly=True,
+        copy=False,
+        groups="base.group_user",
+    )
     website_catalog_status = fields.Selection(
         selection=[
+            ("eplus_draft", "Eplus Draft"),
             ("archived", "Archived"),
             ("published", "Published"),
             ("synced", "Synced, Not Published"),
@@ -338,12 +345,14 @@ class AbProduct(models.Model):
             )
 
     @api.depends(
-        "active", "allow_sale", "website_sale_available",
+        "active", "allow_sale", "website_sale_available", "eplus_catalog_draft",
         "website_product_synced", "website_product_is_published",
     )
     def _compute_website_catalog_status(self):
         for product in self:
-            if not product.active:
+            if product.eplus_catalog_draft and not product.website_product_is_published:
+                product.website_catalog_status = "eplus_draft"
+            elif not product.active:
                 product.website_catalog_status = "archived"
             elif product.website_product_is_published:
                 product.website_catalog_status = "published"

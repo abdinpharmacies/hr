@@ -3501,6 +3501,7 @@ msgid "Progress could not be refreshed. Retrying automatically."
 msgstr ""
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__published
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "Published"
@@ -5992,4 +5993,64 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_ecommerce_legacy_batch__review_duplicate_count
 msgid "Hidden Exact Duplicates"
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__archived
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+msgid "Archived"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot__matched_by__barcode
+msgid "Barcode"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__eplus_catalog_draft
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__eplus_draft
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+msgid "Eplus Draft"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Import Eplus product drafts"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Only administrators can import Eplus products."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__ready
+msgid "Ready to Sync"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__synced
+msgid "Synced, Not Published"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product__website_catalog_status__unavailable
+msgid "Unavailable for Website"
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_catalog_status
+msgid "Website Status"
 msgstr ""
