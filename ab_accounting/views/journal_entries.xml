@@ -213,5 +213,80 @@
                   groups="base.group_system"/>
 
 
+        <record id="ab_accounting_je_line_view_list_layout" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line.list.layout</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_tree"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="multi_edit">1</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='active']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='is_header']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='allow_confirm']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='allow_reverse']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='reconcile']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='has_due_date']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='is_frozen']" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='internal_type'] | //list/field[@name='is_frozen'][not(../field[@name='internal_type'])]" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='id']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='account_id']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='with_account_id']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='debit_val']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='credit_val']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='net_val']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='costcenter_id']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='store_id']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='explain']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+                <xpath expr="//list/field[@name='doc_no']" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
