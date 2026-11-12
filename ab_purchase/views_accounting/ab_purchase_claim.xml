@@ -348,5 +348,157 @@
                   sequence="100"/>
 
 
+        <record id="ab_purchase_claim_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_view_form.layout</field>
+            <field name="model">ab_purchase_claim</field>
+            <field name="inherit_id" ref="ab_purchase_claim_view_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_chatter']" position="replace">
+                    <chatter/>
+                </xpath>
+                <xpath expr="(//sheet/notebook)[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//list/field[@invisible=&quot;1&quot;])[not(@column_invisible=&quot;True&quot;)]" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="(//sheet/div[@class=&quot;text-center&quot;])[not(@class=&quot;oe_title mb-3 d-flex flex-wrap align-items-baseline gap-2&quot;)]" position="attributes">
+                    <attribute name="class">oe_title mb-3 d-flex flex-wrap align-items-baseline gap-2</attribute>
+                </xpath>
+                <xpath expr="//sheet/div[contains(@class,'oe_title')]/span" position="replace"/>
+                <xpath expr="//sheet/div[contains(@class,'oe_title')]/span" position="replace"/>
+                <xpath expr="(//sheet/div[contains(@class,&quot;oe_title&quot;)]/field[@name=&quot;id&quot;])[not(@class=&quot;h4 text-muted w-auto mb-0&quot;)]" position="attributes">
+                    <attribute name="class">h4 text-muted w-auto mb-0</attribute>
+                </xpath>
+                <xpath expr="(//sheet/div[@class=&quot;d-flex flex-column &quot;])[not(@class=&quot;d-flex flex-column gap-3 mb-4&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column gap-3 mb-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;card border-info&quot;])[not(@class=&quot;card border-info w-100&quot;)]" position="attributes">
+                    <attribute name="style"/>
+                    <attribute name="class">card border-info w-100</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;card-text&quot;])[not(@class=&quot;card-text row g-3&quot;)]" position="attributes">
+                    <attribute name="class">card-text row g-3</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]/div)[not(@class=&quot;col-12 col-md-6 col-xl-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-6 col-xl-4</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]/div)[not(@class=&quot;col-12 col-md-6 col-xl-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-6 col-xl-4</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]/div)[not(@class=&quot;col-12 col-md-6 col-xl-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-6 col-xl-4</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]/div)[not(@class=&quot;col-12 col-md-6 col-xl-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-6 col-xl-4</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]/div)[not(@class=&quot;col-12 col-md-6 col-xl-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-6 col-xl-4</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//label)[not(@class=&quot;d-block text-muted small mb-2&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-muted small mb-2</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//label)[not(@class=&quot;d-block text-muted small mb-2&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-muted small mb-2</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//label)[not(@class=&quot;d-block text-muted small mb-2&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-muted small mb-2</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//label)[not(@class=&quot;d-block text-muted small mb-2&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-muted small mb-2</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//label)[not(@class=&quot;d-block text-muted small mb-2&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-muted small mb-2</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//field)[not(@class=&quot;h5 d-block mb-0&quot;)]" position="attributes">
+                    <attribute name="class">h5 d-block mb-0</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//field)[not(@class=&quot;h5 d-block mb-0&quot;)]" position="attributes">
+                    <attribute name="class">h5 d-block mb-0</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//field)[not(@class=&quot;h5 d-block mb-0&quot;)]" position="attributes">
+                    <attribute name="class">h5 d-block mb-0</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//field)[not(@class=&quot;h5 d-block mb-0&quot;)]" position="attributes">
+                    <attribute name="class">h5 d-block mb-0</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card-text&quot;)]//field)[not(@class=&quot;h5 d-block mb-0&quot;)]" position="attributes">
+                    <attribute name="class">h5 d-block mb-0</attribute>
+                </xpath>
+                <xpath expr="(//div[button[@name=&quot;btn_generate_auto_jes&quot;]])[not(@class=&quot;d-flex flex-wrap gap-2&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-wrap gap-2</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_generate_auto_jes&quot;])[not(@class=&quot;btn-info px-3&quot;)]" position="attributes">
+                    <attribute name="class">btn-info px-3</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_delay_rest_claim&quot;])[not(@class=&quot;btn-outline-warning px-3&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-warning px-3</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;row&quot;][div/label[@for=&quot;excel_text&quot;]])[not(@class=&quot;row g-3 mb-3&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 mb-3</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-4&quot;][.//field[@name=&quot;excel_text&quot;]])[not(@class=&quot;col-12 col-lg-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-lg-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-2&quot;][button[@name=&quot;btn_link_je_to_claim&quot;]])[not(@class=&quot;col-12 col-lg-2 d-flex flex-column gap-2&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-lg-2 d-flex flex-column gap-2</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-6&quot;][.//field[@name=&quot;excel_notes&quot;]])[not(@class=&quot;col-12 col-lg-6&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-lg-6</attribute>
+                </xpath>
+                <xpath expr="(//div[div/field[@name=&quot;excel_notes&quot;]]/label)[not(@for=&quot;excel_notes&quot;)]" position="attributes">
+                    <attribute name="for">excel_notes</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;excel_text&quot; or @name=&quot;excel_notes&quot;])[not(@class=&quot;w-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;excel_text&quot; or @name=&quot;excel_notes&quot;])[not(@class=&quot;w-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_link_je_to_claim&quot;])[not(@class=&quot;btn-success w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-success w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_remove_invoices_from_claim&quot;])[not(@class=&quot;btn-danger w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-danger w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_filter_claim_lines&quot;])[not(@class=&quot;btn-outline-success w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-success w-100</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_purchase_claim_view_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+                            .ab_purchase_claim_view_layout .o_notebook,
+                            .ab_purchase_claim_view_layout .o_notebook_content,
+                            .ab_purchase_claim_view_layout .tab-pane,
+                            .ab_purchase_claim_view_layout .o_field_widget.o_field_one2many,
+                            .ab_purchase_claim_view_layout .o_field_widget.o_field_many2many,
+                            .ab_purchase_claim_view_layout .o_field_x2many {
+                                min-width: 0;
+                                max-width: 100%;
+                                overflow: visible !important;
+                            }
+                            .ab_purchase_claim_view_layout .o_field_x2many .o_list_renderer.table-responsive {
+                                width: 100%;
+                                max-width: 100%;
+                                margin-inline: 0 !important;
+                                overflow-x: auto !important;
+                                overflow-y: auto !important;
+                            }
+                        </style>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
