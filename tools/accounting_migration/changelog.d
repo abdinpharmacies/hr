@@ -2,6 +2,24 @@
 
 ## Current changes before commit:
 
+- Deduplicate identical table fingerprints within each operation and retain full checks for raw-policy XML-ID/empty scalar phases, preserving actions, relation writes, and atomic markers.
+- Keep digest format, resume verification, format-2 compatibility, protections, and historical strict-policy behavior; refresh after actual custom-table changes or absent full checks.
+- Add scope/recovery regressions and a reproducible disposable baseline benchmark; document measured performance without changing application databases.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `table_checkpoints.py`
+- `table_resume.py`
+- `tests/benchmark_fingerprints.py`
+- `tests/test_raw_relationships.py`
+- `tests/test_resume_fingerprints.py`
+
+## a31a650ee — emadco88 — 2026-11-11
+
+Original commit subject: `tools/accounting_migration/ FIX dead lock`
+
 - Release validation-worker transactions and record caches before import; verify idle/no-lock state before gating the target, and read a fresh snapshot after import.
 - Bound custom FK DDL lock waits to five seconds and report affected operations instead of waiting indefinitely.
 - Protect standard business rows, native relation tables, aliases, and definitions from migration writes/ALTER; retain scoped attachment/XML-ID data operations only.

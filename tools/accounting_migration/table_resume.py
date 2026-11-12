@@ -67,9 +67,25 @@ class ResumeState:
         e = self.e
         if table not in e.physical or operation == 'validation':
             return
+        # No writes occur between these reads. Never retain this cache across
+        # operations, commits, rollbacks, or resume-time verification.
+        digests = {}
+
+        def digest(descriptor):
+            columns = tuple(descriptor['columns'])
+            scope = ('all',)
+            if descriptor.get('attachment_map'):
+                scope = ('attachment_map',)
+            elif descriptor.get('capture') and 'id' in columns:
+                scope = ('capture', descriptor['capture'])
+            key = (table, columns, scope)
+            if key not in digests:
+                digests[key] = self.digest(table, descriptor)
+            return digests[key]
+
         for key, previous in self.state['checks'].items():
             if previous.get('table', key) == table:
-                previous['hash'] = self.digest(table, previous)
+                previous['hash'] = digest(previous)
         descriptor = dict(table=table, columns=list(e.physical[table]))
         if table == 'ir_attachment' and operation == 'attachments':
             descriptor['attachment_map'] = True
@@ -89,9 +105,19 @@ class ResumeState:
                 item = next((x for x in (self.setup or {}).get('captures', []) if x['table'] == table), None)
                 if item:
                     descriptor['capture'] = item['capture']
-        descriptor['hash'] = self.digest(table, descriptor)
+        descriptor['hash'] = digest(descriptor)
         key = table + ':owned' if descriptor.get('attachment_map') else table
         self.state['checks'][key] = descriptor
+
+    def has_full_fingerprint(self, table):
+        """A no-write operation may retain a complete, already verified check."""
+        descriptor = self.state['checks'].get(table, {})
+        return (table in self.e.physical
+                and descriptor.get('table', table) == table
+                and descriptor.get('columns') == list(self.e.physical[table])
+                and not descriptor.get('attachment_map')
+                and not descriptor.get('capture')
+                and bool(descriptor.get('hash')))
 
     def save(self):
         self.state.update(attempt=self.attempt, revision=fingerprint([self.e.rules, self.e.conversions]),

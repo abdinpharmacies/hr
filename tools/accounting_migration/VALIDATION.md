@@ -1,5 +1,60 @@
 # Prepared-target migration validation
 
+## Fingerprint reuse and recovery (2026-11-11)
+
+The offline suite reports **237 tests: 164 passed, 73 skipped**. With disposable
+PostgreSQL fixtures enabled: **237 tests: 227 passed, 10 skipped**. Optional
+legacy and real-Odoo clone acceptance settings were not enabled. Compilation and
+`git diff --check` passed.
+No application database, including `dev-central19`, was opened or changed.
+
+- Identical table/ordered-column/filter descriptors share one digest within a
+  single operation. Different scopes retain separate hashes; subsequent
+  operations and resume validation always perform fresh reads when required.
+- Raw XML-ID repair and operations without deferred/attachment scalar fields
+  retain full custom-table hashes while committing their actions and markers.
+  External relation inserts still execute. Missing or narrower checks fall back
+  to fingerprint generation; real attachment-field updates refresh their hash.
+- PostgreSQL regressions cover failed checkpoint rollback, interruption after an
+  unchanged operation commits, resumed imports without recopying, and rejection
+  of external edits. Existing strict-policy and format-2 adoption cases remain.
+
+### Disposable benchmark
+
+Baseline: `a31a650ee3e3249647c92dee8febedad28a12277`. Three alternating-order
+baseline/optimized pairs used separate generated databases, each containing
+250,001 synthetic header-shaped rows plus the existing relation/attachment
+fixtures. Only the live-table workflow is timed: source extraction, staging,
+backup, seed construction, resume, and real Odoo registry acceptance are excluded.
+
+| Measurement | Baseline | Optimized |
+| --- | ---: | ---: |
+| Median workflow duration | 4.431 s | 2.312 s |
+| Large-table fingerprint scans | 7 | 1 |
+| Median large-table XML-ID phase | 0.698 s | 0.006 s |
+| Median large-table external phase | 0.689 s | 0.006 s |
+| Median large-table attachment-link phase | 0.707 s | 0.005 s |
+
+The measured workflow reduction was **47.8%**. Every run produced the same
+signature across public-table contents, relationship findings, FK outcomes,
+fingerprint checks, and operation markers. All resumed without recopying.
+This small synthetic benchmark does not predict the 29-million-row application
+run or end-to-end migration duration.
+
+Reproduce from the repository root, using maintenance credentials with CREATEDB:
+
+```bash
+MIGRATION_PREPARED_TEST_CONFIG=/path/to/test-maintenance.conf \
+/opt/odoo19/venv19/bin/python tools/accounting_migration/tests/benchmark_fingerprints.py \
+  --baseline-ref a31a650ee3e3249647c92dee8febedad28a12277 \
+  --rows 250000 --trials 3
+```
+
+The harness loads only the baseline checkpoint/fingerprint modules from Git.
+Both variants use the same remaining working-tree code and fixture logic.
+It creates/drops only generated `codex_migration_test_prepared_*` databases and
+asserts matching results; configuration credentials are never printed.
+
 ## Worker locks and standard-table protection (2026-11-11)
 
 **229 tests: 219 passed, 10 skipped**, with disposable PostgreSQL fixtures enabled.

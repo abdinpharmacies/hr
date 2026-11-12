@@ -137,6 +137,20 @@ format-1 runs remain incompatible.
 - Retain attempt history in database checkpoints and `attempt-N.json`. Current
   reports show outstanding findings; later attempts refresh them.
 
+### Fingerprint performance
+
+Each operation computes identical table/column/filter fingerprints once, without
+changing their format or ordering. This temporary reuse ends with the operation;
+resume still independently verifies committed data before continuing.
+
+In the public raw-reference workflow, XML-ID repair and external-field or
+attachment-link steps with no corresponding scalar fields retain an existing
+full custom-table fingerprint. Their actions, relation writes, security guards,
+and atomic success markers still run. Missing or narrower checks fall back to a
+fresh fingerprint. Actual custom-table changes always refresh their checks.
+No CLI flags, checkpoint conversion, or reset are needed for existing format-2
+runs. See `VALIDATION.md` for disposable benchmark results and reproduction.
+
 ## Final reports and exit status
 
 The command prints its private run directory under `/opt/odoo19/migration-runs/`.

@@ -92,8 +92,12 @@ class TableMigration:
         finally:
             e.selected, e.relations = previous
 
-    def unit(self, table, operation, action, coverage=None, force=False):
-        """The live operation and its success marker have exactly one commit."""
+    def unit(self, table, operation, action, coverage=None, force=False, refresh_fingerprint=True):
+        """Commit action and marker together; reuse checks only for known no-writes.
+
+        refresh_fingerprint=False concerns this table only. The action still
+        runs, including any writes to separately managed metadata/relations.
+        """
         key = 'table:' + operation + ':' + table
         saved = self.resume.marker(table, operation)
         previous_coverage = saved.get('coverage')
@@ -112,7 +116,8 @@ class TableMigration:
                 raise MigrationError('Protected reference or foreign-key lock prevents safe modification')
             rows = action()
             entry = dict(table=table, operation=operation, rows=rows, success=True, coverage=coverage, policy=getattr(self.engine,'relationship_policy','mapped_references_v1'))
-            self.resume.remember(table, operation)
+            if refresh_fingerprint or not self.resume.has_full_fingerprint(table):
+                self.resume.remember(table, operation)
             for model in self.all_models:
                 if operation == 'copy' and self.engine.target[model]['table'] == table:
                     self.resume.state['definitions'][model] = self.resume.definition(model)
@@ -406,7 +411,7 @@ class TableMigration:
                         with self.scope([model]):
                             e.repair_xmlids()
                         return None
-                    self.unit(e.target[model]['table'],'xmlids',aliases)
+                    self.unit(e.target[model]['table'],'xmlids',aliases, refresh_fingerprint=False)
             for item in self.captures:
                 covered = self.successful & set(item['columns'].values())
                 self.unit(item['table'], 'incoming', lambda item=item: self.restore_incoming(item), coverage=dict(models=sorted(covered)))
@@ -419,7 +424,8 @@ class TableMigration:
                     with self.scope([model]):
                         e.external()
                     return None
-                self.unit(e.target[model]['table'], 'external', external)
+                self.unit(e.target[model]['table'], 'external', external,
+                          refresh_fingerprint=not self.raw or bool(e.plans[model]['deferred']))
             relations = self.eligible_relations()
             owners=self.all_models if self.raw else self.successful
             with self.scope(owners, relations):
@@ -430,7 +436,8 @@ class TableMigration:
                     coverage=dict(models=sorted(owners)))
             if attached:
                 for model in sorted(self.successful):
-                    self.unit(e.target[model]['table'], 'attachment_links', lambda m=model: e.restore_attachment_links(m))
+                    self.unit(e.target[model]['table'], 'attachment_links', lambda m=model: e.restore_attachment_links(m),
+                              refresh_fingerprint=not self.raw or bool(e.plans[model]['attachments']))
             loaded_relations = []
             for table in sorted({p['table'] for p in relations}):
                 plans = [p for p in relations if p['table'] == table]

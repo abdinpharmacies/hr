@@ -12,6 +12,8 @@ from prepared_importer import PreparedImporter
 from prepared import read_checkpoint,write_checkpoint
 from table_checkpoints import TableMigration
 from prepared_snapshot import SCHEMA
+from table_resume import ResumeState
+from common import MigrationError
 
 
 @unittest.skipUnless(os.environ.get('MIGRATION_PREPARED_TEST_CONFIG'),'requires disposable PostgreSQL config')
@@ -61,6 +63,111 @@ class RawRelationshipTests(unittest.TestCase):
             second=self.run_raw()
         self.assertEqual(second['status'],'complete_with_warnings',second)
         self.assertEqual(self.scalar('SELECT count(*) FROM ir_attachment'),3)
+
+    def test_unchanged_phases_keep_hashes_and_actions_while_mutations_refresh(self):
+        self.fixture()
+        scans = []
+        original = ResumeState.digest
+        phase = [None]
+        unit = TableMigration.unit
+
+        def observe_unit(runner, table, operation, *args, **kwargs):
+            phase[0] = operation
+            return unit(runner, table, operation, *args, **kwargs)
+
+        def digest(state, table, descriptor):
+            scans.append((table, phase[0]))
+            return original(state, table, descriptor)
+
+        with patch.object(TableMigration, 'unit', observe_unit), patch.object(ResumeState, 'digest', digest):
+            result = self.run_raw()
+        self.assertEqual(result['failed_tables'], [], result)
+        for table in ('ab_group', 'ab_record'):
+            self.assertNotIn((table, 'xmlids'), scans)
+            self.assertNotIn((table, 'external'), scans)
+        self.assertNotIn(('ab_group', 'attachment_links'), scans)
+        self.assertEqual(scans.count(('ab_record', 'attachment_links')), 1)
+        for table in ('ab_group', 'ab_record'):
+            for operation in ('xmlids', 'external', 'attachment_links'):
+                self.assertTrue(read_checkpoint(self.con, 'table:' + operation + ':' + table)['success'])
+        self.assertEqual(self.scalar("SELECT res_id FROM ir_model_data WHERE name='new_alias'"), 42)
+        self.assertEqual(self.scalar('SELECT count(*) FROM ab_record_att_rel'), 2)
+        self.assertNotEqual(self.scalar('SELECT attachment_id FROM ab_record'), 1)
+        with patch.object(TableMigration, 'copy_model', side_effect=AssertionError('recopy')):
+            self.assertEqual(self.run_raw()['failed_tables'], [])
+        with self.con.cursor() as cr:
+            cr.execute("UPDATE ab_group SET name='outside edit'")
+        self.con.commit()
+        with self.assertRaisesRegex(MigrationError, 'Committed table data changed'):
+            self.run_raw()
+        self.con.rollback()
+
+    def test_no_refresh_falls_back_and_external_relation_action_still_commits(self):
+        self.fixture()
+        self.run_raw()
+        engine = RawImporter(*self.arguments)
+        engine.preflight(replacing=False)
+        runner = TableMigration(engine, write_checkpoint)
+        # Exercise an external relation action with no deferred custom columns.
+        relation = next(p for p in engine.relations if p['table'] == 'ab_record_user_rel')
+        relation['phase'] = 'external'
+        engine.relations = [relation]
+        with self.con.cursor() as cr:
+            cr.execute('DELETE FROM ab_record_user_rel')
+        self.con.commit()
+        before = runner.resume.state['checks']['ab_record']['hash']
+        with patch.object(runner.resume, 'digest', wraps=runner.resume.digest) as digest:
+            self.assertTrue(runner.unit('ab_record', 'external', engine.external,
+                                       force=True, refresh_fingerprint=False))
+            digest.assert_not_called()
+        self.assertEqual(self.scalar('SELECT count(*) FROM ab_record_user_rel'), 1)
+        self.assertEqual(runner.resume.state['checks']['ab_record']['hash'], before)
+        del runner.resume.state['checks']['ab_group']
+        with patch.object(runner.resume, 'digest', wraps=runner.resume.digest) as digest:
+            self.assertTrue(runner.unit('ab_group', 'external', lambda: None,
+                                       force=True, refresh_fingerprint=False))
+            self.assertEqual(digest.call_count, 1)
+        self.assertTrue(runner.resume.has_full_fingerprint('ab_group'))
+
+    def test_failed_checkpoint_rolls_back_refreshed_hash_and_data(self):
+        self.fixture()
+        self.run_raw()
+        engine = RawImporter(*self.arguments)
+        engine.preflight(replacing=False)
+        runner = TableMigration(engine, write_checkpoint)
+        previous = read_checkpoint(self.con, 'resume_state')['checks']['ab_group']['hash']
+
+        def mutate():
+            engine.execute("UPDATE ab_group SET name='temporary change'")
+
+        with patch.object(runner.resume, 'save', side_effect=ValueError('checkpoint failure')):
+            self.assertFalse(runner.unit('ab_group', 'external', mutate, force=True))
+        self.assertEqual(self.scalar('SELECT name FROM ab_group'), 'source group')
+        self.assertEqual(runner.resume.state['checks']['ab_group']['hash'], previous)
+        self.assertEqual(read_checkpoint(self.con, 'resume_state')['checks']['ab_group']['hash'], previous)
+        with patch.object(TableMigration, 'copy_model', side_effect=AssertionError('recopy')):
+            self.assertEqual(self.run_raw()['failed_tables'], [])
+
+    def test_interrupt_after_unchanged_operation_commit_resumes_from_marker(self):
+        self.fixture()
+        unit = TableMigration.unit
+
+        def interrupt(runner, table, operation, *args, **kwargs):
+            result = unit(runner, table, operation, *args, **kwargs)
+            if operation == 'xmlids':
+                raise KeyboardInterrupt()
+            return result
+
+        with patch.object(TableMigration, 'unit', interrupt):
+            with self.assertRaises(KeyboardInterrupt):
+                self.run_raw()
+        self.assertIsNone(read_checkpoint(self.con, 'table_result'))
+        self.assertTrue(read_checkpoint(self.con, 'table:xmlids:ab_group')['success'])
+        with patch.object(TableMigration, 'copy_model', side_effect=AssertionError('recopy')):
+            result = self.run_raw()
+        self.assertEqual(result['failed_tables'], [], result)
+        self.assertTrue(any(item['operation'] == 'xmlids' and item['table'] == 'ab_group'
+                            for item in result['skipped']))
 
     def test_future_integer_and_polymorphic_rules_do_not_enforce_relationships(self):
         self.fixture()
