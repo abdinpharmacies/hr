@@ -71,4 +71,52 @@
               action="action_purchase_accounting_config"
               sequence="8"
               groups="ab_accounting.group_ab_accounting_manager"/>
+        <record id="view_purchase_accounting_config_form_layout" model="ir.ui.view">
+            <field name="name">view_purchase_accounting_config_form.layout</field>
+            <field name="model">ab_purchase_accounting_config</field>
+            <field name="inherit_id" ref="view_purchase_accounting_config_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="(//sheet/group[field[@name=&quot;company_id&quot;]])[not(@col=&quot;4&quot;)]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[field[@name=&quot;purchase_doctype_id&quot;]])[not(@col=&quot;4&quot;)]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[field[@name=&quot;inventory_account_id&quot;]])[not(@col=&quot;4&quot;)]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[field[@name=&quot;default_costcenter_id&quot;]])[not(@col=&quot;4&quot;)]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;note&quot;])[not(@class=&quot;w-100&quot;)]" position="attributes">
+                    <attribute name="colspan">2</attribute>
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_purchase_accounting_config_view_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+                            .ab_purchase_accounting_config_view_layout .o_notebook,
+                            .ab_purchase_accounting_config_view_layout .o_notebook_content,
+                            .ab_purchase_accounting_config_view_layout .tab-pane,
+                            .ab_purchase_accounting_config_view_layout .o_field_widget.o_field_one2many,
+                            .ab_purchase_accounting_config_view_layout .o_field_widget.o_field_many2many,
+                            .ab_purchase_accounting_config_view_layout .o_field_x2many {
+                                min-width: 0;
+                                max-width: 100%;
+                                overflow: visible !important;
+                            }
+                            .ab_purchase_accounting_config_view_layout .o_field_x2many .o_list_renderer.table-responsive {
+                                width: 100%;
+                                max-width: 100%;
+                                margin-inline: 0 !important;
+                                overflow-x: auto !important;
+                                overflow-y: auto !important;
+                            }
+                        </style>
+                </xpath>
+            </field>
+        </record>
 </odoo>
