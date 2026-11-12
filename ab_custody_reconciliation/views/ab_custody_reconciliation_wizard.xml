@@ -19,5 +19,18 @@
                 </form>
             </field>
         </record>
+        <record id="ab_custody_reconciliation_wizard_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_wizard_view_form.layout</field>
+            <field name="model">ab_custody_reconciliation_wizard</field>
+            <field name="inherit_id" ref="ab_custody_reconciliation_wizard_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group" position="attributes">
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/field[@name=&quot;notes&quot;]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

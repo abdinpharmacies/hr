@@ -193,5 +193,44 @@
                   sequence="100"/>
 
 
+        <record id="ab_custody_reconciliation_header_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_custody_reconciliation_header_view_form.layout</field>
+            <field name="model">ab_custody_reconciliation_header</field>
+            <field name="inherit_id" ref="ab_custody_reconciliation_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/header/button[@name=&quot;btn_submit&quot;][@invisible=&quot;recon_status != 'entry'&quot;]" position="attributes">
+                    <attribute name="class">btn-warning</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group[group/field[@name=&quot;employee_id&quot;]]" position="attributes">
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group[field[@name=&quot;att_file_ids&quot;]]" position="attributes">
+                    <attribute name="colspan">2</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name=&quot;att_file_ids&quot;]" position="attributes">
+                    <attribute name="colspan">2</attribute>
+                    <attribute name="nolabel">1</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group/field[@name=&quot;feedback&quot;]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field[@name=&quot;line_ids&quot;]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/button[@name=&quot;btn_filter&quot;]" position="attributes">
+                    <attribute name="class">btn-primary mb-3</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group[field[@name=&quot;submit_date&quot;]]" position="inside">
+                    <xpath expr="//form/header/field[@name=&quot;print_all&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//form/sheet/group[field[@name=&quot;submit_date&quot;]]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="//form/div[hasclass('oe_chatter')]" position="replace">
+                    <chatter groups="base.group_user"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
