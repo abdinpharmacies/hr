@@ -6414,3 +6414,152 @@ msgstr "تمت مزامنة الصورة ونشر المنتج."
 #: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Published products"
 msgstr "المنتجات المنشورة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "Synchronization completed successfully"
+msgstr "تمت المزامنة بنجاح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "Synchronization finished — review required"
+msgstr "انتهت المزامنة — توجد عناصر تحتاج إلى مراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "No images were synchronized"
+msgstr "لم تتم مزامنة أي صور"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid ""
+"No matching images were available to synchronize. Check the image names and "
+"product codes in the report."
+msgstr ""
+"لا توجد صور مطابقة متاحة للمزامنة. راجع أسماء الصور وأكواد المنتجات في "
+"التقرير."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "Items requiring review: %(count)s. See the report for details."
+msgstr ""
+"العناصر التي تحتاج إلى مراجعة: %(count)s. راجع التقرير للاطلاع على التفاصيل."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid ""
+"Published products: %(published)s. Updated images: %(updated)s. Unchanged "
+"images: %(unchanged)s. Existing images kept: %(kept)s."
+msgstr ""
+"المنتجات المنشورة: %(published)s. الصور المحدّثة: %(updated)s. الصور "
+"المطابقة بالفعل: %(unchanged)s. الصور التي تم الاحتفاظ بها: %(kept)s."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_image_publication
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_image_publication
+msgid "Activated by Image Synchronization"
+msgstr "تم تفعيله عبر مزامنة الصور"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/ab_product.py:0
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Product codes have conflicting website links. Review the existing products "
+"before synchronization."
+msgstr ""
+"توجد روابط متجر متعارضة لأكواد المنتجات. راجع المنتجات الموجودة قبل "
+"المزامنة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"A valid source product and selling price are required before publication."
+msgstr "يلزم وجود منتج مصدر صحيح وسعر بيع صالح قبل النشر."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"The Eplus price differs from the main product price. Synchronize ab_product "
+"from the main server before publishing."
+msgstr ""
+"سعر Eplus مختلف عن سعر المنتج الرئيسي. زامن ab_product من السيرفر الرئيسي "
+"قبل النشر."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Image publication: website price %(old)s → %(new)s from ab_product. Actor: "
+"%(actor)s. Date: %(date)s."
+msgstr ""
+"النشر عبر الصور: سعر المتجر %(old)s ← %(new)s من ab_product. المستخدم: "
+"%(actor)s. التاريخ: %(date)s."
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_product_template_website_eplus_item_unique
+msgid "Each Eplus fallback item can only be linked to one website product."
+msgstr "يمكن ربط كل صنف بديل من E-Plus بمنتج واحد فقط في الموقع."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__eplus_item_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_eplus_item_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_eplus_item_id
+msgid "Eplus Fallback Item ID"
+msgstr "معرّف الصنف البديل من E-Plus"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Eplus fallback publication: price %(old)s → %(new)s; item %(item)s. Actor: "
+"%(actor)s. Date: %(date)s."
+msgstr ""
+"النشر من E-Plus كمصدر بديل: السعر %(old)s ← %(new)s؛ الصنف %(item)s. "
+"المستخدم: %(actor)s. التاريخ: %(date)s."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The Eplus fallback code is ambiguous. Review the item and image names."
+msgstr ""
+"كود الصنف البديل من E-Plus غير محدد بشكل قاطع. راجع الصنف وأسماء الصور."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The Eplus fallback item needs a name and a valid selling price."
+msgstr "يحتاج الصنف البديل من E-Plus إلى اسم وسعر بيع صالح."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The image code was not found in ab_product or Eplus."
+msgstr "كود الصورة غير موجود في ab_product أو E-Plus."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"The replicated product has no valid selling price. Update it on the main "
+"server before publishing."
+msgstr ""
+"المنتج القادم من الريبلكيشن ليس له سعر بيع صالح. حدّثه على السيرفر الرئيسي "
+"قبل النشر."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Eplus fallback is unavailable. Retry synchronization for the missing product"
+" codes."
+msgstr ""
+"مصدر E-Plus البديل غير متاح. أعد المزامنة لأكواد المنتجات غير الموجودة."

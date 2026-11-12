@@ -105,7 +105,7 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
     def _replacement_signature(self, plan):
         replacements = sorted(
             "%s:%s:%s" % (
-                line["product_id"],
+                line.get("product_id") or "eplus-%s" % line.get("eplus_item_id", 0),
                 line.get("checksum", ""),
                 line.get("current_checksum", ""),
             )
@@ -168,13 +168,56 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
         Service = self.env["ab.website.product.image.sync.service"]
         return Service, Service.prepare_publication_sync_plan(directory_path)
 
+    def _image_sync_completion_action(self, result):
+        self.ensure_one()
+        report_action = self._write_image_sync_report(result)
+        summary = result["summary"]
+        issues = sum(summary.get(key, 0) for key in ("error", "invalid", "ambiguous"))
+        issues += sum(
+            line.get("status") == "missing" and bool(line.get("image_path"))
+            and not line.get("product_id")
+            for line in result["report"]
+        )
+        completed = any(summary.get(key, 0) for key in ("published", "updated", "unchanged", "kept_existing"))
+        message = _(
+            "Published products: %(published)s. Updated images: %(updated)s. "
+            "Unchanged images: %(unchanged)s. Existing images kept: %(kept)s."
+        ) % {
+            "published": summary.get("published", 0),
+            "updated": summary.get("updated", 0),
+            "unchanged": summary.get("unchanged", 0),
+            "kept": summary.get("kept_existing", 0),
+        }
+        if issues:
+            title = _("Synchronization finished — review required")
+            message += " " + _("Items requiring review: %(count)s. See the report for details.") % {"count": issues}
+            notification_type = "warning"
+        elif completed:
+            title = _("Synchronization completed successfully")
+            notification_type = "success"
+        else:
+            title = _("No images were synchronized")
+            message = _("No matching images were available to synchronize. Check the image names and product codes in the report.")
+            notification_type = "info"
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": title,
+                "message": message,
+                "type": notification_type,
+                "sticky": True,
+                "next": report_action,
+            },
+        }
+
     def action_sync_images(self):
         self.ensure_one()
         Service, plan = self._prepare_image_sync_plan()
         if plan["summary"].get("replacements"):
             return self._write_image_sync_report(plan, confirmation_required=True)
         result = Service.apply_sync_plan(plan, publish_requested=True)
-        return self._write_image_sync_report(result)
+        return self._image_sync_completion_action(result)
 
     def action_confirm_replace_images(self):
         self.ensure_one()
@@ -183,13 +226,13 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
         if replacement_count and self._replacement_signature(plan) != self.image_sync_replacement_signature:
             return self._write_image_sync_report(plan, confirmation_required=True)
         result = Service.apply_sync_plan(plan, replace_existing=True, publish_requested=True)
-        return self._write_image_sync_report(result)
+        return self._image_sync_completion_action(result)
 
     def action_sync_new_images_only(self):
         self.ensure_one()
         Service, plan = self._prepare_image_sync_plan()
         result = Service.apply_sync_plan(plan, replace_existing=False, publish_requested=True)
-        return self._write_image_sync_report(result)
+        return self._image_sync_completion_action(result)
 
 
 class AbProduct(models.Model):
@@ -229,6 +272,7 @@ class AbWebsiteSaleImageSyncReportLine(models.TransientModel):
     product_code = fields.Char(readonly=True)
     product_name = fields.Char(readonly=True)
     product_id = fields.Integer(readonly=True)
+    eplus_item_id = fields.Integer(string="Eplus Fallback Item ID", readonly=True)
     matched_identifier = fields.Char(readonly=True)
     image_path = fields.Char(readonly=True)
     relative_path = fields.Char(readonly=True)

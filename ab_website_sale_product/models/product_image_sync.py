@@ -176,17 +176,16 @@ class ProductImageSyncService(models.AbstractModel):
 
     @api.model
     def _get_website_products(self, product_domain=None):
-        domain = ["|", ("active", "=", True), ("website_product_tmpl_id", "!=", False)]
-        if product_domain:
-            domain = list(fields.Domain.AND([domain, product_domain]))
-        return self.env["ab_product"].sudo().with_context(active_test=False).search(domain)
+        return self.env["ab_product"].sudo().with_context(active_test=False).search(product_domain or [])
 
     @api.model
     def prepare_sync_plan(self, directory_path=None, products=None, product_domain=None):
         self.check_image_sync_access()
         scan = self.scan_image_root(directory_path)
         image_index = self.build_image_index(scan["entries"])
-        products = products.sudo() if products is not None else self._get_website_products(product_domain)
+        products = products.with_env(self.env).sudo() if products is not None else self._get_website_products(product_domain)
+        matched_products = products.filtered(lambda product: bool(self._match_product_candidates(product, image_index)))
+        template_matches, conflicts = matched_products._website_template_candidates()
         summary = self._new_summary(len(products), len(scan["entries"]))
         placeholder_checksum = self._placeholder_image_sha256()
         report = []
@@ -198,7 +197,11 @@ class ProductImageSyncService(models.AbstractModel):
                 image_entry=invalid_entry,
             ))
         for product in products:
-            line = self._plan_product_image(product, image_index, placeholder_checksum)
+            line = self._plan_product_image(
+                product, image_index, placeholder_checksum, template=template_matches.get(product.id),
+            )
+            if product in conflicts:
+                line.update(status="ambiguous", reason=_("Product codes have conflicting website links. Review the existing products before synchronization."))
             report.append(line)
             summary[line["status"]] = summary.get(line["status"], 0) + 1
             if line["status"] == "unchanged":
@@ -215,39 +218,132 @@ class ProductImageSyncService(models.AbstractModel):
     @api.model
     def prepare_publication_sync_plan(self, directory_path):
         self.check_image_sync_access()
+        self.env["ab_product"]._lock_website_sync()
+        products = self._get_website_products()
+        plan = self.prepare_sync_plan(directory_path, products=products)
         scan = self.scan_image_root(directory_path)
+        known_tokens = {
+            token for product in products for method, identifier, token in self._product_identifiers(product)
+        }
+        entries = [entry for entry in scan["entries"] if not self._entry_tokens(entry) & known_tokens]
+        if not entries:
+            return plan
         tokens = sorted({
-            token.strip()
-            for entry in scan["entries"]
+            token.strip() for entry in entries
             for token in [entry["filename_without_extension"], *entry["parent_directory_names"]]
             if token.strip()
         })
-        self.env["ab_product"]._lock_website_sync()
-        Snapshot = self.env["ab_eplus_stock_snapshot"]
-        Snapshot.action_refresh_from_eplus()
-        rows = Snapshot.sudo().search([
-            ("active", "=", True),
-            ("itm_code", "in", tokens),
-        ])
-        for offset in range(0, len(rows), 100):
-            rows[offset:offset + 100]._import_eplus_catalog_batch()
-        plan = self.prepare_sync_plan(directory_path)
-        codes = sorted({line["product_code"] for line in plan["report"]
-                        if line["status"] in ("matched", "unchanged") and line["product_code"]})
-        plan["publication_prices"] = Snapshot._fetch_image_publication_prices(codes) if codes else {}
-        reported_paths = {line["image_path"] for line in plan["report"] if line.get("image_path")}
-        matched_tokens = {
-            self._normalize_identifier(line["matched_identifier"])
-            for line in plan["report"] if line.get("matched_identifier")
-        }
-        for entry in scan["entries"]:
-            if entry["absolute_path"] not in reported_paths and not self._entry_tokens(entry) & matched_tokens:
+        try:
+            catalog = self.env["ab_eplus_stock_snapshot"]._fetch_image_fallback_catalog(tokens)
+        except (SerializationFailure, DeadlockDetected):
+            raise
+        except Exception as error:
+            _logger.exception("Eplus image fallback lookup failed")
+            reason = str(error) if isinstance(error, UserError) else _(
+                "Eplus fallback is unavailable. Retry synchronization for the missing product codes."
+            )
+            for entry in entries:
+                plan["report"].append(self._report_line(status="error", reason=reason, image_entry=entry))
+                plan["summary"]["error"] += 1
+            return plan
+        plan["fallback_catalog"] = catalog
+        index = self.build_image_index(entries)
+        placeholder = self._placeholder_image_sha256()
+        handled_paths = set()
+        codes_by_path = defaultdict(set)
+        for code in catalog:
+            for entry in index["by_token"].get(self._normalize_identifier(code), []):
+                codes_by_path[entry["absolute_path"]].add(code)
+        for code, sources in catalog.items():
+            token = self._normalize_identifier(code)
+            candidates = [{
+                "entry": entry, "method": "code", "identifier": code,
+                "method_priority": 1, "specificity": self._entry_specificity(entry, token),
+            } for entry in index["by_token"].get(token, [])]
+            if not candidates:
+                continue
+            handled_paths.update(candidate["entry"]["absolute_path"] for candidate in candidates)
+            try:
+                if len(sources) != 1 or any(len(codes_by_path[c["entry"]["absolute_path"]]) > 1 for c in candidates):
+                    raise UserError(_("The Eplus fallback code is ambiguous. Review the item and image names."))
+                source = sources[0]
+                self._validate_fallback_source(source)
+                template = self._fallback_template(code, source["item_id"])
+                line = self._plan_image_candidates(False, candidates, placeholder, template)
+                line.update(product_code=code, product_name=source["name"], eplus_item_id=source["item_id"])
+            except UserError as error:
+                line = self._report_line(status="error", reason=str(error), image_entry=candidates[0]["entry"])
+                line["product_code"] = code
+            plan["report"].append(line)
+            summary = plan["summary"]
+            summary[line["status"]] = summary.get(line["status"], 0) + 1
+            if line["status"] == "unchanged":
+                summary["matched"] += 1
+            if line["status"] == "matched":
+                summary["to_update"] += 1
+                summary["replacements" if line["replaces_existing"] else "new_images"] += 1
+        for entry in entries:
+            if entry["absolute_path"] not in handled_paths:
                 plan["report"].append(self._report_line(
                     status="missing", image_entry=entry,
-                    reason=_("No linked Abdin product was found for this image. Check the product code and product replication."),
+                    reason=_("The image code was not found in ab_product or Eplus."),
                 ))
                 plan["summary"]["missing"] += 1
         return plan
+
+    @api.model
+    def _validate_fallback_source(self, source):
+        price = float(source.get("price") or 0)
+        if not source.get("name") or not source.get("item_id") or not math.isfinite(price) or price <= 0:
+            raise UserError(_("The Eplus fallback item needs a name and a valid selling price."))
+
+    @api.model
+    def _fallback_template(self, code, item_id):
+        if self.env["ab_product"].sudo().with_context(active_test=False).search_count(
+            fields.Domain("eplus_serial", "=", item_id), limit=1,
+        ):
+            raise UserError(_("Product codes have conflicting website links. Review the existing products before synchronization."))
+        Template = self.env["product.template"].sudo().with_context(active_test=False)
+        templates = Template.search(
+            fields.Domain("default_code", "=", code) | fields.Domain("website_eplus_item_id", "=", item_id)
+        )
+        if len(templates) > 1 or (templates and (
+            templates.ab_product_id
+            or (templates.website_eplus_item_id and templates.website_eplus_item_id != item_id)
+            or (templates.company_id and templates.company_id not in self.env.companies)
+            or len(templates.with_context(active_test=False).product_variant_ids) > 1
+        )):
+            raise UserError(_("Product codes have conflicting website links. Review the existing products before synchronization."))
+        return templates
+
+    @api.model
+    def _apply_fallback_image(self, line, plan, image_payload, checksum):
+        sources = plan.get("fallback_catalog", {}).get(line["product_code"], [])
+        if len(sources) != 1 or sources[0]["item_id"] != line["eplus_item_id"]:
+            raise UserError(_("The Eplus fallback code is ambiguous. Review the item and image names."))
+        source = sources[0]
+        self._validate_fallback_source(source)
+        template = self._fallback_template(line["product_code"], source["item_id"])
+        old_price = template.list_price if template else 0
+        values = {
+            "name": source["name"], "default_code": line["product_code"],
+            "list_price": source["price"], "active": True, "sale_ok": True,
+            "website_eplus_item_id": source["item_id"], "website_image_publication": True,
+        }
+        if template:
+            template.write(values)
+        else:
+            values.update(type="consu", is_storable=True, allow_out_of_stock_order=False, is_published=False)
+            template = self.env["product.template"].sudo().create(values)
+        changed = template._apply_website_sync_image(image_payload, source_checksum=checksum)
+        template.is_published = True
+        if old_price != source["price"]:
+            template.message_post(body=_(
+                "Eplus fallback publication: price %(old)s → %(new)s; item %(item)s. "
+                "Actor: %(actor)s. Date: %(date)s."
+            ) % {"old": old_price, "new": source["price"], "item": source["item_id"],
+                 "actor": self.env.user.display_name, "date": fields.Datetime.now()})
+        return changed
 
     @api.model
     def _new_summary(self, product_count, image_count):
@@ -269,8 +365,12 @@ class ProductImageSyncService(models.AbstractModel):
         }
 
     @api.model
-    def _plan_product_image(self, product, image_index, placeholder_checksum=""):
+    def _plan_product_image(self, product, image_index, placeholder_checksum="", template=None):
         candidates = self._match_product_candidates(product, image_index)
+        return self._plan_image_candidates(product, candidates, placeholder_checksum, template)
+
+    @api.model
+    def _plan_image_candidates(self, product, candidates, placeholder_checksum="", template=None):
         if not candidates:
             return self._report_line(
                 product=product,
@@ -298,7 +398,7 @@ class ProductImageSyncService(models.AbstractModel):
                 match_method=selected["method"],
                 matched_identifier=selected["identifier"],
             )
-        template = product.website_product_tmpl_id
+        template = template or (product.website_product_tmpl_id if product else False)
         current_checksum = self._template_image_sha256(template)
         if current_checksum == image_entry["checksum"] or (
             template
@@ -446,17 +546,18 @@ class ProductImageSyncService(models.AbstractModel):
         self.check_image_sync_access()
         report = []
         summary = dict(plan["summary"])
-        updates = [line for line in plan["report"] if line["status"] == "matched" and line.get("product_id")]
+        updates = [line for line in plan["report"] if line["status"] == "matched" and (line.get("product_id") or line.get("eplus_item_id"))]
         _logger.info(
             "Product image synchronization started: root=%s matched=%s pending_updates=%s",
             plan.get("image_root"),
             summary.get("matched", 0),
             len(updates),
         )
-        Product = self.env["ab_product"].sudo()
+        Product = self.env["ab_product"].sudo().with_context(active_test=False)
+        Product._lock_website_sync()
         eligible_statuses = ("matched", "unchanged") if publish_requested else ("matched",)
         for line in plan["report"]:
-            if line["status"] not in eligible_statuses or not line.get("product_id"):
+            if line["status"] not in eligible_statuses or not (line.get("product_id") or (publish_requested and line.get("eplus_item_id"))):
                 report.append(line)
                 continue
             if line.get("replaces_existing") and not replace_existing:
@@ -467,27 +568,39 @@ class ProductImageSyncService(models.AbstractModel):
                     reason=_("Existing Odoo image kept by user choice."),
                 ))
                 continue
-            product = Product.browse(line["product_id"])
+            product = Product.browse(line.get("product_id"))
+            if not product and line.get("eplus_item_id"):
+                product = Product.search(fields.Domain("code", "=", line["product_code"]))
             try:
+                if len(product) > 1:
+                    raise UserError(_("Product codes have conflicting website links. Review the existing products before synchronization."))
                 image_path = line["image_path"]
                 source_checksum = self._file_sha256(image_path)
                 with open(image_path, "rb") as image_file:
                     image_payload = base64.b64encode(image_file.read())
                 with self.env.cr.savepoint():
-                    template = product.website_product_tmpl_id.sudo()
-                    if not template:
-                        template = product._sync_website_products(
-                            create_missing=True,
-                            publish_requested=False,
+                    if not product:
+                        image_changed = self._apply_fallback_image(line, plan, image_payload, source_checksum)
+                    else:
+                        matches, conflicts = product._website_template_candidates()
+                        if conflicts:
+                            raise UserError(_("Product codes have conflicting website links. Review the existing products before synchronization."))
+                        template = matches.get(product.id)
+                        if template and not template.ab_product_id:
+                            template.write({"ab_product_id": product.id})
+                        if not template:
+                            template = product._sync_website_products(
+                                create_missing=True,
+                                publish_requested=False,
+                            )
+                            if len(template) != 1 or template.is_published:
+                                raise UserError(_("The website product draft could not be created safely."))
+                        image_changed = template._apply_website_sync_image(
+                            image_payload,
+                            source_checksum=source_checksum,
                         )
-                        if len(template) != 1 or template.is_published:
-                            raise UserError(_("The website product draft could not be created safely."))
-                    image_changed = template._apply_website_sync_image(
-                        image_payload,
-                        source_checksum=source_checksum,
-                    )
-                    if publish_requested:
-                        self._publish_image_product(product, template, plan)
+                        if publish_requested:
+                            self._publish_image_product(product, template)
                 if publish_requested:
                     summary["published"] = summary.get("published", 0) + 1
                 if not image_changed:
@@ -509,7 +622,7 @@ class ProductImageSyncService(models.AbstractModel):
             except (SerializationFailure, DeadlockDetected):
                 raise
             except Exception as error:
-                _logger.exception("Failed to synchronize product image for ab_product id=%s", product.id)
+                _logger.exception("Failed to synchronize product image for ab_product id=%s", product.ids)
                 summary["error"] += 1
                 if line["status"] == "unchanged":
                     summary["unchanged"] -= 1
@@ -528,36 +641,20 @@ class ProductImageSyncService(models.AbstractModel):
         return dict(plan, summary=summary, report=report)
 
     @api.model
-    def _publish_image_product(self, product, template, plan):
-        sources = plan.get("publication_prices", {}).get(product.code, [])
-        if len(sources) != 1:
-            raise UserError(_("A unique Eplus price could not be found. The product was not published."))
-        source = sources[0]
-        price = float(source["price"] or 0)
-        if (
-            not source["active"] or not product.active
-            or (product.eplus_serial and product.eplus_serial != source["item_id"])
-            or not math.isfinite(price) or price <= 0
-            or (not product.allow_sale and not product.eplus_catalog_draft)
-        ):
-            raise UserError(_("The product needs an active Eplus item, a valid selling price and sale permission before publication."))
-        values = {}
-        if not product.website_sale_available:
-            values["website_sale_available"] = True
-        if product.default_price != price:
-            values["default_price"] = price
-        if product.eplus_catalog_draft:
-            values.update(allow_sale=True, eplus_catalog_draft=False)
+    def _publish_image_product(self, product, template):
+        master_price = product.default_price
+        if not math.isfinite(master_price) or master_price <= 0:
+            raise UserError(_("The replicated product has no valid selling price. Update it on the main server before publishing."))
         old_price = template.list_price
-        old_source_price = product.default_price
-        if values:
-            product.write(values)
-        template.write({"list_price": price, "sale_ok": True, "is_published": True})
-        if old_price != price or old_source_price != price:
+        template.write({
+            "active": True, "sale_ok": True, "is_published": True,
+            "list_price": master_price, "website_image_publication": True,
+        })
+        if old_price != master_price:
             template.message_post(body=_(
-                "Eplus image publication: website price %(old)s → %(new)s; "
-                "source price %(source)s → %(new)s. Actor: %(actor)s. Date: %(date)s."
-            ) % {"old": old_price, "new": price, "source": old_source_price,
+                "Image publication: website price %(old)s → %(new)s from ab_product. "
+                "Actor: %(actor)s. Date: %(date)s."
+            ) % {"old": old_price, "new": master_price,
                  "actor": self.env.user.display_name, "date": fields.Datetime.now()})
 
     @api.model

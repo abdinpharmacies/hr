@@ -18,6 +18,17 @@ class ProductTemplate(models.Model):
         ondelete="restrict",
         groups="base.group_user",
     )
+    website_eplus_item_id = fields.Integer(
+        string="Eplus Fallback Item ID", readonly=True, copy=False, groups="base.group_system",
+    )
+    _website_eplus_item_unique = models.UniqueIndex(
+        "(website_eplus_item_id) WHERE website_eplus_item_id > 0",
+        "Each Eplus fallback item can only be linked to one website product.",
+    )
+    website_image_publication = fields.Boolean(
+        string="Activated by Image Synchronization", readonly=True, copy=False,
+        groups="base.group_system",
+    )
     website_image_source_checksum = fields.Char(
         string="Website Image Source Checksum", readonly=True, copy=False, groups="base.group_user",
     )

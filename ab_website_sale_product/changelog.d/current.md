@@ -2,12 +2,60 @@
 
 ## Current changes before commit:
 
-- Refresh E-Plus first and finish imports for uploaded image codes before building the synchronization plan.
-- Read the E-Plus selling price through the existing connector using parameterized, batched catalog reads without NOLOCK.
-- Link or create website templates, apply valid images and prices, enable eligible products, and publish them in a per-product transaction.
-- Record old/new website and source prices, actor and time in the product chatter; retain replica write protection.
-- Publish eligible products even when their image already matches; report missing records, invalid prices and denied operations.
-- Add English/Arabic publication results and focused import, price, rollback, permissions and retry coverage.
+- Match uploaded images against active and archived Abdin products.
+- Use replicated ab_product as the primary catalog and price source, including archived records. Look up E-Plus only for image codes absent from that catalog; missing master prices never trigger fallback.
+- Reuse a unique existing website template by its source link or exact code, including archived templates. Reject conflicting links, duplicate codes, unsupported variant adoption and templates outside the selected companies.
+- Unarchive, enable sales and publish the website template after a valid image and source price, without changing the replicated product's price, archive state or sale flags.
+- For missing codes, read E-Plus names and prices through the existing connector and create/reuse only the native website product. Preserve the external item identity and link the same template when its replicated source becomes available during synchronization.
+- Reject duplicate codes, conflicting external identities and ambiguous image matches. E-Plus outages are reported for fallback items while existing source products can still publish. Audit changed website prices with actor and timestamp.
+- Retain explicit image-based website activation during later source synchronization while preserving manual website unpublishing.
+- Show persistent completion feedback with actual counts, distinguish review items/no matches, and keep the report open.
+- Translate new model labels and messages in both Arabic catalogs and preserve existing translations.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/product_template.py`
+- `ab_website_sale_product/models/product_image_sync.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/models/add_many_by_codes_wizard.py`
+- `ab_website_sale_product/tests/test_website_category_mapping.py`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+
+Validation:
+
+- Targeted upgrade on `codex_eplus_sync_20261104`, alternate ports `5069/5072`, passed.
+- Initial primary-source/fallback, completion and catalog suite: 38 tests, zero failures/errors; `/tmp/image-fallback-tests.log`.
+- Expanded final suite: 73 of 74 tests passed, with one failure and zero errors; `/tmp/image-fallback-final-validation.log`. All 23 publication/fallback tests, completion, upload, catalog, image matching and four targeted existing-sync tests passed.
+- The remaining failure is `TestWebsiteCategoryMapping.test_l3_group_maps_to_canonical_category`: the validation database returns no category for Body Care L3. The category classification implementations are unchanged by this work.
+- Updated image test setup to explicitly create native templates and use database-backed test attachments; preserved English expectations for category assertions.
+- Earlier completion/upload suite: 10 tests passed; `/tmp/image-completion-tests.log`.
+- Both Arabic catalogs pass `msgfmt --check-format`; Python syntax and `git diff --check` pass.
+- Runtime `en_US`/`ar_001` verification passed for both new template labels, nine source/completion messages, the E-Plus stock action and the Arabic success notification. All 16 changed UI source strings have both Arabic translations, and the unique-index message is translated too.
+- Uses native Odoo 19 notifications; no shared frontend overrides or new external writes.
+- Isolated filestore lacks some existing attachments; missing-file notices remain in the validation logs.
+- External E-Plus reads were mocked. No live-server upgrade, product publication, or change to main-server replication permissions was performed.
+
+Operational boundary:
+
+- Replicated ab_product records remain controlled by the main server. The fallback creates no local ab_product record and does not bypass replication permissions. Missing/invalid master prices and conflicting links are reported without publication.
+- Fallback products use native stock behavior until linked to the replicated source; this workflow does not import or fabricate inventory quantities.
+- No live E-Plus connection or production deployment was used for this validation. Deployment requires a targeted module upgrade for the new template fields.
+
+## Recent commits
+
+Commit: `d3340f5e`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_website_sale_product/IMP: price and publish products during image sync`
+
+User-facing changes:
+
+- Refresh E-Plus, link image products, validate selling prices, and publish eligible products after image synchronization.
+- Audit price changes and report missing or protected product records.
 
 Files changed:
 
@@ -19,21 +67,6 @@ Files changed:
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/models/product_image_sync.py`
 - `ab_website_sale_product/tests/test_website_category_mapping.py`
-
-Validation:
-
-- Targeted upgrade of both affected modules on `codex_eplus_sync_20261104`, ports `5069/5072`, passed.
-- Focused suite: 29 tests, zero failures/errors; `/tmp/image-publication-verified.log`.
-- External E-Plus reads were mocked in tests; no live product publication was executed.
-- The isolated filestore lacks some pre-existing attachments; Odoo logged missing fixture attachments without test failures.
-- Both Arabic catalogs pass `msgfmt --check-format`; Python AST and `git diff --check` pass.
-- Runtime `en_US`/`ar_001` checks passed for the new publication counter and E-Plus stock action.
-
-Operational boundary:
-
-- A product replica still requires the authoritative product to arrive through supported replication. Missing products and prohibited master-price/availability writes are reported, not bypassed.
-
-## Recent commits
 
 Commit: `fe401bde`
 Author: Mohamed Fawzy

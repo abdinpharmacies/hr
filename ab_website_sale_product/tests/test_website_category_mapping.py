@@ -3,11 +3,12 @@ import hashlib
 from io import BytesIO
 import os
 import tempfile
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from PIL import Image
 
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
+from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
 
 
@@ -24,8 +25,9 @@ class TestWebsiteCategoryMapping(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Group = cls.env["ab_product_group"]
-        cls.env["ab_product_classification_taxonomy"].action_prepare()
+        cls.env["ir.config_parameter"].sudo().set_param("ir_attachment.location", "db")
+        cls.Group = cls.env["ab_product_group"].with_context(lang="en_US")
+        cls.env["ab_product_classification_taxonomy"].with_context(lang="en_US").action_prepare()
 
     def test_l3_group_maps_to_canonical_category(self):
         group = self.Group.create({"name": "Body Care L3"})
@@ -70,7 +72,7 @@ class TestWebsiteCategoryMapping(TransactionCase):
             "website_sale_available": True,
         })
 
-        template = product._sync_website_products()
+        template = product._sync_website_products(create_missing=True)
 
         self.assertTrue(template.image_1920)
 
@@ -86,7 +88,7 @@ class TestWebsiteCategoryMapping(TransactionCase):
             "active": True,
             "website_sale_available": True,
         })
-        product._sync_website_products()
+        product._sync_website_products(create_missing=True)
         return product
 
     def _write_image(self, root, relative_path, payload=PNG_1X1):
@@ -151,6 +153,31 @@ class TestWebsiteCategoryMapping(TransactionCase):
         template = product.website_product_tmpl_id
         self.assertEqual(result["summary"]["updated"], 1)
         self.assertTrue(template)
+        self.assertFalse(template.is_published)
+        self.assertEqual(template.image_1920, base64.b64encode(PNG_1X1))
+
+    def test_image_sync_includes_archived_unlinked_product(self):
+        product = self.env["ab_product"].create({
+            "name": "Archived image product",
+            "product_card_name": "Archived image product",
+            "code": "IMG-ARCHIVED",
+            "active": False,
+            "allow_sale": True,
+            "website_sale_available": False,
+        })
+        service = self.env["ab.website.product.image.sync.service"]
+        self.assertIn(product, service._get_website_products([("id", "=", product.id)]))
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "IMG-ARCHIVED.png")
+            plan = service.prepare_sync_plan(root, product_domain=[("id", "=", product.id)])
+            self.assertEqual(self._single_product_line(plan, product)["status"], "matched")
+            result = service.apply_sync_plan(plan)
+
+        template = product.website_product_tmpl_id
+        self.assertEqual(result["summary"]["updated"], 1)
+        self.assertFalse(product.active)
+        self.assertTrue(template)
+        self.assertFalse(template.active)
         self.assertFalse(template.is_published)
         self.assertEqual(template.image_1920, base64.b64encode(PNG_1X1))
 
@@ -401,10 +428,11 @@ class TestWebsiteCategoryMapping(TransactionCase):
             self.assertEqual(self._single_product_line(plan, product)["status"], "matched")
 
 
+@tagged("post_install", "-at_install")
 class TestImagePublication(TransactionCase):
     def setUp(self):
         super().setUp()
-        self.service = self.env["ab.website.product.image.sync.service"]
+        self.service = self.env["ab.website.product.image.sync.service"].with_context(lang="en_US")
         self.product = self.env["ab_product"].create({
             "product_card_name": "Publication image", "code": "IMG-PUBLISH-NEW",
             "eplus_serial": 99888776, "default_price": 10,
@@ -415,22 +443,31 @@ class TestImagePublication(TransactionCase):
         with open(os.path.join(self.root.name, self.product.code + ".png"), "wb") as image:
             image.write(PNG_1X1)
 
-    def plan(self, price=25):
-        plan = self.service.prepare_sync_plan(self.root.name, products=self.product)
-        plan["publication_prices"] = {self.product.code: [{
-            "item_id": self.product.eplus_serial, "price": price, "active": True,
-        }]}
-        return plan
+    def plan(self):
+        return self.service.prepare_sync_plan(self.root.name, products=self.product)
+
+    def fallback_catalog(self, **values):
+        source = dict(item_id=99888777, price=67.5, active=True, name="Fallback product")
+        source.update(values)
+        code = "IMG-EPLUS-NEW"
+        with open(os.path.join(self.root.name, code + ".png"), "wb") as image:
+            image.write(PNG_1X1)
+        return {code: [source]}
+
+    def publication_plan(self, catalog):
+        with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "_fetch_image_fallback_catalog", return_value=catalog):
+            return self.service.prepare_publication_sync_plan(self.root.name)
 
     def test_image_creates_links_prices_and_publishes(self):
+        self.product._sync_website_products(create_missing=True).list_price = 5
         result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
         template = self.product.website_product_tmpl_id
         self.assertEqual(result["summary"]["updated"], 1)
         self.assertEqual(template.ab_product_id, self.product)
-        self.assertEqual(template.list_price, 25)
-        self.assertEqual(self.product.default_price, 25)
+        self.assertEqual(template.list_price, 10)
+        self.assertEqual(self.product.default_price, 10)
         self.assertTrue(template.is_published)
-        self.assertTrue(template.message_ids.filtered(lambda msg: "Eplus image publication" in str(msg.body)))
+        self.assertTrue(template.message_ids.filtered(lambda msg: "Image publication:" in str(msg.body)))
 
     def test_unchanged_image_republishes_without_duplicate_template(self):
         self.service.apply_sync_plan(self.plan(), publish_requested=True)
@@ -441,41 +478,89 @@ class TestImagePublication(TransactionCase):
         self.assertEqual(self.product.website_product_tmpl_id, template)
         self.assertEqual(result["summary"]["updated"], 0)
 
-    def test_invalid_price_rolls_back_image_and_publication(self):
-        for price in (0, -1, float("nan"), float("inf")):
+    def test_invalid_master_price_does_not_fall_back(self):
+        for price in (0, -1):
             with self.subTest(price=price):
-                result = self.service.apply_sync_plan(self.plan(price), publish_requested=True)
+                self.product.default_price = price
+                with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "_fetch_image_fallback_catalog") as fetch:
+                    plan = self.service.prepare_publication_sync_plan(self.root.name)
+                    result = self.service.apply_sync_plan(plan, publish_requested=True)
+                fetch.assert_not_called()
                 self.assertEqual(result["summary"]["error"], 1)
                 self.assertFalse(self.product.website_product_tmpl_id)
-                self.assertEqual(self.product.default_price, 10)
+                self.assertEqual(self.product.default_price, price)
 
     def test_imported_draft_becomes_saleable_after_valid_price(self):
         self.product.write({"eplus_catalog_draft": True, "allow_sale": False, "website_sale_available": False})
         result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
         self.assertEqual(result["summary"]["updated"], 1)
-        self.assertTrue(self.product.allow_sale)
-        self.assertTrue(self.product.website_sale_available)
-        self.assertFalse(self.product.eplus_catalog_draft)
+        self.assertFalse(self.product.allow_sale)
+        self.assertFalse(self.product.website_sale_available)
+        self.assertTrue(self.product.eplus_catalog_draft)
         self.assertTrue(self.product.website_product_tmpl_id.is_published)
 
-    def test_archived_product_remains_unpublished(self):
-        self.product.active = False
+    def test_archived_source_stays_archived_while_website_is_published(self):
+        self.product.write({"active": False, "allow_sale": False, "website_sale_available": False})
         result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
-        self.assertEqual(result["summary"]["error"], 1)
-        self.assertFalse(self.product.website_product_tmpl_id)
+        self.assertEqual(result["summary"]["published"], 1)
+        template = self.product.website_product_tmpl_id
+        self.assertTrue(template.active)
+        self.assertTrue(template.sale_ok)
+        self.assertTrue(template.is_published)
         self.assertFalse(self.product.active)
+        self.product._sync_website_products()
+        self.assertTrue(template.active)
+        self.assertTrue(template.sale_ok)
+        self.assertTrue(template.is_published)
 
-    def test_duplicate_or_conflicting_eplus_identity_is_rejected(self):
-        for duplicate in (True, False):
-            plan = self.plan()
-            sources = plan["publication_prices"][self.product.code]
-            if duplicate:
-                sources.append(dict(sources[0]))
-            else:
-                sources[0]["item_id"] += 1
-            result = self.service.apply_sync_plan(plan, publish_requested=True)
-            self.assertEqual(result["summary"]["error"], 1)
-            self.assertFalse(self.product.website_product_tmpl_id)
+    def test_conflicting_fallback_identity_is_not_adopted(self):
+        template = self.env["product.template"].create({
+            "name": "Different external item", "default_code": self.product.code,
+            "website_eplus_item_id": self.product.eplus_serial + 1,
+        })
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertEqual(result["summary"]["ambiguous"], 1)
+        self.assertFalse(template.ab_product_id)
+        self.assertFalse(template.is_published)
+
+    def test_existing_fallback_identity_with_changed_code_is_not_duplicated(self):
+        template = self.env["product.template"].create({
+            "name": "Existing external item", "default_code": "OLD-ITEM-CODE",
+            "website_eplus_item_id": self.product.eplus_serial,
+        })
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertEqual(result["summary"]["ambiguous"], 1)
+        self.assertFalse(template.ab_product_id)
+        self.assertFalse(self.product.website_product_tmpl_id)
+
+    def test_fallback_template_outside_selected_company_is_not_modified(self):
+        self.service = self.service.with_context(allowed_company_ids=self.env.company.ids)
+        company = self.env["res.company"].create({"name": "Foreign fallback company"})
+        template = self.env["product.template"].create({
+            "name": "Foreign item", "default_code": "IMG-EPLUS-NEW", "company_id": company.id,
+        })
+        result = self.service.apply_sync_plan(self.publication_plan(self.fallback_catalog()), publish_requested=True)
+        self.assertEqual(result["summary"]["error"], 1)
+        self.assertFalse(template.is_published)
+        self.assertFalse(template.website_eplus_item_id)
+
+    def test_fallback_query_is_parameterized_and_batched(self):
+        snapshot = self.env["ab_eplus_stock_snapshot"]
+        connection = MagicMock()
+        cursor = connection.__enter__.return_value.cursor.return_value.__enter__.return_value
+        cursor.fetchall.return_value = [(99888777, "SAFE-CODE", 67.5, True, "Fallback", None)]
+        codes = ["CODE-%s" % number for number in range(200)] + ["X'); DROP TABLE Item_Catalog; --"]
+        with patch.object(type(snapshot), "_connect_eplus_read", return_value=connection):
+            catalog = snapshot._fetch_image_fallback_catalog(codes)
+        self.assertEqual(cursor.execute.call_count, 2)
+        for call, expected in zip(cursor.execute.call_args_list, (codes[:200], codes[200:])):
+            sql, params = call.args
+            self.assertTrue(sql.startswith("SELECT "))
+            self.assertEqual(sql.count("%s"), len(expected))
+            self.assertEqual(params, tuple(expected))
+            self.assertNotIn(codes[-1], sql)
+            self.assertNotIn("NOLOCK", sql)
+        self.assertEqual(catalog["SAFE-CODE"][0]["price"], 67.5)
 
     def test_public_user_cannot_refresh_or_publish(self):
         service = self.service.with_user(self.env.ref("base.public_user"))
@@ -484,60 +569,217 @@ class TestImagePublication(TransactionCase):
         with self.assertRaises(AccessError):
             service.apply_sync_plan(self.plan(), publish_requested=True)
 
-    def test_refresh_and_import_finish_before_image_matching(self):
-        Snapshot = type(self.env["ab_eplus_stock_snapshot"])
-        events = []
-        row = self.env["ab_eplus_stock_snapshot"].create({
-            "itm_id": self.product.eplus_serial, "itm_code": self.product.code, "itm_qty": 1,
-        })
-        with patch.object(Snapshot, "action_refresh_from_eplus", side_effect=lambda: events.append("refresh")), \
-             patch.object(Snapshot, "_import_eplus_catalog_batch", side_effect=lambda: events.append("import")), \
-             patch.object(type(self.service), "prepare_sync_plan", side_effect=lambda path: events.append("plan") or {"report": [], "summary": {"missing": 0}}):
-            self.service.prepare_publication_sync_plan(self.root.name)
-        self.assertEqual(events, ["refresh", "import", "plan"])
+    def test_replicated_code_publishes_without_eplus(self):
+        with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "_fetch_image_fallback_catalog", side_effect=UserError("Offline")) as fetch:
+            result = self.service.apply_sync_plan(
+                self.service.prepare_publication_sync_plan(self.root.name), publish_requested=True,
+            )
+        fetch.assert_not_called()
+        self.assertEqual(result["summary"]["published"], 1)
+        self.assertEqual(self.product.website_product_tmpl_id.list_price, self.product.default_price)
 
-    def test_refresh_failure_prevents_image_application(self):
-        from odoo.exceptions import UserError
-        with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "action_refresh_from_eplus", side_effect=UserError("Offline")):
-            with self.assertRaises(UserError):
-                self.service.prepare_publication_sync_plan(self.root.name)
-        self.assertFalse(self.product.website_product_tmpl_id)
+    def test_fallback_failure_does_not_block_replicated_products(self):
+        self.fallback_catalog()
+        for error in (UserError("Offline"), RuntimeError("External connection failed")):
+            with self.subTest(error=type(error).__name__):
+                with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "_fetch_image_fallback_catalog", side_effect=error):
+                    result = self.service.apply_sync_plan(
+                        self.service.prepare_publication_sync_plan(self.root.name), publish_requested=True,
+                    )
+                self.assertEqual(result["summary"]["error"], 1)
+                self.assertEqual(result["summary"]["published"], 1)
+                self.assertTrue(self.product.website_product_tmpl_id.is_published)
 
-    def test_new_eplus_code_is_imported_priced_linked_and_published(self):
-        from odoo.addons.integration_queue_job.tests.common import trap_jobs
-        code = "IMG-EPLUS-NEW"
-        item_id = 99888777
-        with open(os.path.join(self.root.name, code + ".png"), "wb") as image:
-            image.write(PNG_1X1)
-        Snapshot = type(self.env["ab_eplus_stock_snapshot"])
-        with trap_jobs(), \
-             patch.object(Snapshot, "_fetch_eplus_stock_rows", return_value=[{
-                 "itm_id": item_id, "itm_code": code, "itm_qty": 2, "extra_data": {},
-             }]), \
-             patch.object(Snapshot, "_fetch_eplus_catalog_names", return_value={
-                 item_id: [(code, "Arabic product", "New Eplus product", True)],
-             }), \
-             patch.object(Snapshot, "_fetch_image_publication_prices", return_value={
-                 code: [{"item_id": item_id, "price": 67.5, "active": True}],
-                 self.product.code: [{"item_id": self.product.eplus_serial, "price": 10, "active": True}],
-             }):
-            plan = self.service.prepare_publication_sync_plan(self.root.name)
-            result = self.service.apply_sync_plan(plan, publish_requested=True)
-        product = self.env["ab_product"].search([("code", "=", code)])
-        self.assertEqual(len(product), 1)
-        self.assertEqual(product.eplus_serial, item_id)
-        self.assertEqual(product.default_price, 67.5)
-        self.assertEqual(product.website_product_tmpl_id.list_price, 67.5)
-        self.assertTrue(product.website_product_tmpl_id.is_published)
+    def test_missing_code_fallback_is_reused_and_later_linked_to_master(self):
+        catalog = self.fallback_catalog()
+        result = self.service.apply_sync_plan(self.publication_plan(catalog), publish_requested=True)
         self.assertEqual(result["summary"]["published"], 2)
+        code = next(iter(catalog))
+        Product = self.env["ab_product"].with_context(active_test=False)
+        self.assertFalse(Product.search([("code", "=", code)]))
+        template = self.env["product.template"].search([("default_code", "=", code)])
+        self.assertTrue(template.is_published)
+        self.assertEqual(template.list_price, 67.5)
+        self.assertEqual(template.website_eplus_item_id, 99888777)
+        self.service.apply_sync_plan(self.publication_plan(catalog), publish_requested=True)
+        self.assertEqual(self.env["product.template"].search([("default_code", "=", code)]), template)
+        master = self.product.copy({"code": code, "eplus_serial": 99888777, "default_price": 73})
+        with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "_fetch_image_fallback_catalog") as fetch:
+            self.service.apply_sync_plan(self.service.prepare_publication_sync_plan(self.root.name), publish_requested=True)
+        fetch.assert_not_called()
+        self.assertEqual(master.website_product_tmpl_id, template)
+        self.assertEqual(template.list_price, 73)
+        self.assertTrue(template.is_published)
 
-    def test_master_write_rejection_preserves_image_price_and_publication(self):
+    def test_fallback_invalid_price_name_and_duplicate_rows_are_rejected(self):
+        for values in ({"price": 0}, {"price": -1}, {"price": float("nan")}, {"price": float("inf")}, {"name": ""}):
+            with self.subTest(values=values):
+                result = self.service.apply_sync_plan(self.publication_plan(self.fallback_catalog(**values)), publish_requested=True)
+                self.assertEqual(result["summary"]["error"], 1)
+                self.assertFalse(self.env["product.template"].search([("website_eplus_item_id", "=", 99888777)]))
+        catalog = self.fallback_catalog()
+        catalog["IMG-EPLUS-NEW"] *= 2
+        result = self.service.apply_sync_plan(self.publication_plan(catalog), publish_requested=True)
+        self.assertEqual(result["summary"]["error"], 1)
+
+    def test_unknown_code_is_reported_without_creation(self):
+        self.fallback_catalog()
+        result = self.service.apply_sync_plan(self.publication_plan({}), publish_requested=True)
+        missing = [line for line in result["report"] if line.get("relative_path") == "IMG-EPLUS-NEW.png"]
+        self.assertEqual(len(missing), 1)
+        self.assertEqual(missing[0]["status"], "missing")
+        self.assertFalse(self.env["product.template"].search([("default_code", "=", "IMG-EPLUS-NEW")]))
+
+    def test_fallback_different_code_for_existing_source_identity_is_rejected(self):
+        catalog = self.fallback_catalog(item_id=self.product.eplus_serial)
+        result = self.service.apply_sync_plan(self.publication_plan(catalog), publish_requested=True)
+        self.assertEqual(result["summary"]["error"], 1)
+        self.assertFalse(self.env["product.template"].search([("default_code", "=", "IMG-EPLUS-NEW")]))
+
+    def test_archived_fallback_template_is_reactivated(self):
+        catalog = self.fallback_catalog(active=False)
+        template = self.env["product.template"].create({
+            "name": "Archived fallback", "default_code": "IMG-EPLUS-NEW", "active": False,
+        })
+        self.service.apply_sync_plan(self.publication_plan(catalog), publish_requested=True)
+        self.assertTrue(template.active)
+        self.assertTrue(template.is_published)
+        self.assertEqual(template.list_price, 67.5)
+        self.assertFalse(template.ab_product_id)
+
+    def _different_image(self):
+        output = BytesIO()
+        Image.new("RGB", (1, 1), (0, 0, 255)).save(output, format="PNG")
+        return output.getvalue()
+
+    def test_fallback_replacement_requires_confirmation(self):
+        catalog = self.fallback_catalog()
+        template = self.env["product.template"].create({
+            "name": "Existing fallback", "default_code": "IMG-EPLUS-NEW",
+            "image_1920": base64.b64encode(self._different_image()),
+        })
+        plan = self.publication_plan(catalog)
+        lines = [line for line in plan["report"] if line.get("eplus_item_id")]
+        self.assertEqual(len(lines), 1)
+        self.assertTrue(lines[0]["replaces_existing"])
+        wizard = self.env["ab.website.sale.add.many.by.codes.wizard"].create({})
+        wizard._write_image_sync_report(plan, confirmation_required=True)
+        self.assertTrue(wizard.image_sync_confirmation_required)
+        self.assertEqual(wizard.image_sync_line_ids.filtered("eplus_item_id").eplus_item_id, 99888777)
+        self.assertFalse(template.is_published)
+
+    def test_publication_does_not_write_master_product(self):
         template = self.product._sync_website_products(create_missing=True)
-        old_image = template.image_1920
         plan = self.plan()
         with patch.object(type(self.product), "write", side_effect=AccessError("Product replica is read only")):
             result = self.service.apply_sync_plan(plan, publish_requested=True)
-        self.assertEqual(result["summary"]["error"], 1)
-        self.assertEqual(template.image_1920, old_image)
+        self.assertEqual(result["summary"]["published"], 1)
         self.assertEqual(template.list_price, 10)
-        self.assertFalse(template.is_published)
+        self.assertTrue(template.is_published)
+
+    def test_reuses_archived_unlinked_template_and_preserves_master(self):
+        template = self.env["product.template"].create({
+            "name": "Existing store product", "default_code": self.product.code,
+            "active": False, "list_price": 10,
+        })
+        self.product.active = False
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertEqual(result["summary"]["published"], 1)
+        self.assertEqual(self.product.website_product_tmpl_id, template)
+        self.assertTrue(template.active)
+        self.assertTrue(template.is_published)
+        self.assertFalse(self.product.active)
+        self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertEqual(self.env["product.template"].with_context(active_test=False).search_count([
+            ("default_code", "=", self.product.code),
+        ]), 1)
+
+    def test_duplicate_template_codes_require_review(self):
+        self.env["product.template"].create([
+            {"name": "First", "default_code": self.product.code},
+            {"name": "Second", "default_code": self.product.code, "active": False},
+        ])
+        plan = self.plan()
+        self.assertEqual(plan["summary"]["ambiguous"], 1)
+        result = self.service.apply_sync_plan(plan, publish_requested=True)
+        self.assertFalse(result["summary"]["published"])
+        self.assertFalse(self.product.website_product_tmpl_id)
+
+    def test_foreign_company_template_is_not_adopted(self):
+        self.service = self.service.with_context(allowed_company_ids=self.env.company.ids)
+        company = self.env["res.company"].create({"name": "Other image company"})
+        template = self.env["product.template"].create({
+            "name": "Other company product", "default_code": self.product.code,
+            "company_id": company.id,
+        })
+        plan = self.plan()
+        self.assertEqual(plan["summary"]["ambiguous"], 1)
+        self.service.apply_sync_plan(plan, publish_requested=True)
+        self.assertFalse(template.ab_product_id)
+        self.assertFalse(self.product.website_product_tmpl_id)
+
+    def test_existing_code_link_to_another_source_is_not_reassigned(self):
+        other = self.product.copy({"code": "OTHER-SOURCE", "eplus_serial": 99888778})
+        template = other._sync_website_products(create_missing=True)
+        template.default_code = self.product.code
+        plan = self.plan()
+        self.assertEqual(plan["summary"]["ambiguous"], 1)
+        self.service.apply_sync_plan(plan, publish_requested=True)
+        self.assertEqual(template.ab_product_id, other)
+        self.assertFalse(self.product.website_product_tmpl_id)
+
+
+class TestImageSyncCompletion(TransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.wizard = self.env["ab.website.sale.add.many.by.codes.wizard"].with_context(lang="en_US").create({})
+        self.report_action = {"type": "ir.actions.act_window", "res_id": self.wizard.id, "target": "new"}
+
+    def completion(self, summary, report=None):
+        with patch.object(type(self.wizard), "_write_image_sync_report", return_value=self.report_action):
+            return self.wizard._image_sync_completion_action({"summary": summary, "report": report or []})
+
+    def test_success_keeps_report_and_confirms_real_counts(self):
+        action = self.completion({"published": 12, "updated": 8, "unchanged": 4, "missing": 35000})
+        self.assertEqual(action["tag"], "display_notification")
+        self.assertEqual(action["params"]["type"], "success")
+        self.assertEqual(action["params"]["next"], self.report_action)
+        self.assertTrue(action["params"]["sticky"])
+        self.assertIn("Published products: 12", action["params"]["message"])
+        self.assertIn("Updated images: 8", action["params"]["message"])
+
+    def test_failures_are_not_reported_as_complete_success(self):
+        action = self.completion({"published": 2, "error": 1, "invalid": 1, "ambiguous": 1}, [{
+            "status": "missing", "image_path": "/tmp/unmatched.png", "product_id": False,
+        }])
+        self.assertEqual(action["params"]["type"], "warning")
+        self.assertIn("Items requiring review: 4", action["params"]["message"])
+
+    def test_no_matches_has_informational_result(self):
+        action = self.completion({"missing": 35000})
+        self.assertEqual(action["params"]["type"], "info")
+        self.assertEqual(action["params"]["title"], "No images were synchronized")
+
+    def test_confirmation_and_sync_paths_notify_only_after_execution(self):
+        service = self.env["ab.website.product.image.sync.service"]
+        plan = {"summary": {}, "report": []}
+        result = {"summary": {"published": 3}, "report": []}
+        for method in ("action_sync_images", "action_confirm_replace_images", "action_sync_new_images_only"):
+            with self.subTest(method=method), \
+                 patch.object(type(self.wizard), "_prepare_image_sync_plan", return_value=(service, plan)), \
+                 patch.object(type(service), "apply_sync_plan", return_value=result) as apply, \
+                 patch.object(type(self.wizard), "_write_image_sync_report", return_value=self.report_action):
+                action = getattr(self.wizard, method)()
+                apply.assert_called_once()
+                self.assertEqual(action["params"]["type"], "success")
+                self.assertIn("Published products: 3", action["params"]["message"])
+
+    def test_replacement_question_does_not_claim_completion(self):
+        service = self.env["ab.website.product.image.sync.service"]
+        plan = {"summary": {"replacements": 1}, "report": []}
+        with patch.object(type(self.wizard), "_prepare_image_sync_plan", return_value=(service, plan)), \
+             patch.object(type(service), "apply_sync_plan") as apply, \
+             patch.object(type(self.wizard), "_write_image_sync_report", return_value=self.report_action):
+            action = self.wizard.action_sync_images()
+        apply.assert_not_called()
+        self.assertEqual(action, self.report_action)

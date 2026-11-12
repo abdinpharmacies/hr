@@ -6139,3 +6139,135 @@ msgid ""
 "The product needs an active Eplus item, a valid selling price and sale "
 "permission before publication."
 msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "Synchronization completed successfully"
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "Synchronization finished — review required"
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "No images were synchronized"
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid ""
+"No matching images were available to synchronize. Check the image names and "
+"product codes in the report."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid "Items requiring review: %(count)s. See the report for details."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid ""
+"Published products: %(published)s. Updated images: %(updated)s. Unchanged "
+"images: %(unchanged)s. Existing images kept: %(kept)s."
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_image_publication
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_image_publication
+msgid "Activated by Image Synchronization"
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/ab_product.py:0
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Product codes have conflicting website links. Review the existing products "
+"before synchronization."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"A valid source product and selling price are required before publication."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"The Eplus price differs from the main product price. Synchronize ab_product "
+"from the main server before publishing."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Image publication: website price %(old)s → %(new)s from ab_product. Actor: "
+"%(actor)s. Date: %(date)s."
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_product_template_website_eplus_item_unique
+msgid "Each Eplus fallback item can only be linked to one website product."
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__eplus_item_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_eplus_item_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_eplus_item_id
+msgid "Eplus Fallback Item ID"
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Eplus fallback publication: price %(old)s → %(new)s; item %(item)s. Actor: "
+"%(actor)s. Date: %(date)s."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The Eplus fallback code is ambiguous. Review the item and image names."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The Eplus fallback item needs a name and a valid selling price."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "The image code was not found in ab_product or Eplus."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"The replicated product has no valid selling price. Update it on the main "
+"server before publishing."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Eplus fallback is unavailable. Retry synchronization for the missing product"
+" codes."
+msgstr ""

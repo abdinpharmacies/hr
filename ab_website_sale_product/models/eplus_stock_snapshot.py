@@ -387,23 +387,26 @@ class EplusStockSnapshot(models.Model):
         return created
 
     @api.model
-    def _fetch_image_publication_prices(self, codes):
-        prices = {}
+    def _fetch_image_fallback_catalog(self, codes):
+        catalog = {}
         with self._connect_eplus_read(charset="CP1256", propagate_error=True) as conn:
             with conn.cursor() as cursor:
                 for offset in range(0, len(codes), 200):
                     batch = codes[offset:offset + 200]
                     placeholders = ",".join(["%s"] * len(batch))
                     cursor.execute(
-                        "SELECT itm_id, itm_code, itm_def_sell_price, itm_active "
-                        "FROM Item_Catalog WHERE itm_code IN (%s)" % placeholders,
+                        "SELECT ic.itm_id, ic.itm_code, ic.itm_def_sell_price, ic.itm_active, "
+                        "n.itm_name_en, n.itm_name_ar FROM Item_Catalog ic "
+                        "LEFT JOIN m_name n ON n.itm_id = ic.itm_id "
+                        "WHERE ic.itm_code IN (%s)" % placeholders,
                         tuple(batch),
                     )
-                    for item_id, code, price, active in cursor.fetchall():
-                        prices.setdefault(str(code or "").strip(), []).append({
-                            "item_id": int(item_id), "price": price, "active": bool(active),
+                    for item_id, code, price, active, name_en, name_ar in cursor.fetchall():
+                        catalog.setdefault(str(code or "").strip(), []).append({
+                            "item_id": int(item_id), "price": float(price or 0),
+                            "active": bool(active), "name": str(name_en or name_ar or "").strip(),
                         })
-        return prices
+        return catalog
 
     @api.model
     def _fetch_eplus_catalog_names(self, itm_ids):

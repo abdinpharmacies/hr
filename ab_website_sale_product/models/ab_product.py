@@ -539,7 +539,9 @@ class AbProduct(models.Model):
         product_tags = self.tag_ids._get_or_create_website_product_tags(sync_cache=sync_cache)
         name = self.name or self.product_card_name or self.code or _("Unnamed Product")
         description = self.description or False
-        sale_ok = bool(self.active and self.allow_sale)
+        image_publication = self.website_product_tmpl_id.website_image_publication
+        sale_ok = bool(image_publication or (self.active and self.allow_sale))
+        website_available = bool(image_publication or self.website_sale_available)
 
         vals = {
             "ab_product_id": self.id,
@@ -553,15 +555,15 @@ class AbProduct(models.Model):
             "show_availability": not self.is_service,
             "sale_ok": sale_ok,
             "purchase_ok": bool(self.active and self.allow_purchase),
-            "active": bool(self.active),
+            "active": bool(image_publication or self.active),
             "description_sale": description,
             "description": self._ab_text_to_html(description),
             "description_ecommerce": self._ab_text_to_html(description),
             "website_description": self._ab_text_to_html(description),
             "product_tag_ids": [fields.Command.set(product_tags.ids)],
         }
-        if publish_requested or not sale_ok or not self.website_sale_available:
-            vals["is_published"] = bool(publish_requested and sale_ok and self.website_sale_available)
+        if publish_requested or not sale_ok or not website_available:
+            vals["is_published"] = bool(publish_requested and sale_ok and website_available)
         if public_categories:
             vals["public_categ_ids"] = [fields.Command.set(public_categories.ids)]
         if "invoice_policy" in ProductTemplate._fields:
@@ -640,13 +642,64 @@ class AbProduct(models.Model):
             template_ids.extend(templates.ids)
         return self.env["product.template"].sudo().with_context(active_test=False).browse(template_ids)
 
+    def _website_template_candidates(self):
+        Template = self.env["product.template"].sudo().with_context(active_test=False)
+        codes = [code for code in self.mapped("code") if code]
+        item_ids = [item_id for item_id in self.mapped("eplus_serial") if item_id]
+        templates = Template.search(
+            fields.Domain("ab_product_id", "in", self.ids)
+            | fields.Domain("default_code", "in", codes)
+            | fields.Domain("website_eplus_item_id", "in", item_ids)
+        )
+        source_products = self.sudo().with_context(active_test=False).search(fields.Domain("code", "in", codes))
+        source_ids_by_code = {}
+        for product in source_products:
+            source_ids_by_code.setdefault(product.code, set()).add(product.id)
+        by_source = {}
+        by_code = {}
+        by_item = {}
+        for template in templates:
+            if template.ab_product_id:
+                by_source.setdefault(template.ab_product_id.id, Template.browse())
+                by_source[template.ab_product_id.id] |= template
+            if template.default_code:
+                by_code.setdefault(template.default_code, Template.browse())
+                by_code[template.default_code] |= template
+            if template.website_eplus_item_id:
+                by_item[template.website_eplus_item_id] = template
+        matches = {}
+        conflicts = self.browse()
+        for product in self:
+            candidates = (
+                by_source.get(product.id, Template.browse())
+                | by_code.get(product.code, Template.browse())
+                | by_item.get(product.eplus_serial, Template.browse())
+            )
+            if (
+                len(candidates) > 1
+                or len(source_ids_by_code.get(product.code, ())) > 1
+                or (candidates and (
+                    (candidates.ab_product_id and candidates.ab_product_id != product)
+                    or (candidates.website_eplus_item_id and product.eplus_serial
+                        and candidates.website_eplus_item_id != product.eplus_serial)
+                    or (candidates.website_eplus_item_id and candidates.default_code != product.code)
+                    or (candidates.company_id and candidates.company_id not in self.env.companies)
+                    or (not candidates.ab_product_id and len(candidates.with_context(active_test=False).product_variant_ids) > 1)
+                ))
+            ):
+                conflicts |= product
+            elif candidates:
+                matches[product.id] = candidates
+        return matches, conflicts
+
     def _sync_website_product_batch(self, outcomes=None, create_missing=False, publish_requested=False):
         products = self.sudo()
         ProductTemplate = self.env["product.template"].sudo().with_context(active_test=False)
-        existing = ProductTemplate.search(fields.Domain("ab_product_id", "in", products.ids))
-        by_product = {}
-        for template in existing:
-            by_product.setdefault(template.ab_product_id.id, template)
+        by_product, conflicts = products._website_template_candidates()
+        if conflicts:
+            raise UserError(_("Product codes have conflicting website links. Review the existing products before synchronization."))
+        if not create_missing:
+            by_product = {product_id: template for product_id, template in by_product.items() if template.ab_product_id}
         sync_cache = products._website_sync_cache()
         missing_products = []
         missing_values = []
