@@ -174,7 +174,7 @@
                                         <div class="ab_carousel_media_upload ab_carousel_cta_image_upload" invisible="cta_style != 'image'">
                                             <field name="cta_image_512" widget="image" string="CTA Image" options="{'preview_image': 'cta_image_512'}"/>
                                         </div>
-                                        <field name="cta_url" string="Destination" widget="url" placeholder="/shop?category=offers"/>
+                                        <field name="cta_url" string="Destination" widget="url" options="{'website_path': True}" dir="ltr" placeholder="/shop?category=offers"/>
                                     </div>
                                 </section>
 
