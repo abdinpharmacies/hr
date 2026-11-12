@@ -79,5 +79,33 @@
                   sequence="300"/>
 
 
+        <record id="ab_custody_employee_data_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_custody_employee_data_view_form.layout</field>
+            <field name="model">ab_custody_employee_data</field>
+            <field name="inherit_id" ref="ab_custody_employee_data_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group" position="attributes">
+                    <attribute name="name">employee_account_layout</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//group[@name=&quot;employee_account_layout&quot;]" position="inside">
+                    <group name="employee_account_layout_0" col="2"/>
+                    <group name="employee_account_layout_1" col="2"/>
+                </xpath>
+                <xpath expr="//group[@name=&quot;employee_account_layout_0&quot;]" position="inside">
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;employee_id&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;employee_code&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;job_title_id&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;department_id&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;workplace_region_id&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//group[@name=&quot;employee_account_layout_1&quot;]" position="inside">
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;bank&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;account_number&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;employee_bank&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;employee_account_layout&quot;]/field[@name=&quot;attachment&quot;]" position="move"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

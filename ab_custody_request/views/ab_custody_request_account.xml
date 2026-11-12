@@ -91,5 +91,31 @@
                   sequence="200"/>
 
 
+        <record id="ab_custody_request_account_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_custody_request_account_view_form.layout</field>
+            <field name="model">ab_custody_request_account</field>
+            <field name="inherit_id" ref="ab_custody_request_account_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group" position="attributes">
+                    <attribute name="name">custody_account_layout</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//group[@name=&quot;custody_account_layout&quot;]" position="inside">
+                    <group name="custody_account_layout_0" col="2"/>
+                    <group name="custody_account_layout_1" col="2"/>
+                </xpath>
+                <xpath expr="//group[@name=&quot;custody_account_layout_0&quot;]" position="inside">
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;name&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;account_id&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;is_recon&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//group[@name=&quot;custody_account_layout_1&quot;]" position="inside">
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;department_id&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;department_manager_id&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;telegram_group&quot;]" position="move"/>
+                    <xpath expr="//group[@name=&quot;custody_account_layout&quot;]/field[@name=&quot;telegram_group_id&quot;]" position="move"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

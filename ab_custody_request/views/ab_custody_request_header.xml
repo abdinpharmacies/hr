@@ -247,6 +247,88 @@
                   parent="ab_custody_request_sub_menu"
                   action="ab_custody_request_header_action"
                   sequence="100"/>
+        <record id="ab_custody_request_header_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_custody_request_header_view_form.layout</field>
+            <field name="model">ab_custody_request_header</field>
+            <field name="inherit_id" ref="ab_custody_request_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group" position="attributes">
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group[field[@name=&quot;employee_id&quot;]]" position="attributes">
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/group[field[@name=&quot;employee_code&quot;]]" position="attributes">
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group" position="after">
+                    <xpath expr="//form/sheet/group/group[field[@name=&quot;custody_type&quot;]]" position="move"/>
+                </xpath>
+                <xpath expr="//form/sheet/group[field[@name=&quot;custody_type&quot;]]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/group/separator" position="replace"/>
+                <xpath expr="//form/sheet/group/separator" position="replace"/>
+                <xpath expr="//div[@name=&quot;button_box&quot;]" position="attributes">
+                    <attribute name="class">oe_button_box</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-bank&quot;]" position="attributes">
+                    <attribute name="class">oe_stat_button</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-credit-card&quot;]" position="attributes">
+                    <attribute name="class">oe_stat_button</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-bank&quot;]/div[.//field[@name=&quot;total_requested_custody&quot;]]" position="attributes">
+                    <attribute name="class">o_stat_info</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-bank&quot;]/div[not(.//field)]" position="attributes">
+                    <attribute name="class">o_stat_text</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-bank&quot;]/div[.//field[@name=&quot;total_requested_custody&quot;]]" position="inside">
+                    <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-bank&quot;]/div[not(.//field)]" position="move"/>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-credit-card&quot;]/div[.//field[@name=&quot;total_approved_custody&quot;]]" position="attributes">
+                    <attribute name="class">o_stat_info</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-credit-card&quot;]/div[not(.//field)]" position="attributes">
+                    <attribute name="class">o_stat_text</attribute>
+                </xpath>
+                <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-credit-card&quot;]/div[.//field[@name=&quot;total_approved_custody&quot;]]" position="inside">
+                    <xpath expr="//div[@name=&quot;button_box&quot;]/button[@icon=&quot;fa-credit-card&quot;]/div[not(.//field)]" position="move"/>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page/field[@name=&quot;line_ids&quot;]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="//form/sheet/notebook/page[field[@name=&quot;line_ids&quot;]]" position="inside">
+                    <div name="custody_details_scroll" class="w-100" style="min-width: 0; max-width: 100%;">
+                        <style>
+                            div[name="custody_details_scroll"] .o_list_renderer.table-responsive {
+                                min-width: 0;
+                                max-width: 100%;
+                                height: auto;
+                                overflow-x: auto;
+                            }
+                            div[name="custody_details_scroll"] .o_list_renderer .o_list_table > thead {
+                                position: static;
+                            }
+                            div[name="custody_details_scroll"] .o_list_table > thead > tr > th {
+                                padding-top: 0.5rem;
+                                padding-bottom: 0.5rem;
+                                line-height: 1.5;
+                                vertical-align: middle;
+                            }
+                        </style>
+                    </div>
+                </xpath>
+                <xpath expr="//div[@name=&quot;custody_details_scroll&quot;]" position="inside">
+                    <xpath expr="//form/sheet/notebook/page/field[@name=&quot;line_ids&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//form/div[hasclass('oe_chatter')]" position="replace">
+                    <chatter/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
 
