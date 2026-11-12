@@ -76,7 +76,7 @@ class StorefrontImageSyncWizard(models.TransientModel):
         self.ensure_one()
         directory = self._validated_upload_directory()
         service = self.env["ab.website.product.image.sync.service"]
-        return service, service.prepare_sync_plan(directory)
+        return service, service.prepare_publication_sync_plan(directory)
 
     def _write_image_sync_report(self, plan, confirmation_required=False):
         self.ensure_one()

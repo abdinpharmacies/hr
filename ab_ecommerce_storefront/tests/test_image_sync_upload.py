@@ -1,6 +1,7 @@
 import io
 import os
 import zipfile
+from unittest.mock import patch
 
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
@@ -56,3 +57,29 @@ class TestStorefrontImageSyncUpload(TransactionCase):
         with self.assertRaises(UserError):
             wizard._extract_image_archive(data)
         self.assertEqual(wizard.upload_file_count, 0)
+
+    def test_upload_sync_uses_refresh_and_publication_plan(self):
+        wizard = self._wizard("folder")
+        wizard._start_image_upload("folder", "Photos")
+        wizard._save_image_file(io.BytesIO(b"image"), "123.png", 5)
+        wizard._finish_image_upload()
+        Service = type(self.env["ab.website.product.image.sync.service"])
+        plan = {"summary": {}, "report": []}
+        with patch.object(Service, "prepare_publication_sync_plan", return_value=plan) as prepare, \
+             patch.object(Service, "apply_sync_plan", return_value=plan) as apply, \
+             patch.object(type(wizard), "_write_image_sync_report", return_value=True):
+            self.assertTrue(wizard.action_sync_images())
+        prepare.assert_called_once_with(wizard._get_directory_path())
+        apply.assert_called_once_with(plan, publish_requested=True)
+
+    def test_preview_does_not_refresh_eplus(self):
+        wizard = self._wizard("folder")
+        wizard._start_image_upload("folder", "Photos")
+        wizard._save_image_file(io.BytesIO(b"image"), "123.png", 5)
+        wizard._finish_image_upload()
+        Service = type(self.env["ab.website.product.image.sync.service"])
+        with patch.object(Service, "prepare_sync_plan", return_value={}), \
+             patch.object(Service, "prepare_publication_sync_plan") as refresh, \
+             patch.object(type(wizard), "_write_image_sync_report", return_value=True):
+            self.assertTrue(wizard.action_preview_images())
+        refresh.assert_not_called()

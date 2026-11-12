@@ -2,7 +2,19 @@
 
 ## Current changes before commit:
 
-- None.
+- Route uploaded folder/ZIP image synchronization through E-Plus refresh, priced product linking and publication; keep preview read-only.
+- Cover publication routing and read-only preview with focused upload wizard tests.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/image_sync_wizard.py`
+- `ab_ecommerce_storefront/tests/test_image_sync_upload.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
+Validation:
+
+- Targeted two-module upgrade and 29 focused tests passed on `codex_eplus_sync_20261104`, ports 5069/5072; `/tmp/image-publication-verified.log`.
+- External E-Plus reads were mocked; the live store was not upgraded or published by this change.
 
 ## Recent commits
 
