@@ -6,13 +6,11 @@
     const SWIPE_THRESHOLD = 45;
     const HORIZONTAL_RATIO = 1.15;
     const SLIDE_LOCK_TIMEOUT = 900;
-    const FULL_SLIDE_LINK_SELECTOR = ".ab-storefront-banner-link";
 
     function isInteractiveTarget(target) {
-        const interactiveTarget = target.closest(
+        return !!target.closest(
             "a, button, input, textarea, select, .carousel-control-prev, .carousel-control-next, .carousel-indicators"
         );
-        return !!interactiveTarget && !interactiveTarget.matches(FULL_SLIDE_LINK_SELECTOR);
     }
 
     function getCarouselInstance(el) {
