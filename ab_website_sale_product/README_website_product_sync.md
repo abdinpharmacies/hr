@@ -67,14 +67,14 @@ selection. Its scheduled action keeps its existing activation state and interval
 this change does not silently enable it. The console also has “Sync Changed
 Products”. Each invocation examines at most the requested limit, capped at 5,000.
 Dirty products without a linked website template are acknowledged without creating
-templates. The Add Many By Codes button is the only module workflow that creates
-`product.template` records and publishes eligible products. Repeated scheduled
+templates. The Publish Products by Code button publishes eligible products;
+E-Plus catalog import can create unpublished website drafts. Repeated scheduled
 invocations drain the backlog of linked products.
 
 Delta and full jobs update already-linked products only. They preserve existing
 publication for eligible products, including products manually unpublished in
 Odoo. If an already-linked product becomes inactive, unavailable, or unsaleable,
-sync unpublishes it. The Add Many By Codes button can publish it again when it
+sync unpublishes it. The Publish Products by Code button can publish it again when it
 becomes eligible.
 
 The flag also tracks synchronized template/variant fields, category/tag metadata

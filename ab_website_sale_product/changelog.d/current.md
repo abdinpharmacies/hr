@@ -2,24 +2,45 @@
 
 ## Current changes before commit:
 
-- Read E-Plus catalog names through the existing native SQL Server connector so the import works without an ODBC runtime on the website server.
-- Keep catalog lookups parameterized and preserve the existing bounded source retry behavior.
-- Cover the native connector choice and make the English notification assertion explicit in the catalog tests.
+- Rename the product-code publication action, kanban/list buttons, wizard heading, confirmation button, and notification so their publication effect is clear.
+- Translate the new labels and availability help in both Arabic catalogs while preserving existing translations.
+- Clarify the difference between code-based publishing and unpublished E-Plus draft creation in the sync reference.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/README_website_product_sync.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/add_many_by_codes_wizard.py`
+- `ab_website_sale_product/views/ab_product_kanban_views.xml`
+- `ab_website_sale_product/views/add_many_by_codes_views.xml`
+
+Validation:
+
+- Targeted upgrade on `codex_eplus_sync_20261104`, ports `5069/5072`, succeeded with no Odoo errors; log `/tmp/eplus_publish_label_final_upgrade.log`.
+- Both Arabic catalogs passed `msgfmt --check-format`.
+- Runtime action and kanban button read `Publish Products by Code` in `en_US` and `نشر المنتجات بالأكواد` in `ar_001`.
+- Publication logic and existing XML IDs are unchanged.
+
+## Recent commits
+
+Commit: `124ad69c`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_website_sale_product/FIX: read Eplus catalog without ODBC`
+
+User-facing changes:
+
+- Read E-Plus catalog names through the native SQL Server connector so queued imports run without ODBC on the website server.
 
 Files changed:
 
 - `ab_website_sale_product/changelog.d/current.md`
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/tests/test_eplus_catalog_import.py`
-
-Validation:
-
-- Targeted upgrade on `codex_eplus_sync_20261104`, ports `5069/5072`: 13 catalog tests passed, 0 failures/errors; log `/tmp/eplus_native_catalog_validation_final.log`.
-- External connections were mocked. The live website server has no ODBC shared library; the existing native connector is available.
-- No new user-facing strings; existing English and Arabic messages are preserved.
-- Existing validation-copy attachment warnings are unrelated.
-
-## Recent commits
 
 Commit: `6963a11a`
 Author: Mohamed Fawzy

@@ -5,7 +5,7 @@
             <field name="name">ab.website.sale.add.many.by.codes.wizard.form</field>
             <field name="model">ab.website.sale.add.many.by.codes.wizard</field>
             <field name="arch" type="xml">
-                <form string="Add Many By Codes">
+                <form string="Publish Products by Code">
                     <sheet>
                         <group>
                             <field name="codes_text"
@@ -14,7 +14,7 @@
                         </group>
                     </sheet>
                     <footer>
-                        <button name="action_sync_codes" type="object" string="Sync Now" class="btn-primary"/>
+                        <button name="action_sync_codes" type="object" string="Publish Now" class="btn-primary"/>
                         <button string="Cancel" class="btn-secondary" special="cancel"/>
                     </footer>
                 </form>
@@ -30,7 +30,7 @@
                     <header>
                         <button name="action_open_add_many_by_codes_wizard"
                                 type="object"
-                                string="Add Many By Codes"
+                                string="Publish Products by Code"
                                 class="btn-secondary"
                                 display="always"/>
                     </header>

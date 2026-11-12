@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 
 class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
     _name = "ab.website.sale.add.many.by.codes.wizard"
-    _description = "Add Many Abdin Products By Codes"
+    _description = "Publish Products by Code"
 
     codes_text = fields.Text(
         string="Codes",
@@ -74,7 +74,7 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Add Many By Codes"),
+                "title": _("Publish Products by Code"),
                 "message": message,
                 "type": "success" if matched_products else "warning",
                 "sticky": bool(missing_codes),
@@ -198,7 +198,7 @@ class AbProduct(models.Model):
     def action_open_add_many_by_codes_wizard(self):
         return {
             "type": "ir.actions.act_window",
-            "name": _("Add Many By Codes"),
+            "name": _("Publish Products by Code"),
             "res_model": "ab.website.sale.add.many.by.codes.wizard",
             "view_mode": "form",
             "target": "new",

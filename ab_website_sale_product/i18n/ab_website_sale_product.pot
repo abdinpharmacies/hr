@@ -440,6 +440,16 @@ msgid "Add Many By Codes"
 msgstr ""
 
 #. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+#: model:ir.model,name:ab_website_sale_product.model_ab_website_sale_add_many_by_codes_wizard
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_tree_view_add_many_by_codes
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_add_many_by_codes_wizard_form
+msgid "Publish Products by Code"
+msgstr ""
+
+#. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__extra_data
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__extra_data
 msgid "Additional Attributes"
@@ -4372,6 +4382,11 @@ msgid "Sync Now"
 msgstr ""
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_add_many_by_codes_wizard_form
+msgid "Publish Now"
+msgstr ""
+
+#. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
 msgid "Sync Selected to Odoo Inventory"
 msgstr ""
@@ -5184,6 +5199,13 @@ msgstr ""
 #: model:ir.model.fields,help:ab_website_sale_product.field_ab_product__website_sale_available
 msgid ""
 "Publish through Add Many By Codes or Match Old Website Publication. "
+"Disabling this option unpublishes a linked product during sync."
+msgstr ""
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product__website_sale_available
+msgid ""
+"Use Publish Products by Code or Match Old Website Publication to publish. "
 "Disabling this option unpublishes a linked product during sync."
 msgstr ""
 

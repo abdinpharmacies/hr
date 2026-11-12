@@ -9,7 +9,7 @@
                 <header>
                     <button name="action_open_add_many_by_codes_wizard"
                             type="object"
-                            string="Add Many By Codes"
+                            string="Publish Products by Code"
                             class="btn-secondary"
                             display="always"/>
                 </header>
