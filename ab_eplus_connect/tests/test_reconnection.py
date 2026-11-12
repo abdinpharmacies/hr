@@ -9,6 +9,30 @@ from ..models.ab_eplus_connect import ConnectionProxy, EPlusConnect, EplusConnec
 
 @tagged("post_install", "-at_install")
 class TestEplusDisconnectedConnection(TransactionCase):
+    def test_probe_timeout_is_retryable_only_when_requested(self):
+        connector = self.env["ab_eplus_connect"]
+        with patch("odoo.addons.ab_eplus_connect.models.ab_eplus_connect.threading.Thread") as thread:
+            thread.return_value.is_alive.return_value = True
+            self.assertFalse(connector.is_connection_valid(None, server="test", max_seconds=5))
+            with self.assertRaises(EplusConnectionError):
+                connector.is_connection_valid(None, server="test", max_seconds=5, retryable_validation=True)
+
+    def test_probe_reports_network_failure_but_does_not_retry_login_rejection(self):
+        connector = self.env["ab_eplus_connect"]
+        args = ("test", "test", "test", "test", "%s", "CP1256", 1433, 5)
+        with patch("odoo.addons.ab_eplus_connect.models.ab_eplus_connect.pymssql") as driver:
+            driver.connect.side_effect = RuntimeError(20009, "connection timed out")
+            with self.assertRaises(EplusConnectionError):
+                connector._probe_connection(*args, retryable_validation=True)
+            driver.connect.side_effect = RuntimeError(18456, "login failed")
+            self.assertFalse(connector._probe_connection(*args, retryable_validation=True))
+
+    def test_threaded_probe_propagates_retryable_network_failure(self):
+        connector = self.env["ab_eplus_connect"]
+        with patch.object(type(connector), "_probe_connection", side_effect=EplusConnectionError("offline")):
+            with self.assertRaises(EplusConnectionError):
+                connector.is_connection_valid(None, server="test", max_seconds=5, retryable_validation=True)
+
     def test_read_connection_retries_transient_open_failure(self):
         connector = self.env["ab_eplus_connect"]
         failed = MagicMock()

@@ -144,7 +144,8 @@ class EPlusConnect(models.AbstractModel):
                     pass
         return ok
 
-    def _probe_connection(self, server, db, user, password, param_str, charset, port, max_seconds):
+    def _probe_connection(self, server, db, user, password, param_str, charset, port, max_seconds,
+                          retryable_validation=False):
         if not server:
             return False
         if password is None:
@@ -203,6 +204,8 @@ class EPlusConnect(models.AbstractModel):
             ok = (not max_seconds) or elapsed <= max_seconds
         except Exception as ex:
             _logger.error(f"Connection probe error: {ex}")
+            if retryable_validation and self._is_connection_open_error(ex):
+                raise EplusConnectionError(self.env._("Server %s is offline or too slow") % server) from ex
             ok = False
         finally:
             if cursor:
@@ -234,6 +237,7 @@ class EPlusConnect(models.AbstractModel):
             param_str='%s',
             charset='CP1256',
             port=1433,
+            retryable_validation=False,
     ):
         """Check if the connection is still valid."""
         if max_seconds is None:
@@ -257,21 +261,30 @@ class EPlusConnect(models.AbstractModel):
                 result = {}
 
                 def _run():
-                    result["ok"] = self._probe_connection(
-                        server, db, user, password, param_str, charset, port, max_seconds
-                    )
+                    try:
+                        result["ok"] = self._probe_connection(
+                            server, db, user, password, param_str, charset, port, max_seconds,
+                            retryable_validation=retryable_validation,
+                        )
+                    except EplusConnectionError as error:
+                        result["error"] = error
 
                 thread = threading.Thread(target=_run, daemon=True)
                 thread.start()
                 thread.join(max_seconds)
                 if thread.is_alive():
                     _logger.warning("Connection probe timed out after %ss", max_seconds)
+                    if retryable_validation:
+                        raise EplusConnectionError(self.env._("Server %s is offline or too slow") % server)
                     ok = False
+                elif "error" in result:
+                    raise result["error"]
                 else:
                     ok = bool(result.get("ok", False))
             else:
                 ok = self._probe_connection(
-                    server, db, user, password, param_str, charset, port, max_seconds
+                    server, db, user, password, param_str, charset, port, max_seconds,
+                    retryable_validation=retryable_validation,
                 )
         elif conn:
             ok = self._validate_connection_now(conn, max_seconds)
@@ -324,6 +337,12 @@ class EPlusConnect(models.AbstractModel):
                     return True
         return False
 
+    def _is_connection_open_error(self, error):
+        return self._is_disconnect_error(error) or any(
+            isinstance(arg, int) and arg in (20002, 20009)
+            for arg in getattr(error, "args", ())
+        )
+
     @contextmanager
     def _connect_eplus_read(self, **kwargs):
         options = {
@@ -332,6 +351,7 @@ class EPlusConnect(models.AbstractModel):
             "port_timeout": 5,
             **kwargs,
             "use_validation_cache": False,
+            "retryable_validation": True,
         }
         for attempt in range(3):
             stack = ExitStack()
@@ -340,7 +360,7 @@ class EPlusConnect(models.AbstractModel):
             except Exception as error:
                 stack.close()
                 if attempt == 2 or not (
-                    isinstance(error, EplusConnectionError) or self._is_disconnect_error(error)
+                    isinstance(error, EplusConnectionError) or self._is_connection_open_error(error)
                 ):
                     raise
                 _logger.warning("Retrying Eplus read connection after attempt %s", attempt + 1)
@@ -363,6 +383,7 @@ class EPlusConnect(models.AbstractModel):
                       connect_timeout=None,
                       port_timeout=2,
                       use_validation_cache=True,
+                      retryable_validation=False,
                       ):
         if server is None:
             server = _get_main_server(port_timeout=port_timeout)
@@ -395,6 +416,7 @@ class EPlusConnect(models.AbstractModel):
                 charset=charset,
                 port=port,
                 use_cache=use_validation_cache,
+                retryable_validation=retryable_validation,
         ):
             raise UserError(_("Server %s is offline or too slow") % server)
 
@@ -412,6 +434,7 @@ class EPlusConnect(models.AbstractModel):
                     charset=charset,
                     port=port,
                     use_cache=use_validation_cache,
+                    retryable_validation=retryable_validation,
             ):
                 _logger.info(f"Connection for user {user_id} is no longer valid. Creating a new connection.")
                 self._connection_pool.pop(user_id, None)
