@@ -387,6 +387,25 @@ class EplusStockSnapshot(models.Model):
         return created
 
     @api.model
+    def _fetch_image_publication_prices(self, codes):
+        prices = {}
+        with self._connect_eplus_read(charset="CP1256", propagate_error=True) as conn:
+            with conn.cursor() as cursor:
+                for offset in range(0, len(codes), 200):
+                    batch = codes[offset:offset + 200]
+                    placeholders = ",".join(["%s"] * len(batch))
+                    cursor.execute(
+                        "SELECT itm_id, itm_code, itm_def_sell_price, itm_active "
+                        "FROM Item_Catalog WHERE itm_code IN (%s)" % placeholders,
+                        tuple(batch),
+                    )
+                    for item_id, code, price, active in cursor.fetchall():
+                        prices.setdefault(str(code or "").strip(), []).append({
+                            "item_id": int(item_id), "price": price, "active": bool(active),
+                        })
+        return prices
+
+    @api.model
     def _fetch_eplus_catalog_names(self, itm_ids):
         names_by_id = {}
         try:

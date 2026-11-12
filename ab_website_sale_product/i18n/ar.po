@@ -6366,3 +6366,51 @@ msgid "Queued %(count)s items for unpublished website product creation."
 msgstr ""
 "تمت إضافة %(count)s صنف إلى قائمة الانتظار لإنشاء منتجات غير منشورة على "
 "الموقع."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"A unique Eplus price could not be found. The product was not published."
+msgstr "تعذر العثور على سعر واحد مؤكد من Eplus. لم يتم نشر المنتج."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"The product needs an active Eplus item, a valid selling price and sale "
+"permission before publication."
+msgstr ""
+"يحتاج المنتج إلى صنف نشط في Eplus وسعر بيع صحيح والسماح بالبيع قبل النشر."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Eplus image publication: website price %(old)s → %(new)s; source price "
+"%(source)s → %(new)s. Actor: %(actor)s. Date: %(date)s."
+msgstr ""
+"النشر عبر صور Eplus: سعر المتجر %(old)s ← %(new)s؛ سعر المصدر %(source)s ← "
+"%(new)s. المستخدم: %(actor)s. التاريخ: %(date)s."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"No linked Abdin product was found for this image. Check the product code and"
+" product replication."
+msgstr ""
+"لم يُعثر على سجل منتج عابدين مرتبط بهذه الصورة. راجع كود المنتج ومزامنته من "
+"السيرفر الرئيسي."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "Image synchronized and product published."
+msgstr "تمت مزامنة الصورة ونشر المنتج."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "Published products"
+msgstr "المنتجات المنشورة"

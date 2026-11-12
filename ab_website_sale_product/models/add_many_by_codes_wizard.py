@@ -166,14 +166,14 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
             directory_path,
         )
         Service = self.env["ab.website.product.image.sync.service"]
-        return Service, Service.prepare_sync_plan(directory_path)
+        return Service, Service.prepare_publication_sync_plan(directory_path)
 
     def action_sync_images(self):
         self.ensure_one()
         Service, plan = self._prepare_image_sync_plan()
         if plan["summary"].get("replacements"):
             return self._write_image_sync_report(plan, confirmation_required=True)
-        result = Service.apply_sync_plan(plan)
+        result = Service.apply_sync_plan(plan, publish_requested=True)
         return self._write_image_sync_report(result)
 
     def action_confirm_replace_images(self):
@@ -182,13 +182,13 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
         replacement_count = plan["summary"].get("replacements", 0)
         if replacement_count and self._replacement_signature(plan) != self.image_sync_replacement_signature:
             return self._write_image_sync_report(plan, confirmation_required=True)
-        result = Service.apply_sync_plan(plan, replace_existing=True)
+        result = Service.apply_sync_plan(plan, replace_existing=True, publish_requested=True)
         return self._write_image_sync_report(result)
 
     def action_sync_new_images_only(self):
         self.ensure_one()
         Service, plan = self._prepare_image_sync_plan()
-        result = Service.apply_sync_plan(plan, replace_existing=False)
+        result = Service.apply_sync_plan(plan, replace_existing=False, publish_requested=True)
         return self._write_image_sync_report(result)
 
 

@@ -399,3 +399,145 @@ class TestWebsiteCategoryMapping(TransactionCase):
             template.image_1920 = base64.b64encode(PNG_1X1)
             plan = self._plan_for(root, product)
             self.assertEqual(self._single_product_line(plan, product)["status"], "matched")
+
+
+class TestImagePublication(TransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.service = self.env["ab.website.product.image.sync.service"]
+        self.product = self.env["ab_product"].create({
+            "product_card_name": "Publication image", "code": "IMG-PUBLISH-NEW",
+            "eplus_serial": 99888776, "default_price": 10,
+            "active": True, "allow_sale": True, "website_sale_available": True,
+        })
+        self.root = tempfile.TemporaryDirectory()
+        self.addCleanup(self.root.cleanup)
+        with open(os.path.join(self.root.name, self.product.code + ".png"), "wb") as image:
+            image.write(PNG_1X1)
+
+    def plan(self, price=25):
+        plan = self.service.prepare_sync_plan(self.root.name, products=self.product)
+        plan["publication_prices"] = {self.product.code: [{
+            "item_id": self.product.eplus_serial, "price": price, "active": True,
+        }]}
+        return plan
+
+    def test_image_creates_links_prices_and_publishes(self):
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        template = self.product.website_product_tmpl_id
+        self.assertEqual(result["summary"]["updated"], 1)
+        self.assertEqual(template.ab_product_id, self.product)
+        self.assertEqual(template.list_price, 25)
+        self.assertEqual(self.product.default_price, 25)
+        self.assertTrue(template.is_published)
+        self.assertTrue(template.message_ids.filtered(lambda msg: "Eplus image publication" in str(msg.body)))
+
+    def test_unchanged_image_republishes_without_duplicate_template(self):
+        self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        template = self.product.website_product_tmpl_id
+        template.is_published = False
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertTrue(template.is_published)
+        self.assertEqual(self.product.website_product_tmpl_id, template)
+        self.assertEqual(result["summary"]["updated"], 0)
+
+    def test_invalid_price_rolls_back_image_and_publication(self):
+        for price in (0, -1, float("nan"), float("inf")):
+            with self.subTest(price=price):
+                result = self.service.apply_sync_plan(self.plan(price), publish_requested=True)
+                self.assertEqual(result["summary"]["error"], 1)
+                self.assertFalse(self.product.website_product_tmpl_id)
+                self.assertEqual(self.product.default_price, 10)
+
+    def test_imported_draft_becomes_saleable_after_valid_price(self):
+        self.product.write({"eplus_catalog_draft": True, "allow_sale": False, "website_sale_available": False})
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertEqual(result["summary"]["updated"], 1)
+        self.assertTrue(self.product.allow_sale)
+        self.assertTrue(self.product.website_sale_available)
+        self.assertFalse(self.product.eplus_catalog_draft)
+        self.assertTrue(self.product.website_product_tmpl_id.is_published)
+
+    def test_archived_product_remains_unpublished(self):
+        self.product.active = False
+        result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
+        self.assertEqual(result["summary"]["error"], 1)
+        self.assertFalse(self.product.website_product_tmpl_id)
+        self.assertFalse(self.product.active)
+
+    def test_duplicate_or_conflicting_eplus_identity_is_rejected(self):
+        for duplicate in (True, False):
+            plan = self.plan()
+            sources = plan["publication_prices"][self.product.code]
+            if duplicate:
+                sources.append(dict(sources[0]))
+            else:
+                sources[0]["item_id"] += 1
+            result = self.service.apply_sync_plan(plan, publish_requested=True)
+            self.assertEqual(result["summary"]["error"], 1)
+            self.assertFalse(self.product.website_product_tmpl_id)
+
+    def test_public_user_cannot_refresh_or_publish(self):
+        service = self.service.with_user(self.env.ref("base.public_user"))
+        with self.assertRaises(AccessError):
+            service.prepare_publication_sync_plan(self.root.name)
+        with self.assertRaises(AccessError):
+            service.apply_sync_plan(self.plan(), publish_requested=True)
+
+    def test_refresh_and_import_finish_before_image_matching(self):
+        Snapshot = type(self.env["ab_eplus_stock_snapshot"])
+        events = []
+        row = self.env["ab_eplus_stock_snapshot"].create({
+            "itm_id": self.product.eplus_serial, "itm_code": self.product.code, "itm_qty": 1,
+        })
+        with patch.object(Snapshot, "action_refresh_from_eplus", side_effect=lambda: events.append("refresh")), \
+             patch.object(Snapshot, "_import_eplus_catalog_batch", side_effect=lambda: events.append("import")), \
+             patch.object(type(self.service), "prepare_sync_plan", side_effect=lambda path: events.append("plan") or {"report": [], "summary": {"missing": 0}}):
+            self.service.prepare_publication_sync_plan(self.root.name)
+        self.assertEqual(events, ["refresh", "import", "plan"])
+
+    def test_refresh_failure_prevents_image_application(self):
+        from odoo.exceptions import UserError
+        with patch.object(type(self.env["ab_eplus_stock_snapshot"]), "action_refresh_from_eplus", side_effect=UserError("Offline")):
+            with self.assertRaises(UserError):
+                self.service.prepare_publication_sync_plan(self.root.name)
+        self.assertFalse(self.product.website_product_tmpl_id)
+
+    def test_new_eplus_code_is_imported_priced_linked_and_published(self):
+        from odoo.addons.integration_queue_job.tests.common import trap_jobs
+        code = "IMG-EPLUS-NEW"
+        item_id = 99888777
+        with open(os.path.join(self.root.name, code + ".png"), "wb") as image:
+            image.write(PNG_1X1)
+        Snapshot = type(self.env["ab_eplus_stock_snapshot"])
+        with trap_jobs(), \
+             patch.object(Snapshot, "_fetch_eplus_stock_rows", return_value=[{
+                 "itm_id": item_id, "itm_code": code, "itm_qty": 2, "extra_data": {},
+             }]), \
+             patch.object(Snapshot, "_fetch_eplus_catalog_names", return_value={
+                 item_id: [(code, "Arabic product", "New Eplus product", True)],
+             }), \
+             patch.object(Snapshot, "_fetch_image_publication_prices", return_value={
+                 code: [{"item_id": item_id, "price": 67.5, "active": True}],
+                 self.product.code: [{"item_id": self.product.eplus_serial, "price": 10, "active": True}],
+             }):
+            plan = self.service.prepare_publication_sync_plan(self.root.name)
+            result = self.service.apply_sync_plan(plan, publish_requested=True)
+        product = self.env["ab_product"].search([("code", "=", code)])
+        self.assertEqual(len(product), 1)
+        self.assertEqual(product.eplus_serial, item_id)
+        self.assertEqual(product.default_price, 67.5)
+        self.assertEqual(product.website_product_tmpl_id.list_price, 67.5)
+        self.assertTrue(product.website_product_tmpl_id.is_published)
+        self.assertEqual(result["summary"]["published"], 2)
+
+    def test_master_write_rejection_preserves_image_price_and_publication(self):
+        template = self.product._sync_website_products(create_missing=True)
+        old_image = template.image_1920
+        plan = self.plan()
+        with patch.object(type(self.product), "write", side_effect=AccessError("Product replica is read only")):
+            result = self.service.apply_sync_plan(plan, publish_requested=True)
+        self.assertEqual(result["summary"]["error"], 1)
+        self.assertEqual(template.image_1920, old_image)
+        self.assertEqual(template.list_price, 10)
+        self.assertFalse(template.is_published)

@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import logging
+import math
 import os
 from collections import defaultdict
 
@@ -212,6 +213,43 @@ class ProductImageSyncService(models.AbstractModel):
         }
 
     @api.model
+    def prepare_publication_sync_plan(self, directory_path):
+        self.check_image_sync_access()
+        scan = self.scan_image_root(directory_path)
+        tokens = sorted({
+            token.strip()
+            for entry in scan["entries"]
+            for token in [entry["filename_without_extension"], *entry["parent_directory_names"]]
+            if token.strip()
+        })
+        self.env["ab_product"]._lock_website_sync()
+        Snapshot = self.env["ab_eplus_stock_snapshot"]
+        Snapshot.action_refresh_from_eplus()
+        rows = Snapshot.sudo().search([
+            ("active", "=", True),
+            ("itm_code", "in", tokens),
+        ])
+        for offset in range(0, len(rows), 100):
+            rows[offset:offset + 100]._import_eplus_catalog_batch()
+        plan = self.prepare_sync_plan(directory_path)
+        codes = sorted({line["product_code"] for line in plan["report"]
+                        if line["status"] in ("matched", "unchanged") and line["product_code"]})
+        plan["publication_prices"] = Snapshot._fetch_image_publication_prices(codes) if codes else {}
+        reported_paths = {line["image_path"] for line in plan["report"] if line.get("image_path")}
+        matched_tokens = {
+            self._normalize_identifier(line["matched_identifier"])
+            for line in plan["report"] if line.get("matched_identifier")
+        }
+        for entry in scan["entries"]:
+            if entry["absolute_path"] not in reported_paths and not self._entry_tokens(entry) & matched_tokens:
+                plan["report"].append(self._report_line(
+                    status="missing", image_entry=entry,
+                    reason=_("No linked Abdin product was found for this image. Check the product code and product replication."),
+                ))
+                plan["summary"]["missing"] += 1
+        return plan
+
+    @api.model
     def _new_summary(self, product_count, image_count):
         return {
             "products_scanned": product_count,
@@ -227,6 +265,7 @@ class ProductImageSyncService(models.AbstractModel):
             "new_images": 0,
             "replacements": 0,
             "kept_existing": 0,
+            "published": 0,
         }
 
     @api.model
@@ -403,7 +442,7 @@ class ProductImageSyncService(models.AbstractModel):
         return self._file_sha256(WEBSITE_PLACEHOLDER_IMAGE_PATH)
 
     @api.model
-    def apply_sync_plan(self, plan, batch_size=100, replace_existing=True):
+    def apply_sync_plan(self, plan, batch_size=100, replace_existing=True, publish_requested=False):
         self.check_image_sync_access()
         report = []
         summary = dict(plan["summary"])
@@ -415,8 +454,9 @@ class ProductImageSyncService(models.AbstractModel):
             len(updates),
         )
         Product = self.env["ab_product"].sudo()
+        eligible_statuses = ("matched", "unchanged") if publish_requested else ("matched",)
         for line in plan["report"]:
-            if line["status"] != "matched" or not line.get("product_id"):
+            if line["status"] not in eligible_statuses or not line.get("product_id"):
                 report.append(line)
                 continue
             if line.get("replaces_existing") and not replace_existing:
@@ -442,14 +482,28 @@ class ProductImageSyncService(models.AbstractModel):
                         )
                         if len(template) != 1 or template.is_published:
                             raise UserError(_("The website product draft could not be created safely."))
-                    if not template._apply_website_sync_image(
+                    image_changed = template._apply_website_sync_image(
                         image_payload,
                         source_checksum=source_checksum,
-                    ):
+                    )
+                    if publish_requested:
+                        self._publish_image_product(product, template, plan)
+                if publish_requested:
+                    summary["published"] = summary.get("published", 0) + 1
+                if not image_changed:
+                    if line["status"] != "unchanged":
                         summary["unchanged"] += 1
-                        report.append(dict(line, status="unchanged", reason=_("The current Odoo image already matches the source file checksum.")))
-                        continue
-                updated_line = dict(line, status="updated", reason=_("Image synchronized."))
+                    report.append(dict(
+                        line, status="unchanged",
+                        reason=_("Image synchronized and product published.") if publish_requested
+                        else _("The current Odoo image already matches the source file checksum."),
+                    ))
+                    continue
+                updated_line = dict(
+                    line, status="updated",
+                    reason=_("Image synchronized and product published.") if publish_requested
+                    else _("Image synchronized."),
+                )
                 summary["updated"] += 1
                 report.append(updated_line)
             except (SerializationFailure, DeadlockDetected):
@@ -457,6 +511,8 @@ class ProductImageSyncService(models.AbstractModel):
             except Exception as error:
                 _logger.exception("Failed to synchronize product image for ab_product id=%s", product.id)
                 summary["error"] += 1
+                if line["status"] == "unchanged":
+                    summary["unchanged"] -= 1
                 report.append(dict(line, status="error", reason=str(error)))
             if len(report) % batch_size == 0:
                 self.env.flush_all()
@@ -470,6 +526,39 @@ class ProductImageSyncService(models.AbstractModel):
             summary.get("error", 0),
         )
         return dict(plan, summary=summary, report=report)
+
+    @api.model
+    def _publish_image_product(self, product, template, plan):
+        sources = plan.get("publication_prices", {}).get(product.code, [])
+        if len(sources) != 1:
+            raise UserError(_("A unique Eplus price could not be found. The product was not published."))
+        source = sources[0]
+        price = float(source["price"] or 0)
+        if (
+            not source["active"] or not product.active
+            or (product.eplus_serial and product.eplus_serial != source["item_id"])
+            or not math.isfinite(price) or price <= 0
+            or (not product.allow_sale and not product.eplus_catalog_draft)
+        ):
+            raise UserError(_("The product needs an active Eplus item, a valid selling price and sale permission before publication."))
+        values = {}
+        if not product.website_sale_available:
+            values["website_sale_available"] = True
+        if product.default_price != price:
+            values["default_price"] = price
+        if product.eplus_catalog_draft:
+            values.update(allow_sale=True, eplus_catalog_draft=False)
+        old_price = template.list_price
+        old_source_price = product.default_price
+        if values:
+            product.write(values)
+        template.write({"list_price": price, "sale_ok": True, "is_published": True})
+        if old_price != price or old_source_price != price:
+            template.message_post(body=_(
+                "Eplus image publication: website price %(old)s → %(new)s; "
+                "source price %(source)s → %(new)s. Actor: %(actor)s. Date: %(date)s."
+            ) % {"old": old_price, "new": price, "source": old_source_price,
+                 "actor": self.env.user.display_name, "date": fields.Datetime.now()})
 
     @api.model
     def _report_line(
@@ -514,6 +603,7 @@ class ProductImageSyncService(models.AbstractModel):
             ("new_images", _("New images")),
             ("replacements", _("Existing images requiring replacement")),
             ("updated", _("Updated images")),
+            ("published", _("Published products")),
             ("kept_existing", _("Existing images kept")),
             ("error", _("Errors")),
         ]

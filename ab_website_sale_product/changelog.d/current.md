@@ -2,14 +2,52 @@
 
 ## Current changes before commit:
 
-- Rename the product-code publication action, kanban/list buttons, wizard heading, confirmation button, and notification so their publication effect is clear.
-- Translate the new labels and availability help in both Arabic catalogs while preserving existing translations.
-- Clarify the difference between code-based publishing and unpublished E-Plus draft creation in the sync reference.
+- Refresh E-Plus first and finish imports for uploaded image codes before building the synchronization plan.
+- Read the E-Plus selling price through the existing connector using parameterized, batched catalog reads without NOLOCK.
+- Link or create website templates, apply valid images and prices, enable eligible products, and publish them in a per-product transaction.
+- Record old/new website and source prices, actor and time in the product chatter; retain replica write protection.
+- Publish eligible products even when their image already matches; report missing records, invalid prices and denied operations.
+- Add English/Arabic publication results and focused import, price, rollback, permissions and retry coverage.
 
 Files changed:
 
 - `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/add_many_by_codes_wizard.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/models/product_image_sync.py`
+- `ab_website_sale_product/tests/test_website_category_mapping.py`
+
+Validation:
+
+- Targeted upgrade of both affected modules on `codex_eplus_sync_20261104`, ports `5069/5072`, passed.
+- Focused suite: 29 tests, zero failures/errors; `/tmp/image-publication-verified.log`.
+- External E-Plus reads were mocked in tests; no live product publication was executed.
+- The isolated filestore lacks some pre-existing attachments; Odoo logged missing fixture attachments without test failures.
+- Both Arabic catalogs pass `msgfmt --check-format`; Python AST and `git diff --check` pass.
+- Runtime `en_US`/`ar_001` checks passed for the new publication counter and E-Plus stock action.
+
+Operational boundary:
+
+- A product replica still requires the authoritative product to arrive through supported replication. Missing products and prohibited master-price/availability writes are reported, not bypassed.
+
+## Recent commits
+
+Commit: `fe401bde`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_website_sale_product/IMP: label code-based product publishing clearly`
+
+User-facing changes:
+
+- Clarify that the code-based product action publishes products, and translate its labels.
+
+Files changed:
+
 - `ab_website_sale_product/README_website_product_sync.md`
+- `ab_website_sale_product/changelog.d/current.md`
 - `ab_website_sale_product/i18n/ab_website_sale_product.pot`
 - `ab_website_sale_product/i18n/ar.po`
 - `ab_website_sale_product/i18n/ar_001.po`
@@ -17,15 +55,6 @@ Files changed:
 - `ab_website_sale_product/models/add_many_by_codes_wizard.py`
 - `ab_website_sale_product/views/ab_product_kanban_views.xml`
 - `ab_website_sale_product/views/add_many_by_codes_views.xml`
-
-Validation:
-
-- Targeted upgrade on `codex_eplus_sync_20261104`, ports `5069/5072`, succeeded with no Odoo errors; log `/tmp/eplus_publish_label_final_upgrade.log`.
-- Both Arabic catalogs passed `msgfmt --check-format`.
-- Runtime action and kanban button read `Publish Products by Code` in `en_US` and `نشر المنتجات بالأكواد` in `ar_001`.
-- Publication logic and existing XML IDs are unchanged.
-
-## Recent commits
 
 Commit: `124ad69c`
 Author: Mohamed Fawzy
