@@ -111,5 +111,77 @@
         </record>
 
 
+        <record id="job_wizard_view_form_layout" model="ir.ui.view">
+            <field name="name">job_wizard_view_form.layout</field>
+            <field name="model">ab_hr_job_wizard</field>
+            <field name="inherit_id" ref="ab_hr.job_wizard_view_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="job_wizard_view_form_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+        .job_wizard_view_form_layout .o_group, .job_wizard_view_form_layout .o_inner_group, .job_wizard_view_form_layout .o_wrap_field,
+        .job_wizard_view_form_layout .o_notebook, .job_wizard_view_form_layout .o_notebook_content, .job_wizard_view_form_layout .tab-pane,
+        .job_wizard_view_form_layout .o_field_widget, .job_wizard_view_form_layout .o_field_x2many { min-width: 0; max-width: 100%; }
+        .job_wizard_view_form_layout .o_notebook, .job_wizard_view_form_layout .o_notebook_content, .job_wizard_view_form_layout .tab-pane,
+        .job_wizard_view_form_layout .o_field_one2many, .job_wizard_view_form_layout .o_field_many2many, .job_wizard_view_form_layout .o_field_x2many { overflow: visible !important; }
+        .job_wizard_view_form_layout .o_field_x2many .o_list_renderer.table-responsive {
+            width: 100%; max-width: 100%; margin-inline: 0 !important; overflow-x: auto !important; overflow-y: auto !important;
+        }
+        .job_wizard_view_form_layout .o_field_html { width: 100%; overflow-x: auto; }
+        .job_wizard_view_form_layout .o_field_html .abdin-query-html { height: auto !important; overflow: visible !important; }
+        </style>
+                </xpath>
+                <xpath expr="//form/script" position="replace"/>
+                <xpath expr="//form" position="inside">
+                    <style>.modal-dialog:has(.job_wizard_view_form_layout) { width: calc(100% - 2rem); max-width: 960px; }</style>
+                </xpath>
+                <xpath expr="(//sheet/group[contains(@class,&quot;h2&quot;)])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[contains(@class,&quot;h2&quot;)])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[contains(@class,&quot;h2&quot;)])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[contains(@class,&quot;h2&quot;)])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[contains(@class,&quot;h2&quot;)])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[contains(@class,&quot;h2&quot;)])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//group/field[@name=&quot;accid&quot;])[not(@class=&quot;h4 text-muted w-100&quot;)]" position="attributes">
+                    <attribute name="class">h4 text-muted w-100</attribute>
+                    <attribute name="colspan">2</attribute>
+                </xpath>
+                <xpath expr="(//div[div/field[@name=&quot;action_type&quot;]])[not(@class=&quot;row g-3 mx-0 mb-4&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 mx-0 mb-4</attribute>
+                </xpath>
+                <xpath expr="(//div[div/field[@name=&quot;action_type&quot;]]/div)[not(@class=&quot;col-12 col-md-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-4</attribute>
+                </xpath>
+                <xpath expr="(//div[div/field[@name=&quot;action_type&quot;]]/div)[not(@class=&quot;col-12 col-md-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-4</attribute>
+                </xpath>
+                <xpath expr="(//div[div/field[@name=&quot;action_type&quot;]]/div)[not(@class=&quot;col-12 col-md-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;text-center pt-5&quot;])[not(@class=&quot;mb-3&quot;)]" position="attributes">
+                    <attribute name="class">mb-3</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

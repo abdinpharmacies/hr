@@ -143,5 +143,42 @@
                   sequence="11"/>
 
 
+        <record id="history_report_view_form_layout" model="ir.ui.view">
+            <field name="name">history_report_view_form.layout</field>
+            <field name="model">ab_hr_history_report</field>
+            <field name="inherit_id" ref="ab_hr.history_report_view_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="history_report_view_form_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+        .history_report_view_form_layout .o_group, .history_report_view_form_layout .o_inner_group, .history_report_view_form_layout .o_wrap_field,
+        .history_report_view_form_layout .o_notebook, .history_report_view_form_layout .o_notebook_content, .history_report_view_form_layout .tab-pane,
+        .history_report_view_form_layout .o_field_widget, .history_report_view_form_layout .o_field_x2many { min-width: 0; max-width: 100%; }
+        .history_report_view_form_layout .o_notebook, .history_report_view_form_layout .o_notebook_content, .history_report_view_form_layout .tab-pane,
+        .history_report_view_form_layout .o_field_one2many, .history_report_view_form_layout .o_field_many2many, .history_report_view_form_layout .o_field_x2many { overflow: visible !important; }
+        .history_report_view_form_layout .o_field_x2many .o_list_renderer.table-responsive {
+            width: 100%; max-width: 100%; margin-inline: 0 !important; overflow-x: auto !important; overflow-y: auto !important;
+        }
+        .history_report_view_form_layout .o_field_html { width: 100%; overflow-x: auto; }
+        .history_report_view_form_layout .o_field_html .abdin-query-html { height: auto !important; overflow: visible !important; }
+        </style>
+                </xpath>
+                <xpath expr="(//div[field[@name=&quot;action_type&quot;]])[not(@class=&quot;d-flex flex-wrap align-items-center gap-2 mb-3 text-muted&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-wrap align-items-center gap-2 mb-3 text-muted</attribute>
+                </xpath>
+                <xpath expr="(//div/field[@name=&quot;action_type&quot; or @name=&quot;manpower_effect&quot; or @name=&quot;delay_per_day&quot;])[not(@class=&quot;w-auto&quot;)]" position="attributes">
+                    <attribute name="class">w-auto</attribute>
+                </xpath>
+                <xpath expr="(//div/field[@name=&quot;action_type&quot; or @name=&quot;manpower_effect&quot; or @name=&quot;delay_per_day&quot;])[not(@class=&quot;w-auto&quot;)]" position="attributes">
+                    <attribute name="class">w-auto</attribute>
+                </xpath>
+                <xpath expr="(//div/field[@name=&quot;action_type&quot; or @name=&quot;manpower_effect&quot; or @name=&quot;delay_per_day&quot;])[not(@class=&quot;w-auto&quot;)]" position="attributes">
+                    <attribute name="class">w-auto</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

@@ -156,5 +156,16 @@
                   sequence="30"/>
 
 
+        <record id="manpower_need_view_tree_layout" model="ir.ui.view">
+            <field name="name">manpower_need_view_tree.layout</field>
+            <field name="model">ab_hr_manpower_need</field>
+            <field name="inherit_id" ref="ab_hr.manpower_need_view_tree"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="(//list/field[@name=&quot;can_access_history&quot;])[not(@column_invisible=&quot;True&quot;)]" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

@@ -34,6 +34,31 @@
                 </form>
             </field>
         </record>
+        <record id="ab_hr_report_wizard_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_hr_report_wizard_view_form.layout</field>
+            <field name="model">ab_hr_report_wizard</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_report_wizard_view_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_hr_report_wizard_view_form_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+        .ab_hr_report_wizard_view_form_layout .o_group, .ab_hr_report_wizard_view_form_layout .o_inner_group, .ab_hr_report_wizard_view_form_layout .o_wrap_field,
+        .ab_hr_report_wizard_view_form_layout .o_notebook, .ab_hr_report_wizard_view_form_layout .o_notebook_content, .ab_hr_report_wizard_view_form_layout .tab-pane,
+        .ab_hr_report_wizard_view_form_layout .o_field_widget, .ab_hr_report_wizard_view_form_layout .o_field_x2many { min-width: 0; max-width: 100%; }
+        .ab_hr_report_wizard_view_form_layout .o_notebook, .ab_hr_report_wizard_view_form_layout .o_notebook_content, .ab_hr_report_wizard_view_form_layout .tab-pane,
+        .ab_hr_report_wizard_view_form_layout .o_field_one2many, .ab_hr_report_wizard_view_form_layout .o_field_many2many, .ab_hr_report_wizard_view_form_layout .o_field_x2many { overflow: visible !important; }
+        .ab_hr_report_wizard_view_form_layout .o_field_x2many .o_list_renderer.table-responsive {
+            width: 100%; max-width: 100%; margin-inline: 0 !important; overflow-x: auto !important; overflow-y: auto !important;
+        }
+        .ab_hr_report_wizard_view_form_layout .o_field_html { width: 100%; overflow-x: auto; }
+        .ab_hr_report_wizard_view_form_layout .o_field_html .abdin-query-html { height: auto !important; overflow: visible !important; }
+        </style>
+                </xpath>
+            </field>
+        </record>
     </data>
 
     <record id="ab_hr_report_wizard_action" model="ir.actions.act_window">
