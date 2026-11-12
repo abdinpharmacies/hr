@@ -318,5 +318,177 @@
                   sequence="20"/>
 
 
+        <record id="ab_hr_action_wizard_form_layout" model="ir.ui.view">
+            <field name="name">ab_hr_action_wizard_form.layout</field>
+            <field name="model">ab_hr_action_wizard</field>
+            <field name="inherit_id" ref="ab_hr_payroll.ab_hr_action_wizard_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_hr_action_wizard_form_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+        .ab_hr_action_wizard_form_layout .o_group, .ab_hr_action_wizard_form_layout .o_inner_group, .ab_hr_action_wizard_form_layout .o_wrap_field,
+        .ab_hr_action_wizard_form_layout .o_notebook, .ab_hr_action_wizard_form_layout .o_notebook_content, .ab_hr_action_wizard_form_layout .tab-pane,
+        .ab_hr_action_wizard_form_layout .o_field_widget, .ab_hr_action_wizard_form_layout .o_field_x2many { min-width: 0; max-width: 100%; }
+        .ab_hr_action_wizard_form_layout .o_notebook, .ab_hr_action_wizard_form_layout .o_notebook_content, .ab_hr_action_wizard_form_layout .tab-pane,
+        .ab_hr_action_wizard_form_layout .o_field_one2many, .ab_hr_action_wizard_form_layout .o_field_many2many, .ab_hr_action_wizard_form_layout .o_field_x2many { overflow: visible !important; }
+        .ab_hr_action_wizard_form_layout .o_field_x2many .o_list_renderer.table-responsive {
+            width: 100%; max-width: 100%; margin-inline: 0 !important; overflow-x: auto !important; overflow-y: auto !important;
+        }
+        .ab_hr_action_wizard_form_layout .o_field_html { width: 100%; overflow-x: auto; }
+        .ab_hr_action_wizard_form_layout .o_field_html .abdin-query-html { height: auto !important; overflow: visible !important; }
+        </style>
+                </xpath>
+                <xpath expr="//div[@class='oe_chatter']" position="replace">
+                    <chatter/>
+                </xpath>
+                <xpath expr="(//group[field[@name=&quot;explain&quot;]])[not(@class=&quot;mb-4&quot;)]" position="attributes">
+                    <attribute name="class">mb-4</attribute>
+                    <attribute name="col">2</attribute>
+                </xpath>
+                <xpath expr="(//group/field[@name=&quot;explain&quot;])[not(@class=&quot;h3 w-100&quot;)]" position="attributes">
+                    <attribute name="class">h3 w-100</attribute>
+                    <attribute name="colspan">2</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;d-flex flex-column align-items-center&quot;])[not(@class=&quot;mb-4&quot;)]" position="attributes">
+                    <attribute name="class">mb-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;card border-info&quot;])[not(@class=&quot;card border-info w-100&quot;)]" position="attributes">
+                    <attribute name="class">card border-info w-100</attribute>
+                    <attribute name="style"/>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;card-body&quot;]/group[group/field[@name=&quot;status&quot;]])[not(@name=&quot;hr_criteria_original&quot;)]" position="attributes">
+                    <attribute name="name">hr_criteria_original</attribute>
+                </xpath>
+                <xpath expr="//*[@name=&quot;hr_criteria_original&quot;]" position="before">
+                    <div class="row g-4">
+                        <div name="hr_criteria_filters" class="col-12 col-xl-8"/>
+                        <div name="hr_criteria_paste" class="col-12 col-xl-4"/>
+                    </div>
+                </xpath>
+                <xpath expr="//*[@name=&quot;hr_criteria_filters&quot;]" position="inside">
+                    <xpath expr="//group[field[@name=&quot;status&quot;]]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;hr_criteria_paste&quot;]" position="inside">
+                    <xpath expr="//div[@class=&quot;row&quot;][div/field[@name=&quot;pasted_type&quot;]]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;hr_criteria_original&quot;]" position="replace"/>
+                <xpath expr="(//*[@name=&quot;hr_criteria_paste&quot;]/div)[not(@class=&quot;row g-3&quot;)]" position="attributes">
+                    <attribute name="class">row g-3</attribute>
+                </xpath>
+                <xpath expr="(//div[field[@name=&quot;pasted_type&quot;]])[not(@class=&quot;col-12&quot;)]" position="attributes">
+                    <attribute name="class">col-12</attribute>
+                </xpath>
+                <xpath expr="(//div[button[@name=&quot;search_button&quot;]])[not(@class=&quot;col-12 d-flex flex-wrap gap-2&quot;)]" position="attributes">
+                    <attribute name="class">col-12 d-flex flex-wrap gap-2</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;search_button&quot;])[not(@class=&quot;btn-info flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">btn-info flex-grow-1</attribute>
+                    <attribute name="style"/>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;filter_button&quot;])[not(@class=&quot;btn-outline-dark flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-dark flex-grow-1</attribute>
+                    <attribute name="style"/>
+                </xpath>
+                <xpath expr="(//*[@name=&quot;hr_criteria_paste&quot;]//button[@name=&quot;report_button&quot;])[not(@class=&quot;btn-outline-info flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-info flex-grow-1</attribute>
+                    <attribute name="style"/>
+                </xpath>
+                <xpath expr="//field[@name=&quot;pasted_type&quot;]" position="before">
+                    <label for="pasted_type" class="mb-2"/>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;pasted_salaries&quot; or @name=&quot;exceptions&quot;])[not(@class=&quot;w-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;pasted_salaries&quot; or @name=&quot;exceptions&quot;])[not(@class=&quot;w-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;container ml-5&quot;])[not(@class=&quot;mb-4&quot;)]" position="attributes">
+                    <attribute name="class">mb-4</attribute>
+                </xpath>
+                <xpath expr="(//div[div/button[@name=&quot;btn_sal_payment_type&quot;]])[not(@class=&quot;row g-3 align-items-end&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 align-items-end</attribute>
+                </xpath>
+                <xpath expr="(//div[button[@name=&quot;btn_sal_payment_type&quot;]])[not(@class=&quot;col-12 col-md-5&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-5</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_sal_payment_type&quot;])[not(@class=&quot;btn-warning w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-warning w-100</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;set_payment_type_id&quot;])[not(@class=&quot;col-12 col-md-7&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-7</attribute>
+                </xpath>
+                <xpath expr="(//page/div[@class=&quot;row&quot;])[not(@class=&quot;row g-2 mb-3&quot;)]" position="attributes">
+                    <attribute name="class">row g-2 mb-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div[@class=&quot;row&quot;])[not(@class=&quot;row g-2 mb-3&quot;)]" position="attributes">
+                    <attribute name="class">row g-2 mb-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page/div/div[@class=&quot;col-2&quot;])[not(@class=&quot;col-12 col-sm-6 col-lg-3&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-sm-6 col-lg-3</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;report_button&quot;])[not(@class=&quot;btn-info w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-info w-100</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;btn_print_pdf_salaries_html&quot;])[not(@class=&quot;btn-info w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-info w-100</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;btn_export_excel_salaries&quot;])[not(@class=&quot;btn-success w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-success w-100</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;btn_browse_salaries_compare_html&quot;])[not(@class=&quot;btn-warning w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-warning w-100</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;btn_browse_issues_salaries_compare_html&quot;])[not(@class=&quot;btn-warning w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-warning w-100</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;btn_print_pdf_salaries_compare_html&quot;])[not(@class=&quot;btn-info w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-info w-100</attribute>
+                </xpath>
+                <xpath expr="(//page//button[@name=&quot;btn_export_excel_salaries_compare&quot;])[not(@class=&quot;btn-success w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-success w-100</attribute>
+                </xpath>
+                <xpath expr="(//page/div[button[@name=&quot;print_report_excel&quot;]])[not(@class=&quot;d-flex flex-wrap gap-2 mb-3&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-wrap gap-2 mb-3</attribute>
+                </xpath>
+                <xpath expr="(//span[label[@for=&quot;sal_count&quot;]])[not(@class=&quot;d-inline-flex flex-wrap align-items-baseline gap-2 h5 mb-3&quot;)]" position="attributes">
+                    <attribute name="class">d-inline-flex flex-wrap align-items-baseline gap-2 h5 mb-3</attribute>
+                </xpath>
+                <xpath expr="(//span/field[@name=&quot;sal_count&quot;])[not(@class=&quot;w-auto&quot;)]" position="attributes">
+                    <attribute name="class">w-auto</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="ab_hr_action_wizard_list_layout" model="ir.ui.view">
+            <field name="name">ab_hr_action_wizard_list.layout</field>
+            <field name="model">ab_hr_action_wizard</field>
+            <field name="inherit_id" ref="ab_hr_payroll.ab_hr_action_wizard_list"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="(//list/field[@name=&quot;action_taken&quot;])[not(@column_invisible=&quot;True&quot;)]" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

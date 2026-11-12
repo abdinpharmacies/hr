@@ -50,6 +50,79 @@
 
             </field>
         </record>
+        <record id="ab_accounting_je_header_view_form_inherit_layout" model="ir.ui.view">
+            <field name="name">ab_accounting_je_header_view_form_inherit.layout</field>
+            <field name="model">ab_accounting_je_header</field>
+            <field name="inherit_id" ref="ab_hr_payroll.ab_accounting_je_header_view_form_inherit"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_accounting_je_header_view_form_inherit_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+        .ab_accounting_je_header_view_form_inherit_layout .o_group, .ab_accounting_je_header_view_form_inherit_layout .o_inner_group, .ab_accounting_je_header_view_form_inherit_layout .o_wrap_field,
+        .ab_accounting_je_header_view_form_inherit_layout .o_notebook, .ab_accounting_je_header_view_form_inherit_layout .o_notebook_content, .ab_accounting_je_header_view_form_inherit_layout .tab-pane,
+        .ab_accounting_je_header_view_form_inherit_layout .o_field_widget, .ab_accounting_je_header_view_form_inherit_layout .o_field_x2many { min-width: 0; max-width: 100%; }
+        .ab_accounting_je_header_view_form_inherit_layout .o_notebook, .ab_accounting_je_header_view_form_inherit_layout .o_notebook_content, .ab_accounting_je_header_view_form_inherit_layout .tab-pane,
+        .ab_accounting_je_header_view_form_inherit_layout .o_field_one2many, .ab_accounting_je_header_view_form_inherit_layout .o_field_many2many, .ab_accounting_je_header_view_form_inherit_layout .o_field_x2many { overflow: visible !important; }
+        .ab_accounting_je_header_view_form_inherit_layout .o_field_x2many .o_list_renderer.table-responsive {
+            width: 100%; max-width: 100%; margin-inline: 0 !important; overflow-x: auto !important; overflow-y: auto !important;
+        }
+        .ab_accounting_je_header_view_form_inherit_layout .o_field_html { width: 100%; overflow-x: auto; }
+        .ab_accounting_je_header_view_form_inherit_layout .o_field_html .abdin-query-html { height: auto !important; overflow: visible !important; }
+        </style>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;row&quot;][div//field[@name=&quot;costcenter_codes&quot; or @name=&quot;from_excel&quot;]])[not(@class=&quot;row g-3 align-items-start&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 align-items-start</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;row&quot;][div//field[@name=&quot;costcenter_codes&quot; or @name=&quot;from_excel&quot;]])[not(@class=&quot;row g-3 align-items-start&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 align-items-start</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-10&quot;][.//field[@name=&quot;costcenter_codes&quot; or @name=&quot;from_excel&quot;]])[not(@class=&quot;col-12 col-md-9&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-9</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-10&quot;][.//field[@name=&quot;costcenter_codes&quot; or @name=&quot;from_excel&quot;]])[not(@class=&quot;col-12 col-md-9&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-9</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-2&quot;][.//button])[not(@class=&quot;col-12 col-md-3 d-flex flex-wrap gap-2&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-3 d-flex flex-wrap gap-2</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-2&quot;][.//button])[not(@class=&quot;col-12 col-md-3 d-flex flex-wrap gap-2&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-3 d-flex flex-wrap gap-2</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;h-50&quot;])[not(@class=&quot;flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">flex-grow-1</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;h-50&quot;])[not(@class=&quot;flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">flex-grow-1</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;h-50&quot;])[not(@class=&quot;flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">flex-grow-1</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;h-50&quot;])[not(@class=&quot;flex-grow-1&quot;)]" position="attributes">
+                    <attribute name="class">flex-grow-1</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_create_je&quot;])[not(@class=&quot;btn-outline-success w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-success w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_remove_all_je&quot;])[not(@class=&quot;btn-outline-danger w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-danger w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_remove_all_je&quot;])[not(@class=&quot;btn-outline-danger w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-danger w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_add_data_from_excel&quot;])[not(@class=&quot;btn-outline-success w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-success w-100</attribute>
+                </xpath>
+                <xpath expr="(//button[@name=&quot;btn_update_data_from_excel&quot;])[not(@class=&quot;btn-outline-warning w-100&quot;)]" position="attributes">
+                    <attribute name="class">btn-outline-warning w-100</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;d-flex justify-content-between&quot;])[not(@class=&quot;d-flex flex-wrap gap-2 align-items-center w-100&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-wrap gap-2 align-items-center w-100</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
     <record id="ab_accounting_je_header_view_inherit" model="ir.ui.view">
         <field name="name">account_header</field>
