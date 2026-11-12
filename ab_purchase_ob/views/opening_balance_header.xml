@@ -125,5 +125,141 @@
         <menuitem id="ab_purchase_ob_header_menu" name="Opening Balance" parent="ab_product_source.menu_root"
                   action="ab_purchase_ob_header_action" sequence="3"/>
 
+        <record id="ab_purchase_ob_header_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_purchase_ob_header_view_form.layout</field>
+            <field name="model">ab_purchase_ob_header</field>
+            <field name="inherit_id" ref="ab_purchase_ob_header_view_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="after">
+                    <div name="ab_purchase_ob_header_view_form_totals" class="row g-3 mb-4">
+                        <div class="col-12 col-md-6 col-xl-4" name="ab_purchase_ob_header_view_form_layout_1"/>
+                        <div class="col-12 col-md-6 col-xl-4" name="ab_purchase_ob_header_view_form_layout_2"/>
+                        <div class="col-12 col-md-6 col-xl-4" name="ab_purchase_ob_header_view_form_layout_3"/>
+                    </div>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_purchase_ob_header_view_form_layout_1&quot;]" position="inside">
+                    <xpath expr="//div[@name=&quot;button_box&quot;]/button[@name=&quot;compute_totals&quot;][.//field[@name=&quot;total_price&quot;]]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_purchase_ob_header_view_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//div[@name=&quot;button_box&quot;]/button[@name=&quot;compute_totals&quot;][.//field[@name=&quot;total_cost&quot;]]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_purchase_ob_header_view_form_layout_3&quot;]" position="inside">
+                    <xpath expr="//div[@name=&quot;button_box&quot;]/button[@name=&quot;compute_totals&quot;][.//field[@name=&quot;lines_count&quot;]]" position="move"/>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button)[not(@class=&quot;btn btn-light border rounded d-flex align-items-center gap-3 text-start w-100 h-100 p-3&quot;)]" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class">btn btn-light border rounded d-flex align-items-center gap-3 text-start w-100 h-100 p-3</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button)[not(@class=&quot;btn btn-light border rounded d-flex align-items-center gap-3 text-start w-100 h-100 p-3&quot;)]" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class">btn btn-light border rounded d-flex align-items-center gap-3 text-start w-100 h-100 p-3</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button)[not(@class=&quot;btn btn-light border rounded d-flex align-items-center gap-3 text-start w-100 h-100 p-3&quot;)]" position="attributes">
+                    <attribute name="width"/>
+                    <attribute name="class">btn btn-light border rounded d-flex align-items-center gap-3 text-start w-100 h-100 p-3</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button/div[span[@class=&quot;o_stat_text&quot;]])[not(@class=&quot;d-flex flex-column text-muted small&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column text-muted small</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button/div[span[@class=&quot;o_stat_text&quot;]])[not(@class=&quot;d-flex flex-column text-muted small&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column text-muted small</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button/div[span[@class=&quot;o_stat_text&quot;]])[not(@class=&quot;d-flex flex-column text-muted small&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column text-muted small</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button/div[span[@class=&quot;o_stat_value&quot;]])[not(@class=&quot;d-flex flex-column ms-auto text-end fw-semibold&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column ms-auto text-end fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button/div[span[@class=&quot;o_stat_value&quot;]])[not(@class=&quot;d-flex flex-column ms-auto text-end fw-semibold&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column ms-auto text-end fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//button/div[span[@class=&quot;o_stat_value&quot;]])[not(@class=&quot;d-flex flex-column ms-auto text-end fw-semibold&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-column ms-auto text-end fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_text&quot;])[not(@class=&quot;d-block text-wrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-wrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_text&quot;])[not(@class=&quot;d-block text-wrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-wrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_text&quot;])[not(@class=&quot;d-block text-wrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-wrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_text&quot;])[not(@class=&quot;d-block text-wrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-wrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_value&quot;])[not(@class=&quot;d-block text-nowrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-nowrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_value&quot;])[not(@class=&quot;d-block text-nowrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-nowrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_value&quot;])[not(@class=&quot;d-block text-nowrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-nowrap</attribute>
+                </xpath>
+                <xpath expr="(//div[@name=&quot;ab_purchase_ob_header_view_form_totals&quot;]//span[@class=&quot;o_stat_value&quot;])[not(@class=&quot;d-block text-nowrap&quot;)]" position="attributes">
+                    <attribute name="class">d-block text-nowrap</attribute>
+                </xpath>
+                <xpath expr="(//widget[@name=&quot;web_ribbon&quot;])[not(@class=&quot;position-relative&quot;)]" position="attributes">
+                    <attribute name="class">position-relative</attribute>
+                    <attribute name="style">height: 6rem; --Ribbon-wrapper-width: 6rem; --Ribbon-font-size: .75rem; --Ribbon-height: 1.75rem;</attribute>
+                </xpath>
+                <xpath expr="(//widget[@name=&quot;web_ribbon&quot;])[not(@class=&quot;position-relative&quot;)]" position="attributes">
+                    <attribute name="class">position-relative</attribute>
+                    <attribute name="style">height: 6rem; --Ribbon-wrapper-width: 6rem; --Ribbon-font-size: .75rem; --Ribbon-height: 1.75rem;</attribute>
+                </xpath>
+                <xpath expr="(//widget[@name=&quot;web_ribbon&quot;])[not(@class=&quot;position-relative&quot;)]" position="attributes">
+                    <attribute name="class">position-relative</attribute>
+                    <attribute name="style">height: 6rem; --Ribbon-wrapper-width: 6rem; --Ribbon-font-size: .75rem; --Ribbon-height: 1.75rem;</attribute>
+                </xpath>
+                <xpath expr="//div[@name='ab_purchase_ob_header_view_form_totals']" position="before">
+                    <xpath expr="//widget[@name=&quot;web_ribbon&quot;][@bg_color=&quot;bg-danger&quot;]" position="move"/>
+                    <xpath expr="//widget[@name=&quot;web_ribbon&quot;][@bg_color=&quot;bg-success&quot;]" position="move"/>
+                    <xpath expr="//widget[@name=&quot;web_ribbon&quot;][@bg_color=&quot;bg-info&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//div[@class='oe_chatter']" position="replace">
+                    <chatter/>
+                </xpath>
+                <xpath expr="(//sheet/notebook)[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//list/field[@invisible=&quot;1&quot;])[not(@column_invisible=&quot;True&quot;)]" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="(//list/field[@invisible=&quot;1&quot;])[not(@column_invisible=&quot;True&quot;)]" position="attributes">
+                    <attribute name="column_invisible">True</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_purchase_ob_header_view_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+                            .ab_purchase_ob_header_view_layout .o_notebook,
+                            .ab_purchase_ob_header_view_layout .o_notebook_content,
+                            .ab_purchase_ob_header_view_layout .tab-pane,
+                            .ab_purchase_ob_header_view_layout .o_field_widget.o_field_one2many,
+                            .ab_purchase_ob_header_view_layout .o_field_widget.o_field_many2many,
+                            .ab_purchase_ob_header_view_layout .o_field_x2many {
+                                min-width: 0;
+                                max-width: 100%;
+                                overflow: visible !important;
+                            }
+                            .ab_purchase_ob_header_view_layout .o_field_x2many .o_list_renderer.table-responsive {
+                                width: 100%;
+                                max-width: 100%;
+                                margin-inline: 0 !important;
+                                overflow-x: auto !important;
+                                overflow-y: auto !important;
+                            }
+                        </style>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
