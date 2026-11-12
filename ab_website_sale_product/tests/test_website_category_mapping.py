@@ -748,6 +748,20 @@ class TestImageSyncCompletion(TransactionCase):
         self.assertIn("Published products: 12", action["params"]["message"])
         self.assertIn("Updated images: 8", action["params"]["message"])
 
+    def test_completion_provides_views_for_direct_client_action(self):
+        view = self.env.ref("ab_website_sale_product.view_sync_images_wizard_form")
+        for summary in ({"published": 197, "unchanged": 197}, {"error": 1}, {}):
+            with self.subTest(summary=summary):
+                action = self.wizard._image_sync_completion_action({
+                    "summary": summary, "report": [], "image_root": "/tmp",
+                })
+                next_action = action["params"]["next"]
+                self.assertEqual(next_action["type"], "ir.actions.act_window")
+                self.assertEqual(next_action["res_model"], self.wizard._name)
+                self.assertEqual(next_action["res_id"], self.wizard.id)
+                self.assertEqual(next_action["target"], "new")
+                self.assertEqual(next_action["views"], [(view.id, "form")])
+
     def test_failures_are_not_reported_as_complete_success(self):
         action = self.completion({"published": 2, "error": 1, "invalid": 1, "ambiguous": 1}, [{
             "status": "missing", "image_path": "/tmp/unmatched.png", "product_id": False,

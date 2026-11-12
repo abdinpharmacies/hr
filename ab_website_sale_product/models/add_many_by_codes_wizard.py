@@ -92,13 +92,15 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
     def _open_image_sync_wizard(self):
         self.ensure_one()
         self._check_image_sync_access()
+        view_id = self.env.ref("ab_website_sale_product.view_sync_images_wizard_form").id
         return {
             "type": "ir.actions.act_window",
             "name": _("Sync Images"),
             "res_model": self._name,
             "res_id": self.id,
             "view_mode": "form",
-            "view_id": self.env.ref("ab_website_sale_product.view_sync_images_wizard_form").id,
+            "view_id": view_id,
+            "views": [(view_id, "form")],
             "target": "new",
         }
 

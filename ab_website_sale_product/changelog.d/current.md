@@ -2,6 +2,33 @@
 
 ## Current changes before commit:
 
+- Keep the success notification and reopen the synchronization report without a client-side exception by including explicit form views in the chained window action.
+- Cover real completion actions for success, warning and empty results, without mocking report-action generation.
+
+Files changed:
+
+- `ab_website_sale_product/models/add_many_by_codes_wizard.py`
+- `ab_website_sale_product/tests/test_website_category_mapping.py`
+- `ab_website_sale_product/changelog.d/current.md`
+
+Validation:
+
+- Six completion tests passed on `codex_eplus_sync_20261104`, zero failures/errors; `/tmp/image-sync-views-fix-tests.log`.
+- Executed the extracted `_preprocessAction` function from deployed asset `b5f69a7/web.assets_web.min.js`: the prior action reproduces the reported missing-map TypeError; explicit form views pass.
+- Captured asset SHA-256: `e14aa8ca3388910911e2c237012ebf5b4a59351a411992976e22bca5c0e81706`.
+- This is function-level JavaScript validation, not an interactive browser run. No product synchronization was executed for this fix.
+- No user-facing source strings changed; existing English and both Arabic translations are retained.
+- Production needs a Python service restart only; no database upgrade is required for this correction.
+
+## Recent commits
+
+Commit: `464d582d`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_website_sale_product/IMP: publish image matches from replicated products with Eplus fallback`
+
+User-facing changes:
+
 - Match uploaded images against active and archived Abdin products.
 - Use replicated ab_product as the primary catalog and price source, including archived records. Look up E-Plus only for image codes absent from that catalog; missing master prices never trigger fallback.
 - Reuse a unique existing website template by its source link or exact code, including archived templates. Reject conflicting links, duplicate codes, unsupported variant adoption and templates outside the selected companies.
@@ -45,7 +72,7 @@ Operational boundary:
 - Fallback products use native stock behavior until linked to the replicated source; this workflow does not import or fabricate inventory quantities.
 - No live E-Plus connection or production deployment was used for this validation. Deployment requires a targeted module upgrade for the new template fields.
 
-## Recent commits
+
 
 Commit: `d3340f5e`
 Author: Mohamed Fawzy
