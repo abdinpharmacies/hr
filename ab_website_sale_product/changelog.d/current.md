@@ -2,24 +2,39 @@
 
 ## Current changes before commit:
 
-- Retry temporary B-Connect connection failures before reading stock or catalog names through the bounded read connector.
-- Make the local website sync status selectable in explicit replica write rules; product-master fields remain protected.
-- Skip product creation denied by replica protection without rolling back website drafts for other matched items in the batch.
+- Read E-Plus catalog names through the existing native SQL Server connector so the import works without an ODBC runtime on the website server.
+- Keep catalog lookups parameterized and preserve the existing bounded source retry behavior.
+- Cover the native connector choice and make the English notification assertion explicit in the catalog tests.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
+
+Validation:
+
+- Targeted upgrade on `codex_eplus_sync_20261104`, ports `5069/5072`: 13 catalog tests passed, 0 failures/errors; log `/tmp/eplus_native_catalog_validation_final.log`.
+- External connections were mocked. The live website server has no ODBC shared library; the existing native connector is available.
+- No new user-facing strings; existing English and Arabic messages are preserved.
+- Existing validation-copy attachment warnings are unrelated.
+
+## Recent commits
+
+Commit: `6963a11a`
+Author: Mohamed Fawzy
+Date: 2026-11-11
+Original subject: `ab_website_sale_product/FIX: recover catalog imports on product replicas`
+
+User-facing changes:
+
+- Complete website draft sync for products already present on the replica while preserving product-master write protection.
 
 Files changed:
 
 - `ab_website_sale_product/changelog.d/current.md`
 - `ab_website_sale_product/models/ab_product.py`
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
-
-Validation:
-
-- Targeted upgrade and optional replica integration install on `ecom19_storefront_validation_20261109`, ports `5069/5072`: 25 tests passed, 0 failures/errors (12 catalog, 9 connector, 4 replica integration).
-- External connections were mocked. The replica integration tests enforce real replica restrictions with install mode disabled.
-- No new user-facing strings; existing English and Arabic messages are preserved.
-- Log: `/tmp/eplus_replica_recovery_validation.log`. Existing validation-copy attachment warnings are unrelated.
-
-## Recent commits
 
 Commit: `b3af5683`
 Author: Mohamed Fawzy

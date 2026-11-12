@@ -390,11 +390,11 @@ class EplusStockSnapshot(models.Model):
     def _fetch_eplus_catalog_names(self, itm_ids):
         names_by_id = {}
         try:
-            with self._connect_eplus_read(param_str="?", charset="CP1256", propagate_error=True) as conn:
+            with self._connect_eplus_read(charset="CP1256", propagate_error=True) as conn:
                 with conn.cursor() as cursor:
                     for offset in range(0, len(itm_ids), 200):
                         batch = itm_ids[offset:offset + 200]
-                        placeholders = ",".join(["?"] * len(batch))
+                        placeholders = ",".join(["%s"] * len(batch))
                         cursor.execute(
                             "SELECT n.itm_id, n.itm_code, n.itm_name_ar, n.itm_name_en, ic.itm_active "
                             "FROM m_name n JOIN Item_Catalog ic ON ic.itm_id = n.itm_id "

@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from odoo.addons.integration_queue_job.exception import RetryableJobError
 from odoo.addons.integration_queue_job.tests.common import trap_jobs
@@ -127,7 +127,7 @@ class TestEplusCatalogImport(TransactionCase):
             }),
             trap_jobs() as trap,
         ):
-            action = self.Snapshot.action_refresh_from_eplus()
+            action = self.Snapshot.with_context(lang="en_US").action_refresh_from_eplus()
             self.assertIn("Queued 2 items", action["params"]["message"])
             trap.assert_jobs_count(1)
             self.assertFalse(product.website_product_tmpl_id)
@@ -189,6 +189,20 @@ class TestEplusCatalogImport(TransactionCase):
                 self.Snapshot._fetch_eplus_catalog_names([99177009])
 
         self.assertEqual(raised.exception.seconds, 60)
+
+    def test_catalog_names_use_native_parameterized_connection(self):
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [(99177009, "99177009", "Arabic Name", "English Name", 1)]
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        with patch.object(type(self.Snapshot), "_connect_eplus_read") as connect:
+            connect.return_value.__enter__.return_value = connection
+            result = self.Snapshot._fetch_eplus_catalog_names([99177009])
+
+        connect.assert_called_once_with(charset="CP1256", propagate_error=True)
+        self.assertIn("IN (%s)", cursor.execute.call_args.args[0])
+        self.assertEqual(cursor.execute.call_args.args[1], (99177009,))
+        self.assertEqual(result[99177009][0][2], "English Name")
 
     def test_stock_refresh_shows_safe_error_when_eplus_is_offline(self):
         with patch.object(type(self.Snapshot), "connect_eplus", side_effect=RuntimeError("connection timed out")):
