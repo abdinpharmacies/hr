@@ -207,5 +207,168 @@
                   action="ab_fixed_asset_assets_inventory_action"
                   sequence="100"/>
 
+        <record id="ab_fixed_asset_assets_inventory_form_layout" model="ir.ui.view">
+            <field name="name">ab_fixed_asset_assets_inventory_form.layout</field>
+            <field name="model">ab_fixed_asset_assets_inventory</field>
+            <field name="inherit_id" ref="ab_fixed_asset_assets_inventory_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_chatter']" position="replace">
+                    <chatter/>
+                </xpath>
+                <xpath expr="(//sheet/notebook)[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="//sheet/div[contains(@class,'oe_title')]" position="before">
+                    <xpath expr="//field[@name=&quot;image&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;image&quot;])[not(@class=&quot;oe_avatar float-start me-3 mb-3&quot;)]" position="attributes">
+                    <attribute name="options">{"size": [160, 160]}</attribute>
+                    <attribute name="class">oe_avatar float-start me-3 mb-3</attribute>
+                </xpath>
+                <xpath expr="(//sheet/div[contains(@class,&quot;oe_title&quot;)])[not(@class=&quot;oe_title mb-4&quot;)]" position="attributes">
+                    <attribute name="class">oe_title mb-4</attribute>
+                </xpath>
+                <xpath expr="(//sheet/div[contains(@class,&quot;oe_title&quot;)]/h1)[not(@class=&quot;d-flex flex-wrap align-items-baseline gap-2&quot;)]" position="attributes">
+                    <attribute name="class">d-flex flex-wrap align-items-baseline gap-2</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[group/field[@name='current_store_id']])[not(@name=&quot;ab_fixed_asset_assets_inventory_form_original_1&quot;)]" position="attributes">
+                    <attribute name="name">ab_fixed_asset_assets_inventory_form_original_1</attribute>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_original_1&quot;]" position="before">
+                    <group>
+                        <group name="ab_fixed_asset_assets_inventory_form_layout_2"/>
+                        <group name="ab_fixed_asset_assets_inventory_form_layout_3"/>
+                    </group>
+                    <group name="ab_fixed_asset_assets_inventory_form_layout_4"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//group/field[@name=&quot;active&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;current_store_id&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;final_level&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;asset_source&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;asset_type&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;costcenter_id&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_2&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;is_company_ownership&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_3&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;manual_value&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_3&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;scrapping_value&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_3&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;useful_life&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_3&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;depreciation_rate&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_4&quot;]" position="inside">
+                    <xpath expr="//field[@name=&quot;description&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_original_1&quot;]" position="replace"/>
+                <xpath expr="(//sheet/div[@class=&quot;row text-center&quot;])[not(@class=&quot;row g-3 mb-4 text-center&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 mb-4 text-center</attribute>
+                </xpath>
+                <xpath expr="(//div[contains(@class,&quot;card border-info&quot;)])[not(@class=&quot;card border-info col-12 p-0&quot;)]" position="attributes">
+                    <attribute name="class">card border-info col-12 p-0</attribute>
+                </xpath>
+                <xpath expr="(//div[@class='card-body'])[not(@name=&quot;ab_fixed_asset_assets_inventory_form_original_5&quot;)]" position="attributes">
+                    <attribute name="name">ab_fixed_asset_assets_inventory_form_original_5</attribute>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_original_5&quot;]" position="before">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <div class="text-muted mb-2" name="ab_fixed_asset_assets_inventory_form_layout_6"/>
+                                <div class="h5 mb-0" name="ab_fixed_asset_assets_inventory_form_layout_7"/>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="text-muted mb-2" name="ab_fixed_asset_assets_inventory_form_layout_8"/>
+                                <div class="h5 mb-0" name="ab_fixed_asset_assets_inventory_form_layout_9"/>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="text-muted mb-2" name="ab_fixed_asset_assets_inventory_form_layout_10"/>
+                                <div class="h5 mb-0" name="ab_fixed_asset_assets_inventory_form_layout_11"/>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_6&quot;]" position="inside">
+                    <xpath expr="//label[@for=&quot;asset_total_value&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_7&quot;]" position="inside">
+                    <xpath expr="//div[contains(@class,&quot;card-text&quot;)]//field[@name=&quot;asset_total_value&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_8&quot;]" position="inside">
+                    <xpath expr="//label[@for=&quot;total_depr&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_9&quot;]" position="inside">
+                    <xpath expr="//div[contains(@class,&quot;card-text&quot;)]//field[@name=&quot;total_depr&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_10&quot;]" position="inside">
+                    <xpath expr="//label[@for=&quot;current_value_after_depr&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_layout_11&quot;]" position="inside">
+                    <xpath expr="//div[contains(@class,&quot;card-text&quot;)]//field[@name=&quot;current_value_after_depr&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//*[@name=&quot;ab_fixed_asset_assets_inventory_form_original_5&quot;]" position="replace"/>
+                <xpath expr="//sheet/notebook" position="before">
+                    <xpath expr="//notebook/field[@name=&quot;je_count&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="//page/group[field[@name='je_line_ids']]" position="replace">
+                    <xpath expr="//field[@name=&quot;je_line_ids&quot;]" position="move"/>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;je_line_ids&quot;])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_fixed_asset_assets_inventory_view_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+                            .ab_fixed_asset_assets_inventory_view_layout .o_notebook,
+                            .ab_fixed_asset_assets_inventory_view_layout .o_notebook_content,
+                            .ab_fixed_asset_assets_inventory_view_layout .tab-pane,
+                            .ab_fixed_asset_assets_inventory_view_layout .o_field_widget.o_field_one2many,
+                            .ab_fixed_asset_assets_inventory_view_layout .o_field_widget.o_field_many2many,
+                            .ab_fixed_asset_assets_inventory_view_layout .o_field_x2many {
+                                min-width: 0;
+                                max-width: 100%;
+                                overflow: visible !important;
+                            }
+                            .ab_fixed_asset_assets_inventory_view_layout .o_field_x2many .o_list_renderer.table-responsive {
+                                width: 100%;
+                                max-width: 100%;
+                                margin-inline: 0 !important;
+                                overflow-x: auto !important;
+                                overflow-y: auto !important;
+                            }
+                        </style>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

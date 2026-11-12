@@ -232,5 +232,145 @@
                   action="ab_fixed_asset_move_wizard_action"
                   sequence="100"/>
 
+        <record id="ab_fixed_asset_move_wizard_view_form_layout" model="ir.ui.view">
+            <field name="name">ab_fixed_asset_move_wizard_view_form.layout</field>
+            <field name="model">ab_fixed_asset_move_wizard</field>
+            <field name="inherit_id" ref="ab_fixed_asset_move_wizard_view_form"/>
+            <field name="priority">90</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='oe_chatter']" position="replace">
+                    <chatter/>
+                </xpath>
+                <xpath expr="(//sheet/notebook)[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/notebook/page/field[list])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//sheet/group[field[@name=&quot;move_type&quot;]])[not(@col=&quot;4&quot;)]" position="attributes">
+                    <attribute name="col">4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;row border border-info&quot;])[not(@class=&quot;row g-3 border border-info rounded mx-0 mb-4 pb-3&quot;)]" position="attributes">
+                    <attribute name="class">row g-3 border border-info rounded mx-0 mb-4 pb-3</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-6&quot;])[not(@class=&quot;col-12 col-xl-6&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-xl-6</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-6&quot;])[not(@class=&quot;col-12 col-xl-6&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-xl-6</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-4&quot;])[not(@class=&quot;col-12 col-md-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-4&quot;])[not(@class=&quot;col-12 col-md-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-4&quot;])[not(@class=&quot;col-12 col-md-4&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-4</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-8&quot;])[not(@class=&quot;col-12 col-md-8&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-8</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-8&quot;])[not(@class=&quot;col-12 col-md-8&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-8</attribute>
+                </xpath>
+                <xpath expr="(//div[@class=&quot;col-8&quot;])[not(@class=&quot;col-12 col-md-8&quot;)]" position="attributes">
+                    <attribute name="class">col-12 col-md-8</attribute>
+                </xpath>
+                <xpath expr="(//label[@style=&quot;font-weight: bold&quot;])[not(@class=&quot;fw-semibold&quot;)]" position="attributes">
+                    <attribute name="style"/>
+                    <attribute name="class">fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//label[@style=&quot;font-weight: bold&quot;])[not(@class=&quot;fw-semibold&quot;)]" position="attributes">
+                    <attribute name="style"/>
+                    <attribute name="class">fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//label[@style=&quot;font-weight: bold&quot;])[not(@class=&quot;fw-semibold&quot;)]" position="attributes">
+                    <attribute name="style"/>
+                    <attribute name="class">fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//label[@style=&quot;font-weight: bold&quot;])[not(@class=&quot;fw-semibold&quot;)]" position="attributes">
+                    <attribute name="style"/>
+                    <attribute name="class">fw-semibold</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;src_inventory_line_transfer_ids&quot;])[not(@class=&quot;w-100 mw-100&quot;)]" position="attributes">
+                    <attribute name="nolabel">1</attribute>
+                    <attribute name="class">w-100 mw-100</attribute>
+                </xpath>
+                <xpath expr="(//field[@name=&quot;partially_explain&quot;])[not(@class=&quot;w-100&quot;)]" position="attributes">
+                    <attribute name="class">w-100</attribute>
+                </xpath>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_fixed_asset_move_wizard_view_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+                            .ab_fixed_asset_move_wizard_view_layout .o_notebook,
+                            .ab_fixed_asset_move_wizard_view_layout .o_notebook_content,
+                            .ab_fixed_asset_move_wizard_view_layout .tab-pane,
+                            .ab_fixed_asset_move_wizard_view_layout .o_field_widget.o_field_one2many,
+                            .ab_fixed_asset_move_wizard_view_layout .o_field_widget.o_field_many2many,
+                            .ab_fixed_asset_move_wizard_view_layout .o_field_x2many {
+                                min-width: 0;
+                                max-width: 100%;
+                                overflow: visible !important;
+                            }
+                            .ab_fixed_asset_move_wizard_view_layout .o_field_x2many .o_list_renderer.table-responsive {
+                                width: 100%;
+                                max-width: 100%;
+                                margin-inline: 0 !important;
+                                overflow-x: auto !important;
+                                overflow-y: auto !important;
+                            }
+                        </style>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_fixed_asset_final_level_form_layout" model="ir.ui.view">
+            <field name="name">ab_fixed_asset_final_level_form.layout</field>
+            <field name="model">ab_fixed_asset_final_level</field>
+            <field name="priority">90</field>
+            <field name="inherit_id" ref="ab_fixed_asset_final_level_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="class" add="ab_fixed_asset_final_level_view_layout" separator=" "/>
+                </xpath>
+                <xpath expr="//form" position="inside">
+                    <style>
+                                    .ab_fixed_asset_final_level_view_layout .o_notebook,
+                                    .ab_fixed_asset_final_level_view_layout .o_notebook_content,
+                                    .ab_fixed_asset_final_level_view_layout .tab-pane,
+                                    .ab_fixed_asset_final_level_view_layout .o_field_widget.o_field_one2many,
+                                    .ab_fixed_asset_final_level_view_layout .o_field_widget.o_field_many2many,
+                                    .ab_fixed_asset_final_level_view_layout .o_field_x2many {
+                                        min-width: 0;
+                                        max-width: 100%;
+                                        overflow: visible !important;
+                                    }
+                                    .ab_fixed_asset_final_level_view_layout .o_field_x2many .o_list_renderer.table-responsive {
+                                        width: 100%;
+                                        max-width: 100%;
+                                        margin-inline: 0 !important;
+                                        overflow-x: auto !important;
+                                        overflow-y: auto !important;
+                                    }
+                                </style>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
