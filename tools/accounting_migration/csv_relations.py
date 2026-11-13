@@ -15,6 +15,7 @@ from csv_plan import present_both
 import prepared_progress as progress
 
 POLICY = 'xmlid_unreplicated_relations_v1'
+M2M_POLICY = 'm2m_replace_v1'
 BATCH = 1000
 
 
@@ -93,15 +94,18 @@ def plan_m2m(source, target, selected, exclusions=None):
             raise MigrationError(f'M2M owner binding differs: {table}')
         dependencies = sorted({value['table'] for value in src.values()} & selected.keys())
         refs = {col: reference(value, dst[col]) for col, value in src.items() if value['table'] not in selected}
-        result[table] = dict(mode='replace' if not refs else 'add', constants={}, references=refs,
-                             dependencies=dependencies, relation=True, mapping_policy=POLICY)
+        result[table] = dict(mode='replace', constants={}, references=refs,
+                             dependencies=dependencies, relation=True, mapping_policy=POLICY,
+                             relation_policy=M2M_POLICY)
     return result
 
 
-def plan_operations(source, target, selected, exclusions=None):
+def plan_operations(source, target, selected, exclusions=None, force_tables=()):
     selected = {table: value for table, value in selected.items()
                 if present_both(source, target, table, 'model', exclusions)}
     result = {table: dict(mode='replace', constants=value) for table, value in selected.items()}
+    for table in set(force_tables) & result.keys():
+        result[table]['force_copy'] = True
     target_fields = {(field['table'], field['column']): field for field in target.get('many2one', [])}
     for field in source.get('many2one', []):
         table, column = field['table'], field['column']

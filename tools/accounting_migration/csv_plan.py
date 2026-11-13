@@ -10,14 +10,10 @@ from psycopg2 import sql
 from common import MigrationError, connect, dumps, loads, save_json, settings
 from resume import endpoint, fingerprint
 
-VERSION = 2
-LEGACY_HEADERS = ('table_name', 'model_type', 'source_columns_first_value_json',
-           'target_columns_first_value_json', 'source_missing_columns_list',
-           'target_missing_columns_list', 'replicate_source_id', 'column_default_value_json',
-           'source_fk_columns_json', 'target_fk_cloumns_json')
+VERSION = 3
 HEADERS = ('table_name', 'model_type', 'existance', 'available_target_selections_json',
            'source_missing_columns_list', 'target_missing_columns_list',
-           'replicate_source_id', 'column_default_value_json',
+           'replicate', 'replicate_override', 'column_default_value_json',
            'source_fk_columns_json', 'target_fk_cloumns_json')
 
 
@@ -201,7 +197,7 @@ def export_plan(args):
             sc, tc = src['columns'].get(table, {}), dst['columns'].get(table, {})
             rows.append(dict(zip(HEADERS, [table, kind, table_existance(table, src, dst), selection_cell(choices, table),
                          dumps(sorted(sc.keys() - tc.keys())), dumps(sorted(tc.keys() - sc.keys())),
-                         '1' if kind == 'custom' else '0', '{}', dumps(fk_cells(src, table)), dumps(fk_cells(dst, table))])))
+                         '1' if kind == 'custom' else '0', '0', '{}', dumps(fk_cells(src, table)), dumps(fk_cells(dst, table))])))
         write_plan(path, dict(plan_id=uuid.uuid4().hex, identities=identities,
                                source=src, target=dst, tables=sorted(owners),
                                created=datetime.datetime.now(datetime.timezone.utc).isoformat()), rows)
@@ -216,19 +212,17 @@ def export_plan(args):
 def read_rows(path):
     path = Path(path).expanduser().resolve()
     meta = loads(Path(str(path) + '.metadata.json').read_text())
-    if meta.get('version') not in (1, VERSION):
-        raise MigrationError('Unsupported CSV metadata version')
+    if meta.get('version') != VERSION:
+        raise MigrationError('Unsupported CSV metadata version; export a new CSV and sidecar')
     if 'plan_id' in meta and (not isinstance(meta['plan_id'], str) or len(meta['plan_id']) != 32
                               or any(char not in '0123456789abcdef' for char in meta['plan_id'])):
         raise MigrationError('Invalid CSV plan identity')
     rows, seen = [], set()
-    # Legacy plans may still contain large diagnostic samples.
     csv.field_size_limit(64 * 1024 * 1024)
     with path.open(encoding='utf-8-sig', newline='') as file:
         reader = csv.DictReader(file)
-        expected = LEGACY_HEADERS if meta['version'] == 1 else HEADERS
-        if tuple(reader.fieldnames or ()) != expected:
-            raise MigrationError('CSV headers/order differ from the exported contract')
+        if tuple(reader.fieldnames or ()) != HEADERS:
+            raise MigrationError('CSV headers/order differ from the exported contract; export a new CSV and sidecar')
         for row in reader:
             table = row['table_name']
             if None in row or any(value is None for value in row.values()) or table in seen or table not in meta['tables']:
@@ -252,12 +246,17 @@ def present_both(source, target, table, kind, exclusions=None):
 def read_plan(path, exclusions=None):
     meta, rows = read_rows(path)
     result = {}
+    forced = []
     for row in rows:
         table = row['table_name']
-        action = row['replicate_source_id'].strip()
+        action = row['replicate'].strip()
+        override = row['replicate_override'].strip()
         if action not in ('', '0', '1'):
-            raise MigrationError(f'Invalid replicate_source_id: {table}')
-        if action == '1' and not present_both(meta['source'], meta['target'], table, 'model', exclusions):
+            raise MigrationError(f'Invalid replicate: {table}')
+        if override not in ('', '0', '1'):
+            raise MigrationError(f'Invalid replicate_override: {table}')
+        selected = action == '1' or override == '1'
+        if selected and not present_both(meta['source'], meta['target'], table, 'model', exclusions):
             continue
         try:
             constants = loads(row['column_default_value_json'].strip() or '{}')
@@ -265,14 +264,16 @@ def read_plan(path, exclusions=None):
             raise MigrationError(f'Invalid constant JSON: {table}') from None
         if not isinstance(constants, dict) or 'id' in constants:
             raise MigrationError(f'Constants must be an object without an id override: {table}')
-        if action == '1':
+        if selected:
             sc, tc = meta['source']['columns'].get(table, {}), meta['target']['columns'].get(table, {})
             if 'id' not in sc or 'id' not in tc:
                 raise MigrationError(f'Selected table must exist on both sides with id: {table}')
             if any(name not in tc or tc[name]['generated'] for name in constants):
                 raise MigrationError(f'Unknown or generated constant column: {table}')
             result[table] = constants
-    return meta, result
+            if override == '1':
+                forced.append(table)
+    return {**meta, 'force_tables': sorted(forced)}, result
 
 
 def convert_plan(path, output, target_config, target_db):

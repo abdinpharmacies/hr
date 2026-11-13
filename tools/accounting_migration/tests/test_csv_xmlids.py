@@ -134,7 +134,7 @@ class XMLIDPostgresTests(unittest.TestCase):
         self.assertEqual(result['failed_tables'], [])
         self.assertEqual(result['skipped_links'], 1)
         self.assertEqual(result['status'], 'complete_with_warnings')
-        self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 1)
+        self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 0)
         self.assertEqual(self.issue_kinds(runner, 'a_b_rel'), {'missing_target_xmlid'})
 
     def add_alias(self, model, name, source_id, target_id):
@@ -162,14 +162,14 @@ class XMLIDPostgresTests(unittest.TestCase):
         runner = self.runner({'ab_record'})
         result = runner.run(runner.plan['target']['fks'])
         self.assertTrue(any(item['table'] == 'a_b_rel' for item in result['failed_tables']))
-        self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 1)
+        self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 0)
         self.assertEqual(self.issue_kinds(runner, 'a_b_rel'), {'ambiguous'})
 
     def test_unidirectional_m2m_maps_either_nonselected_endpoint(self):
         for connection in (self.source, self.con):
             self.execute(connection, "DELETE FROM ir_model_fields WHERE model='ab_other'")
         runner = self.runner({'ab_other'})
-        self.assertEqual(runner.operations['a_b_rel']['mode'], 'add')
+        self.assertEqual(runner.operations['a_b_rel']['mode'], 'replace')
         self.assertEqual(runner.run(runner.plan['target']['fks'])['failed_tables'], [])
         self.assertEqual(self.scalar('SELECT id FROM ab_record'), 9)
         self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel WHERE record_id=9 AND other_id=21'), 1)

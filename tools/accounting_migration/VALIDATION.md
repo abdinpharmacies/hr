@@ -1,5 +1,107 @@
 # Prepared-target migration validation
 
+## Authoritative M2M replacement (2026-11-13)
+
+Final suite: **367 tests, 357 passed and 10 optional tests skipped** in 59.297
+seconds on an isolated PostgreSQL 16 instance over a private Unix socket. Offline
+discovery: **367 tests, 186 passed and 181 skipped**. The CSV subset contains
+**130 tests**. Compilation and `git diff --check` passed. No application migration,
+manual repair, CSV edit, or source/target availability change was performed;
+database mutations used generated disposable fixtures only. The temporary cluster
+was stopped and removed after validation.
+
+- All eligible M2M operations now use full transactional DELETE/streaming COPY
+  on every run, regardless of matching counts or successful old additive markers.
+  Ordinary model count skips and version-3 override controls remain unchanged.
+  Target-only memberships are removed; neither-selected/unrelated relations and
+  excluded schemas remain untouched. Failed selected endpoints block replacement.
+- Reproduce the three direct role conflicts (users 3, 4, and 9409) with different
+  source/target group IDs and renamed groups fields. Even with equal relation
+  counts and count-skipped users, mapped source replacement removes obsolete
+  Internal/Portal/Public memberships and restores missing source memberships.
+- Keep selected endpoint source IDs and exact XML-ID mapping of ignored endpoints.
+  Missing matches skip links with warnings; zero mapped links and empty sources
+  correctly clear target associations. Ambiguities and conflicting extra-column
+  values roll back replacement and preserve valid old target links.
+- Bounded private endpoint-ID indexes deduplicate mapped aliases and duplicate
+  source pairs without loading the relation into memory or creating PostgreSQL
+  staging. Identical extra columns survive; conflicting payloads fail. Temporary
+  indexes are removed after success/failure/interruption.
+- Count accounting covers source rows, inserted links, missing-mapping skips,
+  and duplicate links. Post-copy counts validate emitted links, so filtering or
+  deduplication does not cause false raw-source-count failures. Progress exposes
+  processed source rows; reports use `m2m_replaced` and `m2m_replace_v1`.
+- Existing source extraction bytes and XML-ID artifact policy stay unchanged;
+  reruns do not require a fresh source extraction for this policy change. Tests
+  cover self-relations, repeated/checkpointed runs, transactional interruption,
+  rollback/retry, FK recovery, and defensive cleanup of post-replacement defects.
+
+## Version-3 replication controls and forced recopy (2026-11-13)
+
+Final suite: **357 tests, 347 passed and 10 optional tests skipped** in 49.241
+seconds on an isolated PostgreSQL 16 instance over a private Unix socket. Offline
+discovery: **357 tests, 186 passed and 171 skipped**. The CSV subset contains
+**120 tests**. Compilation and `git diff --check` passed. Existing operator CSVs,
+sidecars, and application databases were not changed, exported, or migrated.
+Database writes were limited to generated disposable test fixtures; the temporary
+cluster was stopped and removed after validation.
+
+- New exports contain `replicate` and `replicate_override` with metadata version
+  3. Defaults remain custom=1/Odoo=0 for normal replication and override=0 for all
+  tables. Old metadata versions and old column-name headers are rejected with a
+  re-export instruction, with no alias or legacy conversion branches.
+- All blank/0/1 flag combinations are covered. Override alone selects and forces
+  a table even with replicate=0; invalid flags/constants still fail and one-sided
+  forced selections remain excluded. New-format diagnostic refresh preserves
+  both controls, row order, plan identity, and binding, without changing inputs.
+- Equal-count override copies restore differing target contents, bypass old
+  successful checkpoints, and are reported as `forced_copy` with reason
+  `replicate_override`. Force repeats on every resume until reset to 0. Resetting
+  restores count-based skipping without changing the retained source snapshot.
+- Reproduce equal source/target partner counts with partner 6 missing in target
+  and referenced by a target user. Normal verification skips the table; override
+  restores source IDs and permits the saved user/partner FK to be restored.
+- A forced-copy checkpoint failure rolls back row changes and sequence restart;
+  retry succeeds. Forced endpoints replay their M2M operations and keep scoped
+  orphan cleanup/FK recovery, unattended backup/gating, and source-ID semantics.
+
+## Scoped M2M orphan cleanup (2026-11-13)
+
+Final suite: **348 tests, 338 passed and 10 optional tests skipped** in 47.512
+seconds on an isolated PostgreSQL 16 instance over a private Unix socket. Offline
+discovery: **348 tests, 183 passed and 165 skipped**. The CSV subset contains
+**111 tests**. Compilation and `git diff --check` passed. Only generated disposable
+databases were mutated; no application migration or manual data repair was run.
+The temporary test cluster was stopped and removed after validation.
+
+Cleanup runs after the current model/relation operations and before independent
+FK restoration. It applies only to eligible M2M operations whose selected
+endpoints completed successfully, including count-skipped models. Ordinary M2O
+tables, registered model tables, unrelated/excluded relations, and relations with
+failed/unfinished selected endpoints are not swept. Count-only verification and
+unattended CSV execution remain unchanged.
+
+Coverage includes:
+
+- Reproduce `res_company_users_rel` with users 2951 and 9426 absent from both
+  databases. A count-skipped rerun removes only their memberships, preserves
+  valid company/user records, and restores `res_company_users_rel_user_id_fkey`.
+- Generic custom endpoints: remove links with either/both endpoint records
+  missing, including old links left by replacing an endpoint. Preserve valid
+  extra links to ignored endpoint models and unrelated invalid M2M/M2O rows.
+- Stream more than 1,000 orphan candidates through a server cursor and bounded
+  DELETE batches. Each DELETE rechecks endpoint absence and logs only IDs
+  actually removed; table OID plus tuple ID avoids collisions across partitions.
+- Rollback on cleanup-checkpoint failure or interruption restores link rows and
+  removes uncommitted audit files. Retry succeeds without recopying committed
+  models. Cleanup failures are reported separately and FK restoration still runs.
+- Current and historical cleanup reports retain private 0600 JSONL deleted-ID
+  file paths, deleted counts, remaining relation counts, and audit history across
+  later no-op retries. Source/target data payload hashes are not introduced.
+- Active incoming cascading FKs block cleanup rather than allowing a junction
+  deletion to cascade into business records. All verification and deletion tests
+  use generated disposable databases; no application migration is executed.
+
 ## Count-only verification and unattended CSV execution (2026-11-13)
 
 Final suite: **338 tests, 328 passed and 10 optional tests skipped** in 46.799

@@ -3,6 +3,7 @@ import hashlib
 import io
 import os
 from pathlib import Path
+import uuid
 
 from psycopg2 import sql
 from psycopg2.extras import Json
@@ -141,7 +142,61 @@ class ProjectionReader:
         return bytes(output)
 
 
-def copy_table(connection, stage, table, file_meta, columns, constants, mode='replace', mapper=None):
+class RelationSet:
+    """Deduplicate mapped endpoint IDs without keeping the relation in memory."""
+    def __init__(self, stage, columns, bindings, mapper):
+        from csv_relations import private_sqlite
+        if len(bindings) != 2 or not set(bindings) <= set(columns):
+            raise MigrationError('Invalid M2M endpoint columns')
+        root = Path(stage) / 'relation-indexes'
+        root.mkdir(mode=0o700, exist_ok=True)
+        self.path = root / (uuid.uuid4().hex + '.sqlite')
+        self.db = private_sqlite(self.path)
+        self.db.execute('CREATE TABLE links(first_id blob,second_id blob,payload text,PRIMARY KEY(first_id,second_id))')
+        self.indexes = [columns.index(name) for name in sorted(bindings)]
+        self.extra = [index for index in range(len(columns)) if index not in self.indexes]
+        self.mapper = mapper
+        self.source_rows = self.inserted_links = self.deduplicated_links = 0
+
+    def inputs(self, rows):
+        for row in rows:
+            self.source_rows += 1
+            if self.source_rows % 1000 == 0:
+                progress.update(processed=self.source_rows)
+            yield row
+
+    def rows(self, rows):
+        rows = self.inputs(rows)
+        if self.mapper:
+            rows = self.mapper.rows(rows)
+        for row in rows:
+            key = [row[index] for index in self.indexes]
+            # Only extra-column collision detection uses a payload digest; this
+            # is not source/target content verification and stores no payload.
+            payload = hashlib.sha256(b'\t'.join(row[index] for index in self.extra)).hexdigest() if self.extra else ''
+            inserted = self.db.execute('INSERT OR IGNORE INTO links VALUES(?,?,?)', [*key, payload]).rowcount
+            if not inserted:
+                previous = self.db.execute('SELECT payload FROM links WHERE first_id=? AND second_id=?', key).fetchone()[0]
+                if previous != payload:
+                    raise MigrationError('Mapped M2M pair has conflicting extra column values')
+                self.deduplicated_links += 1
+                continue
+            self.inserted_links += 1
+            yield row
+
+    def counts(self):
+        return dict(source_rows=self.source_rows, inserted_links=self.inserted_links,
+                    skipped_links=self.mapper.stats['skipped_links'] if self.mapper else 0,
+                    deduplicated_links=self.deduplicated_links)
+
+    def close(self):
+        progress.update(processed=self.source_rows)
+        self.db.close()
+        self.path.unlink(missing_ok=True)
+
+
+def copy_table(connection, stage, table, file_meta, columns, constants, mode='replace', mapper=None,
+               relation=None, relation_counts=None):
     fields = [name for name, meta in columns.items() if not meta['generated']]
     encoded = constant_fields(connection, constants, columns)
     if file_meta['rows']:
@@ -149,22 +204,30 @@ def copy_table(connection, stage, table, file_meta, columns, constants, mode='re
         if missing:
             raise MigrationError(f'Target-only NOT NULL columns require CSV constants: {table}')
     with connection.cursor() as cr:
-        if mode == 'replace':
-            cr.execute(sql.SQL('DELETE FROM public.{}').format(sql.Identifier(table)))
-        elif mode != 'add':
+        if mode != 'replace':
             raise MigrationError('Unsupported CSV table operation')
-        # For shared M2M tables, COPY into the real table via an insert-only view
-        # is not possible with ON CONFLICT. Use bounded multi-row INSERT instead,
-        # keeping the retained COPY format and avoiding any staging relation.
-        if mode == 'add':
-            return add_relations(connection, stage, table, file_meta, fields, columns, mapper)
-        with open(Path(stage) / 'tables' / file_meta['file'], 'rb') as file:
-            reader = ProjectionReader(file, file_meta['columns'], fields, encoded, mapper)
-            cr.copy_expert(sql.SQL("COPY public.{} ({}) FROM STDIN WITH (FORMAT text, ENCODING 'UTF8')").format(
-                sql.Identifier(table), sql.SQL(',').join(map(sql.Identifier, fields))).as_string(connection), reader)
-            rows = cr.rowcount
-            if reader.hash.hexdigest() != file_meta['sha256'] or rows != file_meta['rows']:
-                raise MigrationError(f'COPY checksum/count mismatch: {table}')
+        cr.execute(sql.SQL('DELETE FROM public.{}').format(sql.Identifier(table)))
+        link_set = RelationSet(stage, file_meta['columns'], relation, mapper) if relation is not None else None
+        try:
+            with open(Path(stage) / 'tables' / file_meta['file'], 'rb') as file:
+                reader = ProjectionReader(file, file_meta['columns'], fields, encoded, link_set or mapper)
+                cr.copy_expert(sql.SQL("COPY public.{} ({}) FROM STDIN WITH (FORMAT text, ENCODING 'UTF8')").format(
+                    sql.Identifier(table), sql.SQL(',').join(map(sql.Identifier, fields))).as_string(connection), reader)
+                rows = cr.rowcount
+                expected = file_meta['rows']
+                if link_set:
+                    counts = link_set.counts()
+                    if (counts['source_rows'] != expected or counts['source_rows'] != counts['inserted_links']
+                            + counts['skipped_links'] + counts['deduplicated_links']):
+                        raise MigrationError(f'M2M source/count accounting differs: {table}')
+                    expected = counts['inserted_links']
+                if reader.hash.hexdigest() != file_meta['sha256'] or rows != expected:
+                    raise MigrationError(f'COPY checksum/count mismatch: {table}')
+        finally:
+            if link_set:
+                if relation_counts is not None:
+                    relation_counts.update(link_set.counts())
+                link_set.close()
         cr.execute(sql.SQL('SELECT count(*) FROM public.{}').format(sql.Identifier(table)))
         if cr.fetchone()[0] != rows:
             raise MigrationError(f'Target row count differs: {table}')
@@ -187,36 +250,6 @@ def unescape_copy(value):
         out.append(char)
         index += 1
     return out.decode('utf-8')
-
-
-def add_relations(connection, stage, table, meta, fields, columns, mapper=None):
-    from psycopg2.extras import execute_values
-    if set(fields) != set(meta['columns']):
-        raise MigrationError('Additive M2M columns must match')
-    indexes = [meta['columns'].index(name) for name in fields]
-    template = '(' + ','.join('%s::' + columns[name]['type'] for name in fields) + ')'
-    query = sql.SQL('INSERT INTO public.{} ({}) SELECT v.* FROM (VALUES %s) v WHERE NOT EXISTS '
-                    '(SELECT 1 FROM public.{} t WHERE {}) ON CONFLICT DO NOTHING').format(
-        sql.Identifier(table), sql.SQL(',').join(map(sql.Identifier, fields)), sql.Identifier(table),
-        sql.SQL(' AND ').join(sql.SQL('t.{} IS NOT DISTINCT FROM v.{}').format(
-            sql.Identifier(name), sql.Identifier('column' + str(index + 1))) for index, name in enumerate(fields)))
-    query = query.as_string(connection)
-    rows, batch = 0, []
-    with connection.cursor() as cr, open(Path(stage) / 'tables' / meta['file'], 'rb') as file:
-        reader = ProjectionReader(file, meta['columns'], meta['columns'], {})
-        records = mapper.rows(reader.raw_records()) if mapper is not None else reader.raw_records()
-        for values in records:
-            batch.append(tuple(unescape_copy(values[index]) for index in indexes))
-            if len(batch) == 1000:
-                execute_values(cr, query, list(dict.fromkeys(batch)), template=template, page_size=1000)
-                rows += cr.rowcount
-                batch = []
-        if batch:
-            execute_values(cr, query, list(dict.fromkeys(batch)), template=template, page_size=1000)
-            rows += cr.rowcount
-    if reader.hash.hexdigest() != meta['sha256']:
-        raise MigrationError(f'Retained relation COPY checksum differs: {table}')
-    return rows
 
 
 def table_fingerprint(connection, table, columns):

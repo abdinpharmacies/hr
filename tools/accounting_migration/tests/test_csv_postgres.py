@@ -13,10 +13,16 @@ from unittest.mock import patch
 from psycopg2 import sql
 import test_prepared_postgres as fixtures
 from common import connect, MigrationError, loads, save_json, settings
-from csv_plan import export_plan, read_plan, discover, relation_scope, convert_plan, HEADERS, LEGACY_HEADERS
+from csv_plan import export_plan, read_plan, discover, relation_scope, convert_plan, HEADERS, VERSION
 from csv_copy import extract, verify_files, copy_table, table_fingerprint, restart_sequence
 from csv_replicator import CSVRunner, initialize, read_state, run, FORMAT
 from csv_relations import plan_operations
+
+
+def relation_copy_only(*args, **kwargs):
+    if kwargs.get('relation') is None:
+        raise AssertionError('count-skipped model unexpectedly copied')
+    return copy_table(*args, **kwargs)
 
 
 @unittest.skipUnless(os.environ.get('MIGRATION_PREPARED_TEST_CONFIG'), 'requires disposable PostgreSQL config')
@@ -82,20 +88,22 @@ class CSVPostgresTests(unittest.TestCase):
             cr.execute(sql.SQL('DROP DATABASE {}').format(sql.Identifier(self.source_db)))
         fixtures.PreparedPostgresTests.tearDown(self)
 
-    def export(self, selections=None, constants=None):
+    def export(self, selections=None, constants=None, overrides=None):
         with contextlib.redirect_stdout(io.StringIO()):
             export_plan(self.args)
-        self.edit(selections, constants)
+        self.edit(selections, constants, overrides)
         return read_plan(self.args.table_plan)
 
-    def edit(self, selections=None, constants=None):
+    def edit(self, selections=None, constants=None, overrides=None):
         path = Path(self.args.table_plan)
         with path.open(newline='') as file:
             reader = csv.DictReader(file)
             headers, rows = reader.fieldnames, list(reader)
         for row in rows:
             if selections is not None:
-                row['replicate_source_id'] = '1' if row['table_name'] in selections else '0'
+                row['replicate'] = '1' if row['table_name'] in selections else '0'
+            if overrides is not None:
+                row['replicate_override'] = '1' if row['table_name'] in overrides else '0'
             if constants and row['table_name'] in constants:
                 row['column_default_value_json'] = json.dumps(constants[row['table_name']])
         with path.open('w', newline='') as file:
@@ -103,11 +111,11 @@ class CSVPostgresTests(unittest.TestCase):
             writer.writeheader()
             writer.writerows(rows)
 
-    def runner(self, selections=None, constants=None):
-        self.export(selections, constants)
+    def runner(self, selections=None, constants=None, overrides=None):
+        self.export(selections, constants, overrides)
         exclusions = []
         plan, selected = read_plan(self.args.table_plan, exclusions)
-        operations = plan_operations(plan['source'], plan['target'], selected, exclusions)
+        operations = plan_operations(plan['source'], plan['target'], selected, exclusions, plan['force_tables'])
         self.source.set_session(readonly=True)
         manifest = extract(self.source, self.stage / 'tables', operations, plan['source'], plan['target'])
         self.source.rollback()
@@ -173,22 +181,12 @@ class CSVPostgresTests(unittest.TestCase):
         self.assertEqual(set(selected), {'ab_record', 'ab_other'})
         self.assertEqual({item['table'] for item in exclusions}, {'ab_source_only', 'ab_target_only'})
 
-    def test_legacy_conversion_preserves_controls_and_identity_and_refuses_overwrite(self):
-        self.export({'ab_record'}, {'ab_record': {'name': 'reviewed'}})
+    def test_diagnostic_refresh_preserves_new_controls_and_identity_and_refuses_overwrite(self):
+        self.export({'ab_record'}, {'ab_record': {'name': 'reviewed'}}, overrides={'ab_record'})
         old_path = Path(self.args.table_plan)
         meta = loads(Path(str(old_path) + '.metadata.json').read_text())
         with old_path.open(newline='') as file:
             rows = list(csv.DictReader(file))
-        with old_path.open('w', newline='') as file:
-            writer = csv.DictWriter(file, LEGACY_HEADERS)
-            writer.writeheader()
-            for row in rows:
-                legacy = {key: row[key] for key in LEGACY_HEADERS if key in row}
-                legacy.update(source_columns_first_value_json='{"oversized":"' + 'x' * 40000 + '"}',
-                              target_columns_first_value_json='{}')
-                writer.writerow(legacy)
-        meta['version'] = 1
-        save_json(str(old_path) + '.metadata.json', meta)
         original = old_path.read_bytes()
         old_plan, old_controls = read_plan(old_path)
         output = self.stage / 'selections.csv'
@@ -199,7 +197,8 @@ class CSVPostgresTests(unittest.TestCase):
         self.assertEqual(new_plan['identities'], old_plan['identities'])
         self.assertEqual(new_plan['source'], old_plan['source'])
         self.assertEqual(new_plan['target'], old_plan['target'])
-        self.assertEqual(new_plan['version'], 2)
+        self.assertEqual(new_plan['version'], VERSION)
+        self.assertEqual(new_plan['force_tables'], ['ab_record'])
         with output.open(newline='') as file:
             reader = csv.DictReader(file)
             self.assertEqual(tuple(reader.fieldnames), HEADERS)
@@ -225,7 +224,7 @@ class CSVPostgresTests(unittest.TestCase):
         runner.operations = plan_operations(meta['source'], meta['target'], selected)
         result = runner.run(meta['target']['fks'])
         self.assertEqual(result['failed_tables'], [])
-        self.assertTrue(all(item['status'] == 'verified_existing' for item in result['operations']))
+        self.assertTrue(all(item['status'] in ('verified_existing', 'm2m_replaced') for item in result['operations']))
 
     def test_incoming_cascade_and_set_null_removed_ignored_rows_survive(self):
         runner = self.runner({'res_users', 'ab_record', 'ab_other'})
@@ -244,7 +243,7 @@ class CSVPostgresTests(unittest.TestCase):
         with patch.object(runner, 'unit', wraps=runner.unit):
             second = runner.run(runner.plan['target']['fks'])
         self.assertEqual(second['failed_tables'], [])
-        self.assertTrue(all(item['status'] == 'verified_existing' for item in second['operations'][-4:]))
+        self.assertTrue(all(item['status'] in ('verified_existing', 'm2m_replaced') for item in second['operations'][-4:]))
 
     def test_constants_and_no_automatic_defaults(self):
         with self.con.cursor() as cr:
@@ -273,10 +272,11 @@ class CSVPostgresTests(unittest.TestCase):
 
     def test_shared_relations_are_additive_when_other_owner_is_ignored(self):
         runner = self.runner({'ab_record'})
-        # Both old and imported relation IDs must survive the additive action.
+        # Additive import keeps valid extras; the old link becomes an orphan
+        # when its endpoint is replaced and must be removed before FK restore.
         result = runner.run(runner.plan['target']['fks'])
         self.assertEqual(result['failed_tables'], [], result)
-        self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 2)
+        self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 1)
         self.assertEqual(self.scalar('SELECT id FROM ab_other'), 8)
 
     def test_sequence_restart_rolls_back_and_committed_changes_are_rejected(self):
@@ -415,7 +415,7 @@ class CSVPostgresTests(unittest.TestCase):
         with patch.dict('csv_replicator.ACTIONS', {'copy-filestore': action}):
             first = runner.run(runner.plan['target']['fks'], actions=['copy-filestore'])
             self.assertEqual(first['status'], 'finished_with_errors')
-            with patch('csv_replicator.copy_table', side_effect=AssertionError('recopy')):
+            with patch('csv_replicator.copy_table', side_effect=relation_copy_only):
                 second = runner.run(runner.plan['target']['fks'], actions=['copy-filestore'])
         self.assertEqual(second['status'], 'complete')
         self.assertTrue(second['actions']['copy-filestore']['success'])
@@ -479,7 +479,7 @@ class CSVPostgresTests(unittest.TestCase):
                 second = run(self.args, root)
             self.assertEqual(first['failed_tables'], [])
             self.assertEqual(second['failed_tables'], [])
-            self.assertTrue(all(item['status'] == 'verified_existing' for item in second['operations']))
+            self.assertTrue(all(item['status'] in ('verified_existing', 'm2m_replaced') for item in second['operations']))
             stage = next(root.iterdir())
             self.assertTrue((stage / 'before_import.dump').is_file())
             self.assertFalse((stage / 'id-validation.json').exists())

@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import MigrationError, save_json, loads
 from csv_copy import ProjectionReader, unescape_copy
-from csv_plan import HEADERS, LEGACY_HEADERS, VERSION, read_plan, relation_scope, target_selection_choices, selection_cell, table_existance
+from csv_plan import HEADERS, VERSION, read_plan, relation_scope, target_selection_choices, selection_cell, table_existance
 from migrate import parser, main
 from csv_actions import choose_actions, copy_filestore
 from csv_relations import record_batches, plan_m2m, plan_operations
@@ -38,9 +38,9 @@ class CSVOfflineTests(unittest.TestCase):
         con = MagicMock()
         con.cursor.return_value.__enter__.return_value.fetchone.return_value = (5,)
         self.assertFalse(compare(con, None, 't', {'rows': 3}, {}, dict(mode='replace'))['matches'])
-        self.assertTrue(compare(con, None, 't', {'rows': 3}, {}, dict(mode='add'))['matches'])
+        self.assertFalse(compare(con, None, 't', {'rows': 3}, {}, dict(mode='replace', relation=True))['matches'])
         previous = dict(actual=dict(rows=2), expected=dict(rows=100))
-        self.assertTrue(verify_after(con, None, 't', {}, dict(mode='add'), previous, copied_rows=3)['matches'])
+        self.assertFalse(verify_after(con, None, 't', {}, dict(mode='replace', relation=True), previous, copied_rows=3)['matches'])
 
     def test_projection_preserves_escapes_and_explicit_nulls_in_small_reads(self):
         raw = b'1\ttext\\twith\\nnewlines\\\\and\\N\t\\N\n2\t\tfalse\n'
@@ -70,15 +70,15 @@ class CSVOfflineTests(unittest.TestCase):
             with self.subTest(payload=payload), self.assertRaises(MigrationError):
                 ProjectionReader(io.BytesIO(payload), ['id', 'x'], ['id', 'extra'], {}).read()
 
-    def plan(self, path, action='1', constants='{}', version=VERSION):
+    def plan(self, path, action='1', constants='{}', version=VERSION, override='0'):
         meta = dict(version=version, tables=['ab_record'], source={'columns': {'ab_record': {'id': {}, 'name': {}}}},
                     target={'columns': {'ab_record': {'id': {'generated': False}, 'name': {'generated': False}}}})
         save_json(str(path) + '.metadata.json', meta)
         with path.open('w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(LEGACY_HEADERS if version == 1 else HEADERS)
-            cells = ['{"name":"quoted, sample"}', '{}'] if version == 1 else ['both', '{"available_target_selections":{}}']
-            writer.writerow(['ab_record', 'custom', *cells, '[]', '[]', action, constants, '[]', '[]'])
+            writer.writerow(HEADERS)
+            cells = ['both', '{"available_target_selections":{}}']
+            writer.writerow(['ab_record', 'custom', *cells, '[]', '[]', action, override, constants, '[]', '[]'])
 
     def test_selection_validation_and_constant_values(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -111,7 +111,7 @@ class CSVOfflineTests(unittest.TestCase):
         other = dict(model='ab_b', field='links', table='a_b_rel', columns=['b_id', 'a_id'])
         side = dict(models={'ab_a': 'ab_a', 'ab_b': 'ab_b'}, relations=[relation, other],
                     columns={'a_b_rel': {'a_id': {}, 'b_id': {}}, 'ab_a': {'id': {}}, 'ab_b': {'id': {}}})
-        self.assertEqual(relation_scope({'source': side, 'target': side}, {'ab_a': {}})['a_b_rel']['mode'], 'add')
+        self.assertEqual(relation_scope({'source': side, 'target': side}, {'ab_a': {}})['a_b_rel']['mode'], 'replace')
         self.assertEqual(relation_scope({'source': side, 'target': side}, {'ab_a': {}, 'ab_b': {}})['a_b_rel']['mode'], 'replace')
 
     def test_physical_m2m_roles_match_renamed_fields_but_not_reversed_endpoints(self):
@@ -226,14 +226,49 @@ class CSVOfflineTests(unittest.TestCase):
         self.assertEqual(result, {'ab_table': {'position': ['sided', 'bottom', 'top'], 'dynamic': None}})
         self.assertEqual(selection_cell(result, 'other'), '{"available_target_selections": {}}')
 
-    def test_legacy_and_new_header_versions_remain_readable(self):
+    def test_old_csv_versions_are_rejected_without_conversion(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'plan.csv'
-            results = []
-            for version in (1, VERSION):
-                self.plan(path, constants='{"name":"bottom"}', version=version)
-                results.append(read_plan(path)[1])
-            self.assertEqual(results[0], results[1])
+            for version in (1, 2):
+                self.plan(path, version=version)
+                with self.assertRaisesRegex(MigrationError, 'export a new CSV'):
+                    read_plan(path)
+            self.plan(path)
+            self.assertEqual(read_plan(path)[1], {'ab_record': {}})
+
+    def test_replicate_and_override_flags_select_and_force_independently(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'plan.csv'
+            for action in ('', '0', '1'):
+                for override in ('', '0', '1'):
+                    with self.subTest(replicate=action, override=override):
+                        self.plan(path, action=action, override=override)
+                        meta, selected = read_plan(path)
+                        self.assertEqual(bool(selected), action == '1' or override == '1')
+                        self.assertEqual(meta['force_tables'], ['ab_record'] if override == '1' else [])
+
+    def test_override_does_not_bypass_constants_or_flag_validation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'plan.csv'
+            for action, override in (('yes', '1'), ('0', 'yes'), ('1', '2')):
+                self.plan(path, action=action, override=override)
+                with self.assertRaisesRegex(MigrationError, 'Invalid replicate'):
+                    read_plan(path)
+            self.plan(path, action='0', override='1', constants='{"unknown":1}')
+            with self.assertRaisesRegex(MigrationError, 'constant column'):
+                read_plan(path)
+
+    def test_old_column_name_is_not_an_alias_in_new_csv(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'plan.csv'
+            self.plan(path)
+            with path.open(newline='') as file:
+                rows = list(csv.reader(file))
+            rows[0][rows[0].index('replicate')] = 'replicate_source_id'
+            with path.open('w', newline='') as file:
+                csv.writer(file).writerows(rows)
+            with self.assertRaisesRegex(MigrationError, 'export a new CSV'):
+                read_plan(path)
 
     def test_table_existance_uses_catalog_presence(self):
         source = {'columns': {'shared': {}, 'source': {}}}

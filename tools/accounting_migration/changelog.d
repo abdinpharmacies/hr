@@ -2,6 +2,39 @@
 
 ## Current changes before commit:
 
+- Always replace eligible M2M tables with mapped source links, even on equal-count/checkpointed reruns; retain ordinary model count skips/overrides and reuse existing source/XML-ID snapshots without a CSV format change.
+- Replace additive per-link INSERT checks with transactional DELETE/streaming COPY, bounded mapped-ID deduplication, conflict rollback, explicit source/inserted/skipped/duplicate counts, and `m2m_replaced` reports/progress.
+- Test stale exclusive user roles, obsolete valid memberships, old additive checkpoints, missing/ambiguous mappings, alias collisions, self-relations, empty sources, bounded copying, transaction interruption, and defensive cleanup after replacement.
+- Require CSV/sidecar version 3 with `replicate` and `replicate_override`; reject old versions/column aliases and preserve both flags when refreshing new-format diagnostics.
+- Force transactional DELETE/COPY when override is 1 even if replicate is 0, counts match, or old checkpoints succeeded; retain source IDs, defaults/mappings, count verification, sequence updates, M2M replay/cleanup, FK recovery, and repeated override behavior until reset.
+- Add forced-copy reports and disposable tests covering flag combinations, equal-count missing partner repair, repeated forced resumes, rollback, source-only exclusion, defaults, and strict old-format rejection.
+- Remove orphan link rows generically from eligible M2M relations after successful selected endpoint copies/count-skips and before FK restoration, repairing previous-run memberships without recopying model tables.
+- Preserve valid links, parent/business records, unrelated/excluded relations, and failed-endpoint relations; stream bounded endpoint-checked deletes with partition-safe row identity and per-table rollback/checkpoints.
+- Report deleted endpoint IDs in private JSONL audit files, retain successful cleanup history, update final relation counts, and surface cleanup failures while independently restoring FKs.
+- Add disposable-database regressions for users/company memberships, either missing endpoint, valid extra links, count-skipped reruns, failed endpoints, transaction interruption/retry, multiple batches, and partitioned relations.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `csv_cleanup.py`
+- `csv_copy.py`
+- `csv_plan.py`
+- `csv_relations.py`
+- `csv_replicator.py`
+- `csv_verify.py`
+- `tests/test_csv_cleanup.py`
+- `tests/test_csv_m2m_replace.py`
+- `tests/test_csv_override.py`
+- `tests/test_csv_postgres.py`
+- `tests/test_csv_replication.py`
+- `tests/test_csv_verify.py`
+- `tests/test_csv_xmlids.py`
+
+## 6b20afc93 — emadco88 — 2026-11-13
+
+Original commit subject: `tools/accounting_migration/ UPD replicate res.users safely`
+
 - Add read-only registered-table CSV/sidecar export and reviewed-plan execution, with explicit table replacement controls, source IDs, constant overrides, and no identity/ORM audit behavior in CSV mode.
 - Copy retained source files directly into targets without PostgreSQL staging; preserve NULL/default rules, M2M replacement/additive operations, atomic checkpoints, sequence restarts, and resume.
 - Save/remove/restore incoming and outgoing FKs touching selected tables, preserving ignored rows; recapture constraints after exclusive access to avoid online schema races.

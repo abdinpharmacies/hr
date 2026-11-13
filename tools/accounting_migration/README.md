@@ -3,7 +3,8 @@
 ## CSV-controlled replication
 
 Use this explicit mode to check selected standard/custom table counts and copy
-tables with different counts, using source IDs and shared physical columns.
+tables with different counts, or explicitly force replacement, using source IDs
+and shared physical columns.
 Stored M2O/M2M references to ignored tables use
 shared XML IDs, as described below. It does not invoke the legacy ORM/identity
 workflow documented later in this file.
@@ -29,7 +30,7 @@ without executing addon code or starting a registry.
 The exact CSV header is:
 
 ```text
-table_name,model_type,existance,available_target_selections_json,source_missing_columns_list,target_missing_columns_list,replicate_source_id,column_default_value_json,source_fk_columns_json,target_fk_cloumns_json
+table_name,model_type,existance,available_target_selections_json,source_missing_columns_list,target_missing_columns_list,replicate,replicate_override,column_default_value_json,source_fk_columns_json,target_fk_cloumns_json
 ```
 
 `table_name` is a physical public table. `model_type` defaults to `custom` for
@@ -59,8 +60,11 @@ These diagnostics do not add selection validation or mapping to replication.
 To choose a value, enter `{"target_field_name": "bottom"}` in
 `column_default_value_json`.
 
-New exports use CSV metadata version 2. Original version-1 ten-column files with
-the two sample columns remain readable. The CSV schema is unchanged. Current
+Export and import require CSV metadata version 3 and the exact new header.
+Older CSV versions and `replicate_source_id` headers are rejected: export a new
+CSV and sidecar. There is no old-column alias or legacy CSV conversion. The
+diagnostic-refresh helper accepts only the new format and preserves both flags.
+Current
 checkpoints use run format 4 and row-count verification policy `csv_count_v1`;
 XML-ID artifacts carry their own versioned policy. Missing-column arrays mean
 source-minus-target and target-minus-source respectively. FK JSON uses the
@@ -68,16 +72,31 @@ supplied paired catalog query, including composite keys.
 
 Edit only the operational cells:
 
-- `replicate_source_id`: `1` makes target rows match the source using source IDs,
-  skipping replacement when source and target row counts match; `0` or
-  blank ignores the table. Defaults are custom=1 and Odoo=0. Missing CSV rows are
-  ignored. There is no standard-table allowlist. Selected tables retain their
+- `replicate`: `1` selects normal count-based replication; `0` or blank ignores
+  the table unless override is 1. Defaults are custom=1 and Odoo=0. Missing CSV
+  rows are ignored. There is no standard-table allowlist. Copied tables retain their
   source IDs; references to ignored tables follow the XML-ID rules below.
+- `replicate_override`: `1` selects the table and forces transactional DELETE/COPY,
+  even with `replicate=0`, matching counts, or a successful old checkpoint.
+  Defaults to 0; blank also means 0. Force remains active on every rerun until
+  you set it back to 0. This does not bypass both-side existence, usable IDs,
+  schema/database binding, constants, backup, or SQL/FK validation.
 - `column_default_value_json`: `{}` by default, or a JSON object such as
   `{"company_id": 1, "active": true, "note": null}`. Constants name target
   physical columns and override shared source values for every imported row.
   These are target values and bypass relationship mapping for that column.
   An `id` override is rejected. Diagnostic cells do not control execution.
+
+| replicate | replicate_override | Action |
+|---|---|---|
+| 0/blank | 0/blank | Ignore |
+| 1 | 0/blank | Copy only when counts differ |
+| 0/blank | 1 | Force delete and recopy |
+| 1 | 1 | Force delete and recopy |
+
+For example, set `replicate_override=1` for `res_partner` when counts match but
+source partner ID 6 is missing from the target. The copy restores the source ID
+set instead of treating equal counts as completion.
 
 Then apply the reviewed file:
 
@@ -102,22 +121,22 @@ replication, FK restoration, and reopening the target. There is no
 
 Verification uses **row counts only** (`csv_count_v1`): the source count is read
 from the retained extraction manifest and the target uses `SELECT count(*)`.
-For model tables and replacement M2M operations, equal counts mean
-`verified_existing` with no DELETE/COPY, regardless of previous checkpoint owner.
-Different counts cause the existing transactional copy operation. IDs, values,
-constants, and mapped-reference differences are not compared when counts match.
-No full-row hashing, PostgreSQL composite normalization, or verification SQLite
-indexes are created. A target COUNT still reads database pages and can take time.
+For ordinary model tables, equal counts mean `verified_existing` with no
+DELETE/COPY unless `replicate_override=1`, regardless of previous checkpoint
+owner. Different counts or an override cause the transactional copy. IDs,
+values, constants, and mapped-reference differences are not compared when counts
+match. No full-row hashing, PostgreSQL composite normalization, or verification
+SQLite indexes are created. A target COUNT still reads database pages.
 
-For additive M2M operations, target count >= source count skips the operation;
-otherwise existing bounded inserts add missing mapped links and preserve extras.
-When a selected endpoint was actually copied, replay its M2M operation even if
-counts matched before that endpoint copy, because its IDs may have changed.
-After writes, replacement counts must equal the retained source count; additive
-counts must equal the previous count plus inserted rows. Native PostgreSQL
-constraints and input parsing remain enforced on actual copies. Retained source
-COPY checksums and XML-ID artifact integrity checks remain separate from row-count
-verification.
+Eligible M2M tables are **always fully replaced on every run**, including when
+counts match or selected endpoint models were skipped. DELETE and streaming COPY
+run in one transaction, rebuilding the complete table from mapped source links.
+There are no additive imports or per-link target-existence INSERT checks.
+Replacement removes valid target-only memberships as well as obsolete links.
+After copying, the target count must equal the number of emitted links, with
+raw source rows accounted for as inserted + missing-mapping skips + duplicates.
+Native SQL constraints remain enforced. Source COPY file checksums and XML-ID
+artifact integrity are separate from count verification.
 
 Shared columns copy by identical physical name. Target-only nullable columns
 without constants receive explicit NULL; target-only NOT NULL columns need a
@@ -145,16 +164,39 @@ never created or copied. For example, a source-only
 If both sides exist but columns, declarations, or endpoint roles differ, planning
 still fails rather than guessing. The same rules apply to fresh catalog discovery
 and operation planning from retained extraction metadata.
-Both selected means replacement with source IDs. One selected means additive
-links: retain that endpoint's source ID, map the ignored endpoint via XML ID,
-and preserve existing target links. Neither selected means no association copy.
+Both selected means source IDs at both endpoints. One selected means retaining
+that endpoint's source ID and mapping the other endpoint through shared XML IDs.
+Neither selected means no relation operation. Full replacement applies in both
+selected cases; existing target links absent from mapped source data are removed.
 Physical relation table and endpoint-column roles identify an association, so
 Python field renames such as `groups_id` to `group_ids` are accepted without
-guessing renamed columns. Links with no XML-ID match are skipped and reported as
-warnings. Conflicting aliases that resolve one source ID to different target
-records fail an operation; multiple aliases resolving to the same target are
-accepted. Association writes require all selected endpoint copies to commit.
-INSERT batches remain bounded and use no PostgreSQL staging.
+guessing renamed columns. Missing XML-ID matches skip links with warnings, even
+when that leaves an empty relation. Ambiguous aliases or SQL errors roll back
+that table's DELETE/COPY. Selected endpoint operations must succeed first.
+
+Mapped endpoint pairs are deduplicated with a private, disk-backed ID index,
+keeping memory bounded. If duplicate mapped pairs carry different extra-column
+values, the operation fails rather than choosing a payload. The temporary index
+is removed after success/failure; it is not a source/target content verifier and
+creates no PostgreSQL staging table. Copy progress reports source rows processed.
+`m2m_replacement_report.json` records source/inserted/skipped/deduplicated counts,
+timings, and `m2m_replace_v1` policy; operation status is `m2m_replaced`.
+
+Old additive operation checkpoints cannot skip rebuilding relations. Existing
+compatible source extractions and XML-ID snapshots are reused without changing
+their artifact policy or triggering a fresh extraction just for this change.
+CSV headers and ordinary model override behavior remain unchanged.
+
+After the table/relation operations and before FK restoration, the existing
+scoped orphan cleanup removes surviving links whose endpoint ID has no target
+record, using SQL `NOT EXISTS` checks. It does not scan unrelated/excluded M2M
+tables, ordinary M2O tables, or registered model tables. Failed/unfinished selected
+endpoints block cleanup. Valid surviving links and all endpoint/business records
+are preserved by cleanup; replacement itself intentionally removes extra target
+memberships. Server-cursor candidate discovery and bounded DELETE batches recheck
+absence, identify rows across partitions, and commit deletion checkpoints/audits
+atomically. Private JSONL files contain only deleted endpoint IDs. Active incoming
+CASCADE/SET NULL/SET DEFAULT FKs block cleanup instead of cascading into records.
 
 Before live work, the verified full target backup and existing downtime watchdog
 are used. Incoming/outgoing FKs touching tables that need writes (including FKs owned by
@@ -174,6 +216,10 @@ Runs live under `/opt/odoo19/migration-runs/csv_<plan_id>/`, with authoritative
 checkpoints in private schema `csv_replication` (run format 4, separate from
 legacy format 2). Rerun the same command to compare source/target counts again.
 Changing constants or XML-ID mappings does not force a recopy when counts match.
+Use `replicate_override=1` when replacement is required despite equal counts.
+Forced copies are reported as `forced_copy`, with copy reason `replicate_override`;
+ordinary count-triggered copies remain `copied`. Forced endpoints also replay
+their M2M operations and run the normal orphan cleanup/FK restoration.
 
 A different plan/run is accepted for the bound target. The previous checkpoint
 is archived under `archive:<uuid>` in the checkpoint table, with its constraints
@@ -194,7 +240,8 @@ row or reference. If
 retries in that run too, because the metadata namespaces have been replaced.
 Actual reference mapping checks target records while preparing target lookup metadata.
 
-Existing CSV/sidecar files remain usable. An incompatible/incomplete extraction,
+Existing version-3 CSV/sidecar files remain usable; older CSVs require a fresh
+export, while their checkpoints/run artifacts remain intact. An incompatible/incomplete extraction,
 including one predating XML-ID metadata, automatically starts a fresh
 `generation_<uuid>/` extraction with source rows and aliases in one snapshot.
 Adding selected tables or references not retained in the old extraction also
@@ -208,17 +255,21 @@ still reported as warnings.
 
 Reports: `migration_report.md`, `csv-result.json`, `failed_tables.json`,
 `failed_foreign_keys.json`, `mapping_report.json`, `verification_report.json`,
-`excluded_tables.json`, and `attempt-N.json`, plus normal progress/availability
+`excluded_tables.json`, `m2m_cleanup_report.json`, `m2m_replacement_report.json`, and `attempt-N.json`, plus normal progress/availability
 files. They contain counts, operation timings/errors, FK outcomes, and optional
 action results. Mapping reports include resolved-reference/skipped-link counts,
 issue categories, and private per-operation SQLite artifact paths with detailed
 source IDs and affected columns. Verification reports include expected/actual
 row counts, count-comparison reasons, verification timings, and outcomes:
-`verified_existing`, `copied`, `additive_completed`, or `failed`.
+`verified_existing`, `copied`, `forced_copy`, `m2m_replaced`, or `failed`.
 Exclusion reports identify skipped model/M2M tables, absent source/target tables,
 and missing endpoint tables. They cause `complete_with_warnings`, not failed
 operations. Operation counts include only the current eligible operations,
 while historical checkpoints and outstanding FK restoration remain preserved.
+Cleanup reports give deleted link counts, endpoint bindings, private deleted-ID
+file paths, final relation row counts, skipped relations, and failures. Successful
+removals cause `complete_with_warnings`; cleanup failures cause
+`finished_with_errors` and still allow independent FK restoration attempts.
 There are **no user/partner identity checks or
 reports**, broad missing-reference/orphan scans, or ORM smoke tests in CSV mode. FK/SQL
 failures still surface normally. Exit status remains 0 for complete/warnings,

@@ -13,9 +13,10 @@ from resume import fingerprint
 from csv_plan import database_identity, discover, read_plan
 from csv_copy import extract, verify_files, copy_table, restart_sequence
 from csv_actions import ACTIONS, choose_actions, filestore_roots
-from csv_relations import plan_operations, MappingContext, capture_target, POLICY
+from csv_relations import plan_operations, MappingContext, capture_target, endpoints, POLICY
 from csv_relations import verified_path
-from csv_verify import compare, verify_after
+from csv_verify import compare, verify_after, target_count
+from csv_cleanup import delete_orphan_links
 import prepared_progress as progress
 
 SCHEMA = 'csv_replication'
@@ -213,7 +214,7 @@ class CSVRunner:
             try:
                 item['verification'] = compare(self.con, self.stage, table, self.manifest['tables'][table],
                                                self.plan['target']['columns'][table], spec)
-                if not item['verification']['matches']:
+                if spec.get('relation') or spec.get('force_copy') or not item['verification']['matches']:
                     self.write_tables.add(table)
             except Exception as exc:
                 self.con.rollback()
@@ -239,8 +240,10 @@ class CSVRunner:
         before = copy.deepcopy(self.state)
         mapper = None
         mapping = prepared.get('mapping')
+        relation_counts = {} if spec.get('relation') else None
         verification = prepared.get('verification')
-        progress.begin('copy', table=table, operation='Verify or copy current operation', monitor=True)
+        progress.begin('copy', table=table, operation='Replace mapped M2M links' if spec.get('relation')
+                       else 'Verify or copy current operation', total=file_meta['rows'], monitor=True)
         try:
             if 'error' in prepared:
                 entry = dict(success=False, expected=file_meta['rows'], **prepared['error'])
@@ -254,13 +257,17 @@ class CSVRunner:
                 return
             if any(parent not in self.completed for parent in spec.get('dependencies', [])):
                 raise MigrationError('Selected M2M endpoint copy did not commit')
-            matched = verification['matches'] and not any(parent in self.copied for parent in spec.get('dependencies', []))
+            endpoint_copied = any(parent in self.copied for parent in spec.get('dependencies', []))
+            matched = (verification['matches'] and not spec.get('force_copy')
+                       and not spec.get('relation') and not endpoint_copied)
             if not matched:
                 if table in blocked:
                     raise MigrationError('Required FK removal failed')
                 mapper = self.mapper(table)
                 rows = copy_table(self.con, self.stage, table, file_meta, self.plan['target']['columns'][table],
-                                  spec['constants'], spec['mode'], mapper)
+                                  spec['constants'], spec['mode'], mapper,
+                                  relation=endpoints(self.plan['target'], table) if spec.get('relation') else None,
+                                  relation_counts=relation_counts)
                 if mapper:
                     mapping = mapper.finish()
                 verification = verify_after(self.con, self.stage, table, self.plan['target']['columns'][table], spec, verification, copied_rows=rows)
@@ -271,13 +278,19 @@ class CSVRunner:
             columns = self.plan['target']['columns'][table]
             restart_sequence(self.con, table, columns, only_advance=matched)
             count = verification['actual']['rows']
-            status = 'verified_existing' if matched else 'additive_completed' if spec['mode'] == 'add' else 'copied'
+            status = ('m2m_replaced' if spec.get('relation') else 'verified_existing' if matched
+                      else 'forced_copy' if spec.get('force_copy') else 'copied')
             entry = dict(success=True, rows=rows, target_count=count, status=status,
+                         force_copy=bool(spec.get('force_copy')),
+                         copy_reason='m2m_replace' if spec.get('relation') else 'replicate_override' if spec.get('force_copy') else 'selected_endpoint_copied'
+                         if endpoint_copied else 'count_differs' if not matched else None,
                          specification=fingerprint(spec), expected=file_meta['rows'], mode=spec['mode'],
                          seconds=time.monotonic() - started, verification_seconds=prepared['verification_seconds'],
                          verification=verification, comparison=prepared['verification'])
             if mapping:
                 entry['mapping'] = mapping
+            if relation_counts is not None:
+                entry.update(relation_policy=spec['relation_policy'], relation_counts=relation_counts)
             self.state['operations'][table] = entry
             self.persist()
             self.con.commit()
@@ -293,9 +306,12 @@ class CSVRunner:
                 mapping = mapper.finish()
             if not isinstance(exc, Exception):
                 raise
-            entry = dict(success=False, expected=file_meta['rows'], seconds=time.monotonic() - started, **error_record(exc))
+            entry = dict(success=False, expected=file_meta['rows'], seconds=time.monotonic() - started,
+                         force_copy=bool(spec.get('force_copy')), **error_record(exc))
             if mapping:
                 entry['mapping'] = mapping
+            if relation_counts is not None:
+                entry['relation_counts'] = relation_counts
             if verification:
                 entry['verification'] = verification
             self.state['operations'][table] = entry
@@ -303,6 +319,62 @@ class CSVRunner:
             self.con.commit()
             self.results.append(dict(table=table, status='failed', **entry))
             progress.finish('CSV copy failed; table rolled back')
+
+    def cleanup_m2m(self):
+        history = self.state.setdefault('m2m_cleanup', {})
+        audit_history = self.state.setdefault('m2m_cleanup_history', [])
+        if not isinstance(history, dict) or not isinstance(audit_history, list):
+            raise MigrationError('Saved M2M cleanup metadata is malformed')
+        registered = set(self.plan['source']['models'].values()) | set(self.plan['target']['models'].values())
+        for table, spec in sorted(self.operations.items()):
+            if not spec.get('relation'):
+                continue
+            started = time.monotonic()
+            before = copy.deepcopy(self.state)
+            outcome = None
+            updated_count = None
+            progress.begin('cleanup M2M', table=table, operation='Remove orphan links; pending commit', monitor=True)
+            try:
+                if not spec.get('dependencies') or any(parent not in self.completed for parent in spec['dependencies']):
+                    entry = dict(success=True, status='skipped', reason='selected_endpoint_not_successful', deleted_links=0)
+                else:
+                    bindings = endpoints(self.plan['target'], table)
+                    if (table in registered or len(bindings) != 2
+                            or not set(bindings) <= self.plan['target']['columns'][table].keys()
+                            or any(binding['table'] not in self.plan[side]['columns']
+                                   for binding in bindings.values() for side in ('source', 'target'))):
+                        raise MigrationError(f'Unsafe or ambiguous M2M cleanup binding: {table}')
+                    outcome = delete_orphan_links(self.con, self.stage, table, bindings)
+                    entry = dict(success=True, status='cleaned' if outcome['deleted_links'] else 'no_orphans', **outcome)
+                    if outcome['deleted_links']:
+                        updated_count = target_count(self.con, table)
+                        entry['remaining_rows'] = updated_count
+                        operation = self.state['operations'].get(table, {})
+                        operation.update(target_count=updated_count, cleanup_deleted_links=outcome['deleted_links'])
+                entry.update(attempt=self.state['attempt'], seconds=time.monotonic() - started)
+                self.state['m2m_cleanup'][table] = entry
+                if entry['deleted_links']:
+                    self.state['m2m_cleanup_history'].append(dict(table=table, **entry))
+                self.persist()
+                self.con.commit()
+                if updated_count is not None:
+                    for result in self.results:
+                        if result['table'] == table:
+                            result.update(target_count=updated_count, cleanup_deleted_links=outcome['deleted_links'])
+                progress.finish('M2M cleanup checkpoint committed')
+            except BaseException as exc:
+                self.con.rollback()
+                self.state = read_state(self.con) or before
+                if outcome and outcome.get('deleted_ids_file'):
+                    (self.stage / outcome['deleted_ids_file']).unlink(missing_ok=True)
+                if not isinstance(exc, Exception):
+                    raise
+                self.state.setdefault('m2m_cleanup', {})[table] = dict(
+                    success=False, status='failed', deleted_links=0, attempt=self.state['attempt'],
+                    seconds=time.monotonic() - started, **error_record(exc))
+                self.persist()
+                self.con.commit()
+                progress.finish('M2M cleanup failed; deletions rolled back')
 
     def reports(self):
         failures = [dict(table=table, **entry) for table, entry in self.state['operations'].items()
@@ -318,7 +390,11 @@ class CSVRunner:
         mapping_summary = {table: entry['mapping'] for table, entry in self.state['operations'].items()
                            if table in self.operations and entry.get('mapping')}
         skipped_links = sum(value['stats']['skipped_links'] for value in mapping_summary.values())
-        status = 'finished_with_errors' if failures or action_errors else 'complete_with_warnings' if fks or skipped_links or self.exclusions else 'complete'
+        cleanup = {table: entry for table, entry in self.state.get('m2m_cleanup', {}).items()
+                   if self.operations.get(table, {}).get('relation') and entry.get('attempt') == self.state['attempt']}
+        cleanup_errors = [dict(table=table, **entry) for table, entry in cleanup.items() if not entry.get('success')]
+        deleted_links = sum(entry['deleted_links'] for entry in cleanup.values())
+        status = 'finished_with_errors' if failures or action_errors or cleanup_errors else 'complete_with_warnings' if fks or skipped_links or self.exclusions or deleted_links else 'complete'
         result = dict(status=status, format=FORMAT, operations=self.results, failed_tables=failures,
                       failed_foreign_keys=fks, committed_tables=successful, actions=self.state.get('actions', {}),
                       attempt=self.state['attempt'], constraints=self.state['constraints'])
@@ -326,9 +402,17 @@ class CSVRunner:
         result['mapping'] = mapping_summary
         result['skipped_links'] = skipped_links
         result['excluded_tables'] = self.exclusions
+        result.update(m2m_cleanup=cleanup, failed_m2m_cleanup=cleanup_errors, deleted_m2m_links=deleted_links)
+        result['m2m_cleanup_history'] = [entry for entry in self.state.get('m2m_cleanup_history', [])
+                                       if self.operations.get(entry['table'], {}).get('relation')]
         result['operation_counts'] = {name: sum(item.get('status') == name for item in self.results)
-                                      for name in ('verified_existing', 'copied', 'additive_completed', 'failed')}
+                                      for name in ('verified_existing', 'copied', 'forced_copy', 'm2m_replaced', 'failed')}
+        result['m2m_replacements'] = {
+            table: {key: entry[key] for key in ('success', 'status', 'relation_policy', 'relation_counts', 'seconds') if key in entry}
+            for table, entry in self.state['operations'].items() if self.operations.get(table, {}).get('relation')}
         save_json(self.stage / 'mapping_report.json', mapping_summary)
+        save_json(self.stage / 'm2m_cleanup_report.json', cleanup)
+        save_json(self.stage / 'm2m_replacement_report.json', result['m2m_replacements'])
         save_json(self.stage / 'excluded_tables.json', self.exclusions)
         save_json(self.stage / 'verification_report.json', {
             table: {key: entry[key] for key in ('status', 'verification', 'comparison', 'verification_seconds') if key in entry}
@@ -349,6 +433,9 @@ class CSVRunner:
                   f'M2M links skipped for missing XML-ID matches: {skipped_links}.',
                   'Typed mapping details: `mapping_report.json` and private SQLite artifacts.',
                   'Row-count verification details: `verification_report.json` (no content hashing).',
+                  'M2M source/inserted/skipped/deduplicated counts: `m2m_replacement_report.json`.',
+                  f'Orphan M2M links deleted: {deleted_links}; cleanup failures: {len(cleanup_errors)}.',
+                  'M2M cleanup details and deleted endpoint ID files: `m2m_cleanup_report.json`.',
                   'No broad identity, relationship, or ORM audit was performed.']
         if self.exclusions:
             lines += ['', 'Tables/relations excluded because they do not exist on both sides:', ''] + exclusion_lines(self.exclusions)
@@ -381,6 +468,7 @@ class CSVRunner:
             blocked = self.drop_constraints()
             for table in sorted(self.operations, key=lambda name: (name not in self.plan['tables'], name)):
                 self.unit(table, blocked)
+            self.cleanup_m2m()
             for name in actions:
                 marker = self.state['actions'].get(name, {})
                 if marker.get('success'):
@@ -493,7 +581,7 @@ def run(args, root):
         if compatible:
             plan = {**plan, **{name: {**plan[name], **meta} for name, meta in manifest['relation_metadata'].items()}}
             exclusions[:] = model_exclusions
-            operations = plan_operations(plan['source'], plan['target'], selected, exclusions)
+            operations = plan_operations(plan['source'], plan['target'], selected, exclusions, plan['force_tables'])
             required_models = {ref['source_model'] for op in operations.values() for ref in op.get('references', {}).values()}
             compatible = set(operations) <= manifest['tables'].keys() and required_models <= set(manifest['xmlids']['models'])
         if not compatible:
@@ -502,7 +590,7 @@ def run(args, root):
                 raise MigrationError('Source schema differs from CSV export; re-export the plan')
             plan = {**plan, 'source': source_meta, 'target': target_meta}
             exclusions[:] = model_exclusions
-            operations = plan_operations(source_meta, target_meta, selected, exclusions)
+            operations = plan_operations(source_meta, target_meta, selected, exclusions, plan['force_tables'])
             if manifest is not None or old is not None or (stage / 'tables').exists():
                 stage = private_dir(base / ('generation_' + uuid.uuid4().hex))
                 same_run = False

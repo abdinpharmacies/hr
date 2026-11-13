@@ -53,10 +53,10 @@ class CountPostgresTests(unittest.TestCase):
         first = self.first()
         old_id = first.plan['plan_id']
         self.new_plan()
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('matching table recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             result = self.controller(self.stage / 'runs')
         self.assertEqual(result['failed_tables'], [])
-        self.assertEqual(result['operation_counts']['verified_existing'], 2)
+        self.assertEqual(result['operation_counts']['verified_existing'], 1)
         state = read_state(self.con)
         self.assertNotEqual(state['plan_id'], old_id)
         self.assertEqual(state['format'], FORMAT)
@@ -66,7 +66,7 @@ class CountPostgresTests(unittest.TestCase):
     def test_equal_counts_skip_even_with_changed_values(self):
         runner = self.first()
         self.execute(self.con, "UPDATE ab_record SET name='changed'")
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('equal count recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             result = runner.run(runner.plan['target']['fks'])
         self.assertEqual(result['failed_tables'], [])
         self.assertEqual(self.scalar('SELECT name FROM ab_record'), 'changed')
@@ -98,10 +98,10 @@ class CountPostgresTests(unittest.TestCase):
     def test_adoption_does_not_drop_constraints_or_rewind_sequence(self):
         runner = self.first()
         self.execute(self.con, 'ALTER SEQUENCE ab_record_id_seq RESTART WITH 1000')
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('recopy')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             result = runner.run(runner.plan['target']['fks'])
         self.assertEqual(result['failed_tables'], [])
-        self.assertEqual(runner.write_tables, set())
+        self.assertEqual(runner.write_tables, {'a_b_rel'})
         self.assertEqual(self.scalar('SELECT nextval(\'ab_record_id_seq\')'), 1000)
 
     def test_adoption_advances_stale_sequence(self):
@@ -118,7 +118,7 @@ class CountPostgresTests(unittest.TestCase):
         result = runner.run(runner.plan['target']['fks'])
         self.assertEqual(result['failed_tables'], [])
         self.assertEqual(result['operation_counts']['verified_existing'], 1)
-        self.assertEqual(result['operation_counts']['additive_completed'], 1)
+        self.assertEqual(result['operation_counts']['m2m_replaced'], 1)
         self.assertEqual(self.scalar('SELECT count(*) FROM a_b_rel'), 1)
 
     def test_target_numeric_type_input_normalizes_expected_values(self):
@@ -126,7 +126,7 @@ class CountPostgresTests(unittest.TestCase):
         self.execute(self.source, 'UPDATE ab_record SET amount=5')
         self.execute(self.con, 'ALTER TABLE ab_record ADD COLUMN amount numeric(10,2)')
         runner = self.first()
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('normalization mismatch')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             self.assertEqual(runner.run(runner.plan['target']['fks'])['failed_tables'], [])
 
     def test_varchar_typmod_error_does_not_truncate_or_delete_target(self):
@@ -142,7 +142,7 @@ class CountPostgresTests(unittest.TestCase):
         self.execute(self.con, 'ALTER TABLE ab_record ADD COLUMN doubled integer GENERATED ALWAYS AS (id*2) STORED')
         runner = self.first()
         self.assertEqual(self.scalar('SELECT doubled FROM ab_record'), 84)
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('generated column mismatch')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             self.assertEqual(runner.run(runner.plan['target']['fks'])['failed_tables'], [])
 
     def test_binary_json_arrays_and_escaped_record_values_roundtrip(self):
@@ -153,7 +153,7 @@ class CountPostgresTests(unittest.TestCase):
                                  "document=%s::jsonb,labels=%s,moment='2026-11-12 12:00:00+02'",
                      ['{"x":"quote\\\"\\\\newline\\n","y":null}', ['"', '\\', 'line\ntext', '']])
         runner = self.first()
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('escaped type mismatch')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             self.assertEqual(runner.run(runner.plan['target']['fks'])['failed_tables'], [])
         self.assertNotIn('artifact', runner.state['operations']['ab_record']['verification'])
         self.assertFalse((self.stage / 'verification').exists())
@@ -183,10 +183,10 @@ class CountPostgresTests(unittest.TestCase):
             self.execute(con, 'DELETE FROM a_b_rel')
             self.execute(con, 'DELETE FROM ab_other')
         runner = self.runner({'ab_other'})
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('empty table recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             result = runner.run(runner.plan['target']['fks'])
         self.assertEqual(result['failed_tables'], [])
-        self.assertTrue(all(item['status'] == 'verified_existing' for item in result['operations']))
+        self.assertTrue(all(item['status'] in ('verified_existing', 'm2m_replaced') for item in result['operations']))
 
     def test_historical_missing_fk_definitions_survive_run_transfer(self):
         runner = self.first({'res_users', 'ab_record', 'ab_other'})
@@ -218,7 +218,7 @@ class CountPostgresTests(unittest.TestCase):
         with patch.object(runner, 'persist', interrupt), self.assertRaises(KeyboardInterrupt):
             runner.run(runner.plan['target']['fks'])
         self.assertEqual(self.scalar('SELECT id FROM ab_record'), 42)
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('recopy after adoption interruption')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             self.assertEqual(runner.run(runner.plan['target']['fks'])['failed_tables'], [])
 
     def test_legacy_format_and_extraction_get_new_generation_and_archive(self):
@@ -235,13 +235,13 @@ class CountPostgresTests(unittest.TestCase):
         legacy.pop('mapping_policy')
         save_json(base / 'csv-extraction.json', legacy)
         original = (base / 'csv-extraction.json').read_bytes()
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('legacy matching table recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             result = self.controller(root)
         self.assertEqual(result['failed_tables'], [])
         self.assertEqual((base / 'csv-extraction.json').read_bytes(), original)
         self.assertTrue(list(base.glob('generation_*/csv-extraction.json')))
         self.assertTrue(read_state(self.con).get('previous_checkpoint'))
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('legacy repeat recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             self.assertEqual(self.controller(root)['failed_tables'], [])
 
     def test_interrupted_archive_transaction_preserves_previous_owner(self):
@@ -280,7 +280,7 @@ class CountPostgresTests(unittest.TestCase):
         runner = self.first()
         runner.state['operations']['ab_record']['verification'] = dict(
             policy='csv_content_v1', artifact=dict(file='missing-old.sqlite', sha256='invalid'))
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('equal count recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             self.assertEqual(runner.run(runner.plan['target']['fks'])['failed_tables'], [])
         self.assertEqual(runner.state['operations']['ab_record']['verification']['policy'], 'csv_count_v1')
 
@@ -347,7 +347,7 @@ class CountPostgresTests(unittest.TestCase):
         self.assertEqual(first['committed_tables'], 1)
         self.assertEqual(self.scalar('SELECT id FROM ab_hr_job'), 9)
         self.assertEqual(first['excluded_tables'][0]['table'], relation)
-        with patch('csv_replicator.copy_table', side_effect=AssertionError('matching table recopied')):
+        with patch('csv_replicator.copy_table', side_effect=fixtures.relation_copy_only):
             second = self.controller(root)
         self.assertEqual(second['excluded_tables'], first['excluded_tables'])
         self.assertEqual(second['operation_counts']['verified_existing'], 1)
