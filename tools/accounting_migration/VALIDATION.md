@@ -1,5 +1,238 @@
 # Prepared-target migration validation
 
+## Count-only verification and unattended CSV execution (2026-11-13)
+
+Final suite: **338 tests, 328 passed and 10 optional tests skipped** in 46.799
+seconds, using a private temporary PostgreSQL 16 cluster over a Unix socket.
+Offline discovery: **338 tests, 183 passed and 155 skipped**. The CSV subset has
+**101 tests**. Compilation and `git diff --check` passed. No application database
+was changed, opened for migration, or restarted; database mutations used generated
+disposable fixtures only. The temporary cluster was stopped after testing.
+
+- Replace full-content verification with `csv_count_v1`: read source counts from
+  the retained extraction manifest and issue target `SELECT count(*)`. Equal
+  model/replacement counts skip even if IDs, values, constants, or XML-ID mappings
+  differ. No source row projection, normalization, per-row hashing, verification
+  SQLite files, or old verification-artifact checks are used to decide skipping.
+- Count mismatches retain normal transactional copying and XML-ID mapping.
+  Additive M2M skips when target count >= source count; relations replay after
+  actually copied selected endpoints to account for changed IDs. Replacement
+  post-copy counts must equal source counts; additive post-copy counts equal the
+  previous count plus inserted rows. Native constraints/input parsing and source
+  extraction-file integrity remain enforced independently.
+- Count fixtures intentionally start with differing model counts so copy/mapping
+  regressions still exercise actual writes. Tests explicitly cover same-count
+  changed IDs/values/defaults, count-only legacy resume without old SQLite files,
+  a mocked 29,463,325-row comparison with no source reads or COPY, and additive
+  count semantics, mapping retries, sequence behavior, and FK recovery.
+- Remove the CSV backup/replication `Continue? [y/N]` prompt. Controller tests
+  reject any call to `input()` and verify automatic backup, gating, operations,
+  FK restoration, and reopening. The optional explicitly requested extra-action
+  menu and the separate non-CSV migration workflow retain their own behavior.
+
+## Both-side table eligibility (2026-11-13)
+
+Final suite: **336 tests, 326 passed and 10 optional tests skipped** in 56.419
+seconds, using an isolated temporary PostgreSQL 16 cluster over a private Unix
+socket. Offline discovery: **336 tests, 181 passed and 155 skipped**. The CSV
+subset contains **99 tests**. Compilation and `git diff --check` passed. Database
+mutations were limited to generated disposable fixtures; the cluster was stopped
+and removed after validation.
+
+Coverage includes:
+
+- Selected source-only/target-only model rows are automatically ignored despite
+  replication flag 1; physical metadata controls eligibility independently of
+  the editable CSV `existance` label. Both-side tables still require usable IDs.
+- Source-only and target-only M2M relations are excluded before strict endpoint
+  binding checks, including stale declarations and a missing source declaration.
+  Common relations with one-sided endpoint tables are excluded too. Common
+  physical relations with missing target declarations, column mismatches, or
+  reversed endpoint roles retain strict failures.
+- Reproduce the exact `ab_hr_job_ab_visit_report_report_rel` failure with a
+  source-only report model and source-only relation, after deleting one-sided
+  CSV rows. Both the fresh run and retained-extraction resume skip the relation,
+  copy/verify the common job table, and report warnings without failed operations.
+- One-sided-only selections produce warning reports without backup, target
+  downtime, or checkpoint writes. Ignored association links and outstanding FK
+  restoration remain preserved; historical operations outside the active scope
+  do not inflate committed counts. Exclusions appear in JSON/Markdown reports.
+
+Read-only planning of the existing `main19-migrate.csv` and its sidecar succeeds:
+**119 selected model tables, 44 eligible M2M operations, 16 excluded relations**.
+The reported relation is excluded as `source_only` / `missing_target_table`.
+The CSV/sidecar files and application databases were not changed or migrated.
+
+## Content verification across CSV runs (2026-11-12)
+
+Final suite: **326 tests, 316 passed and 10 optional tests skipped** in 53.685
+seconds, using a private temporary PostgreSQL 16 cluster with Unix-socket access
+only. Offline discovery: **326 tests, 176 passed and 150 skipped**. The CSV subset
+contains **89 tests**. Compilation and `git diff --check` passed. No application
+database was migrated, changed, gated, or reset; all database mutations used
+generated disposable fixtures. The isolated cluster was stopped after validation.
+
+- Format-4 checkpoints adopt identical contents across different plan IDs and
+  archive previous format-3/4 state instead of rejecting run ownership. Saved
+  success markers and equal counts alone cannot authorize skipping.
+- Canonical row-hash multisets compare IDs and all insertable target columns,
+  using PostgreSQL composite input and bounded private SQLite indexes. Test
+  cases cover equal counts with changed IDs/values, duplicate source IDs,
+  numeric precision normalization, varchar length errors without truncation,
+  generated columns, binary/JSONB/array/timestamp values, and escaped text.
+- Current constants and changed target XML-ID matches trigger selective recopy.
+  Additive M2M checks a subset and only inserts missing links, preserving extras;
+  matching operations perform no DELETE/COPY and do not rewind sequences.
+- Pre-copy verification/mapping errors preserve target rows. After-copy content
+  verification catches an INSERT trigger that changes values and rolls back its
+  table. References retained before metadata replacement still require existing
+  target endpoint records during preparation, never queries during active COPY.
+- Incomplete and pre-XML-ID extractions create a fresh generation without
+  overwriting original snapshots. Ordinary compatible resumes reuse their source
+  snapshot. Reports distinguish verified/copied/additive/failed outcomes and
+  retain expected/actual hashes, counts, comparison reasons, and timings.
+- Checkpoint archival is transactional; interrupted adoption retries without
+  recopying matching data. Outstanding missing FKs survive run transfer;
+  malformed history and corrupted verification artifacts are rejected.
+- Previous-generation availability recovery requires the same database/OID and
+  an unambiguous marker. Unidentified offline targets remain untouched. Wrong
+  target identities and schema changes still fail before copying.
+
+## Generic CSV XML-ID relationships (2026-11-12)
+
+Final suite: **300 tests, 290 passed and 10 optional tests skipped** in 64.437
+seconds. Offline discovery: **300 tests, 176 passed and 124 skipped**. Compilation
+and `git diff --check` passed.
+
+Validation uses a private temporary PostgreSQL 16 cluster with Unix-socket access
+only and generated disposable source/target databases. No application database
+was migrated, changed, gated, or reset. CSV schema and sidecar versions are
+unchanged; older retained extractions without XML-ID snapshots require a fresh
+run. The legacy migration path remains unchanged.
+
+Coverage includes:
+
+- Generic stored M2O references to ignored models, including audit user fields;
+  exact shared XML IDs with expected models and existing target records.
+- Real `res.users`/`res.groups` model names with differing source/target group
+  IDs and renamed M2M fields; arbitrary custom endpoints and unidirectional M2M
+  declarations work through the same planner.
+- Both endpoints selected retain source IDs and replace M2M links; one selected
+  maps the ignored endpoint and adds links; neither selected does no relation
+  copy. Failed selected endpoint operations block association writes.
+- Missing source/target XML IDs, wrong models, dangling records, conflicting
+  aliases, multiple aliases resolving to one record, and absence of numeric-ID
+  fallback. M2O failures roll back tables; unmatched M2M links warn and skip.
+- NULL preservation and target constants bypassing mapping, including unavailable
+  comodel metadata. Unavailable M2O endpoints otherwise reject planning. Plain
+  integer and nonstored fields are excluded from mapping.
+- Frozen source aliases and target snapshots; copying `ir_model_data` cannot
+  change decisions mid-run or on a pending retry. Repaired target aliases can
+  resolve pending work when target metadata has not been replaced; changed
+  committed mappings are rejected.
+- Mapping artifact/source snapshot corruption, older retained extraction
+  rejection, rollback before a mapped checkpoint commit, and successful retry.
+- More than 1,000 IDs across lookup batches; record payload batching bounded by
+  both count and bytes; private indexed SQLite artifacts contain identity
+  metadata/decisions rather than business payloads. No PostgreSQL staging.
+
+## Target selection diagnostics and table presence (2026-11-12)
+
+Final suite: **269 tests, 259 passed and 10 optional tests skipped**, using an
+isolated temporary PostgreSQL 16 instance. Offline discovery: **269 tests,
+174 passed and 95 skipped**. The CSV subset has **32 passing tests**.
+Compilation and diff checks passed. No migration or application DB writes were
+performed; the bound target was queried read-only for selection metadata.
+
+- New exports use metadata version 2 and replace both business-sample columns
+  with `available_target_selections_json`; no business sample rows are queried.
+- Stored keys come from `ir_model_fields_selection`/`ir_model_fields`, in metadata
+  order. Tests cover duplicate keys/shared owners, shared/nonstored/non-selection
+  exclusions, empty business tables, unresolved choices as null, and empty maps.
+- `existance` distinguishes `source_only`, `target_only`, and `both` using
+  physical catalogs, independently of row counts. One-sided table selections
+  retain the existing failure before replication; no tables are created.
+- Version-1 legacy headers and new version-2 headers remain readable. Conversion
+  preserves operational cells, row order, identity/schema binding, and plan ID;
+  committed-table resume remains valid. Wrong-target conversion and overwriting
+  an existing converted plan are rejected.
+
+Converted the existing `main19_table_plan.csv` into its sibling
+`main19_table_plan_selections.csv`, plus matching metadata sidecar, under
+`/opt/odoo19/migration-runs/`. SHA-256 verification confirms both original files
+are unchanged. All 341 rows and existing operational/other diagnostic cells were
+preserved. Presence counts: **95 source_only, 202 both, 44 target_only**.
+The new CSV contains 26 target-only selection fields, including two unresolved
+dynamic lists shown as null. Its largest cell is **1,986 characters**, versus
+the original 576,759-character sample; no new cell exceeds 32,767 characters.
+
+## CSV direct replication (2026-11-12)
+
+Final suite: **263 tests, 253 passed and 10 optional tests skipped**, using an
+isolated temporary PostgreSQL 16 instance with Unix-socket access only. Offline
+discovery: **263 tests, 172 passed and 91 skipped**. The CSV-focused subset has
+**26 passing tests**. Compilation and `git diff --check` passed.
+
+The first shared-server full regression attempt encountered an unrelated Odoo
+connection/background-worker race in an existing controller test; the final
+suite used an independent instance. An existing CLI assertion was updated for
+the three new optional arguments while retaining four required arguments.
+Optional real-Odoo clone and legacy opt-ins remain disabled. No application DB
+was migrated, reset, or gated; database mutations used generated disposable DBs.
+
+Coverage includes:
+
+- Read-only CSV/sidecar export, exact headers, credential redaction (including
+  generic config values), NULL/empty samples, JSON constants, and selection rules.
+- Standard/custom replacements with source IDs and no PostgreSQL staging,
+  mappings, ORM validation, or user/partner identity prerequisites/reports.
+- Explicit shared-value overrides, JSON/false/zero/empty constants, explicit NULL
+  instead of SQL defaults, NOT NULL/type failure isolation, and empty source data.
+- Replacement/additive M2M operations, retained file corruption rejection,
+  committed fingerprint verification, and pending default corrections.
+- Incoming CASCADE/SET NULL FKs owned by ignored tables: ignored rows remain
+  unchanged; unsatisfied restoration is reported. Composite FKs are captured
+  with correct column pairing. A simulated removal failure blocks replacement.
+- Target FK recapture after gating, including an incoming CASCADE constraint
+  introduced during online backup; stale pre-backup metadata cannot miss it.
+- Transactional sequence restart rollback; interruption before marker commit and
+  after copy commit; skipped successful work on resume; changed-plan/edit refusal.
+- Real controller backup, watchdog reopening, all-zero no-op, early schema drift
+  rejection, optional action-only retries, and absence of registry/identity calls.
+- Optional directory merging, identical-file reuse, preservation of target-only
+  files, and rejection of conflicting content. File actions default to disabled.
+
+### Direct-copy microbenchmark
+
+Three alternating-order staged/direct pairs ran on equivalent generated
+databases, each containing **250,001 rows** and a **33,889,312-byte retained COPY
+file**. Both variants produced identical sorted target fingerprints.
+
+| Measurement | Staged path | Direct path |
+| --- | ---: | ---: |
+| Median measured copy-path duration | 1.617 s | 0.923 s |
+| Rows written to staging | 250,001 | 0 |
+| Total data rows written | 500,002 | 250,001 |
+
+Measured copy-path reduction: **42.9%**. Logical data-row writes decreased
+**50%**. This is not a measurement of total physical disk bytes or WAL volume.
+The staged baseline explicitly loads/indexes/counts/fingerprints a staging table
+before DELETE/INSERT SELECT; the direct path COPYs into the target. Both maintain
+the sequence and fingerprint the target. Extraction, backup, FK handling,
+checkpoint overhead, and optional files are outside this timed microbenchmark;
+the results do not predict complete production migration duration.
+
+Reproduce on an isolated disposable PostgreSQL instance with CREATEDB:
+
+```bash
+MIGRATION_PREPARED_TEST_CONFIG=/path/to/test-maintenance.conf \
+/opt/odoo19/venv19/bin/python tools/accounting_migration/tests/benchmark_csv.py \
+  --rows 250000 --trials 3
+```
+
+The harness creates/drops only generated `codex_migration_test_prepared_*` DBs.
+The benchmark compares SQL data paths, not the entire former public importer.
+
 ## Fingerprint reuse and recovery (2026-11-11)
 
 The offline suite reports **237 tests: 164 passed, 73 skipped**. With disposable

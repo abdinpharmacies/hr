@@ -2,6 +2,50 @@
 
 ## Current changes before commit:
 
+- Add read-only registered-table CSV/sidecar export and reviewed-plan execution, with explicit table replacement controls, source IDs, constant overrides, and no identity/ORM audit behavior in CSV mode.
+- Copy retained source files directly into targets without PostgreSQL staging; preserve NULL/default rules, M2M replacement/additive operations, atomic checkpoints, sequence restarts, and resume.
+- Save/remove/restore incoming and outgoing FKs touching selected tables, preserving ignored rows; recapture constraints after exclusive access to avoid online schema races.
+- Retain backup/gating/watchdog recovery and add an opt-in resumable filestore action; document commands, limits, tests, and the measured disposable direct-copy benchmark.
+- Replace large sample columns in new CSV exports with database-only target selection choices and `existance` status; preserve legacy plans, conversion controls/binding, and committed resume compatibility.
+- Map stored M2O/M2M references to ignored tables generically through shared XML IDs; retain selected endpoint source IDs and explicit target constants, and match renamed M2M fields by physical endpoint roles.
+- Fail missing M2O matches and conflicting aliases; skip unmatched M2M links with warnings, block relations after failed endpoint copies, and retain mapping reports with private indexed snapshot/decision artifacts.
+- Freeze prepared-target mappings before copying metadata; older/incomplete extractions get a fresh generation without overwriting original artifacts.
+- Use retained source counts and target COUNT(*) for CSV verification across run IDs; skip equal-count models/replacement relations without row hashing, type normalization, or verification SQLite indexes, and recopy count mismatches. Replay relations after copied endpoints and check post-write counts.
+- Archive prior format-3/4 checkpoints on ownership transfer, retain outstanding FK recovery, and report verified/copied/additive/failed outcomes with comparison evidence; adopted tables never rewind sequences.
+- Remove the CSV backup/replication confirmation prompt; continue automatically through backup, downtime, copying, FK restoration, and reopening.
+- Restrict model and automatic M2M imports to tables and endpoints present on both sides; exclude one-sided candidates before strict binding validation, retain genuine mismatch errors, and report skip warnings without counting historical/excluded operations.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `csv_actions.py`
+- `csv_copy.py`
+- `csv_plan.py`
+- `csv_relations.py`
+- `csv_replicator.py`
+- `csv_verify.py`
+- `migrate.py`
+- `tests/benchmark_csv.py`
+- `tests/test_csv_postgres.py`
+- `tests/test_csv_replication.py`
+- `tests/test_csv_verify.py`
+- `tests/test_csv_xmlids.py`
+- `tests/test_migration.py`
+
+## a0526994c — emadco88 — 2026-11-12
+
+Original commit subject: `tools/accounting_migration/prepared.py UPD report_only=False for users and partners`
+
+- Make the existing non-CSV identity checkpoint reject missing source user/partner IDs >= 7 instead of saving report-only approval.
+
+Files changed:
+- `prepared.py`
+
+## cb1bf68e7 — emadco88 — 2026-11-12
+
+Original commit subject: `tools/accounting_migration/ UPD speed process`
+
 - Deduplicate identical table fingerprints within each operation and retain full checks for raw-policy XML-ID/empty scalar phases, preserving actions, relation writes, and atomic markers.
 - Keep digest format, resume verification, format-2 compatibility, protections, and historical strict-policy behavior; refresh after actual custom-table changes or absent full checks.
 - Add scope/recovery regressions and a reproducible disposable baseline benchmark; document measured performance without changing application databases.

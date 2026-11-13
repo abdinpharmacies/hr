@@ -14,19 +14,31 @@ def parser():
     p = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     for name in ('source-config', 'source-db', 'target-config', 'target-db'):
         p.add_argument('--' + name, required=True)
-    p.add_argument('--reset',action='store_true',help='Confirm deletion of private pre-import schemas and matching run directories, then exit. Deletes contained backups/logs/extraction; preserves public records.')
+    mode = p.add_mutually_exclusive_group()
+    mode.add_argument('--reset',action='store_true',help='Confirm deletion of private pre-import schemas and matching run directories, then exit. Deletes contained backups/logs/extraction; preserves public records.')
+    mode.add_argument('--export-table-plan', metavar='PATH', help='Export read-only CSV table selections and metadata, then exit.')
+    mode.add_argument('--table-plan', metavar='PATH', help='Replicate tables using a reviewed CSV plan, without PostgreSQL staging.')
+    p.add_argument('--extra-actions', choices=('menu', 'copy-filestore'), help='Opt-in CSV extra action; requires --table-plan.')
     return p
 
 
 def main(argv=None):
     p=parser()
     args = p.parse_args(argv)
+    if args.extra_actions and not args.table_plan:
+        p.error('--extra-actions requires --table-plan')
     p.print_help()
     sys.stdout.flush()
     try:
         if args.reset:
             from reset_migration import reset
             return reset(args,RUN_ROOT)
+        if args.export_table_plan:
+            from csv_plan import export_plan
+            return export_plan(args)
+        if args.table_plan:
+            from csv_replicator import run
+            return run(args, RUN_ROOT)
         from prepared import run
         return run(args, RUN_ROOT)
     except Exception:
@@ -35,6 +47,9 @@ def main(argv=None):
 
 
 def recovery_help(args):
+    if getattr(args, 'table_plan', None) or getattr(args, 'export_table_plan', None):
+        print('CSV mode: fix the reported operation and rerun the same command. Retain the CSV sidecar and run extraction; --reset does not manage CSV runs.', file=sys.stderr)
+        return
     command=[sys.executable,str(HERE/'migrate.py')]
     for name in ('source_config','source_db','target_config','target_db'):
         command+=['--'+name.replace('_','-'),getattr(args,name)]
