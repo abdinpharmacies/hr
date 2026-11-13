@@ -30,7 +30,7 @@ class TableCheckpointTests(unittest.TestCase):
     def test_cli_exit_status_distinguishes_errors_and_accepted_exceptions(self):
         script=Path(__file__).resolve().parents[1]/'migrate.py'
         argv=[str(script),'--source-config','source','--source-db','a',
-              '--target-config','target','--target-db','b']
+              '--target-config','target','--target-db','b','--no-backup']
         with patch.object(sys,'argv',argv),contextlib.redirect_stdout(io.StringIO()):
             with patch('prepared.run',return_value={'status':'finished_with_errors'}):
                 with self.assertRaises(SystemExit) as error:

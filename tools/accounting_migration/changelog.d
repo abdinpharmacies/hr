@@ -2,6 +2,47 @@
 
 ## Current changes before commit:
 
+- Add a no-argument terminal menu for CSV export, CSV import, and separate database fixes; `0` exits the script. Preserve table-copy/mapping procedures; add explicit per-run backup decisions to existing CLI dispatch.
+- Share validated source/target config paths, database names, and one CSV path across menu actions in an atomic 0600 defaults file; retain settings after operation failures and reject export overwrites.
+- Add read-only live/saved FK auditing, composite/NULL handling, user-type conflict checks, bounded previews, and incomplete-timeout reporting.
+- Add individually selected installed-module XML-ID/configuration, payment-type JSON names, HR field-reference, reviewed Discuss orphan, and original-FK restoration repairs, with identity/dependency guards and no cascading record changes.
+- Protect explicit repairs with an optional explicitly selected fresh verified backup, exclusive target access/watchdog recovery, per-operation rollback, private before/after reports, and atomic database receipts; preserve source read-only snapshots and retained importer artifacts.
+- Require an explicit take/verify, skip, or cancel backup choice on each import/fix run; add mutually exclusive `--backup`/`--no-backup` flags and refuse unspecified noninteractive imports before connecting.
+- Skip all backup/checksum/archive work when declined, keep repair confirmation separate, and record created/reused/skipped outcomes plus per-attempt history without persisting consent in defaults or reusing checkpoint consent.
+- Audit XML IDs globally across target-installed module namespaces; use bound current/archived source-ID copy receipts or explicit core identity checks, preserve generated/target-only/unverified aliases, and never guess by names or matching counts.
+- Restore verified missing/stale aliases in independent per-model transactions across all namespaces, preserve existing ownership/model/noupdate, record detailed module/model previews and unresolved reasons, and continue unaffected model groups after failures.
+- Cover menu dispatch/defaults/cancellation, native FK/login failures, reruns, stale previews, interruption recovery, backup validation, and a real base-upgrade reproduction/repair in disposable databases.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `migrate.py`
+- `migration_menu.py`
+- `backup_policy.py`
+- `csv_replicator.py`
+- `prepared.py`
+- `table_checkpoints.py`
+- `database_repair.py`
+- `repair_audit.py`
+- `repair_fixes.py`
+- `repair_xmlids.py`
+- `tests/test_migration_menu.py`
+- `tests/test_backup_policy.py`
+- `tests/test_csv_postgres.py`
+- `tests/test_migration.py`
+- `tests/test_prepared.py`
+- `tests/test_prepared_postgres.py`
+- `tests/test_reset_migration.py`
+- `tests/test_table_checkpoints.py`
+- `tests/test_database_repair.py`
+- `tests/test_global_xmlids.py`
+- `tests/test_repair_base_upgrade.py`
+
+## 45ce7bb65 — emadco88 — 2026-11-13
+
+Original commit subject: `tools/accounting_migration/ FIX`
+
 - Always replace eligible M2M tables with mapped source links, even on equal-count/checkpointed reruns; retain ordinary model count skips/overrides and reuse existing source/XML-ID snapshots without a CSV format change.
 - Replace additive per-link INSERT checks with transactional DELETE/streaming COPY, bounded mapped-ID deduplication, conflict rollback, explicit source/inserted/skipped/duplicate counts, and `m2m_replaced` reports/progress.
 - Test stale exclusive user roles, obsolete valid memberships, old additive checkpoints, missing/ambiguous mappings, alias collisions, self-relations, empty sources, bounded copying, transaction interruption, and defensive cleanup after replacement.

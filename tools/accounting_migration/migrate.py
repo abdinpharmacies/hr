@@ -19,14 +19,32 @@ def parser():
     mode.add_argument('--export-table-plan', metavar='PATH', help='Export read-only CSV table selections and metadata, then exit.')
     mode.add_argument('--table-plan', metavar='PATH', help='Replicate tables using a reviewed CSV plan, without PostgreSQL staging.')
     p.add_argument('--extra-actions', choices=('menu', 'copy-filestore'), help='Opt-in CSV extra action; requires --table-plan.')
+    backup = p.add_mutually_exclusive_group()
+    backup.add_argument('--backup', dest='backup', action='store_true', default=None,
+                        help='Explicitly authorize creating or verifying a target backup for this import.')
+    backup.add_argument('--no-backup', dest='backup', action='store_false',
+                        help='Explicitly continue this import without creating or verifying a backup.')
     return p
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    if not argv:
+        if not sys.stdin.isatty():
+            parser().print_help()
+            return 2
+        from migration_menu import run_menu
+        return run_menu(main, RUN_ROOT)
     p=parser()
     args = p.parse_args(argv)
     if args.extra_actions and not args.table_plan:
         p.error('--extra-actions requires --table-plan')
+    if not args.reset and not args.export_table_plan:
+        from backup_policy import require_choice
+        try:
+            require_choice(args.backup)
+        except MigrationError as exc:
+            p.error(str(exc))
     p.print_help()
     sys.stdout.flush()
     try:
@@ -63,6 +81,8 @@ def recovery_help(args):
 if __name__ == '__main__':
     try:
         result = main()
+        if isinstance(result, int):
+            sys.exit(result)
         if isinstance(result, dict) and result.get("status") == "finished_with_errors":
             sys.exit(2)
     except (MigrationError, KeyboardInterrupt) as exc:

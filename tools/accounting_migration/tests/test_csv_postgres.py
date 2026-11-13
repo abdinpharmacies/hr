@@ -39,7 +39,7 @@ class CSVPostgresTests(unittest.TestCase):
         self.source = connect(self.config, self.source_db, readonly=False)
         self.args = SimpleNamespace(source_config=self.config, target_config=self.config,
                                     source_db=self.source_db, target_db=self.database,
-                                    export_table_plan=str(self.stage / 'plan.csv'), extra_actions=None)
+                                    export_table_plan=str(self.stage / 'plan.csv'), extra_actions=None, backup=True)
         self.args.table_plan = self.args.export_table_plan
         for con, user, record, other in ((self.source, 13, 42, 21), (self.con, 7, 9, 8)):
             with con.cursor() as cr:
@@ -419,6 +419,25 @@ class CSVPostgresTests(unittest.TestCase):
                 second = runner.run(runner.plan['target']['fks'], actions=['copy-filestore'])
         self.assertEqual(second['status'], 'complete')
         self.assertTrue(second['actions']['copy-filestore']['success'])
+
+    def test_explicit_no_backup_import_never_creates_or_verifies_backup(self):
+        self.export({'ab_record'})
+        self.args.backup=False
+        self.con.close()
+        try:
+            with patch('csv_replicator.ensure_backup',side_effect=AssertionError('backup')), \
+                    patch('backup_policy.digest',side_effect=AssertionError('checksum')), \
+                    patch('backup_policy.subprocess.run',side_effect=AssertionError('archive')), \
+                    patch('builtins.input',side_effect=AssertionError('unexpected prompt')), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                result=run(self.args,self.stage/'runs')
+        finally:
+            self.con=connect(self.config,self.database,readonly=False)
+        self.assertEqual(result['failed_tables'],[])
+        self.assertEqual(result['backup']['status'],'skipped')
+        self.assertEqual(list((self.stage/'runs').rglob('before_import.dump')),[])
+        self.assertEqual(list((self.stage/'runs').rglob('backup.json')),[])
+        self.assertEqual(self.scalar('SELECT count(*) FROM ab_record'),1)
 
     def test_changed_schema_fails_before_backup_or_target_gating(self):
         self.export({'ab_other'})

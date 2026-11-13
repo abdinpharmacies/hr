@@ -12,6 +12,7 @@ from psycopg2 import sql
 from psycopg2.extras import execute_values
 from availability import DatabaseGate, recover_target, target_offline
 from common import MigrationError, connect, loads, save_json, settings, ensure_backup, schema_digest
+from backup_policy import require_choice, select_backup, perform_backup
 from resume import endpoint, fingerprint
 import prepared_snapshot as snapshot
 import prepared_progress as progress
@@ -217,6 +218,7 @@ def identity_checkpoint(connection, ids, stage, report_only=False):
 
 
 def run(args, root):
+    requested_backup = require_choice(getattr(args, 'backup', None))
     os.umask(0o077)
     if args.source_db == args.target_db:
         raise MigrationError('Source and target database names must differ')
@@ -249,6 +251,9 @@ def run(args, root):
         # Keep the original identity stable; reviewed mapping revisions belong
         # to resume metadata, not the database/snapshot identity.
         identity = loads((stage / 'prepared-run.json').read_text())
+        backup_choice = select_backup(requested_backup, args.target_db, stage)
+        if backup_choice is None:
+            return dict(passed=False, status='cancelled', source_access='read_only')
         progress.start(stage, args.target_config)
         print(f'Prepared custom migration: {args.source_db} -> {args.target_db}\nRun: {stage}', flush=True)
         recover_target(tg, stage)
@@ -342,11 +347,12 @@ def run(args, root):
             f'Extracted custom rows: {sum(manifest["tables"][manifest["models"][m]["table"]]["rows"] for m in manifest["selected"]):,}; '
             f'total extraction bytes: {sum(t["bytes"] for t in manifest["tables"].values()):,}.', flush=True)
         print('Omitted models: ' + ', '.join(manifest['omitted']), flush=True)
-        if not confirm('Checkpoint 2: back up target; commit each live table independently, map references, '
+        if not confirm('Checkpoint 2: commit each live table independently, map references, '
                        'import attachments, validate, and attempt FK restoration. Failed tables are retained; '
                        'skip committed operations and retry pending work; the target reopens even with missing constraints.'):
             return dict(passed=False, status='cancelled', source_access='read_only')
-        ensure_backup(args.target_config, args.target_db, stage, progress=progress)
+        backup_result = perform_backup(args.target_config, args.target_db, stage, backup_choice,
+                                       ensure=ensure_backup, progress=progress)
         if not (stage / 'filestore-baseline.json').exists():
             save_json(stage / 'filestore-baseline.json', dict(path=str(target_root), exists=target_root.exists()))
         # The worker connects while online, but reads this manifest only after GO.
@@ -362,6 +368,7 @@ def run(args, root):
                         cr.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(WORK)))
                         cr.execute(sql.SQL('REVOKE ALL ON SCHEMA {} FROM PUBLIC').format(sql.Identifier(WORK)))
                 engine = PreparedImporter(target_con, stage, manifest, target, rules, conversions)
+                engine.backup = backup_result
                 engine.validate_ids()
                 try:
                     engine.preflight(replacing=not bool(saved_setup))

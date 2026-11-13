@@ -53,7 +53,7 @@ class PreparedTests(unittest.TestCase):
 
     def test_cli_uses_only_prepared_workflow(self):
         with patch('prepared.run',return_value={'passed':True}) as run,patch('legacy_migrate.legacy_main') as legacy:
-            result=main(['--source-config','source','--source-db','a','--target-config','target','--target-db','b'])
+            result=main(['--source-config','source','--source-db','a','--target-config','target','--target-db','b','--no-backup'])
         self.assertTrue(result['passed'])
         self.assertEqual(run.call_args.args[0].target_db,'b')
         legacy.assert_not_called()
@@ -87,7 +87,7 @@ class PreparedTests(unittest.TestCase):
         target=MagicMock(oid=12)
         connection=MagicMock()
         connection.cursor.return_value.__enter__.return_value.fetchone.return_value=('19.0',)
-        args=SimpleNamespace(source_db='source',target_db='target',source_config='source.conf',target_config='target.conf')
+        args=SimpleNamespace(source_db='source',target_db='target',source_config='source.conf',target_config='target.conf',backup=False)
         with tempfile.TemporaryDirectory() as directory,contextlib.redirect_stdout(io.StringIO()), \
                 patch('prepared.DatabaseGate',return_value=target) as gate,patch('prepared.recover_target'), \
                 patch('prepared.settings',return_value={'data_dir':directory}),patch('prepared.endpoint',return_value={}), \
@@ -111,7 +111,7 @@ class PreparedTests(unittest.TestCase):
         connection.close.assert_called_once()
 
     def test_user_stable_key_declaration_does_not_block_raw_policy(self):
-        args=SimpleNamespace(source_db='source',target_db='target',source_config='unused',target_config='unused')
+        args=SimpleNamespace(source_db='source',target_db='target',source_config='unused',target_config='unused',backup=False)
         with patch('prepared.loads',side_effect=[{'format':1,'stable_keys':{'res.users':'password'}},{}]), \
                 patch('prepared.settings',return_value={'data_dir':'/tmp/raw-policy-test'}), \
                 patch('prepared.DatabaseGate',side_effect=MigrationError('reached database gate')) as gate:

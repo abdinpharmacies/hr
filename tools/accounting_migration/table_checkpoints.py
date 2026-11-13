@@ -487,6 +487,8 @@ class TableMigration:
                       failed_foreign_keys=self.failed_fks, report=e.report, relationship_warnings=warnings,
                       policy=getattr(e,'relationship_policy','mapped_references_v1'), constraints=self.constraints,
                       report_errors=sorted(self.report_errors), source_access='read_only', stage=str(e.stage))
+        if getattr(e, 'backup', None) is not None:
+            result['backup'] = e.backup
         self.resume.finish(result)
         self.checkpoint(self.con, 'table_result', result)
         self.con.commit()

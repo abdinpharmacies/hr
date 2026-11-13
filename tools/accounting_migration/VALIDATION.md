@@ -1,5 +1,114 @@
 # Prepared-target migration validation
 
+## Global installed-module XML-ID repair (2026-11-13)
+
+Full suite: **416 tests, 406 passed and 10 optional tests skipped**, in 217.354
+seconds. The final focused XML-ID suite passed all **13 tests** after the preview
+preservation adjustment. Compilation and `git diff --check` passed.
+
+The separate identity option now audits aliases owned by every target-installed
+module, including persistent models outside `ab%`. Registered-model/table
+discovery does not start an Odoo registry. Copy evidence follows the active CSV
+checkpoint archive chain and requires matching source/target identities plus a
+committed source-ID replacement receipt; row-count skips alone are insufficient.
+Existing core user/partner association checks remain available independently.
+
+Thirteen disposable PostgreSQL regressions cover both accounting namespaces,
+dangling aliases, aliases pointing to existing wrong records, missing aliases,
+non-`ab` models, target-only/generated/uninstalled namespaces, absent/conflicting
+copy evidence, legacy format-3 receipts, malformed/cyclic history, missing source
+records, table overrides, bounded ID batches, preserved `noupdate`, per-model
+rollback, stale previews, independent progress, and idempotent reruns. The focused
+suite passed after making proposed `noupdate` values reflect the preserved target
+values exactly.
+
+The real Odoo rehearsal creates two temporary installed seed addons in a
+generated database, restores a separate source fixture, and simulates source-ID
+replacement while leaving target XML IDs stale. A seeded upgrade fails with a
+duplicate name, and a base upgrade reproduces the portal-login conflict. Running
+only the global XML-ID/configuration action fixes both namespaces and the core
+identity mappings; a subsequent real base/seed-addon upgrade succeeds with three
+seed records preserved and no duplicate creation. Temporary addons are confined
+to the disposable fixture directory and are not shipped as production addons.
+
+Read-only planning against `main19` inspected 80 installed module namespaces:
+12,356 eligible source aliases and 15,315 target aliases. It proposed 76 verified
+changes across four models, including 62 account-guide aliases covering both
+accounting namespaces. Unsupported/ambiguous/missing-source cases were reported
+without applying changes. The user's custom-model diagnostic (exactly excluding
+`__export__`) found 133 source aliases and 110 target aliases across all modules.
+No application repair, backup, upgrade, or availability change was run against
+the real source or target during this work.
+
+## Explicit backup consent (2026-11-13)
+
+Final full suite: **403 tests, 393 passed and 10 optional tests skipped**, in
+152.227 seconds, including the real disposable Odoo base-upgrade rehearsal.
+The prepared-controller test was also rerun after adding its explicit-skip
+assertion: **1 passed**. Compilation and `git diff --check` passed.
+
+Imports and repairs now require a per-run backup decision. Offline regressions
+verify that blank/invalid input cannot authorize a backup, cancellation takes no
+backup, flags are mutually exclusive, noninteractive imports without a flag stop
+before dispatch/connections, export does not request consent, and reruns do not
+inherit consent. Declining backup bypasses creation, checksum reads, and archive
+validation even when an old corrupt backup exists. Created/reused/skipped and
+failed outcomes are retained in private per-attempt reports.
+
+Disposable PostgreSQL tests exercise CSV import, prepared-workflow resume, and
+database repairs with backup explicitly declined. Repair tests also verify that
+requested-backup failures stop before repair writes or target exclusion, and
+that interruption recovery rolls back/reopens the target with either backup
+choice. Existing tests explicitly authorize their fixture backups. No backup,
+import, repair, module upgrade, or availability change was run against `main19`
+or the real source database during this change.
+
+## Interactive menu and separate repairs (2026-11-13)
+
+Final suite: **389 tests, 379 passed and 10 optional tests skipped**, in 153.671
+seconds with the disposable PostgreSQL tests and real Odoo base-upgrade rehearsal
+enabled. `git diff --check` passed. A real terminal invocation displayed options
+1/2/3/0; entering `0` exited with status 0. Existing CLI parser/dispatch tests pass,
+and the CSV importer/planner/COPY/mapping/verification files are unchanged.
+
+The 22 new tests cover shared atomic 0600 defaults, invalid settings, export
+overwrite refusal, export/import/fix dispatch isolation, cancellation, and native
+login/FK failures. PostgreSQL scenarios reproduce the five missing constraints
+and their orphan counts (9/183 wizard rows, 140 payroll rows, 13 report rows, and
+one Discuss membership), restore them independently, preserve unrelated records
+and translations, and verify repeat execution has no remaining repair changes.
+Additional cases cover composite MATCH FULL/partial NULL references, audit
+timeouts, changed prerequisites, ambiguous field aliases, incoming CASCADE
+dependencies, rollback without a completion receipt, and interruption recovery.
+The complete repair controller was exercised with actual backup creation/archive
+validation, before/after reports, transactional receipts, and availability gating.
+
+The Odoo rehearsal initialized a fresh disposable Odoo 19 base database and
+restored its backup into a separate disposable source clone. It deliberately
+pointed the portal-template alias/configuration at the public user. A real
+`-u base` then failed with `res_users_login_key`. Running only the separate core
+identity repair allowed the subsequent real `-u base` to complete successfully.
+These module upgrades were confined to generated disposable databases, not the
+application target or its full addon set.
+
+Reproduce (requires CREATEDB and the local Odoo server):
+
+```bash
+MIGRATION_PREPARED_TEST_CONFIG=/opt/odoo19/config/migrate19.conf \
+MIGRATION_ODOO_SERVER=/opt/odoo19/server \
+/opt/odoo19/venv19/bin/python -m unittest discover \
+  -s tools/accounting_migration/tests -v
+```
+
+The maintenance config is used only to connect to `postgres` and generated
+`codex_migration_test_prepared_*` fixture databases. Real `main19` and source
+`abdinpharmacies` were inspected read-only to validate repair planning; no
+application migration, repair, module upgrade, or availability change was run
+against them. The supported current repair preview reports six alias/config
+changes, one payment-type insertion, 13 field-reference updates, one reviewed
+membership removal, and five FK restorations. Running option 3 remains an
+explicit operator action, with audit/selection/confirmation before target writes.
+
 ## Authoritative M2M replacement (2026-11-13)
 
 Final suite: **367 tests, 357 passed and 10 optional tests skipped** in 59.297

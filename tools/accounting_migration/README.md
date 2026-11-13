@@ -1,5 +1,155 @@
 # Odoo 15 to Odoo 19 migration tools
 
+## Interactive menu
+
+Start without arguments in a terminal:
+
+```bash
+/opt/odoo19/venv19/bin/python tools/accounting_migration/migrate.py
+```
+
+```text
+1. Export migration CSV
+2. Import migration CSV
+3. Fix database
+0. Exit script
+```
+
+Export/import prompt for `--source-config`, `--source-db`, `--target-config`,
+`--target-db`, and the CSV path (`--export-table-plan` for export, `--table-plan`
+for import). Enter accepts the value in brackets. Both operations share defaults
+in `/opt/odoo19/migration-runs/menu-defaults.json` (mode 0600); only config paths,
+database names, and the CSV path are saved, never connection passwords. Settings
+are saved after validation, before starting the operation, including operations
+that later fail. Export refuses an existing CSV or sidecar; choose a new path.
+Import requires the reviewed version-3 CSV and sidecar. Config files must have an
+`[options]` section. Corrupt saved settings fall back to the example defaults and
+can be re-entered. Existing explicit CLI commands below remain unchanged.
+
+Operations return to the menu. `0` exits the script from the main menu; `0` in the
+fix submenu returns to the main menu. Ctrl+C cancels a prompt or operation and
+returns to the main menu after transaction/availability cleanup; EOF exits.
+Without a terminal, no-argument invocation prints usage and exits with status 2.
+
+### Explicit backup choice
+
+Every import or database-fix run requires a fresh backup decision:
+
+```text
+1. Take/verify backup
+2. Continue without backup
+0. Cancel
+```
+
+Blank input does not select an option. The target database and backup destination
+are shown before the choice. Option 1 creates a backup, or explicitly verifies
+and reuses an existing import backup; fixes use a new run directory and a fresh
+backup. Option 2 skips creation, checksum verification, and archive validation,
+including when an older backup exists. Option 0 cancels without taking a backup.
+Backup choice is separate from repair confirmation and is never saved as a menu
+default or restored from a previous run's checkpoint. Export does not ask.
+
+For explicit CLI imports, add `--backup` or `--no-backup` to the commands below.
+Interactive invocations without either flag ask. Noninteractive invocations
+without either flag exit before connecting or starting migration work. The flags
+are mutually exclusive. Requested backup failures stop the operation; there is
+no fallback to proceeding without a backup. Transaction and availability recovery
+remain enabled with either choice.
+
+`backup-report.json` records the latest decision/outcome and private
+`backup-decision-<unique-id>.json` files preserve individual attempt history.
+Successful operations also include `backup.status` (`created`, `reused`, or
+`skipped`) in their result reports. These reports do not grant consent on reruns.
+
+### Separate database fixes
+
+Option 3 uses the same saved connection settings and reviewed CSV to verify
+database identities. It **does not run import**, and import never runs repairs.
+First it audits all live FKs and missing FKs saved in the active CSV checkpoint,
+including composite keys, MATCH FULL/NULL behavior, and core user-type conflicts.
+Missing/unvalidated/changed definitions, orphan counts, bounded identifier samples,
+and timeouts are retained in the private report; timeouts are incomplete checks.
+The console shows counts and blockers without printing business row payloads.
+
+Choose individual fix numbers separated by commas or `a` for all supported fixes:
+
+- **Installed-module XML IDs and portal configuration:** audit aliases owned by
+  every target-installed module, with no accounting/module/model-prefix allowlist.
+  Restore missing aliases and repoint stale aliases only when migration history
+  proves source-ID replacement of the corresponding model table. Core `base`
+  user/partner aliases retain explicit login/user/company association checks;
+  correct the verified portal-template configuration without renaming logins.
+- **HR payment types:** repair the reviewed source IDs 1–4, preserving translated
+  JSON names and unrelated existing languages, and advance the ID sequence only
+  when needed. Conflicting identities or a different source record set block it.
+- **HR report fields:** repair references using shared field XML IDs plus matching
+  model/field names for `ab_hr_emp_history.action_date` and `notes`. No field-ID or
+  name-only fallback is allowed.
+- **Discuss membership:** archive and remove only reviewed membership 1538 if it
+  still references partner 9429, that partner is absent on both sides, and no
+  other row references the membership. Cascading changes are forbidden.
+- **Foreign keys:** independently restore saved original definitions after their
+  orphan checks pass. Data repairs precede restoration when both are selected.
+
+The XML-ID repair is generic across installed modules. The payment/report/Discuss
+repairs remain bounded to the investigated migration. Unsupported/changed cases
+are reported for review; independently verified XML-ID repairs can still proceed.
+Source reads use a new read-only repeatable-read snapshot, separate from all
+retained import extractions. Preview plans contain before/after values. A separate
+backup choice precedes repair confirmation; a selected backup is checksum/archive-
+verified before writes. With either backup choice, the existing
+exclusive-access/watchdog mechanism protects the repair window. Each XML-ID model
+group (all of its namespaces together), other repair, and FK restoration has
+its own transaction and an atomic completion/before-image receipt in the private
+`database_repairs.completed` table. An interrupt rolls back the active transaction;
+earlier committed repairs remain. Rerunning audits actual state and skips fixes
+that are no longer needed. Failed FK restorations do not undo committed repairs.
+
+Reports/backups live under private
+`/opt/odoo19/migration-runs/fix_<UTC timestamp>_<unique-id>/`: `preview.json`,
+`results.json`, `after.json`, `result.json`, and `failure.json` on interruption or
+failure. Preserve these confidential files, especially archived deleted rows.
+If a commit acknowledgement is lost, inspect `database_repairs.completed` using
+the run-directory name as `run_id` before deciding whether to retry.
+
+`xmlid-preview.json` and `xmlid-after.json` provide module/model counts, proposed
+before/after alias values, copy evidence, skipped unchanged aliases, and unresolved
+reasons. Existing alias ownership/model/`noupdate` values are preserved; new aliases
+use source `noupdate`. Target-only aliases are preserved. Generated namespaces
+such as `__export__` are excluded. Standard Odoo records often have different IDs
+between versions: `no_verified_source_id_copy` is an unsupported mapping, not proof
+that the target record is corrupt. Such cases and missing destinations are never
+guessed from names or numeric ID coincidences.
+
+Copy evidence follows the active checkpoint's archive chain, bound to the same
+source/target identities. It recognizes committed format-3 replacements and
+current copied/forced-copy receipts. Equal counts and `verified_existing` alone
+never prove source-ID preservation; a preceding verified replacement can remain
+evidence through subsequent count-only skips. Conflicting later copies invalidate
+older evidence. A changed/failed model group rolls back independently while other
+verified groups continue; reruns re-audit actual state. Remaining unresolved
+findings produce warnings, while execution failures produce errors.
+
+For the custom-model diagnostic requested during investigation, keep namespace
+and model columns so aliases are unambiguous (SQL `_` is a wildcard in `LIKE`, so
+use exact inequality for the generated namespace):
+
+```sql
+SELECT module, name, model, res_id
+FROM ir_model_data
+WHERE model LIKE 'ab%' AND module <> '__export__'
+ORDER BY module, model, name;
+```
+
+This query is a diagnostic subset; the repair itself covers all target-installed
+module namespaces and persistent models, including models outside `ab%`.
+
+The existing importer remains unchanged: forced text-to-JSONB payment-type COPY
+still fails. The separate repair restores compatible rows so ordinary equal-count
+imports skip that table. Do not leave `replicate_override=1` for that table when
+rerunning import. The fix step never upgrades modules or replaces `ir_model_data`
+wholesale. Audit/fix cancellation creates reports only, without target writes.
+
 ## CSV-controlled replication
 
 Use this explicit mode to check selected standard/custom table counts and copy
@@ -80,7 +230,7 @@ Edit only the operational cells:
   even with `replicate=0`, matching counts, or a successful old checkpoint.
   Defaults to 0; blank also means 0. Force remains active on every rerun until
   you set it back to 0. This does not bypass both-side existence, usable IDs,
-  schema/database binding, constants, backup, or SQL/FK validation.
+  schema/database binding, constants, the current backup choice, or SQL/FK validation.
 - `column_default_value_json`: `{}` by default, or a JSON object such as
   `{"company_id": 1, "active": true, "note": null}`. Constants name target
   physical columns and override shared source values for every imported row.
@@ -115,9 +265,10 @@ exclusive access. The actual extraction uses a fresh read-only repeatable-read
 snapshot; exported catalogs/choices do not freeze the imported data.
 
 CSV mode retains private COPY files but creates **no PostgreSQL staging tables**.
-CSV mode proceeds automatically through backup, exclusive target access,
-replication, FK restoration, and reopening the target. There is no
-`Continue? [y/N]` confirmation for this workflow.
+After the explicit backup choice, CSV mode creates/verifies a backup only when
+selected, then proceeds through exclusive target access, replication, FK
+restoration, and reopening. There is no additional `Continue? [y/N]` confirmation
+for this workflow.
 
 Verification uses **row counts only** (`csv_count_v1`): the source count is read
 from the retained extraction manifest and the target uses `SELECT count(*)`.
@@ -198,8 +349,9 @@ absence, identify rows across partitions, and commit deletion checkpoints/audits
 atomically. Private JSONL files contain only deleted endpoint IDs. Active incoming
 CASCADE/SET NULL/SET DEFAULT FKs block cleanup instead of cascading into records.
 
-Before live work, the verified full target backup and existing downtime watchdog
-are used. Incoming/outgoing FKs touching tables that need writes (including FKs owned by
+Before live work, backup creation/verification follows the explicit per-run
+choice. The existing downtime watchdog is always used. Incoming/outgoing FKs
+touching tables that need writes (including FKs owned by
 ignored tables) are saved and temporarily dropped, preventing CASCADE/SET NULL
 changes to ignored rows. Unrelated constraints stay untouched. Failed removals
 block affected operations. Restoration is attempted independently and missing
@@ -313,7 +465,8 @@ Run with the Odoo 19 virtual environment:
   --target-db YOUR_PREPARED_TARGET_DB
 ```
 
-All four arguments are required. Usage prints before connecting; `--help` never
+All four connection arguments are required; noninteractive imports additionally
+require `--backup` or `--no-backup`. Usage prints before connecting; `--help` never
 connects. The target must already contain its Odoo 19 modules, standard records,
 metadata, and permissions. No module/database installation is performed.
 
@@ -374,8 +527,8 @@ processing. There is no incremental source synchronization.
 ## Staging and live checkpoints
 
 1. Ask for identity-comparison approval and commit its report/checkpoint.
-2. Extract while the target is online. Ask approval for the processing window and
-   create/verify the full online target backup `before_import.dump` with SHA-256.
+2. Extract while the target is online. Ask approval for the processing window;
+   create/verify `before_import.dump` only if backup was explicitly selected.
 3. Block target connections and terminate its other sessions. For each staging
    table, commit COPY + required index + schema/count/content validation + success
    marker together. Roll back individual staging failures and attempt the rest.
@@ -429,7 +582,8 @@ format-1 runs remain incompatible.
   Verification still reads data. Legacy committed setup can adopt verified staging.
 - Skip successful live copies and retry failed/unfinished operations. For example,
   if tables 1/2/4 committed and table 3 failed, only table 3 is recopied.
-- Reuse the backup and attachment map. Newly eligible attachments are added
+- Reuse/verify an existing backup only when backup is selected for this attempt;
+  always retain the attachment map. Newly eligible attachments are added
   incrementally, without duplicate records or overwriting existing files.
 - Record each operation's relationship policy. Prior mapped-policy commits remain
   unchanged and are identified in the report. They are not silently rewritten to

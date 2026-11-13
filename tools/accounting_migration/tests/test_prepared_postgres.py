@@ -958,7 +958,7 @@ with target_offline(gate,con,sys.argv[4]):
                 if side=='source':
                     import shutil
                     shutil.copytree(self.source_files,data/'filestore'/database)
-            args=SimpleNamespace(source_config=configs[0],source_db=source_db,target_config=configs[1],target_db=self.database)
+            args=SimpleNamespace(source_config=configs[0],source_db=source_db,target_config=configs[1],target_db=self.database,backup=True)
             root=self.stage/'runs'
             rules=loads((HERE/'prepared_rules.json').read_text())
             conversions=loads((HERE/'mappings.json').read_text())
@@ -1076,9 +1076,13 @@ with target_offline(gate,con,sys.argv[4]):
                 cr.execute("DELETE FROM prepared_custom_migration.checkpoint WHERE name='table_result'")
             self.con.commit()
             self.con.close()
-            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke),patch('prepared.confirm',return_value=True):
+            args.backup=False
+            with patch('prepared.metadata',side_effect=schema),patch('prepared.SmokeWorker',FakeSmoke), \
+                    patch('prepared.confirm',return_value=True), \
+                    patch('prepared.ensure_backup',side_effect=AssertionError('unexpected backup on explicit skip')):
                 continued=run(args,root)
             self.assertEqual(continued['status'],'finished_with_errors')
+            self.assertEqual(continued['backup']['status'],'skipped')
             self.con=connect(self.config,self.database,readonly=False)
             with patch('builtins.input') as prompt:
                 with self.assertRaisesRegex(MigrationError,'checkpoints'):

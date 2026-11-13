@@ -253,13 +253,13 @@ class MigrationTests(unittest.TestCase):
             engine.relation_ids('ab_hr_report_model', 'target_field_id', 'ir.model.fields', [42])
         self.assertEqual(engine.relation_ids('other', 'links', 'business.record', [42]), [42])
 
-    def test_cli_requires_only_four_explicit_arguments(self):
+    def test_cli_parses_four_identifiers_and_optional_backup_choice(self):
         args = parser().parse_args(['--source-config', '/source.conf', '--source-db', 'chosen_source',
                                     '--target-config', '/target.conf', '--target-db', 'chosen_target'])
         self.assertEqual(args.source_db, 'chosen_source')
         self.assertEqual(args.target_db, 'chosen_target')
         self.assertEqual(set(vars(args)), {'source_config', 'source_db', 'target_config', 'target_db', 'reset',
-                                          'export_table_plan', 'table_plan', 'extra_actions'})
+                                          'export_table_plan', 'table_plan', 'extra_actions', 'backup'})
         self.assertIsNone(args.export_table_plan)
         self.assertIsNone(args.table_plan)
         self.assertIsNone(args.extra_actions)

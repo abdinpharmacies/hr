@@ -18,6 +18,7 @@ from csv_relations import verified_path
 from csv_verify import compare, verify_after, target_count
 from csv_cleanup import delete_orphan_links
 import prepared_progress as progress
+from backup_policy import require_choice, select_backup, perform_backup
 
 SCHEMA = 'csv_replication'
 FORMAT = 4
@@ -398,6 +399,8 @@ class CSVRunner:
         result = dict(status=status, format=FORMAT, operations=self.results, failed_tables=failures,
                       failed_foreign_keys=fks, committed_tables=successful, actions=self.state.get('actions', {}),
                       attempt=self.state['attempt'], constraints=self.state['constraints'])
+        if 'backup' in self.state:
+            result['backup'] = self.state['backup']
         result['ignored_tables'] = sorted(set(self.plan['tables']) - self.operations.keys())
         result['mapping'] = mapping_summary
         result['skipped_links'] = skipped_links
@@ -424,6 +427,8 @@ class CSVRunner:
                  f'Foreign keys left absent: {len(fks)}', '', 'Operation outcomes: ' + dumps(result['operation_counts']), '',
                  '| Table | Outcome | Mode | Expected | Copied | Target count | Verify seconds | Write seconds |',
                  '|---|---|---|---:|---:|---:|---:|---:|']
+        if 'backup' in result:
+            lines[4:4] = ['Backup: **' + result['backup']['status'] + '**']
         for table, entry in sorted(self.state['operations'].items()):
             if table not in self.operations:
                 continue
@@ -519,12 +524,16 @@ def recover_csv_target(gate, stage, root):
 
 
 def run(args, root):
+    requested_backup = require_choice(getattr(args, 'backup', None))
     os.umask(0o077)
     exclusions = []
     plan, selected = read_plan(args.table_plan, exclusions)
     model_exclusions = list(exclusions)
     base = private_dir(Path(root) / ('csv_' + plan['plan_id']))
     stage = extraction_stage(base)
+    backup_choice = select_backup(requested_backup, args.target_db, stage)
+    if backup_choice is None:
+        return dict(status='cancelled')
     actions = choose_actions(getattr(args, 'extra_actions', None), selected)
     if actions:
         filestore_roots(args)
@@ -616,7 +625,10 @@ def run(args, root):
         print(f'CSV replication run: {stage}\nSelected model tables: {len(selected)}; derived M2M: {len(operations) - len(selected)}', flush=True)
         for line in exclusion_lines(exclusions):
             print(line, flush=True)
-        ensure_backup(args.target_config, args.target_db, stage, progress=progress)
+        # Extraction generations can change the initially displayed destination.
+        select_backup(backup_choice, args.target_db, stage)
+        backup_result = perform_backup(args.target_config, args.target_db, stage, backup_choice,
+                                       ensure=ensure_backup, progress=progress)
         with target_offline(gate, target, stage):
             # Metadata read before extraction/backup can become stale while the
             # target is online. Capture current incoming FKs only after gating,
@@ -625,6 +637,7 @@ def run(args, root):
             if schema_signature(live_meta) != schema_signature(plan['target']):
                 raise MigrationError('Target schema changed before exclusive access')
             state = initialize(target, plan, state)
+            state['backup'] = backup_result
             runner = CSVRunner(target, stage, plan, manifest, operations, state, exclusions)
             result = runner.run(live_meta['fks'], args, actions)
         print(f'CSV replication finished: {result["status"]}. Reports: {stage}', flush=True)

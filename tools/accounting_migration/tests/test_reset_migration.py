@@ -14,7 +14,7 @@ from reset_migration import matching_directories,validate_state
 
 class ResetTests(unittest.TestCase):
     def args(self):
-        return ['--source-config','source.conf','--source-db','source','--target-config','target.conf','--target-db','target']
+        return ['--source-config','source.conf','--source-db','source','--target-config','target.conf','--target-db','target','--no-backup']
 
     def test_optional_reset_and_startup_help(self):
         for reset in (False,True):
