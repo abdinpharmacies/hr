@@ -1,0 +1,868 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_custody_request
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-30 10:28+0000\n"
+"PO-Revision-Date: 2025-04-30 10:28+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 && n % 100 <= 99 ? 4 : 5);\n"
+
+#. module: ab_custody_request
+#: model:mail.template,body_html:ab_custody_request.email_template_custody_request
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                    <h3>يرجي اعتماد طلب العهدة</h3> <br/>\n"
+"                    على الرابط\n"
+"\n"
+"                    <div><t t-esc=\"object.custody_link\"/></div>\n"
+"                    ولكم جزيل الشكر,\n"
+"\n"
+"                    <br/>\n"
+"                    <div><strong>Employee Name:</strong> <t t-esc=\"object.employee_id.name\"/></div>\n"
+"                    <div><strong>Employee Code:</strong> <t t-esc=\"object.employee_code\"/></div>\n"
+"                    <br/><br/>\n"
+"\n"
+"\n"
+"                    <br/><br/><br/>\n"
+"                    Best Regards:<br/>\n"
+"                    <t t-esc=\"user.name\"/>\n"
+"\n"
+"\n"
+"                </div>\n"
+"            "
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "<span class=\"o_stat_text\">∑ Approved </span>"
+msgstr "القيمه المعتمده"
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "<span class=\"o_stat_text\">∑ Request </span>"
+msgstr "المطلوب"
+
+#. module: ab_custody_request
+#: model:ir.actions.act_window,name:ab_custody_request.ab_custody_request_config_action
+msgid "Ab custody request config"
+msgstr "مواعيد طلب العهدة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__account_number
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__account_number
+msgid "Account Number"
+msgstr "رقم الحساب"
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "Accounting Input"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__current_user_type__accounting_manager
+msgid "Accounting Manager"
+msgstr "مدير الحسابات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__active
+msgid "Active"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__approved_value
+msgid "Approved Value"
+msgstr "القيمة المعتمده"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Approved value must be <= custody balance!"
+msgstr "القيمة المعتمده يجب ان تكون اقل من او تساوي قيمة العهدة!"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__attachment
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__att_file_ids
+msgid "Attachments"
+msgstr "المرفقات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__bank
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__bank
+msgid "Bank"
+msgstr "اسم البنك"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_employee_data__custody_type__cash
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__custody_type__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__current_user_type__claimer
+msgid "Claimer"
+msgstr "طالب العهدة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__current_user_type__claimer_manager
+msgid "Claimer Manager"
+msgstr "مدير طالب العهدة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__employee_code
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__employee_code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__competent_department_id
+msgid "Competent Department"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.ui.menu,name:ab_custody_request.config_sub_menu
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__create_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__create_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__create_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__create_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__create_uid
+msgid "Created by"
+msgstr "انشئ بواسطة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__create_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__create_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__create_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__create_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__create_date
+msgid "Created on"
+msgstr "تاريخ الانشاء"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__current_user_type
+msgid "Current User Type"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__custody_account_id
+msgid "Custody Account"
+msgstr "الحساب"
+
+#. module: ab_custody_request
+#: model:res.groups,name:ab_custody_request.group_ab_custody_request_accounting
+msgid "Custody Accounting"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.actions.act_window,name:ab_custody_request.ab_custody_request_account_action
+#: model:ir.ui.menu,name:ab_custody_request.ab_custody_request_accounts_menu
+msgid "Custody Accounts"
+msgstr "الحسابات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__custody_balance
+msgid "Custody Balance"
+msgstr "رصيد العهد"
+
+#. module: ab_custody_request
+#: model:ir.ui.menu,name:ab_custody_request.menu_root
+msgid "Custody Cycle"
+msgstr "دورة العهد"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__custody_date
+msgid "Custody Date"
+msgstr "تاريخ الطلب"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "Custody Details"
+msgstr "تفاصيل العهدة"
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "Custody Details Lines"
+msgstr "تفاصيل العهدة"
+
+#. module: ab_custody_request
+#: model:ir.actions.act_window,name:ab_custody_request.ab_custody_employee_data_action
+msgid "Custody Employee Data"
+msgstr "البيانات البنكية للموظفين"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__custody_link
+msgid "Custody Link"
+msgstr "رابط العهدة"
+
+#. module: ab_custody_request
+#: model:res.groups,name:ab_custody_request.group_ab_custody_request_payment
+msgid "Custody Payment"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:res.groups,name:ab_custody_request.group_ab_custody_request_payment_cash
+msgid "Custody Payment Cash"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:res.groups,name:ab_custody_request.group_ab_custody_request_payment_visa
+msgid "Custody Payment Visa"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.actions.act_window,name:ab_custody_request.ab_custody_request_header_action
+#: model:ir.module.category,name:ab_custody_request.category_ab_custody_request
+#: model:ir.ui.menu,name:ab_custody_request.ab_custody_request_sub_menu
+#: model:ir.ui.menu,name:ab_custody_request.custody_request_header_menu
+msgid "Custody Request"
+msgstr "طلب العهدة"
+
+#. module: ab_custody_request
+#: model:ir.ui.menu,name:ab_custody_request.ab_custody_request_config_menu
+msgid "Custody Request Configuration"
+msgstr "إعدادات طلب العهدة"
+
+#. module: ab_custody_request
+#: model:res.groups,name:ab_custody_request.group_ab_custody_request_report
+msgid "Custody Request Report"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:mail.template,subject:ab_custody_request.email_template_custody_request
+msgid "Custody Request: {{ object.employee_id.name }}"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__custody_type
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__custody_type
+msgid "Custody Type"
+msgstr "نوع العهدة"
+
+#. module: ab_custody_request
+#: model:res.groups,name:ab_custody_request.group_ab_custody_request_user
+msgid "Custody User"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__date1
+msgid "Date1"
+msgstr "تاريخ 1"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__date2
+msgid "Date2"
+msgstr "تاريخ 2"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__department_id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__department_id
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__department_manager_id
+msgid "Department Manager"
+msgstr "مدير القسم"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__description
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__description
+msgid "Description"
+msgstr "الشرح"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__display_name
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__display_name
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__display_name
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__display_name
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__display_name
+msgid "Display Name"
+msgstr "الاسم"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__due_date
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__employee_id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__employee_account_id
+msgid "Employee Account"
+msgstr "حساب الموظف"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__employee_bank
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__employee_bank
+msgid "Employee Bank"
+msgstr "تابع لبنك"
+
+#. module: ab_custody_request
+#: model:ir.ui.menu,name:ab_custody_request.ab_custody_employee_data_menu
+msgid "Employee Visa Data"
+msgstr "البيانات البنكية للموظفين"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__employee_ids
+msgid "Exceptional Employees"
+msgstr "استثناءات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__status__for_accounting
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "For Accounting"
+msgstr "الحسابات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__status__for_entry
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "For Entry"
+msgstr "الِادخال"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__status__for_manager
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "For Manager"
+msgstr "المدير المباشر"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__status__for_payment
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_tree
+msgid "For Payment"
+msgstr "الصرف"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__header_id
+msgid "Header"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_needaction
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_has_error
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "Information"
+msgstr "معلومات"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__invoice_code
+msgid "Invoice Code"
+msgstr "رقم الفاتورة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__is_recon
+msgid "Is Recon"
+msgstr "حساب تسوية؟"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__is_sent
+msgid "Is Sent"
+msgstr "مرسل"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__job_title_id
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data____last_update
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account____last_update
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config____last_update
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header____last_update
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line____last_update
+msgid "Last Modified on"
+msgstr "تاريخ اخر تعديل"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__write_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__write_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__write_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__write_uid
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__write_uid
+msgid "Last Updated by"
+msgstr "اّخر تحديث بواسطة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_employee_data__write_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__write_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_config__write_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__write_date
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__write_date
+msgid "Last Updated on"
+msgstr "تاريخ اّخر تحديث"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__account_id
+msgid "Linked to Account"
+msgstr "ربط بحساب:"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__manager_id
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في الِارسال"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Message is posted successfully on telegram."
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "No Lines to Forward"
+msgstr "لا توجد سجلات للإرسال!"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Not In Time For This Employee!"
+msgstr "غير متاح حاليا للموظف!"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Not In Time!"
+msgstr "طلب العهده غير متاح حاليا. رجاء مراجعة المواعيد المتاحة للطلب."
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__message_unread_counter
+msgid "Number of unread messages"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__occupied_job_ids
+msgid "Occupied Job"
+msgstr "الموظف المتاح"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__status__paid
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_tree
+msgid "Paid"
+msgstr "تم الصرف"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__current_user_type__payer
+msgid "Payer"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__payment_date
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "Payment Date"
+msgstr "تاريخ الصرف"
+
+#. module: ab_custody_request
+#: model:mail.template,name:ab_custody_request.email_template_custody_request
+msgid "Request: Send by email"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "Required Input"
+msgstr "مدخلات مطلوبة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__status
+msgid "Status"
+msgstr "حالة العهدة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Status must be \"For Accounting\""
+msgstr "يجب أن تكون العهدة في مرحلة الحسابات!"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Status must be \"For Entry\""
+msgstr "يجب أن تكون العهدة في مرحلة الإدخال!"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Status must be \"For Manager\""
+msgstr "يجب أن تكون العهدة في مرحلة المدير المباشر!"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "Status must be \"For Payment\""
+msgstr "يجب أن تكون العهدة في مرحلة الصرف!"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__telegram_group
+msgid "Telegram Group"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_account__telegram_group_id
+msgid "Telegram Group ID"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__total_approved_custody
+msgid "Total Approved Custody"
+msgstr "اجمالي العهد المعتمدة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__total_requested_custody
+msgid "Total Requested Custody"
+msgstr "اجمالي العهد المطلوبة"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,help:ab_custody_request.field_ab_custody_request_header__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__user_id
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_line__value
+msgid "Value"
+msgstr "قيمة العهده"
+
+#. module: ab_custody_request
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_employee_data__custody_type__visa
+#: model:ir.model.fields.selection,name:ab_custody_request.selection__ab_custody_request_header__custody_type__visa
+msgid "Visa"
+msgstr "فيزا"
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "You can set status \"For Accounting\" or \"Paid\" only"
+msgstr "يمكنك تحويل العهدة للحسابات او لتم الصرف فقط."
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "You can set status \"For Entry\" or \"For Accounting\" only"
+msgstr "يمكنك تحويل العهدة للادخال او للحسابات فقط."
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "You can set status \"For Manager\" only"
+msgstr "يمكنك تحويل العهدة للمدير المباشر فقط. "
+
+#. module: ab_custody_request
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid "You can set status \"For Manager\" or \"For Payment\" only"
+msgstr "يمكنك تحويل العهدة للمدير المباشر او لجهة الصرف فقظ."
+
+#. module: ab_custody_request
+#: model:ir.model,name:ab_custody_request.model_ab_custody_employee_data
+msgid "ab_custody_employee_data"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_employee_data_view_form
+msgid "ab_custody_employee_data_form"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_employee_data_view_pivot
+msgid "ab_custody_employee_data_pivot"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_employee_data_view_search
+msgid "ab_custody_employee_data_search"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_employee_data_view_tree
+msgid "ab_custody_employee_data_tree"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model,name:ab_custody_request.model_ab_custody_request_account
+msgid "ab_custody_request_account"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_account_view_form
+msgid "ab_custody_request_account_form"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_account_view_pivot
+msgid "ab_custody_request_account_pivot"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_account_view_search
+msgid "ab_custody_request_account_search"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_account_view_tree
+msgid "ab_custody_request_account_tree"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model,name:ab_custody_request.model_ab_custody_request_config
+msgid "ab_custody_request_config"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_config_view_form
+msgid "ab_custody_request_config_form"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_config_view_pivot
+msgid "ab_custody_request_config_pivot"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_config_view_search
+msgid "ab_custody_request_config_search"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_config_view_tree
+msgid "ab_custody_request_config_tree"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model,name:ab_custody_request.model_ab_custody_request_header
+msgid "ab_custody_request_header"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_form
+msgid "ab_custody_request_header_form"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_pivot
+msgid "ab_custody_request_header_pivot"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_search
+msgid "ab_custody_request_header_search"
+msgstr ""
+
+#. module: ab_custody_request
+#: model_terms:ir.ui.view,arch_db:ab_custody_request.ab_custody_request_header_view_tree
+msgid "ab_custody_request_header_tree"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model,name:ab_custody_request.model_ab_custody_request_line
+msgid "ab_custody_request_line"
+msgstr ""
+
+#. module: ab_custody_request
+#: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__emails_to
+msgid "Email Recipients"
+msgstr "مستلمو البريد الإلكتروني"

@@ -23,7 +23,7 @@ class AbCustodyRequestHeader(models.Model):
     branch_id = fields.Many2one(related='employee_id.department_id', string='Branch')
     custody_balance = fields.Float(compute='_compute_custody_balance', compute_sudo=True)  # compute previous custody
     manager_id = fields.Many2one('ab_hr_employee', related='employee_id.parent_id')
-    # emails_to = fields.Char(compute='_compute_emails_to', compute_sudo=True)
+    emails_to = fields.Char(string='Email Recipients', compute='_compute_emails_to', compute_sudo=True)
     custody_link = fields.Char(compute='_compute_custody_link', compute_sudo=True)
 
     is_sent = fields.Boolean(default=False)
@@ -274,17 +274,14 @@ class AbCustodyRequestHeader(models.Model):
         for record in self:
             record.display_name = names.get(record.id, False)
 
-    # @api.depends('employee_id', 'manager_id')
-    # def _compute_emails_to(self):
-    #     for rec in self:
-    #         employee_and_manager = [
-    #             rec.employee_id.work_email,
-    #             rec.manager_id.work_email,
-    #         ]
-    #
-    #         emails_to = set(employee_and_manager)
-    #
-    #         rec.emails_to = ','.join(mail for mail in emails_to if mail)
+    @api.depends('employee_id.work_email', 'manager_id.work_email')
+    def _compute_emails_to(self):
+        for rec in self:
+            recipients = dict.fromkeys(
+                email.strip() for email in (rec.employee_id.work_email, rec.manager_id.work_email)
+                if email and email.strip()
+            )
+            rec.emails_to = ','.join(recipients) or False
 
     def _compute_custody_link(self):
         conf_mo = self.env['ir.config_parameter'].sudo()

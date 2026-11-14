@@ -29,7 +29,9 @@ Files changed:
 - `ab_custody_request/views/ab_custody_request_header.xml`
 - `ab_custody_request/views/menus.xml`
 
-## Current changes before commit:
+## ba2649988 — hager yasser — 2026-11-12
+
+Original commit subject: `ab_custody_request/FIX: repair form layouts and contain detail table scrolling`
 
 - Align request entry and accounting sections, remove empty separator rows, and give custody detail tables their full page width.
 - Contain custody detail table horizontal overflow in its native list renderer, with a named wrapper scoping the presentation rules and preserving the original sheet, notebook, and field classes.
