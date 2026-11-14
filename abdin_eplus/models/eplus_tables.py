@@ -167,7 +167,7 @@ class RSalesTransH(models.Model):
     cost_d = fields.Float(readonly=True, )
     total_local_d = fields.Float(readonly=True, )
     total_imported_d = fields.Float(readonly=True, )
-    sec_insert_date_h = fields.Datetime(readonly=True, string="Bill Time")
+    sec_insert_date_h = fields.Datetime(readonly=True, string="Bill Time", index=True)
     employee = Many2oneUnconstraint('abdin_eplus.employee', readonly=True, )
     is_delivery = fields.Boolean(readonly=True, )
     deliv_emp_id = Many2oneUnconstraint('abdin_eplus.employee', readonly=True, )
