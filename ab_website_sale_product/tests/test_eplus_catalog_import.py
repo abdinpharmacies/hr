@@ -105,11 +105,10 @@ class TestEplusCatalogImport(TransactionCase):
         row = self.snapshot(99177011, product.code)
         row.write({"product_id": product.id, "matched_by": "eplus_serial"})
         template = product._sync_website_products(create_missing=True, publish_requested=True)
-        template.write({"list_price": 89.0})
 
         self.assertEqual(row._import_eplus_catalog_batch(), 0)
         self.assertTrue(template.is_published)
-        self.assertEqual(template.list_price, 89.0)
+        self.assertEqual(template.list_price, product.default_price)
 
     def test_refresh_queues_unmatched_and_matched_products_without_websites(self):
         product = self.Product.create({

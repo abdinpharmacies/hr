@@ -10,6 +10,40 @@ from odoo.tools import float_round
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        templates = super().create(vals_list)
+        templates._check_ab_product_base_price()
+        return templates
+
+    def write(self, vals):
+        old_prices = (
+            {template.id: template.list_price for template in self if template.ab_product_id}
+            if "list_price" in vals else {}
+        )
+        result = super().write(vals)
+        if "list_price" in vals or "ab_product_id" in vals:
+            self._check_ab_product_base_price()
+        for template in self.filtered(lambda record: record.id in old_prices):
+            old_price = old_prices[template.id]
+            if old_price != template.list_price:
+                template.message_post(body=_(
+                    "Website base price changed from %(old)s to %(new)s by %(actor)s on %(date)s."
+                ) % {
+                    "old": old_price,
+                    "new": template.list_price,
+                    "actor": self.env.user.display_name,
+                    "date": fields.Datetime.now(),
+                })
+        return result
+
+    def _check_ab_product_base_price(self):
+        for template in self:
+            if template.ab_product_id and template.list_price != template.ab_product_id.default_price:
+                raise ValidationError(_(
+                    "The website base price must match the linked Abdin product price. Change the price on the Abdin product."
+                ))
+
     ab_product_id = fields.Many2one(
         "ab_product",
         string="Abdin Product",

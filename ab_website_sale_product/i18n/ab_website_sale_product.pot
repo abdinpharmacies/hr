@@ -6271,3 +6271,15 @@ msgid ""
 "Eplus fallback is unavailable. Retry synchronization for the missing product"
 " codes."
 msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_template.py:0
+msgid "The website base price must match the linked Abdin product price. Change the price on the Abdin product."
+msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_template.py:0
+msgid "Website base price changed from %(old)s to %(new)s by %(actor)s on %(date)s."
+msgstr ""

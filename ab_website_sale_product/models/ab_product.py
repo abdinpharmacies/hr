@@ -188,6 +188,23 @@ class AbProductTag(models.Model):
 class AbProduct(models.Model):
     _inherit = "ab_product"
 
+    def write(self, vals):
+        result = super().write(vals)
+        if "default_price" in vals:
+            self._sync_linked_website_base_prices()
+        return result
+
+    def _sync_linked_website_base_prices(self):
+        templates = self.env["product.template"].sudo().with_context(active_test=False).search([
+            ("ab_product_id", "in", self.ids),
+        ])
+        for template in templates:
+            new_price = template.ab_product_id.default_price
+            if template.list_price == new_price:
+                continue
+            template.write({"list_price": new_price})
+        return True
+
     website_sync_pending = fields.Boolean(
         string="Website Sync Pending", compute="_compute_website_sync_pending", store=True, readonly=False,
     )

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from psycopg2.errors import SerializationFailure
 
 from odoo import Command, fields
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase, new_test_user
 from odoo.tools.safe_eval import safe_eval
 
@@ -116,8 +116,46 @@ class TestWebsiteProductSync(TransactionCase):
         self.assertEqual(set(outcomes.values()), {'unchanged'})
         products.write({'default_price': 30.0})
         products._sync_website_products(outcomes=outcomes, create_missing=True, publish_requested=True)
-        self.assertEqual(set(outcomes.values()), {'updated'})
+        self.assertEqual(set(outcomes.values()), {'unchanged'})
         self.assertEqual(set(templates.mapped('list_price')), {30.0})
+
+    def test_master_price_updates_linked_website_price_immediately(self):
+        product = self.product('SYNC-MASTER-PRICE')
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
+        product.write({'default_price': 31.0})
+        self.assertEqual(template.list_price, 31.0)
+        self.assertTrue(template.message_ids.filtered(
+            lambda message: 'Website base price changed from' in str(message.body)
+        ))
+        if self.env['res.lang'].search([('code', '=', 'ar_001')]):
+            product.with_context(lang='ar_001').write({'default_price': 32.0})
+            self.assertEqual(template.list_price, 32.0)
+            self.assertTrue(template.message_ids.filtered(
+                lambda message: 'تغيّر السعر الأساسي' in str(message.body)
+            ), template.message_ids.mapped('body'))
+
+    def test_linked_website_price_cannot_be_changed_independently(self):
+        product = self.product('SYNC-PRICE-GUARD')
+        template = product._sync_website_products(create_missing=True, publish_requested=True)
+        with self.assertRaisesRegex(ValidationError, 'The website base price must match'):
+            with self.env.cr.savepoint():
+                template.with_context(lang='en_US').write({'list_price': 100.0})
+        self.assertEqual(template.list_price, product.default_price)
+        with self.assertRaises(ValidationError):
+            with self.env.cr.savepoint():
+                template.product_variant_id.write({'lst_price': 100.0})
+        unlinked_product = self.product('SYNC-PRICE-CREATE-GUARD')
+        with self.assertRaises(ValidationError):
+            with self.env.cr.savepoint():
+                self.env['product.template'].create({
+                    'name': 'Invalid linked website price',
+                    'ab_product_id': unlinked_product.id,
+                    'list_price': 100.0,
+                })
+        if self.env['res.lang'].search([('code', '=', 'ar_001')]):
+            with self.assertRaisesRegex(ValidationError, 'يجب أن يطابق السعر الأساسي'):
+                with self.env.cr.savepoint():
+                    template.with_context(lang='ar_001').write({'list_price': 100.0})
 
     def test_category_translation_and_tag_changes(self):
         product = self.product()
@@ -171,8 +209,8 @@ class TestWebsiteProductSync(TransactionCase):
         good = self.product('SYNC-GOOD')
         bad = self.product('SYNC-BAD')
         (good | bad)._sync_website_products(create_missing=True, publish_requested=True)
-        good.default_price = 31.0
-        bad.default_price = 32.0
+        good.description = 'Updated good product'
+        bad.description = 'Updated bad product'
         job = self.job(good | bad)
         original = type(self.Product)._prepare_website_product_template_vals
 
@@ -378,7 +416,7 @@ class TestWebsiteProductSync(TransactionCase):
     def test_background_checkpoint_updates_linked_products(self):
         products = self.product('SYNC-BG-A') | self.product('SYNC-BG-B')
         products._sync_website_products(create_missing=True, publish_requested=True)
-        products.write({'default_price': 31.0})
+        products.write({'description': 'Updated background product'})
         job = self.job(products)
         with patch.object(type(job), '_background_worker_online', return_value=True):
             job.action_process_to_completion()
@@ -401,7 +439,7 @@ class TestWebsiteProductSync(TransactionCase):
         changed = self.product('SYNC-CHANGED')
         missing = self.product('SYNC-MISSING')
         (clean | changed)._sync_website_products(create_missing=True, publish_requested=True)
-        changed.default_price = 29.0
+        changed.description = 'Updated review product'
         self.env.flush_all()
         job = self.Job.create({})
         with patch.object(type(job), '_full_sync_product_domain', return_value=fields.Domain('id', 'in', (clean | changed | missing).ids)):
@@ -434,7 +472,7 @@ class TestWebsiteProductSync(TransactionCase):
     def test_cancelled_all_resumes_same_job_without_repeating_success(self):
         products = self.product('SYNC-A') | self.product('SYNC-B')
         products._sync_website_products(create_missing=True, publish_requested=True)
-        products.write({'default_price': 31.0})
+        products.write({'description': 'Updated cancelled product'})
         job = self.job(products)
         job._process_next_batch(limit=1)
         first = job.line_ids[:1]
@@ -475,11 +513,8 @@ class TestWebsiteProductSync(TransactionCase):
         template = product._sync_website_products(create_missing=True, publish_requested=True)
         self.env.flush_all()
         self.assertFalse(product.website_sync_pending)
-        template.list_price = 100.0
-        self.assertTrue(product.website_sync_pending)
-        product._sync_website_products(create_missing=True, publish_requested=True)
-        self.env.flush_all()
-        self.assertFalse(product.website_sync_pending)
+        with self.assertRaises(ValidationError):
+            template.list_price = 100.0
         self.assertEqual(template.list_price, product.default_price)
         template.product_variant_id.barcode = '9988774411'
         self.assertTrue(product.website_sync_pending)
@@ -521,7 +556,7 @@ class TestWebsiteProductSync(TransactionCase):
     def test_delta_queue_selects_only_dirty(self):
         products = self.product('SYNC-A') | self.product('SYNC-B')
         products._sync_website_products(create_missing=True, publish_requested=True)
-        products[0].default_price = 31.0
+        products[0].description = 'Updated delta product'
         original = type(self.Product).search
 
         def local_search(records, domain, *args, **kwargs):

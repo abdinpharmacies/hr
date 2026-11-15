@@ -2,25 +2,50 @@
 
 ## Current changes before commit:
 
-- Keep the success notification and reopen the synchronization report without a client-side exception by including explicit form views in the chained window action.
-- Cover real completion actions for success, warning and empty results, without mocking report-action generation.
+- Synchronize a linked website product's base price in the same transaction when `ab_product.default_price` changes.
+- Reject independent base-price changes on linked website templates and variants, while leaving unlinked E-Plus fallback products independent.
+- Record website price changes with old and new values, actor, and timestamp in product chatter.
+- Update the affected sync and image-publication tests for immediate price propagation.
+- Translate the price validation and audit messages in both Arabic catalogs.
 
 Files changed:
 
-- `ab_website_sale_product/models/add_many_by_codes_wizard.py`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/product_template.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
 - `ab_website_sale_product/tests/test_website_category_mapping.py`
+- `ab_website_sale_product/tests/test_website_product_sync.py`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
 - `ab_website_sale_product/changelog.d/current.md`
 
 Validation:
 
-- Six completion tests passed on `codex_eplus_sync_20261104`, zero failures/errors; `/tmp/image-sync-views-fix-tests.log`.
-- Executed the extracted `_preprocessAction` function from deployed asset `b5f69a7/web.assets_web.min.js`: the prior action reproduces the reported missing-map TypeError; explicit form views pass.
-- Captured asset SHA-256: `e14aa8ca3388910911e2c237012ebf5b4a59351a411992976e22bca5c0e81706`.
-- This is function-level JavaScript validation, not an interactive browser run. No product synchronization was executed for this fix.
-- No user-facing source strings changed; existing English and both Arabic translations are retained.
-- Production needs a Python service restart only; no database upgrade is required for this correction.
+- Targeted upgrades used development databases and alternate ports `5069/5072`; no production database was changed.
+- Four focused sync and import tests passed on `codex_eplus_sync_20261104`; `/tmp/ab_price_source_validation.log`.
+- English/Arabic price and direct ORM tests passed on `codex_ecom_offers_20261013`: two tests in `/tmp/ab_price_translation_validation4.log` and one additional direct ORM test in `/tmp/ab_price_direct_orm_validation.log`.
+- A wider sync run executed 41 tests: 37 passed, two existing category/status assertions failed, and two user-creation tests errored on an unrelated `res_partner.ab_storefront_avatar` constraint; `/tmp/ab_price_source_full_sync_validation.log`.
+- Both Arabic catalogs and the POT pass `msgfmt --check-format`; Odoo loaded the new `ar_001` messages at runtime, and the product action renders as `Abdin Products` in `en_US` versus `منتجات عابدين` in `ar_001`.
+- Existing linked price mismatches need one initial reconciliation through the existing website sync action after deployment. Future source-price changes synchronize automatically.
 
 ## Recent commits
+
+Commit: `d78d69be`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_website_sale_product/FIX: reopen image sync report after completion notification`
+
+User-facing changes:
+
+- Reopen the image synchronization report after the completion notification.
+- Cover success, warning, and empty completion actions.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/add_many_by_codes_wizard.py`
+- `ab_website_sale_product/tests/test_website_category_mapping.py`
 
 Commit: `464d582d`
 Author: Mohamed Fawzy

@@ -6563,3 +6563,15 @@ msgid ""
 " codes."
 msgstr ""
 "مصدر E-Plus البديل غير متاح. أعد المزامنة لأكواد المنتجات غير الموجودة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_template.py:0
+msgid "The website base price must match the linked Abdin product price. Change the price on the Abdin product."
+msgstr "يجب أن يطابق السعر الأساسي على الموقع سعر منتج عابدين المرتبط. غيّر السعر في منتج عابدين."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_template.py:0
+msgid "Website base price changed from %(old)s to %(new)s by %(actor)s on %(date)s."
+msgstr "تغيّر السعر الأساسي على الموقع من %(old)s إلى %(new)s بواسطة %(actor)s في %(date)s."

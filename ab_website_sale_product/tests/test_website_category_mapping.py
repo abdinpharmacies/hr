@@ -459,7 +459,9 @@ class TestImagePublication(TransactionCase):
             return self.service.prepare_publication_sync_plan(self.root.name)
 
     def test_image_creates_links_prices_and_publishes(self):
-        self.product._sync_website_products(create_missing=True).list_price = 5
+        template = self.product._sync_website_products(create_missing=True)
+        with patch.object(type(template), '_check_ab_product_base_price', return_value=None):
+            template.list_price = 5
         result = self.service.apply_sync_plan(self.plan(), publish_requested=True)
         template = self.product.website_product_tmpl_id
         self.assertEqual(result["summary"]["updated"], 1)
