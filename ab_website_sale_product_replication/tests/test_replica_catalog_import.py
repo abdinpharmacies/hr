@@ -49,6 +49,21 @@ class TestReplicaCatalogImport(TransactionCase):
         with self.assertRaises(AccessError):
             product.create({"product_card_name": "Blocked replica product", "code": "BLOCKED"})
 
+    def test_replicated_master_price_updates_linked_website_price(self):
+        template = self.product._sync_website_products(create_missing=True)
+        policies = self.env["ab_odoo_replication_override"].search([
+            ("model_name", "=", "ab_product"), ("active", "=", True),
+        ])
+        policies.write({"active": False})
+        with patch.object(type(self.product), "_sync_linked_website_base_prices", return_value=True):
+            self.product.write({"default_price": 73.0})
+        policies.write({"active": True})
+        self.assertEqual(template.list_price, 42.5)
+        self.product._after_force_id_replication("write", {
+            self.product.id: {"default_price": 73.0},
+        })
+        self.assertEqual(template.list_price, 73.0)
+
     def test_missing_master_product_does_not_block_matched_website_draft(self):
         unmatched = self.env["ab_eplus_stock_snapshot"].create({
             "itm_id": 99177102, "itm_code": "UNMATCHED-REPLICA-TEST", "itm_qty": 1,
