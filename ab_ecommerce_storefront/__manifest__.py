@@ -121,6 +121,7 @@
             "ab_ecommerce_storefront/static/src/js/profile_completion.js",
             "ab_ecommerce_storefront/static/src/js/order_delivered.js",
             "ab_ecommerce_storefront/static/src/js/product_card.js",
+            "ab_ecommerce_storefront/static/src/js/second_item_offer.js",
             "ab_ecommerce_storefront/static/src/js/browsing_history.js",
             "ab_ecommerce_storefront/static/src/js/animated_price.js",
             "ab_ecommerce_storefront/static/src/js/product_image_zoom.js",

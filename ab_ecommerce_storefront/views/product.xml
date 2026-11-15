@@ -129,7 +129,23 @@
         </xpath>
         <xpath expr="//div[@name='product_price_container']" position="after">
             <t t-set="ab_product_offer" t-value="website._ab_storefront_offer_details(product).get(product.id, {})"/>
-            <div t-if="ab_product_offer.get('free_qty')" class="ab-storefront-product-bundle-offer my-3">
+            <div t-if="ab_product_offer.get('bundle_offer')" class="ab-storefront-product-bundle-offer ab-storefront-product-second-offer my-3">
+                <i class="fa fa-tags ab-storefront-product-offer-icon" aria-hidden="true"/>
+                <strong class="ab-storefront-product-offer-equation" dir="ltr">
+                    <t t-if="ab_product_offer.get('free_qty')">
+                        <t t-out="ab_product_offer['buy_qty']"/> + <t t-out="ab_product_offer['free_qty']"/> <span>free</span>
+                    </t>
+                    <t t-else="">1 + <t t-out="int(ab_product_offer['discount_rate'])"/>%</t>
+                </strong>
+                <small t-out="ab_product_offer['description']"/>
+                <button type="button" class="ab-storefront-second-offer-trigger btn btn-primary"
+                        t-att-data-offer-id="ab_product_offer['offer_id']"
+                        t-att-data-offer-mode="ab_product_offer['second_item_mode']"
+                        t-att-data-offer-description="ab_product_offer['description']">
+                    Get this offer
+                </button>
+            </div>
+            <div t-elif="ab_product_offer.get('free_qty')" class="ab-storefront-product-bundle-offer my-3">
                 <i class="fa fa-gift ab-storefront-product-offer-icon" aria-hidden="true"/>
                 <strong class="ab-storefront-product-offer-equation" dir="ltr">
                     <t t-out="ab_product_offer['buy_qty']"/> + <t t-out="ab_product_offer['free_qty']"/> <span>free</span>

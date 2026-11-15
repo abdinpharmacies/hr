@@ -2,8 +2,109 @@
 
 ## Current changes before commit:
 
+- Support the annual offer list through percentage discounts, fixed EGP discounts, configurable second-item discounts, and buy-quantity/free-gift offers. Preserve existing before/after fixed-price offers and the `second_half` technical value.
+- Follow the current product sales price for percentage and amount offers. Skip fixed-amount rules when the current price no longer exceeds the discount or the pricelist no longer uses EGP; retain tracked configuration changes.
+- Allow gifts and second-item benefits from the same product or a configured selection of other products. Keep gift fulfillment on native Odoo loyalty reward lines.
+- Add a maximum applications per order setting: zero repeats without a limit, one applies once. Existing second-item offers default to one discounted unit; gifts retain unlimited repetition. Discount the cheapest eligible units, respecting purchase-unit conversion and qualifying quantities.
+- Generalize the existing searchable product picker and product-card/product-page buttons; use the configured discount and localized offer conditions instead of fixed 50% text.
+- Validate website/company, customer eligibility, selected products and available purchase quantities; roll back incomplete bundle additions. Retain native stock and checkout operations.
+- Merge current offer references into the POT and both Arabic catalogs, preserving unrelated entries. The POT is required because Odoo merges PO files against it when loading translations.
+- Extend focused offer tests for the annual rate/amount lists, gift ratios, dynamic prices, repetition caps, eligible-product selection, archival, UoM conversion, company/website isolation and atomic cart updates.
+
+Validation on the isolated local database `codex_offer_types_20261112` (a neutralized copy of the existing offer test database):
+
+- Targeted `ab_ecommerce_storefront` upgrade on ports 5069/5072, workers/cron disabled, with the checkout explicitly selected in addons paths. No upgrade or restart of the storefront database/service and no external database access.
+- 38 focused `TestStorefrontOffers` tests passed with zero failures/errors; annual rates and gift ratios are also exercised as subtests.
+- Python AST, changed XML parsing, JavaScript syntax, both Arabic `msgfmt --check-format` checks and `git diff --check` passed.
+- Odoo's PO reader finds translations for every current offer term in both catalogs. Runtime checks verify the offer form metadata, dynamic description, JavaScript picker translation payload and product-card QWeb rendering in `en_US` and `ar_001`.
+- Runtime verification uses temporary records and rolls back its transaction. Full browser interaction/visual QA and a fresh installation were not run; the validated database path is a targeted upgrade.
+- Existing unrelated manifest/deprecation/schema warnings remain in the test clone. Expected duplicate-usage constraint errors are exercised by the negative tests.
+- Evidence: `/tmp/offer_types_verified.log`, `/tmp/offer_types_runtime_result.json`, `/tmp/storefront_offer_types.pot`, `/tmp/offer_card_en_US.html`, `/tmp/offer_card_ar_001.html`.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/second_item_offer.py`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/product.xml`
+- `ab_ecommerce_storefront/static/src/js/product_card.js`
+- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
+## Recent commits
+
+Commit: `97648978`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_ecommerce_storefront/IMP: explain pending delivery fees`
+
+- Show a bilingual delivery fee notice when the current charge is zero; retain nonzero charges.
+- Verified checkout totals in English and Arabic on the isolated validation database.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/cart.xml`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `346bc9bd`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_ecommerce_storefront/IMP: show shopping bag for order tracking`
+
+- Use the shopping bag icon for desktop and mobile order tracking.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/layout.xml`
+
+Commit: `420c25d9`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_ecommerce_storefront/IMP: include sold-out products in search`
+
+- Include matching sold-out products in text search and show full category navigation.
+- Preserve the explicit availability filter and purchase restrictions.
+
+Files changed:
+
+- `ab_ecommerce_storefront/controllers/shop.py`
+- `ab_ecommerce_storefront/views/shop.xml`
+- `ab_ecommerce_storefront/static/src/js/shop_filter_draft.js`
+- `ab_ecommerce_storefront/tests/test_catalog_cache.py`
+
+Commit: `653fc7c4`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_ecommerce_storefront/FIX: advance orders when picking starts`
+
+- Keep reserved orders in New Orders until warehouse picking begins.
+- Align call center filters and tracking stages; the focused order transition test passed on the isolated validation database.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/order_overview.py`
+- `ab_ecommerce_storefront/models/sale_order.py`
+- `ab_ecommerce_storefront/views/call_center_order_views.xml`
+- `ab_ecommerce_storefront/tests/test_checkout_reservation.py`
+
+Commit: `f1eed94a`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_ecommerce_storefront/IMP: publish products from uploaded image sync`
+
 - Route uploaded folder/ZIP image synchronization through E-Plus refresh, priced product linking and publication; keep preview read-only.
-- Cover publication routing and read-only preview with focused upload wizard tests.
+- Add coverage for publication after image synchronization.
 
 Files changed:
 
@@ -11,12 +112,27 @@ Files changed:
 - `ab_ecommerce_storefront/tests/test_image_sync_upload.py`
 - `ab_ecommerce_storefront/changelog.d/current.md`
 
-Validation:
+Commit: `b7f3694f`
+Author: Mohamed Fawzy
+Date: 2026-11-12
+Original subject: `ab_ecommerce_storefront/FIX: allow full-banner carousel clicks`
 
-- Targeted two-module upgrade and 29 focused tests passed on `codex_eplus_sync_20261104`, ports 5069/5072; `/tmp/image-publication-verified.log`.
-- External E-Plus reads were mocked; the live store was not upgraded or published by this change.
+- Allow carousel navigation by clicking the full banner.
 
-## Recent commits
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/js/hero_carousel.js`
+
+Commit: `12185093`
+Author: Mohamed Fawzy
+Date: 2026-11-09
+Original subject: `ab_ecommerce_storefront/DOCS: record order overview validation`
+
+- Record the order overview's targeted validation and Arabic runtime evidence.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
 
 Commit: `bf8ab5c0`
 Author: Mohamed Fawzy

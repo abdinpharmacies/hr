@@ -1,9 +1,10 @@
-from math import isfinite
+from collections import defaultdict
+from math import floor, isfinite
 
 from psycopg2 import IntegrityError
 
 from odoo import _, api, fields, models
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.http import request
 
 
@@ -32,9 +33,40 @@ class StorefrontOffer(models.Model):
         tracking=True,
     )
     offer_type = fields.Selection(
-        [("gift", "Buy X + Free Gifts"), ("price", "Before / After Price")],
+        [("gift", "Buy X + Free Gifts"), ("price", "Before / After Price"),
+         ("second_half", "Second Item Discount"),
+         ("percent", "Percentage Discount"), ("amount", "Fixed Amount Discount")],
         required=True, default="gift", tracking=True,
     )
+    second_item_mode = fields.Selection(
+        [("same", "Same Product"), ("choice", "Customer Chooses")],
+        string="Second Item", default="same", tracking=True,
+    )
+    second_product_ids = fields.Many2many(
+        "product.product", "ab_storefront_offer_second_product_rel", "offer_id", "product_id",
+        string="Eligible Second Products", check_company=True,
+        domain="[('sale_ok', '=', True), '|', ('website_id', '=', False), ('website_id', '=', website_id)]",
+    )
+    percentage_rate = fields.Selection(
+        [(str(rate), f"{rate}%") for rate in (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70)],
+        string="Percentage Rate", default="10", tracking=True,
+    )
+    second_discount_rate = fields.Selection(
+        [(str(rate), f"{rate}%") for rate in (20, 25, 30, 35, 40, 45, 50, 60)],
+        string="Second Item Discount Rate", default="50", tracking=True,
+    )
+    amount_discount = fields.Selection(
+        [(str(amount), str(amount)) for amount in (80, 100, 120, 125, 130, 140, 150, 200, 250)],
+        string="Discount Amount", default="80", tracking=True,
+    )
+    max_applications = fields.Integer(
+        string="Maximum Applications per Order", compute="_compute_max_applications",
+        store=True, precompute=True, readonly=False, tracking=True,
+        help="Use 1 for one application, or 0 for unlimited applications within the order.",
+    )
+    current_price = fields.Monetary(string="Current Price", compute="_compute_current_offer_price")
+    discounted_price = fields.Monetary(string="Discounted Price", compute="_compute_current_offer_price")
+
     buy_qty = fields.Integer(string="Buy Quantity", default=1, tracking=True)
     gift_qty = fields.Integer(string="Free Quantity", default=1, tracking=True)
     pricelist_id = fields.Many2one(
@@ -62,6 +94,47 @@ class StorefrontOffer(models.Model):
     )
     generated_program_ids = fields.One2many("loyalty.program", "ab_storefront_offer_id", readonly=True)
     price_rule_ids = fields.One2many("product.pricelist.item", "ab_storefront_offer_id", readonly=True)
+
+    @api.depends("offer_type")
+    def _compute_max_applications(self):
+        for offer in self:
+            offer.max_applications = 1 if offer.offer_type == "second_half" else 0
+
+    @api.depends("product_id.lst_price", "currency_id", "website_id", "percentage_rate", "amount_discount", "offer_type")
+    def _compute_current_offer_price(self):
+        for offer in self:
+            product = offer.product_id.with_company(offer.company_id or self.env.company)
+            price = product.lst_price if product else 0
+            if product and offer.currency_id:
+                price = product.currency_id._convert(
+                    price, offer.currency_id, offer.company_id, fields.Date.context_today(offer),
+                )
+            offer.current_price = price
+            offer.discounted_price = max(0, (
+                price * (1 - float(offer.percentage_rate or 0) / 100)
+                if offer.offer_type == "percent" else price - float(offer.amount_discount or 0)
+            ))
+
+    def _benefit_products(self):
+        self.ensure_one()
+        return self.product_id if self.second_item_mode == "same" else self.second_product_ids
+
+    def _storefront_description(self):
+        self.ensure_one()
+        if self.offer_type == "gift":
+            message = _("Buy %(buy)s and get %(free)s free.", buy=self.buy_qty, free=self.gift_qty)
+            message += " " + (
+                _("The gift is the same product.") if self.second_item_mode == "same"
+                else _("Choose your gift from the eligible products.")
+            )
+        else:
+            message = _("Buy one and get %(rate)s%% off a second eligible unit.", rate=self.second_discount_rate)
+            message += " " + _("The cheapest eligible units receive the discount.")
+        message += " " + (
+            _("Maximum %(count)s applications per order.", count=self.max_applications)
+            if self.max_applications else _("Repeats for every qualifying purchase quantity.")
+        )
+        return message
 
     @api.model
     def _default_offer_website(self):
@@ -104,6 +177,12 @@ class StorefrontOffer(models.Model):
             price = offer.price_before * (1 - offer.discount_percentage / 100)
             offer.price_after = offer.currency_id.round(price) if offer.currency_id and isfinite(price) else price
 
+    @api.onchange("offer_type")
+    def _onchange_offer_type(self):
+        if self.offer_type not in ("gift", "price"):
+            self.use_odoo_promotion = False
+            self.program_id = False
+
     @api.onchange("product_id", "pricelist_id", "website_id")
     def _onchange_original_price(self):
         self.price_after = self.price_before
@@ -111,6 +190,8 @@ class StorefrontOffer(models.Model):
     @api.constrains(
         "website_id", "product_id", "offer_type", "buy_qty", "gift_qty", "pricelist_id",
         "price_before", "price_after", "date_from", "date_to", "use_odoo_promotion", "program_id", "active",
+        "second_item_mode", "second_product_ids", "percentage_rate", "amount_discount",
+        "second_discount_rate", "max_applications",
     )
     def _check_offer(self):
         other_offers = self.search([
@@ -126,17 +207,45 @@ class StorefrontOffer(models.Model):
                 or (product.website_id and product.website_id != offer.website_id)
             ):
                 raise ValidationError(_("Select a single-variant sale product available on this website."))
+            if offer.max_applications < 0:
+                raise ValidationError(_("The maximum applications must be zero or a positive whole number."))
             if offer.use_odoo_promotion:
+                if offer.offer_type not in ("gift", "price"):
+                    raise ValidationError(_("This offer type is managed here, without a linked promotion."))
                 offer._check_linked_program()
-            elif offer.offer_type == "gift":
-                if offer.buy_qty < 1 or offer.gift_qty < 1:
+            elif offer.offer_type in ("gift", "second_half"):
+                if offer.offer_type == "gift" and (offer.buy_qty < 1 or offer.gift_qty < 1):
                     raise ValidationError(_("Buy and free quantities must be positive whole numbers."))
-            elif (
-                not offer.pricelist_id or offer.pricelist_id.website_id != offer.website_id
-                or not isfinite(offer.price_before) or not isfinite(offer.price_after)
-                or offer.price_after <= 0 or offer.price_before <= offer.price_after
-            ):
-                raise ValidationError(_("Select a pricelist for this website and set a positive reduced price below the original price."))
+                if offer.offer_type == "second_half" and not offer.second_discount_rate:
+                    raise ValidationError(_("Select a second-item discount rate."))
+                if offer.second_item_mode == "choice":
+                    products = offer.second_product_ids
+                    if not products or offer.product_id in products:
+                        raise ValidationError(_("Choose at least one other eligible benefit product."))
+                    if any(
+                        not candidate.sale_ok or candidate.product_tmpl_id.product_variant_count != 1
+                        or candidate.type == "combo"
+                        or (candidate.website_id and candidate.website_id != offer.website_id)
+                        for candidate in products
+                    ):
+                        raise ValidationError(_("Benefit products must be single-variant sale products on this website."))
+                elif offer.second_item_mode != "same":
+                    raise ValidationError(_("Select how the customer receives the benefit product."))
+            else:
+                if not offer.pricelist_id or offer.pricelist_id.website_id != offer.website_id:
+                    raise ValidationError(_("Select a pricelist for this website."))
+                if offer.offer_type == "price" and (
+                    not isfinite(offer.price_before) or not isfinite(offer.price_after)
+                    or offer.price_after <= 0 or offer.price_before <= offer.price_after
+                ):
+                    raise ValidationError(_("Select a pricelist for this website and set a positive reduced price below the original price."))
+                if offer.offer_type == "percent" and not offer.percentage_rate:
+                    raise ValidationError(_("Select a percentage discount rate."))
+                if offer.offer_type == "amount" and offer.active and (
+                    not offer.amount_discount or float(offer.amount_discount) >= offer.current_price
+                    or offer.currency_id != self.env.ref("base.EGP")
+                ):
+                    raise ValidationError(_("Select an EGP pricelist and a discount amount below the current product price."))
             if offer.active:
                 overlapping = other_offers.filtered(lambda other: (
                     other != offer and other.website_id == offer.website_id
@@ -214,7 +323,8 @@ class StorefrontOffer(models.Model):
         if set(vals) & {
             "name", "active", "website_id", "product_id", "offer_type", "buy_qty", "gift_qty",
             "pricelist_id", "price_before", "price_after", "date_from", "date_to",
-            "use_odoo_promotion", "program_id",
+            "use_odoo_promotion", "program_id", "second_item_mode", "second_product_ids",
+            "percentage_rate", "amount_discount", "second_discount_rate", "max_applications",
         }:
             self._sync_offer_rules()
         if vals.get("once_per_customer"):
@@ -286,7 +396,7 @@ class StorefrontOffer(models.Model):
         for offer in self:
             programs = offer.with_context(active_test=False).generated_program_ids
             programs.write({"active": False})
-            if offer.use_odoo_promotion or offer.offer_type != "gift":
+            if offer.use_odoo_promotion or offer.offer_type not in ("gift", "second_half"):
                 continue
             values = {
                 "name": offer.name, "active": offer.active, "program_type": "buy_x_get_y",
@@ -296,14 +406,29 @@ class StorefrontOffer(models.Model):
                 "ab_storefront_offer_id": offer.id,
             }
             rule_values = {
-                "mode": "auto", "minimum_qty": offer.buy_qty, "minimum_amount": 0,
-                "reward_point_mode": "unit", "reward_point_amount": 1,
+                "mode": "auto",
+                "minimum_qty": (
+                    offer.buy_qty if offer.offer_type == "gift"
+                    else 2 if offer.second_item_mode == "same" else 1
+                ),
+                "minimum_amount": 0, "reward_point_mode": "unit", "reward_point_amount": 1,
                 "product_ids": [fields.Command.set(offer.product_id.ids)],
             }
-            reward_values = {
-                "reward_type": "product", "reward_product_id": offer.product_id.id,
-                "reward_product_qty": offer.gift_qty, "required_points": offer.buy_qty,
-            }
+            if offer.offer_type == "gift":
+                reward_values = {
+                    "reward_type": "product", "reward_product_id": offer._benefit_products()[:1].id,
+                    "ab_storefront_gift_product_ids": [fields.Command.set(offer._benefit_products().ids)],
+                    "reward_product_qty": offer.gift_qty, "required_points": offer.buy_qty,
+                }
+            else:
+                reward_values = {
+                    "reward_type": "discount", "discount": float(offer.second_discount_rate), "discount_mode": "percent",
+                    "discount_applicability": "cheapest", "discount_max_amount": 0,
+                    "discount_product_ids": [fields.Command.set(
+                        offer.product_id.ids if offer.second_item_mode == "same" else offer.second_product_ids.ids
+                    )],
+                    "required_points": 2 if offer.second_item_mode == "same" else 1,
+                }
             if programs:
                 programs.write(values)
                 programs.rule_ids.write(rule_values)
@@ -314,7 +439,7 @@ class StorefrontOffer(models.Model):
                     "reward_ids": [fields.Command.create(reward_values)],
                 })
                 self.env["loyalty.program"].create(values)
-        for offer in self.filtered(lambda rec: rec.offer_type == "price" and not rec.use_odoo_promotion):
+        for offer in self.filtered(lambda rec: rec.offer_type in ("price", "percent", "amount") and not rec.use_odoo_promotion):
             values = {
                 "pricelist_id": offer.pricelist_id.id, "product_id": offer.product_id.id,
                 "applied_on": "0_product_variant", "min_quantity": 0,
@@ -323,6 +448,10 @@ class StorefrontOffer(models.Model):
                 "date_end": fields.Datetime.to_datetime(offer.date_to).replace(hour=23, minute=59, second=59) if offer.date_to else False,
                 "ab_storefront_offer_id": offer.id,
             }
+            if offer.offer_type == "percent":
+                values.update(compute_price="percentage", percent_price=float(offer.percentage_rate))
+            elif offer.offer_type == "amount":
+                values.update(compute_price="formula", price_discount=0, price_surcharge=-float(offer.amount_discount))
             if offer.price_rule_ids:
                 offer.price_rule_ids.write(values)
             else:
@@ -333,6 +462,38 @@ class LoyaltyProgram(models.Model):
     _inherit = "loyalty.program"
 
     ab_storefront_offer_id = fields.Many2one("ab_storefront_offer", copy=False, ondelete="restrict")
+
+
+class LoyaltyReward(models.Model):
+    _inherit = "loyalty.reward"
+
+    ab_storefront_gift_product_ids = fields.Many2many(
+        "product.product", "ab_storefront_reward_gift_product_rel", "reward_id", "product_id",
+        string="Storefront Gift Products", check_company=True,
+    )
+
+    @api.depends("ab_storefront_gift_product_ids", "ab_storefront_gift_product_ids.active")
+    def _compute_multi_product(self):
+        super()._compute_multi_product()
+        for reward in self.filtered(lambda current: current.reward_type == "product" and current.ab_storefront_gift_product_ids):
+            reward.reward_product_ids = reward.ab_storefront_gift_product_ids.filtered("active")
+            reward.multi_product = len(reward.reward_product_ids) != 1
+
+    def _search_reward_product_ids(self, operator, value):
+        domain = super()._search_reward_product_ids(operator, value)
+        if domain is NotImplemented:
+            return domain
+        return fields.Domain(domain) | (
+            fields.Domain("reward_type", "=", "product")
+            & fields.Domain("ab_storefront_gift_product_ids", operator, value)
+        )
+
+    @api.model
+    def _get_active_products_domain(self):
+        return fields.Domain(super()._get_active_products_domain()) | (
+            fields.Domain("reward_type", "=", "product")
+            & fields.Domain("ab_storefront_gift_product_ids.active", "=", True)
+        )
 
 
 class StorefrontOfferUse(models.Model):
@@ -353,6 +514,68 @@ class StorefrontOfferUse(models.Model):
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
+
+    def _program_check_compute_points(self, programs):
+        result = super()._program_check_compute_points(programs)
+        for program, status in result.items():
+            offer = program.sudo().ab_storefront_offer_id
+            if (
+                offer and offer.offer_type == "gift" and offer.max_applications
+                and self.website_id == offer.website_id and self.company_id == offer.company_id
+                and "points" in status
+            ):
+                status["points"] = [min(points, offer.max_applications * offer.buy_qty) for points in status["points"]]
+        return result
+
+    def _discountable_cheapest(self, reward):
+        result = super()._discountable_cheapest(reward)
+        offer = reward.program_id.sudo().ab_storefront_offer_id
+        if not offer or offer.offer_type != "second_half":
+            return result
+        if self.website_id != offer.website_id or self.company_id != offer.company_id:
+            return 0, {}
+        lines = (self.order_line - self._get_no_effect_on_threshold_lines()).filtered(
+            lambda line: not line.reward_id and not line.combo_item_id and line.product_uom_qty > 0
+            and line.price_total > 0
+        )
+        purchase_lines = lines.filtered(lambda line: line.product_id == offer.product_id)
+        purchase_quantity = sum(
+            line.product_uom_id._compute_quantity(line.product_uom_qty, line.product_id.uom_id, round=False)
+            for line in purchase_lines
+        )
+        count = floor(purchase_quantity / (2 if offer.second_item_mode == "same" else 1))
+        if offer.max_applications:
+            count = min(count, offer.max_applications)
+        candidates = lines.filtered(lambda line: line.product_id in offer._benefit_products()).sorted(
+            lambda line: (line.product_uom_id._compute_price(line.price_unit * (1 - line.discount / 100), line.product_id.uom_id), line.id)
+        )
+        discountable = 0
+        amounts = defaultdict(float)
+        for line in candidates:
+            quantity = line.product_uom_id._compute_quantity(line.product_uom_qty, line.product_id.uom_id, round=False)
+            units = min(count, floor(quantity))
+            if not units:
+                continue
+            discountable += line.price_total / quantity * units
+            taxes = line.tax_ids.filtered(lambda tax: tax.amount_type != "fixed")
+            amounts[taxes] += line.product_uom_id._compute_price(
+                line.price_unit * (1 - line.discount / 100), line.product_id.uom_id,
+            ) * units
+            count -= units
+            if not count:
+                break
+        return discountable, amounts
+
+    def _get_reward_values_product(self, reward, coupon, product=None, **kwargs):
+        values = super()._get_reward_values_product(reward, coupon, product=product, **kwargs)
+        offer = reward.program_id.sudo().ab_storefront_offer_id
+        if offer and offer.offer_type == "gift":
+            if self.website_id != offer.website_id or self.company_id != offer.company_id:
+                raise UserError(_("This offer is not available for this website."))
+            if offer.max_applications:
+                for value in values:
+                    value["product_uom_qty"] = min(value["product_uom_qty"], offer.max_applications * offer.gift_qty)
+        return values
 
     def _ab_applied_storefront_offers(self):
         self.ensure_one()
@@ -430,7 +653,16 @@ class ProductPricelist(models.Model):
 
     def _get_applicable_rules(self, products, date, **kwargs):
         rules = super()._get_applicable_rules(products, date, **kwargs)
-        return rules.sorted(key=lambda rule: not rule.ab_storefront_offer_id)
+        eligible_rules = self.env["product.pricelist.item"]
+        for rule in rules:
+            offer = rule.sudo().ab_storefront_offer_id
+            if offer.offer_type == "amount" and (
+                offer.currency_id != self.env.ref("base.EGP")
+                or offer.current_price <= float(offer.amount_discount or 0)
+            ):
+                continue
+            eligible_rules |= rule
+        return eligible_rules.sorted(key=lambda rule: not rule.ab_storefront_offer_id)
 
     def _get_applicable_rules_domain(self, products, date, **kwargs):
         domain = fields.Domain(super()._get_applicable_rules_domain(products, date, **kwargs))
@@ -440,7 +672,7 @@ class ProductPricelist(models.Model):
         domain &= (
             fields.Domain("ab_storefront_offer_id", "=", False)
             | fields.Domain("ab_storefront_offer_id", "any!", [
-                ("active", "=", True), ("offer_type", "=", "price"),
+                ("active", "=", True), ("offer_type", "in", ["price", "percent", "amount"]),
                 ("use_odoo_promotion", "=", False), ("website_id", "=", website_id),
             ])
         )
@@ -467,9 +699,15 @@ class ProductPricelistItem(models.Model):
     def _compute_base_price(self, product, quantity, uom, date, currency, **kwargs):
         price = super()._compute_base_price(product, quantity, uom, date, currency, **kwargs)
         offer = self.sudo().ab_storefront_offer_id
-        if offer:
+        if offer.offer_type == "price":
             price = product.uom_id._compute_price(offer.price_before, uom)
             price = offer.currency_id._convert(price, currency, offer.company_id, date, round=False)
+        return price
+
+    def _compute_price(self, product, quantity, uom, date, currency=None, **kwargs):
+        price = super()._compute_price(product, quantity, uom, date, currency, **kwargs)
+        if self.sudo().ab_storefront_offer_id.offer_type == "amount":
+            return max(0, price)
         return price
 
 

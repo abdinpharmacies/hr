@@ -96,6 +96,9 @@
                 <span t-elif="ab_card_offer.get('free_qty')" class="ab-storefront-offer-badge">
                     <bdi dir="ltr"><t t-out="ab_card_offer['buy_qty']"/> + <t t-out="ab_card_offer['free_qty']"/> <span>free</span></bdi>
                 </span>
+                <span t-elif="ab_card_offer.get('second_half')" class="ab-storefront-offer-badge">
+                    <bdi dir="ltr">1 + <t t-out="int(ab_card_offer['discount_rate'])"/>%</bdi>
+                </span>
                 <span t-elif="ab_card_price.get('base_price', 0) &gt; ab_card_price.get('price_reduce', 0)"
                       class="ab-storefront-offer-badge">
                     <bdi t-if="ab_card_discount" dir="ltr">-<t t-out="ab_card_discount"/>%</bdi>
@@ -112,6 +115,7 @@
                     <a t-att-href="product._get_product_url()" class="text-decoration-none">
                         <span t-field="product.name"/>
                     </a>
+                    <small t-if="ab_card_offer.get('bundle_offer')" class="ab-storefront-second-offer-hint" t-out="ab_card_offer['description']"/>
                 </h3>
                 <div t-if="ab_card_data['pack_units']" class="ab-storefront-pack-info" aria-label="Pack information">
                     <span t-foreach="ab_card_data['pack_units']" t-as="ab_pack_unit">
@@ -138,7 +142,7 @@
                         </button>
                     </div>
                 </fieldset>
-                <div t-attf-class="ab-storefront-product-purchase mt-auto #{ab_card_history_actions and 'ab-storefront-product-purchase-history' or ''}">
+                <div t-attf-class="ab-storefront-product-purchase mt-auto #{ab_card_history_actions and 'ab-storefront-product-purchase-history' or ''} #{ab_card_offer.get('bundle_offer') and 'ab-storefront-product-purchase-offer' or ''}">
                     <button t-if="ab_card_history_actions"
                             type="button"
                             class="ab-storefront-history-remove btn"
@@ -161,7 +165,7 @@
                                  t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                         </div>
                     </div>
-                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add" class="ab-storefront-card-quantity" aria-label="Quantity">
+                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add and not ab_card_offer.get('bundle_offer')" class="ab-storefront-card-quantity" aria-label="Quantity">
                         <button type="button" data-ab-card-quantity="decrease" aria-label="Decrease quantity">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
                         </button>
@@ -173,12 +177,30 @@
                 </div>
                 <div t-if="not ab_card_history_actions" class="ab-storefront-product-actions mt-3">
                     <div t-if="ab_card_can_quick_add" class="ab-storefront-card-purchase-buttons">
-                        <a href="/shop/cart?ab_buy_now=1"
+                        <button t-if="ab_card_offer.get('bundle_offer')" type="button"
+                           class="ab-storefront-card-buy-now ab-storefront-second-offer-trigger btn btn-primary"
+                           t-att-data-offer-id="ab_card_offer['offer_id']"
+                           t-att-data-offer-mode="ab_card_offer['second_item_mode']"
+                           t-att-data-offer-description="ab_card_offer['description']">
+                            Get this offer
+                        </button>
+                        <a t-else="" href="/shop/cart?ab_buy_now=1"
                            class="ab-storefront-card-buy-now btn btn-primary"
                            data-ab-buy-now="true">
                             Buy now
                         </a>
-                        <button type="button"
+                        <button t-if="ab_card_offer.get('bundle_offer')" type="button"
+                                class="ab-storefront-card-add ab-storefront-second-offer-trigger btn"
+                                t-att-data-offer-id="ab_card_offer['offer_id']"
+                                t-att-data-offer-mode="ab_card_offer['second_item_mode']"
+                           t-att-data-offer-description="ab_card_offer['description']"
+                                aria-label="Add offer to cart"
+                                title="Add offer to cart">
+                            <span class="ab-storefront-card-add-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M3 4h2l2.3 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+                            </span>
+                        </button>
+                        <button t-else="" type="button"
                                 class="ab-storefront-card-add btn"
                                 data-show-quantity="false"
                                 aria-label="Add to cart"

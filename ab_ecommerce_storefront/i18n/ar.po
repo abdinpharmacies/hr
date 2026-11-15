@@ -1174,6 +1174,7 @@ msgstr "اتصل بالخط الساخن <span class=\"o_force_ltr\">19036</span
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Close"
@@ -14761,3 +14762,473 @@ msgstr "ليس لديك صلاحية الوصول إلى مجموعة الطلب
 #: code:addons/ab_ecommerce_storefront/models/order_overview.py:0
 msgid "You cannot access this order."
 msgstr "ليس لديك صلاحية الوصول إلى هذا الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__second_half
+msgid "Second Item 50% Off"
+msgstr "خصم ٥٠٪ على القطعة الثانية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__second_item_mode
+msgid "Second Item"
+msgstr "القطعة الثانية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__second_item_mode__same
+msgid "Same Product"
+msgstr "نفس المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__second_item_mode__choice
+msgid "Customer Chooses"
+msgstr "العميل يختار"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__second_product_ids
+msgid "Eligible Second Products"
+msgstr "المنتجات المؤهلة كقطعة ثانية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__second_half
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Second Item Discount"
+msgstr "خصم القطعة الثانية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "One eligible item per order receives 50% off automatically. If several eligible items are added, the discount applies to the cheapest."
+msgstr "تحصل قطعة مؤهلة واحدة لكل طلب على خصم ٥٠٪ تلقائيًا. إذا أُضيفت عدة قطع مؤهلة، يُطبّق الخصم على الأرخص."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Second-item offers are managed here, without a linked promotion."
+msgstr "تُدار عروض القطعة الثانية هنا دون ربط بعرض ترويجي آخر."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose at least one other eligible second product."
+msgstr "اختر منتجًا آخر مؤهلًا واحدًا على الأقل كقطعة ثانية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Second products must be single-variant sale products on this website."
+msgstr "يجب أن تكون منتجات القطعة الثانية قابلة للبيع على هذا الموقع وذات خيار واحد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select how the customer gets the second item."
+msgstr "حدد طريقة حصول العميل على القطعة الثانية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "This offer is no longer available."
+msgstr "لم يعد هذا العرض متاحًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "This offer is no longer available for this customer."
+msgstr "لم يعد هذا العرض متاحًا لهذا العميل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "This offer uses the same product twice."
+msgstr "هذا العرض مخصص لقطعتين من نفس المنتج."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Choose an eligible second item."
+msgstr "اختر قطعة ثانية مؤهلة للعرض."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "An item in this offer is no longer available."
+msgstr "إحدى قطع العرض لم تعد متاحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Two units are required for this offer."
+msgstr "يلزم إضافة قطعتين للحصول على العرض."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "The discount could not be applied. Please try again."
+msgstr "تعذر تطبيق الخصم. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "2nd -50%"
+msgstr "الثانية -٥٠٪"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Second unit at half price"
+msgstr "القطعة الثانية بنصف السعر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Choose another item at half price"
+msgstr "اختر قطعة أخرى بنصف السعر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "Get the 50% offer"
+msgstr "احصل على عرض ٥٠٪"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "Second item 50% off"
+msgstr "خصم ٥٠٪ على القطعة الثانية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "Add two units of this product. One unit per order receives the discount."
+msgstr "أضف قطعتين من هذا المنتج. تحصل قطعة واحدة لكل طلب على الخصم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "Choose another eligible item. One item per order receives the discount; if several qualify, the cheapest is discounted."
+msgstr "اختر قطعة أخرى مؤهلة. تحصل قطعة واحدة لكل طلب على الخصم، وإذا وُجدت عدة قطع مؤهلة يُخصم من الأرخص."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Choose your second item"
+msgstr "اختر القطعة الثانية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "One eligible item per order gets 50% off. If several qualify, the cheapest receives the discount."
+msgstr "تحصل قطعة مؤهلة واحدة لكل طلب على خصم ٥٠٪. وإذا وُجدت عدة قطع مؤهلة، يُخصم من الأرخص."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Search eligible items"
+msgstr "ابحث في المنتجات المؤهلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Show more"
+msgstr "عرض المزيد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Loading eligible items..."
+msgstr "جارٍ تحميل المنتجات المؤهلة..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "No eligible items found. Try another search."
+msgstr "لم نعثر على منتجات مؤهلة. جرّب بحثًا آخر."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Could not load eligible items. Please try again."
+msgstr "تعذر تحميل المنتجات المؤهلة. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Adding offer..."
+msgstr "جارٍ إضافة العرض..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Could not add the offer. Check availability and try again."
+msgstr "تعذرت إضافة العرض. تحقق من التوفر وحاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Add offer to cart"
+msgstr "أضف العرض إلى السلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "This cart is not available for this website."
+msgstr "هذه السلة غير متاحة لهذا الموقع."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Benefit Product"
+msgstr "صنف الاستفادة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Benefit Products"
+msgstr "أصناف الاستفادة من العرض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Benefit products must be single-variant sale products on this website."
+msgstr ""
+"يجب أن تكون أصناف الاستفادة قابلة للبيع على هذا الموقع ولها متغير واحد فقط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Buy %(buy)s and get %(free)s free."
+msgstr "اشترِ %(buy)s واحصل على %(free)s مجانًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Buy one and get %(rate)s%% off a second eligible unit."
+msgstr "اشترِ قطعة واحصل على خصم %(rate)s%% على قطعة ثانية مؤهلة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"Buy quantity is paid; free quantity is added as a gift. For example, 2 + 1 "
+"means three units in total."
+msgstr ""
+"كمية الشراء مدفوعة، وتُضاف الكمية المجانية كهدية. مثال: 2 + 1 تعني ثلاث قطع "
+"إجمالًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose at least one other eligible benefit product."
+msgstr "اختر صنفًا آخر مؤهلًا للاستفادة من العرض على الأقل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Choose your benefit product"
+msgstr "اختر صنف الاستفادة من العرض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose your gift from the eligible products."
+msgstr "اختر هديتك من الأصناف المؤهلة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__current_price
+msgid "Current Price"
+msgstr "السعر الحالي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__amount_discount
+msgid "Discount Amount"
+msgstr "قيمة الخصم"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__discounted_price
+msgid "Discounted Price"
+msgstr "السعر بعد الخصم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Eligible Benefit Products"
+msgstr "الأصناف المؤهلة للاستفادة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"Existing before/after offers keep their fixed sale price. For new offers, "
+"choose Percentage Discount or Fixed Amount Discount."
+msgstr ""
+"تحتفظ عروض السعر قبل وبعد الحالية بسعر البيع الثابت. للعروض الجديدة، اختر "
+"خصم بنسبة أو خصم بمبلغ ثابت."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__amount
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Fixed Amount Discount"
+msgstr "خصم بمبلغ ثابت"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "Get this offer"
+msgstr "احصل على العرض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Maximum %(count)s applications per order."
+msgstr "الحد الأقصى لتطبيق العرض داخل الطلب: %(count)s."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+msgid "Maximum Applications per Order"
+msgstr "أقصى مرات تطبيق داخل الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__percent
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Percentage Discount"
+msgstr "خصم بنسبة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__percentage_rate
+msgid "Percentage Rate"
+msgstr "نسبة الخصم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Product Discount"
+msgstr "خصم على الصنف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Repeats for every qualifying purchase quantity."
+msgstr "يتكرر مع كل كمية شراء تستوفي شروط العرض."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__second_discount_rate
+msgid "Second Item Discount Rate"
+msgstr "نسبة خصم القطعة الثانية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select a percentage discount rate."
+msgstr "اختر نسبة الخصم."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select a pricelist for this website."
+msgstr "اختر قائمة أسعار لهذا الموقع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select a second-item discount rate."
+msgstr "اختر نسبة خصم القطعة الثانية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Select an EGP pricelist and a discount amount below the current product "
+"price."
+msgstr "اختر قائمة أسعار بالجنيه المصري وقيمة خصم أقل من سعر الصنف الحالي."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select how the customer receives the benefit product."
+msgstr "اختر طريقة حصول العميل على صنف الاستفادة من العرض."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"Set one eligible product for a fixed benefit, or several for customer "
+"choice. Use 1 application for once per order, or 0 for unlimited "
+"applications."
+msgstr ""
+"حدد صنفًا مؤهلًا واحدًا لاستفادة محددة، أو عدة أصناف ليختار العميل منها. "
+"أدخل 1 للتطبيق مرة واحدة داخل الطلب، أو 0 للتكرار دون حد."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_reward__ab_storefront_gift_product_ids
+msgid "Storefront Gift Products"
+msgstr "أصناف هدايا المتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The cheapest eligible units receive the discount."
+msgstr "يُطبق الخصم على أرخص القطع المؤهلة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The discount applies per unit to the current product sales price. Amount "
+"discounts are in EGP."
+msgstr ""
+"يُطبق الخصم على كل وحدة من سعر بيع الصنف الحالي. الخصومات بالمبلغ تُحسب "
+"بالجنيه المصري."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The discount applies to the cheapest eligible units, once for each "
+"qualifying pair, up to the order limit."
+msgstr ""
+"يُطبق الخصم على أرخص القطع المؤهلة، مرة لكل زوج مستوفٍ للشروط، حتى الحد "
+"الأقصى للطلب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "The gift could not be applied. Please try again."
+msgstr "تعذر إضافة الهدية. يرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The gift is the same product."
+msgstr "الهدية من نفس الصنف."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The maximum applications must be zero or a positive whole number."
+msgstr "يجب أن يكون الحد الأقصى لتطبيق العرض صفرًا أو عددًا صحيحًا موجبًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "The offer could not be applied. Please try again."
+msgstr "تعذر تطبيق العرض. يرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "The required purchase quantity is no longer available."
+msgstr "كمية الشراء المطلوبة لم تعد متاحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer is not available for this website."
+msgstr "هذا العرض غير متاح لهذا الموقع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer type is managed here, without a linked promotion."
+msgstr "يُدار هذا النوع من العروض هنا دون ربطه بعرض ترويجي آخر."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+msgid ""
+"Use 1 for one application, or 0 for unlimited applications within the order."
+msgstr "أدخل 1 للتطبيق مرة واحدة، أو 0 للتكرار دون حد داخل الطلب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "This offer uses the same benefit product."
+msgstr "هذا العرض يستخدم نفس صنف الاستفادة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Choose an eligible benefit product."
+msgstr "اختر صنفًا مؤهلًا للاستفادة من العرض."

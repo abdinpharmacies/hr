@@ -198,6 +198,9 @@ export class AbStorefrontProductCard extends Interaction {
 
     async onAddToCart(ev) {
         const button = ev.currentTarget;
+        if (button.dataset.offerId) {
+            return;
+        }
         if (button.disabled || button.classList.contains("is-loading")) {
             return;
         }

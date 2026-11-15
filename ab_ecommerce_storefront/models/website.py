@@ -391,6 +391,11 @@ class Website(models.Model):
     def _ab_storefront_offer_candidate_domain(self):
         domains = [Domain("compare_list_price", ">", 0)]
         programs = self.env["loyalty.program"].sudo().search(self._ab_storefront_offer_program_domain())
+        bundle_offers = programs.ab_storefront_offer_id.filtered(
+            lambda offer: offer.active and offer.offer_type in ("gift", "second_half")
+        )
+        if bundle_offers:
+            domains.append(Domain("product_variant_ids", "in", bundle_offers.product_id.ids))
         for program in programs:
             if program.limit_usage and program.total_order_count >= program.max_usage:
                 continue
@@ -487,6 +492,22 @@ class Website(models.Model):
                             discount = linked_discounts.get((program.id, product.product_variant_id.id))
                             if discount:
                                 details[product.id]["discount_percent"] = discount
+        for offer in programs.ab_storefront_offer_id.filtered(
+            lambda current: current.active and current.offer_type in ("gift", "second_half")
+        ):
+            product = offer.product_id.product_tmpl_id
+            if product in candidates:
+                details[product.id] = {
+                    "second_half": offer.offer_type == "second_half",
+                    "bundle_offer": True,
+                    "second_item_mode": offer.second_item_mode,
+                    "discount_rate": float(offer.second_discount_rate) if offer.offer_type == "second_half" else 100,
+                    "buy_qty": offer.buy_qty if offer.offer_type == "gift" else 1,
+                    "free_qty": offer.gift_qty if offer.offer_type == "gift" else 0,
+                    "max_applications": offer.max_applications,
+                    "description": offer._storefront_description(),
+                    "offer_id": offer.id,
+                }
         return details
 
     def _ab_storefront_offer_program_domain(self):

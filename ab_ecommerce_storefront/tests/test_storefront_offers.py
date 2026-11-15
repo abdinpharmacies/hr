@@ -1,9 +1,14 @@
+from types import SimpleNamespace
+from unittest.mock import patch
+
 from psycopg2 import IntegrityError
 
 from odoo import Command
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase, new_test_user
+
+from ..controllers import second_item_offer
 
 
 @tagged("post_install", "-at_install")
@@ -197,6 +202,39 @@ class TestStorefrontOffers(TransactionCase):
             stale.action_confirm()
         self.assertFalse(self.cart().order_line.filtered("is_reward_line"))
 
+    def test_second_half_same_product_discounts_one_unit(self):
+        offer = self.offer(offer_type="second_half", once_per_customer=False)
+        order = self.cart()
+        rewards = order.order_line.filtered(lambda line: line.is_reward_line and line.reward_id.program_id in offer.generated_program_ids)
+        self.assertEqual(len(rewards), 1)
+        self.assertEqual(order.amount_total, 150)
+        self.assertEqual(rewards.price_total, -50)
+
+    def test_second_half_customer_choice_requires_an_eligible_item(self):
+        second = self.env["product.product"].create({
+            "name": "Second offer product", "type": "consu", "list_price": 80,
+            "taxes_id": [Command.clear()], "company_id": self.company.id,
+        })
+        offer = self.offer(
+            offer_type="second_half", second_item_mode="choice",
+            second_product_ids=[Command.set(second.ids)], once_per_customer=False,
+        )
+        self.assertEqual(offer.generated_program_ids.reward_ids.discount_product_ids, second)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.write({"second_product_ids": [Command.clear()]})
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+            "order_line": [Command.create({"product_id": self.product.id, "product_uom_qty": 1})],
+        })
+        order._update_programs_and_rewards()
+        order._auto_apply_rewards()
+        self.assertFalse(order.order_line.filtered("is_reward_line"))
+        order._cart_add(second.id)
+        order._update_programs_and_rewards()
+        order._auto_apply_rewards()
+        self.assertEqual(order.amount_total, 140)
+
     def test_used_offer_cannot_be_deleted_or_usage_erased(self):
         offer = self.offer()
         self.cart().action_confirm()
@@ -227,3 +265,226 @@ class TestStorefrontOffers(TransactionCase):
         self.offer()
         order = self.cart(self.website.user_id.partner_id)
         self.assertEqual(order.order_line.price_unit, 100)
+
+    def _refresh_offer_cart(self, order):
+        order._update_programs_and_rewards()
+        order._auto_apply_rewards()
+
+    def test_all_percentage_rates_follow_current_price(self):
+        offer = self.offer(offer_type="percent", once_per_customer=False)
+        for rate in (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70):
+            with self.subTest(rate=rate):
+                offer.percentage_rate = str(rate)
+                self.assertAlmostEqual(self.cart().amount_total, 200 * (1 - rate / 100))
+        self.product.list_price = 200
+        self.assertAlmostEqual(self.cart().amount_total, 120)
+        self.assertEqual(offer.current_price, 200)
+        self.assertAlmostEqual(offer.discounted_price, 60)
+
+    def test_all_amount_discounts_and_current_price_changes(self):
+        self.pricelist.currency_id = self.env.ref("base.EGP")
+        self.company.currency_id = self.env.ref("base.EGP")
+        self.product.list_price = 500
+        offer = self.offer(offer_type="amount", once_per_customer=False)
+        for amount in (80, 100, 120, 125, 130, 140, 150, 200, 250):
+            with self.subTest(amount=amount):
+                offer.amount_discount = str(amount)
+                self.assertAlmostEqual(self.cart().amount_total, 2 * (500 - amount))
+        self.product.list_price = 600
+        self.assertAlmostEqual(self.cart().amount_total, 700)
+        self.product.list_price = 200
+        cart = self.cart()
+        self.assertEqual(cart.amount_total, 400)
+        self.assertFalse(cart.order_line.ab_storefront_price_offer_id)
+
+    def test_amount_discount_rejects_wrong_currency_or_excess_amount(self):
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.offer(offer_type="amount", amount_discount="250")
+        self.product.list_price = 500
+        self.pricelist.currency_id = self.env.ref("base.USD")
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.offer(offer_type="amount")
+
+    def test_percentage_once_per_customer_and_legacy_price(self):
+        offer = self.offer(offer_type="percent", percentage_rate="20")
+        order = self.cart()
+        self.assertEqual(order.amount_total, 160)
+        order.action_confirm()
+        self.assertEqual(self.cart().amount_total, 200)
+        offer.active = False
+        legacy = self.offer(once_per_customer=False)
+        self.product.list_price = 120
+        self.assertEqual(self.cart().amount_total, 160)
+        self.assertEqual(legacy.price_after, 80)
+
+    def test_second_item_all_rates_and_repetition_limits(self):
+        offer = self.offer(offer_type="second_half", once_per_customer=False)
+        self.assertEqual(offer.max_applications, 1)
+        order = self.cart()
+        paid = order.order_line.filtered(lambda line: not line.is_reward_line)
+        paid.product_uom_qty = 4
+        for rate in (20, 25, 30, 35, 40, 45, 50, 60):
+            with self.subTest(rate=rate):
+                offer.second_discount_rate = str(rate)
+                self._refresh_offer_cart(order)
+                self.assertAlmostEqual(order.amount_total, 400 - rate)
+        offer.write({"second_discount_rate": "50", "max_applications": 0})
+        self._refresh_offer_cart(order)
+        self.assertEqual(order.amount_total, 300)
+        paid.product_uom_qty = 7
+        offer.max_applications = 2
+        self._refresh_offer_cart(order)
+        self.assertEqual(order.amount_total, 600)
+        paid.product_uom_qty = 1
+        self._refresh_offer_cart(order)
+        self.assertFalse(order.order_line.filtered("is_reward_line"))
+
+    def test_second_item_chooses_cheapest_eligible_units(self):
+        second, third, unrelated = self.env["product.product"].create([
+            {"name": name, "type": "consu", "list_price": price, "taxes_id": [Command.clear()], "company_id": self.company.id}
+            for name, price in (("Benefit 80", 80), ("Benefit 60", 60), ("Unrelated 1", 1))
+        ])
+        self.offer(offer_type="second_half", second_item_mode="choice", second_product_ids=[Command.set((second | third).ids)], max_applications=0, once_per_customer=False)
+        order = self.cart()
+        order.write({"order_line": [Command.create({"product_id": product.id, "product_uom_qty": 1}) for product in (second, third, unrelated)]})
+        self._refresh_offer_cart(order)
+        self.assertEqual(order.amount_total, 271)
+        order.order_line.filtered(lambda line: line.product_id == self.product and not line.is_reward_line).product_uom_qty = 1
+        self._refresh_offer_cart(order)
+        self.assertEqual(order.amount_total, 211)
+
+    def test_gift_ratios_and_repeat_limit(self):
+        offer = self.offer(offer_type="gift", once_per_customer=False)
+        for buy, free in ((1, 1), (2, 1), (3, 1), (2, 2)):
+            with self.subTest(buy=buy, free=free):
+                offer.write({"buy_qty": buy, "gift_qty": free, "max_applications": 0})
+                order = self.cart()
+                paid = order.order_line.filtered(lambda line: not line.is_reward_line)
+                paid.product_uom_qty = buy * 3
+                self._refresh_offer_cart(order)
+                self.assertEqual(sum(order.order_line.filtered("is_reward_line").mapped("product_uom_qty")), free * 3)
+                self.assertEqual(order.amount_total, buy * 300)
+                offer.max_applications = 1
+                self._refresh_offer_cart(order)
+                self.assertEqual(sum(order.order_line.filtered("is_reward_line").mapped("product_uom_qty")), free)
+                paid.product_uom_qty = buy - 1
+                self._refresh_offer_cart(order)
+                self.assertFalse(order.order_line.filtered("is_reward_line"))
+
+    def test_fixed_different_gift_and_storefront_details(self):
+        second = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Different gift", "list_price": 80}})
+        offer = self.offer(offer_type="gift", second_item_mode="choice", second_product_ids=[Command.set(second.ids)], buy_qty=2, gift_qty=2, once_per_customer=False)
+        order = self.cart()
+        gift = order.order_line.filtered("is_reward_line")
+        self.assertEqual(gift.product_id, second)
+        self.assertEqual(gift.product_uom_qty, 2)
+        self.assertEqual(order.amount_total, 200)
+        details = self.website._ab_storefront_offer_details(self.product.product_tmpl_id)[self.product.product_tmpl_id.id]
+        self.assertTrue(details["bundle_offer"])
+        self.assertEqual(details["free_qty"], 2)
+        self.assertEqual(details["offer_id"], offer.id)
+
+    def test_multi_product_gift_validates_choice_and_removal(self):
+        second = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Gift B", "list_price": 80}})
+        third = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Gift C", "list_price": 60}})
+        offer = self.offer(offer_type="gift", second_item_mode="choice", second_product_ids=[Command.set((second | third).ids)], buy_qty=2, once_per_customer=False)
+        order = self.cart()
+        self.assertFalse(order.order_line.filtered("is_reward_line"))
+        reward = offer.generated_program_ids.reward_ids
+        coupon = order.coupon_point_ids.coupon_id.filtered(lambda card: card.program_id == offer.generated_program_ids)
+        with self.assertRaises(UserError):
+            order._get_reward_line_values(reward, coupon, product=self.product)
+        result = order._apply_program_reward(reward, coupon, product=third)
+        self.assertNotIn("error", result)
+        self._refresh_offer_cart(order)
+        self.assertEqual(order.order_line.filtered("is_reward_line").product_id, third)
+        order.order_line.filtered(lambda line: not line.is_reward_line).product_uom_qty = 1
+        self._refresh_offer_cart(order)
+        self.assertFalse(order.order_line.filtered("is_reward_line"))
+
+    def test_offer_selection_and_negative_limit_rejected(self):
+        offer = self.offer(offer_type="gift")
+        for values in ({"max_applications": -1}, {"second_item_mode": "choice"}, {"second_item_mode": "choice", "second_product_ids": [Command.set(self.product.ids)]}):
+            with self.subTest(values=values), self.assertRaises(ValidationError), self.env.cr.savepoint():
+                offer.write(values)
+        other_company = self.env["res.company"].create({"name": "Gift other company"})
+        other_product = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Foreign gift", "company_id": other_company.id}})
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            offer.write({"second_item_mode": "choice", "second_product_ids": [Command.set(other_product.ids)]})
+
+    def test_portal_cannot_edit_discount_configuration(self):
+        offer = self.offer(offer_type="percent")
+        with self.assertRaises(AccessError):
+            offer.with_user(self.portal).write({"percentage_rate": "70"})
+        offer.with_user(self.designer).write({"percentage_rate": "25"})
+        self.assertEqual(offer.percentage_rate, "25")
+
+    def test_gift_controller_adds_selected_gift_atomically(self):
+        second = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Selected gift", "list_price": 80}})
+        third = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Other gift", "list_price": 60}})
+        offer = self.offer(offer_type="gift", second_item_mode="choice", second_product_ids=[Command.set((second | third).ids)], buy_qty=2, gift_qty=2, once_per_customer=False)
+        order = self.env["sale.order"].create({"partner_id": self.partner.id, "website_id": self.website.id, "company_id": self.company.id, "pricelist_id": self.pricelist.id})
+        fake_request = SimpleNamespace(env=self.env, website=self.website, cart=order)
+        controller = second_item_offer.StorefrontSecondItemOffer()
+        product_class = type(self.product)
+        with patch.object(second_item_offer, "request", fake_request), patch.object(product_class, "_is_add_to_cart_allowed", return_value=True), patch.object(product_class, "_is_sold_out", return_value=False):
+            with self.assertRaises(UserError):
+                controller.add_second_item(offer.id, self.product.id)
+            self.assertFalse(order.order_line)
+            result = controller.add_second_item(offer.id, third.id)
+            self.assertEqual(result["url"], "/shop/cart")
+        gift = order.order_line.filtered("is_reward_line")
+        self.assertEqual(gift.product_id, third)
+        self.assertEqual(gift.product_uom_qty, 2)
+        self.assertEqual(order.amount_total, 200)
+
+    def test_second_item_converts_purchase_units(self):
+        self.offer(offer_type="second_half", max_applications=0, once_per_customer=False)
+        pair = self.env["uom.uom"].create({"name": "Offer pair", "relative_uom_id": self.product.uom_id.id, "relative_factor": 2})
+        order = self.cart()
+        line = order.order_line.filtered(lambda current: not current.is_reward_line)
+        line.write({"product_uom_id": pair.id, "product_uom_qty": 2, "price_unit": 200})
+        self._refresh_offer_cart(order)
+        self.assertEqual(order.amount_total, 300)
+
+    def test_gift_candidates_survive_archival_of_one_choice(self):
+        second, third = self.env["product.product"].create([
+            {"name": name, "type": "consu", "list_price": 80, "taxes_id": [Command.clear()], "company_id": self.company.id}
+            for name in ("Gift first", "Gift remaining")
+        ])
+        offer = self.offer(offer_type="gift", second_item_mode="choice", second_product_ids=[Command.set((second | third).ids)], once_per_customer=False)
+        second.active = False
+        reward = offer.generated_program_ids.reward_ids
+        self.assertEqual(reward.reward_product_ids, third)
+        self.assertIn(reward, self.env["loyalty.reward"].search([("reward_product_ids", "in", third.ids)]))
+        order = self.cart()
+        self.assertEqual(order.order_line.filtered("is_reward_line").product_id, third)
+
+    def test_bundle_controller_rejects_other_website_and_inactive_offer(self):
+        offer = self.offer(offer_type="gift", once_per_customer=False)
+        controller = second_item_offer.StorefrontSecondItemOffer()
+        website = self.env["website"].create({"name": "Other offer website", "company_id": self.company.id})
+        fake_request = SimpleNamespace(env=self.env(user=self.portal), website=website, cart=self.env["sale.order"])
+        with patch.object(second_item_offer, "request", fake_request):
+            with self.assertRaises(UserError):
+                controller._get_offer(offer.id)
+            fake_request.website = self.website
+            self.assertEqual(controller._get_offer(offer.id), offer)
+            offer.active = False
+            with self.assertRaises(UserError):
+                controller._get_offer(offer.id)
+
+    def test_gift_controller_rolls_back_incomplete_purchase(self):
+        offer = self.offer(offer_type="gift", buy_qty=2, once_per_customer=False)
+        order = self.env["sale.order"].create({"partner_id": self.partner.id, "website_id": self.website.id, "company_id": self.company.id, "pricelist_id": self.pricelist.id})
+        fake_request = SimpleNamespace(env=self.env, website=self.website, cart=order)
+        original_add = type(order)._cart_add
+
+        def incomplete_add(current_order, *args, **kwargs):
+            result = original_add(current_order, *args, **kwargs)
+            return {**result, "added_qty": 1}
+
+        with patch.object(second_item_offer, "request", fake_request), patch.object(type(self.product), "_is_add_to_cart_allowed", return_value=True), patch.object(type(self.product), "_is_sold_out", return_value=False), patch.object(type(order), "_cart_add", incomplete_add):
+            with self.assertRaises(UserError):
+                second_item_offer.StorefrontSecondItemOffer().add_second_item(offer.id)
+        self.assertFalse(order.order_line)
