@@ -1,0 +1,307 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-03 15:26+0000\n"
+"PO-Revision-Date: 2026-11-03 15:26+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_oms_website_adapter
+#: model_terms:ir.ui.view,arch_db:ab_oms_website_adapter.portal_oms_status
+msgid "<strong>Order coordination:</strong>"
+msgstr "<strong>تنسيق الطلب:</strong>"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields.selection,name:ab_oms_website_adapter.selection__sale_order__oms_status__accepted
+msgid "Accepted by Branch"
+msgstr "مقبول لدى الفرع"
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "An event ID cannot be reused with different content."
+msgstr "لا يمكن إعادة استخدام معرّف الحدث بمحتوى مختلف."
+
+#. module: ab_oms_website_adapter
+#: model_terms:ir.ui.view,arch_db:ab_oms_website_adapter.portal_oms_status
+msgid "Cancellation requested; awaiting branch confirmation."
+msgstr "تم طلب الإلغاء؛ بانتظار تأكيد الفرع."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__delivered
+msgid "Delivered"
+msgstr "تم التوصيل"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__digest
+msgid "Digest"
+msgstr "بصمة المحتوى"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__direction
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__display_name
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_payment_transaction__display_name
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__display_name
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order_line__display_name
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_website__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__event_id
+msgid "Event"
+msgstr "الفعالية"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields.selection,name:ab_oms_website_adapter.selection__ab_oms_website_event__direction__in
+msgid "From OMS"
+msgstr "من إدارة الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__id
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_payment_transaction__id
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__id
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order_line__id
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_website__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Integration events are immutable."
+msgstr "لا يمكن تعديل أحداث التكامل."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Integration events are recorded automatically."
+msgstr "تسجل أحداث التكامل تلقائيًا."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Invalid OMS status update."
+msgstr "تحديث حالة إدارة الطلبات غير صالح."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__last_success
+msgid "Last Success"
+msgstr "آخر نجاح"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_website__oms_cutoff
+msgid "OMS Activation Cutoff"
+msgstr "تاريخ بدء استقبال الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model_terms:ir.ui.view,arch_db:ab_oms_website_adapter.view_order_oms
+#: model_terms:ir.ui.view,arch_db:ab_oms_website_adapter.view_website_oms
+msgid "OMS Coordination"
+msgstr "تنسيق الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.ui.menu,name:ab_oms_website_adapter.menu_root
+msgid "OMS Integration"
+msgstr "تكامل إدارة الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.actions.act_window,name:ab_oms_website_adapter.action_ab_oms_website_event
+#: model:ir.ui.menu,name:ab_oms_website_adapter.menu_ab_oms_website_event
+msgid "OMS Integration Events"
+msgstr "أحداث تكامل الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_website__oms_source
+msgid "OMS Source Identity"
+msgstr "هوية مصدر الطلبات"
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "OMS coordination fields are managed by the integration."
+msgstr "يدير التكامل حقول تنسيق الطلبات."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.constraint,message:ab_oms_website_adapter.constraint_sale_order_oms_reference_unique
+msgid "OMS request reference must be unique."
+msgstr "يجب أن يكون مرجع الطلب فريدًا."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_cancellation_requested
+msgid "Oms Cancellation Requested"
+msgstr "طلب إلغاء لدى إدارة الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_reference
+msgid "Oms Reference"
+msgstr "مرجع إدارة الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_request_reference
+msgid "Oms Request Reference"
+msgstr "مرجع طلب الموقع"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_revision
+msgid "Oms Revision"
+msgstr "مراجعة الطلب"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_source_identity
+msgid "Oms Source Identity"
+msgstr "هوية مصدر الطلب"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_status
+msgid "Oms Status"
+msgstr "حالة تنسيق الطلب"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_sale_order__oms_status_revision
+msgid "Oms Status Revision"
+msgstr "مراجعة حالة الطلب"
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Only new unconfirmed website requests can enter OMS."
+msgstr "يمكن استقبال طلبات الموقع الجديدة غير المؤكدة فقط."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Only outgoing events can be acknowledged."
+msgstr "يمكن تأكيد استلام الأحداث الصادرة فقط."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Only the website synchronization service can exchange events."
+msgstr "يسمح لخدمة مزامنة الموقع فقط بتبادل الأحداث."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__order_id
+msgid "Order"
+msgstr "الطلب"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_ab_oms_website_event__payload
+msgid "Payload"
+msgstr "محتوى الإرسال"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model,name:ab_oms_website_adapter.model_payment_transaction
+msgid "Payment Transaction"
+msgstr "معاملة الدفع"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields.selection,name:ab_oms_website_adapter.selection__sale_order__oms_status__processed
+msgid "Processed by Branch"
+msgstr "تمت المعالجة لدى الفرع"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model,name:ab_oms_website_adapter.model_sale_order
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model,name:ab_oms_website_adapter.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "بند أمر المبيعات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields,field_description:ab_oms_website_adapter.field_website__oms_enabled
+msgid "Send New Requests to OMS"
+msgstr "إرسال الطلبات الجديدة إلى إدارة الطلبات"
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "Set an activation cutoff and source identity before enabling OMS."
+msgstr "حدد تاريخ بدء الاستقبال وهوية المصدر قبل تفعيل التكامل."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "The OMS update belongs to another website."
+msgstr "تحديث الطلب يخص موقعًا آخر."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "The branch owns execution. Use the OMS cancellation request workflow."
+msgstr "يتولى الفرع التنفيذ. استخدم مسار طلب الإلغاء في إدارة الطلبات."
+
+#. module: ab_oms_website_adapter
+#. odoo-python
+#: code:addons/ab_oms_website_adapter/models/website.py:0
+msgid "The synchronization account cannot edit business orders directly."
+msgstr "لا يمكن لحساب المزامنة تعديل الطلبات التجارية مباشرة."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.constraint,message:ab_oms_website_adapter.constraint_ab_oms_website_event_event_unique
+msgid "This integration event already exists."
+msgstr "حدث التكامل موجود بالفعل."
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields.selection,name:ab_oms_website_adapter.selection__ab_oms_website_event__direction__out
+msgid "To OMS"
+msgstr "إلى إدارة الطلبات"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model.fields.selection,name:ab_oms_website_adapter.selection__sale_order__oms_status__review
+msgid "Under Review"
+msgstr "قيد المراجعة"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model,name:ab_oms_website_adapter.model_website
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_oms_website_adapter
+#: model:ir.model,name:ab_oms_website_adapter.model_ab_oms_website_event
+msgid "Website OMS Event"
+msgstr "حدث تكامل طلبات الموقع"
+
+#. module: ab_oms_website_adapter
+#: model:res.groups,name:ab_oms_website_adapter.group_sync
+#: model:res.groups.privilege,name:ab_oms_website_adapter.privilege_service
+msgid "Website OMS Synchronization"
+msgstr "مزامنة طلبات الموقع"
