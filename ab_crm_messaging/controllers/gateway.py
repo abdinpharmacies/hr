@@ -13,6 +13,8 @@ OPERATIONS = {
     'receive_media': {'event_id', 'data', 'failed'},
     'receive_status': {'reference', 'status', 'destination'},
     'preview_status': {'reference', 'status', 'destination'},
+    'lease_read_receipt': set(),
+    'report_read_receipt': {'token', 'lease', 'status'},
     'lease_outgoing': set(),
     'acknowledge_receipt': {'token', 'attempt', 'lease', 'receipt'},
     'authorize_send': {'token', 'attempt', 'receipt'},

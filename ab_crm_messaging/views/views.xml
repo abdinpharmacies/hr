@@ -28,7 +28,7 @@
             <field name="branch_id" readonly="id"/>
             <field name="company_id" readonly="id"/>
             <field name="service_user_id"/>
-            <field name="legacy_worker_disabled"/>
+            <field name="legacy_worker_disabled"/><field name="read_receipts_enabled" groups="base.group_system" invisible="provider != 'whatsapp'"/>
             <field name="enabled"/><field name="outgoing_enabled"/><field name="contact_automation"/>
             <field name="active"/>
           </group>

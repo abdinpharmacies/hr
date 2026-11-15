@@ -61,4 +61,9 @@
   </record>
 <record id="media_company" model="ir.rule"><field name="name">Private media company</field><field name="model_id" ref="model_ab_crm_message_media"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
 <record id="media_branch" model="ir.rule"><field name="name">Private media branch</field><field name="model_id" ref="model_ab_crm_message_media"/><field name="domain_force">[('id', '=', False)] if user.has_group('ab_crm_messaging.group_service') else ([] if user.has_group('ab_crm_core.group_manager') or user.has_group('base.group_system') else [('branch_id.user_ids', 'in', [user.id])])</field></record>
+    <record id="read_receipt_company_rule" model="ir.rule">
+        <field name="name">Read receipt company isolation</field>
+        <field name="model_id" ref="model_ab_crm_read_receipt"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
 </odoo>

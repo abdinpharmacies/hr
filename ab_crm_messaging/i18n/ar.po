@@ -29,6 +29,7 @@ msgstr "يمكن ربط الرسالة بعملية إرسال واحدة فقط
 #. module: ab_crm_messaging
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__account_id
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__account_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__account_id
 msgid "Account"
 msgstr "الحساب"
 
@@ -100,6 +101,7 @@ msgstr "المحتوى"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__branch_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__branch_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__branch_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__branch_id
 msgid "Branch"
 msgstr "الفرع"
 
@@ -148,6 +150,7 @@ msgstr "الرمز"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__company_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__company_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__company_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -169,6 +172,7 @@ msgstr "أعدّ حساب مراسلة قبل اعتماد الردود."
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__create_uid
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__create_uid
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__create_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -184,6 +188,7 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__create_date
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__create_date
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__create_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -233,6 +238,7 @@ msgstr "أوقف عامل البوابة السابق قبل تفعيل المر
 #: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__display_name
 #: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__display_name
 #: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -308,6 +314,7 @@ msgstr "السجل"
 #: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_message__id
 #: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_account__id
 #: model:ir.model.fields,field_description:ab_crm_telegram.field_ab_crm_messaging_api__id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -353,6 +360,7 @@ msgstr "وجهة المراسلة غير صالحة."
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__write_uid
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__write_uid
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__write_uid
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -368,6 +376,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_telegram_setup__write_date
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__write_date
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__write_date
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -378,11 +387,13 @@ msgstr "رمز حجز الإرسال"
 
 #. module: ab_crm_messaging
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__lease_until
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__lease_until
 msgid "Lease Until"
 msgstr "نهاية حجز الإرسال"
 
 #. module: ab_crm_messaging
 #: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_messaging_operation__state__leased
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_read_receipt__state__leased
 msgid "Leased"
 msgstr "محجوز للإرسال"
 
@@ -390,6 +401,7 @@ msgstr "محجوز للإرسال"
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__message_id
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_event__message_id
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__message_id
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__message_id
 msgid "Message"
 msgstr "الرسالة"
 
@@ -631,6 +643,7 @@ msgstr "مستخدم الخدمة"
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__state
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__state
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_chatter_session__state
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__state
 msgid "State"
 msgstr "الحالة"
 
@@ -638,12 +651,14 @@ msgstr "الحالة"
 #. odoo-python
 #: code:addons/ab_crm_messaging/models/messaging.py:0
 #: code:addons/ab_crm_sales_workspace/models/telegram_setup.py:0
+#: code:addons/ab_crm_messaging/models/read_receipts.py:0
 msgid "The messaging account is not authorized."
 msgstr "حساب المراسلة غير مصرح به."
 
 #. module: ab_crm_messaging
 #. odoo-python
 #: code:addons/ab_crm_messaging/models/messaging.py:0
+#: code:addons/ab_crm_messaging/models/read_receipts.py:0
 msgid "The outgoing lease has expired."
 msgstr "انتهت صلاحية حجز الإرسال."
 
@@ -666,6 +681,7 @@ msgstr "تم استلام هذا الحدث مسبقًا."
 
 #. module: ab_crm_messaging
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_operation__token
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__token
 msgid "Token"
 msgstr "الرمز"
 
@@ -961,3 +977,90 @@ msgstr "سبب الفشل"
 #: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_message_media__source_metadata
 msgid "Source Metadata"
 msgstr "بيانات المصدر الوصفية"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_read_receipt__state__accepted
+msgid "Accepted"
+msgstr "مقبول"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__accepted_at
+msgid "Accepted At"
+msgstr "وقت القبول"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__actor_id
+msgid "Actor"
+msgstr "المنفذ"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__attempts
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__available_at
+msgid "Available At"
+msgstr "متاح في"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_read_receipt__state__expired
+msgid "Expired"
+msgstr "منتهي الصلاحية"
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/read_receipts.py:0
+msgid "Invalid read receipt result."
+msgstr "نتيجة إيصال القراءة غير صالحة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_read_receipt__lease
+msgid "Lease"
+msgstr "رمز الحجز"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_read_receipt__state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_read_receipt_message_unique
+msgid "Read receipt already queued."
+msgstr "تمت إضافة إيصال القراءة إلى قائمة الانتظار بالفعل."
+
+#. module: ab_crm_messaging
+#: model:ir.model.constraint,message:ab_crm_messaging.constraint_ab_crm_read_receipt_token_unique
+msgid "Read receipt token must be unique."
+msgstr "يجب أن يكون رمز إيصال القراءة فريدًا."
+
+#. module: ab_crm_messaging
+#. odoo-python
+#: code:addons/ab_crm_messaging/models/read_receipts.py:0
+msgid "Read receipts are managed by the conversation workflow."
+msgstr "تُدار إيصالات القراءة من خلال سير عمل المحادثة."
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_read_receipt__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields,field_description:ab_crm_messaging.field_ab_crm_messaging_account__read_receipts_enabled
+msgid "Send WhatsApp Read Receipts"
+msgstr "إرسال إيصالات قراءة واتساب"
+
+#. module: ab_crm_messaging
+#: model:ir.model.fields.selection,name:ab_crm_messaging.selection__ab_crm_message_media__kind__video
+msgid "Video"
+msgstr "فيديو"
+
+#. module: ab_crm_messaging
+#: model:ir.model,name:ab_crm_messaging.model_ab_crm_read_receipt
+msgid "WhatsApp Read Receipt"
+msgstr "إيصال قراءة واتساب"

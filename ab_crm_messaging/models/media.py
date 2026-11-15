@@ -3,6 +3,10 @@ import binascii
 import json
 import math
 import zlib
+import subprocess
+
+from .animation import validate_animation
+from PIL import Image
 from pathlib import Path
 
 from odoo import api, fields, models, _
@@ -13,6 +17,8 @@ MIMES = {
     'image/jpeg',
     'image/png',
     'image/webp',
+    'image/gif',
+    'video/mp4',
     'text/markdown',
     'application/x-tgsticker',
     'application/pdf',
@@ -42,13 +48,13 @@ def validate_media(metadata, data=None, translate=_):
     size = metadata.get('size', 0)
     duration = metadata.get('duration', 0)
     if (
-        kind not in ('image', 'document', 'audio', 'voice')
+        kind not in ('image', 'document', 'audio', 'voice', 'video')
         or type(size) is not int
         or size < 0
         or metadata.get('mimetype') not in MIMES
         or not isinstance(metadata.get('name'), str)
         or not 1 <= len(metadata['name']) <= 255
-        or not isinstance(duration, (float, int))
+        or type(duration) not in (float, int)
         or not math.isfinite(duration)
         or not 0 <= duration <= 300
     ):
@@ -73,9 +79,10 @@ def validate_media(metadata, data=None, translate=_):
             and not (mime.startswith('audio/') or mime == 'video/webm')
         )
         or (kind == 'image' and not mime.startswith('image/'))
+        or (kind == 'video' and mime != 'video/mp4')
     ):
         raise ValidationError(_('Media content does not match its declared type.'))
-    limit = (10 if kind == 'image' else 20) * 1024 * 1024
+    limit = (10 if kind == 'image' else 16 if kind == 'video' else 20) * 1024 * 1024
     if size > limit:
         raise ValidationError(
             _(
@@ -111,6 +118,12 @@ def validate_media(metadata, data=None, translate=_):
                     )
             except (ValueError, zlib.error, UnicodeDecodeError, RecursionError):
                 pass
+        if mime in ('image/gif', 'video/mp4'):
+            try:
+                validate_animation(raw, mime)
+                animation_valid = True
+            except (ValueError, OSError, EOFError, Image.DecompressionBombError, subprocess.SubprocessError, KeyError, TypeError):
+                raise ValidationError(_('Invalid media content or size.')) from None
         valid = (
             text_valid
             or animation_valid
@@ -145,7 +158,7 @@ class Media(models.Model):
     message_id = fields.Many2one('ab_crm_message', required=True, ondelete='restrict')
     name = fields.Char(required=True)
     kind = fields.Selection(
-        [(k, k.title()) for k in ('image', 'document', 'audio', 'voice')], required=True
+        [(k, k.title()) for k in ('image', 'document', 'audio', 'voice', 'video')], required=True
     )
     mimetype = fields.Char(required=True)
     size = fields.Integer(required=True)
@@ -329,6 +342,6 @@ class MessagingAPI(models.AbstractModel):
         }
         self._validate_incoming_media(account, metadata, data)
         media._internal_write(
-            {'data': data, 'size': metadata['size'], 'state': 'ready'}
+            {'data': data, 'size': metadata['size'], 'state': 'ready', 'failure_reason': False}
         )
         return True

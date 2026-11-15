@@ -459,9 +459,11 @@ class TestMessaging(TransactionCase):
             metadata = {'kind': kind, 'mimetype': mime, 'name': name, 'size': len(raw), 'duration': 0, 'file_id': f'file-{index}'}
             result = self.receive(f'attachment-{index}', media=metadata)
             encoded = base64.b64encode(raw).decode()
+            self.gateway.receive_media('tg', '900000123', f'attachment-{index}', '', failed='download')
             self.gateway.receive_media('tg', '900000123', f'attachment-{index}', encoded)
             media = self.env['ab_crm_message'].browse(result['message_id']).media_ids
             self.assertEqual(media.state, 'ready')
+            self.assertFalse(media.failure_reason)
             self.assertEqual(media.with_user(self.staff).download()['data'], encoded)
             with self.assertRaises(AccessError):
                 media.with_user(self.other).download()
@@ -590,3 +592,33 @@ class TestMessaging(TransactionCase):
         self.assertEqual(message.location_snapshot, snapshot)
         with self.assertRaises(AccessError):
             message.sudo().write({'location_snapshot': {}})
+
+    def test_gif_and_mp4_incoming_without_whatsapp_companion(self):
+        import base64
+        import subprocess
+        import tempfile
+        from io import BytesIO
+        from pathlib import Path
+        from PIL import Image
+        from ..models.media import validate_media
+
+        image = BytesIO()
+        Image.new('RGB', (16, 16), 'red').save(image, format='GIF')
+        gif = image.getvalue()
+        metadata = {'kind': 'image', 'name': 'animation.gif', 'mimetype': 'image/gif', 'size': len(gif)}
+        self.assertEqual(validate_media(metadata, base64.b64encode(gif)), gif)
+        with self.assertRaises(ValidationError):
+            validate_media(dict(metadata, size=6), base64.b64encode(b'GIF89a'))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'animation.mp4'
+            subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i',
+                            'color=red:s=16x16:d=0.2', '-c:v', 'libx264', '-threads', '1',
+                            '-pix_fmt', 'yuv420p', str(path)], check=True, timeout=15)
+            raw = path.read_bytes()
+        metadata = {'kind': 'video', 'name': 'animation.mp4', 'mimetype': 'video/mp4',
+                    'file_id': 'animation-file', 'size': len(raw)}
+        result = self.receive(media=metadata)
+        self.gateway.receive_media('tg', '900000123', '1', base64.b64encode(raw).decode())
+        message = self.env['ab_crm_message'].browse(result['message_id'])
+        self.assertEqual(message.media_ids.state, 'ready')
+        self.assertEqual(message.media_ids.mimetype, 'video/mp4')

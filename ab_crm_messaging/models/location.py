@@ -61,7 +61,7 @@ class Message(models.Model):
     def _outgoing_extra(self):
         result = super()._outgoing_extra()
         if self.location_snapshot:
-            if self.direction != 'out' or self.conversation_id.channel_id.provider != 'telegram' or any(
+            if self.direction != 'out' or self.conversation_id.channel_id.provider not in ('telegram', 'whatsapp') or any(
                 result.get(key) for key in ('media', 'reaction', 'contact_button')
             ):
                 raise ValidationError(_('Invalid location.'))
@@ -99,7 +99,7 @@ class Operation(models.Model):
             if 'location' in content:
                 location = validate_location(content['location'])
                 account = self.env['ab_crm_messaging_account'].browse(values.get('account_id'))
-                if account.provider != 'telegram' or not location['name'] or not location['address'] or any(
+                if account.provider not in ('telegram', 'whatsapp') or not location['name'] or not location['address'] or any(
                     content.get(key) for key in ('media', 'reaction', 'template', 'contact_button')
                 ):
                     raise ValidationError(_('Invalid location.'))
