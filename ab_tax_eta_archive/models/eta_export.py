@@ -301,8 +301,6 @@ class EtaExport(models.Model):
                 ('telegram_sent_at', '=', False),
             ])
             for queued_day in sorted(set(queued_recent.mapped('report_date')), reverse=True):
-                if not self._day_complete(config, queued_day):
-                    continue
                 prepared = self._ensure_files(config, queued_day, deadline=deadline)
                 latest = self._latest_day_files(config, queued_day)
                 for category, _label, _kind, _direction in CATEGORIES:
@@ -311,7 +309,6 @@ class EtaExport(models.Model):
                             export.telegram_send_requested and not export.telegram_sent_at):
                         if time.monotonic() >= deadline:
                             return
-                        export.telegram_send_requested = False
                         export._send_telegram(checked_through=queued_day)
                         if (self.env.context.get('cron_id') and
                                 not self.env['ir.cron']._commit_progress(1, remaining=1)):
@@ -322,17 +319,16 @@ class EtaExport(models.Model):
                     return
                 if time.monotonic() >= deadline:
                     return
-            day = cutoff
+            scan_date = config.telegram_scan_date
+            day = scan_date if scan_date and delivery_start <= scan_date <= cutoff else cutoff
             while day >= delivery_start:
                 if time.monotonic() >= deadline:
                     return
-                if not self._day_complete(config, day):
-                    day -= timedelta(days=1)
-                    continue
                 latest = self._latest_day_files(config, day)
                 if (all(latest.get(category) and latest[category].telegram_sent_at
                         for category, _label, _kind, _direction in CATEGORIES) and
                         not self._sent_files_need_revision(config, day, latest)):
+                    config.telegram_scan_date = day - timedelta(days=1) if day > delivery_start else cutoff
                     day -= timedelta(days=1)
                     continue
                 prepared = self._ensure_files(config, day, deadline=deadline)
@@ -343,26 +339,22 @@ class EtaExport(models.Model):
                             not export.telegram_sent_at and export.file_data):
                         if time.monotonic() >= deadline:
                             return
-                        if export.telegram_send_requested:
-                            export.telegram_send_requested = False
                         export._send_telegram(checked_through=day)
                         if (self.env.context.get('cron_id') and
                                 not self.env['ir.cron']._commit_progress(1, remaining=1)):
                             return
+                # Advance even when a stream is blocked or has no activity. The next
+                # sweep retries it, while older gaps retain a chance to be processed.
+                config.telegram_scan_date = day - timedelta(days=1) if day > delivery_start else cutoff
                 if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(
-                        int(len(prepared) == len(CATEGORIES)),
-                        remaining=(day - delivery_start).days +
-                        int(len(prepared) != len(CATEGORIES))):
+                        1, remaining=(day - delivery_start).days):
                     return
                 day -= timedelta(days=1)
             day = today - timedelta(days=1)
             while day > cutoff and day >= config.start_date:
                 if time.monotonic() >= deadline:
                     return
-                if self._day_complete(config, day):
-                    prepared = self._ensure_files(config, day, deadline=deadline)
-                else:
-                    prepared = set()
+                prepared = self._ensure_files(config, day, deadline=deadline)
                 if (self.env.context.get('cron_id') and
                         not self.env['ir.cron']._commit_progress(
                             int(len(prepared) == len(CATEGORIES)),
@@ -397,13 +389,15 @@ class EtaExport(models.Model):
 
     @api.model
     def _ensure_files(self, config, report_date, deadline=None):
-        if not self._day_complete(config, report_date):
-            return set()
         checked_through = report_date
         latest = self._latest_day_files(config, report_date)
         targets = []
         prepared = set()
         for category, _label, kind, direction in CATEGORIES:
+            if not self._day_complete(config, report_date, kind=kind, direction=direction):
+                _logger.info('ETA file waiting for retrieval: connection=%s day=%s category=%s',
+                             config.id, report_date, category)
+                continue
             export = latest.get(category)
             model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
                              else 'ab_tax_eta_archive_receipt']
@@ -421,10 +415,14 @@ class EtaExport(models.Model):
         for category, kind, direction, export in targets:
             model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
                              else 'ab_tax_eta_archive_receipt']
-            if model.search_count([
+            pending_details = model.search_count([
                     ('config_id', '=', config.id), ('report_date', '=', report_date),
                     ('direction', '=', direction),
-                    '|', ('detail_json', '=', False), ('detail_json', '=', '')]):
+                    '|', ('detail_json', '=', False), ('detail_json', '=', '')])
+            if pending_details:
+                _logger.info('ETA file waiting for UUID details: connection=%s day=%s '
+                             'category=%s pending=%s', config.id, report_date,
+                             category, pending_details)
                 continue
             if deadline is not None and time.monotonic() >= deadline:
                 continue
@@ -441,15 +439,21 @@ class EtaExport(models.Model):
         return prepared
 
     @api.model
-    def _day_complete(self, config, report_date):
+    def _day_complete(self, config, report_date, kind=None, direction=None):
         today = datetime.now(pytz.timezone('Africa/Cairo')).date()
         if report_date < config.start_date or report_date >= today:
             return False
-        return self.env['ab_tax_eta_archive_sync'].search_count([
+        domain = [
             ('config_id', '=', config.id),
             ('report_date', '=', report_date),
             ('state', '=', 'done'),
-        ]) == 4
+        ]
+        if kind:
+            domain.append(('kind', '=', kind))
+        if direction:
+            domain.append(('direction', '=', direction))
+        return self.env['ab_tax_eta_archive_sync'].search_count(domain) == (
+            (1 if kind else 2) * (1 if direction else 2))
 
     def action_send_telegram(self):
         self.check_access('write')
@@ -457,9 +461,12 @@ class EtaExport(models.Model):
         for export in unsent:
             if not export.record_count:
                 raise UserError(_('An empty ETA file cannot be sent. Wait for saved transactions.'))
-            if not self._day_complete(export.config_id, export.report_date):
+            _category, _label, kind, direction = next(
+                row for row in CATEGORIES if row[0] == export.category)
+            if not self._day_complete(export.config_id, export.report_date,
+                                      kind=kind, direction=direction):
                 raise UserError(_(
-                    'All four ETA retrievals for this day must finish before sending its file.'))
+                    'The ETA retrieval for this file must finish before sending.'))
         for export in unsent:
             export = export.try_lock_for_update().filtered_domain([
                 ('telegram_sent_at', '=', False),
@@ -832,7 +839,7 @@ class EtaExport(models.Model):
             return
         values = {'telegram_sent_at': fields.Datetime.now(),
                   'telegram_message_id': str(payload.get('result', {}).get('message_id', '')),
-                  'telegram_error': False}
+                  'telegram_error': False, 'telegram_send_requested': False}
         if checked_through:
             values['checked_through'] = checked_through
         self.write(values)

@@ -126,6 +126,8 @@ class EtaConfig(models.Model):
         help='Automatically send unsent files with issue dates on or after this date. '
              'Leave empty to use the archive start date. Automatic delivery waits four days.',
         default=lambda self: datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=4))
+    telegram_scan_date = fields.Date(string='Next Telegram Scan Date', copy=False, readonly=True,
+                                    groups='ab_tax_eta_archive.group_eta_manager')
     invoice_client_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     invoice_client_secret = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     receipt_client_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')

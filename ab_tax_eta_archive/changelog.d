@@ -1,5 +1,28 @@
 ﻿Current changes before commit:
 
+- Generate and send each daily file when its own invoice/receipt direction has finished retrieval and UUID details are ready; unrelated failed streams no longer block the whole date.
+- Save the next automatic Telegram scan date so older missing days are reached across cron time limits. Wrap at the configured start date and retry blocked dates on later sweeps.
+- Preserve queued delivery requests after failed sends and clear them only after successful delivery.
+- Log the specific date/category waiting for retrieval or UUID details, and translate the checkpoint label and revised manual-send validation in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
+
+Validation (2026-11-15):
+
+- Targeted ETA module upgrade passed in eta_validation_20261115 with alternate ports and cron disabled.
+- Generated actual XLSX files with all Telegram HTTP calls mocked. Verified independent stream delivery, recovery of the 2026-11-04 example, missing-detail hold/recovery, no duplicate sends, retained failed requests, manual-send validation and resume after a forced time-budget interruption.
+- Verified both Arabic catalogs with Babel and Arabic runtime field translation, plus denied reader writes to the delivery checkpoint. All fixtures were rolled back.
+- The local abdin_replica19 database has no ETA archive tables, so the actual production delivery status for 2026-11-04 could not be inspected. No live ETA or Telegram requests were made.
+
+6ab70466d834be981daec025b790784c08db457e - yahyazakaria22 - 2026-11-15
+feat: optimize ETA retrieval and configure Telegram delivery start
+
 - Restore invoice UUID detail retrieval and separate invoice/receipt discovery and detail fetching into four scheduled jobs. Preserve the existing invoice job XML IDs on upgrade.
 - Select bounded 80-row detail batches, prioritize never-attempted rows, and index only pending detail rows instead of repeatedly scanning the completed archive.
 - Reuse pooled HTTP connections and cache OAuth tokens until their advertised expiry, with a 60-second renewal margin and one refresh on a detail-request HTTP 401.

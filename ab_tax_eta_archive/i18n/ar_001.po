@@ -4,6 +4,17 @@ msgstr ""
 "Language: ar_001\n"
 
 #. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__telegram_scan_date
+msgid "Next Telegram Scan Date"
+msgstr "تاريخ الفحص التالي لملفات تيليجرام"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
+msgid "The ETA retrieval for this file must finish before sending."
+msgstr "يجب اكتمال جلب بيانات هذا الملف من مصلحة الضرائب قبل إرساله."
+
+#. module: ab_tax_eta_archive
 #: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__telegram_start_date
 msgid "Telegram Delivery Start Date"
 msgstr "تاريخ بدء الإرسال إلى تيليجرام"
