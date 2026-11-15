@@ -511,8 +511,8 @@
                                  width="16" height="16" fill="none" stroke="currentColor"
                                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
                                  aria-hidden="true" focusable="false">
-                                <circle cx="10" cy="10" r="6.5" stroke-width="2.5"/>
-                                <path d="m15 15 6 6" stroke-width="2.5"/>
+                                <path d="M5 8h14l-1.2 12H6.2L5 8Z"/>
+                                <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
                             </svg>
                             <span t-if="request.env.user._is_public()" t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
                             <span t-else="" t-out="ab_header_nav_labels.get('your_orders', 'Your orders')"/>
@@ -599,8 +599,8 @@
                                  width="16" height="16" fill="none" stroke="currentColor"
                                  stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
                                  aria-hidden="true" focusable="false">
-                                <circle cx="10" cy="10" r="6.5" stroke-width="2.5"/>
-                                <path d="m15 15 6 6" stroke-width="2.5"/>
+                                <path d="M5 8h14l-1.2 12H6.2L5 8Z"/>
+                                <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
                             </svg>
                             <span t-if="request.env.user._is_public()" t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
                             <span t-else="" t-out="ab_header_nav_labels.get('your_orders', 'Your orders')"/>
