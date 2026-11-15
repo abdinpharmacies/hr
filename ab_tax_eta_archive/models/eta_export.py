@@ -20,7 +20,7 @@ from openpyxl.utils import get_column_letter
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from .eta_sync import EtaRequestDeferred, eta_detail_task_lock
+from .eta_sync import EtaRequestDeferred, eta_task_lock
 
 _logger = logging.getLogger(__name__)
 
@@ -200,6 +200,7 @@ class EtaExport(models.Model):
     revision = fields.Integer(required=True, default=1, readonly=True)
     supersedes_id = fields.Many2one('ab_tax_eta_archive_export', readonly=True, ondelete='restrict')
     source_digest = fields.Char(readonly=True)
+    source_updated_at = fields.Datetime(string='Source Updated At', readonly=True, copy=False)
     export_format_version = fields.Integer(readonly=True)
     filename = fields.Char(required=True, readonly=True)
     file_data = fields.Binary(attachment=True, readonly=True)
@@ -219,7 +220,7 @@ class EtaExport(models.Model):
     def _cron_fetch_details(self, kind='invoice'):
         if kind not in ('invoice', 'receipt'):
             raise ValueError('Unsupported ETA stream')
-        with eta_detail_task_lock(self.env) as acquired:
+        with eta_task_lock(self.env, 1) as acquired:
             if not acquired:
                 _logger.info('ETA detail queue already running; skipping duplicate %s task', kind)
                 if self.env.context.get('cron_id'):
@@ -259,10 +260,14 @@ class EtaExport(models.Model):
 
     @api.model
     def _wake_detail_cron(self, kind):
-        if not self.env.context.get('cron_id'):
-            return
         xmlid = ('cron_eta_uuid_details' if kind == 'invoice'
                  else 'cron_eta_receipt_uuid_details')
+        self._wake_cron(xmlid)
+
+    @api.model
+    def _wake_cron(self, xmlid):
+        if not self.env.context.get('cron_id'):
+            return
         cron = self.env.ref('ab_tax_eta_archive.' + xmlid)
         if not self.env['ir.cron.trigger'].sudo().search([
                 ('cron_id', '=', cron.id), ('call_at', '<=', fields.Datetime.now())], limit=1):
@@ -336,82 +341,92 @@ class EtaExport(models.Model):
         return next_work[0] if next_work and next_work[0] != kind else None
 
     @api.model
-    def _cron_export_and_send(self):
+    def _cron_prepare_files(self):
+        with eta_task_lock(self.env, 2) as acquired:
+            if not acquired:
+                return
+            self._prepare_files_batch()
+        self._wake_cron('cron_eta_delivery')
+
+    @api.model
+    def _prepare_files_batch(self):
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
-        cutoff = today - timedelta(days=4)
+        cutoff = today - timedelta(days=1)
         deadline = min(time.monotonic() + 25,
                        self.env.context.get('cron_end_time', float('inf')) - 2)
         for config in self.env['ab_tax_eta_archive_config'].search([
             ('active', '=', True), ('start_date', '<', today),
         ]):
-            delivery_start = max(config.start_date, config.telegram_start_date or config.start_date)
-            queued_recent = self.search([
-                ('config_id', '=', config.id), ('report_date', '>', cutoff),
-                ('report_date', '<', today), ('telegram_send_requested', '=', True),
-                ('telegram_sent_at', '=', False),
-            ])
-            for queued_day in sorted(set(queued_recent.mapped('report_date')), reverse=True):
-                prepared = self._ensure_files(config, queued_day, deadline=deadline)
-                latest = self._latest_day_files(config, queued_day)
-                for category, _label, _kind, _direction in CATEGORIES:
-                    export = latest.get(category)
-                    if (category in prepared and export and
-                            export.telegram_send_requested and not export.telegram_sent_at):
-                        if time.monotonic() >= deadline:
-                            return
-                        export._send_telegram(checked_through=queued_day)
-                        if (self.env.context.get('cron_id') and
-                                not self.env['ir.cron']._commit_progress(1, remaining=1)):
-                            return
-                if (self.env.context.get('cron_id') and
-                        not self.env['ir.cron']._commit_progress(
-                            int(len(prepared) == len(CATEGORIES)), remaining=1)):
-                    return
+            scan_date = config.file_scan_date
+            day = scan_date if scan_date and config.start_date <= scan_date <= cutoff else cutoff
+            while day >= config.start_date:
                 if time.monotonic() >= deadline:
                     return
-            scan_date = config.telegram_scan_date
-            day = scan_date if scan_date and delivery_start <= scan_date <= cutoff else cutoff
-            while day >= delivery_start:
+                config.file_scan_date = day
+                self._ensure_files(config, day, deadline=deadline)
                 if time.monotonic() >= deadline:
                     return
-                latest = self._latest_day_files(config, day)
-                if (all(latest.get(category) and latest[category].telegram_sent_at
-                        for category, _label, _kind, _direction in CATEGORIES) and
-                        not self._sent_files_need_revision(config, day, latest)):
-                    config.telegram_scan_date = day - timedelta(days=1) if day > delivery_start else cutoff
-                    day -= timedelta(days=1)
-                    continue
-                prepared = self._ensure_files(config, day, deadline=deadline)
-                latest = self._latest_day_files(config, day)
-                for category, _label, _kind, _direction in CATEGORIES:
-                    export = latest.get(category)
-                    if (category in prepared and export and
-                            not export.telegram_sent_at and export.file_data):
-                        if time.monotonic() >= deadline:
-                            return
-                        export._send_telegram(checked_through=day)
-                        if (self.env.context.get('cron_id') and
-                                not self.env['ir.cron']._commit_progress(1, remaining=1)):
-                            return
                 # Advance even when a stream is blocked or has no activity. The next
                 # sweep retries it, while older gaps retain a chance to be processed.
-                config.telegram_scan_date = day - timedelta(days=1) if day > delivery_start else cutoff
+                config.file_scan_date = day - timedelta(days=1) if day > config.start_date else cutoff
                 if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(
-                        1, remaining=(day - delivery_start).days):
+                        1, remaining=(day - config.start_date).days):
                     return
                 day -= timedelta(days=1)
-            day = today - timedelta(days=1)
-            while day > cutoff and day >= config.start_date:
+
+    @api.model
+    def _cron_export_and_send(self):
+        with eta_task_lock(self.env, 3) as acquired:
+            if acquired:
+                self._deliver_files_batch()
+
+    @api.model
+    def _deliver_files_batch(self):
+        today = datetime.now(pytz.timezone('Africa/Cairo')).date()
+        cutoff = today - timedelta(days=4)
+        deadline = min(time.monotonic() + 25,
+                       self.env.context.get('cron_end_time', float('inf')) - 2)
+        for config in self.env['ab_tax_eta_archive_config'].search([('active', '=', True)]):
+            delivery_start = max(config.start_date, config.telegram_start_date or config.start_date)
+            domain = (fields.Domain('config_id', '=', config.id) &
+                      fields.Domain('report_date', '<', today) &
+                      ((fields.Domain('report_date', '>=', delivery_start) &
+                        fields.Domain('report_date', '<=', cutoff)) |
+                       fields.Domain('telegram_send_requested', '=', True)))
+            seen = set()
+            for export in self.search(domain, order='report_date desc, category, revision desc'):
+                key = (export.report_date, export.category)
+                if key in seen:
+                    continue
+                seen.add(key)
+                if export.telegram_sent_at or not export.file_data:
+                    continue
                 if time.monotonic() >= deadline:
                     return
-                prepared = self._ensure_files(config, day, deadline=deadline)
+                if not export._file_source_ready():
+                    self._wake_cron('cron_eta_prepare_files')
+                    continue
+                export._send_telegram(checked_through=export.report_date)
                 if (self.env.context.get('cron_id') and
-                        not self.env['ir.cron']._commit_progress(
-                            int(len(prepared) == len(CATEGORIES)),
-                            remaining=(day - cutoff).days - 1)):
+                        not self.env['ir.cron']._commit_progress(1, remaining=1)):
                     return
-                day -= timedelta(days=1)
+
+    def _file_source_ready(self):
+        self.ensure_one()
+        _category, _label, kind, direction = next(row for row in CATEGORIES if row[0] == self.category)
+        if not self._day_complete(self.config_id, self.report_date, kind=kind, direction=direction):
+            return False
+        model = self.env['ab_tax_eta_archive_' + kind]
+        domain = (fields.Domain('config_id', '=', self.config_id.id) &
+                  fields.Domain('report_date', '=', self.report_date) &
+                  fields.Domain('direction', '=', direction))
+        [(count, updated_at)] = model._read_group(domain, [], ['__count', 'write_date:max'])
+        return (count > 0 and count == self.record_count and
+                self.source_updated_at == updated_at and
+                self.export_format_version == EXPORT_FORMAT_VERSION and
+                not model.search_count(domain & (
+                    fields.Domain('detail_json', '=', False) | fields.Domain('detail_json', '=', ''))))
 
     @api.model
     def _latest_day_files(self, config, day):
@@ -421,22 +436,6 @@ class EtaExport(models.Model):
         for export in exports:
             latest.setdefault(export.category, export)
         return latest
-
-    @api.model
-    def _sent_files_need_revision(self, config, day, latest):
-        for category, _label, kind, direction in CATEGORIES:
-            export = latest.get(category)
-            if not export or not export.telegram_sent_at:
-                continue
-            model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
-                             else 'ab_tax_eta_archive_receipt']
-            count = model.search_count([
-                ('config_id', '=', config.id), ('report_date', '=', day),
-                ('direction', '=', direction),
-            ])
-            if count != export.record_count:
-                return True
-        return False
 
     @api.model
     def _ensure_files(self, config, report_date, deadline=None):
@@ -452,16 +451,17 @@ class EtaExport(models.Model):
             export = latest.get(category)
             model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
                              else 'ab_tax_eta_archive_receipt']
-            count = model.search_count([
+            [(count, updated_at)] = model._read_group([
                 ('config_id', '=', config.id), ('report_date', '=', report_date),
                 ('direction', '=', direction),
-            ])
+            ], [], ['__count', 'write_date:max'])
             if not count:
                 continue
-            if export and export.telegram_sent_at:
-                if count == export.record_count:
-                    prepared.add(category)
-                    continue
+            if (export and export.file_data and count == export.record_count and
+                    export.source_updated_at == updated_at and
+                    export.export_format_version == EXPORT_FORMAT_VERSION):
+                prepared.add(category)
+                continue
             targets.append((category, kind, direction, export))
         for category, kind, direction, export in targets:
             model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
@@ -477,8 +477,14 @@ class EtaExport(models.Model):
                 continue
             if deadline is not None and time.monotonic() >= deadline:
                 continue
-            current = self._prepare(config, report_date, category, kind, direction,
-                                    export=export)
+            try:
+                with self.env.cr.savepoint():
+                    current = self._prepare(config, report_date, category, kind, direction,
+                                            export=export)
+            except (ValueError, TypeError, KeyError):
+                _logger.exception('ETA file generation failed: connection=%s day=%s category=%s',
+                                  config.id, report_date, category)
+                continue
             if not current:
                 continue
             if current.checked_through != checked_through:
@@ -575,7 +581,9 @@ class EtaExport(models.Model):
         ]
         if record_ids is not None:
             missing_domain.append(('id', 'in', record_ids))
-        missing = model.search(missing_domain, order='issued_at desc NULLS LAST, id desc', limit=batch_size)
+        missing = model.search_fetch(
+            missing_domain, ['uuid', 'detail_json', 'total', 'currency'],
+            order='issued_at desc NULLS LAST, id desc', limit=batch_size)
         if not missing:
             return 0
         if deadline is not None and time.monotonic() >= deadline:
@@ -621,6 +629,7 @@ class EtaExport(models.Model):
             record = model.browse(record_id)
             if deadline is not None and time.monotonic() + 1 >= deadline:
                 break
+            record.fetch(['uuid', 'detail_json', 'total', 'currency'])
             if record.detail_json:
                 continue
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
@@ -663,6 +672,8 @@ class EtaExport(models.Model):
                      config.id, kind, direction, report_date, len(missing), processed,
                      ready, processed - ready, len(missing) - processed,
                      time.monotonic() - batch_started_at)
+        if ready:
+            self._wake_cron('cron_eta_prepare_files')
         return processed
 
     def _progress_iter(self, data, message, total=None):
@@ -673,6 +684,11 @@ class EtaExport(models.Model):
 
     @api.model
     def _prepare(self, config, report_date, category, kind, direction, export=None):
+        if export:
+            export = export.try_lock_for_update()
+            if not export:
+                return False
+            export.invalidate_recordset()
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         if model.search_count([
                 ('config_id', '=', config.id), ('report_date', '=', report_date),
@@ -685,6 +701,7 @@ class EtaExport(models.Model):
                                       'issued_at, uuid'))
         if not records:
             return False
+        source_updated_at = max(filter(None, records.mapped('write_date')), default=False)
         headers = (RECEIPT_HEADERS if kind == 'receipt' else
                    PURCHASE_HEADERS if direction == 'received' else INVOICE_HEADERS)
         cairo = pytz.timezone('Africa/Cairo')
@@ -748,6 +765,7 @@ class EtaExport(models.Model):
         source_digest = digest.hexdigest()
         if (export and export.source_digest == source_digest and export.file_data and
                 export.export_format_version == EXPORT_FORMAT_VERSION):
+            export.source_updated_at = source_updated_at
             return export
 
         workbook = Workbook(write_only=True)
@@ -771,11 +789,15 @@ class EtaExport(models.Model):
             sheet.column_dimensions[get_column_letter(column)].width = width
         thin = Side(style='thin', color='000000')
         border = Border(left=thin, right=thin, top=thin, bottom=thin)
+        normal_font = Font(name='Calibri', size=11)
+        header_font = Font(name='Calibri', size=11)
+        detail_font = Font(name='Comic Sans MS', size=12, bold=True, underline='single')
+        centered = Alignment(horizontal='center')
         header_cells = [WriteOnlyCell(sheet, value=value) for value in headers]
         for cell in header_cells:
-            cell.font = Font(name='Calibri', size=11)
+            cell.font = header_font
             cell.border = border
-            cell.alignment = Alignment(horizontal='center')
+            cell.alignment = centered
         sheet.append(header_cells)
         for serial, record in enumerate(records, start=1):
             cells = export_cells(record, serial)
@@ -783,14 +805,13 @@ class EtaExport(models.Model):
             row = []
             for index, value in enumerate(cells):
                 cell = WriteOnlyCell(sheet, value=value)
-                cell.font = Font(name='Calibri', size=11)
+                cell.font = normal_font
                 cell.border = border
-                cell.alignment = Alignment(horizontal='center')
+                cell.alignment = centered
                 if index in ((4, 5) if kind == 'receipt' else (5, 6)):
                     cell.number_format = 'mm-dd-yy'
                 if index == 1:
-                    cell.font = Font(name='Comic Sans MS', size=12, bold=True,
-                                     underline='single')
+                    cell.font = detail_font
                     if kind == 'invoice' and cells[-1 if direction == 'sent' else -2]:
                         cell.hyperlink = cells[-1 if direction == 'sent' else -2]
                 if kind == 'invoice' and index == len(cells) - (1 if direction == 'sent' else 2) and value:
@@ -807,6 +828,7 @@ class EtaExport(models.Model):
             'file_data': base64.b64encode(output.getbuffer()),
             'file_size_mb': round(output.tell() / (1024 * 1024), 2),
             'record_count': len(records), 'source_digest': source_digest,
+            'source_updated_at': source_updated_at,
             'export_format_version': EXPORT_FORMAT_VERSION,
         }
         if export and not export.telegram_sent_at:

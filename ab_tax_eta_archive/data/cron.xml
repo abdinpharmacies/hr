@@ -17,10 +17,20 @@
         <field name="interval_type">minutes</field>
     </record>
     <record id="cron_eta_delivery" model="ir.cron">
-        <field name="name">ETA: Create and Send Daily Files</field>
+        <field name="name">ETA: Send Daily Files</field>
+        <field name="priority">4</field>
         <field name="model_id" ref="model_ab_tax_eta_archive_export"/>
         <field name="state">code</field>
         <field name="code">model._cron_export_and_send()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+    </record>
+    <record id="cron_eta_prepare_files" model="ir.cron">
+        <field name="name">ETA: Generate Daily Files</field>
+        <field name="priority">3</field>
+        <field name="model_id" ref="model_ab_tax_eta_archive_export"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_prepare_files()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">minutes</field>
     </record>

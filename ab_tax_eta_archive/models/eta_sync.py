@@ -27,12 +27,12 @@ ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED = False
 
 
 @contextmanager
-def eta_detail_task_lock(env):
-    """Keep the detail queue exclusive across progress commits and cron/manual runs."""
+def eta_task_lock(env, task):
+    """Keep an ETA task exclusive across progress commits and cron/manual runs."""
     # A dedicated transaction owns only this advisory lock, never business rows.
     # Its cursor context releases the lock on success, exception or worker exit.
     with env.registry.cursor() as lock_cr:
-        lock_cr.execute('SELECT pg_try_advisory_xact_lock(%s, %s)', (0x455441, 1))
+        lock_cr.execute('SELECT pg_try_advisory_xact_lock(%s, %s)', (0x455441, task))
         yield bool(lock_cr.fetchone()[0])
 
 
@@ -362,10 +362,12 @@ class EtaSync(models.Model):
         if result is None:
             self.write({'state': 'pending', 'last_run_at': fields.Datetime.now(),
                         'error_message': False})
+            self.env['ab_tax_eta_archive_export']._wake_detail_cron(self.kind)
             return
         count, issue_dates = result
         self.write({'state': 'done', 'item_count': count,
                     'last_run_at': fields.Datetime.now(), 'error_message': False})
+        self.env['ab_tax_eta_archive_export']._wake_detail_cron(self.kind)
         # A separate cron fetches UUID details from saved invoice and receipt rows.
 
     def _retrieve(self, auth_cache=None):

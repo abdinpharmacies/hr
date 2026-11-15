@@ -4,6 +4,26 @@ msgstr ""
 "Language: ar_001\n"
 
 #. module: ab_tax_eta_archive
+#: model:ir.actions.server,name:ab_tax_eta_archive.cron_eta_prepare_files_ir_actions_server
+msgid "ETA: Generate Daily Files"
+msgstr "الضرائب: إنشاء الملفات اليومية"
+
+#. module: ab_tax_eta_archive
+#: model:ir.actions.server,name:ab_tax_eta_archive.cron_eta_delivery_ir_actions_server
+msgid "ETA: Send Daily Files"
+msgstr "الضرائب: إرسال الملفات اليومية"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__file_scan_date
+msgid "Next File Generation Date"
+msgstr "تاريخ إنشاء الملفات التالي"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__source_updated_at
+msgid "Source Updated At"
+msgstr "آخر تحديث لبيانات المصدر"
+
+#. module: ab_tax_eta_archive
 #. odoo-python
 #: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 #, python-format

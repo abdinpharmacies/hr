@@ -1,5 +1,33 @@
 ﻿Current changes before commit:
 
+- Separate local Excel generation from Telegram uploads with an independent, resumable generation job. Generate every ready archive date regardless of the Telegram delivery start date or four-day send wait.
+- Keep delivery date limits on sending only; validate that saved files still match their complete source rows before sending, retain explicit manual requests and preserve sent revisions when source data changes.
+- Track source update timestamps and row counts to reuse unchanged files without rebuilding them; reuse Excel style objects rather than allocating fonts and alignments for every cell.
+- Fetch only fields needed for UUID detail updates, wake detail jobs when search imports progress and wake generation after details become ready. Target 0.55-second raw-request spacing while retaining Retry-After cooldowns, day/type order and duplicate-run guards.
+- Give details, local generation and delivery independent task locks. Isolate malformed file data so one failing date/category does not stop other ready files.
+- Add English/Arabic labels for the generation/delivery jobs, generation scan date and source timestamp in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
+
+Validation (2026-11-15):
+
+- Targeted ETA upgrade passed in isolated eta_validation_20261115 with alternate ports and cron disabled. Exported the Odoo 19 POT, validated both PO catalogs with Babel and verified the new generation action in ar_001. GNU msgfmt remains unavailable locally.
+- Passed 11 end-to-end groups using actual XLSX files and mocked HTTP: independent task locks, generation outside delivery limits, pending-detail holds, malformed-data isolation, unchanged-file reuse, delivery bounds/deduplication, stale-file safety, numbered corrections, day/type detail order, cached tokens, throttle deferral, translations and reader ACLs.
+- Local 500-row Excel benchmark: prior implementation 3.032 seconds; optimized implementation 1.828 seconds (1.66x throughput, about 40% less time). Production performance remains unmeasured.
+- Minimum observed invoice-request interval was 0.547 seconds; every tested one-second window had at most two starts. Verified a 120-second Retry-After suppressed further requests and left the UUID pending.
+- All fixtures were rolled back; no live ETA or Telegram requests were made. Temporary tests and generated artifacts are excluded from the addon.
+
+4e529760709c5310254e767728a889639ae74f27 - yahyazakaria22 - 2026-11-15
+fix: close stale ETA detail progress entries
+
 - Close the current detail callback's web progress entry when a partial batch ends, is deferred or raises an exception. Unfinished UUIDs remain queued for later callbacks, preventing stale progress cards from suggesting duplicate running jobs.
 - Reuse the existing operation description and leave shared web_progress components, API pacing, retrieval ordering and overlap protection unchanged.
 

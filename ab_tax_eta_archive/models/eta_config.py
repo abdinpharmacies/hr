@@ -9,6 +9,8 @@ import requests
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
+ETA_DETAIL_REQUEST_INTERVAL = 0.55  # Below ETA's 2 requests/second cap, with a safety margin.
+
 
 class EtaConfig(models.Model):
     _name = 'ab_tax_eta_archive_config'
@@ -94,7 +96,7 @@ class EtaConfig(models.Model):
         if wait:
             time.sleep(wait)
         # ETA allows two calls/second per API. Keep a small safety margin.
-        schedule[endpoint] = time.time() + 0.6
+        schedule[endpoint] = time.time() + ETA_DETAIL_REQUEST_INTERVAL
         self.write({'request_schedule': schedule})
         if self.env.context.get('cron_id'):
             if not self.env['ir.cron']._commit_progress(0, remaining=1):
@@ -128,6 +130,8 @@ class EtaConfig(models.Model):
         default=lambda self: datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=4))
     telegram_scan_date = fields.Date(string='Next Telegram Scan Date', copy=False, readonly=True,
                                     groups='ab_tax_eta_archive.group_eta_manager')
+    file_scan_date = fields.Date(string='Next File Generation Date', copy=False, readonly=True,
+                                groups='ab_tax_eta_archive.group_eta_manager')
     invoice_client_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     invoice_client_secret = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     receipt_client_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
