@@ -302,18 +302,33 @@ class EtaExport(models.Model):
             auth_cache = {}
             # One connection pool and authentication per connection for the whole slice.
             with requests.Session() as session:
-                for (config_id, report_date, direction), record_ids in groups:
-                    if time.monotonic() >= deadline:
-                        break
-                    processed = self._enrich_details(
-                        self.env['ab_tax_eta_archive_config'].browse(config_id),
-                        kind, report_date, direction, deadline=deadline,
-                        batch_size=len(record_ids), record_ids=record_ids,
-                        progress_offset=progress_offset, progress_total=len(selected_batch),
-                        session=session, auth_cache=auth_cache)
-                    progress_offset += processed
-                    if not processed:
-                        break
+                progress_message = self._detail_progress_message(
+                    kind, selected_batch[0].direction, selected_batch[0].report_date)
+                try:
+                    for (config_id, report_date, direction), record_ids in groups:
+                        if time.monotonic() >= deadline:
+                            break
+                        progress_message = self._detail_progress_message(kind, direction, report_date)
+                        processed = self._enrich_details(
+                            self.env['ab_tax_eta_archive_config'].browse(config_id),
+                            kind, report_date, direction, deadline=deadline,
+                            batch_size=len(record_ids), record_ids=record_ids,
+                            progress_offset=progress_offset, progress_total=len(selected_batch),
+                            session=session, auth_cache=auth_cache)
+                        progress_offset += processed
+                        if not processed:
+                            break
+                finally:
+                    # Finish this callback's progress, not the remaining archive.
+                    # Every cron slice gets a new progress code; leaving a partial
+                    # slice ongoing makes the UI show stale duplicate operations.
+                    progress = getattr(self, 'web_progress_percent', None)
+                    if (progress and self.env.context.get('progress_code') and
+                            progress_offset < len(selected_batch)):
+                        try:
+                            progress(100, msg=progress_message, cancellable=False)
+                        except Exception:
+                            _logger.exception('ETA detail batch progress could not be closed')
         next_work = self._next_detail_work(self._detail_queue_domain(configs.ids, today))
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(

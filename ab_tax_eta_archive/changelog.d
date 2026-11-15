@@ -1,5 +1,22 @@
 ﻿Current changes before commit:
 
+- Close the current detail callback's web progress entry when a partial batch ends, is deferred or raises an exception. Unfinished UUIDs remain queued for later callbacks, preventing stale progress cards from suggesting duplicate running jobs.
+- Reuse the existing operation description and leave shared web_progress components, API pacing, retrieval ordering and overlap protection unchanged.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
+
+Validation (2026-11-15):
+
+- Targeted ETA module upgrade passed in eta_validation_20261115 with alternate ports and cron disabled.
+- Tested real web.progress persistence for partial, deferred and failed batches. Each callback ended with a done progress entry and disappeared from active operations; all unfinished UUIDs stayed pending and the task lock released.
+- Rolled back archive fixtures and removed only the test's transient progress rows. No external HTTP calls were made. No user-facing strings changed.
+
+522e0b92d2657443712254e0fa0cb5cd1004d244 - yahyazakaria22 - 2026-11-15
+feat: order ETA detail retrieval and prevent overlapping runs
+
 - Retrieve eligible UUID details newest day first, with invoices before receipts for each day; only then continue to the previous day. Preserve issue-time order across interleaved directions and connections.
 - Keep invoice and receipt scheduled jobs separate, coordinate their queue head, prioritize the invoice cron and trigger the next task after releasing the queue lock. Avoid duplicate pending trigger records.
 - Guard the detail queue with a PostgreSQL transaction advisory lock on a dedicated cursor so scheduled/manual duplicate runs cannot overlap, even across progress commits. This bounded lock query does not modify business data and releases on failure or worker exit.
