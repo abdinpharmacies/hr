@@ -4,6 +4,46 @@ msgstr ""
 "Language: ar_001\n"
 
 #. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__telegram_start_date
+msgid "Telegram Delivery Start Date"
+msgstr "تاريخ بدء الإرسال إلى تيليجرام"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,help:ab_tax_eta_archive.field_ab_tax_eta_archive_config__telegram_start_date
+msgid "Automatically send unsent files with issue dates on or after this date. Leave empty to use the archive start date. Automatic delivery waits four days."
+msgstr "إرسال الملفات غير المرسلة تلقائيا إذا كان تاريخ إصدارها في هذا التاريخ أو بعده. اترك الحقل فارغا لاستخدام تاريخ بدء الأرشيف. ينتظر الإرسال التلقائي أربعة أيام."
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__access_tokens
+msgid "ETA Authentication Cache"
+msgstr "ذاكرة مصادقة مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__request_schedule
+msgid "ETA Request Schedule"
+msgstr "جدول طلبات مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.actions.server,name:ab_tax_eta_archive.cron_eta_uuid_details_ir_actions_server
+msgid "ETA: Fetch Invoice UUID Details"
+msgstr "الضرائب: جلب تفاصيل الفواتير بالمعرف الإلكتروني"
+
+#. module: ab_tax_eta_archive
+#: model:ir.actions.server,name:ab_tax_eta_archive.cron_eta_receipt_uuid_details_ir_actions_server
+msgid "ETA: Fetch Receipt UUID Details"
+msgstr "الضرائب: جلب تفاصيل الإيصالات بالمعرف الإلكتروني"
+
+#. module: ab_tax_eta_archive
+#: model:ir.actions.server,name:ab_tax_eta_archive.cron_eta_sync_ir_actions_server
+msgid "ETA: Retrieve Daily Invoices"
+msgstr "الضرائب: جلب الفواتير اليومية"
+
+#. module: ab_tax_eta_archive
+#: model:ir.actions.server,name:ab_tax_eta_archive.cron_eta_sync_receipts_ir_actions_server
+msgid "ETA: Retrieve Daily Receipts"
+msgstr "الضرائب: جلب الإيصالات اليومية"
+
+#. module: ab_tax_eta_archive
 msgid "ETA Archive"
 msgstr "أرشيف مصلحة الضرائب المصرية"
 

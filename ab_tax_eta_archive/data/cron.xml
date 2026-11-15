@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <record id="cron_eta_sync" model="ir.cron">
-        <field name="name">ETA: Retrieve Daily Documents</field>
+        <field name="name">ETA: Retrieve Daily Invoices</field>
         <field name="model_id" ref="model_ab_tax_eta_archive_sync"/>
         <field name="state">code</field>
-        <field name="code">model._cron_sync()</field>
+        <field name="code">model._cron_sync(kind='invoice')</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+    </record>
+    <record id="cron_eta_sync_receipts" model="ir.cron">
+        <field name="name">ETA: Retrieve Daily Receipts</field>
+        <field name="model_id" ref="model_ab_tax_eta_archive_sync"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync(kind='receipt')</field>
         <field name="interval_number">1</field>
         <field name="interval_type">minutes</field>
     </record>
@@ -17,11 +25,20 @@
         <field name="interval_type">minutes</field>
     </record>
     <record id="cron_eta_uuid_details" model="ir.cron">
-        <field name="name">ETA: Fetch UUID Details</field>
+        <field name="name">ETA: Fetch Invoice UUID Details</field>
         <field name="priority">1</field>
         <field name="model_id" ref="model_ab_tax_eta_archive_export"/>
         <field name="state">code</field>
-        <field name="code">model._cron_fetch_details()</field>
+        <field name="code">model._cron_fetch_details(kind='invoice')</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+    </record>
+    <record id="cron_eta_receipt_uuid_details" model="ir.cron">
+        <field name="name">ETA: Fetch Receipt UUID Details</field>
+        <field name="priority">1</field>
+        <field name="model_id" ref="model_ab_tax_eta_archive_export"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_fetch_details(kind='receipt')</field>
         <field name="interval_number">1</field>
         <field name="interval_type">minutes</field>
     </record>

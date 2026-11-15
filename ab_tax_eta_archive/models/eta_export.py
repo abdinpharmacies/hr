@@ -19,6 +19,7 @@ from openpyxl.utils import get_column_letter
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from .eta_sync import EtaRequestDeferred
 
 _logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ CATEGORIES = (
     ('received_receipt', 'Receipts received', 'receipt', 'received'),
 )
 EXPORT_FORMAT_VERSION = 2
-ETA_DETAIL_REQUEST_INTERVAL = 0.6  # ETA Get Receipt limit: 2 requests per second.
+ETA_DETAIL_BATCH_SIZE = 80
 
 INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
                    'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
@@ -213,7 +214,9 @@ class EtaExport(models.Model):
         'Only one ETA file revision is allowed per day and category.')
 
     @api.model
-    def _cron_fetch_details(self):
+    def _cron_fetch_details(self, kind='invoice'):
+        if kind not in ('invoice', 'receipt'):
+            raise ValueError('Unsupported ETA stream')
         now = datetime.now(pytz.timezone('Africa/Cairo'))
         today = now.date()
         deadline = min(time.monotonic() + 25,
@@ -223,11 +226,12 @@ class EtaExport(models.Model):
                 self.env['ir.cron']._commit_progress(remaining=1)
             return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
-        # Invoice detail fetching is paused while the receipt backlog drains.
-        models = [('receipt', self.env['ab_tax_eta_archive_receipt'])]
+        models = [(kind, self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                                 else 'ab_tax_eta_archive_receipt'])]
         retry_before = fields.Datetime.now() - timedelta(minutes=5)
         selected_kind = None
         selected_batch = self.env['ab_tax_eta_archive_receipt']
+        progress_offset = 0
         for kind, model in models:
             batch = model.search([
                 ('config_id', 'in', configs.ids),
@@ -236,7 +240,8 @@ class EtaExport(models.Model):
                 '|', '|', ('detail_attempt_at', '=', False),
                 ('detail_error', '=', False),
                 ('detail_attempt_at', '<', retry_before),
-            ], order='report_date desc, id desc', limit=10000)
+            ], order='detail_attempt_at asc NULLS FIRST, report_date desc, id desc',
+                limit=ETA_DETAIL_BATCH_SIZE)
             if batch:
                 selected_kind, selected_batch = kind, batch
                 break
@@ -248,15 +253,21 @@ class EtaExport(models.Model):
             _logger.info('ETA UUID detail selection: kind=%s selected=%s groups=%s',
                          selected_kind, len(selected_batch), len(groups))
             progress_offset = 0
-            for (config_id, report_date, direction), record_ids in groups.items():
-                if time.monotonic() >= deadline:
-                    break
-                processed = self._enrich_details(
-                    self.env['ab_tax_eta_archive_config'].browse(config_id),
-                    selected_kind, report_date, direction, deadline=deadline,
-                    batch_size=len(record_ids), record_ids=record_ids,
-                    progress_offset=progress_offset, progress_total=len(selected_batch))
-                progress_offset += processed
+            auth_cache = {}
+            # One connection pool and authentication per connection for the whole slice.
+            with requests.Session() as session:
+                for (config_id, report_date, direction), record_ids in groups.items():
+                    if time.monotonic() >= deadline:
+                        break
+                    processed = self._enrich_details(
+                        self.env['ab_tax_eta_archive_config'].browse(config_id),
+                        selected_kind, report_date, direction, deadline=deadline,
+                        batch_size=len(record_ids), record_ids=record_ids,
+                        progress_offset=progress_offset, progress_total=len(selected_batch),
+                        session=session, auth_cache=auth_cache)
+                    progress_offset += processed
+                    if not processed:
+                        break
         else:
             pending = any(model.search([
                 ('config_id', 'in', configs.ids),
@@ -270,7 +281,8 @@ class EtaExport(models.Model):
                          'pending_any=%s dated_through_today_any=%s eligible=0',
                          len(configs), pending, due_date)
         if self.env.context.get('cron_id'):
-            self.env['ir.cron']._commit_progress(remaining=int(bool(selected_batch)))
+            self.env['ir.cron']._commit_progress(
+                remaining=int(bool(selected_batch) and bool(progress_offset)))
 
     @api.model
     def _cron_export_and_send(self):
@@ -282,6 +294,7 @@ class EtaExport(models.Model):
         for config in self.env['ab_tax_eta_archive_config'].search([
             ('active', '=', True), ('start_date', '<', today),
         ]):
+            delivery_start = max(config.start_date, config.telegram_start_date or config.start_date)
             queued_recent = self.search([
                 ('config_id', '=', config.id), ('report_date', '>', cutoff),
                 ('report_date', '<', today), ('telegram_send_requested', '=', True),
@@ -310,7 +323,7 @@ class EtaExport(models.Model):
                 if time.monotonic() >= deadline:
                     return
             day = cutoff
-            while day >= config.start_date:
+            while day >= delivery_start:
                 if time.monotonic() >= deadline:
                     return
                 if not self._day_complete(config, day):
@@ -338,7 +351,7 @@ class EtaExport(models.Model):
                             return
                 if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(
                         int(len(prepared) == len(CATEGORIES)),
-                        remaining=(day - config.start_date).days +
+                        remaining=(day - delivery_start).days +
                         int(len(prepared) != len(CATEGORIES))):
                     return
                 day -= timedelta(days=1)
@@ -464,39 +477,21 @@ class EtaExport(models.Model):
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.model
-    def _detail_headers(self, config, kind):
-        receipt_pos = kind == 'receipt' and config.receipt_auth_mode == 'pos'
-        client_id = config.receipt_client_id if receipt_pos else config.invoice_client_id
-        client_secret = config.receipt_client_secret if receipt_pos else config.invoice_client_secret
-        if not client_id or not client_secret:
-            raise UserError(_('Configure ETA credentials before retrieving export details.'))
-        identity_url, api_url = config._base_urls()
-        request = self.env['ab_tax_eta_archive_sync']._request
-        options = {}
-        data = {'grant_type': 'client_credentials'}
-        if receipt_pos:
-            required = (config.pos_serial, config.pos_os_version,
-                        config.pos_model_framework, config.pos_preshared_key)
-            if not all(required):
-                raise UserError(_('Configure all ETA POS authentication headers.'))
-            options['headers'] = dict(zip(
-                ('posserial', 'pososversion', 'posmodelframework', 'presharedkey'), required))
-            data.update({'client_id': client_id, 'client_secret': client_secret})
-        else:
-            options['auth'] = (client_id, client_secret)
-        token = request('POST', f'{identity_url}/connect/token', data=data,
-                        request_attempts=1, timeout=(5, 10), **options).get('access_token')
-        if not token:
-            raise UserError(_('ETA authentication returned no access token.'))
-        _logger.info('ETA UUID detail authentication succeeded: connection=%s kind=%s mode=%s',
-                     config.id, kind, 'pos' if receipt_pos else 'taxpayer')
-        return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json',
-                         'Content-Type': 'application/json'}
+    def _detail_headers(self, config, kind, session=None):
+        return config._eta_auth_headers(kind, session=session)
 
     @api.model
     def _enrich_details(self, config, kind, report_date, direction, deadline=None,
                         batch_size=80, record_ids=None, progress_offset=0,
-                        progress_total=None):
+                        progress_total=None, session=None, auth_cache=None):
+        if session is None:
+            with requests.Session() as owned_session:
+                return self._enrich_details(
+                    config, kind, report_date, direction, deadline=deadline,
+                    batch_size=batch_size, record_ids=record_ids,
+                    progress_offset=progress_offset, progress_total=progress_total,
+                    session=owned_session, auth_cache=auth_cache)
+        auth_cache = auth_cache if auth_cache is not None else {}
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         base_domain = [
             ('config_id', '=', config.id), ('report_date', '=', report_date),
@@ -522,7 +517,10 @@ class EtaExport(models.Model):
         _logger.info('ETA UUID detail batch starting: connection=%s kind=%s direction=%s '
                      'day=%s selected=%s', config.id, kind, direction, report_date, len(missing))
         try:
-            api_url, headers = self._detail_headers(config, kind)
+            key = (config.id, kind)
+            if key not in auth_cache:
+                auth_cache[key] = self._detail_headers(config, kind, session=session)
+            api_url, headers = auth_cache[key]
         except (UserError, ValueError, requests.RequestException) as exc:
             attempted_at = fields.Datetime.now()
             missing.write({'detail_error': str(exc)[:500],
@@ -532,9 +530,15 @@ class EtaExport(models.Model):
             if self.env.context.get('cron_id'):
                 self.env['ir.cron']._commit_progress(len(missing), remaining=1)
             return 0
-        session = requests.Session()
+        rate_config = config._detail_rate_owner(kind)
+
+        def refresh_auth():
+            auth_cache[key] = config._eta_auth_headers(kind, session=session, force_refresh=True)
+            return auth_cache[key][1]
+
         request = partial(self.env['ab_tax_eta_archive_sync']._request,
-                          request_session=session, request_attempts=1, timeout=(5, 10))
+                          request_session=session, request_attempts=1, timeout=(5, 10),
+                          rate_config=rate_config, deadline=deadline, refresh_auth=refresh_auth)
         processed = 0
         ready = 0
         shape_logged = False
@@ -543,28 +547,16 @@ class EtaExport(models.Model):
         progress_total = progress_total or len(missing)
         if progress and not progress_offset:
             progress(0, msg=progress_message, cancellable=False)
-        last_request_at = fields.Datetime.to_datetime(config.detail_last_request_at) \
-            if config.detail_last_request_at else None
-        request_wait = (max(0, ETA_DETAIL_REQUEST_INTERVAL -
-                            (datetime.utcnow() - last_request_at).total_seconds())
-                        if last_request_at else 0)
-        next_request_at = time.monotonic() + request_wait
         for record_id in missing.ids:
             # Keep each request's field prefetch bounded after progress commits.
             record = model.browse(record_id)
-            if processed and deadline is not None and time.monotonic() >= deadline:
+            if deadline is not None and time.monotonic() + 1 >= deadline:
                 break
+            if record.detail_json:
+                continue
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
             payload = None
             try:
-                wait = max(0, next_request_at - time.monotonic())
-                if deadline is not None and time.monotonic() + wait >= deadline:
-                    break
-                if wait:
-                    time.sleep(wait)
-                config.write({'detail_last_request_at': datetime.utcnow()})
-                self.env['ir.cron']._commit_progress(0, remaining=1)
-                next_request_at = time.monotonic() + ETA_DETAIL_REQUEST_INTERVAL
                 detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw'
                 payload = request('GET', detail_url, headers=headers)
                 if not isinstance(payload, dict):
@@ -574,6 +566,8 @@ class EtaExport(models.Model):
                                                         sort_keys=True), 'detail_error': False,
                               'detail_attempt_at': fields.Datetime.now()})
                 ready += 1
+            except EtaRequestDeferred:
+                break
             except (UserError, ValueError, requests.RequestException) as exc:
                 record.write({'detail_error': str(exc)[:500],
                               'detail_attempt_at': fields.Datetime.now()})
@@ -600,7 +594,6 @@ class EtaExport(models.Model):
                      config.id, kind, direction, report_date, len(missing), processed,
                      ready, processed - ready, len(missing) - processed,
                      time.monotonic() - batch_started_at)
-        session.close()
         return processed
 
     def _progress_iter(self, data, message, total=None):

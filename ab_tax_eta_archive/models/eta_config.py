@@ -1,5 +1,8 @@
 from datetime import date, datetime, timedelta
 import secrets
+import time
+import hashlib
+import json
 import pytz
 import requests
 
@@ -19,6 +22,95 @@ class EtaConfig(models.Model):
                                groups='ab_tax_eta_archive.group_eta_manager')
     detail_last_request_at = fields.Datetime(string='Last ETA detail request',
                                              copy=False, readonly=True)
+    request_schedule = fields.Json(string='ETA Request Schedule', copy=False, readonly=True,
+                                   groups='ab_tax_eta_archive.group_eta_manager')
+    access_tokens = fields.Json(string='ETA Authentication Cache', copy=False, readonly=True,
+                                groups='ab_tax_eta_archive.group_eta_manager')
+
+    def _eta_auth_headers(self, kind, session=None, force_refresh=False):
+        self.ensure_one()
+        pos = kind == 'receipt' and self.receipt_auth_mode == 'pos'
+        client_id = self.receipt_client_id if pos else self.invoice_client_id
+        client_secret = self.receipt_client_secret if pos else self.invoice_client_secret
+        if not client_id or not client_secret:
+            raise UserError(_('Configure ETA credentials before retrieving export details.'))
+        identity_url, api_url = self._base_urls()
+        options = {}
+        data = {'grant_type': 'client_credentials'}
+        if pos:
+            required = (self.pos_serial, self.pos_os_version,
+                        self.pos_model_framework, self.pos_preshared_key)
+            if not all(required):
+                raise UserError(_('Configure all ETA POS authentication headers.'))
+            options['headers'] = dict(zip(
+                ('posserial', 'pososversion', 'posmodelframework', 'presharedkey'), required))
+            data.update({'client_id': client_id, 'client_secret': client_secret})
+        else:
+            options['auth'] = (client_id, client_secret)
+        fingerprint = hashlib.sha256(json.dumps(
+            [identity_url, client_id, client_secret, options.get('headers')],
+            sort_keys=True).encode()).hexdigest()
+        cached = (self.access_tokens or {}).get(fingerprint, {})
+        token = cached.get('token') if cached.get('expires_at', 0) > time.time() else None
+        if force_refresh or not token:
+            payload = self.env['ab_tax_eta_archive_sync']._request(
+                'POST', f'{identity_url}/connect/token', data=data,
+                request_session=session, request_attempts=1, timeout=(5, 10), **options)
+            token = payload.get('access_token')
+            if not token:
+                raise UserError(_('ETA authentication returned no access token.'))
+            expires_in = max(0, float(payload.get('expires_in') or 0) - 60)
+            if self.try_lock_for_update():
+                self.invalidate_recordset(['access_tokens'])
+                tokens = {key: value for key, value in (self.access_tokens or {}).items()
+                          if value.get('expires_at', 0) > time.time()}
+                tokens[fingerprint] = {'token': token, 'expires_at': time.time() + expires_in}
+                self.write({'access_tokens': tokens})
+        return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json',
+                         'Content-Type': 'application/json'}
+
+    def _detail_rate_owner(self, kind):
+        """Duplicate connections sharing an ERP/POS identity share its API budget."""
+        self.ensure_one()
+        pos = kind == 'receipt' and self.receipt_auth_mode == 'pos'
+        client_field = 'receipt_client_id' if pos else 'invoice_client_id'
+        domain = (fields.Domain('environment', '=', self.environment) &
+                  fields.Domain(client_field, '=', self[client_field]))
+        if pos:
+            domain &= fields.Domain('receipt_auth_mode', '=', 'pos')
+        return self.with_context(active_test=False).search(domain, order='id', limit=1)
+
+    def _reserve_detail_request(self, endpoint, deadline):
+        """Reserve a subsecond slot across workers; called outside savepoints."""
+        from .eta_sync import EtaRequestDeferred
+        self.ensure_one()
+        if not self.try_lock_for_update():
+            raise EtaRequestDeferred()
+        self.invalidate_recordset(['request_schedule'])
+        schedule = dict(self.request_schedule or {})
+        wait = max(0, schedule.get(endpoint, 0) - time.time())
+        if time.monotonic() + wait + 1 >= deadline:
+            raise EtaRequestDeferred()
+        if wait:
+            time.sleep(wait)
+        # ETA allows two calls/second per API. Keep a small safety margin.
+        schedule[endpoint] = time.time() + 0.6
+        self.write({'request_schedule': schedule})
+        if self.env.context.get('cron_id'):
+            if not self.env['ir.cron']._commit_progress(0, remaining=1):
+                raise EtaRequestDeferred()
+
+    def _defer_detail_requests(self, endpoint, delay):
+        # The reservation commit releases the lock before the HTTP request.
+        # Reacquire it so another endpoint's reservation is never overwritten.
+        self.lock_for_update()
+        self.invalidate_recordset(['request_schedule'])
+        schedule = dict(self.request_schedule or {})
+        schedule[endpoint] = max(schedule.get(endpoint, 0), time.time() + delay)
+        self.write({'request_schedule': schedule})
+        if self.env.context.get('cron_id'):
+            self.env['ir.cron']._commit_progress(0, remaining=0)
+
     callback_url = fields.Char(string='Callback Base URL', compute='_compute_callback_url',
                                groups='ab_tax_eta_archive.group_eta_manager')
 
@@ -30,6 +122,9 @@ class EtaConfig(models.Model):
                                    required=True, default='production')
     start_date = fields.Date(required=True, default='2026-10-01')
     telegram_start_date = fields.Date(
+        string='Telegram Delivery Start Date',
+        help='Automatically send unsent files with issue dates on or after this date. '
+             'Leave empty to use the archive start date. Automatic delivery waits four days.',
         default=lambda self: datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=4))
     invoice_client_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     invoice_client_secret = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')

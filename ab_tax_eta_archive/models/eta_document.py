@@ -92,6 +92,9 @@ class EtaInvoice(models.Model):
                 record.detail_json, record.total, record.currency)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA invoice UUID must be unique per connection and direction.')
+    _pending_details = models.Index(
+        "(config_id, detail_attempt_at ASC NULLS FIRST, report_date DESC, id DESC) "
+        "WHERE detail_json IS NULL OR detail_json = ''")
 
     def _eta_values(self, item, direction, config):
         if (not isinstance(item, dict) or not item.get('uuid') or
@@ -163,6 +166,9 @@ class EtaReceipt(models.Model):
                 record.detail_json, record.total, record.currency)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA receipt UUID must be unique per connection and direction.')
+    _pending_details = models.Index(
+        "(config_id, detail_attempt_at ASC NULLS FIRST, report_date DESC, id DESC) "
+        "WHERE detail_json IS NULL OR detail_json = ''")
 
     def _eta_values(self, item, direction, config):
         if (not isinstance(item, dict) or not item.get('uuid') or

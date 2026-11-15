@@ -1,6 +1,7 @@
 import logging
 import json
 import time
+from email.utils import parsedate_to_datetime
 from datetime import datetime, time as day_time, timedelta, timezone
 from urllib.parse import urlsplit
 import pytz
@@ -17,7 +18,7 @@ ETA_MAX_RECEIPTS_PER_SEARCH = 3000
 ETA_RECEIPT_PAGE_SIZE = 100
 ETA_MAX_RECEIPT_PAGE_NO = 300
 ETA_MAX_INVOICE_PAGES = 20
-ETA_INVOICE_SEARCH_DELAY = 2.1
+ETA_INVOICE_SEARCH_DELAY = 0.6
 ETA_RECEIPT_SEARCH_DELAY = 0.6
 ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT = 4
 ETA_RECEIPT_SEARCH_DAYS = 29
@@ -30,6 +31,30 @@ class EtaSearchNoResult(Exception):
 
 class EtaSearchLimit(Exception):
     """ETA requires a narrower receipt search interval."""
+
+
+class EtaRequestDeferred(Exception):
+    """Leave work queued when the request cannot fit in the current cron slice."""
+
+    def __init__(self, config=None, endpoint=None, delay=0):
+        super().__init__()
+        self.config = config
+        self.endpoint = endpoint
+        self.delay = delay
+
+
+def eta_retry_delay(value, attempt=0):
+    """Retry-After supports both delta seconds and an HTTP date (RFC 9110)."""
+    try:
+        delay = float(value)
+        if not 0 <= delay < float('inf'):
+            raise ValueError()
+    except (TypeError, ValueError):
+        try:
+            delay = (parsedate_to_datetime(value) - datetime.now(timezone.utc)).total_seconds()
+        except (TypeError, ValueError, OverflowError):
+            delay = 2 ** attempt
+    return max(delay, 1) + 0.5
 
 
 class EtaSync(models.Model):
@@ -101,23 +126,25 @@ class EtaSync(models.Model):
         return data
 
     @api.model
-    def _cron_sync(self):
+    def _cron_sync(self, kind='invoice'):
+        if kind not in ('invoice', 'receipt'):
+            raise ValueError('Unsupported ETA stream')
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
         error_retry_before = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
         delivery_day = today - timedelta(days=4)
         made_progress = False
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
-        streams = (('invoice', 'received'), ('invoice', 'sent'),
-                   ('receipt', 'sent'), ('receipt', 'received'))
+        streams = ((kind, 'received'), (kind, 'sent'))
         yesterday = today - timedelta(days=1)
         for config in configs:
             if not config.start_date:
                 continue
-            if not self._ensure_run_days(config, today):
+            if not self._ensure_run_days(config, today, kind=kind):
                 return
             runs = self.search([
                 ('config_id', '=', config.id),
+                ('kind', '=', kind),
                 ('report_date', '>=', config.start_date),
                 ('report_date', '<=', today),
             ])
@@ -185,14 +212,15 @@ class EtaSync(models.Model):
                 if day in unfinished_days and day != today:
                     break
         if self.env.context.get('cron_id'):
-            remaining = (sum(self._eligible_remaining(config, today, error_retry_before)
+            remaining = (sum(self._eligible_remaining(config, today, error_retry_before, kind=kind)
                              for config in configs if config.start_date)
                          if made_progress else 0)
             self.env['ir.cron']._commit_progress(remaining=remaining)
 
-    def _eligible_remaining(self, config, today, error_retry_before):
+    def _eligible_remaining(self, config, today, error_retry_before, kind=None):
         runs = self.search([
             ('config_id', '=', config.id),
+            ('kind', 'in', [kind] if kind else ['invoice', 'receipt']),
             ('report_date', '>=', config.start_date),
             ('report_date', '<=', today),
             ('state', 'in', ['pending', 'error']),
@@ -204,9 +232,10 @@ class EtaSync(models.Model):
             (run.state == 'pending' or not run.last_run_at or
              fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)))
 
-    def _ensure_run_days(self, config, today):
+    def _ensure_run_days(self, config, today, kind=None):
         existing = self.search([
             ('config_id', '=', config.id),
+            ('kind', 'in', [kind] if kind else ['invoice', 'receipt']),
             ('report_date', '>=', config.start_date),
             ('report_date', '<=', today),
         ])
@@ -214,12 +243,12 @@ class EtaSync(models.Model):
         missing = []
         day = config.start_date
         while day <= today:
-            for kind in ('invoice', 'receipt'):
+            for stream_kind in ([kind] if kind else ('invoice', 'receipt')):
                 for direction in ('sent', 'received'):
-                    if (day, kind, direction) not in known:
+                    if (day, stream_kind, direction) not in known:
                         missing.append({
                             'config_id': config.id, 'report_date': day,
-                            'kind': kind, 'direction': direction,
+                            'kind': stream_kind, 'direction': direction,
                         })
             day += timedelta(days=1)
         for offset in range(0, len(missing), 200):
@@ -232,6 +261,11 @@ class EtaSync(models.Model):
         return True
 
     def _cron_attempt(self, run):
+        with requests.Session() as session:
+            runner = self.with_context(eta_request_session=session)
+            return runner._run_cron_attempt(run.with_context(eta_request_session=session))
+
+    def _run_cron_attempt(self, run):
         in_cron = bool(self.env.context.get('cron_id'))
         auth_cache = {}
         attempts = ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT if in_cron else 1
@@ -250,7 +284,8 @@ class EtaSync(models.Model):
             if manual_progress:
                 run.web_progress_percent(0, _('Retrieving ETA receipt window'),
                                          cancellable=False)
-            run._attempt(auth_cache=auth_cache)
+            if run._attempt(auth_cache=auth_cache) is False:
+                return False, progressed
             if manual_progress:
                 run.web_progress_percent(100, _('ETA receipt retry finished'),
                                          cancellable=False)
@@ -297,6 +332,11 @@ class EtaSync(models.Model):
                                  self.report_date, self.kind, self.direction)
                     return
                 result = self._retrieve(auth_cache=auth_cache)
+        except EtaRequestDeferred as exc:
+            # Persist search throttles only after the retrieval savepoint rolled back.
+            if exc.config is not None:
+                exc.config._defer_detail_requests(exc.endpoint, exc.delay)
+            return False
         except (requests.RequestException, UserError, ValidationError, ValueError, KeyError) as exc:
             _logger.warning('ETA retrieval failed for %s %s %s: %s',
                             self.report_date, self.kind, self.direction, exc)
@@ -329,41 +369,7 @@ class EtaSync(models.Model):
             if not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED:
                 return None
             return self._retrieve_historical_receipts()
-        receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
-        if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
-            client_id = config.invoice_client_id
-            client_secret = config.invoice_client_secret
-        else:
-            client_id = config.receipt_client_id
-            client_secret = config.receipt_client_secret
-        if not client_id or not client_secret:
-            if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
-                raise UserError(_('Configure the ETA invoice client ID and secret before retrieval.'))
-            raise UserError(_('Configure the ETA receipt client ID and secret before retrieval.'))
-        identity_url, api_url = config._base_urls()
-        headers = {}
-        if self.kind == 'receipt' and receipt_auth_mode == 'pos':
-            required = (config.pos_serial, config.pos_os_version,
-                        config.pos_model_framework, config.pos_preshared_key)
-            if not all(required):
-                raise UserError(_('Configure all ETA POS authentication headers.'))
-            headers = dict(zip(('posserial', 'pososversion', 'posmodelframework', 'presharedkey'), required))
-        token_data = {'grant_type': 'client_credentials'}
-        token_options = {'headers': headers}
-        if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
-            token_options['auth'] = (client_id, client_secret)
-        else:
-            token_data.update({'client_id': client_id, 'client_secret': client_secret})
-        token = auth_cache.get('access_token') if auth_cache is not None else None
-        if not token:
-            token_response = self._request('POST', f'{identity_url}/connect/token',
-                                           data=token_data, **token_options)
-            token = token_response.get('access_token')
-        if not token:
-            raise ValidationError(_('ETA authentication returned no access token.'))
-        if auth_cache is not None:
-            auth_cache['access_token'] = token
-        auth = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
+        api_url, auth = config._eta_auth_headers(self.kind)
         start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
@@ -418,7 +424,9 @@ class EtaSync(models.Model):
                 issue_dates.add(values['report_date'])
                 if uuid in by_uuid:
                     issue_dates.add(by_uuid[uuid].report_date)
-                    by_uuid[uuid].write(values)
+                    if (by_uuid[uuid].raw_json != values['raw_json'] or
+                            by_uuid[uuid].report_date != values['report_date']):
+                        by_uuid[uuid].write(values)
                 else:
                     new_values.append(values)
             if new_values:
@@ -741,31 +749,70 @@ class EtaSync(models.Model):
         raise ValidationError(_('ETA receipt search returned an invalid page.'))
 
     def _request(self, method, url, allow_no_result=False, allow_search_limit=False,
-                 request_session=None, request_attempts=4, **kwargs):
+                 request_session=None, request_attempts=4, rate_config=None,
+                 deadline=None, refresh_auth=None, **kwargs):
         search_delay = {
             '/api/v1.0/documents/search': ETA_INVOICE_SEARCH_DELAY,
             '/api/v1/receipts/search': ETA_RECEIPT_SEARCH_DELAY,
         }.get(urlsplit(url).path, 0)
         timeout = kwargs.pop('timeout', 40)
+        request_session = request_session or self.env.context.get('eta_request_session')
         send = request_session.request if request_session else requests.request
+        endpoint = ('invoice_raw' if '/documents/' in urlsplit(url).path else 'receipt_raw')
+        search_owner = None
+        if search_delay and len(self) == 1:
+            search_owner = self.config_id._detail_rate_owner(self.kind)
+            endpoint = self.kind + '_search'
+            search_owner.invalidate_recordset(['request_schedule'])
+            wait = (search_owner.request_schedule or {}).get(endpoint, 0) - time.time()
+            if wait > 0:
+                raise EtaRequestDeferred(search_owner, endpoint, wait)
         for attempt in range(request_attempts):
+            if deadline is not None and time.monotonic() >= deadline:
+                raise EtaRequestDeferred()
+            if rate_config is not None:
+                rate_config._reserve_detail_request(endpoint, deadline or float('inf'))
             if search_delay:
                 time.sleep(search_delay)
+            request_timeout = timeout
+            if deadline is not None:
+                remaining = deadline - time.monotonic()
+                if remaining <= 1:
+                    raise EtaRequestDeferred()
+                if isinstance(timeout, tuple):
+                    request_timeout = (min(timeout[0], remaining / 3),
+                                       min(timeout[1], remaining * 2 / 3))
+                else:
+                    request_timeout = min(timeout, remaining)
             try:
-                response = send(method, url, timeout=timeout, **kwargs)
+                response = send(method, url, timeout=request_timeout, **kwargs)
             except requests.RequestException:
                 if attempt == request_attempts - 1:
                     raise
                 time.sleep(2 ** attempt)
                 continue
-            if response.status_code in (429, 503) and attempt < request_attempts - 1:
-                retry_after = response.headers.get('Retry-After', '')
-                try:
-                    delay = float(retry_after)
-                except (TypeError, ValueError):
-                    delay = 2 ** attempt
-                time.sleep(max(delay + 0.5, 1))
-                continue
+            if response.status_code == 401 and refresh_auth is None and len(self) == 1:
+                refresh_auth = lambda: self.config_id._eta_auth_headers(
+                    self.kind, session=request_session, force_refresh=True)[1]
+            if response.status_code == 401 and refresh_auth:
+                kwargs['headers'].update(refresh_auth())
+                return self._request(
+                    method, url, allow_no_result=allow_no_result,
+                    allow_search_limit=allow_search_limit,
+                    request_session=request_session, request_attempts=request_attempts,
+                    rate_config=rate_config, deadline=deadline, timeout=timeout,
+                    refresh_auth=False, **kwargs)
+            if response.status_code in (429, 503):
+                delay = eta_retry_delay(response.headers.get('Retry-After'), attempt)
+                if rate_config is not None:
+                    rate_config._defer_detail_requests(endpoint, delay)
+                    # Leave this UUID queued; do not hit other UUIDs during a throttle.
+                    raise EtaRequestDeferred()
+                if attempt < request_attempts - 1 and delay <= 60:
+                    time.sleep(delay)
+                    continue
+                if search_owner is not None:
+                    raise EtaRequestDeferred(search_owner, endpoint, delay)
             if response.status_code == 400 and (allow_search_limit or allow_no_result):
                 try:
                     error = response.json()
