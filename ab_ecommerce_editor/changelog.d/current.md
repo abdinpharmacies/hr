@@ -60,19 +60,57 @@ Files changed:
 - `views/editor_templates.xml`
 - `views/editor_views.xml`
 
-## Current changes before commit:
+## Recent documentation commit
 
+Commit: 4044d8c1104fa54f7da8b1028cc66e726a03e29e
 Author: Mohamed Fawzy
 Date: 2026-11-04
+Subject: docs(ab_ecommerce_editor): document studio workflows and validation
 
-- Document editor usage, publishing roles, routes, the JSON contract, and deferred Flutter integration.
-- Record module-scoped interaction and motion requirements for future work.
-- Record the initial implementation commit and distinguish prior runtime evidence from current static checks.
-- Pre-commit checks passed Python parsing, XML/SVG and JSON parsing, manifest paths and developer ownership, JavaScript syntax, both SCSS compilations, and both Arabic catalogs with 282 translated entries each.
-- Existing Node harnesses passed 20 dirty-state assertions and navigation exit, reduced-motion, and failed-load checks. Backend and browser suites were not rerun; the latest drag-to-trash interactions still need browser verification.
+- Document studio usage, interaction requirements, and prior validation evidence.
 
 Files changed:
 
 - `AGENTS.md`
 - `README.md`
 - `changelog.d/current.md`
+
+## Current changes before commit:
+
+Author: Mohamed Fawzy
+Date: 2026-11-12
+
+- Add a website-scoped homepage draft containing the nine existing storefront sections, enabled in their original order.
+- Repair the Arabic homepage HTTP 500 caused by English-text XPath selectors. Use structural anchors for dynamic sections and editor-owned static markup for repeated service/highlight/support items, preserving content keys and translations. Validate real combined templates in installed English/Arabic locales and confirm the running storefront returns HTTP 200 in both languages after a bounded view-only repair.
+- Fix thumbnail placeholders after localized preview redirects by checking document/section/language/version identity instead of exact URL equality; support the existing storefront wrapper and reject stale or foreign frames. Fit the complete section above its layer name without cropping, with a neutral loading skeleton.
+- Show real homepage section snapshots in the layer list using the existing native preview DOM, retaining its images, styles, and Arabic direction. Update snapshots with unsaved text/style edits and undo, isolate them in noninteractive scriptless frames, and avoid additional server preview requests. Generic blocks retain vector thumbnails and compact two-line labels.
+- Reorder sections from layers or preview, toggle their active state, remove and re-add them, and insert generic blocks by clicking or dragging from the palette.
+- Edit supported static text and section links, retaining dynamic storefront product, banner, category, and review data.
+- Show native sections in isolated previews, update text immediately, scroll to selected sections, and keep layer controls within the tools panel.
+- Preserve independent Arabic/English layouts, publication permissions, review locks, immutable published snapshots, and original-homepage fallback.
+- Validate native section uniqueness, allowed fields, links, active flags, and website/company access server-side.
+- Exclude authenticated homepage previews from indexing, caching, visitor tracking, and shopping interactions.
+- Maintain both Arabic catalogs and document the homepage boundaries and v1 API compatibility.
+- Validate with 28 passing backend tests, existing dirty-state/navigation checks, seven browser check groups, targeted isolated upgrades, runtime Arabic labels, and static asset/catalog checks. Evidence and environment limitations are in outputs/ab_ecommerce_editor_validation/homepage_validation.md.
+
+Files changed:
+
+- `README.md`
+- `__manifest__.py`
+- `changelog.d/current.md`
+- `controllers/editor_content.py`
+- `i18n/ar.po`
+- `i18n/ar_001.po`
+- `models/__init__.py`
+- `models/editor_document.py`
+- `models/homepage.py`
+- `models/homepage_content.py`
+- `static/schema/content-v1.json`
+- `static/schema/homepage-sections.json`
+- `static/src/editor_public.scss`
+- `static/src/editor_workspace.js`
+- `static/src/editor_workspace.scss`
+- `static/src/editor_workspace.xml`
+- `static/src/img/layer-previews.svg`
+- `views/editor_templates.xml`
+- `views/homepage.xml`

@@ -14,7 +14,7 @@ Open **eCommerce Editor** from Odoo. Create a page or article, select a block on
 - Save revisions and restore an older revision as a draft. Existing published content stays available during draft edits.
 - Use **Storefront preview** after saving to view the draft inside the existing storefront header and footer. This route requires editor access. **Open live page** opens the released version.
 
-The current editor manages its own content routes. It does not import or rewrite existing `website.page`, `blog.post`, homepage, catalog, cart, or checkout templates. Its published pages use the current storefront layout. Commerce data and operations remain owned by Odoo's existing commerce modules.
+The editor manages its own content routes and the storefront homepage through module-owned QWeb inheritance. It does not import arbitrary `website.page` or `blog.post` records, or edit catalog, cart, or checkout templates. Its published pages use the current storefront layout. Commerce data and operations remain owned by Odoo's existing commerce modules.
 
 ## Publishing and access
 
@@ -61,3 +61,15 @@ Development checks run on the neutralized database `codex_editor_validation_2026
 The recorded baseline passed 23 backend regression tests, 10 browser checks, and JSON Schema validation for English, Arabic, and compatibility-fallback responses. Later updates have focused validation records; the latest drag-to-trash interactions still need browser verification. See the local `outputs/ab_ecommerce_editor_validation/VALIDATION.md` for the evidence and remaining scope. These validation artifacts are outside this module's Git import. The module is installed in local `ecom19`; refresh Odoo and open **eCommerce Editor**.
 
 The module has no demo records, install hooks, migrations, external database writes, or shared frontend patches. Its one scheduled task implements the requested publishing schedule.
+
+## Homepage editing
+
+Choose **Edit homepage** in the library for the selected website. The first draft contains all nine current storefront sections, enabled and in their original order. Sections can be reordered, disabled, removed, and added again from the palette. Generic content blocks can be inserted between them. Native sections have a single instance per language to preserve carousel and accessibility identifiers.
+
+The inspector edits supported static text and button links. Native previews retain the storefront styling; text and link overrides update immediately. English and Arabic layouts are independent, including an intentionally empty Arabic layout. Save, review, publish, schedule, and restore use the existing document workflow. Saving alone never changes the public homepage; without an active published homepage document, the original section layout remains the fallback.
+
+Product selection, prices, availability, banner slides/images, category images, and customer review records continue to use their existing storefront management screens. The shared header/footer and their menus remain outside this page-body editor. Native sections with no source data can be enabled in the editor but remain empty on the storefront. Native sections cannot be duplicated or exported as reusable page templates. Homepage block types are internal to this editor and are not exposed by the page/blog v1 API.
+
+Editor previews are authenticated, website-scoped, excluded from indexing and caching, and rendered through an untracked preview template. The section frames disable scripts and interactions to prevent accidental shopping actions while dragging.
+
+Homepage layer thumbnails now show complete, uncropped scaled snapshots of the native section preview, including the current images and styling. They update with text/style edits and undo without saving. The larger miniature appears above the layer name. Localized preview redirects are accepted only for the same document, section, language, and draft version. A neutral loading skeleton remains until the source preview loads; a failed or empty source cannot produce a useful image. Switching document/language isolates the snapshots. Thumbnail frames reuse the source HTML/styles, disable scripts and navigation interactions, and make no extra calls to the section-preview endpoint. Native canvas previews load eagerly to supply all nine thumbnails. Generic content blocks retain schematic thumbnails.

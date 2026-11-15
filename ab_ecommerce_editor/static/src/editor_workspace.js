@@ -28,6 +28,17 @@ const BLOCKS = [
     { type: "button", label: _t("Button"), icon: "fa fa-hand-pointer-o" },
     { type: "divider", label: _t("Divider"), icon: "fa fa-minus" },
 ];
+const HOME_BLOCKS = [
+    { type: "home_slider", label: _t("Banner slider"), icon: "fa fa-picture-o" },
+    { type: "home_offers", label: _t("Current offers"), icon: "fa fa-tags" },
+    { type: "home_services", label: _t("Service benefits"), icon: "fa fa-shield" },
+    { type: "home_categories", label: _t("Shop categories"), icon: "fa fa-th-large" },
+    { type: "home_best_sellers", label: _t("Best sellers"), icon: "fa fa-star" },
+    { type: "home_history", label: _t("Recently viewed"), icon: "fa fa-history" },
+    { type: "home_feedback", label: _t("Pharmacy highlights"), icon: "fa fa-heart-o" },
+    { type: "home_reviews", label: _t("Customer reviews"), icon: "fa fa-comments-o" },
+    { type: "home_support", label: _t("Customer support"), icon: "fa fa-phone" },
+];
 const FONTS = ["system", "arabic", "georgia", "monospace"];
 const DEFAULT_BLOCK = {
     hero: { title: _t("A fresh story starts here"), body: _t("Share a clear message with your customers."), label: _t("Explore"), url: "/shop" },
@@ -44,6 +55,7 @@ export class EditorWorkspace extends Component {
 
     setup() {
         this.orm = useService("orm");
+        onPatched(() => this.refreshNativePreviews());
         this.notification = useService("notification");
         this.root = useRef("root");
         this.motionAnimations = new Set();
@@ -60,7 +72,7 @@ export class EditorWorkspace extends Component {
         this.resizeSession = null;
         this.state = useState({
             ready: false, workspaceOpen: false, view: "library", filter: "all", documents: [], templates: [], websites: [], templateId: null, websiteId: null,
-            currentId: null, draft: null, selectedId: null, armedDeleteId: null, actionMenuId: null, deletedBlocks: [], trashOpen: false, inspector: "content", language: "en_US",
+            sectionThumbnails: {}, homeFields: [], paletteDragType: null, currentId: null, draft: null, selectedId: null, armedDeleteId: null, actionMenuId: null, deletedBlocks: [], trashOpen: false, inspector: "content", language: "en_US",
             device: "desktop", toolsOpen: true, layersOpen: true, inspectorOpen: true, canvasToolbarOpen: true, darkMode: false, toolsWidth: 224, layersHeight: 180, inspectorWidth: 290, history: [], future: [], dirty: false, busy: false, canReview: false,
             canPublish: false, scheduleAt: "", dragId: null, trashDragId: null, trashDropActive: false, dropId: null, dropAfter: false, navigating: false, versions: [],
         });
@@ -327,6 +339,7 @@ export class EditorWorkspace extends Component {
 
     get blocks() {
         if (!this.state.draft) return [];
+        if (this.state.language === "ar_001" && this.isHomepage) return this.state.draft.blocks_ar || [];
         if (this.state.language === "ar_001") return this.state.draft.blocks_ar?.length ? this.state.draft.blocks_ar : this.state.draft.blocks_en || [];
         return this.state.draft.blocks_en || [];
     }
@@ -347,7 +360,7 @@ export class EditorWorkspace extends Component {
     get sessionTrash() {
         const scope = this.state.templateId ? `template:${this.state.templateId}` : `document:${this.state.currentId}`;
         const activeIds = new Set(this.blocks.map((block) => block.id));
-        return this.state.deletedBlocks.filter((entry) => entry.scope === scope && entry.language === this.state.language && !activeIds.has(entry.block.id));
+        return this.state.deletedBlocks.filter((entry) => entry.scope === scope && entry.language === this.state.language && !activeIds.has(entry.block.id) && !this.paletteContains(entry.block.type));
     }
 
     get trashScope() {
@@ -358,19 +371,149 @@ export class EditorWorkspace extends Component {
         return entry.block.title || entry.block.label || entry.block.body || this.blockLabel(entry.block.type);
     }
 
-    get blockPalette() { return BLOCKS; }
+    get activeLabel() { return _t("Active"); }
+    get inactiveLabel() { return _t("Inactive"); }
+    get isHomepage() { return this.state.draft?.kind === "homepage"; }
+    get blockPalette() { return this.isHomepage ? [...HOME_BLOCKS, ...BLOCKS] : BLOCKS; }
+    isNativeBlock(type) { return HOME_BLOCKS.some((block) => block.type === type); }
+    paletteContains(type) { return this.isNativeBlock(type) && this.blocks.some((block) => block.type === type); }
+    get nativeFields() { return this.state.homeFields.find((section) => section.type === this.selectedBlock?.type)?.fields || []; }
+    refreshNativePreview(event, block) {
+        const frame = event.target;
+        try {
+            const page = this.nativePreviewDocument(frame, block);
+            if (!page) return;
+            for (const element of page.querySelectorAll("[data-ae-field]")) {
+                if (!element.hasAttribute("data-ae-saved")) element.setAttribute("data-ae-saved", element.textContent);
+                element.textContent = block.content?.[element.dataset.aeField] ?? element.dataset.aeSaved;
+            }
+            for (const element of page.querySelectorAll("[data-ae-url]")) {
+                if (!element.hasAttribute("data-ae-saved-url")) element.setAttribute("data-ae-saved-url", element.getAttribute("href") || "");
+                element.setAttribute("href", block.content?.[element.dataset.aeUrl] ?? element.dataset.aeSavedUrl);
+            }
+            const section = page.querySelector(".ab-editor-homepage, #wrap.ab-storefront-home");
+            section?.setAttribute("style", this.styleFor({ ...this.state.draft.design_tokens, ...this.state.draft.web_overrides }));
+            section?.querySelector(":scope > [class*=ae-visibility-]")?.setAttribute("style", this.styleFor(block.style));
+            frame.style.height = `${Math.max(180, section?.scrollHeight || 180)}px`;
+            this.refreshSectionThumbnail(frame, block);
+        } catch { return; }
+    }
+    nativePreviewDocument(frame, block) {
+        if (this.destroyed || !frame.isConnected) return null;
+        const page = frame.contentDocument;
+        if (!page) return null;
+        const expected = new URL(this.nativePreviewUrl(block), window.location.href);
+        const actual = new URL(page.URL);
+        const previewPath = /^\/(?:[^/]+\/)?editor\/preview\/(\d+)\/?$/;
+        if (actual.origin !== expected.origin || actual.pathname.match(previewPath)?.[1] !== String(this.state.currentId)) return null;
+        if (["section", "lang", "v"].some((key) => actual.searchParams.get(key) !== expected.searchParams.get(key))) return null;
+        return page;
+    }
+    sectionThumbnailKey(block) {
+        return `${this.state.currentId}:${this.state.language}:${block.id}`;
+    }
+    sectionThumbnail(block) {
+        return this.state.sectionThumbnails[this.sectionThumbnailKey(block)];
+    }
+    refreshSectionThumbnail(frame, block) {
+        const page = this.nativePreviewDocument(frame, block);
+        if (!page) return;
+        const section = page.querySelector(".ab-editor-homepage, #wrap.ab-storefront-home");
+        if (!section) return;
+        const width = Math.max(1, frame.clientWidth);
+        const height = Math.max(1, section.scrollHeight);
+        const target = this.root.el?.querySelector(`.ab_editor__layer[data-source-id="${block.id}"] .ab_editor__layer-thumbnail--live`);
+        const targetWidth = Math.max(1, (target?.clientWidth || 82));
+        const targetHeight = Math.max(1, (target?.clientHeight || 52));
+        const scale = Math.min(targetWidth / width, targetHeight / height);
+        const key = this.sectionThumbnailKey(block);
+        const signature = JSON.stringify([page.URL, width, height, targetWidth, targetHeight, block.content, block.style, this.state.draft.design_tokens, this.state.draft.web_overrides]);
+        if (this.state.sectionThumbnails[key]?.signature === signature) return;
+        let snapshot = section.cloneNode(true);
+        for (let ancestor = section.parentElement; ancestor && ancestor !== page.body; ancestor = ancestor.parentElement) {
+            const wrapper = ancestor.cloneNode(false);
+            wrapper.appendChild(snapshot);
+            snapshot = wrapper;
+        }
+        for (const node of snapshot.querySelectorAll("script, iframe, object, embed, audio, video")) node.remove();
+        for (const node of snapshot.querySelectorAll("*")) {
+            for (const attribute of [...node.attributes]) {
+                if (attribute.name.startsWith("on")) node.removeAttribute(attribute.name);
+            }
+        }
+        for (const img of snapshot.querySelectorAll("img")) img.loading = "eager";
+        const thumbnail = page.implementation.createHTMLDocument("");
+        thumbnail.documentElement.dir = page.documentElement.dir || (this.state.language === "ar_001" ? "rtl" : "ltr");
+        thumbnail.documentElement.lang = page.documentElement.lang;
+        const base = thumbnail.createElement("base");
+        base.href = page.baseURI;
+        thumbnail.head.appendChild(base);
+        for (const style of page.head.querySelectorAll('link[rel="stylesheet"], style')) thumbnail.head.appendChild(style.cloneNode(true));
+        const reset = thumbnail.createElement("style");
+        reset.textContent = "html,body{margin:0!important;padding:0!important;min-height:0!important;overflow:hidden!important}#wrapwrap{min-height:0!important}*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}";
+        thumbnail.head.appendChild(reset);
+        thumbnail.body.className = page.body.className;
+        thumbnail.body.appendChild(snapshot);
+        this.state.sectionThumbnails[key] = {
+            signature,
+            html: "<!doctype html>" + thumbnail.documentElement.outerHTML,
+            style: `width:${width}px;height:${height}px;left:${(targetWidth - width * scale) / 2}px;top:${(targetHeight - height * scale) / 2}px;transform:scale(${scale})`,
+        };
+    }
+    refreshNativePreviews() {
+        for (const frame of this.root.el?.querySelectorAll("iframe[data-native-id]") || []) {
+            const block = this.blocks.find((item) => item.id === frame.dataset.nativeId);
+            if (block) this.refreshNativePreview({ target: frame }, block);
+        }
+    }
+    nativePreviewUrl(block) {
+        return `/editor/preview/${this.state.currentId}?section=${block.type}&lang=${this.state.language}&v=${encodeURIComponent(this.state.draft.draft_token || "")}`;
+    }
+    async openHomepage() {
+        if (this.state.busy || !this.state.websiteId) return;
+        if (this.state.dirty && !window.confirm(_t("Discard unsaved changes?"))) return;
+        this.state.busy = true;
+        try {
+            const id = await this.orm.call("ab_ecommerce_editor_document", "open_homepage", [this.state.websiteId]);
+            this.state.dirty = false;
+            await this.loadLibrary();
+            await this.openDocument(id);
+        } finally { this.state.busy = false; }
+    }
+    selectBlock(id) {
+        this.state.selectedId = id;
+        this.root.el?.querySelector(`.ab_editor__preview-block[data-source-id="${id}"]`)?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    }
+    toggleBlock(id) {
+        this.edit((draft) => {
+            const block = this.editableBlocks(draft).find((item) => item.id === id);
+            if (block && block.type !== "template") block.active = block.active === false;
+        });
+    }
+    updateNativeContent(key, event) {
+        this.edit((draft) => {
+            const block = this.editableBlocks(draft).find((item) => item.id === this.state.selectedId);
+            if (block) block.content = { ...block.content, [key]: event.target.value };
+        });
+    }
+    onPaletteDragStart(type, event) {
+        if (this.isLocked || this.paletteContains(type)) { event.preventDefault(); return; }
+        this.state.paletteDragType = type;
+        event.dataTransfer.effectAllowed = "copy";
+        event.dataTransfer.setData("text/plain", type);
+    }
     get fonts() { return FONTS; }
     fontLabel(font) { return { system: _t("System font"), arabic: _t("Arabic font"), georgia: _t("Georgia"), monospace: _t("Monospace") }[font]; }
 
     blockLabel(type) {
-        return BLOCKS.find((block) => block.type === type)?.label || _t("Reusable block");
+        return [...BLOCKS, ...HOME_BLOCKS].find((block) => block.type === type)?.label || _t("Reusable block");
     }
 
     stateLabel(state) {
         return { draft: _t("Draft"), review: _t("In review"), scheduled: _t("Scheduled"), published: _t("Published") }[state];
     }
 
-    kindLabel(kind) { return kind === "blog" ? _t("Article") : _t("Page"); }
+    kindLabel(kind) { return kind === "homepage" ? _t("Homepage") : kind === "blog" ? _t("Article") : _t("Page"); }
     get interfaceDirection() { return (user.context.lang || "").startsWith("ar") ? "rtl" : "ltr"; }
     documentTitle(document) { return this.interfaceDirection === "rtl" ? document.title_ar || document.title_en : document.title_en; }
     get inspectorTitle() { return this.selectedBlock ? this.blockLabel(this.selectedBlock.type) : _t("Page settings"); }
@@ -392,7 +535,7 @@ export class EditorWorkspace extends Component {
 
     get liveUrl() {
         const draft = this.state.draft;
-        return draft?.published_revision_id?.[0] ? `/editor/${draft.kind}/${draft.slug}` : "";
+        return draft?.published_revision_id?.[0] ? (draft.kind === "homepage" ? "/" : `/editor/${draft.kind}/${draft.slug}`) : "";
     }
 
     get previewTitle() {
@@ -434,8 +577,11 @@ export class EditorWorkspace extends Component {
         await this.navigate(async () => {
             const records = await this.orm.searchRead("ab_ecommerce_editor_document", [["id", "=", id]], DOCUMENT_FIELDS);
             if (!records.length) return;
+            const homeFields = records[0].kind === "homepage" ? await this.orm.call("ab_ecommerce_editor_document", "homepage_palette", []) : [];
             const versions = await this.orm.searchRead("ab_ecommerce_editor_revision", [["document_id", "=", id]], ["number", "author_id", "create_date"], { order: "number desc", limit: 30 });
             return () => {
+                this.state.sectionThumbnails = {};
+                this.state.homeFields = homeFields;
                 this.state.currentId = id;
                 this.state.templateId = null;
                 this.state.draft = clone(records[0]);
@@ -505,7 +651,7 @@ export class EditorWorkspace extends Component {
 
     editableBlocks(draft) {
         if (this.state.language === "ar_001") {
-            if (!draft.blocks_ar?.length) draft.blocks_ar = clone(draft.blocks_en || []);
+            if (!draft.blocks_ar?.length && draft.kind !== "homepage") draft.blocks_ar = clone(draft.blocks_en || []);
             return draft.blocks_ar;
         }
         if (!draft.blocks_en) draft.blocks_en = [];
@@ -519,10 +665,11 @@ export class EditorWorkspace extends Component {
         });
     }
 
-    addBlock(type) {
+    addBlock(type, index = null) {
+        if (this.paletteContains(type)) return;
         this.edit((draft) => {
-            const block = { id: `b_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`, type, ...DEFAULT_BLOCK[type], style: {} };
-            this.editableBlocks(draft).push(block);
+            const block = { id: `b_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`, type, ...DEFAULT_BLOCK[type], active: true, style: {} };
+            this.editableBlocks(draft).splice(index ?? this.editableBlocks(draft).length, 0, block);
             this.state.selectedId = block.id;
         });
     }
@@ -600,6 +747,7 @@ export class EditorWorkspace extends Component {
     }
 
     duplicateBlock(id) {
+        if (this.isNativeBlock(this.blocks.find((block) => block.id === id)?.type)) return;
         if (this.isLocked) return;
         this.edit((draft) => {
             const blocks = this.editableBlocks(draft);
@@ -711,13 +859,20 @@ export class EditorWorkspace extends Component {
     }
 
     onRestoreDragOver(event) {
-        if (!this.state.trashDragId || this.isLocked) return;
+        if ((!this.state.trashDragId && !this.state.paletteDragType) || this.isLocked) return;
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
         this.state.dropId = null;
     }
 
     onRestoreDrop(event) {
+        if (this.state.paletteDragType) {
+            event.preventDefault();
+            const type = this.state.paletteDragType;
+            this.onDragEnd();
+            this.addBlock(type);
+            return;
+        }
         if (!this.state.trashDragId) return;
         event.preventDefault();
         const entryId = this.state.trashDragId;
@@ -726,7 +881,7 @@ export class EditorWorkspace extends Component {
     }
 
     onDragOver(id, event) {
-        if (this.isLocked || (!this.state.dragId && !this.state.trashDragId) || this.state.dragId === id) return;
+        if (this.isLocked || (!this.state.dragId && !this.state.trashDragId && !this.state.paletteDragType) || this.state.dragId === id) return;
         event.preventDefault();
         event.stopPropagation();
         event.dataTransfer.dropEffect = "move";
@@ -736,6 +891,7 @@ export class EditorWorkspace extends Component {
     }
 
     onDragEnd() {
+        this.state.paletteDragType = null;
         this.state.dragId = null;
         this.state.trashDragId = null;
         this.state.trashDropActive = false;
@@ -748,7 +904,16 @@ export class EditorWorkspace extends Component {
     }
 
     onDrop(id, event) {
-        if (!this.state.dragId && !this.state.trashDragId) return;
+        if (this.state.paletteDragType) {
+            event.preventDefault();
+            event.stopPropagation();
+            const type = this.state.paletteDragType;
+            const index = this.blocks.findIndex((block) => block.id === id);
+            this.onDragEnd();
+            this.addBlock(type, index);
+            return;
+        }
+        if (!this.state.dragId && !this.state.trashDragId && !this.state.paletteDragType) return;
         event.preventDefault();
         event.stopPropagation();
         const source = this.state.dragId;

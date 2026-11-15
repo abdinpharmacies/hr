@@ -71,8 +71,11 @@ msgid "Abdin Studio"
 msgstr "استوديو عابدين"
 
 #. module: ab_ecommerce_editor
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__active
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__active
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
 msgid "Active"
 msgstr "نشط"
 
@@ -379,6 +382,7 @@ msgstr "أنشئ أول صفحة أو مقال للبدء."
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -386,6 +390,7 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -429,6 +434,8 @@ msgstr "هل تريد تجاهل التغييرات غير المحفوظة؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_website__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -565,6 +572,8 @@ msgstr "قسم رئيسي"
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__id
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__id
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__id
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_website__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -631,6 +640,7 @@ msgstr "الطبقات"
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -638,6 +648,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -660,7 +671,8 @@ msgid ""
 "Linked draft instances follow this template. Published versions keep their "
 "approved content."
 msgstr ""
-"تتبع المسودات المرتبطة نموذج المحتوى هذا. وتحتفظ النسخ المنشورة بمحتواها المعتمد."
+"تتبع المسودات المرتبطة نموذج المحتوى هذا. وتحتفظ النسخ المنشورة بمحتواها "
+"المعتمد."
 
 #. module: ab_ecommerce_editor
 #. odoo-javascript
@@ -1428,6 +1440,7 @@ msgstr "تخصيصات الويب"
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__website_id
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_revision__website_id
 #: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_template__website_id
+#: model:ir.model,name:ab_ecommerce_editor.model_website
 msgid "Website"
 msgstr "الموقع الإلكتروني"
 
@@ -1682,3 +1695,375 @@ msgstr "إظهار لوحة العناصر المحذوفة"
 #: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
 msgid "Resize deleted blocks panel"
 msgstr "تغيير حجم لوحة العناصر المحذوفة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Added"
+msgstr "تمت الإضافة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "All products"
+msgstr "كل المنتجات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Banner slider"
+msgstr "عارض البنرات"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Best sellers"
+msgstr "الأكثر مبيعًا"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Browse all products."
+msgstr "تصفح كل المنتجات."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Browse products"
+msgstr "تصفح المنتجات"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Contact us"
+msgstr "تواصل معنا"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Contact us for help with a product or an order."
+msgstr "كلمنا لو محتاج مساعدة في منتج أو طلب."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Current offers"
+msgstr "العروض الحالية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Customer review"
+msgstr "رأي العميل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Customer reviews"
+msgstr "آراء العملاء"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Customer support"
+msgstr "خدمة العملاء"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Delivery"
+msgstr "التوصيل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Edit homepage"
+msgstr "تعديل الصفحة الرئيسية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Follow your order status"
+msgstr "تابع حالة طلبك"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "From Abdin Pharmacies"
+msgstr "من صيدليات عابدين"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Home delivery"
+msgstr "التوصيل للمنزل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_editor.selection__ab_ecommerce_editor_document__kind__homepage
+msgid "Homepage"
+msgstr "الصفحة الرئيسية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Hotline 19036"
+msgstr "الخط الساخن 19036"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Inactive"
+msgstr "غير مفعّل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid ""
+"Live products and offers keep their storefront data. Empty sections appear "
+"when content is available."
+msgstr ""
+"المنتجات والعروض مرتبطة ببيانات المتجر. تظهر الأقسام الفارغة عند توفر "
+"محتواها."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Need help?"
+msgstr "محتاج مساعدة؟"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "No offers available right now"
+msgstr "لا توجد عروض حاليًا"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Online ordering"
+msgstr "الطلب أونلاين"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Order to your door"
+msgstr "طلبك لحد باب البيت"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Order tracking"
+msgstr "تتبع الطلب"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Our customers' reviews"
+msgstr "آراء عملائنا"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Pharmacy Care"
+msgstr "رعاية صيدلية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Pharmacy essentials"
+msgstr "احتياجاتك من الصيدلية"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Pharmacy highlights"
+msgstr "مميزات الصيدلية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Questions about your order?"
+msgstr "عندك سؤال عن طلبك؟"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Real feedback shared by our customers on social platforms"
+msgstr "آراء عملائنا على مواقع التواصل"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Recently viewed"
+msgstr "شاهدته مؤخرًا"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Service benefits"
+msgstr "مميزات الخدمة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Shop by category"
+msgstr "تسوق حسب القسم"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Shop categories"
+msgstr "أقسام المتجر"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid ""
+"Shop medicines, personal care, baby products, and health devices. Contact us"
+" if you need help."
+msgstr "أدوية، وعناية شخصية، ومنتجات أطفال، وأجهزة طبية. محتاج مساعدة؟ كلمنا."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Shop now"
+msgstr "تسوق الآن"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Shop offers"
+msgstr "عرض العروض"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Support hotline"
+msgstr "الخط الساخن للدعم"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "The homepage URL cannot be changed."
+msgstr "لا يمكن تغيير رابط الصفحة الرئيسية."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+#: code:addons/ab_ecommerce_editor/models/homepage_content.py:0
+msgid "This homepage section is invalid."
+msgstr "قسم الصفحة الرئيسية غير صالح."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "To your door"
+msgstr "لحد باب البيت"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_layout__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "View all products"
+msgstr "عرض كل المنتجات"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "View original comment"
+msgstr "عرض التعليق الأصلي"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Your pharmacy essentials in one place"
+msgstr "كل اللي تحتاجه من صيدليات عابدين"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Your pharmacy essentials, delivered"
+msgstr "طلبك من صيدليات عابدين لحد باب البيت"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "24/7"
+msgstr "24/7"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "19036"
+msgstr "19036"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/homepage.py:0
+msgid "Link"
+msgstr "الرابط"
+
+#. module: ab_ecommerce_editor
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
+msgid "Contact our team"
+msgstr "تواصل مع فريقنا"

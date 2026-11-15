@@ -1,0 +1,273 @@
+[
+  {
+    "type": "home_slider",
+    "label": "Banner slider",
+    "fields": []
+  },
+  {
+    "type": "home_offers",
+    "label": "Current offers",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Current offers",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "Shop offers",
+        "kind": "text"
+      },
+      {
+        "key": "text_2",
+        "label": "No offers available right now",
+        "kind": "text"
+      },
+      {
+        "key": "text_3",
+        "label": "Browse all products.",
+        "kind": "text"
+      },
+      {
+        "key": "text_4",
+        "label": "Browse products",
+        "kind": "text"
+      },
+      {
+        "key": "link_1",
+        "label": "Link",
+        "kind": "url",
+        "placeholder": "/offers"
+      },
+      {
+        "key": "link_2",
+        "label": "Link",
+        "kind": "url",
+        "placeholder": "/shop"
+      }
+    ]
+  },
+  {
+    "type": "home_services",
+    "label": "Service benefits",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Pharmacy essentials",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "From Abdin Pharmacies",
+        "kind": "text"
+      },
+      {
+        "key": "text_2",
+        "label": "Home delivery",
+        "kind": "text"
+      },
+      {
+        "key": "text_3",
+        "label": "Order to your door",
+        "kind": "text"
+      },
+      {
+        "key": "text_4",
+        "label": "Order tracking",
+        "kind": "text"
+      },
+      {
+        "key": "text_5",
+        "label": "Follow your order status",
+        "kind": "text"
+      },
+      {
+        "key": "text_6",
+        "label": "Customer support",
+        "kind": "text"
+      },
+      {
+        "key": "text_7",
+        "label": "Hotline 19036",
+        "kind": "text"
+      }
+    ]
+  },
+  {
+    "type": "home_categories",
+    "label": "Shop categories",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Shop by category",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "View all products",
+        "kind": "text"
+      },
+      {
+        "key": "link_1",
+        "label": "Link",
+        "kind": "url",
+        "placeholder": "/shop"
+      }
+    ]
+  },
+  {
+    "type": "home_best_sellers",
+    "label": "Best sellers",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Best sellers",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "All products",
+        "kind": "text"
+      },
+      {
+        "key": "link_1",
+        "label": "Link",
+        "kind": "url",
+        "placeholder": "/shop"
+      }
+    ]
+  },
+  {
+    "type": "home_history",
+    "label": "Recently viewed",
+    "fields": []
+  },
+  {
+    "type": "home_feedback",
+    "label": "Pharmacy highlights",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Your pharmacy essentials in one place",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "Shop medicines, personal care, baby products, and health devices. Contact us if you need help.",
+        "kind": "text"
+      },
+      {
+        "key": "text_2",
+        "label": "19036",
+        "kind": "text"
+      },
+      {
+        "key": "text_3",
+        "label": "Support hotline",
+        "kind": "text"
+      },
+      {
+        "key": "text_4",
+        "label": "24/7",
+        "kind": "text"
+      },
+      {
+        "key": "text_5",
+        "label": "Online ordering",
+        "kind": "text"
+      },
+      {
+        "key": "text_6",
+        "label": "Delivery",
+        "kind": "text"
+      },
+      {
+        "key": "text_7",
+        "label": "To your door",
+        "kind": "text"
+      }
+    ]
+  },
+  {
+    "type": "home_reviews",
+    "label": "Customer reviews",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Our customers' reviews",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "Real feedback shared by our customers on social platforms",
+        "kind": "text"
+      },
+      {
+        "key": "text_2",
+        "label": "Customer review",
+        "kind": "text"
+      },
+      {
+        "key": "text_3",
+        "label": "View original comment",
+        "kind": "text"
+      }
+    ]
+  },
+  {
+    "type": "home_support",
+    "label": "Customer support",
+    "fields": [
+      {
+        "key": "text_0",
+        "label": "Pharmacy Care",
+        "kind": "text"
+      },
+      {
+        "key": "text_1",
+        "label": "Your pharmacy essentials, delivered",
+        "kind": "text"
+      },
+      {
+        "key": "text_2",
+        "label": "Shop now",
+        "kind": "text"
+      },
+      {
+        "key": "text_3",
+        "label": "Hotline 19036",
+        "kind": "text"
+      },
+      {
+        "key": "text_4",
+        "label": "Questions about your order?",
+        "kind": "text"
+      },
+      {
+        "key": "text_5",
+        "label": "Contact us",
+        "kind": "text"
+      },
+      {
+        "key": "text_6",
+        "label": "Contact us",
+        "kind": "text"
+      },
+      {
+        "key": "text_7",
+        "label": "Need help?",
+        "kind": "text"
+      },
+      {
+        "key": "text_8",
+        "label": "Contact us for help with a product or an order.",
+        "kind": "text"
+      },
+      {
+        "key": "text_9",
+        "label": "19036",
+        "kind": "text"
+      }
+    ]
+  }
+]

@@ -1,0 +1,340 @@
+<odoo>
+    <template id="homepage_editor" inherit_id="ab_ecommerce_storefront.homepage" priority="200">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="ab-editor-homepage" separator=" "/>
+            <attribute name="t-att-style">website._ab_editor_block_style(ae_home_style if ae_home_style is not None else website._ab_editor_home_tokens())</attribute>
+        </xpath>
+        <xpath expr="//div[@id='wrap']" position="before">
+            <t t-set="ae_home_blocks" t-value="ae_home_blocks if ae_home_blocks is not None else website._ab_editor_home_blocks()"/>
+            <t t-set="ae_home_content" t-value="{b['type']: b.get('content', {}) for b in ae_home_blocks}"/>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-hero-slider')]" position="replace">
+            <t t-set="ae_home_slider" t-if="not ae_preview_section or ae_preview_section == 'home_slider'">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-offers')]//div[hasclass('ab-storefront-section-heading')]//h2" position="replace">
+            <h2 class="mb-0" data-ae-field="text_0">
+                <t t-if="'text_0' in ae_home_content.get('home_offers', {})" t-out="ae_home_content['home_offers']['text_0']"/>
+                <t t-else="">Current offers</t>
+            </h2>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-offers')]//div[hasclass('ab-storefront-section-heading')]/a" position="replace">
+            <a class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none" data-ae-field="text_1" t-att-href="ae_home_content.get('home_offers', {}).get('link_1', '/offers')" data-ae-url="link_1">
+                <t t-if="'text_1' in ae_home_content.get('home_offers', {})" t-out="ae_home_content['home_offers']['text_1']"/>
+                <t t-else="">Shop offers</t>
+            </a>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-offers')]//div[hasclass('ab-storefront-offers-empty')]//h3" position="replace">
+            <h3 data-ae-field="text_2">
+                <t t-if="'text_2' in ae_home_content.get('home_offers', {})" t-out="ae_home_content['home_offers']['text_2']"/>
+                <t t-else="">No offers available right now</t>
+            </h3>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-offers')]//div[hasclass('ab-storefront-offers-empty')]//p" position="replace">
+            <p class="mb-0" data-ae-field="text_3">
+                <t t-if="'text_3' in ae_home_content.get('home_offers', {})" t-out="ae_home_content['home_offers']['text_3']"/>
+                <t t-else="">Browse all products.</t>
+            </p>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-offers')]//div[hasclass('ab-storefront-offers-empty')]/a" position="replace">
+            <a class="btn btn-primary text-nowrap" data-ae-field="text_4" t-att-href="ae_home_content.get('home_offers', {}).get('link_2', '/shop')" data-ae-url="link_2">
+                <t t-if="'text_4' in ae_home_content.get('home_offers', {})" t-out="ae_home_content['home_offers']['text_4']"/>
+                <t t-else="">Browse products</t>
+            </a>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-offers')]" position="replace">
+            <t t-set="ae_home_offers" t-if="not ae_preview_section or ae_preview_section == 'home_offers'">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-service-strip')]" position="replace">
+            <t t-set="ae_home_services" t-if="not ae_preview_section or ae_preview_section == 'home_services'">
+                <section class="ab-storefront-service-strip" data-name="Service Benefits">
+                    <div class="container">
+                        <div class="row g-0">
+                            <div class="col-6 col-lg-3">
+                                <div class="ab-storefront-service-item">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 3 5.5 5.4v5.3c0 4.1 2.6 7.8 6.5 9.3 3.9-1.5 6.5-5.2 6.5-9.3V5.4L12 3Zm0 2.2 4.5 1.7v3.8c0 3-1.7 5.7-4.5 7.1-2.8-1.4-4.5-4.1-4.5-7.1V6.9L12 5.2Z"/>
+                                        <path d="m10.9 13.7-2.2-2.2 1.2-1.2 1 1 3.3-3.3 1.2 1.2-4.5 4.5Z"/>
+                                    </svg>
+                                    <span>
+                                        <strong data-ae-field="text_0">
+                                            <t t-if="'text_0' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_0']"/>
+                                            <t t-else="">Pharmacy essentials</t>
+                                        </strong>
+                                        <small data-ae-field="text_1">
+                                            <t t-if="'text_1' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_1']"/>
+                                            <t t-else="">From Abdin Pharmacies</t>
+                                        </small>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="ab-storefront-service-item">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M3 5h12v9h1.3l1.1-3H21v3h1v2h-2.1a3 3 0 0 1-5.8 0H9.9a3 3 0 0 1-5.8 0H3V5Zm2 2v7h9V7H5Zm12.7 6.9H19v-.9h-.2l-.7 1.9h-.4v-1ZM7 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/>
+                                    </svg>
+                                    <span>
+                                        <strong data-ae-field="text_2">
+                                            <t t-if="'text_2' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_2']"/>
+                                            <t t-else="">Home delivery</t>
+                                        </strong>
+                                        <small data-ae-field="text_3">
+                                            <t t-if="'text_3' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_3']"/>
+                                            <t t-else="">Order to your door</t>
+                                        </small>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="ab-storefront-service-item">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                            <circle cx="10" cy="10" r="6.5"/>
+                                            <path d="m15 15 6 6"/>
+                                        </g>
+                                    </svg>
+                                    <span>
+                                        <strong data-ae-field="text_4">
+                                            <t t-if="'text_4' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_4']"/>
+                                            <t t-else="">Order tracking</t>
+                                        </strong>
+                                        <small data-ae-field="text_5">
+                                            <t t-if="'text_5' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_5']"/>
+                                            <t t-else="">Follow your order status</t>
+                                        </small>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="ab-storefront-service-item">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h1.6c-.5 1.2-1.7 2-3.1 2H13v2h1.5A5.5 5.5 0 0 0 20 15.5V11a8 8 0 0 0-8-8Zm-6 10h1v2H6v-2Zm11 0h1v2h-1v-2Z"/>
+                                    </svg>
+                                    <span>
+                                        <strong data-ae-field="text_6">
+                                            <t t-if="'text_6' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_6']"/>
+                                            <t t-else="">Customer support</t>
+                                        </strong>
+                                        <small data-ae-field="text_7">
+                                            <t t-if="'text_7' in ae_home_content.get('home_services', {})" t-out="ae_home_content['home_services']['text_7']"/>
+                                            <t t-else="">Hotline 19036</t>
+                                        </small>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-categories')]//div[hasclass('ab-storefront-section-heading')]//h2" position="replace">
+            <h2 class="mb-0" data-ae-field="text_0">
+                <t t-if="'text_0' in ae_home_content.get('home_categories', {})" t-out="ae_home_content['home_categories']['text_0']"/>
+                <t t-else="">Shop by category</t>
+            </h2>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-categories')]//div[hasclass('ab-storefront-section-heading')]/a" position="replace">
+            <a class="ab-storefront-view-all text-decoration-none" data-ae-field="text_1" t-att-href="ae_home_content.get('home_categories', {}).get('link_1', '/shop')" data-ae-url="link_1">
+                <t t-if="'text_1' in ae_home_content.get('home_categories', {})" t-out="ae_home_content['home_categories']['text_1']"/>
+                <t t-else="">View all products</t>
+            </a>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-categories')]" position="replace">
+            <t t-set="ae_home_categories" t-if="not ae_preview_section or ae_preview_section == 'home_categories'">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-best-sellers')]//div[hasclass('ab-storefront-section-heading')]//h2" position="replace">
+            <h2 class="mb-0" data-ae-field="text_0">
+                <t t-if="'text_0' in ae_home_content.get('home_best_sellers', {})" t-out="ae_home_content['home_best_sellers']['text_0']"/>
+                <t t-else="">Best sellers</t>
+            </h2>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-best-sellers')]//div[hasclass('ab-storefront-section-heading')]/a" position="replace">
+            <a class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none" data-ae-field="text_1" t-att-href="ae_home_content.get('home_best_sellers', {}).get('link_1', '/shop')" data-ae-url="link_1">
+                <t t-if="'text_1' in ae_home_content.get('home_best_sellers', {})" t-out="ae_home_content['home_best_sellers']['text_1']"/>
+                <t t-else="">All products</t>
+            </a>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-best-sellers')]" position="replace">
+            <t t-set="ae_home_best_sellers" t-if="not ae_preview_section or ae_preview_section == 'home_best_sellers'">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/t[@t-call='ab_ecommerce_storefront.browsing_history_rail']" position="replace">
+            <t t-set="ae_home_history" t-if="not ae_preview_section or ae_preview_section == 'home_history'">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-feedback')]" position="replace">
+            <t t-set="ae_home_feedback" t-if="not ae_preview_section or ae_preview_section == 'home_feedback'">
+                <section class="ab-storefront-feedback py-5" data-name="Customer Feedback">
+                    <div class="container">
+                        <div class="ab-storefront-feedback-panel">
+                            <div>
+                                <h1 data-ae-field="text_0" class="h2">
+                                    <t t-if="'text_0' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_0']"/>
+                                    <t t-else="">Your pharmacy essentials in one place</t>
+                                </h1>
+                                <p data-ae-field="text_1">
+                                    <t t-if="'text_1' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_1']"/>
+                                    <t t-else="">Shop medicines, personal care, baby products, and health devices. Contact us if you need help.</t>
+                                </p>
+                            </div>
+                            <div class="ab-storefront-feedback-metrics">
+                                <div>
+                                    <strong data-ae-field="text_2">
+                                        <t t-if="'text_2' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_2']"/>
+                                        <t t-else="">19036</t>
+                                    </strong>
+                                    <span data-ae-field="text_3">
+                                        <t t-if="'text_3' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_3']"/>
+                                        <t t-else="">Support hotline</t>
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong data-ae-field="text_4">
+                                        <t t-if="'text_4' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_4']"/>
+                                        <t t-else="">24/7</t>
+                                    </strong>
+                                    <span data-ae-field="text_5">
+                                        <t t-if="'text_5' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_5']"/>
+                                        <t t-else="">Online ordering</t>
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong data-ae-field="text_6">
+                                        <t t-if="'text_6' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_6']"/>
+                                        <t t-else="">Delivery</t>
+                                    </strong>
+                                    <span data-ae-field="text_7">
+                                        <t t-if="'text_7' in ae_home_content.get('home_feedback', {})" t-out="ae_home_content['home_feedback']['text_7']"/>
+                                        <t t-else="">To your door</t>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-testimonials')]//h2[@id='ab-testimonials-title']" position="replace">
+            <h2 id="ab-testimonials-title" class="mb-0" data-ae-field="text_0">
+                <t t-if="'text_0' in ae_home_content.get('home_reviews', {})" t-out="ae_home_content['home_reviews']['text_0']"/>
+                <t t-else="">Our customers' reviews</t>
+            </h2>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-testimonials')]//div[hasclass('ab-storefront-testimonial-heading')]/div/p" position="replace">
+            <p class="mb-0" data-ae-field="text_1">
+                <t t-if="'text_1' in ae_home_content.get('home_reviews', {})" t-out="ae_home_content['home_reviews']['text_1']"/>
+                <t t-else="">Real feedback shared by our customers on social platforms</t>
+            </p>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-testimonials')]//h3[@id='ab-testimonial-dialog-title']" position="replace">
+            <h3 id="ab-testimonial-dialog-title" data-ae-field="text_2">
+                <t t-if="'text_2' in ae_home_content.get('home_reviews', {})" t-out="ae_home_content['home_reviews']['text_2']"/>
+                <t t-else="">Customer review</t>
+            </h3>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-testimonials')]//a[hasclass('ab-storefront-testimonial-original')]" position="replace">
+            <a class="ab-storefront-testimonial-original ab-storefront-testimonial-link" target="_blank" rel="noopener noreferrer" data-ae-field="text_3">
+                <t t-if="'text_3' in ae_home_content.get('home_reviews', {})" t-out="ae_home_content['home_reviews']['text_3']"/>
+                <t t-else="">View original comment</t>
+            </a>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-testimonials')]" position="replace">
+            <t t-set="ae_home_reviews" t-if="not ae_preview_section or ae_preview_section == 'home_reviews'">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']/section[hasclass('ab-storefront-closing-cta')]" position="replace">
+            <t t-set="ae_home_support" t-if="not ae_preview_section or ae_preview_section == 'home_support'">
+                <section class="ab-storefront-closing-cta py-5" data-name="Customer Support CTA">
+                    <div class="container">
+                        <div class="ab-storefront-cta-promo-grid row g-3 g-lg-4 mb-4">
+                            <div class="col-12 col-lg-6">
+                                <a href="/shop" class="ab-storefront-promo-card ab-storefront-promo-primary text-decoration-none">
+                                    <span class="ab-storefront-promo-icon">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M4 5h16v10H7.8L4 18.8V5Zm2 2v7l1-1h11V7H6Zm3 2h6v2H9V9Zm0 3h4v2H9v-2Z"/>
+                                        </svg>
+                                    </span>
+                                    <span>
+                                        <small data-ae-field="text_0">
+                                            <t t-if="'text_0' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_0']"/>
+                                            <t t-else="">Pharmacy Care</t>
+                                        </small>
+                                        <strong data-ae-field="text_1">
+                                            <t t-if="'text_1' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_1']"/>
+                                            <t t-else="">Your pharmacy essentials, delivered</t>
+                                        </strong>
+                                        <span data-ae-field="text_2">
+                                            <t t-if="'text_2' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_2']"/>
+                                            <t t-else="">Shop now</t>
+                                        </span>
+                                    </span>
+                                </a>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <a href="/contactus" class="ab-storefront-promo-card ab-storefront-promo-secondary text-decoration-none">
+                                    <span class="ab-storefront-promo-icon">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h1.6c-.5 1.2-1.7 2-3.1 2H13v2h1.5A5.5 5.5 0 0 0 20 15.5V11a8 8 0 0 0-8-8Zm-6 10h1v2H6v-2Zm11 0h1v2h-1v-2Z"/>
+                                        </svg>
+                                    </span>
+                                    <span>
+                                        <small data-ae-field="text_3">
+                                            <t t-if="'text_3' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_3']"/>
+                                            <t t-else="">Hotline 19036</t>
+                                        </small>
+                                        <strong data-ae-field="text_4">
+                                            <t t-if="'text_4' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_4']"/>
+                                            <t t-else="">Questions about your order?</t>
+                                        </strong>
+                                        <span data-ae-field="text_5">
+                                            <t t-if="'text_5' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_5']"/>
+                                            <t t-else="">Contact us</t>
+                                        </span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ab-storefront-closing-panel d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
+                            <div>
+                                <span class="ab-storefront-kicker" data-ae-field="text_6">
+                                    <t t-if="'text_6' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_6']"/>
+                                    <t t-else="">Contact us</t>
+                                </span>
+                                <h2 class="mb-2" data-ae-field="text_7">
+                                    <t t-if="'text_7' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_7']"/>
+                                    <t t-else="">Need help?</t>
+                                </h2>
+                                <p class="mb-0" data-ae-field="text_8">
+                                    <t t-if="'text_8' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_8']"/>
+                                    <t t-else="">Contact us for help with a product or an order.</t>
+                                </p>
+                            </div>
+                            <div class="ab-storefront-support-actions d-flex flex-wrap gap-3">
+                                <a href="/contactus" class="btn btn-light btn-lg">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h1.2c-.4 1.2-1.5 2-2.9 2H13v2h1.3A5.3 5.3 0 0 0 19.6 16H20v-5a8 8 0 0 0-8-8Z"/>
+                                    </svg>
+                                    Contact our team
+                                </a>
+                                <a href="tel:19036" class="btn btn-outline-light btn-lg" data-ae-field="text_9">
+                                    <t t-if="'text_9' in ae_home_content.get('home_support', {})" t-out="ae_home_content['home_support']['text_9']"/>
+                                    <t t-else="">19036</t>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+        <xpath expr="//div[@id='wrap']" position="inside">
+            <t t-set="ae_native" t-value="{'home_slider': ae_home_slider, 'home_offers': ae_home_offers, 'home_services': ae_home_services, 'home_categories': ae_home_categories, 'home_best_sellers': ae_home_best_sellers, 'home_history': ae_home_history, 'home_feedback': ae_home_feedback, 'home_reviews': ae_home_reviews, 'home_support': ae_home_support}"/>
+            <t t-foreach="ae_home_blocks" t-as="block">
+                <t t-if="block.get('active', True)">
+                    <div t-att-class="('ab-editor-public__block ' if block['type'] not in ae_native else '') + 'ae-visibility-%s' % block.get('style', {}).get('visibility', 'all')" t-att-style="website._ab_editor_block_style(block.get('style', {}))">
+                        <t t-if="block['type'] in ae_native" t-out="ae_native[block['type']]"/>
+                        <t t-else="" t-call="ab_ecommerce_editor.content_block"/>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+    <template id="homepage_preview" name="Homepage draft preview" track="False">
+        <t t-call="website.homepage"/>
+    </template>
+</odoo>

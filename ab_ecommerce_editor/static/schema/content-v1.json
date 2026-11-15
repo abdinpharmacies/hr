@@ -227,6 +227,9 @@
         "alt": {
           "type": "string",
           "maxLength": 4000
+        },
+        "active": {
+          "type": "boolean"
         }
       }
     },

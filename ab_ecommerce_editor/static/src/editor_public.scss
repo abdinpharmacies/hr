@@ -40,10 +40,10 @@
     a:focus-visible { outline: 3px solid #315bea; outline-offset: 4px; }
 }
 #wrap.ab-editor-public .ab-editor-public__button { color: #fff; }
-@media (min-width: 601px) { .ab-editor-public .ae-visibility-mobile { display: none; } }
+@media (min-width: 601px) { :is(.ab-editor-public, .ab-editor-homepage) .ae-visibility-mobile { display: none; } }
 @media (max-width: 600px) {
     .ab-editor-public { padding: 30px 16px 50px; }
-    .ab-editor-public .ae-visibility-desktop { display: none; }
+    :is(.ab-editor-public, .ab-editor-homepage) .ae-visibility-desktop { display: none; }
     .ab-editor-public__block { font-size: var(--ae-mobile-size, inherit) !important; }
 }
 @media (prefers-reduced-motion: reduce) { .ab-editor-public * { transition: none !important; } }

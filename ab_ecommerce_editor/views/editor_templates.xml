@@ -1,4 +1,18 @@
 <odoo>
+    <template id="content_block" name="Editor content block">
+        <section t-if="block['type'] == 'hero'" class="ab-editor-public__hero">
+            <h2 t-esc="block.get('title', '')"/>
+            <p t-esc="block.get('body', '')"/>
+            <a t-if="block.get('url')" t-att-href="block['url']" class="ab-editor-public__button" t-esc="block.get('label') or block.get('title')"/>
+        </section>
+        <h2 t-elif="block['type'] == 'heading'" t-esc="block.get('title', '')"/>
+        <p t-elif="block['type'] == 'text'" class="ab-editor-public__text" t-esc="block.get('body', '')"/>
+        <figure t-elif="block['type'] == 'image'">
+            <img t-att-src="block.get('url')" t-att-alt="block.get('alt', '')" loading="lazy"/>
+        </figure>
+        <a t-elif="block['type'] == 'button'" t-att-href="block.get('url') or '#'" class="ab-editor-public__button" t-esc="block.get('label', '')"/>
+        <hr t-elif="block['type'] == 'divider'"/>
+    </template>
     <template id="public_content" name="Editor content page">
         <t t-call="website.layout">
             <t t-set="additional_title" t-value="content['seo']['title']"/>
@@ -12,18 +26,7 @@
                         <p t-if="content['summary']" class="ab-editor-public__summary" t-esc="content['summary']"/>
                     </header>
                     <div t-foreach="content['blocks']" t-as="block" t-key="block['id']" t-att-class="'ab-editor-public__block ae-visibility-%s' % block.get('style', {}).get('visibility', 'all')" t-att-style="block_style(block.get('style', {}))">
-                        <section t-if="block['type'] == 'hero'" class="ab-editor-public__hero">
-                            <h2 t-esc="block.get('title', '')"/>
-                            <p t-esc="block.get('body', '')"/>
-                            <a t-if="block.get('url')" t-att-href="block['url']" class="ab-editor-public__button" t-esc="block.get('label') or block.get('title')"/>
-                        </section>
-                        <h2 t-elif="block['type'] == 'heading'" t-esc="block.get('title', '')"/>
-                        <p t-elif="block['type'] == 'text'" class="ab-editor-public__text" t-esc="block.get('body', '')"/>
-                        <figure t-elif="block['type'] == 'image'">
-                            <img t-att-src="block.get('url')" t-att-alt="block.get('alt', '')" loading="lazy"/>
-                        </figure>
-                        <a t-elif="block['type'] == 'button'" t-att-href="block.get('url') or '#'" class="ab-editor-public__button" t-esc="block.get('label', '')"/>
-                        <hr t-elif="block['type'] == 'divider'"/>
+                        <t t-if="block.get('active', True)" t-call="ab_ecommerce_editor.content_block"/>
                     </div>
                 </article>
             </main>

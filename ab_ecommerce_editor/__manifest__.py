@@ -14,6 +14,7 @@
         'security/ir.model.access.csv',
         'views/editor_views.xml',
         'views/editor_templates.xml',
+        'views/homepage.xml',
         'data/scheduled_publish.xml',
     ],
     'assets': {

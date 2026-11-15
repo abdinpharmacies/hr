@@ -50,7 +50,7 @@ class EditorContent(http.Controller):
         revision = revision if revision is not None else document.published_revision_id
         payload = deepcopy(snapshot if snapshot is not None else revision.payload)
         language = language or ('ar_001' if (request.env.lang or '').startswith('ar') else 'en_US')
-        blocks = payload['blocks'][language]
+        blocks = [block for block in payload['blocks'][language] if block.get('active', True)]
         unsupported = []
         if capabilities is not None:
             for block in blocks:
@@ -101,6 +101,26 @@ class EditorContent(http.Controller):
         ]), limit=1)
         if not document:
             return request.not_found()
+        if document.kind == 'homepage':
+            language = kwargs.get('lang')
+            if language in ('en_US', 'ar_001'):
+                request.update_context(lang=language)
+                document = document.with_context(lang=language)
+            language = 'ar_001' if (request.env.lang or '').startswith('ar') else 'en_US'
+            snapshot = document._snapshot()
+            blocks = snapshot['blocks'][language]
+            section = kwargs.get('section')
+            if section:
+                blocks = [block for block in blocks if block['type'] == section]
+                for block in blocks:
+                    block['active'] = True
+            response = request.render('ab_ecommerce_editor.homepage_preview', {
+                'ae_home_style': {**snapshot['design_tokens'], **snapshot['platform_overrides']['web']},
+                'ae_home_blocks': blocks, 'ae_preview_section': section, 'no_header': bool(section), 'no_footer': bool(section),
+            })
+            response.headers['Cache-Control'] = 'no-store'
+            response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+            return response
         content = self._localized(document, snapshot=document._snapshot())
         response = request.render('ab_ecommerce_editor.public_content', {
             'content': content, 'block_style': block_style, 'is_editor_preview': True,

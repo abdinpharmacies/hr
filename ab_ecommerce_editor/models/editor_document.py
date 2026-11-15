@@ -12,6 +12,8 @@ from PIL import Image
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
+from .homepage_content import homepage_sections, validate_home_content
+
 
 BLOCK_TYPES = {'hero', 'heading', 'text', 'image', 'button', 'divider'}
 FONTS = {'system', 'arabic', 'georgia', 'monospace'}
@@ -65,10 +67,12 @@ def validate_url(value, image=False):
         raise ValidationError(_('Use an HTTPS link or an allowed site path.'))
 
 
-def validate_blocks(blocks, allow_template=False):
+def validate_blocks(blocks, allow_template=False, allow_homepage=False):
     if not isinstance(blocks, list) or len(blocks) > 80:
         raise ValidationError(_('A page can contain up to 80 blocks.'))
     seen = set()
+    native_seen = set()
+    native_types = {section["type"] for section in homepage_sections()}
     for block in blocks:
         if not isinstance(block, dict) or not isinstance(block.get('id'), str):
             raise ValidationError(_('A content block is invalid.'))
@@ -80,7 +84,21 @@ def validate_blocks(blocks, allow_template=False):
             if set(block) != {'id', 'type', 'template_id'} or type(block['template_id']) is not int:
                 raise ValidationError(_('The reusable block reference is invalid.'))
             continue
-        if not isinstance(kind, str) or kind not in BLOCK_TYPES or set(block) - ({'id', 'type', 'style', 'url'} | TEXT_KEYS):
+        if isinstance(kind, str) and kind in native_types:
+            if not allow_homepage or kind in native_seen or set(block) - {'id', 'type', 'active', 'content', 'style'}:
+                raise ValidationError(_('This homepage section is invalid.'))
+            native_seen.add(kind)
+            validate_home_content(block)
+            for key, value in block.get('content', {}).items():
+                if key.startswith('link_'):
+                    validate_url(value)
+            validate_style(block.get('style', {}))
+            if type(block.get('active', True)) is not bool:
+                raise ValidationError(_('This homepage section is invalid.'))
+            continue
+        if 'active' in block and type(block['active']) is not bool:
+            raise ValidationError(_('This homepage section is invalid.'))
+        if not isinstance(kind, str) or kind not in BLOCK_TYPES or set(block) - ({'id', 'type', 'style', 'url', 'active'} | TEXT_KEYS):
             raise ValidationError(_('This block type is not supported.'))
         validate_style(block.get('style', {}))
         for key in TEXT_KEYS:
@@ -96,7 +114,7 @@ class EditorDocument(models.Model):
     _order = 'write_date desc, id desc'
 
     name = fields.Char(required=True, translate=False)
-    kind = fields.Selection([('page', 'Page'), ('blog', 'Blog post')], required=True, default='page')
+    kind = fields.Selection([('page', 'Page'), ('blog', 'Blog post'), ('homepage', 'Homepage')], required=True, default='page')
     website_id = fields.Many2one('website', required=True, default=lambda self: self.env['website'].search(fields.Domain('company_id', 'in', self.env.companies.ids), limit=1))
     company_id = fields.Many2one(related='website_id.company_id', store=True)
     slug = fields.Char(required=True)
@@ -134,13 +152,15 @@ class EditorDocument(models.Model):
         'This URL is already used on this website.',
     )
 
-    @api.constrains('slug', 'blocks_en', 'blocks_ar', 'design_tokens', 'web_overrides', 'flutter_overrides', 'image_url')
+    @api.constrains('kind', 'slug', 'blocks_en', 'blocks_ar', 'design_tokens', 'web_overrides', 'flutter_overrides', 'image_url')
     def _check_content(self):
         for document in self:
             if not SLUG.fullmatch(document.slug or ''):
                 raise ValidationError(_('Use lowercase letters, numbers, and hyphens for the URL.'))
-            validate_blocks(document.blocks_en or [], allow_template=True)
-            validate_blocks(document.blocks_ar or [], allow_template=True)
+            if document.kind == 'homepage' and document.slug != 'home':
+                raise ValidationError(_('The homepage URL cannot be changed.'))
+            validate_blocks(document.blocks_en or [], allow_template=True, allow_homepage=document.kind == 'homepage')
+            validate_blocks(document.blocks_ar or [], allow_template=True, allow_homepage=document.kind == 'homepage')
             for value in (document.design_tokens, document.web_overrides, document.flutter_overrides):
                 validate_style(value or {})
             validate_url(document.image_url or '', image=True)
@@ -284,7 +304,7 @@ class EditorDocument(models.Model):
                     result.append(copy)
             else:
                 result.append(deepcopy(block))
-        validate_blocks(result)
+        validate_blocks(result, allow_homepage=self.kind == 'homepage')
         return result
 
     def _snapshot(self):
@@ -301,7 +321,7 @@ class EditorDocument(models.Model):
             'summary': {'en_US': self.summary_en or '', 'ar_001': self.summary_ar or self.summary_en or ''},
             'blocks': {
                 'en_US': self._resolved_blocks(self.blocks_en or []),
-                'ar_001': self._resolved_blocks(self.blocks_ar or self.blocks_en or []),
+                'ar_001': self._resolved_blocks((self.blocks_ar or []) if self.kind == 'homepage' else (self.blocks_ar or self.blocks_en or [])),
             },
             'design_tokens': deepcopy(self.design_tokens or {}),
             'platform_overrides': {
