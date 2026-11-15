@@ -6,8 +6,8 @@ from io import BytesIO
 
 from PIL import Image
 
-from odoo import fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo import models, _
+from odoo.exceptions import ValidationError
 from odoo.addons.ab_crm_messaging.models.media import validate_media
 
 DOCUMENT_MIMES = {
@@ -23,6 +23,8 @@ def validate_whatsapp_attachment(attachment, translate):
     if not isinstance(attachment, dict):
         raise ValidationError(translate('Invalid media content or size.'))
     mime = attachment.get('mimetype')
+    if mime == 'video/mp4':
+        return validate_media(attachment, attachment.get('data'), translate=translate)
     if mime not in DOCUMENT_MIMES | {'video/mp4', 'video/3gpp'}:
         return validate_media(attachment, attachment.get('data'), translate=translate)
     kind = 'video' if mime.startswith('video/') else 'document'
@@ -60,19 +62,6 @@ def validate_whatsapp_attachment(attachment, translate):
     except (ValueError, binascii.Error, UnicodeError):
         raise ValidationError(translate('Invalid media content or size.')) from None
     return raw
-
-
-def preserve_video_history(records):
-    if records:
-        raise UserError(_('Integrated WhatsApp history is immutable.'))
-
-
-class Media(models.Model):
-    _inherit = 'ab_crm_message_media'
-
-    kind = fields.Selection(
-        selection_add=[('video', 'Video')], ondelete={'video': preserve_video_history}
-    )
 
 
 class MessagingAPI(models.AbstractModel):

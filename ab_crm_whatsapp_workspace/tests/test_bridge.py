@@ -1,3 +1,6 @@
+import subprocess
+import tempfile
+from pathlib import Path
 import base64
 from io import BytesIO
 
@@ -10,6 +13,15 @@ from odoo.exceptions import AccessError, UserError
 from odoo.tests import TransactionCase, tagged
 
 from ..models.common import bridge_mutation
+
+
+def sample_mp4():
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / 'clip.mp4'
+        subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i',
+                        'color=red:s=16x16:d=0.2', '-c:v', 'libx264', '-threads', '1',
+                        '-pix_fmt', 'yuv420p', str(path)], check=True, timeout=15)
+        return path.read_bytes()
 
 
 @tagged('post_install', '-at_install')
@@ -783,7 +795,7 @@ class TestWhatsAppBridge(TransactionCase):
             ('image', 'image/webp', b'RIFF\x08\x00\x00\x00WEBPVP8 '),
             ('document', 'application/pdf', b'%PDF-test'),
             ('document', 'text/plain', b'Private document'),
-            ('video', 'video/mp4', b'\x00\x00\x00\x18ftypmp42'),
+            ('video', 'video/mp4', sample_mp4()),
         ]):
             message = self.incoming_whatsapp(f'media-{index}', whatsapp={'type': kind, 'profile_name': 'Human name'},
                 media={'kind': kind, 'mimetype': mime, 'size': 0, 'duration': 0,
@@ -955,7 +967,7 @@ class TestWhatsAppBridge(TransactionCase):
     def test_status_without_send_operation_has_exact_diagnostic(self):
         self.wa_account.whatsapp_webhook_enabled = True
         with self.assertRaisesRegex(UserError, 'Provider acceptance is not recorded yet'):
-            self.gateway.receive_status('test-wa', '98765', 'untracked-provider-message', '201014763233', 'delivered')
+            self.gateway.with_context(lang='en_US').receive_status('test-wa', '98765', 'untracked-provider-message', '201014763233', 'delivered')
 
 
     def test_phone_archive_scope_and_protected_defaults(self):
@@ -1119,3 +1131,131 @@ class TestWhatsAppBridge(TransactionCase):
                 gateway.receive_status('test-wa', '98765', 'missing', '201012345678', 'read')
             with self.assertRaisesRegex(UserError, 'دليل التسليم غير صالح'):
                 gateway.receive_status('test-wa', '98765', '', '201012345678', 'read')
+
+
+    def test_whatsapp_branch_location_queue_history_and_dispatch_gate(self):
+        from uuid import uuid4
+        profile = self.env['ab_crm_branch_location'].create({
+            'directory_key': 'whatsapp-branch', 'store_id': self.store.id,
+            'name': 'Public Branch', 'address': 'Public Street', 'region': 'Region',
+            'latitude': 0, 'longitude': 180, 'source': 'Reviewed test source',
+        })
+        profile.action_review()
+        preview = self.wa_staff.workspace_branch_preview(profile.id)
+        self.assertEqual(preview['provider'], 'whatsapp')
+        args = [profile.id, profile.revision, 'en_US', str(uuid4())]
+        with self.assertRaises(UserError):
+            self.wa_staff.action_share_branch(*args)
+        self.wa_account.branch_location_enabled = True
+        result = self.wa_staff.action_share_branch(*args, include_details=True)
+        self.assertEqual(self.wa_staff.action_share_branch(*args, include_details=True), result)
+        message = self.env['ab_crm_message'].browse(result['location_id'])
+        self.assertEqual(message.whatsapp_history_ids.message_type, 'location')
+        self.assertEqual(message.whatsapp_history_ids.crm_location_snapshot, message.location_snapshot)
+        self.assertEqual(message.messaging_operation_ids.content['location']['longitude'], 180)
+        self.assertNotIn('location', self.env['ab_crm_message'].browse(result['details_id']).messaging_operation_ids.content)
+        payload = self.lease()
+        self.assertEqual(payload['location']['address'], 'Public Street')
+        self.assertTrue(self.authorize(payload))
+        self.wa_account.branch_location_enabled = False
+        self.assertFalse(self.authorize(payload))
+        self.wa_account.branch_location_enabled = True
+        self.gateway.report_delivery('test-wa', '98765', payload['token'], payload['attempt'], 'receipt', 'accepted', 'wamid.branch')
+        self.assertEqual(message.provider_reference, 'wamid.branch')
+        self.assertEqual(message.whatsapp_history_ids.meta_message_id, 'wamid.branch')
+
+    def test_whatsapp_branch_location_scope_and_closed_window(self):
+        from uuid import uuid4
+        profile = self.env['ab_crm_branch_location'].create({
+            'directory_key': 'whatsapp-scope', 'store_id': self.store.id,
+            'name': 'Public Branch', 'address': 'Public Street', 'region': 'Region',
+            'latitude': 0, 'longitude': 0, 'source': 'Reviewed test source',
+        })
+        profile.action_review()
+        self.wa_account.branch_location_enabled = True
+        with self.assertRaises(AccessError):
+            self.wa_account.with_user(self.staff).write({'branch_location_enabled': False})
+        with self.assertRaises(AccessError):
+            self.wa_staff.with_user(self.other).workspace_branch_directory()
+        with self.assertRaises(AccessError):
+            self.wa_staff.with_context(ab_chatter_session_token='invalid').workspace_branch_preview(profile.id)
+        company = self.env['res.company'].create({'name': 'Other branch company'})
+        foreign = self.env['ab_crm_branch_location'].with_company(company).create({
+            'directory_key': 'foreign-whatsapp-scope', 'company_id': company.id,
+            'store_id': self.foreign_store.id, 'name': 'Foreign Branch', 'address': 'Street',
+            'region': 'Region', 'latitude': 0, 'longitude': 0, 'source': 'Reviewed test source',
+        })
+        foreign.action_review()
+        with self.assertRaises(AccessError):
+            self.wa_staff.workspace_branch_preview(foreign.id)
+        with bridge_mutation():
+            self.wa.write({'messaging_last_inbound': fields.Datetime.now() - timedelta(hours=25)})
+        with self.assertRaises(UserError):
+            self.wa_staff.action_share_branch(profile.id, profile.revision, 'en_US', str(uuid4()))
+
+    def test_read_receipt_view_queue_dedup_lease_result_and_scope(self):
+        self.wa_account.whatsapp_webhook_enabled = True
+        received = self.gateway.receive_event('test-wa', '98765', {
+            'id': 'read-receipt-target', 'sender': self.wa.external_key, 'body': 'Read me',
+            'timestamp': fields.Datetime.to_string(fields.Datetime.now()),
+            'unsupported': False, 'source_digest': 'e' * 64,
+        })
+        message_id = received['message_id']
+        self.assertTrue(self.wa_staff.workspace_acknowledge(message_id))
+        receipts = self.env['ab_crm_read_receipt'].search([('account_id', '=', self.wa_account.id)])
+        self.assertFalse(receipts)
+        self.wa_account.read_receipts_enabled = True
+        for unused in range(2):
+            self.assertTrue(self.wa_staff.workspace_acknowledge(message_id))
+        receipts = self.env['ab_crm_read_receipt'].search([('account_id', '=', self.wa_account.id)])
+        self.assertEqual(len(receipts), 1)
+        self.assertEqual(receipts.actor_id, self.staff)
+        with self.assertRaises(AccessError):
+            self.wa_account.with_user(self.staff).write({'read_receipts_enabled': True})
+        with self.assertRaises(AccessError):
+            self.wa.with_user(self.other).workspace_acknowledge(message_id)
+        with self.assertRaises(AccessError):
+            self.gateway.lease_read_receipt('test-wa', 'wrong-account')
+        payload = self.gateway.lease_read_receipt('test-wa', '98765')
+        self.assertEqual(payload['reference'], 'read-receipt-target')
+        self.assertFalse(self.gateway.lease_read_receipt('test-wa', '98765'))
+        with self.assertRaises(AccessError):
+            self.gateway.report_read_receipt('test-wa', '98765', payload['token'], 'stale', 'accepted')
+        self.gateway.report_read_receipt('test-wa', '98765', payload['token'], payload['lease'], 'retry')
+        self.assertEqual(receipts.state, 'pending')
+        receipts._internal_write({'available_at': fields.Datetime.now()})
+        retried = self.gateway.lease_read_receipt('test-wa', '98765')
+        self.assertEqual(retried['token'], payload['token'])
+        self.assertNotEqual(retried['lease'], payload['lease'])
+        self.gateway.report_read_receipt('test-wa', '98765', retried['token'], retried['lease'], 'accepted')
+        self.assertEqual(receipts.state, 'accepted')
+        self.assertTrue(receipts.accepted_at)
+        self.assertFalse(self.gateway.lease_read_receipt('test-wa', '98765'))
+
+    def test_read_receipts_exclude_expired_events(self):
+        self.wa_account.whatsapp_webhook_enabled = True
+        self.wa_account.read_receipts_enabled = True
+        result = self.gateway.receive_event('test-wa', '98765', {
+            'id': 'old-read-target', 'sender': self.wa.external_key, 'body': 'Old',
+            'timestamp': fields.Datetime.to_string(fields.Datetime.now() - timedelta(days=31)),
+            'unsupported': False, 'source_digest': 'd' * 64,
+        })
+        self.wa_staff.workspace_acknowledge(result['message_id'])
+        self.assertFalse(self.gateway.lease_read_receipt('test-wa', '98765'))
+
+
+    def test_channel_switch_validates_target_without_searching_computed_account(self):
+        customer = self.env['ab_crm_customer'].create({'name': 'Switch target', 'branch_id': self.branch.id})
+        telegram = self.env['ab_crm_conversation'].create({
+            'name': 'Telegram', 'external_key': '445566', 'branch_id': self.branch.id,
+            'channel_id': self.channel.id,
+        }).with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
+        for stream in (self.wa_staff, telegram):
+            preview = stream.action_preview_customer_link(customer.id)
+            stream.action_confirm_customer_link(customer.id, preview['fingerprint'])
+        self.assertEqual(self.wa_staff.workspace_channel(telegram.id)['id'], telegram.id)
+        self.assertEqual(telegram.workspace_channel(self.wa.id)['id'], self.wa.id)
+        with self.assertRaises(AccessError):
+            telegram.workspace_channel(False)
+        with self.assertRaises(AccessError):
+            telegram.workspace_channel(telegram.id + 10000)

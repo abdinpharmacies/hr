@@ -138,8 +138,14 @@ class Conversation(models.Model):
         result = super()._workspace_actions(message, send_reason)
         if self.channel_id.provider == 'whatsapp':
             try:
-                self._whatsapp_reference(message.provider_reference, reaction=True)
-                allowed = not send_reason and self.messaging_account_id.whatsapp_extended_enabled
+                history = message.whatsapp_history_ids
+                allowed = bool(
+                    not send_reason and self.messaging_account_id.whatsapp_extended_enabled
+                    and message.conversation_id == self and message.provider_reference
+                    and len(history) == 1 and not history.is_deleted
+                    and history.message_type != 'reaction' and history.crm_timestamp
+                    and history.crm_timestamp >= fields.Datetime.now() - timedelta(days=30)
+                )
             except (AccessError, UserError):
                 allowed = False
             result['react']['enabled'] = allowed

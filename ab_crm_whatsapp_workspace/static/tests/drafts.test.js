@@ -31,12 +31,13 @@ class WhatsAppHarness extends SalesWorkspace {
     }
 }
 
-test("WhatsApp composition enables text and approved templates", async () => {
+test("WhatsApp composition enables text, branch locations and approved templates", async () => {
     await mountWithCleanup(WhatsAppHarness);
     expect(".ab_composer fieldset:disabled").toHaveCount(0);
     expect(".ab_composer textarea").toHaveCount(1);
     await contains(".ab_attach_toggle").click();
     expect(".ab_attachment_menu").toHaveText(/WhatsApp templates/);
+    expect(".ab_attachment_menu button:contains(Location)").toHaveCount(1);
 });
 
 test("WhatsApp composition retains RTL direction", async () => {
@@ -88,7 +89,7 @@ for (const direction of ["ltr", "rtl"]) {
                 super.setup();
                 this.direction = direction;
                 this.state.inbox = [{id: 2, group_key: "shared", name: "Customer", channels: ["telegram", "whatsapp"], unread: 3,
-                    streams: [{id: 1, provider: "telegram"}, {id: 2, provider: "whatsapp"}]}];
+                    streams: [{id: 1, provider: "telegram", unread: 1}, {id: 2, provider: "whatsapp", unread: 2}]}];
                 this.state.detail.streams = [{id: 1, provider: "telegram", label: "Telegram", unread: 1}, {id: 2, provider: "whatsapp", label: "WhatsApp", unread: 2}];
             }
         }
@@ -96,7 +97,11 @@ for (const direction of ["ltr", "rtl"]) {
         expect(".ab_conversation").toHaveCount(1);
         expect(".ab_channel_button").toHaveCount(2);
         expect(".ab_channel_button .badge").toHaveCount(0);
-        expect(".ab_conversation .badge").toHaveText("3");
+        expect(".ab_conversation .ab_inbox_unread").toHaveCount(2);
+        expect(".ab_conversation .ab_inbox_unread[data-channel='telegram']").toHaveText("1");
+        expect(".ab_conversation .ab_inbox_unread[data-channel='whatsapp']").toHaveText("2");
+        expect(".ab_conversation").toHaveAttribute("data-channel", "whatsapp");
+        expect(".ab_conversation .source-whatsapp").toHaveCount(1);
         expect(".ab_conversation.selected").toHaveCount(1);
     });
 }
@@ -145,7 +150,8 @@ test("contact toolbar links the selected channel through the contact picker", as
     await animationFrame();
     expect(".ab_link_contact:disabled").toHaveCount(0);
     expect(".ab_contact_tools").toHaveCount(0);
-    expect(".ab_send svg").toHaveCount(1);
+    expect(".ab_send .fa-paper-plane").toHaveCount(1);
+    expect(".ab_send svg").toHaveCount(0);
     expect(".ab_send").toHaveAttribute("aria-label", "Send message");
 });
 

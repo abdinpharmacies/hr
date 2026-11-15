@@ -4,7 +4,7 @@
             <button t-if="state.detail.whatsapp_templates" class="btn btn-light" t-on-click="() => { state.attachmentMenu = false; this.whatsappTemplates(); }" t-att-disabled="state.busy">WhatsApp templates</button>
         </xpath>
         <xpath expr="//div[hasclass('ab_composer')]/fieldset" position="attributes">
-            <attribute name="t-att-disabled">!state.detail.owned || state.busy || !['telegram', 'whatsapp'].includes(state.detail.provider)</attribute>
+            <attribute name="t-att-disabled">!state.detail.owned || state.busy || state.navigating || !['telegram', 'whatsapp'].includes(state.detail.provider)</attribute>
         </xpath>
     </t>
     <t t-name="ab_crm_whatsapp_workspace.Templates">

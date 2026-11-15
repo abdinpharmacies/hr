@@ -205,7 +205,7 @@ class Account(models.Model):
         for media in message.media_ids:
             limit = (
                 (
-                    5
+                    10 if media.mimetype == 'image/gif' else 5
                     if media.kind == 'image'
                     else 16 if media.kind in ('audio', 'voice', 'video') else 20
                 )
@@ -216,7 +216,7 @@ class Account(models.Model):
                 media.size > limit
                 or (
                     media.kind == 'image'
-                    and media.mimetype not in ('image/jpeg', 'image/png')
+                    and media.mimetype not in ('image/jpeg', 'image/png', 'image/gif')
                 )
                 or (
                     media.kind == 'audio'

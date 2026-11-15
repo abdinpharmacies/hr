@@ -281,7 +281,7 @@ class Message(models.Model):
                     direction='outgoing',
                     wa_id=message.conversation_id.external_key,
                     phone_number_id=account.provider_account,
-                    message_type=kind,
+                    message_type='location' if message.location_snapshot else kind,
                     text_content=message.body,
                     status='queued',
                     reply_to_meta_message_id=(
