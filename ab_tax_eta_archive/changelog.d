@@ -1,5 +1,33 @@
 ﻿Current changes before commit:
 
+- Retrieve eligible UUID details newest day first, with invoices before receipts for each day; only then continue to the previous day. Preserve issue-time order across interleaved directions and connections.
+- Keep invoice and receipt scheduled jobs separate, coordinate their queue head, prioritize the invoice cron and trigger the next task after releasing the queue lock. Avoid duplicate pending trigger records.
+- Guard the detail queue with a PostgreSQL transaction advisory lock on a dedicated cursor so scheduled/manual duplicate runs cannot overlap, even across progress commits. This bounded lock query does not modify business data and releases on failure or worker exit.
+- Align pending-detail indexes with date/issue-time ordering while retaining bounded batches, pooled HTTP sessions, cached tokens, 0.6-second request pacing and persisted Retry-After cooldowns.
+- Identify the operation in web progress descriptions with invoice/receipt type, sent/received direction and issue date. Maintain all four descriptions in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
+
+Validation (2026-11-15):
+
+- Targeted ETA module upgrade passed in eta_validation_20261115 with alternate ports and scheduled jobs disabled.
+- Passed seven validation groups using actual PostgreSQL locks and mocked ETA HTTP: day/type order, interleaved issue-time order, inactive/future/retry-cooling exclusions, token reuse, request pacing, 429 deferral, deduplicated task handoff and priorities.
+- Verified a second worker cannot acquire the detail lock after the main worker commits, duplicate entry points do not execute their batches, and locks release after deliberate exceptions. Verified handoff happens after releasing the lock.
+- Minimum observed invoice-request interval was 0.593 seconds, with at most two starts in every tested one-second window. A 120-second Retry-After response persisted a longer cooldown and left the UUID pending without another HTTP call.
+- All fixtures were rolled back; no live ETA or Telegram requests were made. Temporary tests are excluded from the addon.
+- Progress descriptions: targeted module upgrade passed, exported the Odoo 19 POT, checked both PO catalogs with Babel, and verified all four English/Arabic runtime messages include the correct operation, direction and date. GNU msgfmt remains unavailable locally.
+
+c8ccaadd9d324034dbad211878204ba892445550 - yahyazakaria22 - 2026-11-15
+fix: recover missing ETA Telegram delivery days
+
 - Generate and send each daily file when its own invoice/receipt direction has finished retrieval and UUID details are ready; unrelated failed streams no longer block the whole date.
 - Save the next automatic Telegram scan date so older missing days are reached across cron time limits. Wrap at the configured start date and retry blocked dates on later sweeps.
 - Preserve queued delivery requests after failed sends and clear them only after successful delivery.

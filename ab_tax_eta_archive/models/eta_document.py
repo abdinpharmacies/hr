@@ -93,7 +93,7 @@ class EtaInvoice(models.Model):
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA invoice UUID must be unique per connection and direction.')
     _pending_details = models.Index(
-        "(config_id, detail_attempt_at ASC NULLS FIRST, report_date DESC, id DESC) "
+        "(config_id, report_date DESC, issued_at DESC NULLS LAST, id DESC) "
         "WHERE detail_json IS NULL OR detail_json = ''")
 
     def _eta_values(self, item, direction, config):
@@ -167,7 +167,7 @@ class EtaReceipt(models.Model):
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA receipt UUID must be unique per connection and direction.')
     _pending_details = models.Index(
-        "(config_id, detail_attempt_at ASC NULLS FIRST, report_date DESC, id DESC) "
+        "(config_id, report_date DESC, issued_at DESC NULLS LAST, id DESC) "
         "WHERE detail_json IS NULL OR detail_json = ''")
 
     def _eta_values(self, item, direction, config):

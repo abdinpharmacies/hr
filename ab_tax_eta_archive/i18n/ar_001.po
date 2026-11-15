@@ -4,6 +4,34 @@ msgstr ""
 "Language: ar_001\n"
 
 #. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
+#, python-format
+msgid "Retrieving ETA sent invoice details for %(date)s"
+msgstr "جلب تفاصيل الفواتير الصادرة من مصلحة الضرائب ليوم %(date)s"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
+#, python-format
+msgid "Retrieving ETA received invoice details for %(date)s"
+msgstr "جلب تفاصيل الفواتير الواردة من مصلحة الضرائب ليوم %(date)s"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
+#, python-format
+msgid "Retrieving ETA sent receipt details for %(date)s"
+msgstr "جلب تفاصيل الإيصالات الصادرة من مصلحة الضرائب ليوم %(date)s"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
+#, python-format
+msgid "Retrieving ETA received receipt details for %(date)s"
+msgstr "جلب تفاصيل الإيصالات الواردة من مصلحة الضرائب ليوم %(date)s"
+
+#. module: ab_tax_eta_archive
 #: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__telegram_scan_date
 msgid "Next Telegram Scan Date"
 msgstr "تاريخ الفحص التالي لملفات تيليجرام"

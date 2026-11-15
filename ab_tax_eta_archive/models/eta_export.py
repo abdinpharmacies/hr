@@ -6,6 +6,7 @@ import json
 import logging
 import time
 from functools import partial
+from itertools import groupby
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
@@ -19,7 +20,7 @@ from openpyxl.utils import get_column_letter
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from .eta_sync import EtaRequestDeferred
+from .eta_sync import EtaRequestDeferred, eta_detail_task_lock
 
 _logger = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ CATEGORIES = (
 )
 EXPORT_FORMAT_VERSION = 2
 ETA_DETAIL_BATCH_SIZE = 80
+ETA_DETAIL_ORDER = 'report_date desc, issued_at desc NULLS LAST, id desc'
 
 INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
                    'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
@@ -217,6 +219,57 @@ class EtaExport(models.Model):
     def _cron_fetch_details(self, kind='invoice'):
         if kind not in ('invoice', 'receipt'):
             raise ValueError('Unsupported ETA stream')
+        with eta_detail_task_lock(self.env) as acquired:
+            if not acquired:
+                _logger.info('ETA detail queue already running; skipping duplicate %s task', kind)
+                if self.env.context.get('cron_id'):
+                    self.env['ir.cron']._commit_progress(remaining=0)
+                return
+            handoff = self._fetch_details_batch(kind)
+        # Notify the next worker only after releasing the queue lock; an early
+        # notification could make it consume the trigger while the lock is busy.
+        if handoff:
+            self._wake_detail_cron(handoff)
+            if self.env.context.get('cron_id'):
+                self.env['ir.cron']._commit_progress(remaining=0)
+
+    @api.model
+    def _detail_queue_domain(self, config_ids, today):
+        retry_before = fields.Datetime.now() - timedelta(minutes=5)
+        return (fields.Domain('config_id', 'in', config_ids) &
+                fields.Domain('report_date', '<=', today) &
+                (fields.Domain('detail_json', '=', False) |
+                 fields.Domain('detail_json', '=', '')) &
+                (fields.Domain('detail_attempt_at', '=', False) |
+                 fields.Domain('detail_error', '=', False) |
+                 fields.Domain('detail_attempt_at', '<', retry_before)))
+
+    @api.model
+    def _next_detail_work(self, domain):
+        candidates = []
+        for kind in ('invoice', 'receipt'):
+            head = self.env['ab_tax_eta_archive_' + kind].search(
+                domain, order=ETA_DETAIL_ORDER, limit=1)
+            if head:
+                candidates.append((head.report_date, kind == 'invoice', kind))
+        if not candidates:
+            return None
+        day, _invoice_first, kind = max(candidates)
+        return kind, day
+
+    @api.model
+    def _wake_detail_cron(self, kind):
+        if not self.env.context.get('cron_id'):
+            return
+        xmlid = ('cron_eta_uuid_details' if kind == 'invoice'
+                 else 'cron_eta_receipt_uuid_details')
+        cron = self.env.ref('ab_tax_eta_archive.' + xmlid)
+        if not self.env['ir.cron.trigger'].sudo().search([
+                ('cron_id', '=', cron.id), ('call_at', '<=', fields.Datetime.now())], limit=1):
+            cron._trigger()
+
+    @api.model
+    def _fetch_details_batch(self, kind):
         now = datetime.now(pytz.timezone('Africa/Cairo'))
         today = now.date()
         deadline = min(time.monotonic() + 25,
@@ -226,63 +279,46 @@ class EtaExport(models.Model):
                 self.env['ir.cron']._commit_progress(remaining=1)
             return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
-        models = [(kind, self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
-                                 else 'ab_tax_eta_archive_receipt'])]
-        retry_before = fields.Datetime.now() - timedelta(minutes=5)
-        selected_kind = None
-        selected_batch = self.env['ab_tax_eta_archive_receipt']
+        domain = self._detail_queue_domain(configs.ids, today)
+        next_work = self._next_detail_work(domain)
+        if not next_work or next_work[0] != kind:
+            if self.env.context.get('cron_id'):
+                self.env['ir.cron']._commit_progress(remaining=0)
+            return next_work[0] if next_work else None
+        model = self.env['ab_tax_eta_archive_' + kind]
+        selected_batch = model.search(
+            domain & fields.Domain('report_date', '=', next_work[1]),
+            order=ETA_DETAIL_ORDER, limit=ETA_DETAIL_BATCH_SIZE)
         progress_offset = 0
-        for kind, model in models:
-            batch = model.search([
-                ('config_id', 'in', configs.ids),
-                ('report_date', '<=', today),
-                '|', ('detail_json', '=', False), ('detail_json', '=', ''),
-                '|', '|', ('detail_attempt_at', '=', False),
-                ('detail_error', '=', False),
-                ('detail_attempt_at', '<', retry_before),
-            ], order='detail_attempt_at asc NULLS FIRST, report_date desc, id desc',
-                limit=ETA_DETAIL_BATCH_SIZE)
-            if batch:
-                selected_kind, selected_batch = kind, batch
-                break
         if selected_batch:
-            groups = {}
-            for record in selected_batch:
-                key = (record.config_id.id, record.report_date, record.direction)
-                groups.setdefault(key, []).append(record.id)
+            # Group only consecutive rows; grouping every row by direction would
+            # move an older sent document ahead of a newer received document.
+            groups = [(key, [record.id for record in rows]) for key, rows in groupby(
+                selected_batch, key=lambda record: (
+                    record.config_id.id, record.report_date, record.direction))]
             _logger.info('ETA UUID detail selection: kind=%s selected=%s groups=%s',
-                         selected_kind, len(selected_batch), len(groups))
+                         kind, len(selected_batch), len(groups))
             progress_offset = 0
             auth_cache = {}
             # One connection pool and authentication per connection for the whole slice.
             with requests.Session() as session:
-                for (config_id, report_date, direction), record_ids in groups.items():
+                for (config_id, report_date, direction), record_ids in groups:
                     if time.monotonic() >= deadline:
                         break
                     processed = self._enrich_details(
                         self.env['ab_tax_eta_archive_config'].browse(config_id),
-                        selected_kind, report_date, direction, deadline=deadline,
+                        kind, report_date, direction, deadline=deadline,
                         batch_size=len(record_ids), record_ids=record_ids,
                         progress_offset=progress_offset, progress_total=len(selected_batch),
                         session=session, auth_cache=auth_cache)
                     progress_offset += processed
                     if not processed:
                         break
-        else:
-            pending = any(model.search([
-                ('config_id', 'in', configs.ids),
-                '|', ('detail_json', '=', False), ('detail_json', '=', ''),
-            ], limit=1) for _kind, model in models)
-            due_date = any(model.search([
-                ('config_id', 'in', configs.ids), ('report_date', '<=', today),
-                '|', ('detail_json', '=', False), ('detail_json', '=', ''),
-            ], limit=1) for _kind, model in models)
-            _logger.info('ETA UUID detail selection: active_connections=%s '
-                         'pending_any=%s dated_through_today_any=%s eligible=0',
-                         len(configs), pending, due_date)
+        next_work = self._next_detail_work(self._detail_queue_domain(configs.ids, today))
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(
-                remaining=int(bool(selected_batch) and bool(progress_offset)))
+                remaining=int(bool(progress_offset) and bool(next_work) and next_work[0] == kind))
+        return next_work[0] if next_work and next_work[0] != kind else None
 
     @api.model
     def _cron_export_and_send(self):
@@ -488,6 +524,17 @@ class EtaExport(models.Model):
         return config._eta_auth_headers(kind, session=session)
 
     @api.model
+    def _detail_progress_message(self, kind, direction, report_date):
+        day = fields.Date.to_string(report_date)
+        if kind == 'invoice':
+            return (_('Retrieving ETA sent invoice details for %(date)s', date=day)
+                    if direction == 'sent' else
+                    _('Retrieving ETA received invoice details for %(date)s', date=day))
+        return (_('Retrieving ETA sent receipt details for %(date)s', date=day)
+                if direction == 'sent' else
+                _('Retrieving ETA received receipt details for %(date)s', date=day))
+
+    @api.model
     def _enrich_details(self, config, kind, report_date, direction, deadline=None,
                         batch_size=80, record_ids=None, progress_offset=0,
                         progress_total=None, session=None, auth_cache=None):
@@ -513,7 +560,7 @@ class EtaExport(models.Model):
         ]
         if record_ids is not None:
             missing_domain.append(('id', 'in', record_ids))
-        missing = model.search(missing_domain, order='id desc', limit=batch_size)
+        missing = model.search(missing_domain, order='issued_at desc NULLS LAST, id desc', limit=batch_size)
         if not missing:
             return 0
         if deadline is not None and time.monotonic() >= deadline:
@@ -550,7 +597,7 @@ class EtaExport(models.Model):
         ready = 0
         shape_logged = False
         progress = getattr(self, 'web_progress_percent', None)
-        progress_message = _('Retrieving ETA export details')
+        progress_message = self._detail_progress_message(kind, direction, report_date)
         progress_total = progress_total or len(missing)
         if progress and not progress_offset:
             progress(0, msg=progress_message, cancellable=False)

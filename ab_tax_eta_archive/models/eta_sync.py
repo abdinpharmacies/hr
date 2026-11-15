@@ -2,6 +2,7 @@ import logging
 import json
 import time
 from email.utils import parsedate_to_datetime
+from contextlib import contextmanager
 from datetime import datetime, time as day_time, timedelta, timezone
 from urllib.parse import urlsplit
 import pytz
@@ -23,6 +24,16 @@ ETA_RECEIPT_SEARCH_DELAY = 0.6
 ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT = 4
 ETA_RECEIPT_SEARCH_DAYS = 29
 ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED = False
+
+
+@contextmanager
+def eta_detail_task_lock(env):
+    """Keep the detail queue exclusive across progress commits and cron/manual runs."""
+    # A dedicated transaction owns only this advisory lock, never business rows.
+    # Its cursor context releases the lock on success, exception or worker exit.
+    with env.registry.cursor() as lock_cr:
+        lock_cr.execute('SELECT pg_try_advisory_xact_lock(%s, %s)', (0x455441, 1))
+        yield bool(lock_cr.fetchone()[0])
 
 
 class EtaSearchNoResult(Exception):
