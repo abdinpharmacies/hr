@@ -735,6 +735,15 @@
         <xpath expr="//div[contains(@t-attf-class, 'o_cart_total')]" position="attributes">
             <attribute name="t-attf-class" add="ab-storefront-cart-total" separator=" "/>
         </xpath>
+        <xpath expr="//tr[@name='o_order_delivery']/td[contains(@class, 'text-muted')]" position="replace">
+            <td class="ps-0 pt-0 pb-2 border-0 text-muted" t-att-colspan="3 if website_sale_order.amount_delivery == 0 else 2">
+                <t t-if="website_sale_order.amount_delivery == 0">We will inform you of the delivery fee before your order arrives.</t>
+                <t t-else="">Delivery</t>
+            </td>
+        </xpath>
+        <xpath expr="//tr[@name='o_order_delivery']/td[span[@t-out='website_sale_order.amount_delivery']]" position="attributes">
+            <attribute name="t-att-class">'text-end pe-0 pt-0 pb-2 border-0' + (' d-none' if website_sale_order.amount_delivery == 0 else '')</attribute>
+        </xpath>
         <xpath expr="//tr[@name='o_order_total_taxes']" position="replace"/>
     </template>
 

@@ -5100,7 +5100,13 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_delivery_status
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
 msgid "Delivery"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
+msgid "We will inform you of the delivery fee before your order arrives."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
