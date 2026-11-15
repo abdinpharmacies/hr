@@ -34,7 +34,8 @@
             const hasDeals = DEAL_ORDER.some((deal) => selectedDeals.has(deal));
             const selectedBrand = url.searchParams.get("brand") || "";
             const selectedNeed = url.searchParams.get("need") || "";
-            const includeOutOfStock = url.searchParams.get("include_oos") === "1";
+            const selection = url.searchParams.get("include_oos");
+            const includeOutOfStock = selection === "1" || (url.searchParams.has("search") && selection !== "0");
             const hasFilters = FILTER_PARAMS.some((name) => url.searchParams.has(name));
 
             for (const link of dialog.querySelectorAll("[data-ab-deal]")) {
@@ -203,8 +204,8 @@
                     params.delete("brand");
                 }
             } else if (link.hasAttribute("data-ab-include-oos")) {
-                if (params.get("include_oos") === "1") {
-                    params.delete("include_oos");
+                if (params.get("include_oos") === "1" || (params.has("search") && params.get("include_oos") !== "0")) {
+                    params.set("include_oos", "0");
                 } else {
                     params.set("include_oos", "1");
                 }

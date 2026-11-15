@@ -136,7 +136,7 @@
             </section>
             <section class="ab-storefront-extra-filter-section" aria-label="Availability">
                 <h2>Availability</h2>
-                <a t-att-href="keep(include_oos=None if ab_storefront_include_oos else '1')"
+                <a t-att-href="keep(include_oos='0' if ab_storefront_include_oos and search else None if ab_storefront_include_oos else '1')"
                    data-ab-include-oos=""
                    t-attf-class="ab-storefront-filter-choice ab-storefront-filter-toggle #{'active' if ab_storefront_include_oos else ''}"
                    t-att-aria-pressed="'true' if ab_storefront_include_oos else 'false'">

@@ -11,6 +11,7 @@ from odoo.tests.common import HttpCase, TransactionCase
 from odoo.addons.website_sale.tests.common import MockRequest
 
 from ..controllers.catalog import AbStorefrontCatalog
+from ..controllers.shop import AbEcommerceStorefrontShop
 
 
 @tagged("post_install", "-at_install")
@@ -195,6 +196,23 @@ class TestStorefrontCatalogCache(TransactionCase):
         self.assertNotEqual(initial.xpath(price_path), refreshed.xpath(price_path))
         self.assertTrue(refreshed.xpath("//*[contains(@class,'ab-storefront-product-card-unavailable')]"))
         self.assertFalse(refreshed.xpath("//input[@name='add_qty']"))
+
+    def test_search_keeps_matching_sold_out_product_and_full_category_navigation(self):
+        product = self.env["product.template"].create({
+            "name": "NOW ULTRA OMEGA-3 CAP", "sale_ok": True, "is_published": True,
+            "website_id": self.website.id, "list_price": 2100,
+        })
+        with patch.object(AbEcommerceStorefrontShop, "_ab_storefront_available_products", return_value=product.browse()):
+            response = self.render(params={"search": product.name})
+            self.assertIn(product.id, response.qcontext["products"].ids)
+            self.assertTrue(response.qcontext["ab_storefront_include_oos"])
+            self.assertEqual(
+                response.qcontext["categories"].ids,
+                self.public._ab_storefront_categories(limit=None).ids,
+            )
+            filtered = self.render(params={"search": product.name, "include_oos": "0"})
+            self.assertNotIn(product.id, filtered.qcontext["products"].ids)
+            self.assertFalse(filtered.qcontext["ab_storefront_include_oos"])
 
 
 @tagged("post_install", "-at_install")

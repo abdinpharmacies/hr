@@ -55,6 +55,8 @@ class AbEcommerceStorefrontShop(WebsiteSale):
     def _get_additional_shop_values(self, values, **kwargs):
         result = super()._get_additional_shop_values(values, **kwargs)
         result.update(self._ab_storefront_price_range_values(values))
+        if values.get('search'):
+            result['categories'] = request.website._ab_storefront_categories(limit=None)
         need_key = request.params.get('need')
         result['ab_shop_need'] = request.env['product.tag'].search(
             fields.Domain('ab_shop_need_key', '=', need_key), limit=1
@@ -69,8 +71,12 @@ class AbEcommerceStorefrontShop(WebsiteSale):
                           if deal in (selected_deals ^ {key})) or None
             for key in ('discount', 'coupon', 'today')
         }
-        result['ab_storefront_include_oos'] = request.params.get('include_oos') == '1'
+        result['ab_storefront_include_oos'] = self._ab_storefront_include_oos(values.get('search'))
         return result
+
+    def _ab_storefront_include_oos(self, search):
+        selection = request.params.get('include_oos')
+        return selection == '1' or (bool(search) and selection != '0')
 
     def _get_search_options(self, *args, **kwargs):
         options = super()._get_search_options(*args, **kwargs)
@@ -86,7 +92,7 @@ class AbEcommerceStorefrontShop(WebsiteSale):
         fuzzy_search_term, _product_count, products = super()._shop_lookup_products(
             options, post, search, website
         )
-        include_oos = request.params.get('include_oos') == '1'
+        include_oos = self._ab_storefront_include_oos(search)
         if deals:
             matching_ids = set()
             if 'coupon' in deals:
@@ -200,7 +206,7 @@ class AbEcommerceStorefrontShop(WebsiteSale):
         values['need'] = request.params.get('need') or None
         values['brand'] = self._ab_storefront_brand_id() or None
         values['deal'] = ','.join(self._ab_storefront_deals()) or None
-        values['include_oos'] = '1' if request.params.get('include_oos') == '1' else None
+        values['include_oos'] = request.params.get('include_oos') or None
         return values
 
     def _ab_storefront_brand_id(self):
