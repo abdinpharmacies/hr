@@ -90,6 +90,15 @@ Choose individual fix numbers separated by commas or `a` for all supported fixes
   other row references the membership. Cascading changes are forbidden.
 - **Foreign keys:** independently restore saved original definitions after their
   orphan checks pass. Data repairs precede restoration when both are selected.
+- **Active language date format (option 6):** set every active target language to
+  `%Y-%m-%d` (for example, `2026-11-14`). Preview each affected language ID/code
+  and old/new format; preserve inactive languages and all other language settings.
+  Already-correct formats are skipped. This affects every user of those languages,
+  including English and Arabic when active. Source settings are never copied or
+  changed. It uses the same backup decision, confirmation, before-images, and
+  transaction receipts as the other fixes, and is included in `a` (all supported
+  fixes). Restart running Odoo workers after applying it to clear cached language
+  settings, then refresh the browser. The tool does not restart services.
 
 The XML-ID repair is generic across installed modules. The payment/report/Discuss
 repairs remain bounded to the investigated migration. Unsupported/changed cases

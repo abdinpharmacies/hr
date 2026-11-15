@@ -47,11 +47,17 @@ def show(audit_result, fixes):
                     print(f"   {module}: {counts.get('repairs', 0)} repairs; {counts.get('unresolved', 0)} unresolved")
             for model, count in item['model_changes'].items():
                 print(f'   {model}: {count} changes')
+        if name == 'date_format' and 'error' not in item:
+            for change in item['changes']:
+                before, after = change['before'], change['after']
+                print(f"   {before['code']} (ID {before['id']}): {before['date_format']} -> {after['date_format']}")
+            print('   Applies to every user of active target languages; restart running Odoo workers and refresh after repair.')
     print('a. All supported fixes\n0. Back to main menu')
 
 
 def choose(fixes):
     names = list(LABELS)
+    numbers = {str(i) for i in range(1, len(names) + 1)}
     while True:
         answer = input('Select fixes (comma-separated numbers, a, or 0): ').strip().lower()
         if answer == '0':
@@ -59,13 +65,13 @@ def choose(fixes):
         if answer == 'a':
             return [name for name in names if 'error' not in fixes[name] and fixes[name]['changes']]
         parts = answer.split(',')
-        if parts and all(p.strip() in ('1', '2', '3', '4', '5') for p in parts):
+        if parts and all(p.strip() in numbers for p in parts):
             selected = {names[int(p.strip()) - 1] for p in parts}
             if any('error' in fixes[name] for name in selected):
                 print('A selected fix is blocked. Resolve its findings first.')
                 continue
             return [name for name in names if name in selected and fixes[name]['changes']]
-        print('Choose numbers 1–5, a, or 0.')
+        print(f'Choose numbers 1–{len(names)}, a, or 0.')
 
 
 def ledger(connection):
@@ -206,6 +212,8 @@ def run(values, root, backup=None):
                           results=results, reports=str(stage), backup=backup_result)
             save_json(stage / 'result.json', result)
         print('Repair result:', result['status'])
+        if any(r['operation'] == 'date_format' and r['status'] == 'committed' for r in results):
+            print('Restart running Odoo workers to reload language settings, then refresh the browser.')
         return result
     except BaseException as exc:
         failure = dict(status='interrupted' if isinstance(exc, (KeyboardInterrupt, EOFError)) else 'failed',

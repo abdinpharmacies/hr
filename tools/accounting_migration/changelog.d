@@ -2,6 +2,24 @@
 
 ## Current changes before commit:
 
+- Add Fix database option 6 to set all active target language dates to YYYY-MM-DD, with language/code and old/new previews; preserve inactive languages, unrelated settings, and source data.
+- Reuse backup choice, confirmation, exclusive access, stale-preview checks, guarded updates, rollback, before-images, and atomic receipts; skip already-correct formats and include the fix in all-supported selection.
+- Derive valid fix numbers from menu labels, preserve options 1–5, and explain restarting running Odoo workers and refreshing browsers after applying SQL language changes.
+- Validate menu/display behavior and disposable PostgreSQL repairs, including inactive/already-correct languages, reruns, source preservation, stale previews, and receipt rollback.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `database_repair.py`
+- `repair_fixes.py`
+- `tests/test_database_repair.py`
+- `tests/test_migration_menu.py`
+
+## da05d3e75 — emadco88 — 2026-11-13
+
+Original commit subject: `tools/accounting_migration/ FIX 2`
+
 - Add a no-argument terminal menu for CSV export, CSV import, and separate database fixes; `0` exits the script. Preserve table-copy/mapping procedures; add explicit per-run backup decisions to existing CLI dispatch.
 - Share validated source/target config paths, database names, and one CSV path across menu actions in an atomic 0600 defaults file; retain settings after operation failures and reject export overwrites.
 - Add read-only live/saved FK auditing, composite/NULL handling, user-type conflict checks, bounded previews, and incomplete-timeout reporting.

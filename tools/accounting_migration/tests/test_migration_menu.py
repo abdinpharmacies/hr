@@ -12,7 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import MigrationError
 from migration_menu import DEFAULTS, load_defaults, save_defaults, collect, run_menu
 from migrate import main
-from database_repair import choose
+from database_repair import choose, show
+from repair_fixes import LABELS
 from repair_audit import saved_definition
 
 
@@ -94,12 +95,39 @@ class MenuTests(unittest.TestCase):
             connect.assert_not_called()
 
     def test_fix_selection_orders_dependencies_and_excludes_blocked(self):
-        fixes = {key: {'changes': [1]} for key in ('identities', 'payments', 'reports', 'discuss', 'foreign_keys')}
+        fixes = {key: {'changes': [1]} for key in LABELS}
         with patch('builtins.input', return_value='5,2,2,1'):
             self.assertEqual(choose(fixes), ['identities', 'payments', 'foreign_keys'])
         fixes['payments'] = {'error': 'blocked'}
         with patch('builtins.input', return_value='a'):
-            self.assertEqual(choose(fixes), ['identities', 'reports', 'discuss', 'foreign_keys'])
+            self.assertEqual(choose(fixes), ['identities', 'reports', 'discuss', 'foreign_keys', 'date_format'])
+
+    def test_date_fix_selection_invalid_input_empty_and_cancel(self):
+        fixes = {key: {'changes': [1]} for key in LABELS}
+        with patch('builtins.input', return_value='6'):
+            self.assertEqual(choose(fixes), ['date_format'])
+        with patch('builtins.input', return_value='6,2,6'):
+            self.assertEqual(choose(fixes), ['payments', 'date_format'])
+        with patch('builtins.input', side_effect=['7', '', '-1', '6']), \
+                contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(choose(fixes), ['date_format'])
+        self.assertIn('1–6', output.getvalue())
+        fixes['date_format'] = {'changes': []}
+        with patch('builtins.input', return_value='6'):
+            self.assertEqual(choose(fixes), [])
+        with patch('builtins.input', return_value='0'):
+            self.assertEqual(choose(fixes), [])
+
+    def test_date_fix_preview_displays_language_and_formats(self):
+        fixes = {key: {'error': 'unavailable'} for key in LABELS}
+        fixes['date_format'] = {'changes': [dict(
+            before=dict(id=2, code='ar_001', date_format='%d/%m/%Y'),
+            after=dict(date_format='%Y-%m-%d'))]}
+        checked = dict(checked=0, complete=True, user_roles=dict(conflicting_users=0), constraints=[])
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            show(checked, fixes)
+        self.assertIn('6. Set active language dates to YYYY-MM-DD: 1 change(s)', output.getvalue())
+        self.assertIn('ar_001 (ID 2): %d/%m/%Y -> %Y-%m-%d', output.getvalue())
 
     def test_saved_composite_constraint_definition_is_bounded(self):
         item = dict(referenced_schema='public', referenced_table='parent',

@@ -12,7 +12,7 @@ from psycopg2.extras import Json
 import test_prepared_postgres as fixtures
 from common import MigrationError, connect
 from repair_audit import audit, audit_fk, constraints, rows
-from repair_fixes import plan_fixes, apply_data, payments, reports, discuss, restore_fk
+from repair_fixes import plan_fixes, apply_data, payments, reports, discuss, restore_fk, date_format
 from database_repair import perform, validate_binding, run
 from csv_plan import database_identity
 
@@ -32,6 +32,12 @@ class DatabaseRepairTests(unittest.TestCase):
         for connection, source in ((self.source, True), (self.con, False)):
             with connection.cursor() as cr:
                 cr.execute('CREATE TABLE ir_module_module(name varchar PRIMARY KEY,state varchar)')
+                cr.execute('CREATE TABLE res_lang(id integer PRIMARY KEY,code varchar UNIQUE,active boolean, '
+                           'date_format varchar,time_format varchar)')
+                cr.execute("INSERT INTO res_lang VALUES (1,'en_US',true,'%m/%d/%Y','%H:%M:%S'),"
+                           "(2,'ar_001',true,'%d/%m/%Y','%I:%M %p'),"
+                           "(3,'fr_FR',false,'%d/%m/%Y','%H:%M'),"
+                           "(4,'de_DE',true,'%Y-%m-%d','%H:%M')")
                 cr.execute("INSERT INTO ir_module_module VALUES('base','installed')")
                 cr.execute('CREATE TABLE ir_model(model varchar PRIMARY KEY,transient boolean DEFAULT false)')
                 for model in ('res.users','res.partner','res.company','ir.model.fields','res.groups'):
@@ -100,6 +106,66 @@ class DatabaseRepairTests(unittest.TestCase):
         checked = audit(self.con)
         return checked, plan_fixes(self.source, self.con, checked)
 
+    def test_date_formats_target_only_preserve_properties_and_receipt(self):
+        original = rows(self.con, 'SELECT * FROM res_lang ORDER BY id')
+        source_before = rows(self.source, 'SELECT * FROM res_lang ORDER BY id')
+        changes = date_format(None, self.con)
+        self.assertEqual([c['before']['code'] for c in changes], ['en_US', 'ar_001'])
+        self.con.rollback()
+        with contextlib.redirect_stdout(io.StringIO()):
+            result = perform(self.con, self.source, self.stage, ['date_format'],
+                             {'date_format': {'changes': changes}}, {})
+        self.assertEqual(result[0]['status'], 'committed')
+        expected = [dict(r, date_format='%Y-%m-%d') if r['active'] else r for r in original]
+        self.assertEqual(rows(self.con, 'SELECT * FROM res_lang ORDER BY id'), expected)
+        self.assertEqual(rows(self.source, 'SELECT * FROM res_lang ORDER BY id'), source_before)
+        self.assertEqual(date_format(None, self.con), [])
+        record = rows(self.con, "SELECT record FROM database_repairs.completed WHERE operation='date_format'")[0]['record']
+        self.assertEqual(record['changes'], changes)
+
+    def test_no_active_languages_need_no_changes(self):
+        with self.con.cursor() as cr:
+            cr.execute('UPDATE res_lang SET active=false')
+        self.assertEqual(date_format(None, self.con), [])
+
+    def test_changed_language_preview_rejected_without_partial_updates(self):
+        for update in ("date_format='%d-%m-%Y'", 'active=false', "code='ar'"):
+            with self.subTest(update=update):
+                changes = date_format(None, self.con)
+                with self.con.cursor() as cr:
+                    cr.execute('UPDATE res_lang SET ' + update + ' WHERE id=2')
+                self.con.commit()
+                with contextlib.redirect_stdout(io.StringIO()):
+                    result = perform(self.con, self.source, self.stage, ['date_format'],
+                                     {'date_format': {'changes': changes}}, {})
+                self.assertEqual(result[0]['status'], 'failed')
+                self.assertEqual(self.scalar('SELECT date_format FROM res_lang WHERE id=1'), '%m/%d/%Y')
+                self.assertEqual(self.scalar('SELECT count(*) FROM database_repairs.completed'), 0)
+                with self.con.cursor() as cr:
+                    cr.execute("UPDATE res_lang SET code='ar_001',active=true,date_format='%d/%m/%Y' WHERE id=2")
+                self.con.commit()
+
+    def test_date_update_guard_and_transaction_rollback(self):
+        changes = date_format(None, self.con)
+        with self.con.cursor() as cr:
+            cr.execute('UPDATE res_lang SET active=false WHERE id=2')
+        self.con.commit()
+        with self.assertRaisesRegex(MigrationError, 'unexpected number'):
+            apply_data(self.con, changes)
+        self.con.rollback()
+        self.assertEqual(self.scalar('SELECT date_format FROM res_lang WHERE id=1'), '%m/%d/%Y')
+
+    def test_date_failure_rolls_back_changes_and_receipt(self):
+        changes = date_format(None, self.con)
+        self.con.rollback()
+        with patch('database_repair.receipt', side_effect=MigrationError('injected failure')), \
+                contextlib.redirect_stdout(io.StringIO()):
+            result = perform(self.con, self.source, self.stage, ['date_format'],
+                             {'date_format': {'changes': changes}}, {})
+        self.assertEqual(result[0]['status'], 'failed')
+        self.assertEqual(date_format(None, self.con), changes)
+        self.assertEqual(self.scalar('SELECT count(*) FROM database_repairs.completed'), 0)
+
     def test_all_repairs_restore_five_constraints_and_repeat_without_changes(self):
         before, fixes = self.preview()
         with self.con.cursor() as cr:
@@ -165,6 +231,7 @@ class DatabaseRepairTests(unittest.TestCase):
         self.assertEqual(list(self.stage.rglob('before_import.dump')),[])
         self.assertEqual(self.scalar('SELECT count(*) FROM ab_hr_payment_type'),3)
         self.assertIsNone(self.scalar("SELECT to_regnamespace('database_repairs')"))
+        self.assertEqual(self.scalar('SELECT date_format FROM res_lang WHERE id=1'), '%m/%d/%Y')
 
     def test_explicit_skip_repairs_without_any_backup_or_verification(self):
         identities=dict(source=database_identity(self.source,self.config),target=database_identity(self.con,self.config))

@@ -723,6 +723,39 @@ fixture reads the selected template using pg_dump. It never modifies the templat
 No pre-existing application database is dropped. Config passwords remain in private
 temporary files/environment and are not printed or committed.
 
+## Active language date-format repair (2026-11-14)
+
+Fix database option 6 sets `%Y-%m-%d` on all active target languages. Its
+disposable PostgreSQL fixtures cover English/Arabic changes, inactive and
+already-correct languages, no active languages, source preservation, unchanged
+time formats, idempotent replanning, stale format/active/code previews, guarded
+updates, and rollback of both writes and receipts. The existing full repair
+workflow exercises this fix with backup/gating/reporting and all-supported
+selection; cancellation leaves date formats unchanged.
+
+Validation passed: 20 database-repair tests, 13 global XML-ID regression tests,
+and 11 menu tests. PostgreSQL tests used the maintenance configuration below
+only for `postgres` and generated disposable databases; no application repair
+was executed. Full backup and cancellation workflows were also rerun after the
+operator restart reminder was added.
+
+```bash
+MIGRATION_PREPARED_TEST_CONFIG=/opt/odoo19/config/migrate19.conf \
+/opt/odoo19/venv19/bin/python -m unittest discover \
+  -s tools/accounting_migration/tests -p 'test_database_repair.py' -v
+MIGRATION_PREPARED_TEST_CONFIG=/opt/odoo19/config/migrate19.conf \
+/opt/odoo19/venv19/bin/python -m unittest discover \
+  -s tools/accounting_migration/tests -p 'test_global_xmlids.py' -v
+/opt/odoo19/venv19/bin/python -m unittest discover \
+  -s tools/accounting_migration/tests -p 'test_migration_menu.py' -v
+```
+
+Menu coverage includes option 6, combined and duplicate selections, all-supported
+selection, invalid input, no-change selection, cancellation, and language-format
+preview output. Running Odoo workers must be restarted after SQL repair to reload
+cached language settings; browsers must then be refreshed. Services were not
+restarted as part of validation.
+
 ## Limits
 
 This is not a complete Odoo 15 production migration rehearsal. Large E-Plus tables,

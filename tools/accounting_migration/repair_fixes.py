@@ -7,7 +7,8 @@ from repair_audit import rows, constraints, key, saved_definition, audit_fk
 
 LABELS = {'identities': 'Installed-module XML IDs and portal configuration',
           'payments': 'HR payment types (IDs 1–4)', 'reports': 'HR report field references',
-          'discuss': 'Dangling Discuss membership 1538', 'foreign_keys': 'Restore missing foreign keys'}
+          'discuss': 'Dangling Discuss membership 1538', 'foreign_keys': 'Restore missing foreign keys',
+          'date_format': 'Set active language dates to YYYY-MM-DD'}
 
 
 def fetch(connection, query, params=()):
@@ -103,7 +104,16 @@ def discuss(source, target):
     return [dict(kind='discuss', before=record, after=None)]
 
 
-PLANNERS = dict(identities=identities, payments=payments, reports=reports, discuss=discuss)
+def date_format(source, target):
+    """Use target language identities only; the source locale is irrelevant."""
+    current = rows(target, 'SELECT id,code,active,date_format FROM res_lang '
+                   'WHERE active IS TRUE AND date_format IS DISTINCT FROM %s ORDER BY id', ['%Y-%m-%d'])
+    return [dict(kind='date_format', before=record, after=dict(record, date_format='%Y-%m-%d'))
+            for record in current]
+
+
+PLANNERS = dict(identities=identities, payments=payments, reports=reports, discuss=discuss,
+                date_format=date_format)
 
 
 def plan_fixes(source, target, audit, context=None):
@@ -149,6 +159,10 @@ def apply_data(connection, changes):
                     cr.execute('INSERT INTO ab_hr_payment_type(id,name) VALUES(%s,%s)', [after['id'], Json(after['name'])])
             elif kind == 'report':
                 cr.execute('UPDATE ab_hr_report_model SET target_field_id=%s WHERE id=%s', [after['target_field_id'], after['id']])
+            elif kind == 'date_format':
+                cr.execute('UPDATE res_lang SET date_format=%s WHERE id=%s AND code=%s '
+                           'AND active IS NOT DISTINCT FROM %s AND date_format IS NOT DISTINCT FROM %s',
+                           [after['date_format']] + [before[k] for k in ('id', 'code', 'active', 'date_format')])
             elif kind == 'discuss':
                 cr.execute('DELETE FROM discuss_channel_member WHERE id=%s AND partner_id=%s', [before['id'], before['partner_id']])
             else:
