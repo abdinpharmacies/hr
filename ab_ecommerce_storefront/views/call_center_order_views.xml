@@ -99,7 +99,7 @@
                 <separator/>
                 <filter name="ab_order_new"
                         string="New Orders"
-                        domain="[('state', 'in', ('draft', 'sent'))]"/>
+                        domain="[('ab_call_center_status', 'in', ('received', 'confirmed'))]"/>
                 <filter name="ab_order_confirmed"
                         string="Confirmed Orders"
                         domain="[('state', '=', 'sale')]"/>

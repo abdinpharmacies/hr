@@ -135,6 +135,30 @@ class TestStorefrontReservations(TransactionCase):
         self.assertTrue(all(move.state == "assigned" for move in cart.picking_ids.move_ids))
         self.assertEqual(self.product.with_context(warehouse_id=self.warehouse.id).free_qty, 0)
 
+    def test_confirmed_reservation_stays_new_until_picking_starts(self):
+        order = self.cart()
+        order._cart_add(self.product.id, 1)
+        order.action_confirm()
+
+        self.assertTrue(order.picking_ids.move_ids)
+        self.assertEqual(order.ab_call_center_status, "confirmed")
+        self.assertEqual(order._ab_storefront_delivery_stage(), "confirmed")
+        timeline = order._ab_call_center_timeline()[0]
+        self.assertEqual(next(step for step in timeline if step["key"] == "confirmed")["state"], "current")
+        self.assertEqual(next(step for step in timeline if step["key"] == "preparing")["state"], "upcoming")
+        domains = order._ab_order_overview_domains()
+        self.assertIn(order, self.env["sale.order"].search(domains["new"]))
+        self.assertNotIn(order, self.env["sale.order"].search(domains["processing"]))
+
+        order.picking_ids.move_line_ids.write({"picked": True})
+        self.assertEqual(order.ab_call_center_status, "preparing")
+        self.assertEqual(order._ab_storefront_delivery_stage(), "preparing")
+        timeline = order._ab_call_center_timeline()[0]
+        self.assertEqual(next(step for step in timeline if step["key"] == "confirmed")["state"], "complete")
+        self.assertEqual(next(step for step in timeline if step["key"] == "preparing")["state"], "current")
+        self.assertNotIn(order, self.env["sale.order"].search(domains["new"]))
+        self.assertIn(order, self.env["sale.order"].search(domains["processing"]))
+
     def test_failed_eplus_sync_does_not_authorize_checkout(self):
         self.link_eplus_stock()
         self.completed_eplus_sync()

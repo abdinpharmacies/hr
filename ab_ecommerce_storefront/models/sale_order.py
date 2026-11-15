@@ -270,6 +270,7 @@ class SaleOrder(models.Model):
         "picking_ids.picking_type_code",
         "picking_ids.location_dest_id.usage",
         "picking_ids.move_ids.state",
+        "picking_ids.move_ids.picked",
         "picking_ids.move_ids.origin_returned_move_id",
         "picking_ids.move_ids.location_id.usage",
         "picking_ids.move_ids.location_dest_id.usage",
@@ -304,12 +305,14 @@ class SaleOrder(models.Model):
             elif any(picking.state == "done" for picking in outgoing):
                 order.ab_call_center_status = "preparing"
                 order.ab_call_center_delivery_status = "partial"
-            elif any(picking.state == "assigned" for picking in outgoing):
-                order.ab_call_center_status = "preparing"
-                order.ab_call_center_delivery_status = "preparing"
             else:
-                order.ab_call_center_status = "preparing"
-                order.ab_call_center_delivery_status = "waiting_stock"
+                order.ab_call_center_status = (
+                    "preparing" if outgoing.move_ids.filtered("picked") else "confirmed"
+                )
+                order.ab_call_center_delivery_status = (
+                    "preparing" if any(picking.state == "assigned" for picking in outgoing)
+                    else "waiting_stock"
+                )
 
     def _ab_call_center_last_transaction(self):
         self.ensure_one()
@@ -455,7 +458,9 @@ class SaleOrder(models.Model):
         self.ensure_one()
         outgoing = self._ab_call_center_outgoing_pickings()
         warehouse_done = bool(outgoing) and all(picking.state == "done" for picking in outgoing)
-        preparation_started = bool(outgoing)
+        preparation_started = bool(outgoing.move_ids.filtered("picked")) or any(
+            picking.state == "done" for picking in outgoing
+        )
         last_mile_state = self._ab_call_center_last_mile_state()
         stage_keys = [
             "new",
@@ -517,7 +522,9 @@ class SaleOrder(models.Model):
         warehouse_done = bool(outgoing) and all(
             current.state == "done" for current in outgoing
         )
-        preparation_started = bool(outgoing)
+        preparation_started = bool(outgoing.move_ids.filtered("picked")) or any(
+            current.state == "done" for current in outgoing
+        )
         confirmed = self.state == "sale"
         last_mile_state = self._ab_call_center_last_mile_state()
 
@@ -859,7 +866,7 @@ class SaleOrder(models.Model):
             return "shipped"
         if any(picking.state == "done" for picking in outgoing):
             return "partially_shipped"
-        if any(picking.state == "assigned" for picking in outgoing):
+        if outgoing.move_ids.filtered("picked"):
             return "preparing"
         return stage
 

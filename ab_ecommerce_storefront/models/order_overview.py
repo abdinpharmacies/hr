@@ -31,7 +31,7 @@ class SaleOrderOverview(models.Model):
         utc_end = (local_start + timedelta(days=1)).astimezone(timezone.utc).replace(tzinfo=None)
         return {
             "all": operational,
-            "new": operational & fields.Domain("state", "in", ("draft", "sent")),
+            "new": operational & fields.Domain("ab_call_center_status", "in", ("received", "confirmed")),
             "unpaid": base & fields.Domain("state", "=", "sent"),
             "processing": operational & fields.Domain("ab_call_center_status", "=", "preparing"),
             "assigned": operational
