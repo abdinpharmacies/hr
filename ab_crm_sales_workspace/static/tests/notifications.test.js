@@ -1,4 +1,4 @@
-import {expect, test} from "@odoo/hoot";
+import {expect, test, getFixture} from "@odoo/hoot";
 import {animationFrame} from "@odoo/hoot-mock";
 import {user} from "@web/core/user";
 import {registry} from "@web/core/registry";
@@ -64,6 +64,9 @@ test("popup pages group together and dismissal captures exact IDs while arrivals
     expect(alerts()).toHaveLength(1);
     expect(alerts()[0].sticky).toBe(true);
     expect(alerts()[0].buttons).toHaveLength(2);
+    expect(alerts()[0].message).toBe("You have 2 unread messages");
+    expect(alerts()[0].title).toBe(undefined);
+    expect(alerts()[0].buttons.map(button => button.name)).toEqual(["Open", "Open"]);
     await alerts()[0].buttons[0].onClick();
     expect(alerts()).toHaveLength(1);
     expect(acknowledged).toHaveLength(0);
@@ -75,7 +78,7 @@ test("popup pages group together and dismissal captures exact IDs while arrivals
     await service.poll();
     expect(acknowledged).toEqual([[1, [11]], [2, [21]]]);
     expect(alerts()).toHaveLength(1);
-    expect(alerts()[0].message).toInclude("1 pending messages");
+    expect(alerts()[0].message).toBe("You have 1 unread messages");
     service.focusHandler = (item, token) => service.acknowledge(item, token);
     const opening = alerts()[0].buttons[0].onClick();
     release();
@@ -94,16 +97,39 @@ test("popup pages group together and dismissal captures exact IDs while arrivals
     service.clear();
 });
 
-test("hidden, unfocused, search and history views never advance reads", async () => {
+test("hidden, unfocused and search views never advance reads while history views do", async () => {
     const calls = [];
-    const workspace = {state: {loggedIn: true}, call: (...args) => calls.push(args)};
+    document.body.classList.remove("modal-open");
+    const fixture = getFixture();
+    fixture.innerHTML = '<div class="stream"><article data-message-id="20"></article></div>';
+    const stream = fixture.querySelector(".stream");
+    patchWithCleanup(stream, {getBoundingClientRect: () => ({top: 0, bottom: 100, left: 0, right: 100})});
+    patchWithCleanup(stream.children[0], {getBoundingClientRect: () => ({top: 10, bottom: 90, left: 0, right: 80})});
+    const view = {visibilityState: "visible", focus: true};
+    patchWithCleanup(document, {get visibilityState() { return view.visibilityState; }, hasFocus: () => view.focus});
+    const focusHandler = () => {};
+    const workspace = {
+        state: {loggedIn: true, token: "test", detail: {id: 1, unread_count: 1, messages: [{id: 20, direction: "in"}]}, firstUnread: 20, inbox: []},
+        acknowledged: new Map(), readVersion: 0, messagesRef: {el: stream}, focusHandler,
+        acknowledgeRead: SalesWorkspace.prototype.acknowledgeRead,
+        applyReadPosition: SalesWorkspace.prototype.applyReadPosition,
+        chatterSession: {focusHandler, unreadChanged() {}},
+        call: (...args) => calls.push(args),
+    };
     for (const state of [{visibilityState: "hidden", focus: true}, {visibilityState: "visible", focus: false},
-        {visibilityState: "visible", focus: true, searchOpen: true}, {visibilityState: "visible", focus: true, historyContext: true}]) {
-        patchWithCleanup(document, {get visibilityState() { return state.visibilityState; }, hasFocus: () => state.focus});
-        Object.assign(workspace.state, {searchOpen: !!state.searchOpen, historyContext: !!state.historyContext});
+        {visibilityState: "visible", focus: true, searchOpen: true}]) {
+        Object.assign(view, state);
+        workspace.state.searchOpen = !!state.searchOpen;
         await SalesWorkspace.prototype.acknowledgeVisible.call(workspace);
     }
     expect(calls).toHaveLength(0);
+    Object.assign(view, {visibilityState: "visible", focus: true});
+    workspace.state.searchOpen = false;
+    workspace.state.historyContext = true;
+    await SalesWorkspace.prototype.acknowledgeVisible.call(workspace);
+    expect(calls).toEqual([["ab_crm_conversation", "workspace_acknowledge", [[1], 20]]]);
+    expect(workspace.state.firstUnread).toBe(false);
+    expect(workspace.state.detail.unread_count).toBe(0);
 });
 
 

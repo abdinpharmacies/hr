@@ -31,6 +31,12 @@
             </t>
             <t t-elif="props.mode === 'link'">
                 <p><bdi t-esc="state.selected.name"/> · <bdi dir="ltr" t-esc="state.selected.display_phone || state.selected.phone"/></p>
+                <p><span>Affected conversations</span>: <t t-esc="state.preview.conversation_count"/></p>
+                <p t-foreach="state.preview.conversations" t-as="entry" t-key="entry.conversation_id">
+                    <t t-esc="this.channelLabel(entry.provider)"/> · <bdi dir="ltr" t-esc="entry.destination"/>
+                    <span>Current contact</span>: <bdi t-esc="entry.previous_customer_name || '—'"/>
+                    <span>Identity contact</span>: <bdi t-esc="entry.previous_identity_customer_name || '—'"/>
+                </p>
                 <label t-if="state.preview.conflict"><input type="checkbox" t-model="state.resolveConflict"/> Resolve conflicting identity ownership</label>
             </t>
             <t t-elif="props.mode === 'delete'">

@@ -3,7 +3,7 @@ from contextvars import ContextVar
 import phonenumbers
 
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.exceptions import AccessError, ConcurrencyError, UserError, ValidationError
 from odoo.addons.ab_crm_core.models.core import _INTERNAL
 from .media import validate_workspace_attachment
 
@@ -819,8 +819,6 @@ class Conversation(models.Model):
         ]) if self.customer_id else self
         result = self.browse()
         for conversation in candidates:
-            if conversation.channel_id.provider not in ('whatsapp', 'telegram', 'website', 'application'):
-                continue
             if not conversation.messaging_account_id:
                 continue
             try:
@@ -832,8 +830,15 @@ class Conversation(models.Model):
 
     def workspace_channel(self, conversation_id):
         self.ensure_one()
-        destination = self._workspace_streams().filtered(lambda r: r.id == conversation_id)
-        if not destination:
+        self._workspace_scope()
+        if type(conversation_id) is not int:
+            raise AccessError(_('Select an authorized customer conversation.'))
+        destination = self.search([
+            ('id', '=', conversation_id), ('company_id', '=', self.company_id.id),
+            ('branch_id', '=', self.branch_id.id), ('channel_id.active', '=', True),
+            ('customer_id', '=', self.customer_id.id),
+        ], limit=1) if self.customer_id else self.filtered(lambda r: r.id == conversation_id)
+        if not destination or not destination.messaging_account_id:
             raise AccessError(_('Select an authorized customer conversation.'))
         return destination.workspace_detail()
 
@@ -842,7 +847,7 @@ class Conversation(models.Model):
             'id': media.id, 'name': media.name, 'kind': media.kind,
             'state': media.state, 'mimetype': media.mimetype, 'size': media.size,
             'can_preview': media.state == 'ready' and (
-                media.mimetype in ('image/jpeg', 'image/png', 'image/webp', 'application/pdf')
+                media.mimetype in ('image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf')
                 or media.mimetype.startswith(('audio/', 'video/'))
             ),
         }
@@ -894,7 +899,8 @@ class Conversation(models.Model):
         ], limit=1)
         if not message:
             raise AccessError(_('Invalid read position.'))
-        self.lock_for_update()
+        if not self.try_lock_for_update():
+            raise ConcurrencyError('Concurrent read acknowledgement')
         self.write({})
         positions = self.env['ab_crm_workspace_read'].sudo()
         position = positions.search([
@@ -908,6 +914,7 @@ class Conversation(models.Model):
             })
         elif message.id > position.last_message_id.id:
             position.write({'last_message_id': message.id})
+        self._queue_read_receipt(message, session.employee_id)
         return True
 
     def workspace_focus(self, message_id):

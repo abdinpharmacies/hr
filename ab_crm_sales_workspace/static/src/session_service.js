@@ -104,14 +104,13 @@ registry.category("services").add("ab_chatter_session", {
                         const alert = {silent: false, signature};
                         const conversations = group.conversations.map(item => ({
                             ...item, message_ids: [...item.message_ids],
-                            source: {telegram: _t("Telegram"), whatsapp: _t("WhatsApp"), website: _t("Website")}[item.provider] || _t("Channel"),
                         }));
-                        const text = [_t("%s pending messages", group.count), ...conversations.map(item =>
-                            [item.source, item.display_destination, item.conversation_label, String(item.unread_count), item.preview].filter(Boolean).join(" · "))].join("\n");
+                        const unreadCount = conversations.reduce((count, item) => count + item.unread_count, 0);
+                        const text = _t("You have %s unread messages", unreadCount);
                         alert.close = notification.add(text, {
-                            title: group.name, type: "info", sticky: true, className: "ab_chatter_notification",
+                            type: "info", sticky: true, className: "ab_chatter_notification",
                             buttons: conversations.map(item => ({
-                                name: [_t("Open conversation"), item.source, item.display_destination, item.conversation_label].filter(Boolean).join(" · "),
+                                name: _t("Open"),
                                 onClick: () => service.open(item, token),
                             })),
                             onClose: () => {

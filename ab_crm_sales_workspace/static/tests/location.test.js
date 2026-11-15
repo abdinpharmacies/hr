@@ -16,16 +16,18 @@ test("location validates map URL including zero, boundaries and invalid values",
     for (const latitude of [NaN, Infinity, true, "0", 91]) expect(locationMapUrl({latitude, longitude: 0})).toBe("");
 });
 
-test("location card shows snapshot, copies map link, reports copy failures and isolates coordinates", async () => {
+test("location card shows snapshot, copies map link, reports copy failures and displays the map URL", async () => {
     await mountWithCleanup(MainComponentsContainer);
     const copied = [];
     patchWithCleanup(navigator.clipboard, {writeText: async value => copied.push(value)});
     await mountWithCleanup(LocationCard, {props: {location, provider: "whatsapp", useDelivery: () => copied.push("delivery")}});
     expect(".ab_location_card.channel-whatsapp").toHaveCount(1);
     expect(".ab_location_card strong").toHaveText("Location snapshot");
-    expect(".ab_location_coordinates").toHaveAttribute("dir", "ltr");
-    expect(".ab_location_card a").toHaveAttribute("href", locationMapUrl(location));
-    expect(".ab_location_card a").toHaveAttribute("rel", "noopener noreferrer");
+    expect(".ab_location_coordinates").toHaveCount(0);
+    expect(".ab_location_url").toHaveAttribute("dir", "ltr");
+    expect(".ab_location_url").toHaveText(locationMapUrl(location));
+    expect(".ab_location_url").toHaveAttribute("href", locationMapUrl(location));
+    expect(".ab_location_url").toHaveAttribute("rel", "noopener noreferrer");
     expect(".ab_location_card time").not.toHaveText("");
     await contains("button:contains(Copy location)").click();
     expect(copied).toEqual([locationMapUrl(location)]);

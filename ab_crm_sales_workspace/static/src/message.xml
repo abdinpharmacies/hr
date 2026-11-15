@@ -1,6 +1,6 @@
 <templates xml:space="preserve">
     <t t-name="ab_crm_sales_workspace.MessageQuote">
-        <div class="ab_message_quote">
+        <div class="ab_message_quote" t-ref="quote">
             <button class="ab_quote_content" t-on-click="props.open" t-att-disabled="!props.quote.available">
                 <img t-if="state.url" t-att-src="state.url" alt="Quoted image"/>
                 <t t-if="props.quote.available"><strong><bdi t-esc="props.quote.author"/></strong><span dir="auto" t-esc="props.quote.body"/></t>

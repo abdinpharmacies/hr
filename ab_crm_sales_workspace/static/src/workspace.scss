@@ -15,6 +15,11 @@
     .ab_conversation.selected { background: #eef6ff; border-color: #69a9ff; }
     .ab_conversation small { display: block; color: #60748a; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; margin-block-start: 4px; }
     .ab_channels { display: inline-flex; gap: .5rem; margin-inline: .5rem; color: #707070; }
+    .ab_inbox_unread { display: inline-flex; align-items: center; justify-content: center; min-width: 1.4rem; height: 1.35rem; padding: 0 .35rem; margin-inline-start: .3rem; border: 1px solid currentColor; border-radius: 999px; color: #3b4960; background: #eef1f5; font-size: .72rem; font-weight: 700; line-height: 1; vertical-align: middle; }
+    .ab_inbox_unread[data-channel="whatsapp"] { color: #128c7e; background: #e5f5ec; }
+    .ab_inbox_unread[data-channel="telegram"] { color: #1f7fae; background: #e6f3fa; }
+    .ab_inbox_unread[data-channel="website"] { color: #b85c0c; background: #fdf0e4; }
+    .ab_inbox_unread[data-channel="application"] { color: #3b4960; background: #eef1f5; }
     .source-whatsapp { color: #2bbc37; }
     .source-telegram { color: #32a0dc; }
     .source-website { color: #f38121; }
@@ -358,7 +363,6 @@
     .ab_send { border-radius: 50%; width: 44px; height: 44px; padding: 8px; }
     .ab_send:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
     .ab_send:disabled { opacity: .45; }
-    [dir="rtl"] .ab_send svg { transform: scaleX(-1); }
     .ab_shared_contact { padding: .7rem; border: 1px solid currentColor; border-radius: .7rem; }
     .ab_conversation.selected[data-channel="whatsapp"] { border-inline-start: 4px solid #128c7e; }
     .ab_conversation.selected[data-channel="telegram"] { border-inline-start: 4px solid #229ed9; }

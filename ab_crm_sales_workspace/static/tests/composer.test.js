@@ -10,7 +10,7 @@ import {SalesWorkspace} from "@ab_crm_sales_workspace/workspace";
 
 defineMailModels();
 
-const branch = {id: 4, revision: 2, language: "en_US", name: "Branch", address: "Street", latitude: 0, longitude: 180, store_id: 8, store_code: "08", region: "Region", hotline: "19036", details: "Branch\nStreet\nShared hotline: 19036", fallback: true};
+const branch = {provider: "whatsapp", id: 4, revision: 2, language: "en_US", name: "Branch", address: "Street", latitude: 0, longitude: 180, store_id: 8, store_code: "08", region: "Region", hotline: "19036", details: "Branch\nStreet\nShared hotline: 19036", fallback: true};
 
 async function chooseBranch() {
     await contains(".ab_branch_search input").edit("Branch", {confirm: false});
@@ -31,7 +31,7 @@ test("branch picker previews a native card and sends selected server revision", 
     env.services.dialog.add(LocationDialog, {call, conversationId: 1, valid: () => true, storeId: 8});
     await animationFrame();
     await chooseBranch();
-    expect(".ab_branch_picker .ab_location_card").toHaveCount(1);
+    expect(".ab_branch_picker .ab_location_card.channel-whatsapp").toHaveCount(1);
     expect("button:contains(Use for delivery)").toHaveCount(0);
     expect(".ab_branch_picker .alert-warning").toHaveCount(0);
     expect(".o_notification").toHaveText(/Some text is unavailable/);
@@ -97,7 +97,7 @@ test("branch details checkbox adds details while always sharing the location", a
     await chooseBranch();
     expect(".ab_branch_picker input[type=checkbox]").not.toBeChecked();
     await contains(".ab_branch_picker input[type=checkbox]").click();
-    expect(".ab_branch_picker .ab_location_card").toHaveCount(1);
+    expect(".ab_branch_picker .ab_location_card.channel-whatsapp").toHaveCount(1);
     expect(".ab_branch_picker pre").toHaveText(branch.details);
     await contains(".modal-footer button:first").click();
     expect(sends.length).toBe(1);
@@ -146,7 +146,7 @@ for (const lang of ["en_US", "ar", "ar_001"]) {
         expect(calls).toEqual([]);
         await chooseBranch();
         expect(".ab_branch_search [role=option]").toHaveCount(0);
-        expect(".ab_branch_picker .ab_location_card").toHaveCount(1);
+        expect(".ab_branch_picker .ab_location_card.channel-whatsapp").toHaveCount(1);
         expect(calls.map(call => call.args[2])).toEqual(["ar_001", "ar_001"]);
         await contains(".modal-footer button:first").click();
         expect(calls.at(-1).method).toBe("action_share_branch");
@@ -174,7 +174,7 @@ test("branch search supports keyboard selection, clearing and no matches", async
     await animationFrame();
     await contains(".ab_branch_search input").press("Enter");
     await animationFrame();
-    expect(".ab_branch_picker .ab_location_card").toHaveCount(1);
+    expect(".ab_branch_picker .ab_location_card.channel-whatsapp").toHaveCount(1);
     await contains(".ab_branch_search input").edit("", {confirm: false});
     expect(".ab_branch_picker .ab_location_card").toHaveCount(0);
     expect(".modal-footer button:first").not.toBeEnabled();

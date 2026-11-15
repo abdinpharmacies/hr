@@ -4,7 +4,7 @@
             <strong><i class="fa fa-map-marker me-2"/><t t-if="props.location.is_live_snapshot">Location snapshot</t><t t-else="">Location</t></strong>
             <bdi t-if="props.location.name" dir="auto" t-esc="props.location.name"/>
             <p t-if="props.location.address" dir="auto" t-esc="props.location.address"/>
-            <bdi dir="ltr" class="ab_location_coordinates"><t t-esc="props.location.latitude"/>, <t t-esc="props.location.longitude"/></bdi>
+            <a t-if="url" dir="ltr" class="ab_location_url" t-att-href="url" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" t-esc="url"/>
             <time t-if="timestamp" t-esc="timestamp"/>
             <div class="ab_location_actions">
                 <a t-if="url" class="btn btn-sm btn-light" t-att-href="url" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Open in Maps</a>

@@ -1,3 +1,6 @@
+import subprocess
+import tempfile
+from pathlib import Path
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -6,6 +9,15 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 
 from ..models.workspace import normalized_phone, display_phone
+
+
+def sample_mp4():
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / 'clip.mp4'
+        subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i',
+                        'color=red:s=16x16:d=0.2', '-c:v', 'libx264', '-threads', '1',
+                        '-pix_fmt', 'yuv420p', str(path)], check=True, timeout=15)
+        return path.read_bytes()
 
 
 @tagged('post_install', '-at_install')
@@ -1609,7 +1621,7 @@ class TestWorkspace(TransactionCase):
 
         conversation = self.conversation()
         conversation.action_claim()
-        raw = b'\x00\x00\x00\x0cftypisom'
+        raw = sample_mp4()
         attachment = {
             'kind': 'video', 'name': 'clip.mp4', 'mimetype': 'video/mp4',
             'size': len(raw), 'data': base64.b64encode(raw).decode(),
@@ -2148,7 +2160,8 @@ class TestWorkspace(TransactionCase):
             web = {row['id']: row['string'] for row in code_translations.get_web_translations('ab_crm_sales_workspace', lang)['messages']}
             self.assertEqual(web['Archive contact'], 'أرشفة جهة الاتصال')
             self.assertEqual(web['Merge duplicates'], 'دمج جهات الاتصال المكررة')
-            self.assertEqual(web['%s pending messages'], '%s رسالة معلقة')
+            self.assertEqual(web['You have %s unread messages'], 'لديك %s رسائل غير مقروءة')
+            self.assertEqual(web['Open'], 'فتح')
             self.assertEqual(web['Use existing'], 'استخدام جهة اتصال موجودة')
             self.assertEqual(web['Inbox'], 'الوارد')
             self.assertEqual(web['Connection to Odoo restored.'], 'تمت استعادة الاتصال بأودو.')
@@ -2156,6 +2169,8 @@ class TestWorkspace(TransactionCase):
             self.assertEqual(web['Unlink conversations'], 'إلغاء ربط المحادثات')
             python = code_translations.get_python_translations('ab_crm_sales_workspace', lang)
             self.assertEqual(python['Select a customer with linked conversations.'], 'اختر عميلاً لديه محادثات مرتبطة.')
+            self.assertEqual(python['Branch location sending is not enabled.'], 'إرسال مواقع الفروع غير مفعّل.')
+            self.assertEqual(python['Branch sharing is available only in Telegram and WhatsApp.'], 'مشاركة الفروع متاحة فقط في تيليجرام وواتساب.')
 
     def test_unique_verified_phone_links_without_reason_and_preserves_history(self):
         contact = self.chatter_api.contact_save(self.session_token,
@@ -2320,3 +2335,43 @@ class TestWorkspace(TransactionCase):
         first.action_confirm_customer_link(contact['id'], link['fingerprint'])
         self.assertEqual(first.customer_id.id, contact['id'])
         self.assertFalse((streams - first).customer_id)
+
+    def test_import_navigation_and_direct_access(self):
+        from lxml import etree
+        self.assertFalse(self.env.ref('ab_crm_sales_workspace.menu_branch_location_import').active)
+        self.assertFalse(self.env.ref('ab_crm_sales_workspace.menu_order_archive').active)
+        manager = self.env['res.users'].create({
+            'name': 'Branch import manager', 'login': 'branch-import-manager',
+            'group_ids': [fields.Command.set([
+                self.env.ref('base.group_user').id,
+                self.env.ref('ab_crm_core.group_manager').id,
+            ])],
+        })
+        view = self.env.ref('ab_crm_sales_workspace.branch_location_list')
+        for user in (self.env.ref('base.user_admin'), manager):
+            arch = self.env['ab_crm_branch_location'].with_user(user).get_view(
+                view_id=view.id, view_type='list')['arch']
+            button = etree.fromstring(arch).xpath('//header/button[@display="always"]')
+            self.assertEqual(len(button), 1)
+            self.assertEqual(int(button[0].get('name')),
+                             self.env.ref('ab_crm_sales_workspace.action_branch_location_import').id)
+            self.env['ab_crm_branch_location_import'].with_user(user).check_access('create')
+        for user in (self.staff, self.service):
+            with self.assertRaises(AccessError):
+                self.env['ab_crm_branch_location_import'].with_user(user).create({})
+            wizard = self.env['ab_crm_branch_location_import'].create({'file': b'Y3N2'})
+            for method in ('action_preview', 'action_apply'):
+                with self.assertRaises(AccessError):
+                    getattr(wizard.with_user(user), method)()
+
+    def test_archive_views_load_directly_in_xml_developer_mode(self):
+        from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
+        from odoo.tools import file_path
+        from lxml import etree
+        for name in ('view_order_archive_list', 'view_order_archive_form'):
+            xmlid = 'ab_crm_sales_workspace.' + name
+            source = get_view_arch_from_file(
+                file_path('ab_crm_sales_workspace/views/views.xml'), xmlid)
+            self.assertIsNotNone(etree.fromstring(source))
+            arch = self.env.ref(xmlid).with_context(read_arch_from_file=True)._get_combined_arch()
+            self.assertEqual(arch.get('edit'), '0')

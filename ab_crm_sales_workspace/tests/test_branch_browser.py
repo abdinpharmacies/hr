@@ -39,3 +39,15 @@ class TestBranchBrowser(HttpCase):
             success_signal='[HOOT] Test suite succeeded',
             error_checker=unit_test_error_checker,
         )
+
+    @no_retry
+    def test_header_navigation(self):
+        value = 0
+        for char in '@ab_crm_sales_workspace/navigation':
+            value = ((value << 5) - value + ord(char)) & 0xFFFFFFFF
+        self.browser_js(
+            f'/web/tests?headless&loglevel=2&preset=desktop&timeout=15000&id={value:08x}',
+            '', '', login='admin', timeout=120,
+            success_signal='[HOOT] Test suite succeeded',
+            error_checker=unit_test_error_checker,
+        )

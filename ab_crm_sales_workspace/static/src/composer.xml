@@ -12,7 +12,7 @@
                         <AutoComplete id="searchId" value="state.query" sources="sources" placeholder="searchPlaceholder" autofocus="true" searchOnInputClick="false" menuPositionOptions="{position: 'bottom-fit'}"/>
                     </div>
                     <t t-if="state.preview">
-                        <LocationCard location="state.preview" provider="'telegram'"/>
+                        <LocationCard location="state.preview" provider="state.preview.provider || 'telegram'"/>
                         <pre t-if="state.includeDetails" class="ab_branch_details" dir="auto" t-esc="state.preview.details"/>
                         <p t-if="state.preview.public_phones"><span>Verified public phones</span>: <bdi dir="ltr" t-esc="state.preview.public_phones"/></p>
                         <p t-if="state.preview.hotline"><span>Shared hotline</span>: <bdi dir="ltr" t-esc="state.preview.hotline"/></p>

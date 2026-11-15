@@ -473,7 +473,7 @@ class Account(models.Model):
     _inherit = 'ab_crm_messaging_account'
 
     branch_location_enabled = fields.Boolean(
-        default=False, string='Telegram Branch Locations Enabled'
+        default=False, string='Branch Locations Enabled'
     )
 
     def write(self, values):
@@ -549,8 +549,8 @@ class Conversation(models.Model):
         code, reason = self._reply_eligibility()
         if code:
             raise UserError(reason)
-        if self.channel_id.provider != 'telegram':
-            raise AccessError(_('Branch sharing is available only in Telegram.'))
+        if self.channel_id.provider not in ('telegram', 'whatsapp'):
+            raise AccessError(_('Branch sharing is available only in Telegram and WhatsApp.'))
         return (
             self.env['ab_crm_branch_location']
             .sudo()
@@ -593,7 +593,7 @@ class Conversation(models.Model):
         profiles = self._branch_profiles().filtered(lambda p: p.id == profile_id)
         if len(profiles) != 1:
             raise AccessError(_('Select an authorized reviewed branch.'))
-        return profiles._preview(language)
+        return dict(profiles._preview(language), provider=self.channel_id.provider)
 
     def action_send_branch_location(self, profile_id, revision, language, token):
         return self._send_branch(profile_id, revision, language, token, 'location')
@@ -660,7 +660,7 @@ class Conversation(models.Model):
         ):
             raise ValidationError(_('This branch preview is stale. Preview it again.'))
         if kind == 'location' and not self.messaging_account_id.branch_location_enabled:
-            raise UserError(_('Telegram branch location sending is not enabled.'))
+            raise UserError(_('Branch location sending is not enabled.'))
         preview = profiles._preview(language)
         at = fields.Datetime.to_string(fields.Datetime.now())
         location = {
@@ -727,5 +727,5 @@ class MessagingAPI(models.AbstractModel):
         operation = self._operation(account, token, attempt)
         return bool(
             not (operation.content or {}).get('location')
-            or (account.provider == 'telegram' and account.branch_location_enabled)
+            or (account.provider in ('telegram', 'whatsapp') and account.branch_location_enabled)
         )

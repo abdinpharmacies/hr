@@ -224,12 +224,25 @@ test("unauthorized template editor stays read only and load failure can refresh"
     expect(".ab_template_editor textarea").toHaveCount(0);
 });
 
-test("jump to latest ignores stale polling epoch and preserves the captured unread marker", async () => {
-    const workspace = {navigationVersion: 4, state: {detail: {id: 1}, firstUnread: 2, historyContext: true},
-        run: async action => action(), call: async () => ({id: 1, messages: [{id: 99}], unread_count: 0})};
+test("jump to latest acknowledges the latest incoming message and clears the unread marker", async () => {
+    const calls = [];
+    let unreadChanged = 0;
+    const workspace = {navigationVersion: 4, acknowledged: new Map(), readVersion: 0,
+        acknowledgeRead: SalesWorkspace.prototype.acknowledgeRead,
+        applyReadPosition: SalesWorkspace.prototype.applyReadPosition,
+        state: {token: "test", detail: {id: 1}, firstUnread: 2, historyContext: true, unread_count: 1},
+        chatterSession: {unreadChanged() { unreadChanged++; }},
+        run: async action => action(),
+        call: async (model, method, args) => {
+            if (method === "workspace_acknowledge") { calls.push(args); return true; }
+            return {id: 1, messages: [{id: 99, direction: "in", historical: false}], unread_count: 1};
+        }};
     await SalesWorkspace.prototype.jumpLatest.call(workspace);
     expect(workspace.navigationVersion).toBe(5);
-    expect(workspace.state.firstUnread).toBe(2);
+    expect(workspace.state.firstUnread).toBe(false);
+    expect(workspace.state.detail.unread_count).toBe(0);
     expect(workspace.state.historyContext).toBe(false);
     expect(workspace.resetScroll).toBe(true);
+    expect(calls).toEqual([[[1], 99]]);
+    expect(unreadChanged).toBe(1);
 });

@@ -16,12 +16,12 @@ class Identity(models.Model):
             for values in values_list:
                 channel = self.env['ab_crm_channel'].browse(values.get('channel_id'))
                 channel.check_access('read')
-                if channel.provider == 'whatsapp':
+                if channel.provider != 'telegram':
                     raise AccessError(_('Use reviewed customer linking for this identity.'))
         return super().create(values_list)
 
     def write(self, values):
-        if not _WORKSPACE.get() and any(r.channel_id.provider == 'whatsapp' for r in self):
+        if not _WORKSPACE.get() and any(r.channel_id.provider != 'telegram' for r in self):
             raise AccessError(_('Use reviewed customer linking for this identity.'))
         return super().write(values)
 
@@ -47,7 +47,7 @@ class Conversation(models.Model):
                 if values.get('customer_id') and not _INTERNAL.get():
                     channel = self.env['ab_crm_channel'].browse(values.get('channel_id'))
                     channel.check_access('read')
-                    if channel.provider == 'whatsapp':
+                    if channel.provider != 'telegram':
                         raise AccessError(_('Use reviewed customer linking for this identity.'))
         return super().create(values_list)
 
@@ -55,7 +55,7 @@ class Conversation(models.Model):
         if 'customer_group_key' in values:
             raise AccessError(_('Use reviewed customer linking for this identity.'))
         if 'customer_id' in values and not _WORKSPACE.get() and any(
-            r.channel_id.provider == 'whatsapp' for r in self
+            r.channel_id.provider != 'telegram' for r in self
         ):
             raise AccessError(_('Use reviewed customer linking for this identity.'))
         return super().write(values)
@@ -87,7 +87,7 @@ class Conversation(models.Model):
         account._authorize('read')
         if not customer or not customer.active:
             raise UserError(_('Select a saved contact.'))
-        if not account or not self.active or not self.external_key:
+        if not account or not account.active or not self.channel_id.active or not self.active or not self.external_key:
             raise UserError(_('Select a conversation to begin.'))
         if (customer.branch_id != self.branch_id or customer.company_id != self.company_id
                 or account.branch_id != self.branch_id or account.company_id != self.company_id):
@@ -98,7 +98,9 @@ class Conversation(models.Model):
         identity = self.env['ab_crm_identity'].with_context(active_test=False).search([
             ('channel_id', '=', self.channel_id.id), ('external_key', '=', self.external_key),
         ], limit=1)
-        identity._authorize('read')
+        identity._authorize()
+        if identity and (identity.company_id != self.company_id or identity.branch_id != self.branch_id):
+            raise AccessError(_('The selected company or branch is not allowed.'))
         previous = self.customer_id | identity.customer_id
         previous._authorize('read')
         phone = self._verified_sender_phone()
@@ -115,6 +117,9 @@ class Conversation(models.Model):
 
             'conversation_id': self.id, 'account_id': account.id,
             'identity_id': identity.id, 'identity_active': identity.active,
+            'identity_write_date': str(identity.write_date),
+            'conversation_write_date': str(self.write_date),
+            'account_write_date': str(account.write_date),
             'external_key': self.external_key,
             'previous_customer_id': self.customer_id.id,
             'previous_identity_customer_id': identity.customer_id.id,
@@ -127,32 +132,70 @@ class Conversation(models.Model):
             conflict=bool(previous - customer),
             fingerprint=hashlib.sha256(json.dumps(snapshot, sort_keys=True).encode()).hexdigest())
 
-    def action_preview_customer_link(self, customer_id):
+    def _customer_link_group(self):
+        self.ensure_one()
+        return self
+
+    def _customer_group_link_preview(self, customer_id):
         customer, account, session = self._customer_link_scope(customer_id)
-        return self._customer_link_preview(customer, account)[1]
+        streams = self._customer_link_group().sorted('id')
+        if self not in streams:
+            raise AccessError(_('Select a conversation to begin.'))
+        states = []
+        identities = self.env['ab_crm_identity']
+        for stream in streams:
+            target, account, actor = stream._customer_link_scope(customer_id)
+            identity, preview = stream._customer_link_preview(target, account)
+            identities |= identity
+            states.append(dict(preview, provider=stream.channel_id.provider,
+                               destination=stream.external_key,
+                               previous_customer_name=stream.customer_id.name or '',
+                               previous_identity_customer_name=identity.customer_id.name or ''))
+        snapshot = {'customer_id': customer.id, 'conversations': states}
+        return customer, streams, identities, session, dict(
+            states[streams.ids.index(self.id)], conversations=states,
+            conversation_ids=streams.ids, conversation_count=len(streams),
+            conflict=any(state['conflict'] for state in states),
+            automatic_match=len(states) == 1 and states[0]['automatic_match'],
+            fingerprint=hashlib.sha256(json.dumps(snapshot, sort_keys=True).encode()).hexdigest())
+
+    def action_preview_customer_link(self, customer_id):
+        return self._customer_group_link_preview(customer_id)[4]
 
     def action_confirm_customer_link(self, customer_id, fingerprint, reason='', resolve_conflict=False, customer_confirmed=False):
-        customer, account, session = self._customer_link_scope(customer_id)
-        self.branch_id.lock_for_update()
-        self.branch_id.sudo().write({})
-        account.lock_for_update()
-        customer.lock_for_update()
-        self.lock_for_update()
-        self.invalidate_recordset()
-        customer.invalidate_recordset()
-        account.invalidate_recordset()
-        customer, account, session = self._customer_link_scope(customer_id)
-        identity, preview = self._customer_link_preview(customer, account)
+        with self.env.cr.savepoint():
+            customer, account, session = self._customer_link_scope(customer_id)
+            self.branch_id.lock_for_update()
+            self.branch_id.sudo().write({})
+            customer, streams, identities, session, preview = self._customer_group_link_preview(customer_id)
+            streams.messaging_account_id.sorted('id').lock_for_update()
+            customer.lock_for_update()
+            streams.lock_for_update()
+            identities.sorted('id').lock_for_update()
+            streams.invalidate_recordset()
+            identities.invalidate_recordset()
+            customer.invalidate_recordset()
+            streams.messaging_account_id.invalidate_recordset()
+            customer, streams, identities, session, preview = self._customer_group_link_preview(customer_id)
+            if preview['fingerprint'] != fingerprint:
+                raise UserError(_('The customer link changed. Preview it again.'))
+            if preview['conflict'] and resolve_conflict is not True:
+                raise UserError(_('Explicitly resolve the conflicting customer link.'))
+            for stream in streams:
+                account = stream.messaging_account_id
+                identity, state = stream._customer_link_preview(customer, account)
+                if stream.customer_id == customer and identity and identity.active and identity.customer_id == customer:
+                    continue
+                stream._apply_customer_link(customer, identity, session, state, reason, customer_confirmed)
+            return {'customer_id': customer.id, 'conversation_id': self.id,
+                    'conversation_ids': streams.ids}
+
+    def _apply_customer_link(self, customer, identity, session, preview, reason, customer_confirmed):
         automatic = preview['automatic_match'] and isinstance(reason, str) and not reason.strip()
         if automatic:
             reason = 'Automatically linked by unique verified phone match'
         reason = reason.strip()[:2000] if isinstance(reason, str) else ''
         reason = reason or 'Linked to existing customer'
-        identity.lock_for_update()
-        if preview['fingerprint'] != fingerprint:
-            raise UserError(_('The customer link changed. Preview it again.'))
-        if preview['conflict'] and resolve_conflict is not True:
-            raise UserError(_('Explicitly resolve the conflicting customer link.'))
         flag = _WORKSPACE.set(True)
         try:
             if identity:
@@ -174,7 +217,6 @@ class Conversation(models.Model):
             'values': dict(preview, reason=reason.strip(), identity_id=identity.id,
                            association='verified_phone_match' if automatic else 'manual_review', customer_confirmed=customer_confirmed is True, phone_verified=bool(preview['verified_phone'] and customer in self._matching_saved_contacts(preview['verified_phone']))),
         })
-        return {'customer_id': customer.id, 'conversation_id': self.id}
 
     def _customer_unlink_data(self, customer_id):
         customer, account, session = self._customer_link_scope(customer_id)
@@ -276,7 +318,7 @@ class Conversation(models.Model):
         identities.invalidate_recordset()
         if identities and (not identities.active or identities.customer_id != customer):
             return False
-        preview = self._customer_link_preview(customer, account)[1]
+        preview = self.action_preview_customer_link(customer.id)
         if not preview['automatic_match']:
             return False
         return self.action_confirm_customer_link(customer.id, preview['fingerprint'])
@@ -302,9 +344,11 @@ class Conversation(models.Model):
                 ('message_id.conversation_id', '=', self.id),
             ], limit=1)
             phone = '+' + self.external_key if inbound else ''
-        else:
+        elif self.channel_id.provider == 'telegram':
             evidence = self.contact_evidence_id
             phone = evidence.telegram_phone if evidence.telegram_contact_owned else ''
+        else:
+            phone = ''
         return normalized_phone(phone, self.company_id.country_id.code) or ''
 
     def _matching_saved_contacts(self, phone):

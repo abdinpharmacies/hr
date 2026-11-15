@@ -1,4 +1,4 @@
-import {Component, onMounted, onPatched, onWillStart, onWillUnmount, useState, useRef, useEffect, useExternalListener} from "@odoo/owl";
+import {Component, onMounted, onPatched, onWillUnmount, useState, useRef, useEffect, useExternalListener} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {deserializeDateTime} from "@web/core/l10n/dates";
 import {user} from "@web/core/user";
@@ -20,10 +20,11 @@ export function compactUpdateTime(timestamp, now = luxon.DateTime.now()) {
 export function visibleMessageId(container) {
     if (!container || document.visibilityState !== "visible" || document.body.classList.contains("modal-open")) return null;
     const bounds = container.getBoundingClientRect();
-    return [...container.querySelectorAll("[data-message-id]")].filter(element => {
+    const ids = [...container.querySelectorAll("[data-message-id]")].filter(element => {
         const rect = element.getBoundingClientRect();
-        return rect.bottom > bounds.top && rect.bottom <= bounds.bottom && rect.right > bounds.left && rect.left < bounds.right;
-    }).map(element => Number(element.dataset.messageId)).at(-1) || null;
+        return rect.bottom > bounds.top && rect.top < bounds.bottom && rect.right > bounds.left && rect.left < bounds.right;
+    }).map(element => Number(element.dataset.messageId));
+    return ids.length ? Math.max(...ids) : null;
 }
 
 export function mediaBlob(result) {
@@ -35,17 +36,28 @@ export class MessageQuote extends Component {
     static template = "ab_crm_sales_workspace.MessageQuote";
     static props = {quote: Object, call: Function, open: Function, cancel: {type: Function, optional: true}};
     setup() {
+        this.root = useRef("quote");
         this.state = useState({url: ""});
-        this.destroyed = false;
-        onWillStart(async () => {
+        useEffect(() => {
             const media = this.props.quote.thumbnail;
-            if (!media) return;
-            try {
-                const result = await this.props.call("ab_crm_message_media", "download", [[media.id]]);
-                if (!this.destroyed) this.state.url = URL.createObjectURL(mediaBlob(result));
-            } catch { }
-        });
-        onWillUnmount(() => { this.destroyed = true; if (this.state.url) URL.revokeObjectURL(this.state.url); });
+            let disposed = false;
+            let url = "";
+            let observer;
+            this.state.url = "";
+            if (media) {
+                const load = async () => {
+                    try {
+                        const result = await this.props.call("ab_crm_message_media", "download", [[media.id]]);
+                        if (!disposed) { url = URL.createObjectURL(mediaBlob(result)); this.state.url = url; }
+                    } catch { }
+                };
+                observer = new IntersectionObserver(entries => {
+                    if (entries.some(entry => entry.isIntersecting)) { observer.disconnect(); load(); }
+                }, {root: this.root.el.closest(".ab_messages"), rootMargin: "100px"});
+                observer.observe(this.root.el);
+            }
+            return () => { disposed = true; observer?.disconnect(); if (url) URL.revokeObjectURL(url); };
+        }, () => [this.props.quote.thumbnail?.id]);
     }
 }
 

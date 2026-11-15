@@ -57,15 +57,16 @@ test("message menu hides unsupported mutations and restores focus", async () => 
     expect(".ab_message_menu:first").toBeFocused();
 });
 
-test("read position requires visible tab, unobscured container and visible message bottom", () => {
+test("read position requires visible tab, unobscured container and intersecting message", () => {
     const fixture = getFixture();
-    fixture.innerHTML = '<div class="stream"><article data-message-id="1"></article><article data-message-id="2"></article></div>';
+    fixture.innerHTML = '<div class="stream"><article data-message-id="1"></article><article data-message-id="2"></article><article data-message-id="3"></article></div>';
     const stream = fixture.querySelector(".stream");
     patchWithCleanup(stream, {getBoundingClientRect: () => ({top: 0, bottom: 100, left: 0, right: 100})});
     patchWithCleanup(stream.children[0], {getBoundingClientRect: () => ({top: 10, bottom: 80, left: 0, right: 80})});
     patchWithCleanup(stream.children[1], {getBoundingClientRect: () => ({top: 90, bottom: 130, left: 0, right: 80})});
+    patchWithCleanup(stream.children[2], {getBoundingClientRect: () => ({top: 140, bottom: 180, left: 0, right: 80})});
     patchWithCleanup(document, {get visibilityState() { return "visible"; }});
-    expect(visibleMessageId(stream)).toBe(1);
+    expect(visibleMessageId(stream)).toBe(2);
     document.body.classList.add("modal-open");
     expect(visibleMessageId(stream)).toBe(null);
     document.body.classList.remove("modal-open");
@@ -295,13 +296,14 @@ for (const direction of ["ltr", "rtl"]) {
         const detail = id => ({id, name: "Customer", phone: "+201098320212", provider: "whatsapp", owned: true,
             can_send: true, streams, unread_count: 1, conversation_label: "Business inbox", messages: [message(id * 100, "received", "in")], orders: []});
         class NavigationHarness extends SalesWorkspace {
-            setup() { super.setup(); this.direction = direction; }
+            setup() { super.setup(); this.direction = direction; this.readCalls = []; }
             async call(model, method, args, kwargs = {}) {
                 if (method === "bootstrap") return {session: {employee_id: 1, employee: "Agent"}};
                 if (method === "workspace_customer_inbox") return {items: [{id: 1, name: "Customer", group_key: "customer:1", streams, channels: ["whatsapp", "telegram"]}], has_more: false};
                 if (method === "contact_search") return {contacts: []};
                 if (method === "workspace_focus") return detail(args[0][0]);
                 if (method === "workspace_detail") return {...detail(args[0][0]), messages: kwargs.after_id ? [] : detail(args[0][0]).messages};
+                if (method === "workspace_acknowledge") { this.readCalls.push(args); return true; }
             }
         }
         const workspace = await mountWithCleanup(NavigationHarness);
@@ -330,7 +332,11 @@ for (const direction of ["ltr", "rtl"]) {
         expect(workspace.state.attachments[0].name).toBe("second.pdf");
         expect(workspace.drafts.get(1).reply).toBe("First draft");
         expect(workspace.drafts.get(1).attachments[0].name).toBe("first.pdf");
-        expect(workspace.preferredStream(workspace.state.inbox[0])).toBe(2);
+        expect(workspace.state.inbox[0].streams[1].unread).toBe(0);
+        expect(workspace.state.inbox[0].unread).toBe(1);
+        expect('.ab_inbox_unread[data-channel="whatsapp"]').toHaveCount(1);
+        expect(workspace.preferredStream(workspace.state.inbox[0])).toBe(1);
+        expect(workspace.readCalls).toEqual([[[2], 200]]);
         expect('[data-message-id="200"]').toHaveClass('ab_message_focus');
         expect(acknowledged).toEqual([[200]]);
     });

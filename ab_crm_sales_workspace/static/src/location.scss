@@ -12,7 +12,7 @@
     &.channel-whatsapp { border-color: #128c7e; }
     p { margin: 0; }
     time { font-size: .8rem; }
-    .ab_location_coordinates { unicode-bidi: isolate; }
+    .ab_location_url { unicode-bidi: isolate; overflow-wrap: anywhere; }
     .ab_location_actions { display: flex; flex-wrap: wrap; gap: .4rem; }
     :is(a, button):focus-visible { outline: 3px solid #1b6ba2; outline-offset: 2px; }
 }
