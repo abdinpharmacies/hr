@@ -1,0 +1,371 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-11 19:30+0000\n"
+"PO-Revision-Date: 2026-11-11 19:30+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_capability_expires
+msgid "Ab Callcenter Capability Expires"
+msgstr "انتهاء صلاحية تصريح المحادثة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_capability_hash
+msgid "Ab Callcenter Capability Hash"
+msgstr "بصمة تصريح المحادثة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_endpoint_id
+msgid "Ab Callcenter Endpoint"
+msgstr "نقطة اتصال مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_owner_hash
+msgid "Ab Callcenter Owner Hash"
+msgstr "بصمة مالك الطلب"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_revision
+msgid "Ab Callcenter Revision"
+msgstr "إصدار مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_uuid
+msgid "Ab Callcenter Uuid"
+msgstr "المعرف الفريد لمركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__acknowledged
+msgid "Acknowledged"
+msgstr "تم تأكيد الاستلام"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+msgid "Agent"
+msgstr "الموظف"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__body
+msgid "Body"
+msgstr "النص"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_endpoint
+msgid "Callcenter Endpoint"
+msgstr "نقطة اتصال مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.actions.act_window,name:ab_storefront_callcenter_adapter.endpoint_action
+#: model:ir.ui.menu,name:ab_storefront_callcenter_adapter.endpoint_menu
+msgid "Callcenter Endpoints"
+msgstr "نقاط اتصال مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_api
+#: model:res.groups.privilege,name:ab_storefront_callcenter_adapter.privilege_callcenter
+msgid "Callcenter Exchange"
+msgstr "تبادل مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:res.groups,name:ab_storefront_callcenter_adapter.group_service
+msgid "Callcenter Exchange Service"
+msgstr "خدمة تبادل مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_event
+msgid "Callcenter Outgoing Event"
+msgstr "حدث صادر إلى مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_reply
+msgid "Callcenter Reply"
+msgstr "رد مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_uom_uom__ab_callcenter_code
+msgid "Callcenter Unit Code"
+msgstr "رمز الوحدة لمركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.confirmation_chat
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.portal_chat
+msgid "Chat about this order"
+msgstr "محادثة بخصوص هذا الطلب"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+msgid "Chat unavailable. Please retry."
+msgstr "المحادثة غير متاحة. يرجى المحاولة مجدداً."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__company_id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__company_id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Conflicting website event."
+msgstr "تعارض في حدث الموقع."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Conflicting website reply."
+msgstr "تعارض في رد الموقع."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__create_uid
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__create_uid
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__create_date
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__create_date
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__cutoff
+msgid "Cutoff"
+msgstr "بداية استقبال الطلبات"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Disable the endpoint instead of deleting it."
+msgstr "عطل نقطة الاتصال بدلاً من حذفها."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_api__display_name
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__display_name
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__display_name
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__display_name
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ir_http__display_name
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__display_name
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_uom_uom__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__enabled
+msgid "Enabled"
+msgstr "مفعل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__endpoint_id
+msgid "Endpoint"
+msgstr "نقطة الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Endpoint identity is immutable."
+msgstr "لا يمكن تغيير هوية نقطة الاتصال."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__envelope
+msgid "Envelope"
+msgstr "بيانات الحدث"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__event_uuid
+msgid "Event Uuid"
+msgstr "معرف الحدث الفريد"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_ab_storefront_callcenter_event_event_unique
+msgid "Event already exists."
+msgstr "الحدث موجود بالفعل."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_api__id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ir_http__id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_uom_uom__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Invalid website acknowledgement."
+msgstr "تأكيد استلام الموقع غير صالح."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Invalid website message."
+msgstr "رسالة الموقع غير صالحة."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Invalid website order."
+msgstr "طلب الموقع غير صالح."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Invalid website reply."
+msgstr "رد الموقع غير صالح."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__write_uid
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__write_uid
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__write_date
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__write_date
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_storefront_callcenter_adapter
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.chat
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_event__order_id
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__order_id
+msgid "Order"
+msgstr "الطلب"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_sale_order_callcenter_uuid_unique
+msgid "Order UUID must be unique."
+msgstr "يجب أن يكون معرف الطلب الفريد غير مكرر."
+
+#. module: ab_storefront_callcenter_adapter
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.chat
+msgid "Order chat"
+msgstr "محادثة الطلب"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_uom_uom
+msgid "Product Unit of Measure"
+msgstr "وحدة قياس المنتج"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_ab_storefront_callcenter_reply_reply_unique
+msgid "Reply already exists."
+msgstr "الرد موجود بالفعل."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_sale_order
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: ab_storefront_callcenter_adapter
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.chat
+msgid "Send"
+msgstr "إرسال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__service_user_id
+msgid "Service User"
+msgstr "مستخدم الخدمة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_ab_storefront_callcenter_endpoint_source_unique
+msgid "Source must be unique."
+msgstr "يجب أن يكون المصدر غير مكرر."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_reply__token
+msgid "Token"
+msgstr "الرمز"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Use a dedicated callcenter exchange user."
+msgstr "استخدم مستخدم خدمة مخصصاً لتبادل مركز الاتصال."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__website_id
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_ab_storefront_callcenter_endpoint_website_unique
+msgid "Website endpoint already exists."
+msgstr "نقطة اتصال الموقع موجودة بالفعل."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Website evidence is immutable."
+msgstr "لا يمكن تعديل بيانات الموقع المسجلة."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Website intake is disabled."
+msgstr "استقبال طلبات الموقع معطل."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+msgid "You"
+msgstr "أنت"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ir_http
+msgid "HTTP Routing"
+msgstr "توجيه طلبات HTTP"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Invalid website source."
+msgstr "مصدر الموقع غير صالح."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Only sales managers can publish callcenter updates."
+msgstr "يمكن لمديري المبيعات فقط إرسال تحديثات مركز الاتصال."
+
+#. module: ab_storefront_callcenter_adapter
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.sale_order_form
+msgid "Send callcenter update"
+msgstr "إرسال تحديث إلى مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.module.category,name:ab_storefront_callcenter_adapter.category_callcenter
+msgid "Website Callcenter"
+msgstr "مركز اتصال الموقع"

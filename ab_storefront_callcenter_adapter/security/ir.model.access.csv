@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_storefront_callcenter_endpoint_admin,Callcenter administration,model_ab_storefront_callcenter_endpoint,base.group_system,1,1,1,0
+access_ab_storefront_callcenter_endpoint_service,Callcenter endpoint,model_ab_storefront_callcenter_endpoint,group_service,1,0,0,0
+access_ab_storefront_callcenter_event_admin,Callcenter administration,model_ab_storefront_callcenter_event,base.group_system,1,0,0,0
+access_ab_storefront_callcenter_reply_admin,Callcenter administration,model_ab_storefront_callcenter_reply,base.group_system,1,0,0,0

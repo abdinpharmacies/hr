@@ -1,0 +1,89 @@
+<odoo>
+  <record id="endpoint_list" model="ir.ui.view">
+    <field name="name">Callcenter endpoints</field>
+    <field name="model">ab_storefront_callcenter_endpoint</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="source"/>
+        <field name="website_id"/>
+        <field name="company_id"/>
+        <field name="service_user_id"/>
+        <field name="cutoff"/>
+        <field name="enabled"/>
+      </list>
+    </field>
+  </record>
+  <record id="endpoint_form" model="ir.ui.view">
+    <field name="name">Callcenter endpoint</field>
+    <field name="model">ab_storefront_callcenter_endpoint</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="source" readonly="id"/>
+            <field name="website_id" readonly="id"/>
+            <field name="company_id"/>
+            <field name="service_user_id"/>
+            <field name="cutoff"/>
+            <field name="enabled"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="endpoint_action" model="ir.actions.act_window">
+    <field name="name">Callcenter Endpoints</field>
+    <field name="res_model">ab_storefront_callcenter_endpoint</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <menuitem id="endpoint_menu" name="Callcenter Endpoints" action="endpoint_action" groups="base.group_system"/>
+  <record id="unit_form" model="ir.ui.view">
+    <field name="name">Callcenter unit code</field>
+    <field name="model">uom.uom</field>
+    <field name="inherit_id" ref="uom.product_uom_form_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='name']" position="after">
+        <field name="ab_callcenter_code" groups="base.group_system"/>
+      </xpath>
+    </field>
+  </record>
+  <template id="confirmation_chat" inherit_id="website_sale.confirmation">
+    <xpath expr="//div[@id='order_name']" position="after">
+      <a t-if="order.ab_callcenter_uuid" t-att-href="'/my/website-chat/' + order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
+    </xpath>
+  </template>
+  <template id="portal_chat" inherit_id="sale.sale_order_portal_content">
+    <xpath expr="//div[@id='introduction']" position="after">
+      <a t-if="sale_order.ab_callcenter_uuid" t-att-href="'/my/website-chat/' + sale_order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
+    </xpath>
+  </template>
+  <template id="chat" name="Website Order Chat">
+    <t t-call="website.layout">
+      <main class="container py-4 ab_website_chat">
+        <h1>Order chat</h1>
+        <p t-esc="order.name"/>
+        <div data-chat-history="" aria-live="polite"/>
+        <p data-chat-status="" role="status"/>
+        <form t-att-action="'/storefront-callcenter/chat/' + order.ab_callcenter_uuid" method="post">
+          <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+          <label for="ab_chat_body">Message</label>
+          <textarea id="ab_chat_body" name="body" maxlength="4096" required="required" class="form-control"/>
+          <button type="submit" class="btn btn-primary mt-2">Send</button>
+        </form>
+      </main>
+    </t>
+  </template>
+  <record id="sale_order_form" model="ir.ui.view">
+    <field name="name">Callcenter order update</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header" position="inside">
+        <field name="ab_callcenter_uuid" invisible="True"/>
+        <button name="action_ab_callcenter_publish_revision" type="object" string="Send callcenter update" groups="sales_team.group_sale_manager" invisible="not ab_callcenter_uuid"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>
