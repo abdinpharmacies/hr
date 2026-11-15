@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_crm_website_order_staff,Website records,model_ab_crm_website_order,ab_crm_core.group_user,1,0,0,0
+access_ab_crm_website_event_staff,Website records,model_ab_crm_website_event,ab_crm_core.group_user,1,0,0,0
+access_ab_crm_website_mapping_staff,Website records,model_ab_crm_website_mapping,ab_crm_core.group_user,1,0,0,0
+access_ab_crm_website_mapping_manager,Website mappings,model_ab_crm_website_mapping,ab_crm_core.group_manager,1,1,1,0

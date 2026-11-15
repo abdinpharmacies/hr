@@ -1,0 +1,34 @@
+<templates xml:space="preserve">
+<t t-name="ab_crm_website.OrderMessage">
+    <div t-if="message.website_order" class="ab_website_order">
+        <h5 class="ab_website_order_title">Website Order: <t t-esc="message.website_order.reference"/></h5>
+        <details class="ab_website_invoice">
+            <summary><span class="ab_invoice_show">View invoice</span><span class="ab_invoice_hide">Hide invoice</span></summary>
+            <dl class="ab_website_customer">
+                <dt>Customer Name</dt><dd t-esc="message.website_order.customer.name"/>
+                <dt>Phone Number</dt><dd><bdi dir="ltr" t-esc="message.website_order.customer.phone"/></dd>
+                <dt>Delivery Address</dt><dd class="ab_website_delivery_address" t-esc="message.website_order.display_delivery_address || message.website_order.customer.address"/>
+                <dt>Order Reference</dt><dd class="ab_website_order_reference"><bdi dir="ltr" t-esc="message.website_order.public_reference || '—'"/></dd>
+            </dl>
+            <p t-if="message.website_order.display_notes" class="ab_website_customer_note" t-esc="message.website_order.display_notes"/>
+            <div class="ab_website_table_scroll">
+                <table class="ab_website_invoice_table"><thead><tr><th>Product</th><th>Quantity</th><th>Price</th><th>Discount</th><th>Total</th></tr></thead>
+                    <tbody><tr t-foreach="message.website_order.lines" t-as="line" t-key="line_index"><td t-esc="line.name"/><td t-esc="line.quantity"/><td t-esc="line.price"/><td><t t-esc="line.discount"/>%</td><td t-esc="line.total"/></tr></tbody>
+                </table>
+            </div>
+            <p class="ab_website_invoice_total"><span>Total: </span><t t-esc="message.website_order.total"/> <t t-esc="message.website_order.currency"/></p>
+            <p class="ab_website_payment_method"><strong>Payment method: </strong><t t-esc="message.website_order.payment_method_label"/></p>
+        </details>
+    </div>
+</t>
+<t t-inherit="ab_crm_sales_workspace.Workspace" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('ab_composer')]/fieldset" position="attributes"><attribute name="t-att-disabled">!state.detail.owned || state.busy || state.navigating || !['telegram', 'website'].includes(state.detail.provider)</attribute></xpath>
+    <xpath expr="//div[hasclass('ab_attachment_control')]" position="attributes"><attribute name="t-if">state.detail.provider !== 'website'</attribute></xpath>
+    <xpath expr="//button[@t-on-click='record']" position="attributes"><attribute name="t-if">!state.recording &amp;&amp; state.detail.provider !== 'website'</attribute></xpath>
+    <xpath expr="//article[@t-att-data-message-id]" position="attributes"><attribute name="t-att-class">'ab_message ' + message.direction + (message.website_order ? ' ab_website_message' : '')</attribute></xpath>
+    <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="attributes"><attribute name="t-if">message.body &amp;&amp; !message.location &amp;&amp; !message.website_order</attribute></xpath>
+    <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="after">
+        <t t-call="ab_crm_website.OrderMessage"/>
+    </xpath>
+</t>
+</templates>

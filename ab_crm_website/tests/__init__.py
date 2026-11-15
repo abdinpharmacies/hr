@@ -1,0 +1,6 @@
+from . import test_adapter
+from . import test_pos
+from . import test_ui
+from . import test_http
+
+from . import test_contact_groups

@@ -1,0 +1,548 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-11 19:28+0000\n"
+"PO-Revision-Date: 2026-11-11 19:28+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__account_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__account_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__account_id
+msgid "Account"
+msgstr "الحساب"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__branch_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__branch_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_conversation
+msgid "CRM Conversation"
+msgstr "محادثة العملاء"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_message
+msgid "CRM Message"
+msgstr "رسالة العملاء"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__company_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__company_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Conflicting website event."
+msgstr "تعارض في حدث الموقع."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__conversation_id
+msgid "Conversation"
+msgstr "المحادثة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__create_uid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__create_uid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__create_date
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__create_date
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Discount"
+msgstr "الخصم"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_chatter_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_conversation__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_message__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_account__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_api__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ir_http__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__envelope
+msgid "Envelope"
+msgstr "بيانات الحدث"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__event_uuid
+msgid "Event Uuid"
+msgstr "معرف الحدث الفريد"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__fingerprint
+msgid "Fingerprint"
+msgstr "بصمة المحتوى"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__handoff_id
+msgid "Handoff"
+msgstr "التحويل إلى نقطة البيع"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_chatter_api__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_conversation__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_message__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_account__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_api__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ir_http__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Invalid website event."
+msgstr "حدث الموقع غير صالح."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Invalid website order."
+msgstr "طلب الموقع غير صالح."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Invalid website product or scope mapping."
+msgstr "ربط منتج الموقع أو نطاقه غير صالح."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Invalid website source."
+msgstr "مصدر الموقع غير صالح."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__write_uid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__write_uid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__write_date
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__write_date
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_messaging_account
+msgid "Messaging Account"
+msgstr "حساب المراسلة"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_messaging_api
+msgid "Messaging Gateway API"
+msgstr "واجهة بوابة المراسلة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_order__progress__new
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__order_uuid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__order_uuid
+msgid "Order Uuid"
+msgstr "معرف الطلب الفريد"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Payment evidence:"
+msgstr "إثبات الدفع:"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__phone
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_crm_website
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_order__progress__prepared
+msgid "Prepared"
+msgstr "تم التجهيز"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__progress
+msgid "Progress"
+msgstr "التقدم"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_account__provider
+msgid "Provider"
+msgstr "مزود الخدمة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Quoted price"
+msgstr "السعر المعروض"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__reference
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Resolve website product and unit mappings before preparing POS."
+msgstr "راجع روابط منتجات الموقع ووحداتها قبل التجهيز في نقطة البيع."
+
+#. module: ab_crm_website
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_order__progress__review
+msgid "Review"
+msgstr "للمراجعة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid ""
+"Review POS prices and website payment evidence before invoicing. Website "
+"reservations remain on the website."
+msgstr ""
+"راجع أسعار نقطة البيع وإثبات دفع الموقع قبل إصدار الفاتورة. تبقى حجوزات "
+"الموقع على الموقع."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Review duplicate website products with different units."
+msgstr "راجع منتجات الموقع المكررة بوحدات مختلفة."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/pos.js:0
+msgid "Review the existing draft before adding website lines."
+msgstr "راجع المسودة الحالية قبل إضافة أصناف الموقع."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__revision
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__revision
+msgid "Revision"
+msgstr "الإصدار"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_chatter_api
+msgid "Sales Chatter Login API"
+msgstr "واجهة تسجيل دخول محادثات المبيعات"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__serial
+msgid "Serial"
+msgstr "الرقم التسلسلي"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__snapshot
+msgid "Snapshot"
+msgstr "نسخة الطلب"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "This website order already has a staff POS handoff."
+msgstr "تم تحويل طلب الموقع هذا بالفعل إلى نقطة البيع بواسطة موظف."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Total:"
+msgstr "الإجمالي:"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/pos.js:0
+msgid "Unable to prepare website lines."
+msgstr "تعذر تجهيز أصناف الموقع."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__unit_code
+msgid "Unit Code"
+msgstr "رمز الوحدة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__uom_id
+msgid "Uom"
+msgstr "وحدة القياس"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Use reviewed website customer linking."
+msgstr "استخدم ربط عميل الموقع بعد المراجعة."
+
+#. module: ab_crm_website
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_messaging_account__provider__website
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_event
+msgid "Website Event"
+msgstr "حدث الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_order
+msgid "Website Order"
+msgstr "طلب الموقع"
+
+#. module: ab_crm_website
+#: model:ir.actions.act_window,name:ab_crm_website.orders_action
+#: model:ir.ui.menu,name:ab_crm_website.orders_menu
+msgid "Website Orders"
+msgstr "طلبات الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_conversation__website_phone
+msgid "Website Phone"
+msgstr "هاتف الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_mapping
+msgid "Website Unit Mapping"
+msgstr "ربط وحدة الموقع"
+
+#. module: ab_crm_website
+#: model:ir.actions.act_window,name:ab_crm_website.mappings_action
+#: model:ir.ui.menu,name:ab_crm_website.mappings_menu
+msgid "Website Unit Mappings"
+msgstr "روابط وحدات الموقع"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website chat supports text only."
+msgstr "محادثة الموقع تدعم النصوص فقط."
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_event_unique_event
+msgid "Website event already exists."
+msgstr "حدث الموقع موجود بالفعل."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website evidence is immutable."
+msgstr "لا يمكن تعديل بيانات الموقع المسجلة."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Website fulfillment:"
+msgstr "تنفيذ طلب الموقع:"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website intake is disabled."
+msgstr "استقبال طلبات الموقع معطل."
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_mapping_unique_mapping
+msgid "Website mapping already exists."
+msgstr "ربط الموقع موجود بالفعل."
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_order_unique_order
+msgid "Website order already exists."
+msgstr "طلب الموقع موجود بالفعل."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Website quotation ·"
+msgstr "عرض سعر الموقع ·"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website quotation: %s"
+msgstr "عرض سعر الموقع: %s"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website replies are disabled."
+msgstr "الردود على الموقع معطلة."
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_event_unique_revision
+msgid "Website revision already exists."
+msgstr "إصدار الموقع موجود بالفعل."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website revisions must arrive in order."
+msgstr "يجب استلام إصدارات الموقع بالترتيب."
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ir_http
+msgid "HTTP Routing"
+msgstr "توجيه طلبات HTTP"
+
+#. module: ab_crm_website
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Review website delivery charges before preparing POS."
+msgstr "راجع رسوم توصيل الموقع قبل التجهيز في نقطة البيع."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Create order"
+msgstr "إنشاء طلب"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Website Order: %s"
+msgstr "طلب الموقع: %s"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Website Order:"
+msgstr "طلب الموقع:"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "View invoice"
+msgstr "عرض الفاتورة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Hide invoice"
+msgstr "اخفاء الفاتورة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Delivery Address"
+msgstr "عنوان التوصيل"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Payment method:"
+msgstr "طريقة الدفع:"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Cash on delivery"
+msgstr "الدفع عند الاستلام"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Bank transfer"
+msgstr "تحويل بنكي"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Card"
+msgstr "بطاقة"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Online payment"
+msgstr "دفع إلكتروني"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Not specified"
+msgstr "غير محدد"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__public_reference
+msgid "Order Reference"
+msgstr "مرجع الطلب"
