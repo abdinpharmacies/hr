@@ -44,6 +44,7 @@
         'report_wizard/templates/xlsx_account_statement.xml',
         'report_wizard/templates/template_due_salaries_details.xml',
         'report_wizard/account_statement_view.xml',
+        'views/numeric_date_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

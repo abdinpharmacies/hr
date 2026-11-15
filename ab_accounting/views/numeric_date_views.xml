@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- Numeric dates follow the active language format; datetime fields retain their time. -->
+    <record id="ab_accounting_je_line_view_tree_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_accounting_je_line_view_tree.numeric.dates</field>
+        <field name="model">ab_accounting_je_line</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='due_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='settlement_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='create_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='write_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='posted_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_accounting_je_line_view_form_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_accounting_je_line_view_form.numeric.dates</field>
+        <field name="model">ab_accounting_je_line</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='create_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='write_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_accounting_je_line_qry_view_tree_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_accounting_je_line_qry_view_tree.numeric.dates</field>
+        <field name="model">ab_accounting_je_line_qry</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_qry_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='due_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='final_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='posted_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='create_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_accounting_je_line_qry_view_form_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_accounting_je_line_qry_view_form.numeric.dates</field>
+        <field name="model">ab_accounting_je_line_qry</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_qry_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='due_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='final_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='posted_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='create_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='write_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_accounting_je_header_view_tree_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_accounting_je_header_view_tree.numeric.dates</field>
+        <field name="model">ab_accounting_je_header</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_je_header_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='create_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//list//field[@name='write_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_due_salaries_wizard_view_form_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_due_salaries_wizard_view_form.numeric.dates</field>
+        <field name="model">ab_due_salaries_wizard</field>
+        <field name="inherit_id" ref="ab_accounting.ab_due_salaries_wizard_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group/field[@name='till_month']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='costcenter_deduction_month_prevented_ids']/list/field[@name='till_month']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_costcenter_deduction_month_prevented_view_tree_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_costcenter_deduction_month_prevented_view_tree.numeric.dates</field>
+        <field name="model">ab_costcenter_deduction_month_prevented</field>
+        <field name="inherit_id" ref="ab_accounting.ab_costcenter_deduction_month_prevented_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list//field[@name='till_month']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_costcenter_deduction_month_prevented_view_form_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_costcenter_deduction_month_prevented_view_form.numeric.dates</field>
+        <field name="model">ab_costcenter_deduction_month_prevented</field>
+        <field name="inherit_id" ref="ab_accounting.ab_costcenter_deduction_month_prevented_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='till_month']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_accounting_account_statement_form_numeric_dates" model="ir.ui.view">
+        <field name="name">ab_accounting_account_statement_form.numeric.dates</field>
+        <field name="model">ab_accounting_account_statement</field>
+        <field name="inherit_id" ref="ab_accounting.ab_accounting_account_statement_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='start_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='end_date']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='start_date_due']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='end_date_due']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='start_date_posted']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='end_date_posted']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='start_date_sett']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+            <xpath expr="//form//field[@name='end_date_sett']" position="attributes">
+                <attribute name="options">{'numeric': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
