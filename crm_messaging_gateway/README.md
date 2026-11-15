@@ -152,3 +152,47 @@ Application rechecks the preview and records actor, action, reason and digest in
 `operator_audit`. Payloads and fingerprints are preserved. Normal unmatched new
 callbacks keep their existing bounded retry/review behavior. Queue ordering
 continues to serialize receipts for each account, destination and reference.
+
+### WhatsApp branch locations
+
+Gateway 1.7.0 supports native WhatsApp branch locations through the same durable
+queue as replies. Enable **Branch Locations Enabled** on the authorized Odoo
+account and `location_enabled` on its matching gateway account. Existing sending
+gates and the WhatsApp reply window still apply. Reviewed branch snapshots remain
+immutable and uncertain deliveries require review. See
+[the update record](../docs/simple-notifications-whatsapp-locations.md).
+
+### Recording codecs and contact extensions
+
+Install the distribution `ffmpeg` package so both `ffmpeg` and `ffprobe` are
+available to the gateway worker. Audio/video validation uses restricted file/pipe
+protocols and bounded subprocess timeouts. Missing tools leave incoming media in
+the retry/review path and prevent outgoing provider calls; they are not treated
+as proof of malformed customer content. Supported audio sent as a WhatsApp
+document is normalized as audio.
+
+Native shared contacts are projected onto the supported contact fields before
+validation. Extra top-level provider metadata is ignored; supported-field types
+and size limits remain enforced. The original provider message digest is retained.
+Rejected contact callbacks log only fixed schema categories, never contact values.
+See [the recovery record](../docs/whatsapp-contact-audio-recovery.md).
+
+## Read receipts and animation attachments
+
+Gateway 1.8.0 adds a separate durable read-receipt result table for PostgreSQL and
+SQLite. Run the existing `python -m app.ops migrate` command during rollout before
+restarting the worker. Odoo's administrator-only account setting defaults off;
+the gateway's global sending switch also gates read-receipt delivery.
+
+Telegram animation metadata takes precedence over duplicate documents. GIFs use
+`sendAnimation`; WhatsApp GIFs are converted to silent H.264 MP4 before video
+upload. Retain `ffprobe`, `ffmpeg`, and H.264 encoding support in the service
+environment. Missing media codecs defer incoming events without exhausting retries.
+The original GIF stays in Odoo; captions and reply references stay on the normal
+outgoing operation. See the [implementation, validation and rollout report](../docs/read-receipts-channel-loading-animations.md).
+
+## Website adapter and scoped workers
+
+The optional Website transport runs with `python -m app.website`. Its Odoo companions capture confirmed website orders and supply text chat without using the customer API. See [Website adapter setup and rollout](../docs/website-callcenter-adapter.md).
+
+Use `python -m app.worker --provider telegram` and `--provider whatsapp` for separate durable provider workers. Incoming claims, expired-send recovery, stored receipts and delivery reporting are filtered by assigned accounts on PostgreSQL and SQLite. Replace the previous shared worker before enabling these service templates; keep one Telegram receiver per bot. HTTP/Uvicorn workers remain independent of channel workers. Existing ambiguous-send review behavior is preserved.

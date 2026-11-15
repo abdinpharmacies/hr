@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-TABLES = ('incoming_event', 'outgoing_operation', 'operator_audit', 'telegram_polling')
+TABLES = ('incoming_event', 'outgoing_operation', 'operator_audit', 'telegram_polling', 'read_receipt')
 MAX_BYTES = 512 * 1024 * 1024
 MAX_RECORDS = 1000000
 

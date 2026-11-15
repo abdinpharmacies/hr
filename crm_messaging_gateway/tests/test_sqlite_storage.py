@@ -254,6 +254,8 @@ def test_export_import_and_backup_restore(store, tmp_path):
         digest_records,
     )
 
+    store.persist_read_receipt('wa', {'token': 'read-token', 'reference': 'wamid.test'})
+    store.finish_read_receipt('wa', 'read-token', 'accepted')
     store.ingest('tg', event())
     with store.receiver('123') as conn:
         store.persist_poll(conn, 'tg', '123', event(), 20)
@@ -416,3 +418,8 @@ def test_reviewed_status_does_not_block_other_message_status(store):
     store.ingest('wa', [('newer-status', 'status', {'destination': '201014763233', 'reference': 'new-message', 'status': 'read'})])
     row = store.claim_incoming()
     assert row and row['event_key'] == 'newer-status'
+
+
+def test_read_receipt_durable_result_and_account_isolation(store):
+    from test_storage import test_read_receipt_durable_result_and_account_isolation as verify
+    verify(store)

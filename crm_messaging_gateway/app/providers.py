@@ -6,7 +6,7 @@ import math
 from datetime import datetime, timezone
 
 import httpx
-from .media import whatsapp_media, attachment_diagnostic, telegram_media, supported, prepare, prepare_whatsapp, prepare_video
+from .media import MediaDependencyUnavailable, whatsapp_media, attachment_diagnostic, telegram_media, supported, prepare, prepare_whatsapp, prepare_video
 
 
 def verify_signature(account, raw, headers):
@@ -81,6 +81,37 @@ def location_text(location):
     ]))
 
 
+def contact_card_shape(cards):
+    fields = {'name', 'phones', 'emails', 'addresses', 'urls', 'org', 'birthday'}
+    if not isinstance(cards, list):
+        return 'container'
+    flags = set()
+    for card in cards[:100]:
+        if not isinstance(card, dict):
+            flags.add('card_type')
+            continue
+        if card.keys() - fields:
+            flags.add('extra_card_fields')
+        for key in fields & card.keys():
+            value = card[key]
+            if value is None:
+                flags.add('null_container')
+            values = value if isinstance(value, list) else [value]
+            for item in values[:100]:
+                if isinstance(item, dict):
+                    if any(part is None for part in item.values()):
+                        flags.add('null_value')
+                    if any(part is not None and not isinstance(part, str) for part in item.values()):
+                        flags.add('nontext_value')
+    return ','.join(sorted(flags)) or 'schema_or_limit'
+
+
+class ContactCardsError(ValueError):
+    def __init__(self, cards):
+        super().__init__('Invalid contact cards')
+        self.category = contact_card_shape(cards)
+
+
 def valid_contact_cards(cards):
     if not isinstance(cards, list) or len(cards) > 100:
         return False
@@ -104,6 +135,20 @@ def valid_contact_cards(cards):
         if not isinstance(card.get('birthday', ''), str) or len(card.get('birthday', '')) > 32:
             return False
     return True
+
+
+def normalize_contact_cards(cards):
+    if not isinstance(cards, list) or not 1 <= len(cards) <= 100:
+        raise ContactCardsError(cards)
+    allowed = {'name', 'phones', 'emails', 'addresses', 'urls', 'org', 'birthday'}
+    normalized = [
+        {key: value for key, value in card.items() if key in allowed}
+        if isinstance(card, dict) else card
+        for card in cards
+    ]
+    if any(not card for card in normalized) or not valid_contact_cards(normalized) or len(json.dumps(normalized)) > 50000:
+        raise ContactCardsError(cards)
+    return normalized
 
 
 def normalize(account, payload):
@@ -235,10 +280,7 @@ def normalize(account, payload):
                 location = provider_location(message.get('location')) if message.get('type') == 'location' else None
                 kind = message.get('type', 'unknown')
                 media = whatsapp_media(message)
-                cards = message.get('contacts') if kind == 'contacts' else None
-                if cards is not None and (not valid_contact_cards(cards) or not cards
-                                           or len(json.dumps(cards)) > 50000):
-                    raise ValueError('Invalid contact cards')
+                cards = normalize_contact_cards(message.get('contacts')) if kind == 'contacts' else None
                 reaction = message.get('reaction') if kind == 'reaction' else None
                 if reaction is not None and (not isinstance(reaction, dict)
                     or not isinstance(reaction.get('emoji'), str) or len(reaction['emoji']) > 64):
@@ -306,11 +348,14 @@ def normalize(account, payload):
 
 
 def send(client, account, operation):
+    if account.provider == "website":
+        from .website import send_reply
+        return send_reply(client, account, operation)
     venue = operation.get('location')
     if 'location' in operation:
         valid = provider_location(venue)
         if (
-            account.provider != 'telegram' or not account.location_enabled
+            account.provider not in ('telegram', 'whatsapp') or not account.location_enabled
             or not valid or not isinstance(venue, dict)
             or set(venue) != {'latitude', 'longitude', 'name', 'address'}
             or not valid['name'].strip() or not valid['address'].strip()
@@ -333,7 +378,10 @@ def send(client, account, operation):
             'type': 'text',
             'text': {'body': operation['body'], 'preview_url': False},
         }
-        if operation.get('template'):
+        if venue:
+            payload.pop('text')
+            payload.update(type='location', location=venue)
+        elif operation.get('template'):
             payload.pop('text')
             payload.update(type='template', template=operation['template'])
         elif operation.get('reaction'):
@@ -349,7 +397,7 @@ def send(client, account, operation):
             media = operation['media'][0]
             try:
                 filename, raw, mime = prepare_whatsapp(media)
-                kind = 'audio' if media['kind'] == 'voice' else media['kind']
+                kind = 'video' if media['mimetype'] == 'image/gif' else 'audio' if media['kind'] == 'voice' else media['kind']
                 limit = (
                     (5 if kind == 'image' else 16 if kind in ('audio', 'video') else 20)
                     * 1024
@@ -361,6 +409,8 @@ def send(client, account, operation):
                     or mime in ('audio/webm', 'video/webm')
                 ):
                     raise ValueError('Unsupported WhatsApp media')
+            except MediaDependencyUnavailable:
+                return {'status': 'failed', 'reference': '', 'error': 'unavailable'}
             except Exception:
                 return {'status': 'failed', 'reference': '', 'error': 'media'}
             try:
@@ -439,8 +489,12 @@ def send(client, account, operation):
                 'voice': ('sendVoice', 'voice'),
                 'video': ('sendVideo', 'video'),
             }[media['kind']]
+            if media.get('mimetype') == 'image/gif':
+                method, field = 'sendAnimation', 'animation'
             try:
                 files = {field: prepare_video(media) if media['kind'] == 'video' else prepare(media)}
+            except MediaDependencyUnavailable:
+                return {'status': 'failed', 'reference': '', 'error': 'unavailable'}
             except Exception:
                 return {'status': 'failed', 'reference': '', 'error': 'media'}
             url = url.rsplit('/', 1)[0] + '/' + method
@@ -496,3 +550,23 @@ def send(client, account, operation):
     except (ValueError, KeyError, TypeError, IndexError):
         pass
     return {'status': 'review', 'reference': '', 'error': 'ambiguous'}
+
+
+def send_read_receipt(client, account, reference):
+    if account.provider != 'whatsapp':
+        raise ValueError('Read receipts require WhatsApp')
+    try:
+        response = client.post(
+            f'https://graph.facebook.com/{account.graph_version}/{account.provider_account}/messages',
+            headers={'Authorization': 'Bearer ' + account.token.get_secret_value()},
+            json={'messaging_product': 'whatsapp', 'status': 'read', 'message_id': reference},
+        )
+        if response.status_code == 429 or response.status_code >= 500:
+            return 'retry'
+        if response.status_code in (401, 403):
+            return 'retry'
+        if response.status_code == 200 and response.json().get('success') is True:
+            return 'accepted'
+        return 'rejected'
+    except (httpx.HTTPError, ValueError, TypeError):
+        return 'retry'

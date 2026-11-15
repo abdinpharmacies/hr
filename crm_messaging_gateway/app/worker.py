@@ -5,18 +5,21 @@ from .odoo import Odoo, OdooUnavailable
 import httpx
 
 from .config import settings, load_odoo_tokens
-from .providers import send
+from .providers import send, send_read_receipt
 from .observability import latency
-from .media import download
+from .media import download, MediaDependencyUnavailable
 from .storage import Store
 
 
 class Worker:
-    def __init__(self, config, store, odoo, client):
+    def __init__(self, config, store, odoo, client, accounts=None):
         self.config, self.store, self.odoo, self.client = config, store, odoo, client
+        self.accounts = list(config.accounts) if accounts is None else list(accounts)
+        if set(self.accounts) - config.accounts.keys():
+            raise ValueError("Unknown worker account")
 
     def ingest(self):
-        row = self.store.claim_incoming()
+        row = self.store.claim_incoming(self.accounts)
         if not row:
             return
         success = False
@@ -41,7 +44,7 @@ class Worker:
             ):
                 account = self.config.accounts[row['account']]
                 if account.token is None:
-                    load_odoo_tokens(self.config, self.odoo)
+                    load_odoo_tokens(self.config, self.odoo, accounts=[row['account']])
                 try:
                     data = download(self.client, account, row['payload']['media'])
                 except ValueError:
@@ -82,6 +85,10 @@ class Worker:
                             failed='invalid',
                         )
             success = True
+        except MediaDependencyUnavailable:
+            logging.warning('Incoming media deferred category=codec_unavailable')
+            self.store.defer_incoming(row)
+            return
         except OdooUnavailable:
             self.store.defer_incoming(row)
             return
@@ -90,6 +97,8 @@ class Worker:
         self.store.finish_incoming(row, success)
 
     def collect(self, code):
+        if code not in self.accounts:
+            return
         account = self.config.accounts[code]
         if not self.config.sending_enabled or not account.enabled or not account.sending_enabled:
             return
@@ -114,7 +123,7 @@ class Worker:
         self.store.mark_ready(row)
 
     def recover_receipts(self):
-        for row in self.store.stored():
+        for row in self.store.stored(self.accounts):
             try:
                 self.odoo.call(
                     'acknowledge_receipt',
@@ -132,7 +141,7 @@ class Worker:
         if not self.config.sending_enabled:
             return
         accounts = [
-            code for code, account in self.config.accounts.items() if account.enabled and account.sending_enabled
+            code for code, account in self.config.accounts.items() if code in self.accounts and account.enabled and account.sending_enabled
         ]
         row = self.store.claim_outgoing(accounts)
         if row:
@@ -172,7 +181,7 @@ class Worker:
             self.store.outcome(row, outcome)
 
     def report(self):
-        for row in self.store.reports():
+        for row in self.store.reports(self.accounts):
             try:
                 evidence = {
                     key: row['outcome'][key] for key in ('status', 'reference', 'error')
@@ -189,14 +198,37 @@ class Worker:
             except Exception:
                 logging.warning('Delivery evidence pending for operation %s', row['id'])
 
+    def read_receipts(self, code):
+        if code not in self.accounts:
+            return
+        account = self.config.accounts[code]
+        if not self.config.sending_enabled or account.provider != 'whatsapp' or not account.enabled:
+            return
+        payload = self.odoo.call('lease_read_receipt', code)
+        if not payload:
+            return
+        if payload['provider'] != account.provider or payload['provider_account'] != account.provider_account:
+            raise RuntimeError('Read receipt account mismatch')
+        row = self.store.persist_read_receipt(code, payload)
+        if account.token is None:
+            load_odoo_tokens(self.config, self.odoo, accounts=[code])
+        outcome = row['result_status'] or send_read_receipt(self.client, account, row['reference'])
+        self.store.finish_read_receipt(code, payload['token'], outcome)
+        self.odoo.call('report_read_receipt', code, token=payload['token'], lease=payload['lease'], status=outcome)
+
     def tick(self):
-        self.store.recover_sending()
+        self.store.recover_sending(self.accounts)
         self.ingest()
         self.report()
         self.recover_receipts()
+        for code in self.accounts:
+            try:
+                self.read_receipts(code)
+            except Exception:
+                logging.warning('Read receipt deferred')
         if self.config.sending_enabled:
             for code, account in self.config.accounts.items():
-                if account.enabled and account.sending_enabled:
+                if code in self.accounts and account.enabled and account.sending_enabled:
                     try:
                         self.collect(code)
                     except Exception:
@@ -204,19 +236,22 @@ class Worker:
             self.dispatch()
 
 
-def main():
+def main(provider=None):
     config = settings(load_provider_tokens=False)
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger('httpx').setLevel(logging.CRITICAL)
     logging.getLogger('httpcore').setLevel(logging.CRITICAL)
+    accounts = [code for code, account in config.accounts.items()
+                if account.provider != 'website' and (not provider or account.provider == provider)]
     with httpx.Client(timeout=20, follow_redirects=False) as client:
         if config.sending_enabled:
-            load_odoo_tokens(config, Odoo(config, client))
+            load_odoo_tokens(config, Odoo(config, client), accounts=accounts)
         worker = Worker(
             config,
             Store(config.database_url.get_secret_value()),
             Odoo(config, client),
             client,
+            accounts=accounts,
         )
         while True:
             try:
@@ -227,4 +262,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--provider', choices=['telegram', 'whatsapp'])
+    main(parser.parse_args().provider)

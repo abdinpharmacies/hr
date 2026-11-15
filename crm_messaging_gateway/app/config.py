@@ -9,8 +9,10 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, model_validator
 
 class Account(BaseModel):
     model_config = ConfigDict(extra='forbid')
-    provider: Literal['whatsapp', 'telegram']
-    provider_account: str = Field(pattern=r'^[0-9]+$')
+    provider: Literal['whatsapp', 'telegram', 'website']
+    provider_account: str
+    website_url: str | None = None
+    website_database: str | None = None
     token: SecretStr | None = None
     odoo_key: SecretStr | None = None
     token_source: Literal['config', 'odoo'] = 'config'
@@ -37,6 +39,19 @@ class Account(BaseModel):
 
     @model_validator(mode='after')
     def credentials(self):
+        if self.provider == 'website':
+            from uuid import UUID
+            if str(UUID(self.provider_account)) != self.provider_account:
+                raise ValueError('Website source must be a UUID')
+            url = urlsplit(self.website_url or '')
+            if (url.scheme != 'https' or not url.hostname or url.username or url.password
+                    or url.query or url.fragment or url.path not in ('', '/')
+                    or not self.website_database or not self.odoo_key or not self.token
+                    or self.token_source != 'config' or self.reception != 'disabled'):
+                raise ValueError('Website transport requires HTTPS and dedicated credentials')
+            return self
+        if not self.provider_account.isascii() or not self.provider_account.isdecimal():
+            raise ValueError('Invalid provider account')
         if self.provider == 'whatsapp' and self.enabled and not self.odoo_key:
             raise ValueError('Enabled WhatsApp accounts require a dedicated Odoo credential')
         if self.provider == 'whatsapp' and self.graph_version != 'v26.0':
@@ -164,8 +179,10 @@ def settings(*, load_provider_tokens=True):
     return config
 
 
-def load_odoo_tokens(config, odoo):
+def load_odoo_tokens(config, odoo, accounts=None):
     for code, account in config.accounts.items():
+        if accounts is not None and code not in accounts:
+            continue
         if account.token_source != 'odoo':
             continue
         values = odoo.call('get_provider_credentials', code)

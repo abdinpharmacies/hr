@@ -25,8 +25,11 @@ class Odoo:
         payload = dict(
             account_code=code, provider_account=account.provider_account, **values
         )
-        controller = self.config.odoo_transport == 'controller_v1'
+        controller = self.config.odoo_transport == 'controller_v1' and method != 'receive_website_event'
         path = '/crm/messaging/v1/' if controller else '/json/2/ab_crm_messaging_api/'
+        if method == 'receive_website_event':
+            path = '/crm/website/v1/'
+            method = 'receive'
         attempts = 4 if method == 'get_provider_credentials' else 1
         for attempt in range(attempts):
             try:

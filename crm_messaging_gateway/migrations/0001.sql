@@ -52,3 +52,12 @@ CREATE INDEX IF NOT EXISTS incoming_conversation_pending ON incoming_event
 CREATE INDEX IF NOT EXISTS outgoing_conversation_pending ON outgoing_operation
     (account, (payload->>'destination'), id)
     WHERE state!='done' OR outcome->>'status'='review';
+
+CREATE TABLE IF NOT EXISTS read_receipt (
+    id bigserial PRIMARY KEY,
+    account text NOT NULL,
+    token text NOT NULL,
+    reference text NOT NULL,
+    result_status text,
+    UNIQUE (account, token)
+);

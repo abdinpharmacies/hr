@@ -67,8 +67,9 @@ def test_native_venue_payload_and_receipt():
         {'location': {'latitude': 0, 'longitude': 0, 'name': '', 'address': 'B'}},
     ],
 )
-def test_invalid_venue_never_calls_provider(changes):
-    account = telegram().model_copy(update={'location_enabled': True})
+@pytest.mark.parametrize("factory", [telegram, whatsapp])
+def test_invalid_venue_never_calls_provider(changes, factory):
+    account = factory().model_copy(update={'location_enabled': True})
     with httpx.Client(
         transport=httpx.MockTransport(lambda r: pytest.fail('Unexpected provider call'))
     ) as client:
@@ -76,9 +77,9 @@ def test_invalid_venue_never_calls_provider(changes):
 
 
 @pytest.mark.parametrize(
-    'account', [telegram(), whatsapp().model_copy(update={'location_enabled': True})]
+    'account', [telegram(), whatsapp()]
 )
-def test_disabled_and_whatsapp_fail_closed(account):
+def test_disabled_locations_fail_closed(account):
     with httpx.Client(
         transport=httpx.MockTransport(lambda r: pytest.fail('Unexpected provider call'))
     ) as client:
@@ -101,3 +102,24 @@ def test_venue_transport_uncertainty(failure, expected):
             )['status']
             == expected
         )
+
+
+def test_whatsapp_native_location_payload_and_receipt():
+    import json
+    calls = []
+    def transport(request):
+        calls.append((request.url.path, json.loads(request.content)))
+        return httpx.Response(200, json={'messages': [{'id': 'wamid.location'}]})
+    with httpx.Client(transport=httpx.MockTransport(transport)) as client:
+        result = send(client, whatsapp().model_copy(update={'location_enabled': True}), operation(reply_reference='wamid.reply'))
+    assert result == {'status': 'accepted', 'reference': 'wamid.location', 'error': 'none'}
+    assert calls == [('/v26.0/456/messages', {
+        'messaging_product': 'whatsapp', 'to': '12345', 'type': 'location',
+        'location': operation()['location'], 'context': {'message_id': 'wamid.reply'},
+    })]
+
+
+def test_whatsapp_location_expired_window_never_calls_provider():
+    with httpx.Client(transport=httpx.MockTransport(lambda request: pytest.fail('Unexpected provider call'))) as client:
+        result = send(client, whatsapp().model_copy(update={'location_enabled': True}), operation(expires_at='2000-01-01 00:00:00'))
+    assert result == {'status': 'failed', 'reference': '', 'error': 'window'}

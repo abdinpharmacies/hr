@@ -5,8 +5,8 @@ from fastapi.responses import PlainTextResponse
 from starlette.concurrency import run_in_threadpool
 
 from .config import settings
-from .observability import latency
-from .providers import normalize, verify_signature
+from .observability import latency, logger
+from .providers import ContactCardsError, normalize, verify_signature
 from .storage import Conflict, Store
 
 
@@ -78,7 +78,9 @@ def create_app(config=None, store=None):
             IndexError,
             AttributeError,
             OverflowError,
-        ):
+        ) as error:
+            category = 'invalid_contact_cards:' + error.category if isinstance(error, ContactCardsError) else 'invalid_payload'
+            logger.warning('webhook_rejected provider=%s category=%s', provider, category)
             raise HTTPException(400, 'Invalid webhook') from None
         try:
             await run_in_threadpool(store.ingest, code, events)

@@ -217,17 +217,19 @@ class SQLiteStore:
                 (provider_account, next_offset),
             )
 
-    def claim_incoming(self):
+    def claim_incoming(self, accounts=None):
         with self.connect() as conn:
             return conn.execute(
                 """UPDATE incoming_event SET state='processing', lease_until=now()+60, attempts=attempts+1
                 WHERE id=(SELECT candidate.id FROM incoming_event candidate WHERE ((candidate.state='pending' AND candidate.available_at<=now())
                     OR (candidate.state='processing' AND candidate.lease_until<now()))
+                    AND (? IS NULL OR candidate.account IN (SELECT value FROM json_each(?)))
                     AND NOT EXISTS (SELECT 1 FROM incoming_event earlier WHERE earlier.account=candidate.account AND earlier.kind=candidate.kind
                         AND (candidate.kind!='status' OR COALESCE(earlier.payload->>'reference','')=COALESCE(candidate.payload->>'reference',''))
                         AND COALESCE(earlier.payload->>'sender',earlier.payload->>'destination','')=COALESCE(candidate.payload->>'sender',candidate.payload->>'destination','')
                         AND earlier.id<candidate.id AND earlier.state NOT IN ('done','ignored'))
-                    ORDER BY candidate.id LIMIT 1) RETURNING *"""
+                    ORDER BY candidate.id LIMIT 1) RETURNING *""",
+                (None if accounts is None else 1, encode(accounts)),
             ).fetchone()
 
     def finish_incoming(self, row, success):
@@ -279,10 +281,11 @@ class SQLiteStore:
                 raise Conflict('Conflicting outgoing operation')
             return row
 
-    def stored(self):
+    def stored(self, accounts=None):
         with self.connect() as conn:
             return conn.execute(
-                "SELECT * FROM outgoing_operation WHERE state='stored' ORDER BY id LIMIT 50"
+                "SELECT * FROM outgoing_operation WHERE state='stored' AND (? IS NULL OR account IN (SELECT value FROM json_each(?))) ORDER BY id LIMIT 50",
+                (None if accounts is None else 1, encode(accounts)),
             ).fetchall()
 
     def defer_send(self, row):
@@ -299,12 +302,12 @@ class SQLiteStore:
                 (row['id'],),
             )
 
-    def recover_sending(self):
+    def recover_sending(self, accounts=None):
         with self.connect() as conn:
             conn.execute(
                 """UPDATE outgoing_operation SET state='report', outcome=?
-                WHERE state='sending' AND lease_until<now()""",
-                (encode({'status': 'review', 'reference': '', 'error': 'ambiguous'}),),
+                WHERE state='sending' AND lease_until<now() AND (? IS NULL OR account IN (SELECT value FROM json_each(?)))""",
+                (encode({'status': 'review', 'reference': '', 'error': 'ambiguous'}), None if accounts is None else 1, encode(accounts)),
             )
 
     def claim_outgoing(self, accounts):
@@ -338,10 +341,11 @@ class SQLiteStore:
                 ),
             )
 
-    def reports(self):
+    def reports(self, accounts=None):
         with self.connect() as conn:
             return conn.execute(
-                "SELECT * FROM outgoing_operation WHERE state='report' ORDER BY id LIMIT 50"
+                "SELECT * FROM outgoing_operation WHERE state='report' AND (? IS NULL OR account IN (SELECT value FROM json_each(?))) ORDER BY id LIMIT 50",
+                (None if accounts is None else 1, encode(accounts)),
             ).fetchall()
 
     def reported(self, row):
@@ -349,4 +353,27 @@ class SQLiteStore:
             conn.execute(
                 "UPDATE outgoing_operation SET state='done' WHERE id=? AND state='report'",
                 (row['id'],),
+            )
+
+    def persist_read_receipt(self, account, payload):
+        with self.connect() as conn:
+            conn.execute(
+                'INSERT INTO read_receipt(account,token,reference) VALUES (?,?,?) ON CONFLICT DO NOTHING',
+                (account, payload['token'], payload['reference']),
+            )
+            row = conn.execute(
+                'SELECT * FROM read_receipt WHERE account=? AND token=?',
+                (account, payload['token']),
+            ).fetchone()
+            if row['reference'] != payload['reference']:
+                raise Conflict('Conflicting read receipt')
+            return row
+
+    def finish_read_receipt(self, account, token, outcome):
+        if outcome not in ('accepted', 'rejected'):
+            return
+        with self.connect() as conn:
+            conn.execute(
+                'UPDATE read_receipt SET result_status=? WHERE account=? AND token=? AND result_status IS NULL',
+                (outcome, account, token),
             )

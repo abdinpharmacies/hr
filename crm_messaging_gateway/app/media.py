@@ -9,11 +9,28 @@ import re
 import subprocess
 import tempfile
 
+class MediaDependencyUnavailable(RuntimeError):
+    pass
+
+
+def run_media_tool(*args, **kwargs):
+    try:
+        return subprocess.run(*args, **kwargs)
+    except subprocess.CalledProcessError as error:
+        if any(marker in (error.stderr or b'') for marker in (b'Unknown encoder', b'Encoder not found', b'Unknown decoder', b'Decoder not found')):
+            raise MediaDependencyUnavailable('Media codec tools are unavailable') from None
+        raise
+    except FileNotFoundError:
+        raise MediaDependencyUnavailable('Media codec tools are unavailable') from None
+
+
 LIMIT = 20 * 1024 * 1024
 MIMES = {
     'image/jpeg',
     'image/png',
     'image/webp',
+    'image/gif',
+    'video/mp4',
     'text/markdown',
     'application/x-tgsticker',
     'application/pdf',
@@ -47,6 +64,14 @@ def telegram_media(message):
             key=lambda item: (item[1].get('file_size', 0), item[0]),
         )[1]
         kind, mime, name = 'image', 'image/jpeg', 'image.jpg'
+    elif isinstance(message.get('animation'), dict):
+        source = message['animation']
+        name = source.get('file_name') or ''
+        mime = source.get('mime_type') or ('image/gif' if Path(name).suffix.lower() == '.gif' else 'video/mp4')
+        if mime not in ('image/gif', 'video/mp4'):
+            return None
+        name = name or ('animation.gif' if mime == 'image/gif' else 'animation.mp4')
+        kind = 'image' if mime == 'image/gif' else 'video'
     elif isinstance(message.get('sticker'), dict):
         source = message['sticker']
         if source.get('is_animated'):
@@ -66,7 +91,9 @@ def telegram_media(message):
             return None
         mime = source.get('mime_type') or ('audio/ogg' if kind == 'voice' else 'application/octet-stream')
         name = source.get('file_name') or ('voice.ogg' if kind == 'voice' else 'attachment')
-        if kind == 'document' and mime in ('image/jpeg', 'image/png', 'image/webp'):
+        if kind == 'document' and mime == 'application/octet-stream' and Path(name).suffix.lower() == '.gif':
+            mime = 'image/gif'
+        if kind == 'document' and mime in ('image/jpeg', 'image/png', 'image/webp', 'image/gif'):
             kind = 'image'
         elif (
             kind == 'document'
@@ -92,7 +119,7 @@ def supported(metadata):
     return (
         metadata.get('mimetype') in MIMES
         and type(size) is int
-        and 0 <= size <= (10 * 1024 * 1024 if metadata.get('kind') == 'image' else LIMIT)
+        and 0 <= size <= (10 * 1024 * 1024 if metadata.get('kind') == 'image' else 16 * 1024 * 1024 if metadata.get('kind') == 'video' else LIMIT)
         and type(duration) in (int, float)
         and 0 <= duration <= 300
         and math.isfinite(duration)
@@ -145,6 +172,11 @@ def download(client, account, metadata):
             raw.extend(chunk)
             if len(raw) > limit:
                 raise ValueError('Media exceeds supported limits')
+    if metadata['mimetype'] in ('image/gif', 'video/mp4'):
+        try:
+            inspect_animation(bytes(raw), metadata['mimetype'])
+        except (OSError, subprocess.SubprocessError, KeyError, TypeError) as error:
+            raise ValueError('Invalid animation content') from error
     return base64.b64encode(raw).decode()
 
 
@@ -157,8 +189,19 @@ def prepare(metadata):
     raw = base64.b64decode(encoded, validate=True)
     if not raw or len(raw) != metadata['size']:
         raise ValueError('Invalid media')
+    if metadata['mimetype'] in ('image/gif', 'video/mp4'):
+        inspect_animation(raw, metadata['mimetype'])
     if metadata['kind'] not in ('voice', 'audio'):
         return metadata['name'], raw, metadata['mimetype']
+    mime = metadata['mimetype']
+    valid = (
+        mime in ('audio/webm', 'video/webm') and raw.startswith(b'\x1a\x45\xdf\xa3')
+        or mime == 'audio/ogg' and raw.startswith(b'OggS')
+        or mime == 'audio/mpeg' and (raw.startswith(b'ID3') or raw[:1] == b'\xff')
+        or mime == 'audio/mp4' and raw[4:8] == b'ftyp'
+    )
+    if not valid:
+        raise ValueError('Invalid audio content')
     with tempfile.TemporaryDirectory(prefix='crm-media-') as directory:
         source = Path(directory) / 'source'
         source.write_bytes(raw)
@@ -169,7 +212,7 @@ def prepare(metadata):
             'audio/mpeg': 'mp3',
             'audio/mp4': 'mov',
         }[metadata['mimetype']]
-        probe = subprocess.run(
+        probe = run_media_tool(
             [
                 'ffprobe',
                 '-protocol_whitelist',
@@ -193,7 +236,7 @@ def prepare(metadata):
             raise ValueError('Recording exceeds five minutes')
         if metadata['kind'] == 'voice':
             target = Path(directory) / 'voice.ogg'
-            subprocess.run(
+            run_media_tool(
                 [
                     'ffmpeg',
                     '-nostdin',
@@ -245,7 +288,7 @@ def _prepare_extended_attachment(metadata):
         with tempfile.TemporaryDirectory(prefix='crm-video-') as directory:
             source = Path(directory) / 'source'
             source.write_bytes(raw)
-            probe = subprocess.run(
+            probe = run_media_tool(
                 [
                     'ffprobe',
                     '-protocol_whitelist',
@@ -280,13 +323,38 @@ def _prepare_extended_attachment(metadata):
 
 
 def prepare_whatsapp(metadata):
+    if metadata.get('mimetype') == 'image/gif':
+        name, raw, mime = prepare(metadata)
+        with tempfile.TemporaryDirectory(prefix='crm-gif-') as directory:
+            source, target = Path(directory) / 'source.gif', Path(directory) / 'animation.mp4'
+            source.write_bytes(raw)
+            try:
+                run_media_tool([
+                    'ffmpeg', '-nostdin', '-v', 'error', '-max_alloc', '67108864',
+                    '-protocol_whitelist', 'file,pipe', '-threads', '1', '-f', 'gif',
+                    '-i', str(source), '-an', '-map_metadata', '-1',
+                    '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264',
+                    '-threads', '1', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
+                    '-t', '300', '-fs', str(16 * 1024 * 1024 + 1), str(target),
+                ], capture_output=True, timeout=60, check=True)
+            except subprocess.CalledProcessError as error:
+                if b'Unknown encoder' in (error.stderr or b'') or b'Encoder not found' in (error.stderr or b''):
+                    raise MediaDependencyUnavailable('H.264 encoder is unavailable') from None
+                raise
+            converted = target.read_bytes()
+            if len(converted) > 16 * 1024 * 1024:
+                raise ValueError('Converted animation exceeds 16 MB')
+            inspect_animation(converted, 'video/mp4')
+            return Path(name).stem + '.mp4', converted, 'video/mp4'
     return _prepare_extended_attachment(metadata)
 
 
 def prepare_video(metadata):
     if metadata.get('kind') != 'video' or metadata.get('mimetype') != 'video/mp4':
         raise ValueError('Invalid video')
-    return _prepare_extended_attachment(metadata)
+    result = _prepare_extended_attachment(metadata)
+    inspect_animation(result[1], result[2])
+    return result
 
 
 WHATSAPP_MIMES = {
@@ -329,6 +397,8 @@ def whatsapp_media(message):
     mime = source.get('mime_type', '').split(';')[0].strip().lower()
     if kind == 'sticker' or kind == 'document' and mime.startswith('image/'):
         kind = 'image'
+    if kind == 'document' and mime in WHATSAPP_MIMES['audio']:
+        kind = 'audio'
     if kind == 'audio' and source.get('voice') and mime == 'audio/ogg':
         kind = 'voice'
     suffix = {'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png',
@@ -368,7 +438,7 @@ def validate_whatsapp_content(metadata, raw):
         with tempfile.TemporaryDirectory(prefix='crm-wa-media-') as directory:
             source = Path(directory) / 'source'
             source.write_bytes(raw)
-            probe = subprocess.run([
+            probe = run_media_tool([
                 'ffprobe', '-protocol_whitelist', 'file,pipe', '-v', 'error',
                 '-show_entries', 'format=duration:stream=codec_type,codec_name',
                 '-of', 'json', str(source),
@@ -423,3 +493,36 @@ def download_whatsapp(client, account, metadata):
     except (OSError, subprocess.SubprocessError, KeyError, UnicodeError, TypeError) as error:
         raise ValueError('Invalid media content') from error
     return base64.b64encode(raw).decode()
+
+
+def inspect_animation(raw, mime):
+    if not raw or (mime == 'image/gif' and raw[:6] not in (b'GIF87a', b'GIF89a')):
+        raise ValueError('Invalid animation content')
+    if mime == 'video/mp4' and raw[4:8] != b'ftyp':
+        raise ValueError('Invalid animation content')
+    with tempfile.TemporaryDirectory(prefix='crm-animation-') as directory:
+        source = Path(directory) / 'source'
+        source.write_bytes(raw)
+        probe = run_media_tool([
+            'ffprobe', '-v', 'error', '-max_alloc', '67108864',
+            '-protocol_whitelist', 'file,pipe', '-threads', '1', '-f', 'gif' if mime == 'image/gif' else 'mov',
+            '-count_frames', '-show_entries',
+            'format=duration:stream=codec_type,codec_name,width,height,nb_read_frames',
+            '-of', 'json', str(source),
+        ], capture_output=True, timeout=15, check=True)
+        if getattr(probe, 'stderr', b'').strip():
+            raise ValueError('Invalid animation content')
+        details = json.loads(probe.stdout)
+        streams = details['streams']
+        videos = [stream for stream in streams if stream.get('codec_type') == 'video']
+        if len(videos) != 1:
+            raise ValueError('Invalid animation streams')
+        video = videos[0]
+        pixels = video['width'] * video['height']
+        frames = int(video['nb_read_frames'])
+        duration = float(details.get('format', {}).get('duration', 0.1 if frames == 1 else 301))
+        if (not 0 < duration <= 300 or not 0 < pixels <= 16777216
+                or frames > 9000 or pixels * frames > 500000000
+                or video['codec_name'] != ('gif' if mime == 'image/gif' else 'h264')
+                or any(stream.get('codec_name') not in ('gif', 'h264', 'aac') for stream in streams)):
+            raise ValueError('Animation exceeds supported limits')

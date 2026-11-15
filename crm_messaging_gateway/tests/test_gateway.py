@@ -951,7 +951,7 @@ def test_telegram_video_sends_private_upload_and_preserves_reply(monkeypatch):
     from types import SimpleNamespace
 
     monkeypatch.setattr('app.media.subprocess.run', lambda *a, **k: SimpleNamespace(
-        stdout=json.dumps({'streams': [{'codec_type': 'video', 'codec_name': 'h264'}]})
+        stdout=json.dumps({'format': {'duration': '1'}, 'streams': [{'codec_type': 'video', 'codec_name': 'h264', 'width': 16, 'height': 16, 'nb_read_frames': '25'}]})
     ))
     metadata = {'kind': 'video', 'mimetype': 'video/mp4', 'name': 'clip.mp4',
                 'size': 12, 'data': base64.b64encode(b'\x00\x00\x00\x0cftypisom').decode()}

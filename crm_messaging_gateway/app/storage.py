@@ -97,17 +97,19 @@ class Store:
                 (provider_account, next_offset),
             )
 
-    def claim_incoming(self):
+    def claim_incoming(self, accounts=None):
         with self.connect() as conn:
             return conn.execute(
                 """UPDATE incoming_event SET state='processing', lease_until=now()+interval '60 seconds', attempts=attempts+1
                 WHERE id=(SELECT candidate.id FROM incoming_event candidate WHERE ((candidate.state='pending' AND candidate.available_at<=now())
                     OR (candidate.state='processing' AND candidate.lease_until<now()))
+                    AND (%s::integer IS NULL OR candidate.account=ANY(%s))
                     AND NOT EXISTS (SELECT 1 FROM incoming_event earlier WHERE earlier.account=candidate.account AND earlier.kind=candidate.kind
                         AND (candidate.kind!='status' OR COALESCE(earlier.payload->>'reference','')=COALESCE(candidate.payload->>'reference',''))
                         AND COALESCE(earlier.payload->>'sender',earlier.payload->>'destination','')=COALESCE(candidate.payload->>'sender',candidate.payload->>'destination','')
                         AND earlier.id<candidate.id AND earlier.state NOT IN ('done','ignored'))
-                    ORDER BY candidate.id FOR UPDATE OF candidate SKIP LOCKED LIMIT 1) RETURNING *"""
+                    ORDER BY candidate.id FOR UPDATE OF candidate SKIP LOCKED LIMIT 1) RETURNING *""",
+                (None if accounts is None else 1, accounts),
             ).fetchone()
 
     def finish_incoming(self, row, success):
@@ -159,10 +161,11 @@ class Store:
                 raise Conflict('Conflicting outgoing operation')
             return row
 
-    def stored(self):
+    def stored(self, accounts=None):
         with self.connect() as conn:
             return conn.execute(
-                "SELECT * FROM outgoing_operation WHERE state='stored' ORDER BY id LIMIT 50"
+                "SELECT * FROM outgoing_operation WHERE state='stored' AND (%s::integer IS NULL OR account=ANY(%s)) ORDER BY id LIMIT 50",
+                (None if accounts is None else 1, accounts),
             ).fetchall()
 
     def defer_send(self, row):
@@ -179,12 +182,12 @@ class Store:
                 (row['id'],),
             )
 
-    def recover_sending(self):
+    def recover_sending(self, accounts=None):
         with self.connect() as conn:
             conn.execute(
                 """UPDATE outgoing_operation SET state='report', outcome=%s
-                WHERE state='sending' AND lease_until<now()""",
-                (Jsonb({'status': 'review', 'reference': '', 'error': 'ambiguous'}),),
+                WHERE state='sending' AND lease_until<now() AND (%s::integer IS NULL OR account=ANY(%s))""",
+                (Jsonb({'status': 'review', 'reference': '', 'error': 'ambiguous'}), None if accounts is None else 1, accounts),
             )
 
     def claim_outgoing(self, accounts):
@@ -218,10 +221,11 @@ class Store:
                 ),
             )
 
-    def reports(self):
+    def reports(self, accounts=None):
         with self.connect() as conn:
             return conn.execute(
-                "SELECT * FROM outgoing_operation WHERE state='report' ORDER BY id LIMIT 50"
+                "SELECT * FROM outgoing_operation WHERE state='report' AND (%s::integer IS NULL OR account=ANY(%s)) ORDER BY id LIMIT 50",
+                (None if accounts is None else 1, accounts),
             ).fetchall()
 
     def reported(self, row):
@@ -229,4 +233,27 @@ class Store:
             conn.execute(
                 "UPDATE outgoing_operation SET state='done' WHERE id=%s AND state='report'",
                 (row['id'],),
+            )
+
+    def persist_read_receipt(self, account, payload):
+        with self.connect() as conn:
+            conn.execute(
+                'INSERT INTO read_receipt(account,token,reference) VALUES (%s,%s,%s) ON CONFLICT DO NOTHING',
+                (account, payload['token'], payload['reference']),
+            )
+            row = conn.execute(
+                'SELECT * FROM read_receipt WHERE account=%s AND token=%s',
+                (account, payload['token']),
+            ).fetchone()
+            if row['reference'] != payload['reference']:
+                raise Conflict('Conflicting read receipt')
+            return row
+
+    def finish_read_receipt(self, account, token, outcome):
+        if outcome not in ('accepted', 'rejected'):
+            return
+        with self.connect() as conn:
+            conn.execute(
+                'UPDATE read_receipt SET result_status=%s WHERE account=%s AND token=%s AND result_status IS NULL',
+                (outcome, account, token),
             )

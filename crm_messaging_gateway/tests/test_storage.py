@@ -23,7 +23,7 @@ def store():
     instance.migrate()
     with instance.connect() as conn:
         conn.execute(
-            'TRUNCATE telegram_polling, operator_audit, incoming_event, outgoing_operation RESTART IDENTITY'
+            'TRUNCATE read_receipt, telegram_polling, operator_audit, incoming_event, outgoing_operation RESTART IDENTITY'
         )
     return instance
 
@@ -322,3 +322,16 @@ def test_reviewed_status_does_not_block_other_message_status(store):
     store.ingest('wa', [('newer-status', 'status', {'destination': '201014763233', 'reference': 'new-message', 'status': 'read'})])
     row = store.claim_incoming()
     assert row and row['event_key'] == 'newer-status'
+
+
+def test_read_receipt_durable_result_and_account_isolation(store):
+    receipt = {'token': 'read-token', 'reference': 'wamid.test'}
+    first = store.persist_read_receipt('wa', receipt)
+    assert store.persist_read_receipt('wa', receipt)['id'] == first['id']
+    store.finish_read_receipt('wa', receipt['token'], 'retry')
+    assert store.persist_read_receipt('wa', receipt)['result_status'] is None
+    store.finish_read_receipt('wa', receipt['token'], 'accepted')
+    assert Store(store.database_url).persist_read_receipt('wa', receipt)['result_status'] == 'accepted'
+    assert store.persist_read_receipt('other', receipt)['result_status'] is None
+    with pytest.raises(Conflict):
+        store.persist_read_receipt('wa', dict(receipt, reference='different'))
