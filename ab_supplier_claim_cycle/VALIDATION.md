@@ -12,7 +12,7 @@ disposable databases. The validation databases were removed after completion.
 | XML parsing and view loading | Passed |
 | Python compilation | Passed |
 | Focused post-install suite | 15 tests, 0 failures, 0 errors |
-| Legacy open-claim migration rehearsal | Passed |
+| Dynamic configuration preservation rehearsal | Passed |
 | `git diff --check` | Passed |
 
 The focused tests cover:
@@ -34,13 +34,18 @@ The focused tests cover:
 - allowed-field selector filtering aligned with server-side publication validation;
 - fully editable draft copies created by **New Version**;
 - unassigned-participant record-rule denial;
-- conversion of a legacy open claim into runtime stage-state rows.
+- absence of hardcoded department lifecycle methods and obsolete wizard models.
+
+The isolated `hr_db` clone retained identical counts and content hashes for 190
+claims, 7 workflows, 29 stages, 19 runtime stage states, 195 allowed-field links,
+58 approver links, 86 history rows and 25 document rows after the targeted upgrade.
 
 ## Deployment
 
 Before production, restore the production backup into an isolated database and run
 the targeted module upgrade with the production addons path. Compare claim,
-history and document counts before and after the upgrade. Do not use `-u base`.
+workflow, stage, approver, allowed-field, history and document snapshots before
+and after the upgrade. Do not use `-u base`.
 
 ```bash
 odoo-bin -c /path/to/isolated.conf -d supplier_claim_test \

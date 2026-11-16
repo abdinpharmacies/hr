@@ -1,11 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
 from markupsafe import Markup
-
-
-SECRETARIAL_PREPARATION_SLA_DAYS = 2
-
-
 class SupplierClaimDocument(models.Model):
     _name = 'ab_supplier_claim_document'
     _description = 'Supplier Claim Document Revision'
@@ -54,21 +49,3 @@ class SupplierClaimDocument(models.Model):
     @api.ondelete(at_uninstall=True)
     def _prevent_deletion(self):
         raise AccessError(_('Document history cannot be deleted.'))
-
-
-class ResCompany(models.Model):
-    _inherit = 'res.company'
-
-    supplier_claim_secretarial_sla_days = fields.Integer(
-        compute='_compute_supplier_claim_secretarial_sla_days',
-        store=False,
-        readonly=True,
-    )
-
-    def _compute_supplier_claim_secretarial_sla_days(self):
-        for company in self:
-            company.supplier_claim_secretarial_sla_days = SECRETARIAL_PREPARATION_SLA_DAYS
-
-    @api.model
-    def _get_supplier_claim_secretarial_sla_days(self):
-        return SECRETARIAL_PREPARATION_SLA_DAYS

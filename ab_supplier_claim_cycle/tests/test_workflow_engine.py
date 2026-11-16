@@ -1,7 +1,5 @@
 from datetime import timedelta
 import base64
-import importlib.util
-from pathlib import Path
 
 from odoo import Command, fields
 from odoo.exceptions import AccessError, ValidationError
@@ -309,6 +307,22 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
             })
         self.assertNotIn(company_field, stage.allowed_field_ids)
 
+    def test_only_dynamic_workflow_controls_claim_lifecycle(self):
+        Claim = self.env['ab_supplier_claim_cycle']
+        state_values = dict(Claim._fields['state']._description_selection(self.env))
+        self.assertEqual(
+            set(state_values), {'draft', 'in_progress', 'returned', 'closed'})
+        for method_name in (
+                'action_decide', 'action_prepare_payment', 'action_close',
+                'action_department_decision', 'action_open_document_replacement'):
+            self.assertFalse(hasattr(Claim, method_name), method_name)
+        self.assertNotIn('ab_supplier_claim_cycle_decision_wizard', self.env.registry)
+        self.assertNotIn('ab_supplier_claim_document_replacement', self.env.registry)
+        for field_name in (
+                'inventory_decision', 'purchasing_decision',
+                'supplier_accounts_decision', 'bank_accounts_decision'):
+            self.assertIn(field_name, Claim._fields)
+
     def test_new_version_remains_structurally_editable(self):
         action = self.workflow.with_user(self.admin).action_new_version()
         draft = self.env['ab_supplier_claim_workflow'].browse(action['res_id'])
@@ -355,38 +369,4 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         claim.write({'workflow_id': self.workflow.id})
         claim.action_submit()
         self.assertEqual(claim.workflow_id, self.workflow)
-
-    def test_legacy_open_claim_migration(self):
-        claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create({
-            'supplier_id': self.supplier.id,
-            'num_of_invoice': 2,
-            'area': 'north',
-            'claim_amount': 200,
-            'type_of_invoice': 'original',
-            'payment_nature': 'bank_transfer',
-            'tax_classification': 'tax_payment',
-        })
-        claim._workflow_write({
-            'state': 'operational_review',
-            'inventory_decision': 'approved',
-            'purchasing_decision': 'pending',
-            'tax_decision': 'pending',
-            'supplier_accounts_decision': 'pending',
-            'bank_accounts_decision': 'pending',
-        })
-        migration_path = (Path(__file__).parents[1] / 'migrations' / '19.0.6.0.0'
-                          / 'post-migrate.py')
-        spec = importlib.util.spec_from_file_location('supplier_claim_dynamic_migration', migration_path)
-        migration = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(migration)
-        migration.migrate(self.env.cr, '19.0.5.3.0')
-        self.assertEqual(claim.state, 'in_progress')
-        self.assertTrue(claim.workflow_id)
-        self.assertTrue(claim.stage_state_ids)
-        self.assertEqual(
-            claim.stage_state_ids.filtered(lambda row: row.name == 'Inventory').status,
-            'approved')
-        self.assertEqual(
-            claim.stage_state_ids.filtered(lambda row: row.name == 'Purchasing').status,
-            'pending')
 

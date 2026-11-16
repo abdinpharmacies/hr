@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Odoo 19 · version 19.0.6.6.0 · Developer: Alhassan Hossny
+Odoo 19 · version 19.0.7.0.0 · Developer: Alhassan Hossny
 
 ## Dynamic workflow
 
@@ -56,20 +56,14 @@ Participants can read claims assigned to any of their snapshot stages. Company
 record rules still restrict claim, stage-state, history and document access even
 though workflow definitions are globally shared.
 
-## Upgrade from 19.0.5.x
+## Deployment
 
-Back up PostgreSQL and the matching filestore, then rehearse the targeted upgrade
-on an isolated restored database before production.
+This release contains only the dynamic workflow engine. It has no migration code
+or compatibility path from the former hardcoded department workflow. Existing
+dynamic claims and workflow configuration retain their model and field identities.
 
-The `19.0.6.0.0` migration:
-
-- creates immutable legacy workflow versions for cash/non-cash and tax/non-tax
-  routes;
-- adds existing departmental approvers to Workflow Participant;
-- converts draft, open, returned and closed claims to runtime stage-state rows;
-- preserves existing chatter, history, documents, XML IDs and legacy audit data.
-
-Run only the targeted module upgrade:
+Back up PostgreSQL and the matching filestore, rehearse the targeted upgrade on
+an isolated restored database, then run only the module upgrade:
 
 ```bash
 odoo-bin -c /path/to/isolated.conf -d supplier_claim_test \
@@ -85,4 +79,4 @@ No Telegram adapter or Telegram compatibility layer is included.
 The focused suite covers domain matching and priority, parallel progression,
 allowed-field enforcement, immutable document snapshots, rejection/resubmission,
 deferral, approval removal, closed-claim protection, participant record rules,
-published-version immutability and legacy migration.
+published-version editing guards and removal of fixed department routing.

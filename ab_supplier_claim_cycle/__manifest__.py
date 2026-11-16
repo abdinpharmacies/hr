@@ -1,13 +1,13 @@
 {
     'name': 'Supplier Claim Cycle',
-    'version': '19.0.6.6.0',
+    'version': '19.0.7.0.0',
     'description': 'Supplier claims with versioned, domain-selected dynamic approval workflows.',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
     'application': True,
-    'depends': ['base', 'mail', 'web', 'ab_costcenter', 'resource'],
+    'depends': ['base', 'mail', 'web', 'ab_costcenter'],
     'data': [
         'security/groups.xml',
         'security/record_rules.xml',

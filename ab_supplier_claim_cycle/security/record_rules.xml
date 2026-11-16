@@ -51,10 +51,10 @@
         <field name="perm_unlink" eval="False"/>
     </record>
     <record id="claim_write_inventory" model="ir.rule">
-        <field name="name">claim_write_inventory</field>
+        <field name="name">Inventory assigned dynamic stages</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">[('active', '=', True), ('state', '=', 'operational_review'), ('inventory_decision', 'in', ['pending', 'deferred'])]</field>
+        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -81,10 +81,10 @@
         <field name="perm_unlink" eval="False"/>
     </record>
     <record id="claim_write_purchasing" model="ir.rule">
-        <field name="name">claim_write_purchasing</field>
+        <field name="name">Purchasing assigned dynamic stages</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">[('active', '=', True), ('state', '=', 'operational_review'), ('purchasing_decision', 'in', ['pending', 'deferred'])]</field>
+        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -111,10 +111,10 @@
         <field name="perm_unlink" eval="False"/>
     </record>
     <record id="claim_write_supplier_accounts" model="ir.rule">
-        <field name="name">claim_write_supplier_accounts</field>
+        <field name="name">Supplier Accounts assigned dynamic stages</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">[('active', '=', True), ('state', '=', 'financial_review'), ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</field>
+        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -141,10 +141,10 @@
         <field name="perm_unlink" eval="False"/>
     </record>
     <record id="claim_write_bank_accounts" model="ir.rule">
-        <field name="name">claim_write_bank_accounts</field>
+        <field name="name">Bank Accounts assigned dynamic stages</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">[('active', '=', True), ('state', '=', 'bank_accounts'), ('bank_accounts_decision', 'in', ['pending', 'deferred'])]</field>
+        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -239,10 +239,10 @@
         <field name="domain_force">[(1, '=', 1)] if user.has_group('ab_supplier_claim_cycle.supplier_claim_group_admin') or user.has_group('ab_supplier_claim_cycle.supplier_claim_group_user') else ['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
     </record>
     <record id="claim_write_tax" model="ir.rule">
-        <field name="name">Tax pending review</field>
+        <field name="name">Tax assigned dynamic stages</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
-        <field name="domain_force">[('active', '=', True), ('state', '=', 'financial_review'), ('tax_decision', 'in', ['pending', 'deferred'])]</field>
+        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
