@@ -224,6 +224,7 @@ msgstr "إعادة إرسال الرمز"
 #. module: ab_storefront_whatsapp_auth
 #: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
 #: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
 msgid "Security code"
 msgstr "رمز الأمان"
 
@@ -313,6 +314,7 @@ msgstr "نتيجة غير معروفة"
 #. module: ab_storefront_whatsapp_auth
 #: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
 #: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
 msgid "Verify code"
 msgstr "التحقق من الرمز"
 
@@ -405,3 +407,42 @@ msgstr "جارٍ إرسال الرمز الخاص بك."
 #: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
 msgid "Your code is queued for delivery."
 msgstr "الرمز الخاص بك في قائمة انتظار التسليم."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_identity__kind__whatsapp
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
+msgid "Verify WhatsApp contact"
+msgstr "توثيق رقم واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
+msgid "WhatsApp number"
+msgstr "رقم واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+msgid "Send verification code"
+msgstr "إرسال رمز التحقق"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
+msgid "Current password"
+msgstr "كلمة المرور الحالية"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
+msgid "Account security"
+msgstr "أمان الحساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.recovery_whatsapp
+msgid "<i class=\"fa fa-whatsapp\" aria-hidden=\"true\"/> Recover via WhatsApp"
+msgstr "<i class=\"fa fa-whatsapp\" aria-hidden=\"true\"/> استرداد الحساب عبر واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_link
+msgid "<i class=\"fa fa-whatsapp\" aria-hidden=\"true\"/> Send verification code"
+msgstr "<i class=\"fa fa-whatsapp\" aria-hidden=\"true\"/> إرسال رمز التحقق"

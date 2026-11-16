@@ -1,4 +1,5 @@
 import re
+import logging
 import secrets
 from datetime import timedelta
 from uuid import uuid4
@@ -16,13 +17,13 @@ class WhatsAppChannel(models.AbstractModel):
     _description = 'Storefront WhatsApp Verification Channel'
 
     def _identity_kind(self):
-        return 'phone'
+        return 'whatsapp'
 
     def _enabled(self):
         return bool(self.env['ab_storefront_auth_service']._wa_transport())
 
     def _available_for(self, user):
-        return self._enabled() and bool(self.env['ab_storefront_auth_service']._identities(user).filtered(lambda identity: identity.kind == 'phone' and identity.verified_at))
+        return self._enabled() and bool(self.env['ab_storefront_auth_service']._verified_whatsapp(user))
 
     def _prepare_recovery(self, service, challenge, token):
         transport = service._wa_transport()
@@ -152,7 +153,8 @@ class WhatsAppService(models.AbstractModel):
             ))
             user.write({'email': False})
             self._set_identity(user, 'phone', challenge.value)
-            challenge.write({'used_at': fields.Datetime.now(), 'code_hash': False})
+            self._set_identity(user, 'whatsapp', challenge.value)
+            challenge.write({'user_id': user.id, 'used_at': fields.Datetime.now(), 'code_hash': False})
         return user
 
     def _request_recovery(self, channel, identifier, browser, ip):
@@ -165,6 +167,8 @@ class WhatsAppService(models.AbstractModel):
         if token:
             challenge = self.env['ab_storefront_auth_challenge'].sudo().search([('token_hash', '=', self._digest('token:' + token)), ('channel', '=', 'whatsapp')], limit=1)
             challenge.write({'wa_transport_id': transport.id, 'expires_at': fields.Datetime.now() + timedelta(seconds=300)})
+            event = self.env['ab_storefront_auth_event'].sudo().search(fields.Domain('challenge_id', '=', challenge.id) & fields.Domain('channel', '=', 'recovery_request'), limit=1)
+            self._process_event(event)
         return token
 
     def _verify_recovery(self, token, browser, code=None):
@@ -185,11 +189,87 @@ class WhatsAppService(models.AbstractModel):
         transport = challenge.wa_transport_id
         if not transport.enabled or not transport.service_user_id.active:
             return
-        user = self._recovery_user('phone', challenge.value)
-        if user and (user.company_id != transport.company_id or (user.website_id and user.website_id != transport.website_id)):
-            return
         scoped = self.with_context(website_id=transport.website_id.id)
         return super(WhatsAppService, scoped)._prepare_recovery(challenge, payload)
+
+    def _verified_whatsapp(self, user):
+        if not self._eligible_customer(user):
+            return self.env['ab_storefront_auth_identity'].sudo().browse()
+        identities = self._identities(user)
+        identity = identities.filtered(lambda item: item.kind == 'whatsapp')
+        if identity:
+            return identity
+        phone = identities.filtered(lambda item: item.kind == 'phone')
+        if not phone or user.login != phone.value:
+            return identity
+        evidence = self.env['ab_storefront_auth_challenge'].sudo().search([
+            ('purpose', '=', 'phone_signup'), ('channel', '=', 'whatsapp'),
+            ('value', '=', phone.value), ('phone_verified', '=', True), ('used_at', '!=', False),
+            ('wa_transport_id.company_id', '=', user.company_id.id),
+            ('used_at', '>=', user.create_date.replace(microsecond=0)),
+            ('used_at', '<=', user.create_date + timedelta(seconds=5)),
+        ])
+        evidence = evidence.filtered(lambda item: (
+            (not user.website_id or item.wa_transport_id.website_id == user.website_id)
+            and (not self._auth_website() or item.wa_transport_id.website_id == self._auth_website())
+            and abs((item.used_at - phone.verified_at).total_seconds()) <= 1
+            and (not item.user_id or item.user_id == user)))
+        if len(evidence) == 1:
+            self._set_identity(user, 'whatsapp', phone.value)
+            identity = self._identities(user).filtered(lambda item: item.kind == 'whatsapp')
+            identity.verified_at = phone.verified_at
+        elif evidence:
+            logging.getLogger(__name__).warning('WhatsApp signup evidence requires reverification: user=%s', user.id)
+        return identity
+
+    def _social_contacts(self, user):
+        self._verified_whatsapp(user)
+        return super()._social_contacts(user)
+
+    def _recovery_destination(self, user, channel):
+        if channel == 'whatsapp':
+            self._verified_whatsapp(user)
+        return super()._recovery_destination(user, channel)
+
+    def _request_whatsapp_link(self, user, phone, browser, ip):
+        if not self._eligible_customer(user) or not browser:
+            raise ValidationError(_('The code or link is invalid or expired.'))
+        transport = self._wa_transport()
+        if not transport:
+            raise UserError(_('WhatsApp verification is unavailable. Choose Telegram or try again later.'))
+        phone = normalize_identity('whatsapp', phone)
+        self._assert_available_identity(user, 'whatsapp', phone)
+        for action, subject, limit, window in (
+                ('link-ip', ip, 20, 3600), ('link-phone', phone, 5, 3600), ('wa-cooldown', phone, 1, 60)):
+            allowed, retry = self._rate_allow_with_retry(action, subject, limit, window)
+            if not allowed:
+                raise AuthRateLimitError(retry)
+        self._wa_invalidate(browser)
+        challenge, token = self._new_challenge('link', user, browser, phone, 'whatsapp', ttl=300)
+        challenge.wa_transport_id = transport
+        self._wa_queue(challenge, token)
+        return token
+
+    def _finish_whatsapp_link(self, token, browser, user, code):
+        challenge = self._find(token, ['link'], browser)
+        if not challenge or challenge.channel != 'whatsapp' or challenge.user_id != user:
+            return False
+        if not self._verify_whatsapp_code(challenge, token, code):
+            return False
+        self._set_identity(user, 'whatsapp', challenge.value)
+        if not user.partner_id.phone:
+            user.partner_id.phone = challenge.value
+        challenge.write({'used_at': fields.Datetime.now(), 'phone_verified': True, 'code_hash': False})
+        return True
+
+    def _verify_whatsapp_code(self, challenge, token, code):
+        challenge.write({'attempts': challenge.attempts + 1})
+        valid = (challenge.attempts <= 5 and isinstance(code, str)
+                 and re.fullmatch(r'[0-9]{6}', code)
+                 and secrets.compare_digest(challenge.code_hash or '', self._digest('otp:' + token + ':' + code)))
+        if not valid and challenge.attempts >= 5:
+            challenge.write({'used_at': fields.Datetime.now(), 'code_hash': False})
+        return bool(valid)
 
     def _wa_deliverable(self, event):
         challenge = event.challenge_id
@@ -204,5 +284,7 @@ class WhatsAppService(models.AbstractModel):
                     and challenge.expires_at > fields.Datetime.now() + timedelta(seconds=10)
                     and (not challenge.user_id or (
                         challenge.user_id.active and challenge.user_id.share
+                        and challenge.user_id.company_id == transport.company_id
+                        and (not challenge.user_id.website_id or challenge.user_id.website_id == transport.website_id)
                         and secrets.compare_digest(challenge.credential_stamp or '', self._credential_stamp(challenge.user_id)))))
 

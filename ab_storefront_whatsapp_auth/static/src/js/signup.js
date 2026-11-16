@@ -1,6 +1,7 @@
 import { Interaction } from "@web/public/interaction";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
+import { isValidEgyptianMobile } from "@ab_ecommerce_storefront/js/auth";
 
 class WhatsAppStart extends Interaction {
     static selector = ".ab-auth-page";
@@ -24,8 +25,11 @@ class WhatsAppStart extends Interaction {
         if (!button) {
             return;
         }
-        const login = button.closest("form").elements.login.value.trim();
-        button.classList.toggle("d-none", !login || login.includes("@"));
+        const form = button.closest("form");
+        const login = form.elements.login.value.trim();
+        const phoneMode = Boolean(login && !login.includes("@") && /^[+\d\s().\-٠-٩۰-۹]+$/.test(login));
+        button.classList.toggle("d-none", !phoneMode);
+        button.disabled = Boolean(this.isSubmitting || !isValidEgyptianMobile(login) || form.querySelector("[data-ab-rate-limit-seconds]"));
         button.dataset.abWhatsappReady = "true";
     }
 
@@ -35,7 +39,7 @@ class WhatsAppStart extends Interaction {
 
     startVerification(event) {
         const button = event.target.closest("[data-ab-whatsapp-start]");
-        if (!button || !this.el.contains(button)) {
+        if (!button || !this.el.contains(button) || button.disabled || this.isSubmitting) {
             return;
         }
         event.preventDefault();
@@ -56,6 +60,7 @@ class WhatsAppStart extends Interaction {
             input.value = name === "action" ? "start" : form.elements[name].value;
             target.append(input);
         }
+        this.isSubmitting = true;
         button.disabled = true;
         button.textContent = _t("Continuing...");
         document.body.append(target);

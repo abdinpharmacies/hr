@@ -55,3 +55,41 @@ def run(registry):
         env = api.Environment(cr, SUPERUSER_ID, {})
         assert env['res.users'].search_count([('login', '=', phone)]) == 1
     print('Concurrent completion: one account created; second completion rejected')
+
+
+def run_recovery(registry):
+    browser = secrets.token_urlsafe(32)
+    with registry.cursor() as cr:
+        env = api.Environment(cr, SUPERUSER_ID, {'lang': 'en_US'})
+        website = env['website'].search([], limit=1)
+        service = env['ab_storefront_auth_service'].with_context(website_id=website.id)
+        user = env['res.users'].search([('login', '=', '+201009987654')])
+        token = service._request_recovery('whatsapp', user.login, browser, '192.0.2.3')
+        challenge = service._find(token, ['otp'], browser)
+        event = env['ab_storefront_auth_event'].search([('challenge_id', '=', challenge.id), ('channel', '=', 'recovery_request')])
+        service._process_event(event)
+        delivery = env['ab_storefront_auth_event'].search([('challenge_id', '=', challenge.id), ('channel', '=', 'whatsapp')])
+        code = json.loads(service._cipher().decrypt(delivery.payload.encode()).decode())['code']
+        grant = service._verify_recovery(token, browser, code)
+        assert grant
+        website_id = website.id
+        cr.commit()
+    barrier = Barrier(2)
+
+    def complete(index):
+        barrier.wait(timeout=10)
+        for attempt in range(3):
+            try:
+                with registry.cursor() as cr:
+                    env = api.Environment(cr, SUPERUSER_ID, {'lang': 'en_US', 'website_id': website_id})
+                    result = env['ab_storefront_auth_service']._reset_password(grant, browser, 'Concurrent9!Pass')
+                    cr.commit()
+                    return 'reset' if result else 'rejected'
+            except OperationalError:
+                continue
+        return 'retry-exhausted'
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(complete, (1, 2)))
+    assert sorted(results) == ['rejected', 'reset'], results
+    print('Concurrent recovery: one password reset; second completion rejected')

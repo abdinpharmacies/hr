@@ -76,38 +76,46 @@ class WhatsAppAuthentication(StorefrontAuthSecurity):
             response = request.render('ab_storefront_whatsapp_auth.whatsapp_signup', values)
             response.headers.update({'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "frame-ancestors 'none'"})
             return response
-        if template == 'auth_recovery':
-            service = self._service()
-            if service._channel('whatsapp')._enabled() and 'whatsapp' not in values['available_channels']:
-                if not request.session.uid or service._channel('whatsapp')._available_for(request.env.user):
-                    values['available_channels'].append('whatsapp')
         return super()._render(template, values)
 
-    @http.route('/ab_storefront/auth/whatsapp/recover', type='http', auth='public', website=True, sitemap=False, methods=['POST'], csrf=True)
+    @http.route('/ab_storefront/auth/whatsapp/recover', type='http', auth='public', website=True, sitemap=False, methods=['GET', 'POST'], csrf=True)
     def whatsapp_recover(self, **post):
+        if request.httprequest.method == 'POST' and post.get('identifier'):
+            post['action'] = 'identify'
+        return self.recover(**post)
+
+    @http.route('/ab_storefront/auth/whatsapp/link', type='http', auth='user', website=True, sitemap=False, methods=['GET', 'POST'], csrf=True)
+    def whatsapp_link(self, **post):
         self._secure()
-        if request.env['ir.config_parameter'].sudo().get_param('auth_signup.reset_password', 'False') != 'True':
-            raise Forbidden()
+        user = request.env.user
         service = self._service()
-        browser = self._browser()
-        values = {'step': 'otp', 'error': False, 'message': False, 'available_channels': ['email', 'whatsapp'], 'telegram_enabled': False}
-        action = post.get('action', 'request')
-        if action in ('request', 'resend'):
-            identifier = post.get('identifier', '') if action == 'request' else request.session.get('ab_wa_recovery_phone', '')
-            request.session['ab_wa_recovery_phone'] = identifier[:254]
-            token = service._request_recovery('whatsapp', identifier, browser, self._ip())
-            if token:
-                request.session['ab_wa_recovery_token'] = token
-            values['message'] = _('If an eligible account exists, you will receive recovery instructions shortly.')
-        elif action == 'otp':
-            grant = service._verify_recovery(request.session.get('ab_wa_recovery_token', ''), browser, post.get('code', '')) if service._rate_allow('verify-ip', self._ip(), 60) else False
-            if grant:
-                request.session['ab_auth_grant'] = grant
-                values['step'] = 'password'
-            else:
-                values['error'] = _('The code or link is invalid or expired.')
-        else:
+        if not service._eligible_customer(user):
             raise Forbidden()
-        response = request.render('ab_storefront_whatsapp_auth.whatsapp_recovery', values)
+        browser = self._browser()
+        token = request.session.get('ab_wa_link', '')
+        challenge = service._find(token, ['link'], browser)
+        if challenge and (challenge.user_id != user or challenge.channel != 'whatsapp'):
+            challenge = challenge.browse()
+        values = {'error': False, 'phone': challenge.value if challenge else user.phone or '', 'active': bool(challenge)}
+        if request.httprequest.method == 'POST':
+            try:
+                action = post.get('action')
+                if action in ('start', 'resend'):
+                    self._confirm_password(user, post)
+                    phone = challenge.value if action == 'resend' and challenge else post.get('phone', '')
+                    token = service._request_whatsapp_link(user, phone, browser, self._ip())
+                    request.session['ab_wa_link'] = token
+                    values.update(active=True, phone=phone)
+                elif action == 'verify':
+                    if (not service._rate_allow('verify-ip', self._ip(), 60)
+                            or not service._finish_whatsapp_link(token, browser, user, post.get('code', ''))):
+                        raise UserError(_('The code or link is invalid or expired.'))
+                    request.session.pop('ab_wa_link', None)
+                    return request.redirect('/my/authentication', 303)
+                else:
+                    raise Forbidden()
+            except UserError as error:
+                values['error'] = error.args[0]
+        response = request.render('ab_storefront_whatsapp_auth.whatsapp_link', values)
         response.headers.update({'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "frame-ancestors 'none'"})
         return response
