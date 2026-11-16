@@ -15,6 +15,7 @@ from cryptography.fernet import Fernet, InvalidToken
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.http import request
 
 from .auth_identity import normalize_identity
 
@@ -103,6 +104,7 @@ class AuthService(models.AbstractModel):
         token = secrets.token_urlsafe(32)
         challenge = self.env["ab_storefront_auth_challenge"].sudo().create({
             "purpose": purpose, "user_id": user.id if user else False,
+            "website_id": self._auth_website().id,
             "token_hash": self._digest("token:" + token),
             "browser_hash": self._digest("browser:" + browser) if browser else False,
             "credential_stamp": self._credential_stamp(user) if user else False,
@@ -123,6 +125,18 @@ class AuthService(models.AbstractModel):
         challenge.invalidate_recordset()
         if not challenge or challenge.used_at or challenge.expires_at <= fields.Datetime.now():
             return challenge.browse()
+        website = self._auth_website()
+        if challenge.website_id and challenge.website_id != website and (website or browser):
+            return challenge.browse()
+        if (request and request.session.uid and challenge.user_id
+                and challenge.purpose in {"lookup", "otp", "email_reset", "grant"}
+                and challenge.user_id.id != request.session.uid):
+            return challenge.browse()
+        scoped = self.with_context(website_id=challenge.website_id.id) if challenge.website_id and not website else self
+        if challenge.user_id and not scoped._eligible_customer(challenge.user_id):
+            return challenge.browse()
+        if challenge.purpose in {"otp", "grant", "lookup"} and not browser:
+            return challenge.browse()
         if challenge.channel == "telegram" and not self._channel("telegram")._enabled():
             return challenge.browse()
         if browser and not secrets.compare_digest(challenge.browser_hash or "", self._digest("browser:" + browser)):
@@ -140,8 +154,94 @@ class AuthService(models.AbstractModel):
     def _identities(self, user):
         return self.env["ab_storefront_auth_identity"].sudo().search([("user_id", "=", user.id)])
 
+    def _auth_website(self):
+        website_id = request.website.id if request and hasattr(request, "website") else self.env.context.get("website_id")
+        return self.env["website"].sudo().browse(website_id).exists()
+
+    def _eligible_customer(self, user):
+        website = self._auth_website()
+        return bool(user and user.active and user.share and (
+            not website or (user.company_id == website.company_id and (not user.website_id or user.website_id == website))))
+
     def _available_channels(self, user):
+        if not self._eligible_customer(user):
+            return []
         return [name for name in self._channel_registry() if self._channel(name)._available_for(user)]
+
+    def _recovery_destination(self, user, channel):
+        identity = self._identities(user).filtered(lambda item: item.kind == self._channel(channel)._identity_kind())
+        if identity:
+            return identity.value
+        return user.email if channel == "email" else False
+
+    def _resolve_recovery_user(self, identifier):
+        identifier = str(identifier or "").strip()[:254]
+        users = self.env["res.users"].sudo().browse()
+        if not identifier:
+            return users
+        candidates = self.env["res.users"].sudo().search([
+            ("active", "=", True), ("share", "=", True),
+            "|", ("login", "=ilike", identifier), ("email", "=ilike", identifier),
+        ])
+        Identity = self.env["ab_storefront_auth_identity"].sudo()
+        for kind in ("email", "phone"):
+            try:
+                value = normalize_identity(kind, identifier)
+            except ValidationError:
+                continue
+            kinds = ["email"] if kind == "email" else ["phone", "whatsapp"]
+            candidates |= Identity.search(["|", "&", ("kind", "in", kinds), ("value", "=", value),
+                                          "&", ("kind", "=", "telegram"), ("phone_value", "=", value)]).user_id
+        candidates = candidates.filtered(self._eligible_customer)
+        return candidates if len(candidates) == 1 else users
+
+    def _lookup_recovery(self, identifier, browser, ip, user=None):
+        if not browser or not self._rate_allow("lookup-ip", ip, 20) or not self._rate_allow("lookup-browser", browser, 10):
+            return False
+        target = user.sudo() if user else self._resolve_recovery_user(identifier)
+        if not self._eligible_customer(target):
+            return False
+        challenge, token = self._new_challenge("lookup", target, browser, ttl=300)
+        return token
+
+    def _invalidate_recovery(self, browser):
+        self._lock("recovery-browser:" + self._digest(browser))
+        self.env["ab_storefront_auth_challenge"].sudo().search([
+            ("browser_hash", "=", self._digest("browser:" + browser)),
+            ("purpose", "in", ["otp", "email_reset", "grant"]), ("used_at", "=", False),
+        ]).write({"used_at": fields.Datetime.now(), "code_hash": False})
+
+    def _profile_contact_status(self, user):
+        identities = self._identities(user)
+        result = {}
+        for kind, value in (("phone", user.phone), ("email", user.email)):
+            verified = False
+            try:
+                normalized = normalize_identity(kind, value)
+                verified = bool(identities.filtered(lambda item: item.kind == kind and item.value == normalized))
+            except ValidationError:
+                pass
+            result[kind] = {"value": value, "verified": verified}
+        return result
+
+    def _social_contacts(self, user):
+        if not self._eligible_customer(user):
+            return []
+        identities = self._identities(user)
+        pending = self.env["ab_storefront_auth_challenge"].sudo().search([
+            ("user_id", "=", user.id), ("purpose", "=", "link"), ("used_at", "=", False),
+            ("website_id", "in", [False, self._auth_website().id]),
+            ("expires_at", ">", fields.Datetime.now()),
+        ], order="id desc")
+        contacts = []
+        for channel in ("whatsapp", "telegram"):
+            identity = identities.filtered(lambda item: item.kind == channel)
+            attempt = pending.filtered(lambda item: item.channel == channel)[:1]
+            contacts.append({"channel": channel, "value": (identity.phone_value or identity.value) if identity else attempt.value,
+                             "verified": bool(identity), "pending": bool(attempt),
+                             "enabled": channel in self._channel_registry() and self._channel(channel)._enabled(),
+                             "url": "/ab_storefront/auth/whatsapp/link" if channel == "whatsapp" else "/ab_storefront/auth/phone"})
+        return contacts
 
     def _assert_available_identity(self, user, kind, value):
         Identity = self.env["ab_storefront_auth_identity"].sudo()
@@ -159,13 +259,13 @@ class AuthService(models.AbstractModel):
             if existing and (not user or existing != user):
                 raise ValidationError(_("This identity is already linked to an account."))
 
-    def _set_identity(self, user, kind, value, chat_id=None):
+    def _set_identity(self, user, kind, value, chat_id=None, phone_value=None):
         value = normalize_identity(kind, value)
         self._lock("identity:" + kind + ":" + value)
         self._lock("identities-user:" + str(user.id))
         self._assert_available_identity(user, kind, value)
         identity = self._identities(user).filtered(lambda item: item.kind == kind)
-        values = {"user_id": user.id, "kind": kind, "value": value, "chat_id": chat_id, "verified_at": fields.Datetime.now()}
+        values = {"user_id": user.id, "kind": kind, "value": value, "chat_id": chat_id, "phone_value": phone_value, "verified_at": fields.Datetime.now()}
         if identity:
             identity.write(values)
         else:
@@ -183,7 +283,7 @@ class AuthService(models.AbstractModel):
 
     def _request_link(self, user, phone, browser, ip):
         if not self._channel("telegram")._enabled():
-            raise UserError(_("Telegram delivery is unavailable."))
+            raise UserError(_("Telegram verification is currently unavailable on this website. Choose another method or contact support."))
         phone = normalize_identity("phone", phone)
         allowed_ip, retry_after = self._rate_allow_with_retry("link-ip", ip, 20)
         if not allowed_ip:
@@ -191,7 +291,10 @@ class AuthService(models.AbstractModel):
         allowed_phone, retry_after = self._rate_allow_with_retry("link-phone", phone)
         if not allowed_phone:
             raise AuthRateLimitError(retry_after)
-        self._assert_available_identity(user, "phone", phone)
+        if user and not self._eligible_customer(user):
+            raise ValidationError(_("The code or link is invalid or expired."))
+        if not user:
+            self._assert_available_identity(user, "phone", phone)
         if not user and self.env["res.users"]._get_signup_invitation_scope() != "b2c":
             raise UserError(_("Signup is not allowed for uninvited users."))
         old = self.env["ab_storefront_auth_challenge"].sudo().search([("browser_hash", "=", self._digest("browser:" + browser)), ("purpose", "in", ["link", "phone_signup"]), ("used_at", "=", False)])
@@ -204,16 +307,19 @@ class AuthService(models.AbstractModel):
 
     def _finish_link(self, token, browser, user):
         challenge = self._find(token, ["link"], browser)
-        if not challenge or challenge.user_id != user or not challenge.phone_verified:
+        if not browser or not challenge or challenge.channel != "telegram" or challenge.user_id != user or not challenge.phone_verified:
             return False
-        self._set_identity(user, "phone", challenge.value)
-        self._set_identity(user, "telegram", challenge.telegram_user_id, challenge.telegram_chat_id)
+        if not self._identities(user).filtered(lambda item: item.kind == "phone") and not user.partner_id.phone:
+            self._set_identity(user, "phone", challenge.value)
+        self._set_identity(user, "telegram", challenge.telegram_user_id, challenge.telegram_chat_id, challenge.value)
+        if not user.partner_id.phone:
+            user.partner_id.phone = challenge.value
         challenge.write({"used_at": fields.Datetime.now()})
         return True
 
     def _finish_phone_signup(self, token, browser, values):
         challenge = self._find(token, ["phone_signup"], browser)
-        if not challenge or not challenge.phone_verified:
+        if not browser or not challenge or challenge.channel != "telegram" or not challenge.phone_verified:
             raise ValidationError(_("Complete Telegram phone verification first."))
         self._lock("identity:phone:" + challenge.value)
         self._assert_available_identity(None, "phone", challenge.value)
@@ -221,7 +327,9 @@ class AuthService(models.AbstractModel):
         user = self.env["res.users"].sudo().with_context(no_reset_password=True)._signup_create_user(values)
         user.write({"email": False})
         self._set_identity(user, "phone", challenge.value)
-        self._set_identity(user, "telegram", challenge.telegram_user_id, challenge.telegram_chat_id)
+        self._set_identity(user, "telegram", challenge.telegram_user_id, challenge.telegram_chat_id, challenge.value)
+        if not user.partner_id.phone:
+            user.partner_id.phone = challenge.value
         challenge.write({"used_at": fields.Datetime.now()})
         return user
 
@@ -240,38 +348,44 @@ class AuthService(models.AbstractModel):
 
     def _request_recovery(self, channel, identifier, browser, ip):
         adapter = self._channel(channel)
-        kind = adapter._identity_kind()
-        try:
-            value = normalize_identity(kind, identifier)
-        except ValidationError:
-            value = "invalid"
+        if not browser:
+            return False
+        user = self._resolve_recovery_user(identifier)
+        if request and request.session.uid:
+            user = request.env.user.sudo()
+        value = self._recovery_destination(user, channel) if user else "invalid"
         allowed_ip = self._rate_allow("recovery-ip", ip, self._setting("ip_rate_limit", 20, maximum=200))
         if not allowed_ip:
             return False
-        allowed_identity = self._rate_allow("recovery", value)
-        cooldown = self._rate_allow("recovery-cooldown", value, 1, self._setting("resend_cooldown", 60, maximum=3600))
-        if not allowed_identity or not cooldown:
+        subject = value if channel == "whatsapp" and value and user else str(user.id) if user else "invalid"
+        if not self._rate_allow("recovery", subject) or not self._rate_allow("recovery-cooldown", subject, 1, self._setting("resend_cooldown", 60, maximum=3600)):
             return False
+        if user and (not self._eligible_customer(user) or not adapter._can_recover(user)):
+            return False
+        self._invalidate_recovery(browser)
         purpose = adapter._recovery_purpose()
-        challenge, token = self._new_challenge(purpose, browser=browser if purpose == "otp" else None, value=value, channel=channel, ttl=self._setting("otp_expiration", 300, maximum=900) if purpose == "otp" else None)
+        challenge, token = self._new_challenge(purpose, user, browser, value=value or "invalid", channel=channel,
+                                              ttl=self._setting("otp_expiration", 300, maximum=900) if purpose == "otp" else None)
         if purpose == "otp":
-            challenge.write({"code_hash": self._digest("decoy-code:" + token)})
-        self._queue("recovery_request", {"token": token, "allowed": allowed_ip and allowed_identity and cooldown}, challenge)
+            challenge.code_hash = self._digest("decoy-code:" + token)
+        self._queue("recovery_request", {"token": token, "allowed": True}, challenge)
+        self._wake_delivery()
         return token
 
     def _prepare_recovery(self, challenge, payload):
         adapter = self._channel(challenge.channel)
-        kind = adapter._identity_kind()
-        value = challenge.value
-        user = self._recovery_user(kind, value) if value != "invalid" else self.env["res.users"].sudo().browse()
-        eligible = bool(user and adapter._can_recover(user))
-        if eligible and payload.get("allowed"):
-            token = payload["token"]
-            challenge.write({"user_id": user.id, "credential_stamp": self._credential_stamp(user)})
+        user = challenge.user_id
+        website = challenge.website_id
+        service = self.with_context(website_id=website.id) if website else self
+        if (service._eligible_customer(user) and adapter._can_recover(user) and payload.get("allowed")
+                and challenge.value == service._recovery_destination(user, challenge.channel)):
             self._lock("recovery-user:" + str(user.id))
-            old = self.env["ab_storefront_auth_challenge"].sudo().search([("user_id", "=", user.id), ("purpose", "in", ["otp", "email_reset", "grant"]), ("used_at", "=", False), ("id", "!=", challenge.id)])
-            old.write({"used_at": fields.Datetime.now()})
-            adapter._prepare_recovery(self, challenge, token)
+            old = self.env["ab_storefront_auth_challenge"].sudo().search([
+                ("user_id", "=", user.id), ("purpose", "in", ["otp", "email_reset", "grant"]),
+                ("used_at", "=", False), ("id", "!=", challenge.id),
+            ])
+            old.write({"used_at": fields.Datetime.now(), "code_hash": False})
+            adapter._prepare_recovery(service, challenge, payload["token"])
 
     def _generate_otp(self, challenge, token):
         code = f"{secrets.randbelow(1000000):06d}"
@@ -291,12 +405,14 @@ class AuthService(models.AbstractModel):
                 if challenge.attempts >= self._setting("otp_max_attempts", 5, maximum=10):
                     challenge.write({"used_at": fields.Datetime.now()})
                 return False
-        if not challenge.user_id:
+        if not challenge.user_id or not self._channel(challenge.channel)._can_recover(challenge.user_id):
+            return False
+        if challenge.value != self._recovery_destination(challenge.user_id, challenge.channel):
             return False
         challenge.write({"used_at": fields.Datetime.now(), "code_hash": False})
         if challenge.purpose == "email_reset":
             self._set_identity(challenge.user_id, "email", challenge.value)
-        grant, grant_token = self._new_challenge("grant", challenge.user_id, browser, ttl=300)
+        grant, grant_token = self._new_challenge("grant", challenge.user_id, browser, value=challenge.value, channel=challenge.channel, ttl=300)
         return grant_token
 
     def _confirm_email(self, token):
@@ -313,7 +429,10 @@ class AuthService(models.AbstractModel):
         if not challenge:
             return False
         user = challenge.user_id
+        if not self._channel(challenge.channel)._can_recover(user) or challenge.value != self._recovery_destination(user, challenge.channel):
+            return False
         self._lock("password-user:" + str(user.id))
+        user.invalidate_recordset()
         if not secrets.compare_digest(challenge.credential_stamp, self._credential_stamp(user)):
             return False
         user.write({"password": password})

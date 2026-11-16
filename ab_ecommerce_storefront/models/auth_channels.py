@@ -59,10 +59,10 @@ class EmailChannel(models.AbstractModel):
         return "email_reset"
 
     def _available_for(self, user):
-        return bool(self.env["ab_storefront_auth_service"]._identities(user).filtered(lambda identity: identity.kind == "email"))
+        return bool(user.email or self.env["ab_storefront_auth_service"]._identities(user).filtered(lambda identity: identity.kind == "email"))
 
     def _can_recover(self, user):
-        return bool(user)
+        return self._available_for(user)
 
     def _prepare_recovery(self, service, challenge, token):
         service._queue(challenge.channel, {"user_id": challenge.user_id.id, "destination": challenge.value, "purpose": "email_reset", "url": service._base_url() + "/ab_storefront/auth/recover#" + token}, challenge)
@@ -91,11 +91,11 @@ class TelegramChannel(models.AbstractModel):
     _description = "Storefront Telegram Verification Channel"
 
     def _identity_kind(self):
-        return "phone"
+        return "telegram"
 
     def _available_for(self, user):
         kinds = self.env["ab_storefront_auth_service"]._identities(user).mapped("kind")
-        return self._enabled() and {"phone", "telegram"}.issubset(set(kinds))
+        return self._enabled() and "telegram" in kinds
 
     def _prepare_recovery(self, service, challenge, token):
         code = service._generate_otp(challenge, token)
@@ -104,13 +104,16 @@ class TelegramChannel(models.AbstractModel):
         text = self.with_context(lang=user.lang or "ar_001").env._("Your Abdin Pharmacy security code is: %s. Do not share it. It expires shortly.", code)
         service._queue(challenge.channel, {"chat_id": telegram.chat_id, "text": text, "protect_content": True}, challenge)
 
+    def _bot_token(self):
+        return (self.env["ir.config_parameter"].sudo().get_param("ab_storefront_auth.telegram_bot_token", "") or "").strip()
+
     def _enabled(self):
-        return self.env["ir.config_parameter"].sudo().get_param("ab_storefront_auth.telegram_enabled", "False") == "True" and bool(deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN"))
+        return self.env["ir.config_parameter"].sudo().get_param("ab_storefront_auth.telegram_enabled", "False") == "True" and bool(self._bot_token())
 
     def _api(self, method, payload):
         if method not in {"sendMessage", "answerCallbackQuery", "setWebhook", "deleteWebhook", "getUpdates", "getMe", "getWebhookInfo", "setMyCommands"}:
             raise UserError(_("Unsupported Telegram operation."))
-        token = deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN")
+        token = self._bot_token()
         if not token:
             raise UserError(_("Telegram delivery is unavailable."))
         try:

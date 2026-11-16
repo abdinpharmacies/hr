@@ -89,6 +89,7 @@
             "ab_ecommerce_storefront/static/src/scss/order_overview.scss",
         ],
         "web.assets_frontend": [
+            "ab_ecommerce_storefront/static/src/scss/social_contacts.scss",
             "ab_ecommerce_storefront/static/src/js/navigation_performance.js",
             "ab_ecommerce_storefront/static/src/js/hero_carousel.js",
             "ab_ecommerce_storefront/static/src/js/customer_testimonials.js",

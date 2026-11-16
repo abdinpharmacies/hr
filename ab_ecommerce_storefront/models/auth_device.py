@@ -205,10 +205,10 @@ class AuthDeviceService(models.AbstractModel):
         translated = self.with_context(lang=user.lang or "en_US").env
         self._queue("telegram", {"chat_id": telegram.chat_id, "text": translated._("Sign-in approved. Return to the requesting browser and continue.") if approved else translated._("Sign-in rejected. Your current sessions remain active. Change your password if this was not you.")})
 
-    def _set_identity(self, user, kind, value, chat_id=None):
+    def _set_identity(self, user, kind, value, chat_id=None, phone_value=None):
         old = self._identities(user).filtered(lambda identity: identity.kind == "telegram") if kind == "telegram" else False
         changed = bool(old and old.value != str(value))
-        result = super()._set_identity(user, kind, value, chat_id)
+        result = super()._set_identity(user, kind, value, chat_id, phone_value)
         if changed:
             self._invalidate_device_security(user)
         return result

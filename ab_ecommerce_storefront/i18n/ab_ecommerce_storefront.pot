@@ -1457,6 +1457,7 @@ msgstr ""
 #. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
 #: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
 msgid "Continue"
 msgstr ""
 
@@ -5476,6 +5477,8 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "WhatsApp"
 msgstr ""
 
@@ -6458,6 +6461,9 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_details_avatar
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Not provided"
 msgstr ""
 
@@ -7736,6 +7742,9 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Not verified"
 msgstr ""
 
@@ -8010,6 +8019,8 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__telegram
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Telegram"
 msgstr ""
 
@@ -8168,6 +8179,9 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Verified"
 msgstr ""
 
@@ -8349,6 +8363,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Used to recover your account and verify your identity."
 msgstr ""
 
@@ -14481,4 +14496,82 @@ msgstr ""
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
 msgid ""
 "Use 1 for one application, or 0 for unlimited applications within the order."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Login, email or linked phone"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid ""
+"No verified recovery channels are available. Check your details or contact "
+"support."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Choose another channel"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Continue verification"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Social contacts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Verify"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Add &amp; verify"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Replace &amp; verify"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "<i class=\"fa fa-telegram\" aria-hidden=\"true\"/> Recover via Telegram"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+msgid ""
+"<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/><span "
+"class=\"visually-hidden\">Verified</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "New password"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Confirm new password"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid ""
+"Telegram verification is currently unavailable on this website. Choose "
+"another method or contact support."
 msgstr ""

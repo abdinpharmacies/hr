@@ -1,0 +1,80 @@
+.ab-social-button {
+    color: #fff;
+    border: 2px solid transparent;
+    white-space: normal;
+    &.is-whatsapp { background: #136c38; }
+    &.is-telegram { background: #096b9a; }
+    &:hover, &:focus { color: #fff; filter: brightness(.9); }
+    &:focus-visible { outline: 3px solid #162c46; outline-offset: 3px; }
+    .fa { margin-inline-end: .4rem; }
+}
+.ab-social-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    overflow-wrap: anywhere;
+}
+
+.ab-contact-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    color: #136c38;
+    font-weight: 600;
+}
+
+.ab-social-button.is-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 50%;
+    &.is-whatsapp { color: #136c38; background: #e8f5ed; border-color: #b8dfc6; }
+    &.is-telegram { color: #096b9a; background: #e8f3f9; border-color: #b9dcec; }
+    .fa { margin: 0; }
+}
+
+.oe_signup_form[data-ab-phone-signup="true"] [data-ab-auth-submit] {
+    color: #fff;
+    background: #096b9a !important;
+    border-color: #096b9a !important;
+    box-shadow: 0 14px 28px rgba(9, 107, 154, .18);
+    &:disabled:not(.is-loading) {
+        color: #527786;
+        background: #e8f3f9 !important;
+        border-color: #c6dfe9 !important;
+        box-shadow: none;
+    }
+    &:focus-visible { outline: 3px solid #162c46; outline-offset: 3px; }
+}
+.oe_signup_form button[data-ab-whatsapp-start] {
+    color: #fff;
+    background: #136c38;
+    border-color: #136c38;
+    box-shadow: 0 14px 28px rgba(19, 108, 56, .18);
+    &:hover, &:focus-visible { color: #fff; background: #105e30; border-color: #105e30; }
+    &:focus-visible { outline: 3px solid #162c46; outline-offset: 3px; }
+    &:disabled {
+        color: #537c63;
+        background: #e8f5ed;
+        border-color: #c7dfcf;
+        box-shadow: none;
+        cursor: not-allowed;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.ab-security-social {
+    .ab-security-method-icon .fa { font-size: 1.75rem; }
+    .ab-security-verify-button {
+        text-decoration: none;
+        &.is-whatsapp { color: #fff; background: #136c38; border-color: #136c38; }
+        &.is-telegram { color: #fff; background: #096b9a; border-color: #096b9a; }
+        &:hover { filter: brightness(.92); }
+        &:focus-visible { outline: 3px solid #162c46; outline-offset: 3px; }
+    }
+}

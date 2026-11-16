@@ -491,6 +491,8 @@
                                     <h1 t-out="partner.name or account_user.name"/>
                                     <p>
                                         <t t-if="account_phone" t-out="account_phone"/>
+                                                <span t-if="contact_status['phone']['verified']" class="ab-contact-verified"><i class="fa fa-check-circle" aria-hidden="true"/><span class="visually-hidden">Verified</span></span>
+                                                <span t-elif="account_phone">Not verified</span>
                                         <t t-elif="account_email" t-out="account_email"/>
                                         <t t-else="">Not provided</t>
                                     </p>
@@ -538,16 +540,21 @@
                                             <dt>Phone number</dt>
                                             <dd dir="ltr">
                                                 <t t-if="account_phone" t-out="account_phone"/>
-                                                <t t-else="">Not provided</t>
+                                                <span t-if="contact_status['phone']['verified']" class="ab-contact-verified"><i class="fa fa-check-circle" aria-hidden="true"/><span class="visually-hidden">Verified</span></span>
+                                                <span t-elif="account_phone">Not verified</span>
+                                                <t t-if="not account_phone">Not provided</t>
                                             </dd>
                                         </div>
                                         <div>
                                             <dt>Email</dt>
                                             <dd dir="ltr">
                                                 <t t-if="account_email" t-out="account_email"/>
-                                                <t t-else="">Not provided</t>
+                                                <span t-if="contact_status['email']['verified']" class="ab-contact-verified"><i class="fa fa-check-circle" aria-hidden="true"/><span class="visually-hidden">Verified</span></span>
+                                                <span t-elif="account_email">Not verified</span>
+                                                <t t-if="not account_email">Not provided</t>
                                             </dd>
                                         </div>
+                                        <div><dt class="visually-hidden">Social contacts</dt><dd><t t-call="ab_ecommerce_storefront.social_contact_methods"/></dd></div>
                                         <div t-if="not account_is_oauth" data-ab-password-row="">
                                             <dt>Password</dt>
                                             <dd class="ab-account-password-value">

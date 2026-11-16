@@ -16,7 +16,7 @@ def normalize_identity(kind, value, region="EG"):
         if not normalized or normalized != value.lower() or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", normalized):
             raise ValidationError(_("Please enter a valid email address."))
         return normalized.lower()
-    if kind == "phone":
+    if kind in {"phone", "whatsapp"}:
         value = value.translate(str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789"))
         if not re.fullmatch(r"[+\d ()-]+", value, re.ASCII):
             raise ValidationError(_("Please enter a valid phone number."))
@@ -42,14 +42,17 @@ class AuthIdentity(models.Model):
     value = fields.Char(required=True, index=True, groups="base.group_system")
     verified_at = fields.Datetime(required=True, default=fields.Datetime.now)
     chat_id = fields.Char(groups="base.group_system")
+    phone_value = fields.Char(groups="base.group_system")
 
     _unique_value = models.Constraint("UNIQUE(kind, value)", "This identity is already linked to an account.")
     _unique_user_kind = models.Constraint("UNIQUE(user_id, kind)", "An account can have one identity of each type.")
 
-    @api.constrains("kind", "value", "chat_id")
+    @api.constrains("kind", "value", "chat_id", "phone_value")
     def _check_identity(self):
         for identity in self:
             if normalize_identity(identity.kind, identity.value) != identity.value:
+                raise ValidationError(_("Invalid authentication identity."))
+            if identity.phone_value and normalize_identity("phone", identity.phone_value) != identity.phone_value:
                 raise ValidationError(_("Invalid authentication identity."))
             if identity.kind == "telegram" and identity.chat_id != identity.value:
                 raise ValidationError(_("Telegram verification requires a private chat."))
@@ -61,7 +64,8 @@ class AuthChallenge(models.Model):
     _rec_name = "purpose"
 
     user_id = fields.Many2one("res.users", index=True, ondelete="cascade", groups="base.group_system")
-    purpose = fields.Selection([(key, key) for key in ("link", "phone_signup", "email_verify", "email_reset", "otp", "grant")], required=True, index=True)
+    purpose = fields.Selection([(key, key) for key in ("link", "phone_signup", "email_verify", "email_reset", "otp", "grant", "lookup")], required=True, index=True)
+    website_id = fields.Many2one("website", ondelete="cascade", index=True, groups="base.group_system")
     channel = fields.Char(index=True)
     value = fields.Char(groups="base.group_system")
     token_hash = fields.Char(required=True, index=True, groups="base.group_system")

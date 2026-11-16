@@ -15,17 +15,27 @@
                 <div data-ab-without-proof="">
                     <form t-if="step == 'request'" action="/ab_storefront/auth/recover" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                        <input type="hidden" name="action" value="request"/>
-                        <fieldset class="mb-3">
-                            <legend class="fs-6">Recovery method</legend>
-                            <label t-if="'email' in available_channels" class="d-block mb-2"><input type="radio" name="channel" value="email" checked="checked"/> Recover via email</label>
-                            <label t-if="'telegram' in available_channels" class="d-block"><input type="radio" name="channel" value="telegram" t-att-checked="'checked' if 'email' not in available_channels else None"/> Recover via Telegram</label>
-                        </fieldset>
+                        <input type="hidden" name="action" value="identify"/>
                         <div class="ab-auth-field">
-                            <label for="recovery_identifier">Email or phone number</label>
+                            <label for="recovery_identifier">Login, email or linked phone</label>
                             <div class="ab-auth-input"><input id="recovery_identifier" name="identifier" type="text" required="required" maxlength="254" autocomplete="username" dir="ltr"/></div>
                         </div>
-                        <button type="submit" class="btn btn-primary ab-auth-primary">Send recovery instructions</button>
+                        <button type="submit" class="btn btn-primary ab-auth-primary">Continue</button>
+                    </form>
+                    <form t-if="step == 'choose'" action="/ab_storefront/auth/recover" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="action" value="request"/>
+                        <fieldset>
+                            <legend class="fs-6">Recovery method</legend>
+                            <button t-if="'email' in available_channels" type="submit" name="channel" value="email" class="btn ab-auth-secondary mb-2">Recover via email</button>
+                            <button t-if="'telegram' in available_channels" type="submit" name="channel" value="telegram" class="btn ab-social-button is-telegram mb-2"><i class="fa fa-telegram" aria-hidden="true"/> Recover via Telegram</button>
+                        </fieldset>
+                        <p t-if="not available_channels" role="status">No verified recovery channels are available. Check your details or contact support.</p>
+                    </form>
+                    <form t-if="step in ('otp', 'sent', 'password')" action="/ab_storefront/auth/recover" method="post" class="mb-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="action" value="switch"/>
+                        <button type="submit" class="btn ab-auth-secondary">Choose another channel</button>
                     </form>
                     <t t-if="step == 'otp'">
                         <form action="/ab_storefront/auth/recover" method="post">
@@ -41,7 +51,7 @@
                     </t>
                     <form t-if="step == 'password'" action="/ab_storefront/auth/recover" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="action" value="password"/>
-                        <t t-call="auth_signup.fields"><t t-set="autofocus" t-value="True"/><t t-set="only_passwords" t-value="True"/></t>
+                        <t t-call="auth_signup.fields"><t t-set="autofocus" t-value="True"/><t t-set="only_passwords" t-value="True"/><t t-set="ab_new_password_labels" t-value="True"/></t>
                         <button type="submit" class="btn btn-primary ab-auth-primary">Set new password</button>
                     </form>
                     <form t-if="step == 'sent'" action="/ab_storefront/auth/recover" method="post" class="mt-3">
@@ -52,6 +62,40 @@
                 </div>
             </div>
         </t>
+    </template>
+    <template id="social_contact_methods" name="Verified social contacts">
+        <div t-foreach="social_contacts" t-as="contact" class="ab-social-contact mb-3">
+            <strong><t t-if="contact['channel'] == 'whatsapp'">WhatsApp</t><t t-else="">Telegram</t></strong>
+            <span t-if="contact['value']" dir="ltr" t-out="contact['value']"/>
+            <span t-if="contact['verified']" class="ab-contact-verified"><i class="fa fa-check-circle" aria-hidden="true"/><span class="visually-hidden">Verified</span></span>
+            <span t-elif="contact['value']">Not verified</span>
+            <span t-else="">Not provided</span>
+            <a t-if="contact['enabled']" t-att-href="contact['url']" t-attf-class="btn ab-social-button is-#{contact['channel']} #{'is-icon' if contact['verified'] and not contact['pending'] else ''}">
+                <i t-attf-class="fa #{'fa-refresh' if contact['verified'] and not contact['pending'] else 'fa-' + contact['channel']}" aria-hidden="true"/>
+                <t t-if="contact['pending']">Continue verification</t>
+                <span t-elif="contact['verified']" class="visually-hidden">Replace &amp; verify</span>
+                <t t-elif="contact['value']">Verify</t>
+                <t t-else="">Add &amp; verify</t>
+            </a>
+        </div>
+    </template>
+    <template id="social_contact_security_methods" name="Social recovery security methods">
+        <article t-foreach="social_contacts" t-as="contact" t-attf-class="ab-security-method ab-security-social #{'is-verified' if contact['verified'] else 'is-pending' if contact['value'] else 'is-unavailable'}">
+            <span t-attf-class="ab-security-method-icon is-#{contact['channel']}" aria-hidden="true"><i t-attf-class="fa fa-#{contact['channel']}"/></span>
+            <div class="ab-security-method-copy">
+                <h3><t t-if="contact['channel'] == 'whatsapp'">WhatsApp</t><t t-else="">Telegram</t></h3>
+                <p>Used to recover your account and verify your identity.</p>
+            </div>
+            <div class="ab-security-method-value" dir="ltr"><span t-out="contact['value'] or '—'"/></div>
+            <span t-attf-class="ab-security-status #{'is-success' if contact['verified'] else 'is-warning' if contact['value'] else 'is-neutral'}">
+                <i t-attf-class="fa #{'fa-check-circle' if contact['verified'] else 'fa-exclamation-circle' if contact['value'] else 'fa-minus-circle'}" aria-hidden="true"/>
+                <span t-if="contact['verified']">Verified</span><span t-elif="contact['value']">Not verified</span><span t-else="">Not provided</span>
+            </span>
+            <a t-if="contact['enabled']" t-att-href="contact['url']" t-attf-class="ab-security-verify-button is-#{contact['channel']}">
+                <i t-attf-class="fa #{'fa-refresh' if contact['verified'] and not contact['pending'] else 'fa-paper-plane'}" aria-hidden="true"/>
+                <span t-if="contact['pending']">Continue verification</span><span t-elif="contact['verified']">Replace &amp; verify</span><span t-elif="contact['value']">Verify</span><span t-else="">Add &amp; verify</span>
+            </a>
+        </article>
     </template>
     <template id="auth_email_confirm" name="Verify email">
         <t t-call="website.login_layout">
@@ -86,7 +130,7 @@
                     </div>
                 </div>
                 <div class="ab-auth-form-head"><h2 t-if="not signed_in">Continue with phone</h2><h2 t-else="">Link phone and Telegram</h2></div>
-                <p>Phone registration requires linking Telegram for verification and password recovery.</p>
+                <p t-if="not signed_in">Phone registration requires linking Telegram for verification and password recovery.</p>
                 <p t-if="error" class="ab-auth-alert ab-auth-alert-error" role="alert"
                     t-att-data-ab-rate-limit-seconds="retry_after or None">
                     <t t-if="retry_after">
@@ -137,12 +181,12 @@
     <template id="auth_account_security" name="Account security">
         <t t-call="portal.portal_layout">
             <t t-set="no_breadcrumbs" t-value="True"/>
-            <t t-set="email_verified" t-value="bool(identities.get('email'))"/>
-            <t t-set="phone_verified" t-value="bool(identities.get('phone'))"/>
+            <t t-set="email_verified" t-value="contact_status['email']['verified']"/>
+            <t t-set="phone_verified" t-value="contact_status['phone']['verified']"/>
             <t t-set="telegram_connected" t-value="bool(identities.get('telegram'))"/>
             <t t-set="email_value" t-value="identities.get('email') or request.env.user.email or ''"/>
-            <t t-set="phone_value" t-value="identities.get('phone') or request.env.user.phone or ''"/>
-            <t t-set="secured_method_count" t-value="(1 if email_verified else 0) + (1 if phone_verified else 0) + (1 if telegram_connected else 0)"/>
+            <t t-set="phone_value" t-value="request.env.user.phone or ''"/>
+            <t t-set="secured_method_count" t-value="(1 if email_verified else 0) + sum(1 for contact in social_contacts if contact['verified'])"/>
             <t t-set="verified_label">Verified</t>
             <t t-set="not_verified_label">Not verified</t>
             <t t-set="connected_label">Connected</t>
@@ -156,7 +200,7 @@
             <t t-set="recovery_description">Recover access using a verified security method.</t>
             <t t-set="change_password_label">Change password</t>
             <t t-set="change_password_description">Update your password securely.</t>
-            <main class="ab-security-dashboard" dir="rtl">
+            <main class="ab-security-dashboard">
                 <div class="container ab-security-container">
                     <div class="ab-account-shell ab-security-shell">
                         <t t-set="account_nav_active" t-value="'security'"/>
@@ -204,6 +248,25 @@
                         <section class="ab-security-methods" aria-labelledby="abSecurityMethodsTitle">
                             <h2 id="abSecurityMethodsTitle">Security methods</h2>
 
+                            <article t-attf-class="ab-security-method #{'is-verified' if phone_verified else 'is-unavailable'}">
+                                <span class="ab-security-method-icon is-phone" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M7.2 3h3l1.5 4-2.1 1.4a15 15 0 0 0 6 6l1.4-2.1 4 1.5v3c0 1.3-1 2.3-2.3 2.2C11.3 18.4 5.6 12.7 5 5.3 4.9 4 5.9 3 7.2 3Z"/></svg>
+                                </span>
+                                <div class="ab-security-method-copy">
+                                    <h3>Phone</h3>
+                                    <p>Used to recover your account and verify your identity.</p>
+                                </div>
+                                <div class="ab-security-method-value" dir="ltr">
+                                    <span t-out="phone_value or '—'"/>
+                                </div>
+                                <span t-if="phone_verified" class="ab-security-status is-success">
+                                    <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="verified_label"/>
+                                </span>
+                                <span t-else="" class="ab-security-status is-neutral">
+                                    <i class="fa fa-minus-circle" aria-hidden="true"/><span t-if="phone_value" t-out="not_verified_label"/><span t-else="">Not provided</span>
+                                </span>
+                            </article>
+
                             <article t-attf-class="ab-security-method #{'is-verified' if email_verified else 'is-pending'}">
                                 <span class="ab-security-method-icon is-email" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
@@ -221,51 +284,15 @@
                                     <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="verified_label"/>
                                 </span>
                                 <span t-else="" class="ab-security-status is-warning">
-                                    <i class="fa fa-exclamation-circle" aria-hidden="true"/><span t-out="not_verified_label"/>
+                                    <i class="fa fa-exclamation-circle" aria-hidden="true"/><span t-if="email_value" t-out="not_verified_label"/><span t-else="">Not provided</span>
                                 </span>
                                 <button type="submit" class="ab-security-verify-button">
                                     <i class="fa fa-paper-plane" aria-hidden="true"/><span t-out="verification_action_label"/>
                                 </button>
                             </article>
 
-                            <article t-attf-class="ab-security-method #{'is-verified' if phone_verified else 'is-unavailable'}">
-                                <span class="ab-security-method-icon is-phone" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M7.2 3h3l1.5 4-2.1 1.4a15 15 0 0 0 6 6l1.4-2.1 4 1.5v3c0 1.3-1 2.3-2.3 2.2C11.3 18.4 5.6 12.7 5 5.3 4.9 4 5.9 3 7.2 3Z"/></svg>
-                                </span>
-                                <div class="ab-security-method-copy">
-                                    <h3>Phone</h3>
-                                    <p>Used to recover your account and verify your identity.</p>
-                                </div>
-                                <div class="ab-security-method-value" dir="ltr">
-                                    <span t-out="phone_value or '—'"/>
-                                </div>
-                                <span t-if="phone_verified" class="ab-security-status is-success">
-                                    <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="verified_label"/>
-                                </span>
-                                <span t-else="" class="ab-security-status is-neutral">
-                                    <i class="fa fa-minus-circle" aria-hidden="true"/><span t-out="not_verified_label"/>
-                                </span>
-                            </article>
+                            <t t-call="ab_ecommerce_storefront.social_contact_security_methods"/>
 
-                            <article t-attf-class="ab-security-method #{'is-connected' if telegram_connected else 'is-unavailable'}">
-                                <span class="ab-security-method-icon is-telegram" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" focusable="false"><path d="m3.5 11.4 16-6.2c.8-.3 1.5.2 1.2 1.6l-2.7 12.5c-.2.9-.8 1.1-1.6.7l-4.1-3-2 1.9c-.2.2-.4.4-.8.4l.3-4.2 7.7-7c.3-.3-.1-.5-.5-.2l-9.5 6-4.1-1.3c-.9-.3-.9-.9.1-1.2Z"/></svg>
-                                </span>
-                                <div class="ab-security-method-copy">
-                                    <h3>Telegram</h3>
-                                    <p>Used to recover your account and verify your identity.</p>
-                                </div>
-                                <div class="ab-security-method-value">
-                                    <span t-if="telegram_connected" t-out="connected_label"/>
-                                    <span t-else="" t-out="not_connected_label"/>
-                                </div>
-                                <span t-if="telegram_connected" class="ab-security-status is-linked">
-                                    <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="connected_label"/>
-                                </span>
-                                <span t-else="" class="ab-security-status is-neutral">
-                                    <i class="fa fa-link" aria-hidden="true"/><span t-out="not_connected_label"/>
-                                </span>
-                            </article>
                         </section>
 
                         <section class="ab-security-password" aria-labelledby="abSecurityPasswordTitle">
@@ -308,7 +335,7 @@
                                 <span class="ab-security-action-copy"><strong t-out="recovery_label"/><small t-out="recovery_description"/></span>
                                 <i class="fa fa-angle-left ab-security-action-arrow" aria-hidden="true"/>
                             </a>
-                            <a href="/my/security" class="ab-security-action">
+                            <a href="/ab_storefront/auth/recover" class="ab-security-action">
                                 <span class="ab-security-action-icon" aria-hidden="true"><i class="fa fa-key"/></span>
                                 <span class="ab-security-action-copy"><strong t-out="change_password_label"/><small t-out="change_password_description"/></span>
                                 <i class="fa fa-angle-left ab-security-action-arrow" aria-hidden="true"/>

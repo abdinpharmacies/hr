@@ -52,7 +52,7 @@ function normalizeEgyptianPhone(value = "") {
     return phone;
 }
 
-function isValidEgyptianMobile(value = "") {
+export function isValidEgyptianMobile(value = "") {
     return EGYPT_MOBILE_RE.test(normalizeEgyptianPhone(value));
 }
 
@@ -510,6 +510,8 @@ export class AbStorefrontAuth extends Interaction {
         const value = input.value.trim();
         const phoneMode = Boolean(value && !value.includes("@") && /^[+\d\s().\-٠-٩۰-۹]+$/.test(value));
         const validPhone = phoneMode && isValidEgyptianMobile(value);
+        const telegramAvailable = form.dataset.abTelegramEnabled !== "false";
+        form.querySelector("[data-ab-telegram-unavailable]")?.classList.toggle("d-none", !phoneMode);
         form.dataset.abPhoneSignup = phoneMode ? "true" : "false";
         form.querySelector("[data-ab-phone-signup-notice]")?.classList.toggle("d-none", !phoneMode);
         for (const section of form.querySelectorAll("[data-ab-signup-credentials], [data-ab-signup-avatar]")) {
@@ -525,7 +527,7 @@ export class AbStorefrontAuth extends Interaction {
         if (button && !this.isSubmitting) {
             button.textContent = phoneMode ? (form.dataset.abPhoneSignupLabel || _t("Start Telegram verification")) : (form.dataset.abEmailSignupLabel || _t("Create account"));
             button.dataset.loadingText = phoneMode ? (form.dataset.abSignupContinuingLabel || _t("Continuing...")) : (form.dataset.abSignupLoadingLabel || _t("Creating account..."));
-            button.disabled = Boolean(form.querySelector("[data-ab-rate-limit-seconds]")) || (phoneMode && !validPhone);
+            button.disabled = Boolean(form.querySelector("[data-ab-rate-limit-seconds]")) || (phoneMode && (!validPhone || !telegramAvailable));
         }
         this.clearFieldError(input);
     }

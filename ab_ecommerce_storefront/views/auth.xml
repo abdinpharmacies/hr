@@ -136,11 +136,12 @@
     <template id="auth_signup_fields" name="Abdin Password Fields" inherit_id="auth_signup.fields" priority="220">
         <xpath expr="//div[hasclass('field-password')]" position="replace">
             <div class="ab-auth-field field-password o_caps_lock_warning">
-                <label for="password">Password</label>
+                <t t-set="ab_password_field_label"><t t-if="ab_new_password_labels">New password</t><t t-else="">Password</t></t>
+                <label for="password" t-out="ab_password_field_label"/>
                 <div class="ab-auth-input">
                     <t t-set="icon" t-value="'lock'"/>
                     <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
-                    <input type="password" name="password" id="password" required="required" t-att-autofocus="'autofocus' if autofocus else None" placeholder="Password" autocomplete="new-password"/>
+                    <input type="password" name="password" id="password" required="required" t-att-autofocus="'autofocus' if autofocus else None" t-att-placeholder="ab_password_field_label" autocomplete="new-password"/>
                     <button type="button" class="ab-auth-password-toggle o_show_password" aria-label="Show password">
                         <t t-set="icon" t-value="'eye'"/>
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
@@ -221,11 +222,12 @@
         </xpath>
         <xpath expr="//div[hasclass('field-confirm_password')]" position="replace">
             <div class="ab-auth-field field-confirm_password">
-                <label for="confirm_password">Confirm password</label>
+                <t t-set="ab_confirm_password_field_label"><t t-if="ab_new_password_labels">Confirm new password</t><t t-else="">Confirm password</t></t>
+                <label for="confirm_password" t-out="ab_confirm_password_field_label"/>
                 <div class="ab-auth-input">
                     <t t-set="icon" t-value="'lock'"/>
                     <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
-                    <input type="password" name="confirm_password" id="confirm_password" required="required" placeholder="Confirm password" autocomplete="new-password"/>
+                    <input type="password" name="confirm_password" id="confirm_password" required="required" t-att-placeholder="ab_confirm_password_field_label" autocomplete="new-password"/>
                     <button type="button" class="ab-auth-password-toggle o_show_password" aria-label="Show password">
                         <t t-set="icon" t-value="'eye'"/>
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
@@ -238,7 +240,7 @@
 
     <template id="auth_signup" name="Abdin Phone Signup" inherit_id="auth_signup.signup" priority="220">
         <xpath expr="//form[hasclass('oe_signup_form')]" position="replace">
-            <form class="oe_signup_form ab-auth-form" role="form" method="post" enctype="multipart/form-data" t-if="not message" data-captcha="signup" data-ab-auth-form="signup" t-att-data-ab-phone-signup-label="ab_phone_signup_label" t-att-data-ab-email-signup-label="ab_email_signup_label" t-att-data-ab-signup-loading-label="ab_signup_loading_label" t-att-data-ab-signup-continuing-label="ab_signup_continuing_label">
+            <form class="oe_signup_form ab-auth-form" role="form" method="post" enctype="multipart/form-data" t-if="not message" data-captcha="signup" data-ab-auth-form="signup" t-att-data-ab-telegram-enabled="'true' if ab_telegram_enabled else 'false'" t-att-data-ab-phone-signup-label="ab_phone_signup_label" t-att-data-ab-email-signup-label="ab_email_signup_label" t-att-data-ab-signup-loading-label="ab_signup_loading_label" t-att-data-ab-signup-continuing-label="ab_signup_continuing_label">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <div class="ab-auth-form-head">
                     <span class="ab-auth-form-mark">New account</span>
@@ -307,6 +309,7 @@
                 <div class="oe_login_buttons ab-auth-actions">
                     <t t-set="ab_create_loading">Creating account...</t>
                     <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" t-att-data-loading-text="ab_create_loading">Create account</button>
+                    <p t-if="not token and not ab_telegram_enabled" class="small text-muted d-none" data-ab-telegram-unavailable="">Telegram verification is currently unavailable on this website. Choose another method or contact support.</p>
                     <t t-call="web.login_oauth"/>
                     <p>Already have an account?</p>
                     <a t-attf-href="/web/login?{{ keep_query() }}" class="btn ab-auth-secondary" role="button" data-ab-auth-nav="login">Sign in</a>
@@ -339,6 +342,7 @@
                 <t t-if="token and not invalid_token">
                     <t t-call="auth_signup.fields">
                         <t t-set="autofocus" t-value="1"/>
+                        <t t-set="ab_new_password_labels" t-value="True"/>
                     </t>
                 </t>
                 <t t-if="not token">

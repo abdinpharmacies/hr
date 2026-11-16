@@ -2,41 +2,30 @@
 
 This addon attaches verified email, E.164 phone and private Telegram identities to the existing Odoo user. It preserves Odoo password hashing, backend login, Google OAuth, invitation tokens and the portal password-change page. Customer recovery lives at `/ab_storefront/auth/recover`; identity management lives at `/my/authentication`.
 
-## Existing bot and secure credentials
+## Existing bot and credentials
 
-Use the existing **Abdin Pharmacy Bot**, `@Abdin_Pharmacy_Bot`. No new bot is required. The administrator already completed BotFather creation. To retrieve or rotate its credentials, open the official [BotFather](https://t.me/BotFather), send `/mybots`, choose `@Abdin_Pharmacy_Bot`, then **API Token**. For rotation, choose **Revoke current token** and provide the replacement through the same secret provisioning process. Never paste credentials into Odoo shell, command arguments, repository files, tickets or logs.
+Use the existing **Abdin Pharmacy Bot**, `@Abdin_Pharmacy_Bot`. An administrator enters its token manually in **Settings → Technical → Parameters → System Parameters**:
 
-Run this as the operating-system user that runs Odoo. The directory must be outside the repository. The command prompts privately for the existing token and creates a separate random webhook secret. It refuses to overwrite existing files.
+- `ab_storefront_auth.telegram_bot_token`: the bot token.
+- `ab_storefront_auth.telegram_enabled`: `True` when Telegram verification is intended to be available.
+- `ab_storefront_auth.telegram_bot_username`: `Abdin_Pharmacy_Bot`, or the username belonging to the configured token.
+
+The bot token is read only from `ir.config_parameter`; token files and `AB_STOREFRONT_TELEGRAM_TOKEN` environment variables are no longer used. Do not enter the token in source files, shell commands, tickets or logs. System Parameters retain their native administrator-only access. Parameter changes are read through Odoo's normal configuration cache; restart once to load changed Python code, not after every token edit.
+
+The webhook's request-authentication secret is separate from the bot token and retains its deployment-secret configuration. Generate that secret outside the repository as the Odoo service user:
 
 ```bash
-python3 /opt/odoo19/custom-addons-ecommerce/ab_ecommerce_storefront/tools/provision_auth_secrets.py \
+python3 /opt/odoo19/worktrees/e_commerce/ab_ecommerce_storefront/tools/provision_auth_secrets.py \
   --directory "$HOME/.config/odoo-storefront-auth"
 ```
 
-Set these environment variables in the Odoo service environment and in administrative Odoo shell sessions. Substitute the absolute directory produced above; the environment contains paths, not credentials.
+The directory must have mode `0700`. The helper creates only `telegram_webhook_secret`, with mode `0600`, and refuses to overwrite it. Configure either `AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET_FILE` or this nonsecret path in the private Odoo configuration:
 
 ```ini
-AB_STOREFRONT_TELEGRAM_TOKEN_FILE=/absolute/private/directory/telegram_token
-AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET_FILE=/absolute/private/directory/telegram_webhook_secret
-```
-
-For systemd, put `Environment=AB_STOREFRONT_TELEGRAM_TOKEN_FILE=/absolute/private/directory/telegram_token` and the corresponding webhook-secret `Environment=` entry in the Odoo service override. Restart that service after installing/upgrading. For a development shell:
-
-```bash
-export AB_STOREFRONT_TELEGRAM_TOKEN_FILE="$HOME/.config/odoo-storefront-auth/telegram_token"
-export AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET_FILE="$HOME/.config/odoo-storefront-auth/telegram_webhook_secret"
-```
-
-File permissions must be `0600` and ownership must match the service user. Direct environment values `AB_STOREFRONT_TELEGRAM_TOKEN` and `AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET` are supported for deployment secret managers. Neither credential is stored in `ir.config_parameter`. The existing Odoo `database.secret` protects hashes and encrypted queue payloads; retain it in protected database backups. Odoo administrators are trusted operators.
-
-For an existing privately created token file, no provisioning command is required. It must contain only the bot token and have mode `0600`. Alternatively to environment variables, add nonsecret file paths to the deployment's private Odoo configuration under `[options]`:
-
-```ini
-ab_storefront_telegram_token_file = /absolute/private/directory/telegram_token
 ab_storefront_telegram_webhook_secret_file = /absolute/private/directory/telegram_webhook_secret
 ```
 
-Environment `_FILE` settings take precedence over these Odoo configuration paths. A configured missing or publicly readable file fails closed; the token itself must never be placed in the configuration file. Restart Odoo after changing deployment file paths.
+A deployment-secret manager may instead provide `AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET` directly. The webhook secret authenticates inbound bot updates; it is not the Telegram API token. The existing Odoo `database.secret` continues protecting authentication hashes and encrypted queue payloads.
 
 ## Installation and nonsecret settings
 
@@ -82,7 +71,7 @@ Reset grants last five minutes. Additional limits protect signup, identity linki
 
 ## Register the production webhook
 
-Run the following with the secret-file environment already exported. It validates the configured bot username against `getMe` and sends `setWebhook` with `secret_token`, `allowed_updates=["message", "callback_query"]` and `drop_pending_updates=false`. Only a success message is printed.
+Run the following after saving the bot token in System Parameters and configuring the separate webhook secret. It validates the configured bot username against `getMe` and sends `setWebhook` with `secret_token`, `allowed_updates=["message", "callback_query"]` and `drop_pending_updates=false`. Only a success message is printed.
 
 ```bash
 /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin shell \
@@ -102,9 +91,11 @@ Keep at least one production cron worker active. `Storefront authentication deli
 
 ## Development and live delivery testing
 
-Use a dedicated development database and service, unused ports and the same private secret files. Set `ab_storefront_auth.development=True`, set `base_url` to the actual local origin, and enable Telegram. Development HTTP is allowed only on `localhost` or literal loopback addresses (`127.0.0.0/8` and `::1`), and the connecting client must also be loopback. This includes `127.0.0.4`; LAN/public addresses and lookalike DNS names still require HTTPS.
+Password recovery also triggers the authentication delivery cron immediately after enqueueing its encrypted request. A cron trigger cannot run when the job is inactive or the server uses `max_cron_threads = 0`; codes remain queued and expire. For local testing with cron intentionally disabled, run a bounded, account-scoped authentication queue worker. Receiving Telegram updates and sending reset codes are separate operations: reset delivery needs no polling receiver or webhook change. Do not enable unrelated scheduled jobs to test authentication.
 
-The main signup field accepts an email address or a phone number. Email registration signs the customer in without an OTP. The existing email confirmation link is queued separately and does not block sign-in or mark the email as verified automatically. Phone input starts Telegram verification; after sharing the matching personal contact in the bot, return to the website, confirm the connection and choose a password. A six-digit OTP is then delivered to that linked Telegram chat and must be entered on the website before the first authenticated session. The entered name is retained, but no password is stored in the pending signup session. If Telegram is disabled or its secret is missing, phone signup displays an availability error and does not create an unverified account.
+Use a dedicated development database and service, unused ports, the token system parameter and the separate webhook-secret configuration. Set `ab_storefront_auth.development=True`, set `base_url` to the actual local origin, and enable Telegram. Development HTTP is allowed only on `localhost` or literal loopback addresses (`127.0.0.0/8` and `::1`), and the connecting client must also be loopback. This includes `127.0.0.4`; LAN/public addresses and lookalike DNS names still require HTTPS.
+
+The main signup field accepts an email address or a phone number. Email registration signs the customer in without an OTP. The existing email confirmation link is queued separately and does not block sign-in or mark the email as verified automatically. Phone input starts Telegram verification; after sharing the matching personal contact in the bot, return to the website, confirm the connection and choose a password. A six-digit OTP is then delivered to that linked Telegram chat and must be entered on the website before the first authenticated session. The entered name is retained, but no password is stored in the pending signup session. If Telegram is disabled or its token parameter is empty, its phone-signup action is disabled with an availability explanation. Direct submissions remain rejected without creating an unverified account.
 
 Phone first-sign-in verification lives at `/ab_storefront/auth/signup-otp`. For phone registrations, password verification creates only an Odoo pre-session; account pages remain inaccessible until the OTP succeeds. Codes use the existing expiration, attempt and resend limits, are bound to the account and browser, and are invalidated after successful verification. Email link confirmation, password recovery, Telegram contact sharing and browser approval cannot replace this OTP. Delivery failure leaves the account pending; customers can retry or resend after the cooldown. No password is stored in the pending session. Email accounts are exempt even if an earlier version left a pending OTP flag; no database cleanup is required. Existing accounts and invitation/Google registration retain their previous behavior. After completion, the OTP is not repeated; existing Telegram browser protection still applies to later sign-ins.
 
@@ -168,9 +159,9 @@ Telegram proves control of the Telegram account and the contact Telegram reports
 
 ## Production rollout and rotation
 
-Back up the Odoo database, deploy code and dependencies, run the targeted upgrade, configure mail and nonsecret settings, provide the two secret files, restart the Odoo service, register the webhook, and execute the live test sequence above. Confirm HTTPS, database routing, cron capacity and Arabic rendering before opening phone registration to customers. Do not use `-u base`.
+Back up the Odoo database, deploy code and dependencies, run the targeted upgrade, configure mail and nonsecret settings, set the bot-token system parameter and provide the separate webhook secret, restart the Odoo service, register the webhook, and execute the live test sequence above. Confirm HTTPS, database routing, cron capacity and Arabic rendering before opening phone registration to customers. Do not use `-u base`.
 
-For token rotation, revoke the token in BotFather, privately provision replacement files in a new `0700` directory, update both service secret-file paths, restart all workers, then rerun webhook registration. Retain the old directory only as required by the deployment's secret-retention policy. Credential files must never enter Git or fixtures.
+For token rotation, revoke the old token in BotFather and enter its replacement manually in `ab_storefront_auth.telegram_bot_token`. Rerun webhook registration with the configured separate webhook secret. Do not copy real credentials into Git, fixtures or logs.
 
 To disable Telegram safely, set `ab_storefront_auth.telegram_enabled=False`. New links, Telegram challenges and delivery then stop; verified identity records remain for later re-enablement. Email and existing phone/password login remain available. Remove the remote webhook using the administrator shell if retiring the bot. Ensure phone-only customers link email before planned permanent retirement; they otherwise need administrator-assisted recovery.
 

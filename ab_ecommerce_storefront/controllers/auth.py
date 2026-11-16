@@ -296,10 +296,7 @@ class AbStorefrontAuth(OAuthLogin):
     def web_auth_reset_password(self, *args, **kw):
         if request.params.get("token"):
             return super().web_auth_reset_password(*args, **kw)
-        from .auth_security import StorefrontAuthSecurity
-        post = dict(kw)
-        post.setdefault("identifier", request.params.get("login", ""))
-        return StorefrontAuthSecurity().recover(**post)
+        return request.redirect("/ab_storefront/auth/recover", 303)
 
     @http.route("/ab_storefront/avatar/update", type="http", auth="user", website=True, methods=["POST"], csrf=True)
     def ab_storefront_avatar_update(self, **post):

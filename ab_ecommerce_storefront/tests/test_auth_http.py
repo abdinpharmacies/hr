@@ -30,10 +30,12 @@ class TestStorefrontAuthHTTP(HttpCase):
         page = self.url_open("/ab_storefront/auth/recover")
         self.assertEqual(page.status_code, 200)
         csrf = self._csrf(page)
-        known = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": csrf, "identifier": self.user.email, "channel": "email", "action": "request"})
-        missing = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": csrf, "identifier": "missing.http@example.test", "channel": "email", "action": "request"})
+        known = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": csrf, "identifier": self.user.email, "action": "identify"})
+        missing = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": csrf, "identifier": "missing.http@example.test", "action": "identify"})
         self.assertEqual(known.status_code, missing.status_code)
-        self.assertEqual(known.text, missing.text)
+        self.assertIn("Recover via email", known.text)
+        self.assertNotIn(self.user.email, known.text)
+        self.assertIn("No verified recovery channels", missing.text)
         self.assertIn("no-store", known.headers["Cache-Control"])
         rejected = self.url_open("/ab_storefront/auth/recover", data={"identifier": self.user.email})
         self.assertEqual(rejected.status_code, 400)
@@ -129,6 +131,8 @@ class TestStorefrontAuthHTTP(HttpCase):
         grant_page = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(page), "action": "email", "proof": token})
         self.assertEqual(grant_page.status_code, 200)
         self.assertIn('name="action" value="password"', grant_page.text)
+        self.assertIn('New password', grant_page.text)
+        self.assertIn('Confirm new password', grant_page.text)
         reset = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(grant_page), "action": "password", "password": "Replacement9!Pass", "confirm_password": "Replacement9!Pass"})
         self.assertEqual(reset.status_code, 200)
         self.assertIn("Your password has been reset successfully", reset.text)
@@ -167,7 +171,8 @@ class TestStorefrontAuthHTTP(HttpCase):
             messages.clear()
             self.url_open("/web/session/logout?redirect=/web/login")
             page = self.url_open("/ab_storefront/auth/recover")
-            sent = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(page), "action": "request", "channel": "telegram", "identifier": "01012345678"})
+            chosen = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(page), "action": "identify", "identifier": "01012345678"})
+            sent = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(chosen), "action": "request", "channel": "telegram"})
             service._process_queue()
             code_messages = [message for message in messages if "security code is:" in message.get("text", "")]
             self.assertEqual(len(code_messages), 1)
@@ -218,7 +223,7 @@ class TestStorefrontAuthHTTP(HttpCase):
             page = self.url_open("/web/signup")
             denied = self.url_open("/web/signup", data={"csrf_token": self._csrf(page), "login": "01012345679", "name": "Unavailable signup"})
             self.assertEqual(denied.status_code, 200)
-            self.assertIn("Telegram delivery is unavailable", denied.text)
+            self.assertIn("Telegram verification is currently unavailable on this website", denied.text)
             self.assertFalse(self.env["res.users"].sudo().search([("login", "=", "+201012345679")]))
 
     def test_shared_signup_invalid_identity(self):
@@ -350,3 +355,30 @@ class TestStorefrontAuthHTTP(HttpCase):
 
     def test_email_proof_browser_mobile(self):
         self._check_proof_browser("390x844")
+
+    def test_recovery_password_labels_arabic_and_signup_labels_unchanged(self):
+        self.env.ref('base.lang_ar').active = True
+        self.env.ref('website.default_website').write({'language_ids': [(4, self.env.ref('base.lang_ar').id)]})
+        signup = self.url_open('/web/signup')
+        self.assertIn('>Password</label>', signup.text)
+        service = self.env['ab_storefront_auth_service'].sudo()
+        challenge, token = service._new_challenge('email_reset', self.user, value=self.user.email, channel='email')
+        page = self.url_open('/ar/ab_storefront/auth/recover')
+        verified = self.url_open('/ar/ab_storefront/auth/recover', data={'csrf_token': self._csrf(page), 'action': 'email', 'proof': token})
+        self.assertIn('كلمة المرور الجديدة', verified.text)
+        self.assertIn('تأكيد كلمة المرور الجديدة', verified.text)
+
+    def test_disabled_telegram_signup_is_unavailable_before_submit(self):
+        with patch.object(type(self.env['ab_storefront_auth_telegram']), '_enabled', return_value=False):
+            self.browser_js('/web/signup', """
+                const form = document.querySelector('form.oe_signup_form');
+                form.elements.login.value = '01012345678';
+                form.elements.login.dispatchEvent(new Event('input', {bubbles: true}));
+                if (!form.querySelector('[data-ab-auth-submit]').disabled) { throw new Error('Disabled Telegram is offered for signup'); }
+                const hint = form.querySelector('[data-ab-telegram-unavailable]');
+                if (!hint || hint.classList.contains('d-none')) { throw new Error('Unavailable Telegram has no explanation'); }
+                form.elements.login.value = 'email@example.test';
+                form.elements.login.dispatchEvent(new Event('input', {bubbles: true}));
+                if (form.querySelector('[data-ab-auth-submit]').disabled) { throw new Error('Email signup is blocked by Telegram'); }
+                console.log('test successful');
+            """, ready="Boolean(document.querySelector('.ab-auth-page.is-auth-ready form.oe_signup_form[data-ab-telegram-enabled=\"false\"]'))")

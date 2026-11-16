@@ -223,6 +223,8 @@ class AbStorefrontCustomerPortal(SaleCustomerPortal):
             prescription_count = 0
 
         values.update({
+            "contact_status": request.env["ab_storefront_auth_service"].sudo()._profile_contact_status(user),
+            "social_contacts": request.env["ab_storefront_auth_service"].sudo()._social_contacts(user),
             "account_user": user,
             "account_partner": partner,
             "account_phone": account_phone,

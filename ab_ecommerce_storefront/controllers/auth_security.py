@@ -62,37 +62,69 @@ class StorefrontAuthSecurity(http.Controller):
             raise NotFound()
         service = self._service()
         browser = self._browser()
-        values = {"step": "request", "error": False, "message": False, "telegram_enabled": service._channel("telegram")._enabled()}
+        lookup = service._find(request.session.get("ab_auth_lookup", ""), ["lookup"], browser)
         if request.session.uid:
-            values["available_channels"] = service._available_channels(request.env.user)
-        else:
-            values["available_channels"] = ["email"] + (["telegram"] if values["telegram_enabled"] else [])
+            if not service._eligible_customer(request.env.user):
+                raise Forbidden()
+            if not lookup or lookup.user_id != request.env.user:
+                token = service._lookup_recovery("", browser, self._ip(), request.env.user)
+                request.session["ab_auth_lookup"] = token
+                lookup = service._find(token, ["lookup"], browser)
+        values = {"step": "choose" if lookup else "request", "error": False, "message": False,
+                  "available_channels": service._available_channels(lookup.user_id) if lookup else [],
+                  "telegram_enabled": service._channel("telegram")._enabled()}
+        if request.httprequest.method == "GET":
+            grant = service._find(request.session.get("ab_auth_grant", ""), ["grant"], browser)
+            attempt = service._find(request.session.get("ab_auth_otp", ""), ["otp", "email_reset"], browser)
+            if grant:
+                values["step"] = "password"
+            elif attempt:
+                values["step"] = "sent" if attempt.channel == "email" else "otp"
         if request.httprequest.method == "POST":
-            action = post.get("action", "request")
+            action = post.get("action", "identify")
             try:
-                if action == "request":
-                    channel = post.get("channel", "email")
-                    token = service._request_recovery(channel, post.get("identifier", ""), browser, self._ip())
-                    if token or channel != "telegram":
-                        request.session["ab_auth_otp"] = token if channel == "telegram" else False
-                    request.session["ab_auth_recovery_identifier"] = post.get("identifier", "")[:254]
-                    request.session["ab_auth_recovery_channel"] = channel
-                    values["message"] = _("If an eligible account exists, you will receive recovery instructions shortly.")
-                    values["step"] = "otp" if channel == "telegram" else "sent"
-                elif action == "resend":
-                    channel = request.session.get("ab_auth_recovery_channel", "email")
-                    token = service._request_recovery(channel, request.session.get("ab_auth_recovery_identifier", ""), browser, self._ip())
-                    if token and channel == "telegram":
-                        request.session["ab_auth_otp"] = token
-                    values["message"] = _("If an eligible account exists, you will receive recovery instructions shortly.")
-                    values["step"] = "otp" if channel == "telegram" else "sent"
+                if action == "identify":
+                    service._invalidate_recovery(browser)
+                    request.session.pop("ab_auth_grant", None)
+                    token = service._lookup_recovery(post.get("identifier", ""), browser, self._ip(),
+                                                     request.env.user if request.session.uid else None)
+                    request.session["ab_auth_lookup"] = token
+                    lookup = service._find(token, ["lookup"], browser)
+                    values.update(step="choose", available_channels=service._available_channels(lookup.user_id) if lookup else [])
+                elif action in {"request", "resend", "switch"}:
+                    if not lookup or (request.session.uid and lookup.user_id != request.env.user):
+                        raise ValidationError(_("The code or link is invalid or expired."))
+                    channels = service._available_channels(lookup.user_id)
+                    values.update(step="choose", available_channels=channels)
+                    if action == "switch":
+                        service._invalidate_recovery(browser)
+                        request.session.pop("ab_auth_otp", None)
+                        request.session.pop("ab_auth_grant", None)
+                    else:
+                        channel = request.session.get("ab_auth_recovery_channel") if action == "resend" else post.get("channel")
+                        if channel not in channels:
+                            raise ValidationError(_("Invalid recovery channel."))
+                        destination = service._recovery_destination(lookup.user_id, channel)
+                        if action == "resend" and destination != request.session.get("ab_auth_recovery_destination"):
+                            raise ValidationError(_("The code or link is invalid or expired."))
+                        if action == "request":
+                            request.session["ab_auth_recovery_destination"] = destination
+                            service._invalidate_recovery(browser)
+                            request.session.pop("ab_auth_grant", None)
+                            request.session.pop("ab_auth_otp", None)
+                        token = service._request_recovery(channel, lookup.user_id.login, browser, self._ip())
+                        if token:
+                            request.session["ab_auth_otp"] = token
+                        request.session["ab_auth_recovery_channel"] = channel
+                        values.update(step="sent" if channel == "email" else "otp",
+                                      message=_("If an eligible account exists, you will receive recovery instructions shortly."))
                 elif action in {"otp", "email"}:
+                    values["step"] = "otp" if action == "otp" else "request"
                     if not service._rate_allow("verify-ip", self._ip(), 60):
                         raise ValidationError(_("Please wait before trying again."))
                     token = request.session.get("ab_auth_otp", "") if action == "otp" else post.get("proof", "")
                     grant = service._verify_recovery(token, browser, post.get("code", "") if action == "otp" else None)
                     if not grant:
-                        values["step"] = "otp" if action == "otp" else "request"
                         raise ValidationError(_("The code or link is invalid or expired."))
                     request.session["ab_auth_grant"] = grant
                     values["step"] = "password"
@@ -104,12 +136,10 @@ class StorefrontAuthSecurity(http.Controller):
                         raise ValidationError(_("The code or link is invalid or expired."))
                     request.session.logout(keep_db=True)
                     values.update(step="done", message=_("Your password has been reset successfully."))
-            except (UserError, ValidationError) as error:
-                if action in {"request", "resend"}:
-                    channel = post.get("channel") if action == "request" else request.session.get("ab_auth_recovery_channel", "email")
-                    values.update(step="otp" if channel == "telegram" else "sent", message=_("If an eligible account exists, you will receive recovery instructions shortly."))
                 else:
-                    values["error"] = error.args[0]
+                    raise Forbidden()
+            except (UserError, ValidationError) as error:
+                values["error"] = error.args[0]
         return self._render("auth_recovery", values)
 
     @http.route("/ab_storefront/auth/confirm", type="http", auth="public", website=True, sitemap=False, methods=["GET", "POST"], csrf=True)
@@ -137,7 +167,7 @@ class StorefrontAuthSecurity(http.Controller):
             "link": request.session.get("ab_auth_deep_link"),
             "verified": False,
             "error": False,
-            "phone": request.session.get("ab_auth_phone", ""),
+            "phone": request.session.get("ab_auth_phone", "") or (user.phone if user else ""),
             "telegram_id": False,
             "name": request.session.get("ab_auth_signup_name", ""),
             "telegram_auto_opened": bool(request.session.get("ab_auth_telegram_auto_open")) and not user,
@@ -148,6 +178,9 @@ class StorefrontAuthSecurity(http.Controller):
         }
         token = request.session.get("ab_auth_link", "")
         challenge = service._find(token, ["link", "phone_signup"], browser)
+        if not challenge:
+            values["link"] = False
+            request.session.pop("ab_auth_deep_link", None)
         values["verified"] = bool(challenge and challenge.phone_verified)
         values["telegram_id"] = challenge.telegram_user_id if challenge else False
         if values["verified"]:
@@ -250,6 +283,8 @@ class StorefrontAuthSecurity(http.Controller):
                 values["message"] = _("Check your email to verify your address.")
             except (UserError, ValidationError) as error:
                 values["error"] = error.args[0]
+        values["contact_status"] = service._profile_contact_status(user)
+        values["social_contacts"] = service._social_contacts(user)
         identities = service._identities(user)
         values["identities"] = {identity.kind: identity.value for identity in identities}
         values["channels"] = service._available_channels(user)

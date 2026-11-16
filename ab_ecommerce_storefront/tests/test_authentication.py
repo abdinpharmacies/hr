@@ -74,9 +74,9 @@ class TestStorefrontAuthentication(TransactionCase):
             path.write_text(value)
             path.chmod(0o600)
             with patch.dict(os.environ, {}, clear=True), patch("odoo.addons.ab_ecommerce_storefront.models.auth_channels.config.get", return_value=str(path)):
-                self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN"), value)
+                self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET"), value)
                 path.chmod(0o644)
-                self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN"), "")
+                self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET"), "")
 
     def test_secret_environment_file_precedes_odoo_configuration(self):
         with TemporaryDirectory() as directory:
@@ -84,12 +84,12 @@ class TestStorefrontAuthentication(TransactionCase):
             value = secrets.token_urlsafe(32)
             path.write_text(value)
             path.chmod(0o600)
-            with patch.dict(os.environ, {"AB_STOREFRONT_TELEGRAM_TOKEN_FILE": str(path)}, clear=True), patch("odoo.addons.ab_ecommerce_storefront.models.auth_channels.config.get", return_value="/missing/credential"):
-                self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN"), value)
+            with patch.dict(os.environ, {"AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET_FILE": str(path)}, clear=True), patch("odoo.addons.ab_ecommerce_storefront.models.auth_channels.config.get", return_value="/missing/credential"):
+                self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET"), value)
 
     def test_secret_missing_configured_file_is_fail_closed(self):
         with patch.dict(os.environ, {}, clear=True), patch("odoo.addons.ab_ecommerce_storefront.models.auth_channels.config.get", return_value="/missing/credential"):
-            self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN"), "")
+            self.assertEqual(deployment_secret("AB_STOREFRONT_TELEGRAM_WEBHOOK_SECRET"), "")
 
     def _telegram(self, text=None, contact=None, sender=910001, chat=None):
         message = {"from": {"id": sender, "language_code": "ar"}, "chat": {"id": sender if chat is None else chat, "type": "private"}}
@@ -137,7 +137,7 @@ class TestStorefrontAuthentication(TransactionCase):
 
     def test_email_reset_and_password_hash(self):
         token = self.service._request_recovery("email", self.user.email, self.browser, "test-ip")
-        self.assertFalse(self.service._find(token, ["email_reset"]).user_id)
+        self.assertEqual(self.service._find(token, ["email_reset"]).user_id, self.user)
         self.service._process_queue()
         self.assertTrue(self.env["mail.mail"].sudo().search([("email_to", "=", self.user.email)], limit=1))
         grant = self.service._verify_recovery(token, self.browser)
@@ -156,12 +156,28 @@ class TestStorefrontAuthentication(TransactionCase):
             self.assertFalse(self.service._find(token, [purpose], self.browser))
         self.assertFalse(self.service._find("invalid", ["email_reset"]))
 
-    def test_no_account_enumeration_in_request(self):
-        with patch.object(type(self.service), "_recovery_user", side_effect=AssertionError("Account lookup in HTTP request")):
+    def test_recovery_requests_queue_opaque_proofs_without_delivery(self):
+        before = self.Event.search_count([("channel", "=", "recovery_request")])
+        with patch.object(type(self.service), "_prepare_recovery", side_effect=AssertionError("Delivery in HTTP request")):
             known = self.service._request_recovery("email", self.user.email, self.browser, "test-ip")
             missing = self.service._request_recovery("email", "missing@example.test", self.browser, "test-ip")
         self.assertEqual(len(known), len(missing))
-        self.assertEqual(len(self.Event.search([("channel", "=", "recovery_request")])), 2)
+        self.assertEqual(self.Event.search_count([("channel", "=", "recovery_request")]) - before, 2)
+
+    def test_recovery_wakes_delivery_without_provider_call(self):
+        token, url = self._link()
+        self.service._finish_link(token, self.browser, self.user)
+        telegram = self.env["ab_storefront_auth_telegram"]
+        with patch.object(type(self.service), "_wake_delivery") as wake, patch.object(type(telegram), "_deliver") as deliver:
+            token = self.service._request_recovery("telegram", "01012345678", self.browser, "test-ip")
+            self.assertTrue(token)
+            wake.assert_called_once_with()
+            deliver.assert_not_called()
+            self.assertFalse(self.service._request_recovery("telegram", "01012345678", self.browser, "test-ip"))
+            wake.assert_called_once_with()
+        challenge = self.service._find(token, ["otp"], self.browser)
+        event = self.Event.search([("challenge_id", "=", challenge.id), ("channel", "=", "recovery_request")])
+        self.assertEqual(event.state, "pending")
 
     def test_unknown_phone_still_enforces_attempt_limits(self):
         token = self.service._request_recovery("telegram", "01012345678", self.browser, "test-ip")
@@ -380,3 +396,47 @@ class TestStorefrontAuthentication(TransactionCase):
             self.service._process_queue()
             self.assertEqual(len(delivered_codes), 1)
             self.assertTrue(self.service._verify_recovery(token, self.browser, delivered_codes[0]))
+
+    def test_telegram_link_preserves_separate_profile_phone(self):
+        self.user.phone = '+201112345678'
+        token, url = self._link()
+        self.assertTrue(self.service._finish_link(token, self.browser, self.user))
+        telegram = self.service._identities(self.user).filtered(lambda identity: identity.kind == 'telegram')
+        self.assertEqual(telegram.phone_value, '+201012345678')
+        self.assertEqual(self.user.phone, '+201112345678')
+        challenge, token, code = self._otp()
+        self.assertEqual(challenge.value, telegram.value)
+        self.assertTrue(self.service._verify_recovery(token, self.browser, code))
+
+    def test_telegram_token_uses_system_parameter_for_enablement_and_api(self):
+        channel = self.env['ab_storefront_auth_telegram'].sudo()
+        params = self.env['ir.config_parameter'].sudo()
+        params.set_param('ab_storefront_auth.telegram_enabled', 'True')
+        params.set_param('ab_storefront_auth.telegram_bot_token', ' 123456:fixture_token ')
+        self.enabled.stop()
+        with patch('odoo.addons.ab_ecommerce_storefront.models.auth_channels.deployment_secret', side_effect=AssertionError('Bot token must not use file/environment secrets')):
+            self.assertTrue(channel._enabled())
+            self.assertEqual(channel._bot_token(), '123456:fixture_token')
+            with patch('odoo.addons.ab_ecommerce_storefront.models.auth_channels.urllib.request.urlopen') as opened:
+                opened.return_value.__enter__.return_value.read.return_value = b'{"ok":true,"result":{"username":"Abdin_Pharmacy_Bot"}}'
+                self.assertEqual(channel._api('getMe', {})['username'], 'Abdin_Pharmacy_Bot')
+                self.assertEqual(opened.call_args.args[0].full_url, 'https://api.telegram.org/bot123456:fixture_token/getMe')
+            params.set_param('ab_storefront_auth.telegram_bot_token', '')
+            self.assertFalse(channel._enabled())
+
+    def test_telegram_token_parameter_is_private(self):
+        self.params.set_param('ab_storefront_auth.telegram_bot_token', 'fixture-only-token')
+        for actor in (self.user, self.env.ref('base.public_user')):
+            with self.assertRaises(AccessError):
+                self.env['ir.config_parameter'].with_user(actor).get_param('ab_storefront_auth.telegram_bot_token')
+
+    def test_telegram_signup_opens_bot_before_contact_and_otp(self):
+        with patch.object(type(self.env['ab_storefront_auth_telegram']), '_api', side_effect=AssertionError('Signup start must not send an OTP')):
+            token, url = self.service._request_link(None, '01012345678', self.browser, 'test-ip')
+        self.assertEqual(url, 'https://t.me/Abdin_Pharmacy_Bot?start=' + token)
+        challenge = self.service._find(token, ['phone_signup'], self.browser)
+        self.assertFalse(challenge.phone_verified)
+        self.assertFalse(self.Event.search_count([('challenge_id', '=', challenge.id)]))
+        self._telegram('/start ' + token)
+        self._telegram(contact={'user_id': 910001, 'phone_number': '+201012345678'})
+        self.assertTrue(challenge.phone_verified)
