@@ -130,6 +130,64 @@ class TestStorefrontOffers(TransactionCase):
             order.action_confirm()
         self.assertEqual(self.env["ab_storefront_offer_use"].search_count([("partner_id", "=", self.partner.id)]), 1)
 
+    def test_total_sales_units_block_stale_and_future_price_orders(self):
+        offer = self.offer(once_per_customer=False, max_offer_units=5)
+        first, stale = self.cart(), self.cart(self.portal.partner_id)
+        first.action_confirm()
+        self.assertEqual(offer._sold_primary_quantity(), 2)
+        second = self.cart(self.portal.partner_id)
+        second.action_confirm()
+        self.assertEqual(offer._sold_primary_quantity(), 4)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            stale.action_confirm()
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            stale._check_cart_is_ready_to_be_paid()
+        last = self.cart(self.portal.partner_id)
+        last.order_line.product_uom_qty = 1
+        self._refresh_offer_cart(last)
+        self.assertEqual(last.order_line.ab_storefront_price_offer_id, offer)
+        last.action_confirm()
+        self.assertEqual(offer._sold_primary_quantity(), 5)
+        self.assertEqual(self.cart(self.portal.partner_id).order_line.price_unit, 100)
+
+    def test_total_sales_units_block_future_gift_orders(self):
+        offer = self.offer(offer_type="gift", once_per_customer=False, max_offer_units=2)
+        first, stale = self.cart(), self.cart(self.portal.partner_id)
+        self.assertTrue(first.order_line.filtered("is_reward_line"))
+        self.assertTrue(stale.order_line.filtered("is_reward_line"))
+        first.action_confirm()
+        self.assertEqual(offer._sold_primary_quantity(), 2)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            stale.action_confirm()
+        self.assertFalse(self.cart(self.portal.partner_id).order_line.filtered("is_reward_line"))
+
+    def test_global_offer_limits_reject_negative_values(self):
+        offer = self.offer(once_per_customer=False)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.write({"max_offer_units": -1})
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.write({"max_applications": -1})
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.write({"max_applications": 1})
+
+    def test_gift_benefit_limit_resets_in_next_order(self):
+        self.offer(offer_type="gift", once_per_customer=False, max_applications=2)
+        for unused in range(2):
+            order = self.cart()
+            order.order_line.filtered(lambda line: not line.is_reward_line).product_uom_qty = 4
+            self._refresh_offer_cart(order)
+            self.assertEqual(sum(order.order_line.filtered("is_reward_line").mapped("product_uom_qty")), 2)
+            order.action_confirm()
+
+    def test_second_item_benefit_limit_resets_in_next_order(self):
+        self.offer(offer_type="second_half", once_per_customer=False, max_applications=1)
+        for unused in range(2):
+            order = self.cart()
+            order.order_line.filtered(lambda line: not line.is_reward_line).product_uom_qty = 4
+            self._refresh_offer_cart(order)
+            self.assertEqual(order.amount_total, 350)
+            order.action_confirm()
+
     def test_enabling_limit_remembers_previous_use(self):
         offer = self.offer(once_per_customer=False)
         self.cart().action_confirm()
@@ -281,6 +339,32 @@ class TestStorefrontOffers(TransactionCase):
         self.assertEqual(offer.current_price, 200)
         self.assertAlmostEqual(offer.discounted_price, 60)
 
+    def test_cart_price_breakdown_shows_percentage_savings(self):
+        regular_cart = self.cart()
+        self.assertEqual(regular_cart._ab_storefront_cart_price_breakdown()["discount"], 0)
+        self.offer(offer_type="percent", percentage_rate="10", once_per_customer=False)
+        order = self.cart()
+        breakdown = order._ab_storefront_cart_price_breakdown()
+        self.assertAlmostEqual(breakdown["original_price"], 200)
+        self.assertAlmostEqual(breakdown["discount"], 20)
+        self.assertAlmostEqual(order.amount_total, 180)
+        totals_html = self.env["ir.qweb"]._render("website_sale.total", {
+            "website_sale_order": order, "hide_promotions": True,
+        })
+        self.assertIn("Original price", totals_html)
+        self.assertIn("Discount", totals_html)
+        arabic_totals_html = self.env["ir.qweb"].with_context(lang="ar_001")._render(
+            "website_sale.total", {"website_sale_order": order, "hide_promotions": True},
+        )
+        self.assertIn("السعر الأصلي", arabic_totals_html)
+        self.assertIn("الخصم", arabic_totals_html)
+        self.product.list_price = 200
+        updated_order = self.cart()
+        updated_breakdown = updated_order._ab_storefront_cart_price_breakdown()
+        self.assertAlmostEqual(updated_breakdown["original_price"], 400)
+        self.assertAlmostEqual(updated_breakdown["discount"], 40)
+        self.assertAlmostEqual(updated_order.amount_total, 360)
+
     def test_all_amount_discounts_and_current_price_changes(self):
         self.pricelist.currency_id = self.env.ref("base.EGP")
         self.company.currency_id = self.env.ref("base.EGP")
@@ -333,9 +417,8 @@ class TestStorefrontOffers(TransactionCase):
         self.assertEqual(self.cart().amount_total, 160)
         self.assertEqual(legacy.price_after, 80)
 
-    def test_second_item_all_rates_and_repetition_limits(self):
+    def test_second_item_all_rates_repeat_per_eligible_pair(self):
         offer = self.offer(offer_type="second_half", once_per_customer=False)
-        self.assertEqual(offer.max_applications, 1)
         order = self.cart()
         paid = order.order_line.filtered(lambda line: not line.is_reward_line)
         paid.product_uom_qty = 4
@@ -343,14 +426,13 @@ class TestStorefrontOffers(TransactionCase):
             with self.subTest(rate=rate):
                 offer.second_discount_rate = str(rate)
                 self._refresh_offer_cart(order)
-                self.assertAlmostEqual(order.amount_total, 400 - rate)
-        offer.write({"second_discount_rate": "50", "max_applications": 0})
+                self.assertAlmostEqual(order.amount_total, 400 - 2 * rate)
+        offer.write({"second_discount_rate": "50"})
         self._refresh_offer_cart(order)
         self.assertEqual(order.amount_total, 300)
         paid.product_uom_qty = 7
-        offer.max_applications = 2
         self._refresh_offer_cart(order)
-        self.assertEqual(order.amount_total, 600)
+        self.assertEqual(order.amount_total, 550)
         paid.product_uom_qty = 1
         self._refresh_offer_cart(order)
         self.assertFalse(order.order_line.filtered("is_reward_line"))
@@ -360,7 +442,7 @@ class TestStorefrontOffers(TransactionCase):
             {"name": name, "type": "consu", "list_price": price, "taxes_id": [Command.clear()], "company_id": self.company.id}
             for name, price in (("Benefit 80", 80), ("Benefit 60", 60), ("Unrelated 1", 1))
         ])
-        self.offer(offer_type="second_half", second_item_mode="choice", second_product_ids=[Command.set((second | third).ids)], max_applications=0, once_per_customer=False)
+        self.offer(offer_type="second_half", second_item_mode="choice", second_product_ids=[Command.set((second | third).ids)], once_per_customer=False)
         order = self.cart()
         order.write({"order_line": [Command.create({"product_id": product.id, "product_uom_qty": 1}) for product in (second, third, unrelated)]})
         self._refresh_offer_cart(order)
@@ -369,20 +451,17 @@ class TestStorefrontOffers(TransactionCase):
         self._refresh_offer_cart(order)
         self.assertEqual(order.amount_total, 211)
 
-    def test_gift_ratios_and_repeat_limit(self):
+    def test_gift_ratios_repeat_per_eligible_quantity(self):
         offer = self.offer(offer_type="gift", once_per_customer=False)
         for buy, free in ((1, 1), (2, 1), (3, 1), (2, 2)):
             with self.subTest(buy=buy, free=free):
-                offer.write({"buy_qty": buy, "gift_qty": free, "max_applications": 0})
+                offer.write({"buy_qty": buy, "gift_qty": free})
                 order = self.cart()
                 paid = order.order_line.filtered(lambda line: not line.is_reward_line)
                 paid.product_uom_qty = buy * 3
                 self._refresh_offer_cart(order)
                 self.assertEqual(sum(order.order_line.filtered("is_reward_line").mapped("product_uom_qty")), free * 3)
                 self.assertEqual(order.amount_total, buy * 300)
-                offer.max_applications = 1
-                self._refresh_offer_cart(order)
-                self.assertEqual(sum(order.order_line.filtered("is_reward_line").mapped("product_uom_qty")), free)
                 paid.product_uom_qty = buy - 1
                 self._refresh_offer_cart(order)
                 self.assertFalse(order.order_line.filtered("is_reward_line"))
@@ -395,10 +474,17 @@ class TestStorefrontOffers(TransactionCase):
         self.assertEqual(gift.product_id, second)
         self.assertEqual(gift.product_uom_qty, 2)
         self.assertEqual(order.amount_total, 200)
-        details = self.website._ab_storefront_offer_details(self.product.product_tmpl_id)[self.product.product_tmpl_id.id]
+        with patch.object(type(second), "_is_add_to_cart_allowed", return_value=True), patch.object(type(second), "_is_sold_out", return_value=False):
+            details = self.website._ab_storefront_offer_details(self.product.product_tmpl_id)[self.product.product_tmpl_id.id]
         self.assertTrue(details["bundle_offer"])
         self.assertEqual(details["free_qty"], 2)
         self.assertEqual(details["offer_id"], offer.id)
+        self.assertEqual(details["benefit_products"][0]["id"], second.id)
+        self.assertEqual(details["benefit_products"][0]["name"], second.name)
+        self.assertEqual(details["benefit_product_count"], 1)
+        with patch.object(type(second), "_is_add_to_cart_allowed", return_value=False):
+            unavailable = self.website._ab_storefront_offer_details(self.product.product_tmpl_id)[self.product.product_tmpl_id.id]
+        self.assertFalse(unavailable["benefit_products"])
 
     def test_multi_product_gift_validates_choice_and_removal(self):
         second = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Gift B", "list_price": 80}})
@@ -420,7 +506,7 @@ class TestStorefrontOffers(TransactionCase):
 
     def test_offer_selection_and_negative_limit_rejected(self):
         offer = self.offer(offer_type="gift")
-        for values in ({"max_applications": -1}, {"second_item_mode": "choice"}, {"second_item_mode": "choice", "second_product_ids": [Command.set(self.product.ids)]}):
+        for values in ({"second_item_mode": "choice"}, {"second_item_mode": "choice", "second_product_ids": [Command.set(self.product.ids)]}):
             with self.subTest(values=values), self.assertRaises(ValidationError), self.env.cr.savepoint():
                 offer.write(values)
         other_company = self.env["res.company"].create({"name": "Gift other company"})
@@ -432,8 +518,14 @@ class TestStorefrontOffers(TransactionCase):
         offer = self.offer(offer_type="percent")
         with self.assertRaises(AccessError):
             offer.with_user(self.portal).write({"percentage_rate": "70"})
+        with self.assertRaises(AccessError):
+            offer.with_user(self.portal).write({"max_offer_units": 1})
+        with self.assertRaises(AccessError):
+            offer.with_user(self.portal).write({"max_applications": 1})
         offer.with_user(self.designer).write({"percentage_rate": "25"})
+        offer.with_user(self.designer).write({"max_offer_units": 2})
         self.assertEqual(offer.percentage_rate, "25")
+        self.assertEqual(offer.max_offer_units, 2)
 
     def test_gift_controller_adds_selected_gift_atomically(self):
         second = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Selected gift", "list_price": 80}})
@@ -455,7 +547,7 @@ class TestStorefrontOffers(TransactionCase):
         self.assertEqual(order.amount_total, 200)
 
     def test_second_item_converts_purchase_units(self):
-        self.offer(offer_type="second_half", max_applications=0, once_per_customer=False)
+        self.offer(offer_type="second_half", once_per_customer=False)
         pair = self.env["uom.uom"].create({"name": "Offer pair", "relative_uom_id": self.product.uom_id.id, "relative_factor": 2})
         order = self.cart()
         line = order.order_line.filtered(lambda current: not current.is_reward_line)

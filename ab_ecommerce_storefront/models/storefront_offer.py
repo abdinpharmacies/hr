@@ -63,10 +63,13 @@ class StorefrontOffer(models.Model):
     custom_amount_discount = fields.Monetary(
         string="Custom Discount Amount", currency_field="currency_id", tracking=True,
     )
+    max_offer_units = fields.Integer(
+        string="Units Allocated to This Offer", default=0, tracking=True,
+        help="The offer stops after this many paid units of its main product are sold across all customers. No limit keeps it available.",
+    )
     max_applications = fields.Integer(
-        string="Maximum Applications per Order", compute="_compute_max_applications",
-        store=True, precompute=True, readonly=False, tracking=True,
-        help="Use 1 for one application, or 0 for unlimited applications within the order.",
+        string="Maximum Benefit Applications per Order", default=0, tracking=True,
+        help="Limit how many times the benefit applies in one order. A new order starts a new limit. No limit allows every eligible quantity.",
     )
     current_price = fields.Monetary(string="Current Price", compute="_compute_current_offer_price")
     discounted_price = fields.Monetary(string="Discounted Price", compute="_compute_current_offer_price")
@@ -99,11 +102,6 @@ class StorefrontOffer(models.Model):
     generated_program_ids = fields.One2many("loyalty.program", "ab_storefront_offer_id", readonly=True)
     price_rule_ids = fields.One2many("product.pricelist.item", "ab_storefront_offer_id", readonly=True)
 
-    @api.depends("offer_type")
-    def _compute_max_applications(self):
-        for offer in self:
-            offer.max_applications = 1 if offer.offer_type == "second_half" else 0
-
     @api.depends("product_id.lst_price", "currency_id", "website_id", "percentage_rate", "amount_discount", "custom_amount_discount", "offer_type")
     def _compute_current_offer_price(self):
         for offer in self:
@@ -127,6 +125,36 @@ class StorefrontOffer(models.Model):
         self.ensure_one()
         return self.product_id if self.second_item_mode == "same" else self.second_product_ids
 
+    def _orders_using_offer(self):
+        self.ensure_one()
+        programs = self.with_context(active_test=False).generated_program_ids | self.program_id
+        applied_line = fields.Domain("ab_storefront_price_offer_id", "=", self.id)
+        if programs:
+            applied_line |= fields.Domain("reward_id.program_id", "in", programs.ids)
+        return self.env["sale.order"].sudo().search(
+            fields.Domain("website_id", "=", self.website_id.id)
+            & fields.Domain("company_id", "=", self.company_id.id)
+            & fields.Domain("state", "=", "sale")
+            & fields.Domain("order_line", "any", applied_line)
+        )
+
+    def _paid_primary_quantity(self, order):
+        self.ensure_one()
+        programs = self.with_context(active_test=False).generated_program_ids | self.program_id
+        has_reward = bool(order.order_line.filtered(lambda line: line.reward_id.program_id in programs))
+        lines = order.order_line.filtered(lambda line: (
+            not line.is_reward_line and line.product_id == self.product_id and line.product_uom_qty > 0
+            and (has_reward or line.ab_storefront_price_offer_id == self)
+        ))
+        return sum(
+            line.product_uom_id._compute_quantity(line.product_uom_qty, self.product_id.uom_id, round=False)
+            for line in lines
+        )
+
+    def _sold_primary_quantity(self):
+        self.ensure_one()
+        return sum(self._paid_primary_quantity(order) for order in self._orders_using_offer())
+
     def _storefront_description(self):
         self.ensure_one()
         if self.offer_type == "gift":
@@ -138,10 +166,10 @@ class StorefrontOffer(models.Model):
         else:
             message = _("Buy one and get %(rate)s%% off a second eligible unit.", rate=self.second_discount_rate)
             message += " " + _("The cheapest eligible units receive the discount.")
-        message += " " + (
-            _("Maximum %(count)s applications per order.", count=self.max_applications)
-            if self.max_applications else _("Repeats for every qualifying purchase quantity.")
-        )
+        if self.max_applications:
+            message += " " + _("Up to %(count)s benefit applications per order.", count=self.max_applications)
+        else:
+            message += " " + _("Repeats for every qualifying purchase quantity.")
         return message
 
     @api.model
@@ -199,7 +227,7 @@ class StorefrontOffer(models.Model):
         "website_id", "product_id", "offer_type", "buy_qty", "gift_qty", "pricelist_id",
         "price_before", "price_after", "date_from", "date_to", "use_odoo_promotion", "program_id", "active",
         "second_item_mode", "second_product_ids", "percentage_rate", "amount_discount",
-        "second_discount_rate", "max_applications", "custom_amount_discount",
+        "second_discount_rate", "max_offer_units", "max_applications", "custom_amount_discount",
     )
     def _check_offer(self):
         other_offers = self.search([
@@ -215,8 +243,12 @@ class StorefrontOffer(models.Model):
                 or (product.website_id and product.website_id != offer.website_id)
             ):
                 raise ValidationError(_("Select a single-variant sale product available on this website."))
+            if offer.max_offer_units < 0:
+                raise ValidationError(_("The maximum offer product units must be a positive whole number or no limit."))
             if offer.max_applications < 0:
-                raise ValidationError(_("The maximum applications must be zero or a positive whole number."))
+                raise ValidationError(_("The maximum benefit applications must be a positive whole number or no limit."))
+            if offer.max_applications and (offer.offer_type not in ("gift", "second_half") or offer.use_odoo_promotion):
+                raise ValidationError(_("Benefit application limits are available only for offers managed with free gifts or second-item discounts."))
             if offer.use_odoo_promotion:
                 if offer.offer_type not in ("gift", "price"):
                     raise ValidationError(_("This offer type is managed here, without a linked promotion."))
@@ -335,7 +367,7 @@ class StorefrontOffer(models.Model):
             "name", "active", "website_id", "product_id", "offer_type", "buy_qty", "gift_qty",
             "pricelist_id", "price_before", "price_after", "date_from", "date_to",
             "use_odoo_promotion", "program_id", "second_item_mode", "second_product_ids",
-            "percentage_rate", "amount_discount", "custom_amount_discount", "second_discount_rate", "max_applications",
+            "percentage_rate", "amount_discount", "custom_amount_discount", "second_discount_rate",
         }:
             self._sync_offer_rules()
         if vals.get("once_per_customer"):
@@ -388,16 +420,20 @@ class StorefrontOffer(models.Model):
     def _unavailable_for_customer(self, website, partner, order=None):
         offers = self.sudo().with_context(active_test=False).search([
             ("website_id", "=", website.id), ("company_id", "=", website.company_id.id),
-            ("once_per_customer", "=", True),
+            "|", ("once_per_customer", "=", True), ("max_offer_units", ">", 0),
         ])
+        sold_out = offers.filtered(lambda offer: (
+            offer.max_offer_units and offer._sold_primary_quantity() >= offer.max_offer_units
+        ))
+        customer_limited = offers.filtered("once_per_customer")
         if not partner or partner == website.user_id.partner_id:
-            return offers
+            return sold_out | customer_limited
         uses = self.env["ab_storefront_offer_use"].sudo().search([
-            ("offer_id", "in", offers.ids),
+            ("offer_id", "in", customer_limited.ids),
             ("partner_id", "=", partner.commercial_partner_id.id),
             ("order_id", "!=", order.id if order else False),
         ])
-        return uses.offer_id
+        return sold_out | uses.offer_id
 
     def _sync_offer_rules(self):
         self.check_access("write")
@@ -599,24 +635,41 @@ class SaleOrder(models.Model):
             ])
         return offers
 
-    def _ab_check_offer_eligibility(self):
+    def _ab_check_offer_eligibility(self, lock=False):
+        capped_offers = self.env["ab_storefront_offer"].sudo()
+        applied_by_order = {}
+        for order in self:
+            applied = order._ab_applied_storefront_offers()
+            applied_by_order[order.id] = applied
+            capped_offers |= applied.filtered("max_offer_units")
+        if lock:
+            for offer in capped_offers.sorted("id"):
+                if not offer.try_lock_for_update():
+                    raise ValidationError(_("An offer is being confirmed in another order. Please try again."))
+        pending_sales = defaultdict(float)
         for order in self:
             order.check_access("write")
-            offers = order._ab_applied_storefront_offers().filtered("once_per_customer")
-            if not offers:
-                continue
-            if (
-                not order.website_id or not order.partner_id
-                or order.partner_id == order.website_id.user_id.partner_id
-                or any(offer.website_id != order.website_id or offer.company_id != order.company_id for offer in offers)
-            ):
-                raise ValidationError(_("Sign in with an eligible customer account to use this offer."))
-            if self.env["ab_storefront_offer_use"].sudo().search_count([
-                ("offer_id", "in", offers.ids),
-                ("partner_id", "=", order.partner_id.commercial_partner_id.id),
-                ("order_id", "!=", order.id),
-            ]):
-                raise ValidationError(_("This customer has already used this offer. Update the cart before continuing."))
+            applied = applied_by_order[order.id]
+            for offer in applied.filtered("max_offer_units"):
+                if offer.website_id != order.website_id or offer.company_id != order.company_id:
+                    raise ValidationError(_("This offer is no longer available for this order."))
+                pending_sales[offer.id] += offer._paid_primary_quantity(order)
+                if offer._sold_primary_quantity() + pending_sales[offer.id] > offer.max_offer_units:
+                    raise ValidationError(_("This offer has reached its product sales limit. Reduce the quantity or update the cart."))
+            offers = applied.filtered("once_per_customer")
+            if offers:
+                if (
+                    not order.website_id or not order.partner_id
+                    or order.partner_id == order.website_id.user_id.partner_id
+                    or any(offer.website_id != order.website_id or offer.company_id != order.company_id for offer in offers)
+                ):
+                    raise ValidationError(_("Sign in with an eligible customer account to use this offer."))
+                if self.env["ab_storefront_offer_use"].sudo().search_count([
+                    ("offer_id", "in", offers.ids),
+                    ("partner_id", "=", order.partner_id.commercial_partner_id.id),
+                    ("order_id", "!=", order.id),
+                ]):
+                    raise ValidationError(_("This customer has already used this offer. Update the cart before continuing."))
 
     def _get_program_domain(self):
         domain = fields.Domain(super()._get_program_domain())
@@ -633,7 +686,7 @@ class SaleOrder(models.Model):
         return super()._check_cart_is_ready_to_be_paid()
 
     def action_confirm(self):
-        self._ab_check_offer_eligibility()
+        self._ab_check_offer_eligibility(lock=True)
         result = super().action_confirm()
         for order in self.filtered(lambda current: current.state == "sale"):
             for offer in order._ab_applied_storefront_offers():

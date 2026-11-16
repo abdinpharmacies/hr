@@ -2,45 +2,152 @@
 
 ## Current changes before commit:
 
-- Support the annual offer list through percentage discounts, fixed EGP discounts, configurable second-item discounts, and buy-quantity/free-gift offers. Preserve existing before/after fixed-price offers and the `second_half` technical value.
-- Follow the current product sales price for percentage and amount offers. Skip fixed-amount rules when the current price no longer exceeds the discount or the pricelist no longer uses EGP; retain tracked configuration changes.
-- Allow gifts and second-item benefits from the same product or a configured selection of other products. Keep gift fulfillment on native Odoo loyalty reward lines.
-- Add a maximum applications per order setting: zero repeats without a limit, one applies once. Existing second-item offers default to one discounted unit; gifts retain unlimited repetition. Discount the cheapest eligible units, respecting purchase-unit conversion and qualifying quantities.
-- Generalize the existing searchable product picker and product-card/product-page buttons; use the configured discount and localized offer conditions instead of fixed 50% text.
-- Validate website/company, customer eligibility, selected products and available purchase quantities; roll back incomplete bundle additions. Retain native stock and checkout operations.
-- Merge current offer references into the POT and both Arabic catalogs, preserving unrelated entries. The POT is required because Odoo merges PO files against it when loading translations.
-- Extend focused offer tests for the annual rate/amount lists, gift ratios, dynamic prices, repetition caps, eligible-product selection, archival, UoM conversion, company/website isolation and atomic cart updates.
+- Limit gift and second-item benefits within each order while allowing new orders to start a fresh limit.
+- Stop offers after their configured paid primary-product units have sold across customers, including stale cart and direct confirmation checks.
+- Provide preset limits, a custom positive number and No limit in the offer form; show the per-order limit before the total allocation.
+- Keep offer rules scoped by website and company, and reject concurrent confirmations that would exceed the allocation.
+- Translate the updated labels and messages in both Arabic catalogs.
 
-Validation on the isolated local database `codex_offer_types_20261112` (a neutralized copy of the existing offer test database):
+Validation:
 
-- Targeted `ab_ecommerce_storefront` upgrade on ports 5069/5072, workers/cron disabled, with the checkout explicitly selected in addons paths. No upgrade or restart of the storefront database/service and no external database access.
-- 38 focused `TestStorefrontOffers` tests passed with zero failures/errors; annual rates and gift ratios are also exercised as subtests.
-- Python AST, changed XML parsing, JavaScript syntax, both Arabic `msgfmt --check-format` checks and `git diff --check` passed.
-- Odoo's PO reader finds translations for every current offer term in both catalogs. Runtime checks verify the offer form metadata, dynamic description, JavaScript picker translation payload and product-card QWeb rendering in `en_US` and `ar_001`.
-- Runtime verification uses temporary records and rolls back its transaction. Full browser interaction/visual QA and a fresh installation were not run; the validated database path is a targeted upgrade.
-- Existing unrelated manifest/deprecation/schema warnings remain in the test clone. Expected duplicate-usage constraint errors are exercised by the negative tests.
-- Evidence: `/tmp/offer_types_verified.log`, `/tmp/offer_types_runtime_result.json`, `/tmp/storefront_offer_types.pot`, `/tmp/offer_card_en_US.html`, `/tmp/offer_card_ar_001.html`.
+- The isolated `codex_offer_types_20261112` database ran 43 focused offer tests without failures or errors after the limit changes.
+- The corrected limit dropdown compiled in the backend bundle; targeted local upgrades and `en_US`/`ar_001` label checks passed.
+- Existing one-use settings remained at one, and new paid-unit caps defaulted to No limit in the local runtime checks.
 
 Files changed:
 
 - `ab_ecommerce_storefront/__manifest__.py`
-- `ab_ecommerce_storefront/controllers/__init__.py`
-- `ab_ecommerce_storefront/controllers/second_item_offer.py`
-- `ab_ecommerce_storefront/models/storefront_offer.py`
-- `ab_ecommerce_storefront/models/website.py`
-- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
-- `ab_ecommerce_storefront/views/homepage.xml`
-- `ab_ecommerce_storefront/views/product.xml`
-- `ab_ecommerce_storefront/static/src/js/product_card.js`
-- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/changelog.d/current.md`
 - `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
 - `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
 - `ab_ecommerce_storefront/tests/test_storefront_offers.py`
-- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/static/src/js/offer_limit_field.js`
+- `ab_ecommerce_storefront/static/src/xml/offer_limit_field.xml`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
 
 ## Recent commits
+Commit: `70e6da77`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_ecommerce_storefront/IMP: allow custom fixed discounts`
+
+- Allow a custom positive EGP discount and validate it against the original product price.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
+
+Commit: `a6eb21e9`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_ecommerce_storefront/IMP: explain fixed offer pricing`
+
+- Explain that a Before / After offer keeps its reduced price when the original price rises.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
+
+Commit: `1525c72f`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_ecommerce_storefront/IMP: add integrated customer live chat`
+
+- Add a branded Odoo Live Chat option to the existing support menu with English and Arabic text.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/data/livechat.xml`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/static/src/img/abdin_pharmacy_bot_avatar.jpg`
+- `ab_ecommerce_storefront/static/src/js/livechat_bridge.js`
+- `ab_ecommerce_storefront/static/src/js/support_widget.js`
+- `ab_ecommerce_storefront/static/src/scss/livechat_theme.scss`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/layout.xml`
+
+Commit: `41bda170`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_ecommerce_storefront/IMP: show selectable offer benefits`
+
+- Show eligible benefit products as selectable images on product cards and pages.
+
+Files changed:
+
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/product.xml`
+
+Commit: `1ad51b61`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_ecommerce_storefront/IMP: show cart savings before total`
+
+- Show the original cart price and savings above the final total when an offer discounts the order.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/sale_order.py`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/cart.xml`
+
+Commit: `7bed53e8`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_ecommerce_storefront/IMP: show ordered items in customer details`
+
+- Show ordered products, quantities, prices and total in the customer order details card.
+
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/portal.xml`
+
+Commit: `0ac9fffe`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_ecommerce_storefront/IMP: support flexible storefront offers`
+
+- Add configurable percentage, amount, second-item, and gift offers to the storefront.
+- Validate offer eligibility, cart changes, and bilingual presentation.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/second_item_offer.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/static/src/js/product_card.js`
+- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/product.xml`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
 
 Commit: `97648978`
 Author: Mohamed Fawzy

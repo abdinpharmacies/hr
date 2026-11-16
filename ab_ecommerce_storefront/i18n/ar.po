@@ -3324,8 +3324,6 @@ msgstr "خدمة العملاء"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "WhatsApp"
 msgstr "واتساب"
 
@@ -3361,6 +3359,7 @@ msgstr "الكمية"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
 msgid "Discount"
 msgstr "الخصم"
 
@@ -4777,9 +4776,6 @@ msgstr "غير متوفر"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_details_avatar
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Not provided"
 msgstr "لا يوجد"
 
@@ -6185,9 +6181,6 @@ msgstr "غير مربوط"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Not verified"
 msgstr "غير مؤكد"
 
@@ -6481,8 +6474,6 @@ msgstr "إرسال رسائل التحقق بالمتجر"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__telegram
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Telegram"
 msgstr "تيليجرام"
 
@@ -6664,9 +6655,6 @@ msgstr "تم إلغاء التحقق. ارجع إلى موقع الصيدلية 
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Verified"
 msgstr "مؤكد"
 
@@ -6773,7 +6761,6 @@ msgstr "حدث خطأ غير متوقع. يرجى المحاولة مرة أخر
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
 msgid "Continue"
 msgstr "متابعة"
 
@@ -6899,7 +6886,6 @@ msgstr "حدّث كلمة مرورك بأمان."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
 msgid "Used to recover your account and verify your identity."
 msgstr "يُستخدم لاستعادة الحساب والتحقق من هويتك."
 
@@ -15029,6 +15015,8 @@ msgstr "اختر صنفًا آخر مؤهلًا للاستفادة من العر
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
 msgid "Choose your benefit product"
 msgstr "اختر صنف الاستفادة من العرض"
 
@@ -15082,13 +15070,13 @@ msgstr "احصل على العرض"
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
-msgid "Maximum %(count)s applications per order."
-msgstr "الحد الأقصى لتطبيق العرض داخل الطلب: %(count)s."
+#~ msgid "Maximum %(count)s applications per order."
+#~ msgstr "الحد الأقصى لتطبيق العرض داخل الطلب: %(count)s."
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
-msgid "Maximum Applications per Order"
-msgstr "أقصى مرات تطبيق داخل الطلب"
+#~ msgid "Maximum Applications per Order"
+#~ msgstr "أقصى مرات تطبيق داخل الطلب"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__percent
@@ -15203,8 +15191,8 @@ msgstr "الهدية من نفس الصنف."
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
-msgid "The maximum applications must be zero or a positive whole number."
-msgstr "يجب أن يكون الحد الأقصى لتطبيق العرض صفرًا أو عددًا صحيحًا موجبًا."
+#~ msgid "The maximum applications must be zero or a positive whole number."
+#~ msgstr "يجب أن يكون الحد الأقصى لتطبيق العرض صفرًا أو عددًا صحيحًا موجبًا."
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -15232,9 +15220,9 @@ msgstr "يُدار هذا النوع من العروض هنا دون ربطه ب
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
-msgid ""
-"Use 1 for one application, or 0 for unlimited applications within the order."
-msgstr "أدخل 1 للتطبيق مرة واحدة، أو 0 للتكرار دون حد داخل الطلب."
+#~ msgid ""
+#~ "Use 1 for one application, or 0 for unlimited applications within the order."
+#~ msgstr "أدخل 1 للتطبيق مرة واحدة، أو 0 للتكرار دون حد داخل الطلب."
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -15249,95 +15237,6 @@ msgid "Choose an eligible benefit product."
 msgstr "اختر صنفًا مؤهلًا للاستفادة من العرض."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
-msgid "Login, email or linked phone"
-msgstr "اسم الدخول أو البريد الإلكتروني أو الهاتف المرتبط"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
-msgid ""
-"No verified recovery channels are available. Check your details or contact "
-"support."
-msgstr "لا توجد وسائل استرداد موثّقة متاحة. راجع بياناتك أو تواصل مع الدعم."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
-msgid "Choose another channel"
-msgstr "اختر وسيلة أخرى"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
-msgid "Continue verification"
-msgstr "متابعة التحقق"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-msgid "Social contacts"
-msgstr "حسابات التواصل"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
-msgid "Verify"
-msgstr "تحقق"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
-msgid "Add &amp; verify"
-msgstr "إضافة وتوثيق"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
-msgid "Replace &amp; verify"
-msgstr "استبدال وتوثيق"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
-msgid "<i class=\"fa fa-telegram\" aria-hidden=\"true\"/> Recover via Telegram"
-msgstr ""
-"<i class=\"fa fa-telegram\" aria-hidden=\"true\"/> استرداد الحساب عبر "
-"تيليجرام"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
-msgid ""
-"<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/><span "
-"class=\"visually-hidden\">Verified</span>"
-msgstr ""
-"<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/><span "
-"class=\"visually-hidden\">مؤكد</span>"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
-msgid "New password"
-msgstr "كلمة المرور الجديدة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
-msgid "Confirm new password"
-msgstr "تأكيد كلمة المرور الجديدة"
-
-#. module: ab_ecommerce_storefront
-#. odoo-python
-#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
-msgid ""
-"Telegram verification is currently unavailable on this website. Choose "
-"another method or contact support."
-msgstr ""
-"التحقق عبر تيليجرام غير متاح حاليًا على هذا الموقع. اختر طريقة أخرى أو تواصل"
-" مع الدعم."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
-msgid "Original price"
-msgstr "السعر الأصلي"
-
-#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid ""
 "<span>\n"
@@ -15349,49 +15248,197 @@ msgstr ""
 "                            <strong>مساعد عابدين</strong>\n"
 "                            <small>محادثة داخل الموقع</small>\n"
 "                        </span>"
-
 #. module: ab_ecommerce_storefront
 #: model:chatbot.script,title:ab_ecommerce_storefront.chatbot_abdin_support
 msgid "Abdin Assistant"
 msgstr "مساعد عابدين"
-
 #. module: ab_ecommerce_storefront
 #: model:im_livechat.channel,button_text:ab_ecommerce_storefront.livechat_channel
 msgid "Chat with Abdin Pharmacies"
 msgstr "تحدث مع صيدليات عابدين"
-
 #. module: ab_ecommerce_storefront
 #: model:im_livechat.channel,default_message:ab_ecommerce_storefront.livechat_channel
 msgid "Hello! How can we help you?"
 msgstr "مرحبًا! كيف يمكننا مساعدتك؟"
-
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Open Abdin Assistant chat"
 msgstr "افتح محادثة مساعد عابدين"
-
 #. module: ab_ecommerce_storefront
 #: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_unavailable
 msgid ""
 "Our team is unavailable right now. Please leave your email so we can follow "
 "up."
 msgstr "فريقنا غير متاح الآن. اترك بريدك الإلكتروني لنتابع معك."
-
 #. module: ab_ecommerce_storefront
 #: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_welcome
 msgid "Welcome to Abdin Pharmacies. We are connecting you to our team."
 msgstr "مرحبًا بك في صيدليات عابدين. نوصلك الآن بفريقنا."
-
 #. module: ab_ecommerce_storefront
 #: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_email
 msgid "What is your email address?"
 msgstr "ما بريدك الإلكتروني؟"
 
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid "Maximum Offer Uses per Order"
+#~ msgstr "أقصى عدد مرات الاستفادة من العرض في الطلب الواحد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid "Limit how many times the offer applies in one order. No limit allows every eligible quantity."
+#~ msgstr "حدد عدد مرات تطبيق العرض في الطلب الواحد. بلا قيود يسمح بكل كمية مؤهلة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_total_orders
+#~ msgid "Maximum Offer Uses Across All Orders"
+#~ msgstr "أقصى عدد مرات الاستفادة من العرض في جميع الطلبات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_total_orders
+#~ msgid "Limit the number of confirmed orders that can use this offer. Each order counts once. No limit keeps the offer available."
+#~ msgstr "حدد عدد الطلبات المؤكدة التي يمكنها الاستفادة من العرض. يُحتسب كل طلب مرة واحدة. بلا قيود يُبقي العرض متاحًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#~ msgid "The maximum total offer uses must be a positive whole number or no limit."
+#~ msgstr "يجب أن يكون الحد الأقصى للاستفادة من العرض عددًا صحيحًا موجبًا أو بلا قيود."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "An offer is being confirmed in another order. Please try again."
+msgstr "يتم تأكيد العرض في طلب آخر حاليًا. يُرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer is no longer available for this order."
+msgstr "لم يعد هذا العرض متاحًا لهذا الطلب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#~ msgid "This offer has reached its total usage limit. Update the cart before continuing."
+#~ msgstr "وصل هذا العرض إلى الحد الأقصى للاستفادة منه. حدّث سلة التسوق قبل المتابعة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#~ msgid "Set one eligible product for a fixed benefit, or several for customer choice. Choose No limit or enter a positive number of uses per order."
+#~ msgstr "حدد صنفًا مؤهلًا واحدًا لاستفادة محددة، أو عدة أصناف ليختار العميل منها. اختر بلا قيود أو أدخل عددًا موجبًا لمرات الاستفادة في الطلب الواحد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/offer_limit_field.js:0
+msgid "No limit"
+msgstr "بلا قيود"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/offer_limit_field.js:0
+msgid "Custom number"
+msgstr "رقم مخصص"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid "Maximum Benefit Applications Across All Orders"
+#~ msgstr "أقصى عدد مرات الاستفادة من العرض في جميع الطلبات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_offer_units
+#~ msgid "Maximum Offer Product Units Sold"
+#~ msgstr "أقصى عدد قطع المنتج المباعة بالعرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_offer_units
+msgid "Units Allocated to This Offer"
+msgstr "عدد القطع المخصصه لهذا العرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_offer_units
+msgid "The offer stops after this many paid units of its main product are sold across all customers. No limit keeps it available."
+msgstr "يتوقف العرض بعد بيع هذا العدد من القطع المدفوعة من المنتج الأساسي لجميع العملاء. بلا قيود يُبقي العرض متاحًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid "Count each free-gift or second-item benefit, including repeated benefits in the same order. No limit allows unlimited applications."
+#~ msgstr "تُحسب كل استفادة من الهدية أو خصم القطعة الثانية، بما فيها التكرار داخل الطلب الواحد. بلا قيود يسمح بعدد غير محدود من الاستفادات."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#~ msgid "Available for %(count)s benefit applications across all orders."
+#~ msgstr "العرض متاح لعدد %(count)s من مرات الاستفادة في جميع الطلبات."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The maximum offer product units must be a positive whole number or no limit."
+msgstr "يجب أن يكون الحد الأقصى لقطع المنتج المباعة بالعرض عددًا صحيحًا موجبًا أو بلا قيود."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The maximum benefit applications must be a positive whole number or no limit."
+msgstr "يجب أن يكون الحد الأقصى لمرات الاستفادة عددًا صحيحًا موجبًا أو بلا قيود."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer has reached its product sales limit. Reduce the quantity or update the cart."
+msgstr "وصل العرض إلى الحد الأقصى للقطع المباعة. قلل الكمية أو حدّث سلة التسوق."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer has reached its benefit application limit. Reduce the quantity or update the cart."
+msgstr "وصل العرض إلى الحد الأقصى لمرات الاستفادة. قلل الكمية أو حدّث سلة التسوق."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#~ msgid "Set one eligible product for a fixed benefit, or several for customer choice. Each qualifying benefit counts toward the limit across all orders."
+#~ msgstr "حدد صنفًا مؤهلًا واحدًا للاستفادة الثابتة، أو عدة أصناف ليختار العميل منها. تُحسب كل استفادة مؤهلة ضمن الحد في جميع الطلبات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "The discount applies to the cheapest eligible units, once for each qualifying pair."
+msgstr "يُطبّق الخصم على أرخص القطع المؤهلة، مرة لكل زوج مؤهل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Benefit application limits are available only for offers managed with free gifts or second-item discounts."
+msgstr "حد مرات الاستفادة متاح فقط للعروض المُدارة بهدايا مجانية أو خصم على القطعة الثانية."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+msgid "Maximum Benefit Applications per Order"
+msgstr "أقصى عدد مرات الاستفادة من العرض في الطلب الواحد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+msgid ""
+"Limit how many times the benefit applies in one order. A new order starts a "
+"new limit. No limit allows every eligible quantity."
+msgstr ""
+"حدد عدد مرات تطبيق فائدة العرض في الطلب الواحد. يبدأ الحد من جديد في كل طلب."
+" بلا قيود يسمح بالاستفادة لكل كمية مؤهلة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Up to %(count)s benefit applications per order."
+msgstr "حتى %(count)s مرات استفادة من العرض في الطلب الواحد."
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
 msgid ""
-"The discounted product price stays fixed even if its original price rises."
-msgstr "سعر المنتج بعد الخصم ثابت حتى لو ارتفع سعره الأصلي."
+"Each qualifying benefit counts within the current order. A new order starts "
+"a new limit unless Once per Customer is enabled."
+msgstr ""
+"تُحسب كل استفادة مؤهلة داخل الطلب الحالي. يبدأ الحد من جديد في طلب آخر، إلا "
+"إذا كان خيار مرة واحدة لكل عميل مفعّلًا."
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__amount_discount__custom
@@ -15415,3 +15462,110 @@ msgstr "أدخل مبلغ خصم ثابتًا موجبًا."
 msgid ""
 "The fixed discount amount must be less than the original product price."
 msgstr "يجب أن يكون مبلغ الخصم الثابت أقل من السعر الأصلي للمنتج."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The discounted product price stays fixed even if its original price rises."
+msgstr "سعر المنتج بعد الخصم ثابت حتى لو ارتفع سعره الأصلي."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
+msgid "Original price"
+msgstr "السعر الأصلي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Login, email or linked phone"
+msgstr "اسم الدخول أو البريد الإلكتروني أو الهاتف المرتبط"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid ""
+"No verified recovery channels are available. Check your details or contact "
+"support."
+msgstr "لا توجد وسائل استرداد موثّقة متاحة. راجع بياناتك أو تواصل مع الدعم."
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Choose another channel"
+msgstr "اختر وسيلة أخرى"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Continue verification"
+msgstr "متابعة التحقق"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Social contacts"
+msgstr "حسابات التواصل"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Verify"
+msgstr "تحقق"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Add &amp; verify"
+msgstr "إضافة وتوثيق"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_security_methods
+msgid "Replace &amp; verify"
+msgstr "استبدال وتوثيق"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "<i class=\"fa fa-telegram\" aria-hidden=\"true\"/> Recover via Telegram"
+msgstr ""
+"<i class=\"fa fa-telegram\" aria-hidden=\"true\"/> استرداد الحساب عبر "
+"تيليجرام"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.social_contact_methods
+msgid ""
+"<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/><span "
+"class=\"visually-hidden\">Verified</span>"
+msgstr ""
+"<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/><span "
+"class=\"visually-hidden\">مؤكد</span>"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "New password"
+msgstr "كلمة المرور الجديدة"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Confirm new password"
+msgstr "تأكيد كلمة المرور الجديدة"
+
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid ""
+"Telegram verification is currently unavailable on this website. Choose "
+"another method or contact support."
+msgstr ""
+"التحقق عبر تيليجرام غير متاح حاليًا على هذا الموقع. اختر طريقة أخرى أو تواصل"
+" مع الدعم."

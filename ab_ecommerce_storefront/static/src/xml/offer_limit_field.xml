@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ab_ecommerce_storefront.OfferLimitField">
+        <span t-if="props.readonly" t-esc="value ? value : noLimitLabel"/>
+        <div t-else="" class="d-flex flex-wrap gap-2 align-items-center">
+            <select class="o_input w-auto" t-att-id="props.id" t-on-change="onSelect">
+                <option value="unlimited" t-att-selected="selectedValue === 'unlimited'" t-esc="noLimitLabel"/>
+                <option t-foreach="presets" t-as="preset" t-key="preset" t-att-value="preset"
+                        t-att-selected="selectedPreset === preset" t-esc="preset"/>
+                <option value="custom" t-att-selected="selectedValue === 'custom'" t-esc="customLabel"/>
+            </select>
+            <input t-if="selectedValue === 'custom'" type="number" min="1" step="1" inputmode="numeric"
+                   class="o_input w-auto" t-att-aria-label="customLabel" t-att-value="value || ''"
+                   t-on-change="onCustomChange"/>
+        </div>
+    </t>
+</templates>

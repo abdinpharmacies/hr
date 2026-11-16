@@ -84,6 +84,8 @@
             "ab_ecommerce_storefront/static/src/scss/livechat_theme.scss",
         ],
         "web.assets_backend": [
+            "ab_ecommerce_storefront/static/src/js/offer_limit_field.js",
+            "ab_ecommerce_storefront/static/src/xml/offer_limit_field.xml",
             "ab_ecommerce_storefront/static/src/js/image_sync_upload.js",
             "ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml",
             "ab_ecommerce_storefront/static/src/scss/image_sync_wizard.scss",

@@ -42,6 +42,9 @@
                         <group>
                             <field name="use_odoo_promotion" invisible="offer_type not in ('gift', 'price')"/>
                             <field name="once_per_customer"/>
+                            <field name="max_applications" widget="ab_offer_limit" invisible="offer_type not in ('gift', 'second_half') or use_odoo_promotion"/>
+                            <div class="text-muted" colspan="2" invisible="offer_type not in ('gift', 'second_half') or use_odoo_promotion">Each qualifying benefit counts within the current order. A new order starts a new limit unless Once per Customer is enabled.</div>
+                            <field name="max_offer_units" widget="ab_offer_limit"/>
                             <field name="program_id" invisible="not use_odoo_promotion" required="use_odoo_promotion" options="{'no_create': True}"/>
                             <field name="date_from" invisible="use_odoo_promotion"/>
                             <field name="date_to" invisible="use_odoo_promotion"/>
@@ -59,9 +62,7 @@
                                required="offer_type in ('gift', 'second_half') and second_item_mode == 'choice' and not use_odoo_promotion"
                                options="{'no_create': True}"/>
                         <field name="second_discount_rate" invisible="offer_type != 'second_half'" required="offer_type == 'second_half'"/>
-                        <field name="max_applications"/>
-                        <div class="text-muted" colspan="2">Set one eligible product for a fixed benefit, or several for customer choice. Use 1 application for once per order, or 0 for unlimited applications.</div>
-                        <div class="text-muted" colspan="2" invisible="offer_type != 'second_half'">The discount applies to the cheapest eligible units, once for each qualifying pair, up to the order limit.</div>
+                        <div class="text-muted" colspan="2" invisible="offer_type != 'second_half'">The discount applies to the cheapest eligible units, once for each qualifying pair.</div>
                     </group>
                     <group string="Product Discount" invisible="offer_type not in ('percent', 'amount')">
                         <field name="pricelist_id" required="offer_type in ('percent', 'amount')" options="{'no_create': True}"/>

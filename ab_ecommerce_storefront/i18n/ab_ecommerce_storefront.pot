@@ -5499,6 +5499,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
 msgid "Discount"
 msgstr ""
 
@@ -14207,6 +14208,8 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
 msgid "Choose your benefit product"
 msgstr ""
 
@@ -14286,13 +14289,13 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
-msgid "Maximum %(count)s applications per order."
-msgstr ""
+#~ msgid "Maximum %(count)s applications per order."
+#~ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
-msgid "Maximum Applications per Order"
-msgstr ""
+#~ msgid "Maximum Applications per Order"
+#~ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -14435,8 +14438,8 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
-msgid "The maximum applications must be zero or a positive whole number."
-msgstr ""
+#~ msgid "The maximum applications must be zero or a positive whole number."
+#~ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -14494,8 +14497,212 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid ""
+#~ "Use 1 for one application, or 0 for unlimited applications within the order."
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid ""
-"Use 1 for one application, or 0 for unlimited applications within the order."
+"<span>\n"
+"                            <strong>Abdin Assistant</strong>\n"
+"                            <small>Chat on this website</small>\n"
+"                        </span>"
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model:chatbot.script,title:ab_ecommerce_storefront.chatbot_abdin_support
+msgid "Abdin Assistant"
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model:im_livechat.channel,button_text:ab_ecommerce_storefront.livechat_channel
+msgid "Chat with Abdin Pharmacies"
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model:im_livechat.channel,default_message:ab_ecommerce_storefront.livechat_channel
+msgid "Hello! How can we help you?"
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Open Abdin Assistant chat"
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_unavailable
+msgid ""
+"Our team is unavailable right now. Please leave your email so we can follow "
+"up."
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_welcome
+msgid "Welcome to Abdin Pharmacies. We are connecting you to our team."
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_email
+msgid "What is your email address?"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid "Maximum Offer Uses per Order"
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+#~ msgid "Limit how many times the offer applies in one order. No limit allows every eligible quantity."
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_total_orders
+#~ msgid "Maximum Offer Uses Across All Orders"
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_total_orders
+#~ msgid "Limit the number of confirmed orders that can use this offer. Each order counts once. No limit keeps the offer available."
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#~ msgid "The maximum total offer uses must be a positive whole number or no limit."
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "An offer is being confirmed in another order. Please try again."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer is no longer available for this order."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#~ msgid "This offer has reached its total usage limit. Update the cart before continuing."
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#~ msgid "Set one eligible product for a fixed benefit, or several for customer choice. Choose No limit or enter a positive number of uses per order."
+#~ msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/offer_limit_field.js:0
+msgid "No limit"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/offer_limit_field.js:0
+msgid "Custom number"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_offer_units
+msgid "Units Allocated to This Offer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_offer_units
+msgid "The offer stops after this many paid units of its main product are sold across all customers. No limit keeps it available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The maximum offer product units must be a positive whole number or no limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The maximum benefit applications must be a positive whole number or no limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer has reached its product sales limit. Reduce the quantity or update the cart."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "This offer has reached its benefit application limit. Reduce the quantity or update the cart."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "The discount applies to the cheapest eligible units, once for each qualifying pair."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Benefit application limits are available only for offers managed with free gifts or second-item discounts."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+msgid "Maximum Benefit Applications per Order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__max_applications
+msgid ""
+"Limit how many times the benefit applies in one order. A new order starts a "
+"new limit. No limit allows every eligible quantity."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Up to %(count)s benefit applications per order."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"Each qualifying benefit counts within the current order. A new order starts "
+"a new limit unless Once per Customer is enabled."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__amount_discount__custom
+msgid "Custom Amount"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__custom_amount_discount
+msgid "Custom Discount Amount"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Enter a positive fixed discount amount."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"The fixed discount amount must be less than the original product price."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The discounted product price stays fixed even if its original price rises."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
+msgid "Original price"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -14574,84 +14781,4 @@ msgstr ""
 msgid ""
 "Telegram verification is currently unavailable on this website. Choose "
 "another method or contact support."
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
-msgid "Original price"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid ""
-"<span>\n"
-"                            <strong>Abdin Assistant</strong>\n"
-"                            <small>Chat on this website</small>\n"
-"                        </span>"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model:chatbot.script,title:ab_ecommerce_storefront.chatbot_abdin_support
-msgid "Abdin Assistant"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model:im_livechat.channel,button_text:ab_ecommerce_storefront.livechat_channel
-msgid "Chat with Abdin Pharmacies"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model:im_livechat.channel,default_message:ab_ecommerce_storefront.livechat_channel
-msgid "Hello! How can we help you?"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Open Abdin Assistant chat"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_unavailable
-msgid ""
-"Our team is unavailable right now. Please leave your email so we can follow "
-"up."
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_welcome
-msgid "Welcome to Abdin Pharmacies. We are connecting you to our team."
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_email
-msgid "What is your email address?"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
-msgid ""
-"The discounted product price stays fixed even if its original price rises."
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__amount_discount__custom
-msgid "Custom Amount"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__custom_amount_discount
-msgid "Custom Discount Amount"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#. odoo-python
-#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
-msgid "Enter a positive fixed discount amount."
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#. odoo-python
-#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
-msgid ""
-"The fixed discount amount must be less than the original product price."
 msgstr ""
