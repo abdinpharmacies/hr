@@ -2,7 +2,7 @@
 
 These are offline maintenance tools, not an installed addon or RPC interface.
 Run with the Odoo virtualenv. They support legacy `19.0.4.x` and dynamic
-`19.0.7.x` sources and a dynamic `19.0.7.0.0` target.
+`19.0.7.x` sources and a dynamic `19.0.7.1.0` target.
 Update/install the module from current code before importing: its inherited form
 view exposes department notes/dates only when populated or granted by a stage.
 Their write permissions continue to come entirely from the dynamic workflow.
@@ -97,7 +97,10 @@ silently overwriting it. For a deliberate later full replacement, use both
 - Check/bank transfer: Inventory → Purchasing → Supplier Accounts → Bank Accounts
   → Secretarial Closure.
 - Source department memberships configure approvers. Only active internal users
-  are approvers; source role assignments are translated by XML ID.
+  are approvers. Historical department memberships map to Workflow Participant;
+  Secretarial, Reviewer, and Administrator memberships retain their XML IDs.
+  Approvers continue to come from the source stage configuration/department
+  metadata, not from recreated department groups.
 - Drafts without a payment method remain drafts without a selected workflow.
 - Rejections resume their rejecting stage; deferrals retain original dates,
   including overdue dates. Ready-to-close claims wait at Secretarial Closure.
@@ -152,3 +155,15 @@ Both migration-owned workflow definitions are included even if one has no claims
    (matching database/filestore/code) and reports.
 
 The first-transfer command never implements any of these production mutations.
+
+## Four-role security upgrade
+
+Upgrade existing dynamic databases to 19.0.7.1.0 with `-u ab_supplier_claim_cycle`.
+No reinstall or claim reimport is required. Existing department members retain
+Participant access, but can read only claims assigned to them, with complete
+workflow/history/document access for those claims. The module supplies read-only
+cost-center access and retains company restrictions. Unknown external security
+dependencies cause the upgrade to stop.
+
+The target-version check requires 19.0.7.1.0; old 19.0.4.x/19.0.7.x bundles remain
+readable. New exports contain only the four generic security roles.

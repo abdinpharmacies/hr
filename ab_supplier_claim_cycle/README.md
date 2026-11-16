@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Odoo 19 · version 19.0.7.0.0 · Developer: Alhassan Hossny
+Odoo 19 · version 19.0.7.1.0 · Developer: Alhassan Hossny
 
 ## Dynamic workflow
 
@@ -47,10 +47,15 @@ Uploads continue to create immutable document-history records.
 ## Security
 
 - **Secretarial** creates drafts, selects workflows and handles returned claims.
-- **Workflow Participant** is required for users configured as stage approvers.
+- **Workflow Participant** reads assigned claims and their complete workflow, history,
+  documents, and supplier details. Only an assigned active-stage approver can edit
+  that stage’s allowed fields or decide it.
 - **Reviewer** has read-only access.
 - **Administrator** configures workflows, overrides active decisions and removes
   approvals.
+
+These are the only four supplier-claim groups. Department responsibilities belong
+to workflow stages; there are no department-specific security groups.
 
 Participants can read claims assigned to any of their snapshot stages. Company
 record rules still restrict claim, stage-state, history and document access even
@@ -58,19 +63,30 @@ though workflow definitions are globally shared.
 
 ## Deployment
 
-This release contains only the dynamic workflow engine. It has no migration code
-or compatibility path from the former hardcoded department workflow. Existing
-dynamic claims and workflow configuration retain their model and field identities.
-
-Back up PostgreSQL and the matching filestore, rehearse the targeted upgrade on
-an isolated restored database, then run only the module upgrade:
+Upgrade an existing dynamic installation with the targeted module upgrade, not an
+uninstall/reinstall. Version 19.0.7.1.0 migrates effective department-group members
+(including inactive users) to Workflow Participant, then removes department ACLs,
+rules and groups. The four retained XML IDs and all business records stay intact.
+Unknown custom dependencies stop the upgrade instead of being silently removed.
+Participants lose the former department-wide submitted-claim visibility and see
+only assigned claims. Reviewer remains read-only, including when also assigned
+as an approver, unless the user is an Administrator.
 
 ```bash
-odoo-bin -c /path/to/isolated.conf -d supplier_claim_test \
-  -u ab_supplier_claim_cycle \
-  --test-enable --test-tags=/ab_supplier_claim_cycle \
-  --stop-after-init
+odoo-bin -c /path/to/instance.conf -d existing_database \
+  -u ab_supplier_claim_cycle --stop-after-init --no-http
 ```
+
+`tools/audit_security_upgrade.py` captures read-only row fingerprints and role
+memberships for before/after comparisons. It does not store record contents or
+create a database/filestore backup. Do not run fixture-based module tests against
+an actively used database; use static/unit checks plus read-only access checks for
+an in-place upgrade.
+
+The standalone transfer tools support legacy 19.0.4.x and dynamic 19.0.7.x bundles
+with a 19.0.7.1.0 target. Department roles in historical bundles map to Participant;
+they are not recreated. This does not add a direct hardcoded-to-dynamic module
+upgrade path: legacy claim data still requires the documented transfer tooling.
 
 No Telegram adapter or Telegram compatibility layer is included.
 

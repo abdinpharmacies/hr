@@ -5,6 +5,19 @@ import tempfile
 import unittest
 
 from claim_transfer import BANK, CASH, Bundle, amount, digest, legacy_runtime, save_json
+from security_roles import CURRENT_ROLES, LEGACY_ROLES, PARTICIPANT, mapped_role_name
+
+
+class TestSecurityRoles(unittest.TestCase):
+    def test_legacy_roles_only_grant_participant(self):
+        self.assertEqual({mapped_role_name(role) for role in LEGACY_ROLES}, {PARTICIPANT})
+
+    def test_generic_roles_are_preserved(self):
+        self.assertEqual([mapped_role_name(role) for role in CURRENT_ROLES], list(CURRENT_ROLES))
+
+    def test_unknown_role_does_not_silently_grant_access(self):
+        with self.assertRaises(ValueError):
+            mapped_role_name('supplier_claim_group_custom_admin')
 
 
 class TestAmount(unittest.TestCase):

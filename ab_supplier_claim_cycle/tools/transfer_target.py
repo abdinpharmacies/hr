@@ -10,6 +10,7 @@ import re
 import sys
 
 from claim_transfer import BANK, CASH, CLAIM, DEPARTMENTS, MODEL_TABLES, PREFIX, amount, legacy_runtime
+from security_roles import TARGET_VERSION, mapped_role_name
 
 
 def utc_datetime(value):
@@ -78,8 +79,13 @@ class Transfer:
     def preflight(self):
         if not self.bundle.rows(CLAIM):
             self.errors.append('Bundle has no claims; refusing empty replacement')
-        if self.env['ir.module.module'].search([('name', '=', CLAIM), ('state', '=', 'installed')]).latest_version != '19.0.7.0.0':
-            self.errors.append('Target must have dynamic supplier claim module 19.0.7.0.0 installed')
+        if self.env['ir.module.module'].search([('name', '=', CLAIM), ('state', '=', 'installed')]).latest_version != TARGET_VERSION:
+            self.errors.append('Target must have dynamic supplier claim module %s installed' % TARGET_VERSION)
+        for row in self.bundle.rows('groups'):
+            try:
+                mapped_role_name(row['name'])
+            except ValueError as exc:
+                self.errors.append(str(exc))
         if not self.env.ref(PREFIX + 'invoice_view_form_department_notes', raise_if_not_found=False):
             self.errors.append('Update the target module from current code first: department notes view is missing')
         if not self.legacy and not self.bundle.meta['module_version'].startswith('19.0.7.'):
@@ -238,9 +244,8 @@ class Transfer:
 
     def roles(self):
         for row in self.bundle.rows('groups'):
-            group = self.env.ref(PREFIX + row['name'], raise_if_not_found=False)
-            if group:
-                self.env['res.users'].browse(self.mapped('users', row['uid'])).write({'group_ids': [(4, group.id)]})
+            group = self.env.ref(PREFIX + mapped_role_name(row['name']))
+            self.env['res.users'].browse(self.mapped('users', row['uid'])).write({'group_ids': [(4, group.id)]})
 
     def workflows(self):
         from odoo import Command
@@ -441,8 +446,9 @@ class Transfer:
         self.env['ir.config_parameter'].set_param(self.bundle.namespace + '.identities', json.dumps({
             'database': origin.get('database', self.bundle.meta['database']),
             'uuid': origin.get('uuid', self.bundle.meta['uuid']), 'users': users,
-            'groups': [{'name': row['name'], 'uid': self.mapped('users', row['uid'])}
-                       for row in self.bundle.rows('groups')]}))
+            'groups': [{'name': name, 'uid': uid} for name, uid in sorted({
+                (mapped_role_name(row['name']), self.mapped('users', row['uid']))
+                for row in self.bundle.rows('groups')})]}))
         return self.verify()
 
     def restore_log_access(self):

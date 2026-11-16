@@ -30,126 +30,6 @@
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
-    <record id="claim_read_inventory" model="ir.rule">
-        <field name="name">claim_read_inventory</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="history_read_inventory" model="ir.rule">
-        <field name="name">history_read_inventory</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_write_inventory" model="ir.rule">
-        <field name="name">Inventory assigned dynamic stages</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
-        <field name="perm_read" eval="False"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_read_purchasing" model="ir.rule">
-        <field name="name">claim_read_purchasing</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="history_read_purchasing" model="ir.rule">
-        <field name="name">history_read_purchasing</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_write_purchasing" model="ir.rule">
-        <field name="name">Purchasing assigned dynamic stages</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
-        <field name="perm_read" eval="False"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_read_supplier_accounts" model="ir.rule">
-        <field name="name">claim_read_supplier_accounts</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="history_read_supplier_accounts" model="ir.rule">
-        <field name="name">history_read_supplier_accounts</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_write_supplier_accounts" model="ir.rule">
-        <field name="name">Supplier Accounts assigned dynamic stages</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
-        <field name="perm_read" eval="False"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_read_bank_accounts" model="ir.rule">
-        <field name="name">claim_read_bank_accounts</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="history_read_bank_accounts" model="ir.rule">
-        <field name="name">history_read_bank_accounts</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="claim_write_bank_accounts" model="ir.rule">
-        <field name="name">Bank Accounts assigned dynamic stages</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
-        <field name="perm_read" eval="False"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
     <record id="claim_read_reviewer" model="ir.rule">
         <field name="name">claim_read_reviewer</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
@@ -200,24 +80,6 @@
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
-    <record id="claim_read_tax" model="ir.rule">
-        <field name="name">claim_read_tax</field>
-        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-    <record id="history_read_tax" model="ir.rule">
-        <field name="name">history_read_tax</field>
-        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
     <record id="claim_company_scope" model="ir.rule">
         <field name="name">Claim company scope</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
@@ -238,16 +100,6 @@
         <field name="model_id" ref="model_ab_supplier_claim_document"/>
         <field name="domain_force">[(1, '=', 1)] if user.has_group('ab_supplier_claim_cycle.supplier_claim_group_admin') or user.has_group('ab_supplier_claim_cycle.supplier_claim_group_user') else ['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
     </record>
-    <record id="claim_write_tax" model="ir.rule">
-        <field name="name">Tax assigned dynamic stages</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
-        <field name="domain_force">[('active', '=', True), ('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
-        <field name="perm_read" eval="False"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
     <record id="claim_participant_assigned" model="ir.rule">
         <field name="name">Participant assigned supplier claims</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
@@ -266,31 +118,11 @@
         <field name="groups" eval="[(4, ref('supplier_claim_group_participant'))]"/>
         <field name="domain_force">[('claim_id.stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
     </record>
-    <record id="document_department_submitted" model="ir.rule">
-        <field name="name">Departments submitted claim documents</field>
-        <field name="model_id" ref="model_ab_supplier_claim_document"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory')), (4, ref('supplier_claim_group_purchasing')), (4, ref('supplier_claim_group_tax')), (4, ref('supplier_claim_group_supplier_accounts')), (4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">[('claim_id.state', '!=', 'draft')]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
     <record id="stage_state_participant_assigned" model="ir.rule">
         <field name="name">Participant assigned stage states</field>
         <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_participant'))]"/>
-        <field name="domain_force">[('stage_id.approver_ids', 'in', [user.id])]</field>
-    </record>
-    <record id="stage_state_department_submitted" model="ir.rule">
-        <field name="name">Departments submitted claim stage states</field>
-        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
-        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory')), (4, ref('supplier_claim_group_purchasing')), (4, ref('supplier_claim_group_tax')), (4, ref('supplier_claim_group_supplier_accounts')), (4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">[('claim_id.state', '!=', 'draft')]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('claim_id.stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
     </record>
     <record id="stage_state_secretarial_all" model="ir.rule">
         <field name="name">Secretarial all stage states</field>

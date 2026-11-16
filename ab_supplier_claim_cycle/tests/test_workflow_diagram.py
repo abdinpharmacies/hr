@@ -13,7 +13,7 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
             groups='ab_supplier_claim_cycle.supplier_claim_group_user')
         cls.observer = new_test_user(
             cls.env, login='diagram_inventory', password='claim-test-password',
-            groups='ab_supplier_claim_cycle.supplier_claim_group_inventory')
+            groups='ab_supplier_claim_cycle.supplier_claim_group_participant')
         supplier = cls.env['ab_costcenter'].create({
             'name': 'Diagram supplier', 'code': '1-DIAGRAM',
         })

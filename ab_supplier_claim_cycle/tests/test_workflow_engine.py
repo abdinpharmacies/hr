@@ -24,14 +24,6 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         cls.outsider = new_test_user(
             cls.env, login='dynamic_claim_outsider',
             groups='ab_supplier_claim_cycle.supplier_claim_group_participant')
-        cls.department_observers = [
-            new_test_user(
-                cls.env, login=f'dynamic_claim_{department}_observer',
-                groups=f'ab_supplier_claim_cycle.supplier_claim_group_{department}')
-            for department in (
-                'inventory', 'purchasing', 'tax',
-                'supplier_accounts', 'bank_accounts')
-        ]
         cls.admin = new_test_user(
             cls.env, login='dynamic_claim_admin',
             groups='ab_supplier_claim_cycle.supplier_claim_group_admin')
@@ -181,10 +173,10 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         with self.assertRaises(AccessError):
             claim.with_user(self.outsider).check_access('read')
 
-    def test_departments_read_complete_submitted_workflow(self):
+    def test_participants_read_complete_assigned_workflow(self):
         Claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial)
         claim = Claim.create(self._claim_values())
-        for observer in self.department_observers:
+        for observer in (self.approver_a, self.approver_b, self.outsider):
             with self.assertRaises(AccessError):
                 claim.with_user(observer).check_access('read')
 
@@ -201,7 +193,7 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         self.assertTrue(history)
         self.assertTrue(documents)
 
-        for observer in self.department_observers:
+        for observer in (self.approver_a, self.approver_b):
             claim.with_user(observer).check_access('read')
             stage_states.with_user(observer).check_access('read')
             history.with_user(observer).check_access('read')
@@ -212,10 +204,25 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
                 ]),
                 len(stage_states),
             )
+            claim.supplier_id.with_user(observer).check_access('read')
+            other_stage = stage_states.filtered(
+                lambda row: observer not in row.approver_ids)[:1]
             with self.assertRaises(AccessError):
-                stage_states[:1].with_user(observer).action_approve()
+                other_stage.with_user(observer).action_approve()
             with self.assertRaises(AccessError):
-                claim.with_user(observer).write({'claim_amount': 999})
+                claim.with_user(observer).write({'num_of_invoice': 999})
+
+        for records in (claim, stage_states, history, documents):
+            with self.assertRaises(AccessError):
+                records.with_user(self.outsider).check_access('read')
+
+    def test_only_four_generic_security_roles_exist(self):
+        from ..tools.security_roles import CURRENT_ROLES, LEGACY_ROLES
+        for role in CURRENT_ROLES:
+            self.assertTrue(self.env.ref('ab_supplier_claim_cycle.' + role))
+        for role in LEGACY_ROLES:
+            self.assertFalse(self.env.ref(
+                'ab_supplier_claim_cycle.' + role, raise_if_not_found=False))
 
     def test_reviewer_role_remains_read_only(self):
         claim = self._claim()
