@@ -125,6 +125,7 @@ class AccountStatementReport(models.Model):
 
             if self.store_id:
                 domain.append(('store_id', '=', self.store_id.id))
+                balance_domain.append(('store_id', '=', self.store_id.id))
 
             if self.creator_ids:
                 domain.append(('create_uid', 'in', self.creator_ids.ids))

@@ -1,5 +1,8 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
+import csv
+import io
+from datetime import datetime
 
 
 # class IrAttachment(models.Model):
@@ -274,11 +277,85 @@ class AbAccountingJeHeader(models.Model):
         self.account_id = self.debit_val = self.credit_val \
             = self.due_date = self.costcenter_id = self.doctype_id = None
 
+    def _parse_journal_excel_data(self):
+        self.ensure_one()
+        text = (self.from_excel or '').strip('\r\n')
+        if not text.strip():
+            raise UserError(_("Paste at least one journal line with column headers."))
+        try:
+            delimiter = '\t' if '\t' in text else csv.Sniffer().sniff(text).delimiter
+            rows = list(csv.reader(io.StringIO(text), delimiter=delimiter))
+        except csv.Error as exc:
+            raise UserError(_("Invalid journal clipboard data.")) from exc
+        if len(rows) < 2:
+            raise UserError(_("Paste at least one journal line with column headers."))
+        line_model = self.env['ab_accounting_je_line']
+        column_names = {}
+        for name, field in line_model._fields.items():
+            for label in (name, field._description_string(self.env),
+                          field._description_string(self.with_context(lang='en_US').env)):
+                column_names.setdefault(label.strip().lower(), name)
+        names = []
+        for column in rows[0]:
+            name = column_names.get(column.strip().lower())
+            if not name or line_model._fields[name].readonly or name in names:
+                raise UserError(_("Column %(column)s cannot be imported.", column=column))
+            names.append(name)
+        values = []
+        for row_number, row in enumerate(rows[1:], 2):
+            if len(row) != len(names):
+                raise UserError(_("Row %(row)s must contain %(count)s values.",
+                                  row=row_number, count=len(names)))
+            values.append({name: self._journal_excel_value(line_model, name, value.strip())
+                           for name, value in zip(names, row)})
+        return values
+
+    def _journal_excel_value(self, line_model, name, value):
+        field = line_model._fields[name]
+        if not value:
+            return False
+        if field.type == 'many2one':
+            related_model = self.env[field.comodel_name]
+            matches = related_model.name_search(name=value, operator='=', limit=2)
+            match_ids = {record_id for record_id, label in matches}
+            if 'code' in related_model._fields:
+                match_ids.update(related_model.search(fields.Domain('code', '=', value), limit=2).ids)
+            if not match_ids:
+                match_ids.update(record_id for record_id, label in related_model.name_search(
+                    name=value, operator='ilike', limit=2))
+            if len(match_ids) != 1:
+                raise UserError(_("No unique match was found for %(value)s in %(field)s.",
+                                  value=value, field=field._description_string(self.env)))
+            return next(iter(match_ids))
+        try:
+            if field.type == 'date':
+                for date_format in ('%Y-%m-%d', '%d-%m-%Y', '%d/%m/%Y'):
+                    try:
+                        return datetime.strptime(value, date_format).date()
+                    except ValueError:
+                        continue
+                raise ValueError(value)
+            if field.type in ('float', 'monetary', 'integer'):
+                return field.convert_to_cache(value.replace(',', ''), line_model)
+            if field.type == 'selection':
+                matches = [key for key, label in field._description_selection(self.env)
+                           if value.lower() in (str(key).lower(), label.lower())]
+                if len(matches) != 1:
+                    raise ValueError(value)
+                return matches[0]
+            if field.type == 'boolean':
+                if value.lower() not in ('true', 'false', '1', '0'):
+                    raise ValueError(value)
+                return value.lower() in ('true', '1')
+            return field.convert_to_cache(value, line_model)
+        except (TypeError, ValueError) as exc:
+            raise UserError(_("Invalid value %(value)s for %(field)s.",
+                              value=value, field=field._description_string(self.env))) from exc
+
     def btn_add_data_from_excel(self):
-        number_of_lines = len(self.from_excel.strip().split('\n')) - 1
-        self.data_from_excel(model_name='ab_accounting_je_line',
-                             x2many_field='line_ids',
-                             excel_data=self.from_excel.strip('\n'), update_only=False)
+        rows = self._parse_journal_excel_data()
+        number_of_lines = len(rows)
+        self.write({'line_ids': [fields.Command.create(values) for values in rows]})
 
         message = _("""<span class='h4 text-success'>%s</span> lines added  
         <span class='h4 text-success'>successfully</span>  
@@ -286,17 +363,16 @@ class AbAccountingJeHeader(models.Model):
         return self.ab_msg(message=message)
 
     def btn_update_data_from_excel(self):
-        rows_count = len(self.from_excel.strip('\n').split('\n')) - 1
-        if rows_count == len(self.line_ids):
-            self.data_from_excel(model_name='ab_accounting_je_line',
-                                 x2many_field='line_ids',
-                                 excel_data=self.from_excel.strip('\n'), update_only=True)
-        else:
+        rows = self._parse_journal_excel_data()
+        if len(rows) != len(self.line_ids):
             raise UserError(_("Number of rows is not equal number of lines"))
+        self.write({'line_ids': [fields.Command.update(line.id, values)
+                                 for line, values in zip(self.line_ids, rows)]})
         message = _("""<span class='h4 text-success'>%s</span> lines updated  
         <span class='h4 text-success'>successfully</span>  
         by user <span class='h4 font-italic text-muted'>%s</span>""") % (len(self.line_ids), self.env.user.name)
         return self.ab_msg(message=message)
+
 
     @staticmethod
     def notify_user(msg, title="Done", msg_type="success"):

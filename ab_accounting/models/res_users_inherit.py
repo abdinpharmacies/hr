@@ -48,3 +48,16 @@ class ClsUserAuth(models.Model):
         self.write({
             'store_ids': self.env['ab_store'].search([])
         })
+
+    def _accounting_branch_scope_domain(self, header_field=None):
+        self.ensure_one()
+        forbidden_stores = self.store_ids.ids
+        header_domain = (
+            fields.Domain('store_id', 'not in', forbidden_stores)
+            & fields.Domain('line_ids', 'not any!',
+                            fields.Domain('store_id', 'in', forbidden_stores))
+        )
+        if header_field:
+            return (fields.Domain('store_id', 'not in', forbidden_stores)
+                    & fields.Domain(header_field, 'any!', header_domain))
+        return header_domain

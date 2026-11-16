@@ -10,6 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2025-06-19 09:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ar_001\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -21,7 +22,7 @@ msgstr ""
 msgid ""
 "\n"
 "- Moves have been Posted before."
-msgstr "- تم رفع الحركات من قبل."
+msgstr "\n- تم رفع الحركات من قبل."
 
 #. module: ab_accounting
 #: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
@@ -2242,3 +2243,43 @@ msgstr "⚠فروع ممنوعة ⚠"
 #: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
 msgid "⚠ this will remove all je form current, Are you sure?"
 msgstr ""
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Paste at least one journal line with column headers."
+msgstr "الصق سطر قيد واحدًا على الأقل مع عناوين الأعمدة."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Invalid journal clipboard data."
+msgstr "بيانات القيود المنسوخة غير صالحة."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid "Column %(column)s cannot be imported."
+msgstr "لا يمكن استيراد العمود %(column)s."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid "Row %(row)s must contain %(count)s values."
+msgstr "يجب أن يحتوي الصف %(row)s على %(count)s من القيم."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid "No unique match was found for %(value)s in %(field)s."
+msgstr "لم يتم العثور على تطابق وحيد للقيمة %(value)s في الحقل %(field)s."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid "Invalid value %(value)s for %(field)s."
+msgstr "القيمة %(value)s غير صالحة للحقل %(field)s."
