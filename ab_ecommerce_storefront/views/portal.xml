@@ -360,6 +360,29 @@
                                     </div>
                                 </dl>
                             </div>
+                            <div class="ab-order-summary-panel-section ab-order-items-card">
+                                <h3>What you ordered</h3>
+                                <ul class="ab-order-items-list">
+                                    <li t-foreach="product_lines.filtered(lambda line: not line.display_type)" t-as="line" class="ab-order-item">
+                                        <img class="ab-order-item-image"
+                                             t-att-src="image_data_uri(line.product_id.image_128) if line.product_id.image_128 else '/web/static/img/placeholder.png'"
+                                             t-att-alt="line.name"
+                                             width="56" height="56" loading="lazy"/>
+                                        <div class="ab-order-item-info">
+                                            <strong t-out="line.name"/>
+                                            <div class="ab-order-item-meta">
+                                                <span><span>Quantity</span> <span t-field="line.product_uom_qty"/></span>
+                                                <span><span>Unit price</span> <span t-out="line.price_unit * (1 - line.discount / 100)" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/></span>
+                                            </div>
+                                        </div>
+                                        <strong class="ab-order-item-price" t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="ab-order-summary-panel-section ab-order-items-total">
+                                <span>Order total</span>
+                                <strong t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
+                            </div>
                         </aside>
                     </div>
 
