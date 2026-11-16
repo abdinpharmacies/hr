@@ -7,7 +7,7 @@
             <field name="model_id" ref="ab_custody_request.model_ab_custody_request_header"/>
             <!--<field name="email_from"></field>-->
             <!-- @formatter:off -->
-            <field name="email_to">{{ object.emails_to }}</field>
+            <field name="email_to" eval="False"/>
             <!-- @formatter:on -->
             <field name="subject">Custody Request: {{ object.employee_id.name }}</field>
             <field name="body_html" type="html">

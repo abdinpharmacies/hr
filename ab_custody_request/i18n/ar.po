@@ -866,3 +866,43 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_custody_request.field_ab_custody_request_header__emails_to
 msgid "Email Recipients"
 msgstr "مستلمو البريد الإلكتروني"
+
+#. module: ab_custody_request
+#. odoo-python
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+msgid "You are not authorized to make this custody transition."
+msgstr "ليست لديك صلاحية تنفيذ هذا الانتقال في طلب العهدة."
+
+#. module: ab_custody_request
+#. odoo-python
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+#, python-format
+msgid ""
+"Status is changed to <span class=\"h6 text-success\">%s</span> successfully."
+msgstr "تم تغيير الحالة إلى <span class=\"h6 text-success\">%s</span> بنجاح."
+
+#. module: ab_custody_request
+#. odoo-python
+#: code:addons/ab_custody_request/models/ab_custody_request_header.py:0
+msgid ""
+"Telegram notifications are not configured correctly. Ask an administrator to"
+" check the bot token and destination. This action was not completed."
+msgstr ""
+"إعدادات إشعارات تيليجرام غير صحيحة. اطلب من مسؤول النظام مراجعة رمز الروبوت "
+"ووجهة الإرسال. لم يتم إكمال هذا الإجراء."
+
+#. module: ab_custody_request
+#. odoo-javascript
+#: code:addons/ab_custody_request/static/src/js/custody_error_handler.js:0
+msgid "Custody request too large"
+msgstr "طلب العهدة كبير جدًا"
+
+#. module: ab_custody_request
+#. odoo-javascript
+#: code:addons/ab_custody_request/static/src/js/custody_error_handler.js:0
+msgid ""
+"The custody request is too large to process. Use smaller attachments or "
+"fewer detail lines, then try again."
+msgstr ""
+"حجم طلب العهدة أكبر من المسموح. استخدم مرفقات أصغر أو قلل عدد بنود الطلب، ثم"
+" حاول مرة أخرى."

@@ -1,7 +1,7 @@
 import datetime
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class AbCustodyRequestHeader(models.Model):
@@ -128,11 +128,17 @@ class AbCustodyRequestHeader(models.Model):
 
         # attachment = self.attachment if self.send_attachment else None
         attachment = None
-        self.send_by_bot(self.get_chat_id("telegram_custody_group_chat_id"),
-                         msg=subject,
-                         before=before,
-                         after=after,
-                         attachment=attachment)
+        try:
+            self.send_by_bot(self.get_chat_id("telegram_custody_group_chat_id"),
+                             msg=subject,
+                             before=before,
+                             after=after,
+                             attachment=attachment)
+        except (TypeError, ValueError) as exc:
+            raise ValidationError(_(
+                "Telegram notifications are not configured correctly. Ask an administrator to check "
+                "the bot token and destination. This action was not completed."
+            )) from exc
 
         title = _("Message is posted successfully on telegram.")
         status = 'success'
@@ -148,23 +154,27 @@ class AbCustodyRequestHeader(models.Model):
             }
         }
 
+    @api.depends('user_id', 'manager_id.user_id', 'status', 'custody_type')
+    @api.depends_context('uid')
     def _compute_current_user_type(self):
         for rec in self:
-            if rec.user_id.id == self.env.user.id and rec.status == 'for_entry':
-                rec.current_user_type = 'claimer'
+            rec.current_user_type = rec._get_status_actor()
 
-            elif rec.manager_id.sudo().user_id.id == self.env.user.id and rec.status == 'for_manager':
-                rec.current_user_type = 'claimer_manager'
-
-            elif self.env.user.has_group(
-                    'ab_custody_request.group_ab_custody_request_accounting') and rec.status == 'for_accounting':
-                rec.current_user_type = 'accounting_manager'
-
-            elif self.env.user.has_group(
-                    'ab_custody_request.group_ab_custody_request_payment') and rec.status == 'for_payment':
-                rec.current_user_type = 'payer'
-            else:
-                rec.current_user_type = False
+    def _get_status_actor(self):
+        self.ensure_one()
+        user = self.env.user
+        if self.status == 'for_entry' and self.user_id == user:
+            return 'claimer'
+        if self.status == 'for_manager' and self.manager_id.sudo().user_id == user:
+            return 'claimer_manager'
+        if self.status == 'for_accounting' and user.has_group(
+                'ab_custody_request.group_ab_custody_request_accounting'):
+            return 'accounting_manager'
+        if self.status == 'for_payment' and self.custody_type in ('cash', 'visa'):
+            payment_group = 'ab_custody_request.group_ab_custody_request_payment_%s' % self.custody_type
+            if user.has_group('base.group_system') or user.has_group(payment_group):
+                return 'payer'
+        return False
 
     def _get_current_user_type_selection(self):
         selection = self.fields_get(allfields=['status'])['status']['selection']
@@ -205,60 +215,41 @@ class AbCustodyRequestHeader(models.Model):
 
             rec.custody_balance = sum(line.debit_val - line.credit_val for line in je_lines)
 
+    def _check_status_transition(self, action):
+        self.ensure_one()
+        self.check_access('read')
+        actor = self._get_status_actor()
+        transitions = {
+            'claimer': ('for_manager',),
+            'claimer_manager': ('for_entry', 'for_accounting'),
+            'accounting_manager': ('for_manager', 'for_payment'),
+            'payer': ('for_accounting', 'paid'),
+        }
+        if not actor or action not in transitions[actor]:
+            raise AccessError(_("You are not authorized to make this custody transition."))
+        if actor == 'claimer_manager' and action == 'for_accounting':
+            now = datetime.datetime.now()
+            allowed_time = self.env['ab_custody_request_config'].search([
+                ('date1', '<=', now), ('date2', '>=', now)], order='date1 desc', limit=1)
+            if not allowed_time:
+                raise ValidationError(_("Not In Time!"))
+            if allowed_time.employee_ids and self.manager_id not in allowed_time.employee_ids:
+                raise ValidationError(_("Not In Time For This Employee!"))
+
+    def write(self, values):
+        if 'status' in values and not self.env.su:
+            for rec in self:
+                rec._check_status_transition(values['status'])
+        return super().write(values)
+
     def btn_set_status(self):
         self.ensure_one()
         action = self.env.context.get('action')
-        now = datetime.datetime.now()
-
-        allowed_time_recs = self.env['ab_custody_request_config'].search([
-            ('date1', '<=', now),
-            ('date2', '>=', now)], order='date1 desc')
-
-        if not allowed_time_recs:  # not in time
-            # from claimer_manager to accounting
-            if self.current_user_type == 'claimer_manager' and action == 'for_accounting':
-                raise ValidationError(_("Not In Time!"))
-
-        if allowed_time_recs:
-            allowed_employees = allowed_time_recs[0].employee_ids
-
-            current_employee = self.env['ab_hr_employee'].search([('user_id', '=', self.env.user.id)], limit=1)
-
-            if allowed_employees:
-                # from claimer_manager to accounting
-                if self.current_user_type == 'claimer_manager' and action == 'for_accounting':
-                    if current_employee.id not in allowed_employees.ids:
-                        raise ValidationError(_("Not In Time For This Employee!"))
-
-        if self.current_user_type == 'claimer':
-            if self.status != 'for_entry':
-                raise ValidationError(_('Status must be "For Entry"'))
-            if action != 'for_manager':
-                raise ValidationError(_('You can set status "For Manager" only'))
-        elif self.current_user_type == 'claimer_manager':
-            if self.status != 'for_manager':
-                raise ValidationError(_('Status must be "For Manager"'))
-            if action not in ('for_entry', 'for_accounting'):
-                raise ValidationError(_('You can set status "For Entry" or "For Accounting" only'))
-
-        elif self.current_user_type == 'accounting_manager':
-            if self.status != 'for_accounting':
-                raise ValidationError(_('Status must be "For Accounting"'))
-            if action not in ('for_manager', 'for_payment'):
-                raise ValidationError(_('You can set status "For Manager" or "For Payment" only'))
-
-        elif self.current_user_type == 'payer':
-            if self.status != 'for_payment':
-                raise ValidationError(_('Status must be "For Payment"'))
-            if action not in ('for_accounting', 'paid'):
-                raise ValidationError(_('You can set status "For Accounting" or "Paid" only'))
-
-        self.sudo().status = action
+        self._check_status_transition(action)
+        self.sudo().write({'status': action})
         self.btn_post_telegram()
-
         status_name = dict(self._fields['status']._description_selection(self.env)).get(action)
-
-        msg = _(f"""Status is changed to <span class="h6 text-success">{status_name}</span> successfully.""")
+        msg = _("""Status is changed to <span class="h6 text-success">%s</span> successfully.""") % status_name
         return self.ab_msg(title='Done', message=msg)
 
     def name_get(self):

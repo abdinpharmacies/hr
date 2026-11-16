@@ -4,7 +4,12 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'ab_hr', 'ab_costcenter', 'ab_store', 'ab_accounting', 'abdin_telegram'],
+    'depends': ['base', 'web', 'ab_hr', 'ab_costcenter', 'ab_store', 'ab_accounting', 'abdin_telegram'],
+    'assets': {
+        'web.assets_backend': [
+            'ab_custody_request/static/src/js/custody_error_handler.js',
+        ],
+    },
     'data': [
         'security/security_groups.xml',
         'security/record_rules_ab_custody_request_header.xml',

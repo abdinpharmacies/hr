@@ -29,7 +29,15 @@ Files changed:
 - `ab_custody_request/views/ab_custody_request_header.xml`
 - `ab_custody_request/views/menus.xml`
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ## ba2649988 — hager yasser — 2026-11-12
+=======
+## ba264998 — hager yasser — 2026-11-12
+>>>>>>> Stashed changes
+=======
+## ba264998 — hager yasser — 2026-11-12
+>>>>>>> Stashed changes
 
 Original commit subject: `ab_custody_request/FIX: repair form layouts and contain detail table scrolling`
 
