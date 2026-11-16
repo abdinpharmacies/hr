@@ -1,0 +1,35 @@
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_editor.SiteMap">
+        <main class="ab_editor__sitemap">
+            <div class="ab_editor__map-toolbar">
+                <div><h1><i class="fa fa-map-o" aria-hidden="true"/> Site map</h1><p>Choose a page to edit. Arrows show links from the selected page.</p></div>
+                <button type="button" class="ab_editor__button ab_editor__button--quiet" t-on-click="props.onBack">Back</button>
+                <label>Links from<select t-model="state.source"><option t-foreach="nodes" t-as="node" t-key="node.url" t-att-value="node.url" t-esc="node.title"/></select></label>
+                <p>Previews show the top of each page. Links appear as previews load.</p>
+            </div>
+            <div class="ab_editor__map-scroll">
+                <div class="ab_editor__map-canvas" t-att-style="'height:' + height + 'px'">
+                    <svg class="ab_editor__map-lines" width="1140" t-att-height="height" aria-hidden="true">
+                        <defs><marker id="ae-map-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>
+                        <path t-foreach="connections" t-as="connection" t-key="connection.url" t-att-d="connection.path" marker-end="url(#ae-map-arrow)"/>
+                    </svg>
+                    <article t-foreach="nodes" t-as="node" t-key="node.url" class="ab_editor__map-node" t-att-class="state.source === node.url ? 'is-source' : ''" t-att-style="'left:' + node.x + 'px;top:' + node.y + 'px'">
+                        <button type="button" class="ab_editor__map-open" t-on-click="() => props.onOpen(node)">
+                            <span class="ab_editor__map-preview">
+                                <span t-if="state.failed[node.url]" class="ab_editor__map-placeholder">Preview unavailable</span>
+                                <span t-elif="!state.loaded[node.url]" class="ab_editor__map-placeholder">Loading preview...</span>
+                                <iframe t-att-src="node.preview_url" t-att-title="node.title" loading="lazy" sandbox="allow-same-origin" tabindex="-1" aria-hidden="true" t-on-load="(ev) => this.previewLoaded(node, ev)"/>
+                            </span>
+                            <span class="ab_editor__map-title"><strong t-esc="node.title"/><i class="fa fa-pencil" aria-hidden="true"/></span>
+                            <small dir="ltr" t-esc="node.url"/>
+                        </button>
+                        <div class="ab_editor__map-links">
+                            <button t-foreach="outgoing(node)" t-as="target" t-key="target.url" type="button" t-on-click="() => props.onOpen(target)"><span aria-hidden="true">→ </span><t t-esc="target.title"/></button>
+                            <span t-if="state.loaded[node.url] &amp;&amp; !outgoing(node).length">No mapped links</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </t>
+</templates>

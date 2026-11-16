@@ -8,17 +8,19 @@ import { user } from "@web/core/user";
 import { standardActionServiceProps } from "@web/webclient/actions/action_service";
 import { useSetupAction } from "@web/search/action_hook";
 
+import { EditorSiteMap } from "./site_map";
+
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const LAYOUT_FIELDS = ["tools_open", "layers_open", "inspector_open", "canvas_toolbar_open", "dark_mode", "tools_width", "layers_height", "inspector_width"];
 
 const DOCUMENT_FIELDS = [
-    "name", "kind", "website_id", "slug", "category", "image_url", "title_en", "title_ar",
+    "name", "kind", "native_path", "website_id", "slug", "category", "image_url", "title_en", "title_ar",
     "summary_en", "summary_ar", "blocks_en", "blocks_ar", "design_tokens", "web_overrides",
     "flutter_overrides", "seo_title_en", "seo_title_ar", "seo_description_en", "seo_description_ar",
     "state", "scheduled_at", "published_at", "published_revision_id", "version", "active", "write_date", "draft_token",
 ];
 const EDITABLE_FIELDS = DOCUMENT_FIELDS.filter((field) => ![
-    "state", "scheduled_at", "published_at", "published_revision_id", "version", "active", "write_date", "draft_token",
+    "state", "scheduled_at", "published_at", "published_revision_id", "version", "active", "write_date", "draft_token", "native_path",
 ].includes(field));
 const BLOCKS = [
     { type: "hero", label: _t("Hero"), icon: "fa fa-window-maximize" },
@@ -52,6 +54,7 @@ const DEFAULT_BLOCK = {
 export class EditorWorkspace extends Component {
     static template = "ab_ecommerce_editor.Workspace";
     static props = { ...standardActionServiceProps };
+    static components = { EditorSiteMap };
 
     setup() {
         this.orm = useService("orm");
@@ -59,6 +62,8 @@ export class EditorWorkspace extends Component {
         this.notification = useService("notification");
         this.root = useRef("root");
         this.motionAnimations = new Set();
+        this.nativeObservers = new Map();
+        this.stageObserver = new ResizeObserver(() => this.resizePreview());
         this.motionPositions = null;
         this.pressTimer = null;
         this.pressStart = null;
@@ -71,7 +76,7 @@ export class EditorWorkspace extends Component {
         this.layoutSaving = Promise.resolve();
         this.resizeSession = null;
         this.state = useState({
-            ready: false, workspaceOpen: false, view: "library", filter: "all", documents: [], templates: [], websites: [], templateId: null, websiteId: null,
+            previewScale: 1, nativeFields: {}, siteMap: null, ready: false, workspaceOpen: false, view: "library", filter: "all", documents: [], templates: [], websites: [], templateId: null, websiteId: null,
             sectionThumbnails: {}, homeFields: [], paletteDragType: null, currentId: null, draft: null, selectedId: null, armedDeleteId: null, actionMenuId: null, deletedBlocks: [], trashOpen: false, inspector: "content", language: "en_US",
             device: "desktop", toolsOpen: true, layersOpen: true, inspectorOpen: true, canvasToolbarOpen: true, darkMode: false, toolsWidth: 224, layersHeight: 180, inspectorWidth: 290, history: [], future: [], dirty: false, busy: false, canReview: false,
             canPublish: false, scheduleAt: "", dragId: null, trashDragId: null, trashDropActive: false, dropId: null, dropAfter: false, navigating: false, versions: [],
@@ -99,6 +104,9 @@ export class EditorWorkspace extends Component {
         onWillUnmount(() => {
             if (this.layoutTimer) this.saveLayout(true);
             this.destroyed = true;
+            this.stageObserver.disconnect();
+            for (const { observer } of this.nativeObservers.values()) observer.disconnect();
+            this.nativeObservers.clear();
             this.cancelPreviewPress();
             for (const animation of this.motionAnimations) animation.cancel();
             document.body.classList.remove("ab_editor_active");
@@ -107,7 +115,7 @@ export class EditorWorkspace extends Component {
             window.removeEventListener("pointerup", this.endResize);
             window.removeEventListener("pointercancel", this.endResize);
         });
-        onPatched(() => this.animatePositions());
+        onPatched(() => { this.animatePositions(); this.resizePreview(); });
     }
 
     get reducedMotion() { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
@@ -304,7 +312,7 @@ export class EditorWorkspace extends Component {
         try {
             const commit = await prepare();
             if (!commit || this.destroyed) return;
-            const element = this.root.el.querySelector(".ab_editor__workspace, .ab_editor__library");
+            const element = this.root.el.querySelector(".ab_editor__workspace, .ab_editor__library, .ab_editor__sitemap");
             animation = this.animateElement(element, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(10px) scale(.985)" }], 160, "forwards");
             if (animation) await animation.finished.catch(() => {});
             if (!this.destroyed) {
@@ -315,6 +323,48 @@ export class EditorWorkspace extends Component {
             animation?.cancel();
             if (!this.destroyed) this.state.navigating = false;
         }
+    }
+
+    async openSiteMap() {
+        if (!this.state.websiteId || this.state.busy) return;
+        await this.navigate(async () => {
+            const siteMap = await this.orm.call("ab_ecommerce_editor_document", "get_site_map", [this.state.websiteId]);
+            return () => {
+                this.state.siteMap = siteMap;
+                this.state.view = "sitemap";
+            };
+        });
+    }
+
+    async openSiteMapPage(node) {
+        if (node.document_id) return this.openDocument(node.document_id);
+        if (node.kind === "homepage") return this.openHomepage();
+        if (this.state.busy) return;
+        this.state.busy = true;
+        try {
+            const id = await this.orm.call("ab_ecommerce_editor_document", "open_site_page", [this.state.websiteId, node.url]);
+            await this.loadLibrary();
+            await this.openDocument(id);
+        } finally { this.state.busy = false; }
+    }
+
+    resizePreview() {
+        const stage = this.root.el?.querySelector(".ab_editor__stage");
+        if (!stage) return;
+        if (this.observedStage !== stage) {
+            this.stageObserver.disconnect();
+            this.stageObserver.observe(stage);
+            this.observedStage = stage;
+        }
+        const width = this.state.device === "mobile" ? 390 : 1280;
+        const available = Math.max(240, stage.clientWidth - 32);
+        const scale = Math.min(1, available / width);
+        if (Math.abs(this.state.previewScale - scale) > .001) this.state.previewScale = scale;
+    }
+
+    get previewViewportStyle() {
+        return this.isHomepage || this.state.draft?.native_path
+            ? `width:${this.state.device === "mobile" ? 390 : 1280}px;max-width:none;zoom:${this.state.previewScale}` : "";
     }
 
     async loadLibrary() {
@@ -375,14 +425,20 @@ export class EditorWorkspace extends Component {
     get inactiveLabel() { return _t("Inactive"); }
     get isHomepage() { return this.state.draft?.kind === "homepage"; }
     get blockPalette() { return this.isHomepage ? [...HOME_BLOCKS, ...BLOCKS] : BLOCKS; }
-    isNativeBlock(type) { return HOME_BLOCKS.some((block) => block.type === type); }
+    isNativeBlock(type) { return type === "storefront_page" || HOME_BLOCKS.some((block) => block.type === type); }
     paletteContains(type) { return this.isNativeBlock(type) && this.blocks.some((block) => block.type === type); }
-    get nativeFields() { return this.state.homeFields.find((section) => section.type === this.selectedBlock?.type)?.fields || []; }
+    get nativeFields() { if (this.selectedBlock?.type === "storefront_page") return this.state.nativeFields[this.state.language] || []; return this.state.homeFields.find((section) => section.type === this.selectedBlock?.type)?.fields || []; }
     refreshNativePreview(event, block) {
         const frame = event.target;
         try {
             const page = this.nativePreviewDocument(frame, block);
             if (!page) return;
+            if (block.type === "storefront_page") {
+                const fields = [...page.querySelectorAll("[data-ae-field]")].map((element) => ({
+                    key: element.dataset.aeField, label: element.dataset.aeOriginal || element.textContent, kind: "text",
+                }));
+                if (JSON.stringify(fields) !== JSON.stringify(this.state.nativeFields[this.state.language])) this.state.nativeFields[this.state.language] = fields;
+            }
             for (const element of page.querySelectorAll("[data-ae-field]")) {
                 if (!element.hasAttribute("data-ae-saved")) element.setAttribute("data-ae-saved", element.textContent);
                 element.textContent = block.content?.[element.dataset.aeField] ?? element.dataset.aeSaved;
@@ -391,10 +447,27 @@ export class EditorWorkspace extends Component {
                 if (!element.hasAttribute("data-ae-saved-url")) element.setAttribute("data-ae-saved-url", element.getAttribute("href") || "");
                 element.setAttribute("href", block.content?.[element.dataset.aeUrl] ?? element.dataset.aeSavedUrl);
             }
-            const section = page.querySelector(".ab-editor-homepage, #wrap.ab-storefront-home");
-            section?.setAttribute("style", this.styleFor({ ...this.state.draft.design_tokens, ...this.state.draft.web_overrides }));
-            section?.querySelector(":scope > [class*=ae-visibility-]")?.setAttribute("style", this.styleFor(block.style));
-            frame.style.height = `${Math.max(180, section?.scrollHeight || 180)}px`;
+            const section = page.querySelector("[data-ae-native-page], .ab-editor-homepage, #wrap.ab-storefront-home");
+            if (block.type !== "storefront_page") section?.setAttribute("style", this.styleFor({ ...this.state.draft.design_tokens, ...this.state.draft.web_overrides }));
+            if (block.type === "storefront_page" && section) {
+                if (!section.hasAttribute("data-ae-saved-style")) section.setAttribute("data-ae-saved-style", section.getAttribute("style") || "");
+                section.setAttribute("style", section.dataset.aeSavedStyle + ";" + this.styleFor(block.style));
+            } else section?.querySelector(":scope > [class*=ae-visibility-]")?.setAttribute("style", this.styleFor(block.style));
+            const resize = () => {
+                if (!frame.isConnected || this.destroyed) return;
+                const height = Math.max(1, Math.ceil(section?.getBoundingClientRect().height || 180));
+                if (frame.style.height !== `${height}px`) frame.style.height = `${height}px`;
+            };
+            resize();
+            for (const [oldFrame, { observer }] of this.nativeObservers) {
+                if (!oldFrame.isConnected) { observer.disconnect(); this.nativeObservers.delete(oldFrame); }
+            }
+            if (section && this.nativeObservers.get(frame)?.section !== section) {
+                this.nativeObservers.get(frame)?.observer.disconnect();
+                const observer = new ResizeObserver(resize);
+                observer.observe(section);
+                this.nativeObservers.set(frame, { observer, section });
+            }
             this.refreshSectionThumbnail(frame, block);
         } catch { return; }
     }
@@ -404,6 +477,11 @@ export class EditorWorkspace extends Component {
         if (!page) return null;
         const expected = new URL(this.nativePreviewUrl(block), window.location.href);
         const actual = new URL(page.URL);
+        if (block.type === "storefront_page") {
+            return actual.origin === expected.origin && actual.searchParams.get("ae_preview") === String(this.state.currentId)
+                && ["section", "lang", "v"].every((key) => actual.searchParams.get(key) === expected.searchParams.get(key))
+                && page.querySelector("[data-ae-native-page]") ? page : null;
+        }
         const previewPath = /^\/(?:[^/]+\/)?editor\/preview\/(\d+)\/?$/;
         if (actual.origin !== expected.origin || actual.pathname.match(previewPath)?.[1] !== String(this.state.currentId)) return null;
         if (["section", "lang", "v"].some((key) => actual.searchParams.get(key) !== expected.searchParams.get(key))) return null;
@@ -418,10 +496,10 @@ export class EditorWorkspace extends Component {
     refreshSectionThumbnail(frame, block) {
         const page = this.nativePreviewDocument(frame, block);
         if (!page) return;
-        const section = page.querySelector(".ab-editor-homepage, #wrap.ab-storefront-home");
+        const section = page.querySelector("[data-ae-native-page], .ab-editor-homepage, #wrap.ab-storefront-home");
         if (!section) return;
         const width = Math.max(1, frame.clientWidth);
-        const height = Math.max(1, section.scrollHeight);
+        const height = Math.max(1, block.type === "storefront_page" ? Math.min(720, section.scrollHeight) : section.scrollHeight);
         const target = this.root.el?.querySelector(`.ab_editor__layer[data-source-id="${block.id}"] .ab_editor__layer-thumbnail--live`);
         const targetWidth = Math.max(1, (target?.clientWidth || 82));
         const targetHeight = Math.max(1, (target?.clientHeight || 52));
@@ -485,6 +563,7 @@ export class EditorWorkspace extends Component {
         this.root.el?.querySelector(`.ab_editor__preview-block[data-source-id="${id}"]`)?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
     }
     toggleBlock(id) {
+        if (this.blocks.find((block) => block.id === id)?.type === "storefront_page") return;
         this.edit((draft) => {
             const block = this.editableBlocks(draft).find((item) => item.id === id);
             if (block && block.type !== "template") block.active = block.active === false;
@@ -506,6 +585,7 @@ export class EditorWorkspace extends Component {
     fontLabel(font) { return { system: _t("System font"), arabic: _t("Arabic font"), georgia: _t("Georgia"), monospace: _t("Monospace") }[font]; }
 
     blockLabel(type) {
+        if (type === "storefront_page") return _t("Original page");
         return [...BLOCKS, ...HOME_BLOCKS].find((block) => block.type === type)?.label || _t("Reusable block");
     }
 
@@ -535,7 +615,7 @@ export class EditorWorkspace extends Component {
 
     get liveUrl() {
         const draft = this.state.draft;
-        return draft?.published_revision_id?.[0] ? (draft.kind === "homepage" ? "/" : `/editor/${draft.kind}/${draft.slug}`) : "";
+        return draft?.published_revision_id?.[0] ? (draft.native_path || (draft.kind === "homepage" ? "/" : `/editor/${draft.kind}/${draft.slug}`)) : "";
     }
 
     get previewTitle() {
@@ -581,6 +661,7 @@ export class EditorWorkspace extends Component {
             const versions = await this.orm.searchRead("ab_ecommerce_editor_revision", [["document_id", "=", id]], ["number", "author_id", "create_date"], { order: "number desc", limit: 30 });
             return () => {
                 this.state.sectionThumbnails = {};
+                this.state.nativeFields = {};
                 this.state.homeFields = homeFields;
                 this.state.currentId = id;
                 this.state.templateId = null;
@@ -685,6 +766,7 @@ export class EditorWorkspace extends Component {
     }
 
     async removeBlock(id) {
+        if (this.blocks.find((block) => block.id === id)?.type === "storefront_page") return;
         if (this.isLocked || this.removingIds.has(id)) return;
         const index = this.blocks.findIndex((block) => block.id === id);
         if (index < 0) return;

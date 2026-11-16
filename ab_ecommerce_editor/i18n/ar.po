@@ -2067,3 +2067,224 @@ msgstr "الرابط"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_editor.homepage_editor
 msgid "Contact our team"
 msgstr "تواصل مع فريقنا"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/about-us"
+msgstr "/about-us"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/branches"
+msgstr "/branches"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/business-partnerships"
+msgstr "/business-partnerships"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/contactus"
+msgstr "/contactus"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/editor/blog"
+msgstr "/editor/blog"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/prescription-order"
+msgstr "/prescription-order"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/return-policy"
+msgstr "/return-policy"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/shop"
+msgstr "/shop"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/shop/category"
+msgstr "/shop/category"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/shop/offers"
+msgstr "/shop/offers"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/terms-and-conditions"
+msgstr "/terms-and-conditions"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "/track-order"
+msgstr "/track-order"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "About us"
+msgstr "من نحن"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Branches"
+msgstr "الفروع"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Business partnerships"
+msgstr "الشراكات التجارية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Categories"
+msgstr "الأقسام"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "Choose a page to edit. Arrows show links from the selected page."
+msgstr "اختر صفحة لتعديلها. توضح الأسهم الروابط من الصفحة المحددة."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Choose an existing storefront page."
+msgstr "اختر صفحة موجودة في المتجر."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model,name:ab_ecommerce_editor.model_ir_http
+msgid "HTTP Routing"
+msgstr "توجيه HTTP"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Keep the original storefront section in this page."
+msgstr "احتفظ بقسم الصفحة الأصلي داخل هذه الصفحة."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "Links from"
+msgstr "الروابط من"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "Loading preview..."
+msgstr "جارٍ تحميل المعاينة..."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "No mapped links"
+msgstr "لا توجد روابط لصفحات الخريطة"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Offers"
+msgstr "العروض"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+msgid "Original page"
+msgstr "الصفحة الأصلية"
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.fields,field_description:ab_ecommerce_editor.field_ab_ecommerce_editor_document__native_path
+msgid "Original page address"
+msgstr "عنوان الصفحة الأصلية"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Prescription order"
+msgstr "طلب روشتة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "Preview unavailable"
+msgstr "المعاينة غير متاحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "Previews show the top of each page. Links appear as previews load."
+msgstr ""
+"تعرض المعاينات الجزء العلوي من كل صفحة. تظهر الروابط عند تحميل المعاينات."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Return policy"
+msgstr "سياسة الاسترجاع"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: code:addons/ab_ecommerce_editor/static/src/site_map.xml:0
+msgid "Site map"
+msgstr "خريطة الموقع"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Terms and conditions"
+msgstr "الشروط والأحكام"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "The original page address cannot be changed."
+msgstr "لا يمكن تغيير عنوان الصفحة الأصلية."
+
+#. module: ab_ecommerce_editor
+#: model:ir.model.constraint,message:ab_ecommerce_editor.constraint_ab_ecommerce_editor_document_unique_native_path
+msgid "This page already has an editor document."
+msgstr "هذه الصفحة مضافة إلى المحرر بالفعل."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+msgid "This storefront section is invalid."
+msgstr "قسم المتجر غير صالح."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/site_map.py:0
+msgid "Track order"
+msgstr "تتبع الطلب"

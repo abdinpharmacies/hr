@@ -14,7 +14,7 @@ Open **eCommerce Editor** from Odoo. Create a page or article, select a block on
 - Save revisions and restore an older revision as a draft. Existing published content stays available during draft edits.
 - Use **Storefront preview** after saving to view the draft inside the existing storefront header and footer. This route requires editor access. **Open live page** opens the released version.
 
-The editor manages its own content routes and the storefront homepage through module-owned QWeb inheritance. It does not import arbitrary `website.page` or `blog.post` records, or edit catalog, cart, or checkout templates. Its published pages use the current storefront layout. Commerce data and operations remain owned by Odoo's existing commerce modules.
+The editor manages its own content routes, the storefront homepage, and page-body overlays for existing website pages and the supported storefront landing routes. Native blog records and transactional cart/checkout flows remain outside this integration. Commerce data and operations remain owned by Odoo's existing commerce modules.
 
 ## Publishing and access
 
@@ -73,3 +73,11 @@ Product selection, prices, availability, banner slides/images, category images, 
 Editor previews are authenticated, website-scoped, excluded from indexing and caching, and rendered through an untracked preview template. The section frames disable scripts and interactions to prevent accidental shopping actions while dragging.
 
 Homepage layer thumbnails now show complete, uncropped scaled snapshots of the native section preview, including the current images and styling. They update with text/style edits and undo without saving. The larger miniature appears above the layer name. Localized preview redirects are accepted only for the same document, section, language, and draft version. A neutral loading skeleton remains until the source preview loads; a failed or empty source cannot produce a useful image. Switching document/language isolates the snapshots. Thumbnail frames reuse the source HTML/styles, disable scripts and navigation interactions, and make no extra calls to the section-preview endpoint. Native canvas previews load eagerly to supply all nine thumbnails. Generic content blocks retain schematic thumbnails.
+
+## Site map and existing pages
+
+Choose **Site map** beside the creation buttons. The selected website's homepage, storefront landing pages, readable website pages, and Studio documents appear as cropped top-of-page previews. Arrows represent links found in the rendered page, including shared navigation. Select **Links from** to inspect one page's destinations. Previews load lazily; links appear after their source preview loads. Script-generated links and individual product-detail routes are not enumerated. Preview requests fail closed when the browser is on a different website.
+
+Click a card to open it in this Studio. Existing storefront pages get a draft only on first opening; their original layout, forms, product data, and live rendering remain unchanged until an authorized publisher releases edits. The protected **Original page** block retains the current native page body. Editors can override supported plain-text headings outside product cards/forms, style that block, and add or reorder Studio blocks before or after it. Paragraphs, navigation, product values, and form behavior remain owned by the source page. The original block cannot be removed, disabled, or duplicated. Overrides apply only while the original heading identity still matches the source. English and Arabic changes are independent. Native overlays are web-only and are excluded from the page/blog v1 content API.
+
+Desktop native previews use a 1280px layout viewport and mobile previews use 390px, scaled to fit the available editor area. Resizing editor panels no longer changes storefront breakpoints. Frame heights follow image loading and responsive content changes; observers are replaced when the frame navigates and disconnected on cleanup.

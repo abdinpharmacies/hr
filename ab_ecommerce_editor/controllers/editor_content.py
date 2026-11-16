@@ -1,5 +1,6 @@
 import hashlib
 from copy import deepcopy
+from urllib.parse import urlencode
 
 from odoo import fields, http
 from odoo.http import request
@@ -39,10 +40,19 @@ def block_style(style):
 
 
 class EditorContent(http.Controller):
+    @http.route('/editor/site-map/preview/<int:website_id>', type='http', auth='user', website=True, methods=['GET'], sitemap=False)
+    def site_map_preview(self, website_id, path='/', **kwargs):
+        catalog = request.env['ab_ecommerce_editor_document'].get_site_map(website_id)
+        node = next((node for node in catalog['nodes'] if node['url'] == path), None)
+        if not node or request.website.id != website_id:
+            return request.not_found()
+        target = f"/editor/preview/{node['document_id']}" if node['document_id'] else node['url']
+        return request.redirect(target, code=303)
+
     def _document(self, kind, slug):
         return request.env['ab_ecommerce_editor_document'].sudo().search(fields.Domain([
             ('website_id', '=', request.website.id),
-            ('kind', '=', kind), ('slug', '=', slug),
+            ('kind', '=', kind), ('slug', '=', slug), ('native_path', '=', False),
             ('active', '=', True), ('published_revision_id', '!=', False),
         ]), limit=1)
 
@@ -101,6 +111,16 @@ class EditorContent(http.Controller):
         ]), limit=1)
         if not document:
             return request.not_found()
+        if document.native_path:
+            target = '/shop/category' if document.native_path == '/shop/offers' else document.native_path
+            query = urlencode({
+                **({'deal': 'discount'} if document.native_path == '/shop/offers' else {}),
+                'ae_preview': document.id, 'section': kwargs.get('section', ''),
+                'lang': kwargs.get('lang', request.env.lang), 'v': kwargs.get('v', ''),
+            })
+            language = request.env['res.lang'].search(fields.Domain('code', '=', kwargs.get('lang', request.env.lang)), limit=1)
+            prefix = '/' + language.url_code if language and language in request.website.language_ids else ''
+            return request.redirect(f'{prefix}{target}?{query}', code=303)
         if document.kind == 'homepage':
             language = kwargs.get('lang')
             if language in ('en_US', 'ar_001'):

@@ -19,6 +19,9 @@
     ],
     'assets': {
         'web.assets_backend': [
+            'ab_ecommerce_editor/static/src/site_map.js',
+            'ab_ecommerce_editor/static/src/site_map.xml',
+            'ab_ecommerce_editor/static/src/site_map.scss',
             'ab_ecommerce_editor/static/src/editor_workspace.js',
             'ab_ecommerce_editor/static/src/editor_workspace.xml',
             'ab_ecommerce_editor/static/src/editor_workspace.scss',

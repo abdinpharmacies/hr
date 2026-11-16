@@ -67,7 +67,7 @@ def validate_url(value, image=False):
         raise ValidationError(_('Use an HTTPS link or an allowed site path.'))
 
 
-def validate_blocks(blocks, allow_template=False, allow_homepage=False):
+def validate_blocks(blocks, allow_template=False, allow_homepage=False, allow_native=False):
     if not isinstance(blocks, list) or len(blocks) > 80:
         raise ValidationError(_('A page can contain up to 80 blocks.'))
     seen = set()
@@ -83,6 +83,18 @@ def validate_blocks(blocks, allow_template=False, allow_homepage=False):
         if kind == 'template' and allow_template:
             if set(block) != {'id', 'type', 'template_id'} or type(block['template_id']) is not int:
                 raise ValidationError(_('The reusable block reference is invalid.'))
+            continue
+        if kind == 'storefront_page':
+            if not allow_native or kind in native_seen or set(block) - {'id', 'type', 'content', 'style'}:
+                raise ValidationError(_('This storefront section is invalid.'))
+            native_seen.add(kind)
+            content = block.get('content', {})
+            if not isinstance(content, dict) or len(content) > 200:
+                raise ValidationError(_('This storefront section is invalid.'))
+            for key, value in content.items():
+                if not isinstance(key, str) or not re.fullmatch(r'text_[a-f0-9]{64}', key) or not isinstance(value, str) or len(value) > 4000:
+                    raise ValidationError(_('This storefront section is invalid.'))
+            validate_style(block.get('style', {}))
             continue
         if isinstance(kind, str) and kind in native_types:
             if not allow_homepage or kind in native_seen or set(block) - {'id', 'type', 'active', 'content', 'style'}:
@@ -159,8 +171,8 @@ class EditorDocument(models.Model):
                 raise ValidationError(_('Use lowercase letters, numbers, and hyphens for the URL.'))
             if document.kind == 'homepage' and document.slug != 'home':
                 raise ValidationError(_('The homepage URL cannot be changed.'))
-            validate_blocks(document.blocks_en or [], allow_template=True, allow_homepage=document.kind == 'homepage')
-            validate_blocks(document.blocks_ar or [], allow_template=True, allow_homepage=document.kind == 'homepage')
+            validate_blocks(document.blocks_en or [], allow_template=True, allow_homepage=document.kind == 'homepage', allow_native=bool(document.native_path))
+            validate_blocks(document.blocks_ar or [], allow_template=True, allow_homepage=document.kind == 'homepage', allow_native=bool(document.native_path))
             for value in (document.design_tokens, document.web_overrides, document.flutter_overrides):
                 validate_style(value or {})
             validate_url(document.image_url or '', image=True)
@@ -304,13 +316,14 @@ class EditorDocument(models.Model):
                     result.append(copy)
             else:
                 result.append(deepcopy(block))
-        validate_blocks(result, allow_homepage=self.kind == 'homepage')
+        validate_blocks(result, allow_homepage=self.kind == 'homepage', allow_native=bool(self.native_path))
         return result
 
     def _snapshot(self):
         self.ensure_one()
         self._check_content()
         return {
+            **({'native_path': self.native_path} if self.native_path else {}),
             'schema_version': 1,
             'kind': self.kind,
             'slug': self.slug,

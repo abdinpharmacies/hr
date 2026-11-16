@@ -75,10 +75,12 @@ Files changed:
 - `README.md`
 - `changelog.d/current.md`
 
-## Current changes before commit:
+## Recent homepage commit
 
+Commit: 98be07e4174a94724f7ef0fc923d9f2c5223e5a4
 Author: Mohamed Fawzy
-Date: 2026-11-12
+Date: 2026-11-15
+Subject: ab_ecommerce_editor/IMP: edit and publish homepage sections
 
 - Add a website-scoped homepage draft containing the nine existing storefront sections, enabled in their original order.
 - Repair the Arabic homepage HTTP 500 caused by English-text XPath selectors. Use structural anchors for dynamic sections and editor-owned static markup for repeated service/highlight/support items, preserving content keys and translations. Validate real combined templates in installed English/Arabic locales and confirm the running storefront returns HTTP 200 in both languages after a bounded view-only repair.
@@ -114,3 +116,34 @@ Files changed:
 - `static/src/img/layer-previews.svg`
 - `views/editor_templates.xml`
 - `views/homepage.xml`
+
+## Current changes before commit:
+
+Author: Mohamed Fawzy
+Date: 2026-11-15
+
+- Add the bilingual Site map button, cropped native page previews, and arrows derived from rendered links, with keyboard controls and RTL support.
+- Open mapped pages inside the custom Studio. Preserve existing page layouts and forms in a protected native block; support static heading overrides and additional content around the original body.
+- Keep imports as drafts and apply only authorized published snapshots to their original website routes. Validate website/company access, allowed routes, unique page ownership, and the required native section.
+- Fit 1280px desktop and 390px mobile native viewports inside the editor without changing their responsive breakpoints. Track frame height changes and replace observers after navigation.
+- Maintain both Arabic catalogs and document the supported editing boundaries.
+
+Files changed:
+
+- `README.md`
+- `__manifest__.py`
+- `changelog.d/current.md`
+- `controllers/editor_content.py`
+- `i18n/ar.po`
+- `i18n/ar_001.po`
+- `models/__init__.py`
+- `models/editor_document.py`
+- `models/site_map.py`
+- `models/site_page_render.py`
+- `static/src/editor_workspace.js`
+- `static/src/editor_workspace.scss`
+- `static/src/editor_workspace.xml`
+- `static/src/site_map.js`
+- `static/src/site_map.scss`
+- `static/src/site_map.xml`
+- `views/editor_templates.xml`

@@ -1,4 +1,9 @@
 <odoo>
+    <template id="site_page_block" name="Storefront editor block">
+        <div t-att-class="'ab-editor-public__block ae-visibility-%s' % block.get('style', {}).get('visibility', 'all')" t-att-style="block_style(block.get('style', {}))">
+            <t t-call="ab_ecommerce_editor.content_block"/>
+        </div>
+    </template>
     <template id="content_block" name="Editor content block">
         <section t-if="block['type'] == 'hero'" class="ab-editor-public__hero">
             <h2 t-esc="block.get('title', '')"/>
