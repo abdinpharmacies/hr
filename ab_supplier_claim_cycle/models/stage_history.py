@@ -14,7 +14,12 @@ class SupplierClaimHistory(models.Model):
     _order = 'id desc'
 
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True, ondelete='restrict', index=True)
-    event = fields.Selection([(e, e.title()) for e in ('submitted', 'resubmitted', 'decision', 'closed', 'archived', 'restored', 'prepared', 'document_replaced', 'migration_exception')] + [('secretarial_note', 'Secretarial Note'), ('tax_finished', 'Taxes Finished'), ('claim_updated', 'Claim Details Updated')], required=True)
+    event = fields.Selection([(e, e.replace('_', ' ').title()) for e in (
+        'submitted', 'resubmitted', 'decision', 'closed', 'archived', 'restored',
+        'prepared', 'document_replaced', 'migration_exception', 'workflow_submitted',
+        'workflow_resubmitted', 'stage_decision', 'stage_invalidated', 'approval_removed',
+    )] + [('secretarial_note', 'Secretarial Note'), ('tax_finished', 'Taxes Finished'),
+          ('claim_updated', 'Claim Details Updated')], required=True)
     from_state = fields.Selection(HISTORY_STATES)
     to_state = fields.Selection(HISTORY_STATES, required=True)
     department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS] + [('secretarial', 'Secretarial'), ('tax_accounts', 'Taxes')])
@@ -35,6 +40,10 @@ class SupplierClaimHistory(models.Model):
     review_round = fields.Integer(required=True)
     user_id = fields.Many2one('res.users', required=True, ondelete='restrict')
     occurred_at = fields.Datetime(required=True)
+    stage_state_id = fields.Many2one(
+        'ab_supplier_claim_stage_state', readonly=True, ondelete='restrict', index=True)
+    stage_name = fields.Char(readonly=True)
+    stage_sequence = fields.Integer(readonly=True)
 
     cheque_attachment = fields.Binary(
         compute='_compute_cheque_attachment', compute_sudo=False,
@@ -81,7 +90,8 @@ class SupplierClaimHistory(models.Model):
         messages = self.env['mail.message'].sudo().search(
             fields.Domain('supplier_claim_history_id', 'in', self.ids))
         linked_ids = set(messages.mapped('supplier_claim_history_id').ids)
-        names = ('event', 'from_state', 'to_state', 'department', 'decision',
+        names = ('event', 'from_state', 'to_state', 'stage_name', 'stage_sequence',
+                 'department', 'decision',
                  'reason', 'notes', 'followup_date', 'review_round', 'document_revision')
         for entry in self.filtered(lambda record: record.id not in linked_ids):
             paragraphs = []

@@ -17,7 +17,6 @@ PAYMENT_NATURE = [
 TAX_CLASSIFICATION = [
     ('through_supplier', 'Advance Payments'),
     ('tax_payment', 'Tax Payment'),
-    ('withholding_tax', 'Withholding Tax'),
     ('non_tax_payment', 'Non-tax Payment'),
 ]
 
@@ -25,7 +24,8 @@ SUPPLIER_SECTION = [('medical', 'Medicine'), ('cosmo', 'Cosmetics'), ('other', '
 CLAIM_DEFAULT_FIELDS = ('type_of_invoice', 'payment_nature', 'tax_classification', 'section', 'area')
 
 STATES = [(value, label) for value, label in (
-    ('draft', 'Draft'), ('operational_review', 'Operational Review'),
+    ('draft', 'Draft'), ('in_progress', 'In Progress'), ('returned', 'Returned'),
+    ('operational_review', 'Operational Review'),
     ('financial_review', 'Financial Review'), ('secretarial_preparation', 'Secretarial Preparation'),
     ('bank_accounts', 'Bank Accounts'), ('returned_secretarial', 'Returned to Secretarial'),
     ('ready_to_close', 'Ready to Close'), ('closed', 'Closed'))]
@@ -108,7 +108,9 @@ class SupplierClaimCycle(models.Model):
     def _compute_amounts(self):
         for claim in self:
             amount = Decimal(str(claim.claim_amount)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-            discount = (amount * Decimal('0.01')).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP) if claim.tax_discount_decision == 'apply' else Decimal('0')
+            discount = (amount * Decimal('0.01')).quantize(Decimal('0.01'),
+                                                           rounding=ROUND_HALF_UP) if claim.tax_discount_decision == 'apply' else Decimal(
+                '0')
             claim.tax_discount_rate = 1.0
             claim.tax_discount_amount = float(discount)
             claim.net_claim_amount = float(amount - discount)
@@ -123,8 +125,8 @@ class SupplierClaimCycle(models.Model):
     def _compute_preparation_overdue(self):
         for claim in self:
             claim.preparation_overdue = bool(claim.active and claim.preparation_due_date
-                and claim.secretarial_preparation_status in ('pending', 'returned')
-                and claim.preparation_due_date < fields.Datetime.now())
+                                             and claim.secretarial_preparation_status in ('pending', 'returned')
+                                             and claim.preparation_due_date < fields.Datetime.now())
 
     def _role_allowed(self, role):
         if self._is_admin():
@@ -158,8 +160,8 @@ class SupplierClaimCycle(models.Model):
     def _department_actionable(self, department):
         self.ensure_one()
         return bool(self.active and self.state == STAGES[department]
-            and self[f'{department}_decision'] in ('pending', 'deferred')
-            and (department != 'bank_accounts' or self.secretarial_preparation_status == 'prepared'))
+                    and self[f'{department}_decision'] in ('pending', 'deferred')
+                    and (department != 'bank_accounts' or self.secretarial_preparation_status == 'prepared'))
 
     @api.depends('state', 'active', 'secretarial_preparation_status',
                  *(f'{d}_decision' for d in DEPARTMENTS))
@@ -167,11 +169,13 @@ class SupplierClaimCycle(models.Model):
     def _compute_permissions(self):
         for claim in self:
             for department in DEPARTMENTS:
-                claim[f'can_edit_{department}'] = self._role_allowed(department) and claim._department_actionable(department)
-            claim.can_close_claim = bool(self._role_allowed('user') and claim.active and claim.state == 'ready_to_close')
+                claim[f'can_edit_{department}'] = self._role_allowed(department) and claim._department_actionable(
+                    department)
+            claim.can_close_claim = bool(
+                self._role_allowed('user') and claim.active and claim.state == 'ready_to_close')
             claim.can_prepare_payment = bool(self._role_allowed('user') and claim.active
-                and claim.state == 'secretarial_preparation'
-                and claim.secretarial_preparation_status in ('pending', 'returned'))
+                                             and claim.state == 'secretarial_preparation'
+                                             and claim.secretarial_preparation_status in ('pending', 'returned'))
 
     type_of_invoice = fields.Selection([('original', 'Original'), ('copy', 'Copy'),
                                         ('bank_statement', 'Bank Statement')], required=True, tracking=True)
@@ -244,12 +248,13 @@ class SupplierClaimCycle(models.Model):
             permitted = open_permitted and claim.state in ('draft', 'returned_secretarial')
             claim.can_edit_supplier_section = open_permitted
             claim.can_edit_tax_classification = open_permitted and not (
-                claim.tax_decision == 'approved' and claim.supplier_accounts_decision == 'approved')
+                    claim.tax_decision == 'approved' and claim.supplier_accounts_decision == 'approved')
             claim.can_edit_correction_fields = permitted
             claim.can_edit_payment_nature = open_permitted
             claim.can_edit_open_claim_fields = open_permitted
 
     can_edit_current_review = fields.Boolean(compute='_compute_can_edit_current_review')
+
     def action_upload_documents(self, field_name, files):
         self.ensure_one()
         self._prepare_action()
@@ -272,7 +277,8 @@ class SupplierClaimCycle(models.Model):
                 raise ValidationError(_('Empty attachments cannot be uploaded.'))
             if (field_name == 'payment_request_attachment' and self.invalidated_payment_request_digest
                     and hashlib.sha256(content).hexdigest() == self.invalidated_payment_request_digest):
-                raise ValidationError(_('Upload a corrected payment request; the invalidated document cannot be reused.'))
+                raise ValidationError(
+                    _('Upload a corrected payment request; the invalidated document cannot be reused.'))
         kind = kinds[field_name]
         filename_field = 'attachment_filename' if kind == 'attachment' else kind + '_filename'
         with self.env.cr.savepoint():
@@ -308,7 +314,8 @@ class SupplierClaimCycle(models.Model):
             claim.exception_history_ids = claim.history_ids.filtered(
                 lambda entry: entry.event == 'decision' and entry.decision in ('rejected', 'deferred'))
 
-    timeline_tax_exception_ids = fields.One2many('ab_supplier_claim_cycle.history', compute='_compute_timeline_exceptions')
+    timeline_tax_exception_ids = fields.One2many('ab_supplier_claim_cycle.history',
+                                                 compute='_compute_timeline_exceptions')
     timeline_tax = fields.Text(compute='_compute_timeline_details')
     timeline_tax_date = fields.Datetime(compute='_compute_timeline_details')
 
@@ -441,7 +448,8 @@ class SupplierClaimCycle(models.Model):
                 'net_claim_amount', 'secretarial_preparation_status', 'preparation_started_at',
                 'preparation_due_date', 'document_revision', 'payment_request_revision',
                 'bank_approval_revision', 'migration_gate_exception', 'return_destination',
-                'amount_of_check', 'cheque_attachment', 'cheque_filename', 'invalidated_payment_request_digest'} | {f'{d}_decision' for d in DEPARTMENTS}
+                'amount_of_check', 'cheque_attachment', 'cheque_filename', 'invalidated_payment_request_digest'} | {
+            f'{d}_decision' for d in DEPARTMENTS}
 
     @api.model
     def _entry_fields(self):
@@ -456,11 +464,13 @@ class SupplierClaimCycle(models.Model):
         clean = []
         for vals in vals_list:
             self._validate_amount_value({'claim_amount': vals.get('claim_amount')})
-            harmless = {'active': True, **{kind + '_filename': False for kind in ('supplier_cheque', 'tax_review', 'payment_request', 'bank_cheque')}}
+            harmless = {'active': True, **{kind + '_filename': False for kind in
+                                           ('supplier_cheque', 'tax_review', 'payment_request', 'bank_cheque')}}
             if any(name not in harmless or value != harmless[name]
                    for name, value in vals.items() if name not in self._entry_fields()):
                 raise AccessError(_('Create a draft claim without workflow values.'))
-            values = {**self._last_claim_values_by_supplier([vals.get('supplier_id')]).get(vals.get('supplier_id'), {}), **vals}
+            values = {**self._last_claim_values_by_supplier([vals.get('supplier_id')]).get(vals.get('supplier_id'), {}),
+                      **vals}
             values.update(state='draft', user_id=self.env.uid, company_id=self.env.company.id,
                           review_round=0, active=True, document_revision=1,
                           secretarial_preparation_status='not_required')
@@ -512,7 +522,7 @@ class SupplierClaimCycle(models.Model):
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
         draft_supplier_changes = self.filtered(
             lambda claim: claim.state == 'draft' and 'supplier_id' in vals
-            and claim.supplier_id.id != vals['supplier_id'])
+                          and claim.supplier_id.id != vals['supplier_id'])
         supplier_defaults = (self._last_claim_values_by_supplier([vals['supplier_id']], exclude_ids=self.ids)
                              if draft_supplier_changes else {})
         review_changes = {}
@@ -536,8 +546,9 @@ class SupplierClaimCycle(models.Model):
             if changes:
                 if not vals.get('payment_nature', claim.payment_nature):
                     raise ValidationError(_('Select a payment nature before submitting the claim.'))
-                reason = _('Claim details changed: %(changes)s. Previous approvals and payment documents require review.',
-                           changes='; '.join(changes))
+                reason = _(
+                    'Claim details changed: %(changes)s. Previous approvals and payment documents require review.',
+                    changes='; '.join(changes))
                 digest = (hashlib.sha256(base64.b64decode(claim.payment_request_attachment)).hexdigest()
                           if claim.payment_request_attachment else claim.invalidated_payment_request_digest)
                 review_changes[claim.id] = (claim.state, reason, digest)
@@ -562,7 +573,8 @@ class SupplierClaimCycle(models.Model):
             if vals.get('payment_request_attachment') and claim.invalidated_payment_request_digest:
                 digest = hashlib.sha256(base64.b64decode(vals['payment_request_attachment'])).hexdigest()
                 if digest == claim.invalidated_payment_request_digest:
-                    raise ValidationError(_('Upload a corrected payment request; the invalidated document cannot be reused.'))
+                    raise ValidationError(
+                        _('Upload a corrected payment request; the invalidated document cannot be reused.'))
             if vals.get('supplier_cheque_attachment') and claim.supplier_cheque_attachment:
                 claim._workflow_write({'document_revision': claim.document_revision + 1})
         result = super().write(vals)
@@ -576,7 +588,8 @@ class SupplierClaimCycle(models.Model):
                 if (kind + '_attachment' in vals or kind + '_filename' in vals) and claim[kind + '_attachment']:
                     claim._snapshot_document(kind, 'Document uploaded')
             if 'payment_request_attachment' in vals:
-                claim._workflow_write({'payment_request_revision': claim.document_revision if vals['payment_request_attachment'] else 0})
+                claim._workflow_write(
+                    {'payment_request_revision': claim.document_revision if vals['payment_request_attachment'] else 0})
             if claim.state == 'returned_secretarial' and 'claim_amount' in vals:
                 claim._workflow_write(claim._financial_reset_values())
             if claim.id in review_changes:
@@ -707,7 +720,8 @@ class SupplierClaimCycle(models.Model):
             if not claim.payment_nature or not claim.tax_classification or not claim.supplier_id.active:
                 raise ValidationError(_('Select an active supplier, payment nature and tax type.'))
             old_state = claim.state
-            stage = ('financial_review' if claim.payment_nature == 'cash' else 'operational_review') if old_state == 'draft' else claim.resume_stage
+            stage = (
+                'financial_review' if claim.payment_nature == 'cash' else 'operational_review') if old_state == 'draft' else claim.resume_stage
             if stage not in ('operational_review', 'financial_review'):
                 raise ValidationError(_('The claim has no valid review stage to resume.'))
             vals = dict(state=stage, review_round=claim.review_round + 1, resume_stage=False,
@@ -715,7 +729,8 @@ class SupplierClaimCycle(models.Model):
             vals.update(claim._financial_reset_values())
             for department in ('inventory', 'purchasing'):
                 vals[department + '_decision'] = ('not_required' if claim.payment_nature == 'cash' else
-                    'approved' if claim[department + '_decision'] == 'approved' else 'pending')
+                                                  'approved' if claim[
+                                                                    department + '_decision'] == 'approved' else 'pending')
             claim._workflow_write(vals)
             claim._log('submitted' if old_state == 'draft' else 'resubmitted', old_state)
         return True
@@ -754,8 +769,8 @@ class SupplierClaimCycle(models.Model):
                 raise UserError(_('Payment preparation is not pending.'))
             claim._validate_preparation()
             claim._workflow_write(dict(secretarial_preparation_status='prepared',
-                state='ready_to_close' if claim.payment_nature == 'cash' else 'bank_accounts',
-                bank_accounts_decision='not_required' if claim.payment_nature == 'cash' else 'pending'))
+                                       state='ready_to_close' if claim.payment_nature == 'cash' else 'bank_accounts',
+                                       bank_accounts_decision='not_required' if claim.payment_nature == 'cash' else 'pending'))
             claim._log('prepared', 'secretarial_preparation')
         return True
 
@@ -800,9 +815,10 @@ class SupplierClaimCycle(models.Model):
                     if return_destination not in ('secretarial', 'supplier_accounts'):
                         raise ValidationError(_('Choose a return destination.'))
                     vals.update(return_destination=return_destination, migration_gate_exception=False,
-                        payment_request_attachment=False, payment_request_filename=False,
-                        payment_request_revision=0, bank_approval_revision=0,
-                        invalidated_payment_request_digest=hashlib.sha256(base64.b64decode(claim.payment_request_attachment)).hexdigest() if claim.payment_request_attachment else False)
+                                payment_request_attachment=False, payment_request_filename=False,
+                                payment_request_revision=0, bank_approval_revision=0,
+                                invalidated_payment_request_digest=hashlib.sha256(base64.b64decode(
+                                    claim.payment_request_attachment)).hexdigest() if claim.payment_request_attachment else False)
                     if return_destination == 'secretarial':
                         vals.update(state='secretarial_preparation', secretarial_preparation_status='returned')
                     else:
@@ -836,8 +852,10 @@ class SupplierClaimCycle(models.Model):
         old_state = self.state
         if self.supplier_cheque_attachment:
             self._snapshot_document('supplier_cheque', reason)
-        invalidated_digest = hashlib.sha256(base64.b64decode(self.payment_request_attachment)).hexdigest() if self.payment_request_attachment else self.invalidated_payment_request_digest
-        vals = dict(invalidated_payment_request_digest=invalidated_digest, supplier_cheque_attachment=content, supplier_cheque_filename=filename,
+        invalidated_digest = hashlib.sha256(base64.b64decode(
+            self.payment_request_attachment)).hexdigest() if self.payment_request_attachment else self.invalidated_payment_request_digest
+        vals = dict(invalidated_payment_request_digest=invalidated_digest, supplier_cheque_attachment=content,
+                    supplier_cheque_filename=filename,
                     document_revision=self.document_revision + 1, migration_gate_exception=False,
                     payment_request_attachment=False, payment_request_filename=False,
                     payment_request_revision=0, bank_approval_revision=0,

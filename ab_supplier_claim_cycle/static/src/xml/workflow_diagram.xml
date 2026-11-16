@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_supplier_claim_cycle.WorkflowDiagram">
+        <section class="o_scc_workflow_diagram" aria-label="Claim workflow diagram">
+            <header class="o_scc_workflow_diagram__header">
+                <strong>Claim Timeline</strong>
+                <span>Follow the claim through each review stage</span>
+            </header>
+            <div class="o_scc_workflow_diagram__track" role="list">
+                <div class="o_scc_workflow_diagram__group o_scc_workflow_diagram__group--endpoint"
+                     role="listitem" data-endpoint="draft">
+                    <div class="o_scc_workflow_diagram__node o_scc_workflow_diagram__node--approved"
+                         data-lifecycle-status="completed" aria-label="Draft: Completed">
+                        <span class="o_scc_workflow_diagram__dot" aria-hidden="true"/>
+                        <strong>Draft</strong>
+                        <span class="o_scc_workflow_diagram__status">Completed</span>
+                    </div>
+                </div>
+                <div class="o_scc_workflow_diagram__connector o_scc_workflow_diagram__connector--complete"
+                     aria-hidden="true"/>
+                <t t-foreach="stageGroups" t-as="group" t-key="group.sequence">
+                    <div class="o_scc_workflow_diagram__group" role="group"
+                         t-att-data-sequence="group.sequence"
+                         t-att-aria-label="'Workflow sequence ' + group.sequence">
+                        <t t-foreach="group.stages" t-as="stage" t-key="stage.id">
+                            <div t-att-class="'o_scc_workflow_diagram__node o_scc_workflow_diagram__node--' + stage.className"
+                                 role="listitem" t-att-data-stage-status="stage.status"
+                                 t-att-aria-label="stage.name + ': ' + stage.label">
+                                <span class="o_scc_workflow_diagram__dot" aria-hidden="true"/>
+                                <strong t-esc="stage.name"/>
+                                <span class="o_scc_workflow_diagram__status" t-esc="stage.label"/>
+                                <div class="o_scc_workflow_diagram__action" t-if="stage.hasActionMetadata">
+                                    <span class="o_scc_workflow_diagram__actor">
+                                        <i class="fa fa-user" aria-hidden="true"/>
+                                        <t t-esc="stage.actor"/>
+                                    </span>
+                                    <span class="o_scc_workflow_diagram__action-date">
+                                        <i class="fa fa-clock-o" aria-hidden="true"/>
+                                        <t t-esc="stage.actionDate"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div t-att-class="connectorClass(group)" aria-hidden="true"/>
+                </t>
+                <div class="o_scc_workflow_diagram__group o_scc_workflow_diagram__group--endpoint"
+                     role="listitem" data-endpoint="closed">
+                    <div t-att-class="'o_scc_workflow_diagram__node o_scc_workflow_diagram__node--' + closedStatus"
+                         t-att-data-stage-status="closedStatus"
+                         t-att-aria-label="'Closed: ' + closedLabel">
+                        <span class="o_scc_workflow_diagram__dot" aria-hidden="true"/>
+                        <strong>Closure</strong>
+                        <span class="o_scc_workflow_diagram__status"
+                              t-esc="closedStatus === 'approved' ? closedLabel : 'Upcoming'"/>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </t>
+
+    <t t-name="ab_supplier_claim_cycle.WorkflowActions">
+        <div class="o_scc_workflow_actions">
+            <t t-foreach="activeStages" t-as="stage" t-key="stage.id">
+                <button type="button" class="btn btn-primary"
+                        t-att-disabled="state.busy"
+                        t-on-click.stop="() => this.approve(stage.id)"
+                        t-esc="actionLabel('approve', stage.name)"/>
+                <button type="button" class="btn btn-secondary"
+                        t-att-disabled="state.busy"
+                        t-on-click.stop="() => this.openDecision(stage.id, 'rejected')"
+                        t-esc="actionLabel('reject', stage.name)"/>
+                <button type="button" class="btn btn-secondary"
+                        t-att-disabled="state.busy"
+                        t-on-click.stop="() => this.openDecision(stage.id, 'deferred')"
+                        t-esc="actionLabel('defer', stage.name)"/>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -4,3 +4,4 @@ from . import stage_history
 
 from . import payment_preparation
 from . import claim_chatter
+from . import workflow_engine

@@ -1,3 +1,2 @@
-from . import test_claim_cycle
-
-from . import test_claim_http
+from . import test_workflow_engine
+from . import test_workflow_diagram

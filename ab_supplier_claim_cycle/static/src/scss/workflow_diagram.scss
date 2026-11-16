@@ -1,0 +1,337 @@
+$scc-diagram-grey: #94a3b8;
+$scc-diagram-warning: #facc15;
+$scc-diagram-warning-text: #a16207;
+$scc-diagram-danger: #dc2626;
+$scc-diagram-info: #0ea5e9;
+$scc-diagram-success: #16a34a;
+$scc-diagram-border: rgba(32, 36, 42, 0.1);
+$scc-diagram-muted: #667085;
+
+.o_scc_workflow_diagram {
+    margin: 0 0 22px;
+    padding: 26px 22px 28px;
+    border: 1px solid rgba(37, 99, 235, 0.22);
+    border-top-width: 3px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #fff 0%, #fbfcfe 100%);
+    box-shadow: 0 8px 22px rgba(32, 36, 42, 0.05);
+
+    &__header {
+        margin-bottom: 26px;
+
+        strong,
+        span {
+            display: block;
+        }
+
+        strong {
+            color: #20242a;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        span {
+            margin-top: 2px;
+            color: $scc-diagram-muted;
+            font-size: 0.95rem;
+        }
+    }
+
+    &__track {
+        display: flex;
+        min-width: max-content;
+        align-items: flex-start;
+        overflow: visible;
+        padding: 4px 2px 8px;
+    }
+
+    &__group {
+        display: flex;
+        width: 150px;
+        flex: 0 0 150px;
+        align-items: center;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    &__node {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+
+        strong {
+            margin-top: 9px;
+            color: #20242a;
+            font-size: 0.82rem;
+            font-weight: 800;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+            text-transform: uppercase;
+        }
+    }
+
+    &__status {
+        margin-top: 4px;
+        color: $scc-diagram-muted;
+        font-size: 0.82rem;
+        font-weight: 650;
+    }
+
+    &__action {
+        display: flex;
+        max-width: 100%;
+        margin-top: 7px;
+        align-items: center;
+        flex-direction: column;
+        gap: 2px;
+        color: $scc-diagram-muted;
+        font-size: 0.72rem;
+        font-weight: 450;
+        line-height: 1.35;
+    }
+
+    &__actor,
+    &__action-date {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        white-space: normal;
+
+        .fa {
+            width: 13px;
+            margin-inline-end: 3px;
+            color: rgba($scc-diagram-muted, 0.78);
+            text-align: center;
+        }
+    }
+
+    &__dot {
+        display: block;
+        width: 18px;
+        height: 18px;
+        border: 4px solid #fff;
+        border-radius: 50%;
+        background: $scc-diagram-grey;
+        box-shadow: 0 0 0 1px rgba($scc-diagram-grey, 0.38);
+    }
+
+    &__node--waiting {
+        opacity: 0.62;
+    }
+
+    &__node--pending {
+        strong,
+        .o_scc_workflow_diagram__status {
+            color: $scc-diagram-warning-text;
+        }
+
+        .o_scc_workflow_diagram__dot {
+            background: $scc-diagram-warning;
+            box-shadow:
+                0 0 0 1px rgba($scc-diagram-warning, 0.5),
+                0 0 0 7px rgba($scc-diagram-warning, 0.18),
+                0 0 22px rgba($scc-diagram-warning, 0.32);
+        }
+    }
+
+    &__node--rejected {
+        strong,
+        .o_scc_workflow_diagram__status {
+            color: $scc-diagram-danger;
+        }
+
+        .o_scc_workflow_diagram__dot {
+            background: $scc-diagram-danger;
+            box-shadow: 0 0 0 1px rgba($scc-diagram-danger, 0.32);
+        }
+    }
+
+    &__node--deferred {
+        strong,
+        .o_scc_workflow_diagram__status {
+            color: $scc-diagram-info;
+        }
+
+        .o_scc_workflow_diagram__dot {
+            background: $scc-diagram-info;
+            box-shadow: 0 0 0 1px rgba($scc-diagram-info, 0.32);
+        }
+    }
+
+    &__node--approved {
+        strong,
+        .o_scc_workflow_diagram__status {
+            color: $scc-diagram-success;
+        }
+
+        .o_scc_workflow_diagram__dot {
+            background: $scc-diagram-success;
+            box-shadow: 0 0 0 1px rgba($scc-diagram-success, 0.3);
+        }
+    }
+
+    &__connector {
+        width: 72px;
+        min-width: 34px;
+        height: 2px;
+        flex: 1 1 72px;
+        margin-top: 8px;
+        border-radius: 999px;
+        background: rgba($scc-diagram-grey, 0.32);
+    }
+
+    &__connector--complete {
+        background: linear-gradient(
+            90deg,
+            rgba($scc-diagram-success, 0.9),
+            rgba($scc-diagram-success, 0.58)
+        );
+    }
+}
+
+.o_scc_workflow_actions_field {
+    display: contents;
+}
+
+.o_scc_workflow_actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+
+    .btn {
+        white-space: nowrap;
+    }
+}
+
+.o_scc_form .o_scc_history_table {
+    .o_list_renderer {
+        border: 0;
+        background: transparent;
+    }
+
+    .o_list_table {
+        min-width: 860px;
+        table-layout: fixed;
+    }
+
+    th[data-name="occurred_at"],
+    td[name="occurred_at"] {
+        width: 15%;
+    }
+
+    th[data-name="user_id"],
+    td[name="user_id"] {
+        width: 16%;
+    }
+
+    th[data-name="event"],
+    td[name="event"] {
+        width: 16%;
+    }
+
+    th[data-name="stage_name"],
+    td[name="stage_name"] {
+        width: 15%;
+    }
+
+    th[data-name="decision"],
+    td[name="decision"] {
+        width: 12%;
+    }
+
+    td[name="event"],
+    td[name="stage_name"],
+    td[name="display_note"] {
+        white-space: pre-wrap !important;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
+
+        .text-truncate,
+        span {
+            white-space: normal !important;
+            text-overflow: clip;
+        }
+    }
+
+    td[name="display_note"] {
+        min-width: 240px;
+        line-height: 1.45;
+    }
+
+    .badge {
+        max-width: 100%;
+        white-space: normal;
+        text-align: start;
+    }
+}
+
+.o_field_widget[name="stage_state_ids"]:has(.o_scc_workflow_diagram) {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 767px) {
+    .o_scc_workflow_diagram {
+        padding: 18px 16px;
+
+        &__header {
+            margin-bottom: 20px;
+        }
+
+        &__track {
+            min-width: 0;
+            align-items: stretch;
+            flex-direction: column;
+            overflow: visible;
+        }
+
+        &__group {
+            width: 100%;
+            flex: 0 0 auto;
+            align-items: flex-start;
+            gap: 18px;
+        }
+
+        &__group:not(.o_scc_workflow_diagram__group--endpoint) {
+            padding: 8px 0 8px 24px;
+            border-inline-start: 1px dashed $scc-diagram-border;
+        }
+
+        &__node {
+            display: grid;
+            grid-template-columns: 22px minmax(0, 1fr);
+            align-items: center;
+            text-align: start;
+
+            strong {
+                margin: 0;
+            }
+        }
+
+        &__dot {
+            grid-row: 1 / span 2;
+        }
+
+        &__status {
+            margin-top: 2px;
+        }
+
+        &__action {
+            grid-column: 2;
+            align-items: flex-start;
+            margin-top: 4px;
+        }
+
+        &__connector {
+            width: 2px;
+            min-width: 2px;
+            height: 28px;
+            flex: 0 0 28px;
+            margin: 0 0 0 8px;
+        }
+    }
+}

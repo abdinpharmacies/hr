@@ -248,4 +248,95 @@
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
+    <record id="claim_participant_assigned" model="ir.rule">
+        <field name="name">Participant assigned supplier claims</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_participant'))]"/>
+        <field name="domain_force">[('stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
+    </record>
+    <record id="history_participant_assigned" model="ir.rule">
+        <field name="name">Participant assigned claim history</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_participant'))]"/>
+        <field name="domain_force">[('claim_id.stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
+    </record>
+    <record id="document_participant_assigned" model="ir.rule">
+        <field name="name">Participant assigned claim documents</field>
+        <field name="model_id" ref="model_ab_supplier_claim_document"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_participant'))]"/>
+        <field name="domain_force">[('claim_id.stage_state_ids.stage_id.approver_ids', 'in', [user.id])]</field>
+    </record>
+    <record id="document_department_submitted" model="ir.rule">
+        <field name="name">Departments submitted claim documents</field>
+        <field name="model_id" ref="model_ab_supplier_claim_document"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory')), (4, ref('supplier_claim_group_purchasing')), (4, ref('supplier_claim_group_tax')), (4, ref('supplier_claim_group_supplier_accounts')), (4, ref('supplier_claim_group_bank_accounts'))]"/>
+        <field name="domain_force">[('claim_id.state', '!=', 'draft')]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="stage_state_participant_assigned" model="ir.rule">
+        <field name="name">Participant assigned stage states</field>
+        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_participant'))]"/>
+        <field name="domain_force">[('stage_id.approver_ids', 'in', [user.id])]</field>
+    </record>
+    <record id="stage_state_department_submitted" model="ir.rule">
+        <field name="name">Departments submitted claim stage states</field>
+        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory')), (4, ref('supplier_claim_group_purchasing')), (4, ref('supplier_claim_group_tax')), (4, ref('supplier_claim_group_supplier_accounts')), (4, ref('supplier_claim_group_bank_accounts'))]"/>
+        <field name="domain_force">[('claim_id.state', '!=', 'draft')]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="stage_state_secretarial_all" model="ir.rule">
+        <field name="name">Secretarial all stage states</field>
+        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="stage_state_reviewer_all" model="ir.rule">
+        <field name="name">Reviewer all stage states</field>
+        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_reviewer'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="stage_state_admin_all" model="ir.rule">
+        <field name="name">Administrator all stage states</field>
+        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="stage_state_company_scope" model="ir.rule">
+        <field name="name">Stage state company scope</field>
+        <field name="model_id" ref="model_ab_supplier_claim_stage_state"/>
+        <field name="domain_force">[('claim_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="workflow_published_read" model="ir.rule">
+        <field name="name">Published workflows</field>
+        <field name="model_id" ref="model_ab_supplier_claim_workflow"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_user')), (4, ref('supplier_claim_group_participant')), (4, ref('supplier_claim_group_reviewer'))]"/>
+        <field name="domain_force">[('state', 'in', ['published', 'archived'])]</field>
+    </record>
+    <record id="workflow_admin_all" model="ir.rule">
+        <field name="name">Administrator all workflows</field>
+        <field name="model_id" ref="model_ab_supplier_claim_workflow"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="workflow_stage_published_read" model="ir.rule">
+        <field name="name">Published workflow stages</field>
+        <field name="model_id" ref="model_ab_supplier_claim_workflow_stage"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_user')), (4, ref('supplier_claim_group_participant')), (4, ref('supplier_claim_group_reviewer'))]"/>
+        <field name="domain_force">[('workflow_id.state', 'in', ['published', 'archived'])]</field>
+    </record>
+    <record id="workflow_stage_admin_all" model="ir.rule">
+        <field name="name">Administrator all workflow stages</field>
+        <field name="model_id" ref="model_ab_supplier_claim_workflow_stage"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
 </odoo>

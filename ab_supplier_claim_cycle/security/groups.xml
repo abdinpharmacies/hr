@@ -7,30 +7,35 @@
         <field name="name">Supplier Claim</field>
         <field name="category_id" ref="ab_supplier_claim_cycle_category"/>
     </record>
+    <record id="supplier_claim_group_participant" model="res.groups">
+        <field name="name">Workflow Participant</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
     <record id="supplier_claim_group_user" model="res.groups">
         <field name="name">Secretarial</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_participant'))]"/>
     </record>
     <record id="supplier_claim_group_inventory" model="res.groups">
         <field name="name">Inventory</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_participant'))]"/>
     </record>
     <record id="supplier_claim_group_purchasing" model="res.groups">
         <field name="name">Purchasing</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_participant'))]"/>
     </record>
     <record id="supplier_claim_group_supplier_accounts" model="res.groups">
         <field name="name">Supplier Accounts</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_participant'))]"/>
     </record>
     <record id="supplier_claim_group_bank_accounts" model="res.groups">
         <field name="name">Bank Accounts</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_participant'))]"/>
     </record>
     <record id="supplier_claim_group_reviewer" model="res.groups">
         <field name="name">Reviewer</field>
@@ -40,7 +45,7 @@
     <record id="supplier_claim_group_admin" model="res.groups">
         <field name="name">Administrator</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user')), (4, ref('supplier_claim_group_participant'))]"/>
     </record>
     <record id="base.group_system" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('supplier_claim_group_admin'))]"/>
@@ -48,6 +53,6 @@
     <record id="supplier_claim_group_tax" model="res.groups">
         <field name="name">Supplier Claim Tax Department</field>
         <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_participant'))]"/>
     </record>
 </odoo>
