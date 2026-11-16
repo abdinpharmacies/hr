@@ -1,0 +1,10 @@
+<odoo>
+    <record id="group_auth_transport" model="res.groups">
+        <field name="name">WhatsApp Authentication Worker</field>
+    </record>
+    <record id="transport_company_rule" model="ir.rule">
+        <field name="name">WhatsApp authentication company isolation</field>
+        <field name="model_id" ref="model_ab_storefront_whatsapp_transport"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

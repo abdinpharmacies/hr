@@ -1,0 +1,407 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_storefront_whatsapp_auth
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-15 15:09+0000\n"
+"PO-Revision-Date: 2026-11-15 15:09+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_accepted
+msgid "Accepted"
+msgstr "تم القبول"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.transport_form
+msgid "Approved authentication copy-code templates"
+msgstr "قوالب المصادقة المعتمدة لنسخ الرمز"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.constraint,message:ab_storefront_whatsapp_auth.constraint_ab_storefront_whatsapp_transport_unique_source
+msgid "Authentication sources must be unique."
+msgstr "يجب أن تكون مصادر المصادقة فريدة."
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/models/transport.py:0
+msgid "Authentication transport access denied."
+msgstr "تم رفض الوصول إلى خدمة نقل المصادقة."
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
+msgid "Back to account recovery"
+msgstr "العودة إلى استرداد الحساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Cancel or choose Telegram"
+msgstr "إلغاء أو اختيار تيليجرام"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.constraint,message:ab_storefront_whatsapp_auth.constraint_ab_storefront_whatsapp_transport_unique_website
+msgid "Configure one authentication transport per website."
+msgstr "قم بإعداد خدمة نقل مصادقة واحدة لكل موقع."
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-javascript
+#: code:addons/ab_storefront_whatsapp_auth/static/src/js/signup.js:0
+msgid "Continuing..."
+msgstr "جارٍ المتابعة..."
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Create account"
+msgstr "إنشاء حساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_delivered
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid ""
+"Delivery could not be confirmed. Request a new code after the cooldown or "
+"choose Telegram."
+msgstr ""
+"تعذر تأكيد التسليم. اطلب رمزًا جديدًا بعد انتهاء مدة الانتظار أو اختر "
+"تيليجرام."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.constraint,message:ab_storefront_whatsapp_auth.constraint_ab_storefront_auth_event_unique_wa_uuid
+msgid "Delivery identifiers must be unique."
+msgstr "يجب أن تكون معرّفات التسليم فريدة."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_dispatching
+msgid "Dispatching"
+msgstr "جارٍ الإرسال"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_challenge__display_name
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__display_name
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_service__display_name
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_whatsapp__display_name
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__enabled
+msgid "Enabled"
+msgstr "مفعّل"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Enter the six-digit code sent to WhatsApp. It expires in five minutes."
+msgstr ""
+"أدخل الرمز المكوّن من ستة أرقام المرسل إلى واتساب. تنتهي صلاحيته خلال خمس "
+"دقائق."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_challenge__id
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__id
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_service__id
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_whatsapp__id
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/controllers/auth.py:0
+msgid ""
+"If an eligible account exists, you will receive recovery instructions "
+"shortly."
+msgstr "إذا وُجد حساب مؤهل، فستصلك تعليمات الاسترداد قريبًا."
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/models/transport.py:0
+msgid "Invalid WhatsApp authentication configuration."
+msgstr "إعدادات مصادقة واتساب غير صالحة."
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/models/transport.py:0
+msgid "Invalid delivery receipt."
+msgstr "إيصال التسليم غير صالح."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__language_ar
+msgid "Language Ar"
+msgstr "لغة القالب العربي"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__language_en
+msgid "Language En"
+msgstr "لغة القالب الإنجليزي"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_leased
+msgid "Leased"
+msgstr "محجوز للإرسال"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Phone verified. Complete your password to create your account."
+msgstr "تم التحقق من الهاتف. أكمل كلمة المرور لإنشاء حسابك."
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/controllers/auth.py:0
+msgid "Please fill in this field."
+msgstr "يرجى ملء هذا الحقل."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_pending
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_read
+msgid "Read"
+msgstr "تمت القراءة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.recovery_whatsapp
+msgid "Recover via WhatsApp"
+msgstr "الاسترداد عبر واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Refresh delivery status"
+msgstr "تحديث حالة التسليم"
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-javascript
+#: code:addons/ab_storefront_whatsapp_auth/static/src/js/signup.js:0
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Resend code"
+msgstr "إعادة إرسال الرمز"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Security code"
+msgstr "رمز الأمان"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__sender
+msgid "Sender"
+msgstr "المرسل"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__service_user_id
+msgid "Service User"
+msgstr "مستخدم الخدمة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
+msgid "Set new password"
+msgstr "تعيين كلمة مرور جديدة"
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/models/service.py:0
+msgid "Signup is not allowed for uninvited users."
+msgstr "التسجيل غير مسموح للمستخدمين غير المدعوين."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.signup_whatsapp
+msgid "Start WhatsApp verification"
+msgstr "بدء التحقق عبر واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model,name:ab_storefront_whatsapp_auth.model_ab_storefront_auth_challenge
+msgid "Storefront Authentication Challenge"
+msgstr "طلب مصادقة المتجر"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model,name:ab_storefront_whatsapp_auth.model_ab_storefront_auth_event
+msgid "Storefront Authentication Delivery Queue"
+msgstr "قائمة انتظار تسليم مصادقة المتجر"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model,name:ab_storefront_whatsapp_auth.model_ab_storefront_auth_service
+msgid "Storefront Authentication Service"
+msgstr "خدمة مصادقة المتجر"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model,name:ab_storefront_whatsapp_auth.model_ab_storefront_auth_whatsapp
+msgid "Storefront WhatsApp Verification Channel"
+msgstr "قناة التحقق عبر واتساب للمتجر"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__template_ar
+msgid "Template Ar"
+msgstr "القالب العربي"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__template_en
+msgid "Template En"
+msgstr "القالب الإنجليزي"
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/controllers/auth.py:0
+#: code:addons/ab_storefront_whatsapp_auth/models/service.py:0
+msgid "The code or link is invalid or expired."
+msgstr "الرمز أو الرابط غير صالح أو منتهي الصلاحية."
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "This verification request has expired. Start again."
+msgstr "انتهت صلاحية طلب التحقق. ابدأ من جديد."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields.selection,name:ab_storefront_whatsapp_auth.selection__ab_storefront_auth_event__state__wa_unknown
+msgid "Unknown outcome"
+msgstr "نتيجة غير معروفة"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Verify code"
+msgstr "التحقق من الرمز"
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/models/service.py:0
+msgid "Verify your WhatsApp code first."
+msgstr "تحقق من رمز واتساب أولًا."
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.signup_whatsapp
+msgid "Verify your phone using Telegram or WhatsApp."
+msgstr "تحقق من هاتفك باستخدام تيليجرام أو واتساب."
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__wa_lease_hash
+msgid "Wa Lease Hash"
+msgstr "بصمة حجز واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__wa_lease_until
+msgid "Wa Lease Until"
+msgstr "انتهاء حجز واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__wa_reference
+msgid "Wa Reference"
+msgstr "مرجع واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__wa_scope_hash
+msgid "Wa Scope Hash"
+msgstr "بصمة نطاق واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_challenge__wa_transport_id
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__wa_transport_id
+msgid "Wa Transport"
+msgstr "خدمة نقل واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_auth_event__wa_uuid
+msgid "Wa Uuid"
+msgstr "معرّف تسليم واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model.fields,field_description:ab_storefront_whatsapp_auth.field_ab_storefront_whatsapp_transport__website_id
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.actions.act_window,name:ab_storefront_whatsapp_auth.transport_action
+#: model:ir.ui.menu,name:ab_storefront_whatsapp_auth.transport_menu
+msgid "WhatsApp Authentication"
+msgstr "مصادقة واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:ir.model,name:ab_storefront_whatsapp_auth.model_ab_storefront_whatsapp_transport
+msgid "WhatsApp Authentication Transport"
+msgstr "خدمة نقل مصادقة واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model:res.groups,name:ab_storefront_whatsapp_auth.group_auth_transport
+msgid "WhatsApp Authentication Worker"
+msgstr "عامل مصادقة واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_recovery
+msgid "WhatsApp password recovery"
+msgstr "استرداد كلمة المرور عبر واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "WhatsApp phone verification"
+msgstr "التحقق من الهاتف عبر واتساب"
+
+#. module: ab_storefront_whatsapp_auth
+#. odoo-python
+#: code:addons/ab_storefront_whatsapp_auth/models/service.py:0
+msgid ""
+"WhatsApp verification is unavailable. Choose Telegram or try again later."
+msgstr "التحقق عبر واتساب غير متاح. اختر تيليجرام أو حاول مرة أخرى لاحقًا."
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Your code is being sent."
+msgstr "جارٍ إرسال الرمز الخاص بك."
+
+#. module: ab_storefront_whatsapp_auth
+#: model_terms:ir.ui.view,arch_db:ab_storefront_whatsapp_auth.whatsapp_signup
+msgid "Your code is queued for delivery."
+msgstr "الرمز الخاص بك في قائمة انتظار التسليم."

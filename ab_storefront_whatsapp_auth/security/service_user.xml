@@ -1,0 +1,10 @@
+<odoo noupdate="1">
+    <record id="user_auth_worker" model="res.users" context="{'no_reset_password': True}">
+        <field name="name">Storefront WhatsApp Authentication Worker</field>
+        <field name="login">storefront.whatsapp.worker</field>
+        <field name="active" eval="True"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="company_ids" eval="[(6, 0, [ref('base.main_company')])]"/>
+        <field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('ab_storefront_whatsapp_auth.group_auth_transport')])]"/>
+    </record>
+</odoo>
