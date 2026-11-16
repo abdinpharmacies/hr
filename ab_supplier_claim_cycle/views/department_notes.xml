@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="invoice_view_form_department_notes" model="ir.ui.view">
+        <field name="name">supplier.claim.form.department.notes</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="inherit_id" ref="invoice_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[@name='claim_workflow_details']/page[@name='history']" position="before">
+                <page name="department_review_notes" string="Department Notes"
+                      invisible="not (inventory_notes or purchasing_notes or supplier_accounts_notes or bank_accounts_notes or inventory_followup_date or purchasing_followup_date or supplier_accounts_followup_date or bank_accounts_followup_date or 'inventory_notes' in editable_field_names or 'purchasing_notes' in editable_field_names or 'supplier_accounts_notes' in editable_field_names or 'bank_accounts_notes' in editable_field_names or 'inventory_followup_date' in editable_field_names or 'purchasing_followup_date' in editable_field_names or 'supplier_accounts_followup_date' in editable_field_names or 'bank_accounts_followup_date' in editable_field_names)">
+                    <group>
+                        <group string="Inventory"
+                               invisible="not inventory_notes and not inventory_followup_date and 'inventory_notes' not in editable_field_names and 'inventory_followup_date' not in editable_field_names">
+                            <field name="inventory_notes" readonly="'inventory_notes' not in editable_field_names"/>
+                            <field name="inventory_followup_date" readonly="'inventory_followup_date' not in editable_field_names"/>
+                        </group>
+                        <group string="Purchasing"
+                               invisible="not purchasing_notes and not purchasing_followup_date and 'purchasing_notes' not in editable_field_names and 'purchasing_followup_date' not in editable_field_names">
+                            <field name="purchasing_notes" readonly="'purchasing_notes' not in editable_field_names"/>
+                            <field name="purchasing_followup_date" readonly="'purchasing_followup_date' not in editable_field_names"/>
+                        </group>
+                        <group string="Supplier Accounts"
+                               invisible="not supplier_accounts_notes and not supplier_accounts_followup_date and 'supplier_accounts_notes' not in editable_field_names and 'supplier_accounts_followup_date' not in editable_field_names">
+                            <field name="supplier_accounts_notes" readonly="'supplier_accounts_notes' not in editable_field_names"/>
+                            <field name="supplier_accounts_followup_date" readonly="'supplier_accounts_followup_date' not in editable_field_names"/>
+                        </group>
+                        <group string="Bank Accounts"
+                               invisible="not bank_accounts_notes and not bank_accounts_followup_date and 'bank_accounts_notes' not in editable_field_names and 'bank_accounts_followup_date' not in editable_field_names">
+                            <field name="bank_accounts_notes" readonly="'bank_accounts_notes' not in editable_field_names"/>
+                            <field name="bank_accounts_followup_date" readonly="'bank_accounts_followup_date' not in editable_field_names"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -14,6 +14,7 @@
         'security/ir.model.access.csv',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
+        'views/department_notes.xml',
         'views/workflow_views.xml',
         'wizard/workflow_decision_views.xml',
     ],
