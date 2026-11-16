@@ -2,9 +2,36 @@
 
 ## Current changes before commit:
 
-- Apply linked website base-price synchronization when a replicated `ab_product.default_price` change is replayed.
-- Keep the integration scoped to replicated price changes and preserve replica write restrictions.
-- Cover the replication callback with a test that starts from a stale linked website price.
+- Reconcile linked website base prices after each successful unrestricted ab_product replication, including runs with no new source rows.
+- Scan linked templates in batches and write only price differences through Odoo, retaining the existing price audit messages.
+- Respect caller permissions, company rules, and caller-controlled transactions; skip reconciliation for failed, scoped, or unrelated replication calls.
+
+Files changed:
+
+- `ab_website_sale_product_replication/models/__init__.py`
+- `ab_website_sale_product_replication/models/replication.py`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
+- `ab_website_sale_product_replication/changelog.d/current.md`
+
+Validation:
+
+- Targeted upgrade on development database `codex_eplus_sync_20261104`, alternate ports `5069/5072`, HTTP and cron disabled: 11 tests passed, zero failures/errors; `/tmp/ab_replica_price_reconcile_test2.log`.
+- Covered unchanged-source repair, audit creation, repeated no-op runs, caller transactions, skipped scopes, source failure, denied reader writes, and company isolation alongside the existing integration tests.
+- The development database logged an existing missing filestore attachment; the price tests completed successfully.
+- No new user-facing strings or translation entries are needed. Price changes use the existing bilingual audit message.
+- Deployment requires reloading the Python integration; no schema, XML, or translation upgrade is needed.
+
+## Recent commits
+
+Commit: `05ba003d`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_website_sale_product_replication/IMP: synchronize replicated website prices`
+
+User-facing changes:
+
+- Propagate replicated default-price changes to linked website products during replay.
+- Cover replay of a source price change while the website price is stale.
 
 Files changed:
 
@@ -13,13 +40,6 @@ Files changed:
 - `ab_website_sale_product_replication/models/ab_product.py`
 - `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 - `ab_website_sale_product_replication/changelog.d/current.md`
-
-Validation:
-
-- Targeted install and upgrade on development database `codex_eplus_sync_20261104`, ports `5069/5072`: all five replica integration tests passed, zero failures/errors; `/tmp/ab_price_replication_suite.log`.
-- No user-facing strings, security records, or external database writes were added.
-
-## Recent commits
 
 Commit: `450e6eef`
 Author: Mohamed Fawzy

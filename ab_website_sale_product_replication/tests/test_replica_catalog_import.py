@@ -3,6 +3,7 @@ from unittest.mock import patch
 from odoo.exceptions import AccessError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase, new_test_user
+from odoo.addons.ab_odoo_replication.models.ab_odoo_replication import OdooReplication
 
 
 @tagged("post_install", "-at_install")
@@ -76,6 +77,65 @@ class TestReplicaCatalogImport(TransactionCase):
         self.assertTrue(self.product.website_product_tmpl_id)
         self.assertFalse(self.product.website_product_tmpl_id.is_published)
         self.assertFalse(self.product.website_sync_pending)
+
+    def _stale_website_price(self):
+        template = self.product._sync_website_products(create_missing=True)
+        with patch.object(type(self.product), "_sync_linked_website_base_prices", return_value=True):
+            self.product.sudo().with_context(replication=True).write({"default_price": 73.0})
+        self.assertEqual(template.list_price, 42.5)
+        return template
+
+    def test_replication_without_new_source_rows_repairs_stale_price(self):
+        template = self._stale_website_price()
+        replication = self.env["ab_odoo_replication"].with_context(lang="en_US")
+        with patch.object(OdooReplication, "_replicate_model", return_value=None):
+            replication.replicate_model("ab_product", commit=False)
+        self.assertEqual(template.list_price, 73.0)
+        self.assertTrue(template.message_ids.filtered(
+            lambda message: "Website base price changed from" in str(message.body)
+        ))
+        with patch.object(type(template), "write") as write:
+            self.assertEqual(replication._reconcile_website_base_prices(), 0)
+            write.assert_not_called()
+
+    def test_price_reconciliation_preserves_caller_transaction(self):
+        template = self._stale_website_price()
+        with patch.object(type(self.env.cr), "commit") as commit:
+            self.env["ab_odoo_replication"]._reconcile_website_base_prices(commit=False)
+            commit.assert_not_called()
+        self.assertEqual(template.list_price, 73.0)
+
+    def test_scoped_and_unrelated_replication_do_not_reconcile_prices(self):
+        template = self._stale_website_price()
+        replication = self.env["ab_odoo_replication"]
+        with patch.object(OdooReplication, "_replicate_model", return_value=None):
+            replication.replicate_model("ab_product_card", commit=False)
+            replication.replicate_model("ab_product", commit=False, extra_domain=[("id", "=", self.product.id)])
+        self.assertEqual(template.list_price, 42.5)
+
+    def test_failed_source_replication_does_not_reconcile_prices(self):
+        template = self._stale_website_price()
+        with patch.object(OdooReplication, "_replicate_model", side_effect=RuntimeError("Source unavailable")):
+            with self.assertRaises(RuntimeError):
+                self.env["ab_odoo_replication"].replicate_model("ab_product", commit=False)
+        self.assertEqual(template.list_price, 42.5)
+
+    def test_price_reconciliation_does_not_elevate_reader_access(self):
+        template = self._stale_website_price()
+        with self.assertRaises(AccessError):
+            with self.env.cr.savepoint():
+                self.env["ab_odoo_replication"].with_user(self.reader)._reconcile_website_base_prices()
+        self.assertEqual(template.list_price, 42.5)
+
+    def test_price_reconciliation_respects_allowed_companies(self):
+        template = self._stale_website_price()
+        company = self.env["res.company"].create({"name": "Other replica company"})
+        template.company_id = company
+        replication = self.env["ab_odoo_replication"].with_user(self.admin).sudo(False).with_context(
+            allowed_company_ids=[self.env.company.id],
+        )
+        replication._reconcile_website_base_prices()
+        self.assertEqual(template.list_price, 42.5)
 
     def test_internal_user_cannot_clear_status_or_import(self):
         with self.assertRaises(AccessError):
