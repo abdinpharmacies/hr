@@ -5255,6 +5255,29 @@ html[dir="rtl"] .ab-storefront-testimonial-controls svg {
         font-weight: var(--ab-font-weight-semi-bold);
     }
 
+    .ab-storefront-original-price-row del {
+        color: $ab-muted;
+        text-decoration-color: rgba($ab-muted, .6);
+        white-space: nowrap;
+    }
+
+    .ab-storefront-discount-row td {
+        color: $ab-green-dark;
+        font-weight: var(--ab-font-weight-semi-bold);
+    }
+
+    .ab-storefront-discount-amount {
+        display: inline-flex;
+        align-items: center;
+        gap: .2rem;
+        padding: .2rem .55rem;
+        border-radius: 999px;
+        background: rgba($ab-green-soft, .7);
+        color: $ab-green-dark;
+        font-weight: var(--ab-font-weight-bold);
+        white-space: nowrap;
+    }
+
     tr[name="o_order_total"] {
         td {
             padding-top: .9rem !important;

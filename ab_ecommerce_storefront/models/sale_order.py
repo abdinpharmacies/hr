@@ -967,6 +967,41 @@ class SaleOrder(models.Model):
             discount += line.price_unit * line.product_uom_qty * line.discount / 100.0
         return self.currency_id.round(discount)
 
+    def _ab_storefront_cart_price_breakdown(self):
+        self.ensure_one()
+        discount = 0.0
+        delivery_total = 0.0
+        for line in self.order_line:
+            if line.display_type:
+                continue
+            if line.is_delivery:
+                delivery_total += line.price_total
+                continue
+            if line.is_reward_line:
+                discount += max(0.0, -line.price_total)
+                continue
+            if not line.product_id or line.product_uom_qty <= 0:
+                continue
+            original_unit = line.price_unit
+            if line.pricelist_item_id._show_discount_on_shop():
+                original_unit = line._get_pricelist_price_before_discount()
+                product_taxes = line.product_id.taxes_id._filter_taxes_by_company(line.company_id)
+                original_unit = line.product_id._get_tax_included_unit_price_from_price(
+                    original_unit,
+                    product_taxes=product_taxes,
+                    fiscal_position=self.fiscal_position_id,
+                )
+            original_total = line.tax_ids.compute_all(
+                original_unit, self.currency_id, line.product_uom_qty,
+                line.product_id, self.partner_id,
+            )["total_included"]
+            discount += max(0.0, original_total - line.price_total)
+        discount = self.currency_id.round(discount)
+        return {
+            "original_price": self.currency_id.round(self.amount_total - delivery_total + discount),
+            "discount": discount,
+        }
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"

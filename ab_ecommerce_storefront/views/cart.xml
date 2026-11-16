@@ -735,6 +735,28 @@
         <xpath expr="//div[contains(@t-attf-class, 'o_cart_total')]" position="attributes">
             <attribute name="t-attf-class" add="ab-storefront-cart-total" separator=" "/>
         </xpath>
+        <xpath expr="//tr[@name='o_order_total_untaxed']" position="before">
+            <t t-set="ab_cart_price_breakdown" t-value="website_sale_order._ab_storefront_cart_price_breakdown()"/>
+            <tr t-if="ab_cart_price_breakdown['discount'] > 0" class="ab-storefront-original-price-row">
+                <td colspan="2" class="border-0 pb-1 ps-0 pt-0">Original price</td>
+                <td class="text-end border-0 pb-1 pe-0 pt-0">
+                    <del t-out="ab_cart_price_breakdown['original_price']"
+                         t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                </td>
+            </tr>
+            <tr t-if="ab_cart_price_breakdown['discount'] > 0" class="ab-storefront-discount-row">
+                <td colspan="2" class="border-0 pb-2 ps-0 pt-0">Discount</td>
+                <td class="text-end border-0 pb-2 pe-0 pt-0">
+                    <bdi dir="ltr" class="ab-storefront-discount-amount">
+                        − <span t-out="ab_cart_price_breakdown['discount']"
+                                t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                    </bdi>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='o_order_total_untaxed']" position="attributes">
+            <attribute name="t-if">not ab_cart_price_breakdown['discount']</attribute>
+        </xpath>
         <xpath expr="//tr[@name='o_order_delivery']/td[contains(@class, 'text-muted')]" position="replace">
             <td class="ps-0 pt-0 pb-2 border-0 text-muted" t-att-colspan="3 if website_sale_order.amount_delivery == 0 else 2">
                 <t t-if="website_sale_order.amount_delivery == 0">We will inform you of the delivery fee before your order arrives.</t>

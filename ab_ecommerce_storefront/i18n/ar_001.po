@@ -15331,3 +15331,8 @@ msgid ""
 msgstr ""
 "التحقق عبر تيليجرام غير متاح حاليًا على هذا الموقع. اختر طريقة أخرى أو تواصل"
 " مع الدعم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
+msgid "Original price"
+msgstr "السعر الأصلي"
