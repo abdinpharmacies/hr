@@ -305,6 +305,22 @@ class TestStorefrontOffers(TransactionCase):
         with self.assertRaises(ValidationError), self.env.cr.savepoint():
             self.offer(offer_type="amount")
 
+    def test_custom_amount_discount_updates_price_and_rejects_excess(self):
+        self.pricelist.currency_id = self.env.ref("base.EGP")
+        self.company.currency_id = self.env.ref("base.EGP")
+        self.product.list_price = 500
+        offer = self.offer(
+            offer_type="amount", amount_discount="custom", custom_amount_discount=275.5,
+            once_per_customer=False,
+        )
+        self.assertAlmostEqual(self.cart().amount_total, 449)
+        self.assertAlmostEqual(offer.discounted_price, 224.5)
+        offer.custom_amount_discount = 300
+        self.assertAlmostEqual(self.cart().amount_total, 400)
+        for amount in (0, 500, 501):
+            with self.subTest(amount=amount), self.assertRaises(ValidationError), self.env.cr.savepoint():
+                offer.custom_amount_discount = amount
+
     def test_percentage_once_per_customer_and_legacy_price(self):
         offer = self.offer(offer_type="percent", percentage_rate="20")
         order = self.cart()

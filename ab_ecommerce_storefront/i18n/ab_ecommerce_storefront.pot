@@ -14632,3 +14632,26 @@ msgstr ""
 msgid ""
 "The discounted product price stays fixed even if its original price rises."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__amount_discount__custom
+msgid "Custom Amount"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__custom_amount_discount
+msgid "Custom Discount Amount"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Enter a positive fixed discount amount."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"The fixed discount amount must be less than the original product price."
+msgstr ""

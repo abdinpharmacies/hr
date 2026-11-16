@@ -68,6 +68,8 @@
                         <field name="currency_id"/>
                         <field name="percentage_rate" invisible="offer_type != 'percent'" required="offer_type == 'percent'"/>
                         <field name="amount_discount" invisible="offer_type != 'amount'" required="offer_type == 'amount'"/>
+                        <field name="custom_amount_discount" invisible="offer_type != 'amount' or amount_discount != 'custom'"
+                               required="offer_type == 'amount' and amount_discount == 'custom'"/>
                         <field name="current_price"/>
                         <field name="discounted_price"/>
                         <div class="text-muted" colspan="2">The discount applies per unit to the current product sales price. Amount discounts are in EGP.</div>

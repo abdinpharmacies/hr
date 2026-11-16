@@ -56,8 +56,12 @@ class StorefrontOffer(models.Model):
         string="Second Item Discount Rate", default="50", tracking=True,
     )
     amount_discount = fields.Selection(
-        [(str(amount), str(amount)) for amount in (80, 100, 120, 125, 130, 140, 150, 200, 250)],
+        [(str(amount), str(amount)) for amount in (80, 100, 120, 125, 130, 140, 150, 200, 250)]
+        + [("custom", "Custom Amount")],
         string="Discount Amount", default="80", tracking=True,
+    )
+    custom_amount_discount = fields.Monetary(
+        string="Custom Discount Amount", currency_field="currency_id", tracking=True,
     )
     max_applications = fields.Integer(
         string="Maximum Applications per Order", compute="_compute_max_applications",
@@ -100,7 +104,7 @@ class StorefrontOffer(models.Model):
         for offer in self:
             offer.max_applications = 1 if offer.offer_type == "second_half" else 0
 
-    @api.depends("product_id.lst_price", "currency_id", "website_id", "percentage_rate", "amount_discount", "offer_type")
+    @api.depends("product_id.lst_price", "currency_id", "website_id", "percentage_rate", "amount_discount", "custom_amount_discount", "offer_type")
     def _compute_current_offer_price(self):
         for offer in self:
             product = offer.product_id.with_company(offer.company_id or self.env.company)
@@ -112,8 +116,12 @@ class StorefrontOffer(models.Model):
             offer.current_price = price
             offer.discounted_price = max(0, (
                 price * (1 - float(offer.percentage_rate or 0) / 100)
-                if offer.offer_type == "percent" else price - float(offer.amount_discount or 0)
+                if offer.offer_type == "percent" else price - offer._fixed_discount_amount()
             ))
+
+    def _fixed_discount_amount(self):
+        self.ensure_one()
+        return self.custom_amount_discount if self.amount_discount == "custom" else float(self.amount_discount or 0)
 
     def _benefit_products(self):
         self.ensure_one()
@@ -191,7 +199,7 @@ class StorefrontOffer(models.Model):
         "website_id", "product_id", "offer_type", "buy_qty", "gift_qty", "pricelist_id",
         "price_before", "price_after", "date_from", "date_to", "use_odoo_promotion", "program_id", "active",
         "second_item_mode", "second_product_ids", "percentage_rate", "amount_discount",
-        "second_discount_rate", "max_applications",
+        "second_discount_rate", "max_applications", "custom_amount_discount",
     )
     def _check_offer(self):
         other_offers = self.search([
@@ -241,11 +249,14 @@ class StorefrontOffer(models.Model):
                     raise ValidationError(_("Select a pricelist for this website and set a positive reduced price below the original price."))
                 if offer.offer_type == "percent" and not offer.percentage_rate:
                     raise ValidationError(_("Select a percentage discount rate."))
-                if offer.offer_type == "amount" and offer.active and (
-                    not offer.amount_discount or float(offer.amount_discount) >= offer.current_price
-                    or offer.currency_id != self.env.ref("base.EGP")
-                ):
-                    raise ValidationError(_("Select an EGP pricelist and a discount amount below the current product price."))
+                if offer.offer_type == "amount" and offer.active:
+                    discount_amount = offer._fixed_discount_amount()
+                    if not isfinite(discount_amount) or discount_amount <= 0:
+                        raise ValidationError(_("Enter a positive fixed discount amount."))
+                    if discount_amount >= offer.current_price:
+                        raise ValidationError(_("The fixed discount amount must be less than the original product price."))
+                    if offer.currency_id != self.env.ref("base.EGP"):
+                        raise ValidationError(_("Select an EGP pricelist and a discount amount below the current product price."))
             if offer.active:
                 overlapping = other_offers.filtered(lambda other: (
                     other != offer and other.website_id == offer.website_id
@@ -324,7 +335,7 @@ class StorefrontOffer(models.Model):
             "name", "active", "website_id", "product_id", "offer_type", "buy_qty", "gift_qty",
             "pricelist_id", "price_before", "price_after", "date_from", "date_to",
             "use_odoo_promotion", "program_id", "second_item_mode", "second_product_ids",
-            "percentage_rate", "amount_discount", "second_discount_rate", "max_applications",
+            "percentage_rate", "amount_discount", "custom_amount_discount", "second_discount_rate", "max_applications",
         }:
             self._sync_offer_rules()
         if vals.get("once_per_customer"):
@@ -451,7 +462,7 @@ class StorefrontOffer(models.Model):
             if offer.offer_type == "percent":
                 values.update(compute_price="percentage", percent_price=float(offer.percentage_rate))
             elif offer.offer_type == "amount":
-                values.update(compute_price="formula", price_discount=0, price_surcharge=-float(offer.amount_discount))
+                values.update(compute_price="formula", price_discount=0, price_surcharge=-offer._fixed_discount_amount())
             if offer.price_rule_ids:
                 offer.price_rule_ids.write(values)
             else:
@@ -658,7 +669,7 @@ class ProductPricelist(models.Model):
             offer = rule.sudo().ab_storefront_offer_id
             if offer.offer_type == "amount" and (
                 offer.currency_id != self.env.ref("base.EGP")
-                or offer.current_price <= float(offer.amount_discount or 0)
+                or offer.current_price <= offer._fixed_discount_amount()
             ):
                 continue
             eligible_rules |= rule
