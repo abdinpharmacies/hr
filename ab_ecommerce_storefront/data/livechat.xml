@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="chatbot_abdin_support" model="chatbot.script">
+        <field name="title">Abdin Assistant</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/abdin_pharmacy_bot_avatar.jpg"/>
+    </record>
+
+    <record id="chatbot_abdin_support_welcome" model="chatbot.script.step">
+        <field name="chatbot_script_id" ref="chatbot_abdin_support"/>
+        <field name="sequence">1</field>
+        <field name="step_type">text</field>
+        <field name="message">Welcome to Abdin Pharmacies. We are connecting you to our team.</field>
+    </record>
+
+    <record id="chatbot_abdin_support_forward" model="chatbot.script.step">
+        <field name="chatbot_script_id" ref="chatbot_abdin_support"/>
+        <field name="sequence">2</field>
+        <field name="step_type">forward_operator</field>
+    </record>
+
+    <record id="chatbot_abdin_support_unavailable" model="chatbot.script.step">
+        <field name="chatbot_script_id" ref="chatbot_abdin_support"/>
+        <field name="sequence">3</field>
+        <field name="step_type">text</field>
+        <field name="message">Our team is unavailable right now. Please leave your email so we can follow up.</field>
+    </record>
+
+    <record id="chatbot_abdin_support_email" model="chatbot.script.step">
+        <field name="chatbot_script_id" ref="chatbot_abdin_support"/>
+        <field name="sequence">4</field>
+        <field name="step_type">question_email</field>
+        <field name="message">What is your email address?</field>
+    </record>
+
+    <record id="livechat_channel" model="im_livechat.channel">
+        <field name="name">Abdin Pharmacies</field>
+        <field name="button_text">Chat with Abdin Pharmacies</field>
+        <field name="default_message">Hello! How can we help you?</field>
+        <field name="header_background_color">#0B5F39</field>
+        <field name="title_color">#FFFFFF</field>
+        <field name="button_background_color">#16834F</field>
+        <field name="button_text_color">#FFFFFF</field>
+        <field name="user_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+    </record>
+
+    <record id="livechat_channel_rule" model="im_livechat.channel.rule">
+        <field name="channel_id" ref="livechat_channel"/>
+        <field name="action">display_button</field>
+        <field name="regex_url">/</field>
+        <field name="chatbot_script_id" ref="chatbot_abdin_support"/>
+        <field name="chatbot_enabled_condition">always</field>
+    </record>
+
+    <function model="website" name="write"
+              eval="[[ref('website.default_website')], {'channel_id': ref('ab_ecommerce_storefront.livechat_channel')}]"/>
+</odoo>

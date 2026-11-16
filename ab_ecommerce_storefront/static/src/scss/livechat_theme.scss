@@ -1,0 +1,118 @@
+:host(.ab-storefront-livechat) {
+    --bs-body-font-family: var(--ab-font-family-current, "IBM Plex Sans Arabic", sans-serif);
+    --bs-body-color: #19352b;
+    --bs-primary: #16834f;
+    --bs-primary-rgb: 22, 131, 79;
+    --bs-link-color-rgb: 11, 95, 57;
+    --mail-Composer-bg: #fff;
+    font-family: var(--bs-body-font-family);
+    color: #19352b;
+
+    [part="openChatButton"] {
+        display: none !important;
+    }
+
+    .o-mail-ChatWindow {
+        overflow: hidden;
+        border: 1px solid #d7e8dd !important;
+        border-radius: 18px !important;
+        background: #f7fbf8 !important;
+        box-shadow: 0 20px 60px rgba(11, 95, 57, .18) !important;
+    }
+
+    .o-mail-ChatWindow.o-mobile {
+        border: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .o-mail-ChatWindow-header {
+        min-height: 54px;
+        border-color: #0b5f39 !important;
+        background-image: linear-gradient(105deg, #0b5f39, #16834f) !important;
+    }
+
+    .o-mail-ChatWindow-header .o-mail-ChatWindow-threadAvatar img {
+        border: 2px solid rgba(255, 255, 255, .8);
+        border-radius: 50% !important;
+    }
+
+    .o-mail-ChatWindow-header .o-mail-ActionList button,
+    .o-mail-ChatWindow-header .o-mail-ChatWindow-moreActions {
+        --o-mail-ActionList-Button-opacity: 1;
+        min-width: 44px;
+        min-height: 44px;
+        color: #fff !important;
+    }
+
+    .o-mail-Thread {
+        background-color: #f7fbf8 !important;
+    }
+
+    .o-mail-Thread > .d-flex.flex-column.position-relative {
+        justify-content: flex-start !important;
+    }
+
+    .o-mail-Message:not(.o-selfAuthored) .o-mail-Message-bubble,
+    .o-mail-Message:not(.o-selfAuthored) .o-mail-Message-bubbleTail {
+        --o-message-bubble-bg: #e9f6ef;
+        --o-message-bubble-border-color: #cce8d7;
+    }
+
+    .o-mail-Message.o-selfAuthored .o-mail-Message-bubble,
+    .o-mail-Message.o-selfAuthored .o-mail-Message-bubbleTail {
+        --o-message-bubble-bg: #16834f;
+        --o-message-bubble-border-color: #16834f;
+    }
+
+    .o-mail-Message:not(.o-selfAuthored) .o-mail-Message-body {
+        color: #19352b;
+    }
+
+    .o-mail-Message.o-selfAuthored .o-mail-Message-body,
+    .o-mail-Message.o-selfAuthored .o-mail-Message-body a {
+        color: #fff;
+    }
+
+    .o-mail-Composer {
+        border-top: 1px solid #d7e8dd;
+        background: #fff;
+    }
+
+    .o-mail-Composer-inputContainer {
+        border-color: #bfdcc9 !important;
+        border-radius: 20px;
+        background: #fff;
+    }
+
+    .o-mail-Composer-input {
+        color: #19352b;
+        font-family: var(--bs-body-font-family);
+        font-size: 16px;
+    }
+
+    .o-mail-Composer-input::placeholder {
+        color: #64736d;
+        opacity: .8 !important;
+    }
+
+    .o-mail-Composer-send:not(:disabled) {
+        width: 44px;
+        height: 44px;
+        color: #fff !important;
+        border-radius: 50%;
+        background: #16834f !important;
+    }
+
+    .o-mail-ChatWindow .bg-200.fst-italic {
+        color: #4c6958 !important;
+        border-top: 1px solid #d7e8dd;
+        background: #e9f6ef !important;
+        font-style: normal !important;
+    }
+
+    .o-mail-ChatWindow button:focus-visible,
+    .o-mail-Composer-input:focus-visible {
+        outline: 2px solid #ef8b2c;
+        outline-offset: 2px;
+    }
+}

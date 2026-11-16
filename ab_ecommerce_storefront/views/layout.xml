@@ -43,8 +43,7 @@
                    aria-label="Customer support">
                 <div id="abStorefrontSupportMenu"
                      class="ab-storefront-support-menu"
-                     data-ab-support-menu=""
-                     role="menu">
+                     data-ab-support-menu="">
                     <div class="ab-storefront-support-menu-head">
                         <strong>Contact us</strong>
                         <button type="button"
@@ -54,11 +53,27 @@
                             <i class="fa fa-times" aria-hidden="true"/>
                         </button>
                     </div>
+                    <button type="button"
+                            class="ab-storefront-support-item ab-storefront-support-item--livechat"
+                            data-ab-support-livechat=""
+                            data-ab-support-choice="livechat"
+                            hidden="hidden"
+                            aria-label="Open Abdin Assistant chat">
+                        <t t-set="ab_chatbot_partner" t-value="request.env.ref('ab_ecommerce_storefront.chatbot_abdin_support').sudo().operator_partner_id"/>
+                        <span class="ab-storefront-support-item-icon">
+                            <img t-att-src="'/web/image/res.partner/%s/avatar_128?access_token=%s' % (ab_chatbot_partner.id, ab_chatbot_partner._get_avatar_128_access_token())"
+                                 alt="" width="42" height="42" loading="lazy" decoding="async"/>
+                        </span>
+                        <span>
+                            <strong>Abdin Assistant</strong>
+                            <small>Chat on this website</small>
+                        </span>
+                    </button>
                     <a href="https://wa.me/201030578926"
                        class="ab-storefront-support-item ab-storefront-support-item--whatsapp"
+                       data-ab-support-choice="whatsapp"
                        target="_blank"
                        rel="noopener"
-                       role="menuitem"
                        aria-label="Open WhatsApp support">
                         <span class="ab-storefront-support-item-icon">
                             <i class="fa fa-whatsapp" aria-hidden="true"/>
@@ -70,9 +85,9 @@
                     </a>
                     <a href="http://m.me/AbdinPharmaciesOfficial"
                        class="ab-storefront-support-item ab-storefront-support-item--messenger"
+                       data-ab-support-choice="messenger"
                        target="_blank"
                        rel="noopener"
-                       role="menuitem"
                        aria-label="Open Messenger support">
                         <span class="ab-storefront-support-item-icon">
                             <i class="fa fa-comments" aria-hidden="true"/>
@@ -84,7 +99,7 @@
                     </a>
                     <a href="tel:19036"
                        class="ab-storefront-support-item ab-storefront-support-item--hotline"
-                       role="menuitem"
+                       data-ab-support-choice="hotline"
                        aria-label="Call hotline 19036">
                         <span class="ab-storefront-support-item-icon">
                             <i class="fa fa-phone" aria-hidden="true"/>

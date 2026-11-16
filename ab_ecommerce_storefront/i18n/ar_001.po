@@ -15336,3 +15336,53 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.total_abdin_skin
 msgid "Original price"
 msgstr "السعر الأصلي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"<span>\n"
+"                            <strong>Abdin Assistant</strong>\n"
+"                            <small>Chat on this website</small>\n"
+"                        </span>"
+msgstr ""
+"<span>\n"
+"                            <strong>مساعد عابدين</strong>\n"
+"                            <small>محادثة داخل الموقع</small>\n"
+"                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model:chatbot.script,title:ab_ecommerce_storefront.chatbot_abdin_support
+msgid "Abdin Assistant"
+msgstr "مساعد عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:im_livechat.channel,button_text:ab_ecommerce_storefront.livechat_channel
+msgid "Chat with Abdin Pharmacies"
+msgstr "تحدث مع صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:im_livechat.channel,default_message:ab_ecommerce_storefront.livechat_channel
+msgid "Hello! How can we help you?"
+msgstr "مرحبًا! كيف يمكننا مساعدتك؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Open Abdin Assistant chat"
+msgstr "افتح محادثة مساعد عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_unavailable
+msgid ""
+"Our team is unavailable right now. Please leave your email so we can follow "
+"up."
+msgstr "فريقنا غير متاح الآن. اترك بريدك الإلكتروني لنتابع معك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_welcome
+msgid "Welcome to Abdin Pharmacies. We are connecting you to our team."
+msgstr "مرحبًا بك في صيدليات عابدين. نوصلك الآن بفريقنا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_email
+msgid "What is your email address?"
+msgstr "ما بريدك الإلكتروني؟"

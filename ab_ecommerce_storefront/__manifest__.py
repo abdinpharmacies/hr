@@ -19,6 +19,7 @@
         "sale_stock",
         "website_sale_loyalty",
         "website_sale_wishlist",
+        "website_livechat",
     ],
     "data": [
         "security/security_groups.xml",
@@ -36,6 +37,7 @@
         "data/storefront_pricelist.xml",
         "data/prescription_sequence.xml",
         "data/mail_template_data.xml",
+        "data/livechat.xml",
         "views/category_icons.xml",
         "views/avatar.xml",
         "views/auth.xml",
@@ -77,6 +79,10 @@
         "data/seo_metadata.xml",
     ],
     "assets": {
+        "im_livechat.assets_embed_core": [
+            "ab_ecommerce_storefront/static/src/js/livechat_bridge.js",
+            "ab_ecommerce_storefront/static/src/scss/livechat_theme.scss",
+        ],
         "web.assets_backend": [
             "ab_ecommerce_storefront/static/src/js/image_sync_upload.js",
             "ab_ecommerce_storefront/static/src/xml/image_sync_upload.xml",
