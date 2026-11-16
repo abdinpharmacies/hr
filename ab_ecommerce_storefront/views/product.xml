@@ -129,7 +129,8 @@
         </xpath>
         <xpath expr="//div[@name='product_price_container']" position="after">
             <t t-set="ab_product_offer" t-value="website._ab_storefront_offer_details(product).get(product.id, {})"/>
-            <div t-if="ab_product_offer.get('bundle_offer')" class="ab-storefront-product-bundle-offer ab-storefront-product-second-offer my-3">
+            <div t-if="ab_product_offer.get('bundle_offer')" class="ab-storefront-product-bundle-offer ab-storefront-product-second-offer my-3"
+                 t-att-data-primary-product-id="ab_product_offer['primary_product_id']">
                 <i class="fa fa-tags ab-storefront-product-offer-icon" aria-hidden="true"/>
                 <strong class="ab-storefront-product-offer-equation" dir="ltr">
                     <t t-if="ab_product_offer.get('free_qty')">
@@ -137,7 +138,26 @@
                     </t>
                     <t t-else="">1 + <t t-out="int(ab_product_offer['discount_rate'])"/>%</t>
                 </strong>
-                <small t-out="ab_product_offer['description']"/>
+                <div t-if="ab_product_offer.get('benefit_products')" class="ab-storefront-benefit-options"
+                     role="group" aria-label="Choose your benefit product">
+                    <button t-foreach="ab_product_offer['benefit_products']" t-as="ab_benefit"
+                            type="button" class="ab-storefront-benefit-option"
+                            t-att-data-benefit-id="ab_benefit['id']"
+                            t-att-title="ab_benefit['name']"
+                            t-att-aria-label="ab_benefit['name']"
+                            aria-pressed="false">
+                        <img t-att-src="ab_benefit['image']" t-att-alt="ab_benefit['name']"
+                             width="48" height="48" loading="lazy"/>
+                    </button>
+                    <button t-if="ab_product_offer['benefit_product_count'] &gt; 4" type="button"
+                            class="ab-storefront-benefit-more ab-storefront-second-offer-trigger"
+                            t-att-data-offer-id="ab_product_offer['offer_id']"
+                            data-offer-mode="choice" data-picker-only="true"
+                            t-att-data-offer-description="ab_product_offer['description']"
+                            aria-label="Choose your benefit product">
+                        +<t t-out="ab_product_offer['benefit_product_count'] - 4"/>
+                    </button>
+                </div>
                 <button type="button" class="ab-storefront-second-offer-trigger btn btn-primary"
                         t-att-data-offer-id="ab_product_offer['offer_id']"
                         t-att-data-offer-mode="ab_product_offer['second_item_mode']"

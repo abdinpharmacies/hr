@@ -40,6 +40,12 @@ export class StorefrontSecondItemOffer extends Interaction {
             await this.addOffer();
             return;
         }
+        const container = this.el.closest(".ab-storefront-product-card, #product_detail");
+        const selectedId = Number(container?.querySelector(".ab-storefront-benefit-options")?.dataset.selectedBenefitId);
+        if (selectedId && this.el.dataset.pickerOnly !== "true") {
+            await this.addOffer(selectedId);
+            return;
+        }
         this.openPicker();
         await this.loadItems();
     }
@@ -174,3 +180,69 @@ export class StorefrontSecondItemOffer extends Interaction {
 }
 
 registry.category("public.interactions").add("ab_ecommerce_storefront.second_item_offer", StorefrontSecondItemOffer);
+
+export class StorefrontBenefitOptions extends Interaction {
+    static selector = ".ab-storefront-benefit-options";
+
+    setup() {
+        this.onSelect = this.onSelect.bind(this);
+    }
+
+    start() {
+        this.el.addEventListener("click", this.onSelect);
+    }
+
+    destroy() {
+        this.el.removeEventListener("click", this.onSelect);
+    }
+
+    onSelect(event) {
+        const option = event.target.closest(".ab-storefront-benefit-option");
+        if (!option || !this.el.contains(option)) {
+            return;
+        }
+        const selected = option.getAttribute("aria-pressed") !== "true";
+        for (const item of this.el.querySelectorAll(".ab-storefront-benefit-option")) {
+            item.setAttribute("aria-pressed", String(selected && item === option));
+        }
+        this.el.dataset.selectedBenefitId = selected ? option.dataset.benefitId : "";
+    }
+}
+
+registry.category("public.interactions").add("ab_ecommerce_storefront.benefit_options", StorefrontBenefitOptions);
+
+export class StorefrontProductOfferCart extends Interaction {
+    static selector = ".ab-storefront-product-page #product_detail";
+
+    setup() {
+        this.onCartClick = this.onCartClick.bind(this);
+    }
+
+    start() {
+        this.el.addEventListener("click", this.onCartClick, true);
+    }
+
+    destroy() {
+        this.el.removeEventListener("click", this.onCartClick, true);
+    }
+
+    onCartClick(event) {
+        const button = event.target.closest("#add_to_cart, .o_we_buy_now");
+        if (!button || !this.el.contains(button)) {
+            return;
+        }
+        const offer = this.el.querySelector(".ab-storefront-product-second-offer[data-primary-product-id]");
+        const productId = this.el.querySelector("input[name='product_id']")?.value;
+        if (!offer || offer.dataset.primaryProductId !== productId) {
+            return;
+        }
+        const trigger = offer.querySelector(".ab-storefront-second-offer-trigger[data-offer-mode='choice']");
+        if (trigger) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            trigger.click();
+        }
+    }
+}
+
+registry.category("public.interactions").add("ab_ecommerce_storefront.product_offer_cart", StorefrontProductOfferCart);

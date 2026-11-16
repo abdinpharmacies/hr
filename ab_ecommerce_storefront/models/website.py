@@ -497,6 +497,23 @@ class Website(models.Model):
         ):
             product = offer.product_id.product_tmpl_id
             if product in candidates:
+                benefit_products = []
+                benefit_product_count = 0
+                if offer.second_item_mode == "choice":
+                    available = self.env["product.product"].browse(
+                        offer.second_product_ids.ids
+                    ).exists().filtered(lambda item: (
+                        item.id != offer.product_id.id
+                        and item._is_add_to_cart_allowed()
+                        and not item._is_sold_out()
+                    ))
+                    benefit_product_count = len(available)
+                    for item in available.sorted(lambda item: (item.name, item.id))[:4]:
+                        benefit_products.append({
+                            "id": item.id,
+                            "name": item.name,
+                            "image": self.image_url(item.product_tmpl_id, "image_128"),
+                        })
                 details[product.id] = {
                     "second_half": offer.offer_type == "second_half",
                     "bundle_offer": True,
@@ -507,6 +524,9 @@ class Website(models.Model):
                     "max_applications": offer.max_applications,
                     "description": offer._storefront_description(),
                     "offer_id": offer.id,
+                    "primary_product_id": offer.product_id.id,
+                    "benefit_products": benefit_products,
+                    "benefit_product_count": benefit_product_count,
                 }
         return details
 
