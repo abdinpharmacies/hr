@@ -1,0 +1,16 @@
+{
+  "enabled": false,
+  "sources": {
+    "00000000-0000-4000-8000-000000000001": {
+      "url": "https://shop.example.invalid",
+      "database": "ecommerce_database",
+      "token": "REPLACE_WITH_DEDICATED_NATIVE_ODOO_API_KEY",
+      "account": "configured_whatsapp_account_code",
+      "sender": "123456789",
+      "templates": {
+        "en_US": "approved_authentication_en",
+        "ar": "approved_authentication_ar"
+      }
+    }
+  }
+}
