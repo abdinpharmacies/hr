@@ -15386,3 +15386,9 @@ msgstr "مرحبًا بك في صيدليات عابدين. نوصلك الآن 
 #: model_terms:chatbot.script.step,message:ab_ecommerce_storefront.chatbot_abdin_support_email
 msgid "What is your email address?"
 msgstr "ما بريدك الإلكتروني؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The discounted product price stays fixed even if its original price rises."
+msgstr "سعر المنتج بعد الخصم ثابت حتى لو ارتفع سعره الأصلي."
