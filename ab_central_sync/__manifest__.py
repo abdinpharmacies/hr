@@ -1,10 +1,6 @@
 {'name': 'Central Synchronization',
  'description': 'Durable central synchronization for native sales, returns and reversals.',
-<<<<<<< Updated upstream
  'version': '19.0.5.1.2',
-=======
- 'version': '19.0.5.1.1',
->>>>>>> Stashed changes
  'license': 'LGPL-3',
  'author': 'Abdin Pharmacies',
  'developer': 'hossam elsheikh',
