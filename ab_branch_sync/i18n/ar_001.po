@@ -1157,6 +1157,7 @@ msgstr "عملية البيع المركزية هذه مرتبطة بالفعل 
 #. module: ab_branch_sync
 #. odoo-python
 #: code:addons/ab_branch_sync/models/operation.py:0
+#: code:addons/ab_branch_sync/models/pos.py:0
 msgid "Configure a central HTTP or HTTPS URL, database, and API key."
 msgstr ""
 "اضبط عنوان المركزي باستخدام HTTP أو HTTPS واسم قاعدة البيانات ومفتاح "
@@ -1492,3 +1493,21 @@ msgstr "تم تحديث المخزون. لا تزال بعض العمليات ا
 #: code:addons/ab_branch_sync/models/enrollment.py:0
 msgid "Synchronization failed. Check the central connection and retry."
 msgstr "فشلت المزامنة. تحقق من الاتصال بالمركز الرئيسي وأعد المحاولة."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/cache.py:0
+msgid "Native sales access is required."
+msgstr "صلاحية المبيعات الأصلية مطلوبة."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/cache.py:0
+msgid "Cashier access is required."
+msgstr "صلاحية أمين الصندوق مطلوبة."
+
+#. module: ab_branch_sync
+#. odoo-python
+#: code:addons/ab_branch_sync/models/cache.py:0
+msgid "This store is unavailable for native sales."
+msgstr "هذا الفرع غير متاح للمبيعات الأصلية."

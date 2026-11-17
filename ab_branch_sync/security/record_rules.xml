@@ -2,11 +2,41 @@
     <record id="operation_store_rule" model="ir.rule">
         <field name="name">Synchronization store access</field>
         <field name="model_id" ref="model_ab_branch_sync_operation"/>
-        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
     </record>
     <record id="cache_store_rule" model="ir.rule">
         <field name="name">Central stock cache store access</field>
         <field name="model_id" ref="ab_sales.model_ab_sales_inventory"/>
-        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('central_initialized', '=', False), ('store_id', 'in', user.inventory_store_ids.ids)]</field>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('central_initialized', '=', False), ('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.backend_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.sale_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('native_backend', '=', False), ('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.line_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('header_id.native_backend', '=', False), ('header_id.store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.return_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('native_origin_id', '=', False), ('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.return_line_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('header_id.native_origin_id', '=', False), ('header_id.store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.ab_sales_native_payment_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids()), ('cashier_id', '=', user.id)]</field>
+    </record>
+    <record id="ab_sales_inventory.ab_sales_native_cash_balance_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids()), ('cashier_id', '=', user.id)]</field>
+    </record>
+    <record id="ab_sales_inventory.allocation_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.shortage_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="ab_sales_inventory.reversal_branch" model="ir.rule">
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user._branch_sync_inventory_store_ids())]</field>
     </record>
 </odoo>

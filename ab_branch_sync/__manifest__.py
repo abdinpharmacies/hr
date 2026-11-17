@@ -1,6 +1,6 @@
 {'name': 'Branch Synchronization',
  'description': 'Durable central synchronization for native sales, returns and reversals.',
- 'version': '19.0.5.1.0',
+ 'version': '19.0.5.1.2',
  'license': 'LGPL-3',
  'author': 'Abdin Pharmacies',
  'developer': 'hossam elsheikh',

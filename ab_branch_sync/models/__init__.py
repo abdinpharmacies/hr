@@ -3,6 +3,7 @@ from . import sales
 from . import enrollment
 from . import ir_config_parameter
 from . import cache
+from . import access
 
 from . import product
 from . import pos

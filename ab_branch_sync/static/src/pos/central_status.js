@@ -2,10 +2,23 @@
 
 import {Component, onWillDestroy, useEffect, useState} from "@odoo/owl";
 import {registry} from "@web/core/registry";
-import {patch} from "@web/core/utils/patch";
 import {useService} from "@web/core/utils/hooks";
 import {_t} from "@web/core/l10n/translation";
 import "@ab_sales/pos/pos_action";
+
+const preparations = new Map();
+
+export function prepareCentralStore(orm, storeId) {
+    if (!preparations.has(storeId)) {
+        const pending = orm.call("ab_sales_pos_api", "pos_central_prepare", [], {store_id: storeId});
+        preparations.set(storeId, pending);
+        const release = () => {
+            if (preparations.get(storeId) === pending) preparations.delete(storeId);
+        };
+        pending.then(release, release);
+    }
+    return preparations.get(storeId);
+}
 
 export class BranchCentralStatus extends Component {
     static template = "ab_branch_sync.CentralStatus";
@@ -53,9 +66,10 @@ export class BranchCentralStatus extends Component {
     }
 
     get label() {
-        if (this.props.requiresLogin && !this.props.sessionToken) return _t("Central: sign in");
         if (!this.props.storeId) return _t("Central: select branch");
         if (this.state.busy) return _t("Central: syncing");
+        if (this.props.requiresLogin && !this.props.sessionToken
+                && ["online", "waiting"].includes(this.state.status)) return _t("Central: sign in");
         return {
             online: _t("Central: online"),
             offline: _t("Central: offline"),
@@ -78,17 +92,22 @@ export class BranchCentralStatus extends Component {
 
     async check(synchronize = true, generation = this.generation) {
         if (this.destroyed || generation !== this.generation || this.inFlight === generation
-                || !this.props.storeId || (this.props.requiresLogin && !this.props.sessionToken)) return;
+                || !this.props.storeId) return;
         this.inFlight = generation;
         // Reconnect by installing a fresh snapshot, not merely changing the label.
         synchronize = synchronize || this.state.status === "offline" || this.syncIssue;
         if (synchronize) this.state.busy = true;
         try {
-            const result = await this.orm.call("ab_sales_pos_api", "pos_central_sync", [], {
-                store_id: this.props.storeId,
-                session_token: this.props.sessionToken,
-                synchronize,
-            });
+            const storeId = this.props.storeId;
+            const preparation = await prepareCentralStore(this.orm, storeId);
+            if (this.destroyed || generation !== this.generation) return;
+            const needsLogin = this.props.requiresLogin && !this.props.sessionToken;
+            const result = !preparation.ready || preparation.synced || needsLogin ? preparation
+                : await this.orm.call("ab_sales_pos_api", "pos_central_sync", [], {
+                    store_id: storeId,
+                    session_token: this.props.sessionToken,
+                    synchronize,
+                });
             if (this.destroyed || generation !== this.generation) return;
             this.setSyncInterval(result.interval_seconds, generation);
             this.state.status = result.state;
@@ -112,12 +131,55 @@ export class BranchCentralStatus extends Component {
 }
 
 const PosAction = registry.category("actions").get("ab_sales.pos");
-PosAction.components = {...PosAction.components, BranchCentralStatus};
-patch(PosAction.prototype, {
+
+export class BranchSyncPosAction extends PosAction {
+    static components = {...PosAction.components, BranchCentralStatus};
+
+    async abBranchSyncPrepareSelection(storeId, generation) {
+        try {
+            const result = await prepareCentralStore(this.orm, storeId);
+            if (this._balanceRefreshUnmounted || generation !== this._abBranchSelectionGeneration) return false;
+            if (!result.ready) this.notification.add(result.message, {type: "warning"});
+            return result.ready;
+        } catch {
+            if (!this._balanceRefreshUnmounted && generation === this._abBranchSelectionGeneration) {
+                this.notification.add(_t("Connection status could not be checked. Retry synchronization."), {type: "warning"});
+            }
+            return false;
+        }
+    }
+
+    async createNewBill(storeId) {
+        const generation = this._abBranchSelectionGeneration = (this._abBranchSelectionGeneration || 0) + 1;
+        if (storeId && !await this.abBranchSyncPrepareSelection(storeId, generation)) return false;
+        return super.createNewBill(...arguments);
+    }
+
+    async onStoreM2OUpdate(value) {
+        const generation = this._abBranchSelectionGeneration = (this._abBranchSelectionGeneration || 0) + 1;
+        const bill = this.currentBill;
+        if (value?.id && !await this.abBranchSyncPrepareSelection(value.id, generation)) return;
+        if (this.currentBill !== bill) return;
+        return super.onStoreM2OUpdate(...arguments);
+    }
+
+    async loadCache() {
+        const result = await super.loadCache(...arguments);
+        const storeId = this.currentBill?.header?.store_id || this.state.abSalesHr?.selectedStoreId;
+        if (storeId) {
+            // Restored drafts need the same preparation before mounted stock
+            // reads. The status component displays failures and offers retry.
+            try { await prepareCentralStore(this.orm, storeId); } catch { /* Status handles failures. */ }
+        }
+        return result;
+    }
+
     abBranchSyncRefreshBalances() {
         this.scheduleLinePosBalanceRefresh(this.currentBill);
         // Update displayed availability without changing draft quantities or prices.
         this._refreshPosBalancesForResults(this.state.productResults,
             this.currentBill?.header?.store_id, this._posBalanceRequestId);
-    },
-});
+    }
+}
+
+registry.category("actions").add("ab_sales.pos", BranchSyncPosAction, {force: true});

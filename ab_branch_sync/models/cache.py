@@ -157,10 +157,35 @@ class Backend(models.Model):
 
     @api.model
     def _check_store(self, store_id, cashier=False):
-        store = super()._check_store(store_id, cashier=cashier)
+        store = self.env['ab_store'].browse(int(store_id)).exists()
         journal = self.env['ab_branch_sync_operation']
-        if journal._uses_central(store, 'branch'):
-            journal._check_enrolled_store(store)
+        if not journal._uses_central(store, 'branch'):
+            return super()._check_store(store_id, cashier=cashier)
+        store = self._check_branch_store_access(store_id, cashier=cashier)
+        journal._check_enrolled_store(store)
+        return store
+
+    @api.model
+    def _check_branch_store_access(self, store_id, cashier=False):
+        """Authorize POS preparation without allowing a sale before readiness."""
+        store = self.env['ab_store'].browse(int(store_id)).exists()
+        if not self.env['ab_branch_sync_operation']._uses_central(store, 'branch'):
+            raise AccessError(_('This store is unavailable for native sales.'))
+        # Branch inventory access follows existing sales access. The API user
+        # on central owns inventory permissions; local tills need no extra role.
+        user = self.env.user
+        sales = self.env['ab_sales_header']
+        sales.check_access('read')
+        if not user.has_group('base.group_user'):
+            raise AccessError(_('Native sales access is required.'))
+        if hasattr(sales, '_raise_sales_prevented'):
+            sales._raise_sales_prevented()
+        if cashier and not (user.has_group('base.group_system')
+                            or user.has_group('ab_sales.group_ab_sales_manager')
+                            or user.has_group('ab_sales.group_ab_sales_cashier')):
+            raise AccessError(_('Cashier access is required.'))
+        if not store.active or not store.allow_sale:
+            raise AccessError(_('This store is unavailable for native sales.'))
         return store
 
 

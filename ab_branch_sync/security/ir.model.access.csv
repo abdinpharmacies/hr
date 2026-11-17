@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_operation_manager,Central operation manager,model_ab_branch_sync_operation,group_manager,1,1,0,0
+access_branch_return_ui,Branch sales return screen,ab_sales.model_ab_sales_return_ui_api,base.group_user,1,1,1,1

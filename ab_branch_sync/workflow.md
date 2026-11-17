@@ -1,4 +1,4 @@
-# Inventory synchronization workflow — 19.0.5.1.0
+# Inventory synchronization workflow — 19.0.5.1.2
 
 ## Ownership
 
@@ -28,9 +28,10 @@ activation settings are unchanged.
 ## Connection and stock
 
 The only authentication credential is a standard Odoo user API key (RPC scope).
-On central, assign the user the **Inventory Writer** role and explicit
-**Inventory Stores**. Active users can access only the intersection of their
-inventory stores, allowed companies, and the requested replica's sales stores.
+On central, assign the API user the **Inventory Writer** role. Configure the
+replica's **Allowed Sales Stores** once; no Inventory Stores assignment is needed
+on the API user. The connection returns active, sale-enabled replica stores in
+the API user's allowed companies. Every request rechecks that same sales scope.
 The role is not granted to administrators automatically. Revoking the key or
 removing the role removes transport access.
 
@@ -43,12 +44,21 @@ System Parameters. Configure these existing keys directly:
 | `ab_central_branch_connection.database` | Central Odoo database name |
 | `ab_central_branch_connection.api_key` | Inventory Writer's standard Odoo user API key |
 
-Then open Branch Synchronization → Operations and click **Connect to Central**.
-The button reads the saved parameters, verifies access, and downloads the initial
-stock snapshot. **Sync Now** delivers up to 100 queued, uncertain or retryable
+Select the branch in the POS. The POS reads these saved parameters, verifies
+central access and downloads the initial stock snapshot automatically, including
+before employee PIN login. Opening or switching a bill waits for preparation
+before loading stock; restored drafts use the same preparation. Setup does not
+submit queued sales. A failed connection or incomplete download leaves selling
+blocked, shows the failure in the central status tag, and can be retried there.
+
+Administrators can also open Branch Synchronization → Operations and click
+**Connect to Central** to prepare the installation manually. **Sync Now**
+delivers up to 100 queued, uncertain or retryable
 protocol-3 operations and refreshes stock; its notification reports whether any
-outgoing operations still need attention. Both buttons are available on an empty
-Operations list and require a system administrator, including direct RPC calls.
+outgoing operations still need attention. Both Operations buttons are available on an empty list and require a system
+administrator, including direct RPC calls. The POS preparation endpoint is limited
+to an authenticated sales user and the locally assigned store, using only saved
+server-side credentials.
 The object-button handlers accept empty or multiple-record selections through
 Odoo record-method dispatch; the connection and synchronization run once per click.
 Synchronization managers retain their existing operation review/retry access.
@@ -61,8 +71,8 @@ first; cancel abandoned invoices only after reviewing central counterparts and
 using native cancellation/reversal workflows on the affected installations.
 
 Changing, creating, renaming or deleting a connection parameter clears connection
-authorization and stock readiness. Click Connect to Central again after editing
-the target or API key. Unchanged values and unrelated parameters do not reset the
+authorization and stock readiness. Selecting a POS branch attempts setup again
+using the new target or API key; Connect to Central remains a manual alternative. Unchanged values and unrelated parameters do not reset the
 connection. The module maintains these parameters; do not configure them manually:
 
 | Key | Purpose |
@@ -81,8 +91,8 @@ For an existing development installation, rename the old `ab_branch_sync.url`,
 `ab_branch_sync.database`, and `ab_branch_sync.api_key` keys in System Parameters
 to the corresponding `ab_central_branch_connection.*` keys, preserving their values.
 If a custom `ab_branch_sync.pos_sync_interval_seconds` exists, rename it too to
-preserve the interval. Then click **Connect to Central** to regenerate the five
-module-maintained parameters and download stock. Old parameter names are no longer
+preserve the interval. Then select the POS branch (or use **Connect to Central**)
+to regenerate the five module-maintained parameters and download stock. Old parameter names are no longer
 read; no automatic migration or fallback is provided. Renaming keys does not
 change database UUIDs, replica serials, snapshots, or operation records.
 
@@ -103,6 +113,18 @@ sessions are installed. A server-only trusted replay context authorizes this
 transport without a central employee PIN or POS service-user configuration.
 Ordinary branch POS and cashier session checks remain in force.
 
+The replay grants the authenticated API user temporary access to only the selected
+store. The normal sales methods still validate stock, prices, quantities,
+promotions, returns and employee references. Record-rule caches distinguish replay
+stores from ordinary requests using server-owned state, not RPC context flags.
+No groups or user store assignments are written during synchronization.
+
+The inventory ledger's `store_id` identifies the stock owner. Its `db_serial` is
+stamped from the posting server configuration; it is not proof of the originating
+branch or an access grant. The journal retains the branch origin, token and store,
+and the authenticated request validates the replica serial. Local database IDs
+are resolved through stable store/product codes rather than trusted across databases.
+
 Before approving a connected sale, refresh its products from central. Network
 outages and central HTTP 5xx failures permit the last complete snapshot to be
 used. Authentication/business errors do not select offline fallback. A first
@@ -117,11 +139,46 @@ inventory acceptance. The bill form and POS status API expose inventory state,
 central bill reference, and diagnostic details. Existing callcenter responses
 continue exposing sync_state and sync_message alongside their branch bill reference.
 
+## Branch user access
+
+Configure the central URL, database and API key once for the branch. Selecting
+the branch in the POS attempts authorization and the first stock download. Existing internal sales users
+then use the enrolled stores without a Native Sales Operator group or personal
+Inventory Stores assignments. Merely entering credentials does not bypass
+central authentication or the required first snapshot.
+
+Automatic scope is the intersection of this installation's active replica's
+Allowed Sales Stores and central's authorized store codes, with a matching
+connected database UUID. It is added to any existing explicit inventory scope;
+other native stores retain their existing checks. Sale and return headers/lines,
+stock caches, backend records and related inventory rules use the same scope.
+Changing connection credentials or replica assignments invalidates cached access.
+Cashier payment/balance records retain the cashier's own-record restriction.
+
+Existing sales ACLs, sales-prevention controls, employee POS session/profile
+permissions, cashier roles, and administrator/manager rules remain effective.
+The return-screen API uses the existing internal-sales user access; it does not
+require an extra native-inventory role. Editing connection credentials remains an
+administrator operation and synchronization-journal management remains restricted.
+Central requires an active Inventory Writer API user, but derives transport
+store access from the replica's Allowed Sales Stores and the user's companies.
+Personal Inventory Stores continue controlling ordinary central UI access; they
+do not restrict this authenticated transport.
+
 ## POS opening and connection status
 
-The branch POS header shows a compact central connection tag. Once a store and,
-when installed, an active employee session are available, it synchronizes in the
-background: verify central identity/protocol, deliver up to ten queued protocol-3
+The branch POS header shows a compact central connection tag. Selecting a store
+first checks internal sales access, the current replica assignment and the POS
+service-user binding where installed. It can prepare the saved connection before
+employee PIN login, without granting permission to sell or replay queued sales.
+Authorization and the first complete snapshot for all centrally authorized stores
+run in one savepoint. Failure rolls back partial setup; only a full successful
+download marks the installation ready. An already-ready selection avoids repeating
+the first download. Concurrent UI preparation calls for the same store share one
+request, and stale responses cannot switch a bill or refresh another branch.
+
+After an active employee session is available, ordinary periodic synchronization
+continues: verify central identity/protocol, deliver up to ten queued protocol-3
 inventory events for that store, then atomically replace that store's full stock
 snapshot. Existing retry/hourly jobs handle the remaining work. Legacy protocol-2
 events are not replayed. POS requests cannot operate outside the current replica,
@@ -130,7 +187,7 @@ authorized stores, user access, or employee authorization.
 The tag reports syncing, online, offline, or needs attention. A connection check and full store resync run through setInterval every 10 seconds
 while the POS is open. The system parameter
 `ab_central_branch_connection.pos_sync_interval_seconds` controls the interval in seconds
-(default 10; invalid/nonpositive values fall back to 10). Active requests do not
+(default 10; values outside 1–86400 or invalid values fall back to 10). Active requests do not
 overlap. The response updates the timer if the parameter changes. Recovery from an
 offline/failed sync installs a fresh snapshot; clicking the tag retries manually.
 Successful downloads refresh displayed product and line availability without
@@ -177,8 +234,9 @@ before selling from the cache; normal offline fallback then applies.
 
 New operations use protocol 3 at /ab_central_sync/v3/. Central commits stock,
 its bill representation, and the operation result atomically. Duplicate tokens
-return the same result; modified payloads are rejected. The API key, Inventory Writer role, active user, company, replica and explicit
-inventory-store scope are checked on every request.
+return the same result; modified payloads are rejected. The API key, Inventory
+Writer role, active user, company, active replica and its sale-enabled stores are
+checked on every request.
 Central selects actual stock batches; agreed quantities, prices, promotions and
 totals must still match. Inventory conflicts remain visible for reconciliation.
 
