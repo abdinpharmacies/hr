@@ -126,8 +126,11 @@ class EmployeeHistory(models.Model):
     @api.depends('action_date', 'action_type.action_date_type', 'alt_job_id.action_date')
     def _compute_start_fir_date(self):
         for rec in self:
+            if not rec.action_date:
+                rec.start_fir_date = False
+                continue
             default_firing_date = rec.action_date + datetime.timedelta(days=30)
-            if rec.alt_job_id and rec.alt_job_id.action_date <= default_firing_date:
+            if rec.alt_job_id and rec.alt_job_id.action_date and rec.alt_job_id.action_date <= default_firing_date:
                 rec.start_fir_date = rec.alt_job_id.action_date
             elif rec.action_type.action_date_type == 'pending_issue':
                 rec.start_fir_date = default_firing_date

@@ -32,10 +32,7 @@ class Employees(models.Model):
         string='Children')
 
     name = fields.Char(required=True)
-    costcenter_id = fields.Many2one('ab_costcenter', index=True,
-                                    readonly=lambda self: not self.user.has_group(
-                                        'ab_hr.group_ab_hr_co')
-                                    )
+    costcenter_id = fields.Many2one('ab_costcenter', index=True)
     user_id = fields.Many2one('res.users', string='Related User',
                               readonly=lambda self: not self.user.has_group('base.group_system'))
     cc_id = fields.Many2one('ab_costcenter')
@@ -112,7 +109,7 @@ class Employees(models.Model):
     issue_date = fields.Date(related='main_occupied_job_id.issue_date')
     job_status = fields.Selection(related='main_occupied_job_id.job_status')
     territory = fields.Selection(related='main_occupied_job_id.territory')
-    is_working = fields.Boolean(compute='_compute_main_job_data', compute_sudo=True, search='_search_is_working')
+    is_working = fields.Boolean(compute='_compute_is_working', compute_sudo=True, search='_search_is_working')
     is_docs_complete = fields.Boolean(compute='_compute_is_docs_complete')
 
     address_text = fields.Char(string='Address: ')
@@ -310,10 +307,10 @@ class Employees(models.Model):
         else:
             return False
 
-    @api.depends('job_id')
+    @api.depends('main_occupied_job_id', 'main_occupied_job_id.job_status')
     def _compute_is_working(self):
         for rec in self:
-            rec.is_working = bool(rec.job_id)
+            rec.is_working = rec.main_occupied_job_id.job_status == 'active'
 
     def _search_is_working(self, operator, val):
         # Odoo 19 canonicalizes Boolean searches to membership domains.
@@ -417,12 +414,10 @@ class Employees(models.Model):
                 rec.main_occupied_job_id = target_job.id
                 rec.job_id = target_job.job_id.id
                 rec.department_id = target_job.workplace.id
-                rec.is_working = target_job.job_status == 'active'
             else:
                 rec.main_occupied_job_id = False
                 rec.job_id = False
                 rec.department_id = False
-                rec.is_working = False
 
     @api.model
     def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):

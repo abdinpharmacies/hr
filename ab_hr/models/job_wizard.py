@@ -73,6 +73,7 @@ class JobWizard(models.TransientModel):
 
         return res
 
+
     # JOB_CREATE #####################################################
     def job_create(self, vals):
 
@@ -110,18 +111,13 @@ class JobWizard(models.TransientModel):
 
         action_date_type = self.env['ab_hr_history_action_type'].browse(vals['action_type']).action_date_type
         if action_date_type == 'firing':
-            manager = job_id.workplace.manager_id
-            if manager.id == job_id.employee_id.id:
-                job_id.workplace.manager_id = False
             job_id.termination_date = vals['action_date']
-            job_id.workplace._compute_manager_id()
 
         elif action_date_type == 'hiring':
             job_id.hiring_date = vals['action_date']
 
         elif action_date_type == 'clear_firing':
             job_id.termination_date = False
-            job_id.workplace._compute_manager_id()
 
     # MANPOWER_CREATE #####################################################
     def manpower_create(self, vals):

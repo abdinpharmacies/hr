@@ -47,6 +47,16 @@
             </field>
         </record>
 
+
+        <record id="emp_history_list_remove_apply_button" model="ir.ui.view">
+            <field name="name">ab_hr_emp_history.list.remove.apply.button</field>
+            <field name="model">ab_hr_emp_history</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_emp_history_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/button[@name='btn_is_applied']" position="replace"/>
+            </field>
+        </record>
+
         <record id="emp_history_view_form" model="ir.ui.view">
             <field name="name">emp_history_view_form</field>
             <field name="model">ab_hr_emp_history</field>

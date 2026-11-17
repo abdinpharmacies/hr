@@ -61,8 +61,9 @@ class ReportWizard(models.TransientModel):
 
     def btn_export_excel_termination_feedback(self):
         action = self.env.ref('ab_hr.action_export_termination_feedback_excel')
-        action[0].name = self.report_model_id.name
-        return action.report_action(self)
+        result = action.report_action(self)
+        result['name'] = self.report_model_id.name
+        return result
 
     def _get_termination_feedback(self):
         headers = ['employee_code', 'employee', 'job title', 'workplace', 'territory', 'action_type', 'action_date',

@@ -89,25 +89,23 @@ class ManpowerNeed(models.Model):
                 rec.urgent = ''
 
     def _search_urgent(self, operator, val):
-        if operator == '!=':
-            need_manpower = self.env['ab_hr_manpower_need'].search([('need_manpower', '<', 0)])
-            manpower = []
-            for rec in need_manpower:
-                need = rec.need_manpower
-                history = self.env['ab_hr_history_report'].sudo()
-                if need < 0:
-                    limit = need * -1
-                    history = history.search([
-                        ('workplace_id', '=', rec.workplace.id),
-                        ('job_title_id', '=', rec.job_title.id),
-                        ('territory', '=', rec.territory),
-                        ('default_urgent', '=', True),
-                    ], order='action_date desc', limit=limit)
-                    if history and [h.delay_per_day for h in history if h.delay_per_day > 0]:
-                        manpower.append(rec.id)
-            if operator == '!=':
-                return [('id', 'in', manpower)]
-            return []
+        # Empty Char searches are normalized to membership domains by Odoo 19.
+        values = val if operator in ('in', 'not in') else [val]
+        if operator not in ('=', '!=', 'in', 'not in') or any(v not in (False, '', None) for v in values):
+            return NotImplemented
+        urgent_ids = []
+        for rec in self.search([('need_manpower', '<', 0)]):
+            history = self.env['ab_hr_history_report'].sudo().search([
+                ('workplace_id', '=', rec.workplace.id),
+                ('job_title_id', '=', rec.job_title.id),
+                ('territory', '=', rec.territory),
+                ('default_urgent', '=', True),
+            ], order='action_date desc', limit=int(-rec.need_manpower))
+            if any(h.delay_per_day > 0 for h in history):
+                urgent_ids.append(rec.id)
+        if not values:
+            return fields.Domain.TRUE if operator == 'not in' else fields.Domain.FALSE
+        return fields.Domain('id', 'in' if operator in ('!=', 'not in') else 'not in', urgent_ids)
 
     def btn_history_detail(self):
         return {

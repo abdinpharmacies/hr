@@ -421,5 +421,15 @@
                 </xpath>
             </field>
         </record>
+        <record id="ab_hr_employee_search_department_sidebar" model="ir.ui.view">
+            <field name="name">ab_hr_employee.search.department.sidebar</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//searchpanel/field[@name='department_id']" position="attributes">
+                    <attribute name="limit">0</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

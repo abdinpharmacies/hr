@@ -13,7 +13,7 @@ msgstr ""
 "Language: ar_001\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 
 #. module: ab_hr
@@ -2222,10 +2222,11 @@ msgid "Received Date"
 msgstr "تاريخ الاستلام"
 
 #. module: ab_hr
+#. odoo-python
 #: code:addons/ab_hr/models/history.py:0
 #, python-format
 msgid "Record is already archived."
-msgstr ""
+msgstr "تمت أرشفة السجل بالفعل."
 
 #. module: ab_hr
 #: model:ir.model.fields,field_description:ab_hr.field_ab_hr_history_action_type__recruiter_allowed
@@ -3265,3 +3266,9 @@ msgstr "نفسي"
 #: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__supervision_type__workplace_manager_job
 msgid "Workplace manager job"
 msgstr "وظيفة مدير مكان العمل"
+
+#. module: ab_hr
+#. odoo-python
+#: code:addons/ab_hr/models/job_wizard.py:0
+msgid "The workplace must belong to one of your assigned branches."
+msgstr "يجب أن يكون مكان العمل تابعاً لأحد الفروع المسندة إليك."
