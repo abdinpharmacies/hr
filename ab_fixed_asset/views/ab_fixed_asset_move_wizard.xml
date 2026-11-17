@@ -372,5 +372,53 @@
                 </xpath>
             </field>
         </record>
+    <record id="asset_move_workflow_safety" model="ir.ui.view">
+  <field name="name">asset.move.workflow.safety</field>
+  <field name="model">ab_fixed_asset_move_wizard</field>
+  <field name="inherit_id" ref="ab_fixed_asset_move_wizard_view_form"/>
+  <field name="priority">100</field>
+  <field name="arch" type="xml">
+    <xpath expr="//button[@name='btn_submit']" position="attributes">
+      <attribute name="invisible">is_submitted</attribute>
+    </xpath>
+    <xpath expr="//button[@name='btn_confirm']" position="attributes">
+      <attribute name="invisible">not is_submitted or is_confirmed</attribute>
+    </xpath>
+    <xpath expr="//field[@name='src_fixed_asset_ids']" position="attributes">
+      <attribute name="required">True</attribute>
+    </xpath>
+    <xpath expr="//field[@name='dest_fixed_asset_id']" position="attributes">
+      <attribute name="required">move_type == 'partially_transfer'</attribute>
+      <attribute name="invisible">move_type != 'partially_transfer'</attribute>
+      <attribute name="domain">[('id', 'not in', src_fixed_asset_ids)]</attribute>
+    </xpath>
+    <xpath expr="//field[@name='je_dst_debit_value']" position="attributes">
+      <attribute name="required">move_type == 'partially_transfer'</attribute>
+      <attribute name="readonly">is_submitted or move_type == 'partially_depr'</attribute>
+    </xpath>
+    <xpath expr="//field[@name='move_type']" position="after">
+      <field name="journal_ids" widget="many2many_tags" readonly="True" invisible="not journal_ids"/>
+    </xpath>
+    <xpath expr="//field[@name='src_inventory_line_transfer_ids']" position="attributes">
+      <attribute name="readonly">is_submitted</attribute>
+    </xpath>
+    <xpath expr="//field[@name='src_inventory_line_ids']" position="attributes">
+      <attribute name="readonly">is_submitted</attribute>
+    </xpath>
+    <xpath expr="//field[@name='dst_inventory_line_ids']" position="attributes">
+      <attribute name="readonly">is_submitted</attribute>
+    </xpath>
+    <xpath expr="//field[@name='dest_fixed_asset_line_ids']" position="attributes">
+      <attribute name="readonly">is_submitted</attribute>
+    </xpath>
+    <xpath expr="//button[@name='btn_add_src_asset_inventory_line']" position="attributes">
+      <attribute name="invisible">is_submitted</attribute>
+    </xpath>
+    <xpath expr="//button[@name='btn_add_dst_asset_inventory_line']" position="attributes">
+      <attribute name="invisible">is_submitted</attribute>
+    </xpath>
+  </field>
+</record>
+
     </data>
 </odoo>

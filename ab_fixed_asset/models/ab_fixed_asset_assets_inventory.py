@@ -1,10 +1,16 @@
 import datetime
+import logging
 
 import re
 
 import json
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, Command
+from odoo.tools import SQL
+from odoo.tools.float_utils import float_compare, float_is_zero
 from odoo.exceptions import ValidationError, UserError
+
+
+_logger = logging.getLogger(__name__)
 
 
 class AbdinInventory(models.Model):
@@ -101,67 +107,26 @@ class AbdinInventory(models.Model):
 
     active = fields.Boolean(default=True)
 
+    @api.depends('asset_total_value', 'total_depr', 'useful_life', 'asset_has_accounting_value', 'scrapping_value')
     def _compute_asset_status(self):
         for rec in self:
-            asset_total_value = rec.asset_total_value
-            total_depr = rec.total_depr
-            current_value_after_depr = rec.current_value_after_depr
-            useful_life = rec.useful_life
-            je_count = rec.je_count
-            if je_count == 0:
+            if not rec.asset_has_accounting_value:
                 rec.asset_status = 'new'
-            elif current_value_after_depr < 1 and rec.asset_has_accounting_value:
-                rec.asset_status = 'disposed'
-            elif current_value_after_depr > 1 and useful_life > 0:
-                rec.asset_status = 'active'
-            elif useful_life == 0 and total_depr > 0:
+            elif rec.useful_life == 0 and rec.scrapping_value > 0:
                 rec.asset_status = 'scrapped'
+            elif float_compare(rec.current_value_after_depr, 0, precision_digits=2) <= 0:
+                rec.asset_status = 'disposed'
+            elif rec.useful_life > 0:
+                rec.asset_status = 'active'
             else:
                 rec.asset_status = 'unknown'
 
     def _search_asset_status(self, operator, value):
-        if operator not in ['=', '!=']:
+        if operator not in ('=', '!=', 'in', 'not in'):
             raise UserError(_('Operation not supported for asset_status'))
-
-        if value == 'new':
-            matched_ids = self.sudo().search([('je_count', '=', 0)]).ids
-        else:
-            fixed_asset_account = self.env['ab_accounting_account_guide'].search(
-                [('internal_type', '=', 'fixed_asset')])
-            depr_account = self.env.ref('ab_accounting.ab_accounting_account_guide_depreciation')
-            depr_account_ids = [depr_account.id]  # Can be a list in the future
-
-            asset_account_ids = fixed_asset_account.ids + depr_account_ids
-            asset_account_ids_str = ",".join(map(str, asset_account_ids))
-            depr_account_ids_str = ",".join(map(str, depr_account_ids))
-
-            sql = f"""
-                SELECT fixed_asset_id
-                FROM ab_accounting_je_line je
-                JOIN ab_accounting_account_guide gu ON je.account_id = gu.id
-                JOIN ab_fixed_asset_assets_inventory fa on fa.id = je.fixed_asset_id
-                WHERE gu.id IN ({asset_account_ids_str}) and je.active = True and fa.useful_life > 0
-                GROUP BY fixed_asset_id
-                HAVING SUM(
-                    CASE
-                        WHEN gu.id IN ({depr_account_ids_str}) THEN je.credit_val - je.debit_val
-                        ELSE je.debit_val - je.credit_val
-                    END
-                ) > 1
-            """
-            self.env.cr.execute(sql)
-            active_asset_ids = [row[0] for row in self.env.cr.fetchall()]
-
-            if value == 'active':
-                matched_ids = active_asset_ids
-            else:
-                all_recs = self.sudo().search([
-                    ('je_count', '>', 0),
-                    ('id', 'not in', active_asset_ids)
-                ])
-                matched_ids = [rec.id for rec in all_recs if rec.asset_status == value]
-
-        return [('id', 'not in' if operator == '!=' else 'in', matched_ids)]
+        values = value if operator in ('in', 'not in') else [value]
+        matches = self.search([]).filtered(lambda asset: asset.asset_status in values)
+        return [('id', 'not in' if operator in ('!=', 'not in') else 'in', matches.ids)]
 
     def _compute_je_count(self):
         for rec in self:
@@ -198,90 +163,90 @@ class AbdinInventory(models.Model):
             ids = [row[0] for row in self.env.cr.fetchall()]
         return [('id', 'in', ids)]
 
-    @api.depends('je_line_ids')
+    def _asset_cost_accounts(self):
+        accounts = self.env['ab_accounting_account_guide'].with_context(active_test=False).search([
+            ('internal_type', '=', 'fixed_asset'),
+        ])
+        return accounts | self.env.ref('ab_accounting.ab_accounting_account_guide_fixed_asset_inventory')
+
+    def _posted_asset_lines(self, accounts):
+        return self.env['ab_accounting_je_line'].sudo().search([
+            ('fixed_asset_id', 'in', self.ids), ('account_id', 'in', accounts.ids),
+            ('header_id.is_posted', '=', True), ('active', '=', True),
+        ], order='due_date, id')
+
+    @api.depends('je_line_ids.account_id', 'je_line_ids.due_date', 'je_line_ids.active', 'je_line_ids.header_id.is_posted')
     def _compute_last_depreciation_date(self):
-        depr_account = self.env.ref('ab_accounting.ab_accounting_account_guide_depreciation')
-
+        account = self.env.ref('ab_accounting.ab_accounting_account_guide_depreciation')
+        dates = {}
+        for line in self._posted_asset_lines(account):
+            if line.due_date:
+                dates[line.fixed_asset_id.id] = max(dates.get(line.fixed_asset_id.id, line.due_date), line.due_date)
         for rec in self:
-            je_line = self.env['ab_accounting_je_line'].search(
-                [('fixed_asset_id', '=', rec.id), ('account_id', '=', depr_account.id)],
-                limit=1,
-                order='due_date desc')
+            rec.last_depreciation_date = dates.get(rec.id, False)
 
-            rec.last_depreciation_date = je_line.due_date
-
-    @api.depends('je_line_ids')
+    @api.depends('je_line_ids.account_id', 'je_line_ids.active', 'je_line_ids.header_id.is_posted')
     def _compute_asset_has_accounting_value(self):
+        ids = set(self._posted_asset_lines(self._asset_cost_accounts()).fixed_asset_id.ids)
         for rec in self:
-            JE = self.env['ab_accounting_je_line'].sudo()
-            je_lines_count = JE.search_count(
-                [('fixed_asset_id', '=', rec.id), ('account_id.internal_type', '=', 'fixed_asset')])
-            if je_lines_count > 0:
-                rec.asset_has_accounting_value = True
-            else:
-                rec.asset_has_accounting_value = False
+            rec.asset_has_accounting_value = rec.id in ids
 
     def _search_asset_has_accounting_value(self, operator, val):
-        # Odoo 19 canonicalizes Boolean searches to membership domains.
-        if operator in ('in', 'not in'):
-            values = set(val)
-            if not values or values == {False, True}:
-                matches_all = bool(values) == (operator == 'in')
-                return [(1, '=', 1)] if matches_all else [(0, '=', 1)]
-            val = True in values
-            operator = '=' if operator == 'in' else '!='
-        if operator not in ['=', '!='] or not isinstance(val, bool):
+        if operator not in ('=', '!=', 'in', 'not in'):
             raise UserError(_('Operation not supported'))
-
-        self.env.cr.execute(" select fixed_asset_id "
-                            " from ab_accounting_je_line je"
-                            " join ab_accounting_account_guide gu on gu.id = je.account_id"
-                            " WHERE gu.internal_type='fixed_asset' and je.fixed_asset_id IS NOT NULL "
-                            " group by je.fixed_asset_id ")
-        ids = [row[0] for row in self.env.cr.fetchall()]
-
-        if operator != '=':  # that means it is '!='
-            val = not val
-        return [('id', 'in' if val else 'not in', ids)]
+        values = val if operator in ('in', 'not in') else [val]
+        matches = self.search([]).filtered(lambda asset: asset.asset_has_accounting_value in values)
+        return [('id', 'not in' if operator in ('!=', 'not in') else 'in', matches.ids)]
 
     def _search_last_depreciation_date(self, operator, val):
-        print(operator)
-        print(val)
-        return []
+        if operator not in ('=', '!=', 'in', 'not in', '>', '>=', '<', '<='):
+            raise UserError(_('Operation not supported'))
+        values = val if operator in ('in', 'not in') else [val]
+        values = [fields.Date.to_date(value) if value else False for value in values]
+        def matches(asset):
+            date = asset.last_depreciation_date
+            if operator in ('=', 'in'):
+                return date in values
+            if operator in ('!=', 'not in'):
+                return date not in values
+            if not date or not values[0]:
+                return False
+            return {'>': date > values[0], '>=': date >= values[0],
+                    '<': date < values[0], '<=': date <= values[0]}[operator]
+        return [('id', 'in', self.search([]).filtered(matches).ids)]
 
-    @api.depends('je_line_ids', 'je_line_ids.account_id')
+    @api.depends('je_line_ids.account_id', 'je_line_ids.debit_val', 'je_line_ids.credit_val',
+                 'je_line_ids.active', 'je_line_ids.header_id.is_posted')
     def _compute_total_depr(self):
+        # Remaining accumulated depreciation, not lifetime expense. Disposal and
+        # direct cost write-downs must not be subtracted a second time.
+        account = self.env.ref('ab_accounting.ab_accounting_account_guide_accumulated_depreciation')
+        totals = {}
+        for line in self._posted_asset_lines(account):
+            key = line.fixed_asset_id.id
+            totals[key] = totals.get(key, 0) + line.credit_val - line.debit_val
         for rec in self:
-            depr_account = self.env.ref('ab_accounting.ab_accounting_account_guide_depreciation')
+            rec.total_depr = totals.get(rec.id, 0)
 
-            depr_jes = self.env['ab_accounting_je_line'].search(
-                [('fixed_asset_id', '=', rec.id), ('account_id', '=', depr_account.id)],
-                order='due_date')
-
-            rec.total_depr = sum(je.debit_val - je.credit_val for je in depr_jes)
-
-    @api.depends('je_line_ids', 'je_line_ids.account_id')
+    @api.depends('asset_total_value', 'total_depr')
     def _compute_current_value_after_depr(self):
         for rec in self:
             rec.current_value_after_depr = rec.asset_total_value - rec.total_depr
 
-    @api.depends('je_line_ids', 'je_line_ids.account_id.internal_type')
+    @api.depends('je_line_ids.account_id', 'je_line_ids.debit_val', 'je_line_ids.credit_val',
+                 'je_line_ids.active', 'je_line_ids.header_id.is_posted')
     def _compute_asset_total_value(self):
+        totals = {}
+        for line in self._posted_asset_lines(self._asset_cost_accounts()):
+            key = line.fixed_asset_id.id
+            totals[key] = totals.get(key, 0) + line.debit_val - line.credit_val
         for rec in self:
-            fixed_asset_account = self.env['ab_accounting_account_guide'].search(
-                [('internal_type', '=', 'fixed_asset')])
-
-            fixed_asset_jes = self.env['ab_accounting_je_line'].search(
-                [('fixed_asset_id', '=', rec.id), ('account_id', 'in', fixed_asset_account.ids)],
-                order='due_date')
-
-            rec.asset_total_value = sum(je.debit_val - je.credit_val for je in fixed_asset_jes)
+            rec.asset_total_value = totals.get(rec.id, 0)
 
     @api.depends('useful_life')
     def _get_depreciation_rate(self):
         for rec in self:
-            if rec.useful_life:
-                rec.depreciation_rate = 1 / rec.useful_life * 100
+            rec.depreciation_rate = 100 / rec.useful_life if rec.useful_life else 0
 
     @api.depends('asset_value', 'quantity')
     def _compute_total_asset_value(self):
@@ -324,25 +289,10 @@ class AbdinInventory(models.Model):
         self.set_standards_for_asset(self)
 
     def set_standards_for_asset(self, asset):
-        # get standard_ids from final_level
-        # because of delegate=True, you can not access final_level properties directly
-        # you should use ._origin for that
-        # (asset.final_level object) with id=59 will be like ab_fixed_asset_final_level(<NewId origin=59>,)
-        standards_ids = asset.final_level._origin.mapped('standards_ids').mapped('id')
-
-        # make object of type model 'ab_fixed_asset_inventory_standards'
-        inventory_standards = self.env['ab_fixed_asset_inventory_standards']
-
-        # This for loop will create standard_ids in model_ab_fixed_asset_inventory_standards
-        # which is in One2many relation with asset_inventory
-        for standard_id in standards_ids:
-            inventory_standard = asset.inventory_standards_ids.create({'standard_id': standard_id})
-            inventory_standards += inventory_standard
-
-        # Write -in current asset inventory record- the previous standard_ids
-        # NOTE THAT it write INVENTORY_STANDARD_IDS not just STANDARD_IDS
-        # If you want to know the difference just uncomment the below print line
-        asset.write({'inventory_standards_ids': [(6, 0, inventory_standards.ids)]})
+        asset.update({'inventory_standards_ids': [Command.clear()] + [
+            Command.create({'standard_id': standard.id})
+            for standard in asset.final_level.standards_ids
+        ]})
 
     def name_get(self):
         res = []
@@ -391,107 +341,133 @@ class AbdinInventory(models.Model):
         ids = self._name_search(value or '', operator=operator, limit=None)
         return [('id', 'in', ids)]
 
+    def _lock_workflow_rows(self, records):
+        """A row version forces stale repeatable-read transactions to retry."""
+        if not records:
+            return
+        records.flush_recordset()
+        records.env.cr.execute(SQL(
+            "SELECT id FROM %s WHERE id IN %s ORDER BY id FOR UPDATE",
+            SQL.identifier(records._table), tuple(records.ids)))
+        records.env.cr.execute(SQL(
+            "UPDATE %s SET write_date = write_date WHERE id IN %s",
+            SQL.identifier(records._table), tuple(records.ids)))
+        records.invalidate_recordset()
+
+
+    def _asset_account(self, suffix):
+        account = self.env.ref('ab_accounting.ab_accounting_account_guide_' + suffix)
+        if not account.active or not account.is_final:
+            raise UserError(_('Configure an active posting account for %(account)s.', account=account.name))
+        return account
+
+    def _post_asset_journal(self, amounts, explanation):
+        self.ensure_one()
+        lines = []
+        for asset, account, debit, credit in amounts:
+            if float_is_zero(debit, precision_digits=2) and float_is_zero(credit, precision_digits=2):
+                continue
+            if not account.active or not account.is_final:
+                raise UserError(_('Configure an active posting account for %(account)s.', account=account.name))
+            lines.append(Command.create({
+                'fixed_asset_id': asset.id, 'account_id': account.id,
+                'store_id': asset.current_store_id.id, 'debit_val': round(debit, 2),
+                'credit_val': round(credit, 2), 'due_date': fields.Date.today(),
+                'explain': explanation,
+            }))
+        if not lines:
+            raise UserError(_('There is no amount to post.'))
+        # The validated asset workflow owns these exact journal values.
+        # Preserve the acting user while bypassing unrelated manual-entry ACLs.
+        header = self.env['ab_accounting_je_header'].sudo().create({
+            'account_id': amounts[0][1].id,
+            'doctype_id': self.env.ref('ab_accounting.ab_accounting_doctype_auto_je').id,
+            'is_posted': True, 'line_ids': lines,
+        })
+        header.sudo_confirm_all_je()
+        self.invalidate_recordset()
+        return header
+
     def btn_depreciate(self, remove=False):
-        sudo_self = self.sudo()
-        today = datetime.date.today()
-
-        accum_depr_account = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_accumulated_depreciation')
-        account_fixed_asset = self.env.ref('ab_accounting.ab_accounting_account_guide_fixed_asset')
-        depr_account = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_depreciation')
-
-        fixed_asset_account = sudo_self.env['ab_accounting_account_guide'].search(
-            [('internal_type', '=', 'fixed_asset')])
-
-        depr_jes = sudo_self.env['ab_accounting_je_line'].search(
-            [('fixed_asset_id', '=', sudo_self.id), ('account_id', '=', depr_account.id)],
-            order='due_date')
-
-        fixed_asset_jes = sudo_self.env['ab_accounting_je_line'].search(
-            [('fixed_asset_id', '=', sudo_self.id), ('account_id', 'in', fixed_asset_account.ids)],
-            order='due_date')
-
-        if not fixed_asset_jes:
-            raise ValidationError(_("You can't depreciate if fixed asset je does not exist."))
-
-        asset_value = sum(je.debit_val - je.credit_val for je in fixed_asset_jes)
-        asset_purchase_date = fixed_asset_jes[0].due_date
-
-        total_prev_depr = sum(je.debit_val - je.credit_val for je in depr_jes)
-
-        elapsed_days_asset_purchase_date = (today - asset_purchase_date).days
-        if self.useful_life:
-            all_depr_percent = elapsed_days_asset_purchase_date / (self.useful_life * 365)
-            all_depr_value = all_depr_percent * asset_value
-            curr_depr_value = all_depr_value - total_prev_depr
-        else:
-            curr_depr_value = asset_value - total_prev_depr
-
-        if (abs(curr_depr_value) < 1) and (self.asset_total_value > 1):
-            raise ValidationError(_("Depreciation is nearly zero for ID (%d)!\nDepreciation is cancelled.") % self.id)
-        elif curr_depr_value > 0:
-            debit_val = round(curr_depr_value, 2)
-            credit_val = 0
-        else:
-            debit_val = 0
-            credit_val = round(curr_depr_value * -1, 2)
-
-        if remove and self.asset_total_value < 1:
-            raise ValidationError(_("Asset ID %d already removed (Zero Value)") % self.id)
-
-        lines = [
-            (0, 0, {
-                'fixed_asset_id': self.id,
-                'account_id': depr_account.id,
-                'store_id': self.current_store_id.id,
-                'debit_val': debit_val,
-                'credit_val': credit_val,
-                'due_date': datetime.date.today(),
-                'explain': f'Depreciation due to {elapsed_days_asset_purchase_date} days',
-            }),
-            (0, 0, {
-                'fixed_asset_id': self.id,
-                'account_id': accum_depr_account.id if self.asset_total_value else account_fixed_asset.id,
-                'store_id': self.current_store_id.id,
-                'debit_val': credit_val,
-                'credit_val': debit_val,
-                'due_date': today,
-                'explain': f'Depreciation due to {elapsed_days_asset_purchase_date} days',
-            }),
-
-        ]
-        header_je = self.env['ab_accounting_je_header'].create({
-            'account_id': accum_depr_account.id,
-            'doctype_id': 7,
-            'is_posted': True,
-            'line_ids': lines})
-
         if remove:
-            header_je.write({'line_ids': [
-                (0, 0, {
-                    'fixed_asset_id': self.id,
-                    'account_id': account_fixed_asset.id,
-                    'store_id': self.current_store_id.id,
-                    'debit_val': 0.0,
-                    'credit_val': self.asset_total_value,
-                    'due_date': today,
-                    'explain': 'Removed',
-                }),
-                (0, 0, {
-                    'fixed_asset_id': self.id,
-                    'account_id': accum_depr_account.id,
-                    'store_id': self.current_store_id.id,
-                    'debit_val': self.asset_total_value,
-                    'credit_val': 0.0,
-                    'due_date': today,
-                    'explain': 'Removed',
-                }),
+            raise UserError(_('Use an asset movement to scrap or dispose of an asset.'))
+        with self.env.cr.savepoint():
+            self._lock_workflow_rows(self)
+            for asset in self.sorted('id'):
+                asset._depreciate_asset()
+        return True
 
-            ]})
+    def _depreciate_asset(self, allow_reversal=False):
+        self.ensure_one()
+        costs = self._posted_asset_lines(self._asset_cost_accounts())
+        acquisitions = costs.filtered(lambda line: line.debit_val > 0)
+        if not acquisitions or self.asset_total_value <= 0:
+            raise ValidationError(_('A posted acquisition with a positive cost is required.'))
+        today = fields.Date.today()
+        if any(not line.due_date or line.due_date > today for line in acquisitions):
+            raise ValidationError(_('Acquisition dates must be set and cannot be in the future.'))
+        if self.useful_life <= 0:
+            raise ValidationError(_('Useful life must be positive for depreciation.'))
+        cost = self.asset_total_value
+        previous = self.total_depr
+        if previous < 0 or float_compare(previous, cost, precision_digits=2) > 0:
+            raise ValidationError(_('Review the asset cost and accumulated depreciation before posting.'))
+        days = (today - acquisitions[0].due_date).days
+        target = round(min(cost, cost * days / (self.useful_life * 365)), 2)
+        delta = round(target - previous, 2)
+        # Regular depreciation never reverses a previous write-down. Revaluation
+        # after an explicitly approved useful-life change is a separate action.
+        if float_is_zero(delta, precision_digits=2) and allow_reversal:
+            return self.env['ab_accounting_je_header']
+        if float_is_zero(delta, precision_digits=2) or (delta < 0 and not allow_reversal):
+            raise UserError(_('No additional depreciation is due for this asset.'))
+        expense = self._asset_account('depreciation')
+        accumulated = self._asset_account('accumulated_depreciation')
+        return self._post_asset_journal([
+            (self, expense, max(delta, 0), max(-delta, 0)),
+            (self, accumulated, max(-delta, 0), max(delta, 0)),
+        ], _('Depreciation for %(days)s days', days=days))
 
-        header_je.sudo_confirm_all_je()
+    def _dispose_asset(self):
+        self.ensure_one()
+        costs = self._posted_asset_lines(self._asset_cost_accounts())
+        balances = {}
+        for line in costs:
+            balances[line.account_id] = balances.get(line.account_id, 0) + line.debit_val - line.credit_val
+        cost = self.asset_total_value
+        accumulated = self.total_depr
+        if cost <= 0 or accumulated < 0 or float_compare(accumulated, cost, precision_digits=2) > 0:
+            raise ValidationError(_('Review the asset cost and accumulated depreciation before posting.'))
+        if any(value < 0 for value in balances.values()):
+            raise ValidationError(_('Review the asset cost and accumulated depreciation before posting.'))
+        amounts = [(self, account, 0, value) for account, value in balances.items()]
+        amounts += [(self, self._asset_account('accumulated_depreciation'), accumulated, 0),
+                    (self, self._asset_account('depreciation'), cost - accumulated, 0)]
+        return self._post_asset_journal(amounts, _('Asset disposal'))
 
-        # if self.asset_total_value < 1 and self.current_value_after_depr < 1:
-        #     raise ValidationError(_("You can't depreciate if value after depr. not grater than 0!"))
+    def action_asset_movement(self):
+        return {
+            'type': 'ir.actions.act_window', 'name': _('Asset Movement'),
+            'res_model': 'ab_fixed_asset_move_wizard', 'view_mode': 'form',
+            'target': 'current', 'context': {'default_src_fixed_asset_ids': self.ids},
+        }
+
+    @api.model
+    def _send_asset_notification(self, msg, after, attachment=None):
+        # Notifications are optional; malformed credentials or chat IDs must not
+        # roll back asset creation or a successfully validated movement.
+        try:
+            return self.send_by_bot(
+                self.get_chat_id('telegram_fixed_asset_move_group_chat_id'),
+                msg=msg, after=after, attachment=attachment,
+            )
+        except (ValueError, TypeError) as error:
+            # Do not log exception arguments: configuration can contain secrets.
+            _logger.warning(
+                'Fixed asset Telegram notification skipped: invalid bot or chat configuration (%s).',
+                type(error).__name__,
+            )
+            return False
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -509,6 +485,5 @@ class AbdinInventory(models.Model):
         """
 
         after = "\n\nBy %s" % (self.env.user.name,)
-        self.send_by_bot(self.get_chat_id("telegram_fixed_asset_move_group_chat_id"),
-                         msg=msg, after=after)
+        self._send_asset_notification(msg, after)
         return res

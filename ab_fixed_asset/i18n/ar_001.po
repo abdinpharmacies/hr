@@ -4,16 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 15.0\n"
+"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-09 08:20+0000\n"
-"PO-Revision-Date: 2025-03-09 08:20+0000\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2026-11-15 14:00+0200\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_fixed_asset
 #: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
@@ -168,9 +169,12 @@ msgid "Asset Loss"
 msgstr "أصل مفقود"
 
 #. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
 #: model:ir.ui.menu,name:ab_fixed_asset.asset_movement_sub_menu
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.asset_form_workflow_safety
 msgid "Asset Movement"
-msgstr "حركة الأصل"
+msgstr "حركة أصل"
 
 #. module: ab_fixed_asset
 #: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_final_level__name
@@ -351,7 +355,7 @@ msgstr "معدل الإهلاك"
 msgid ""
 "Depreciation is nearly zero for ID (%s)!\n"
 "Depreciation is cancelled."
-msgstr "إهلاك الأصل يقارب الصفر. تم الغاء الإهلاك"
+msgstr "إهلاك الأصل (%s) يقارب الصفر. تم إلغاء الإهلاك."
 
 #. module: ab_fixed_asset
 #: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__description
@@ -519,8 +523,10 @@ msgstr "المخزون"
 #: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__inventory_line_ids
 #: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__src_fixed_asset_line_ids
 #: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_assets_inventory_form
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__src_inventory_line_transfer_ids
+#: model:ir.ui.menu,name:ab_fixed_asset.ab_fixed_asset_inventory_line_menu
 msgid "Inventory Lines"
-msgstr "Inventory Lines"
+msgstr "بنود المخزون"
 
 #. module: ab_fixed_asset
 #: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__is_company_ownership
@@ -1016,10 +1022,11 @@ msgid "Useful Life"
 msgstr "العمر الافتراضي"
 
 #. module: ab_fixed_asset
+#. odoo-python
 #: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
 #, python-format
 msgid "Useful life can not be negative!"
-msgstr "العمر الافتراضي لا يجب ان يكون بالسالب!"
+msgstr "لا يمكن أن يكون العمر الإنتاجي سالباً!"
 
 #. module: ab_fixed_asset
 #: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
@@ -1167,3 +1174,221 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ab_fixed_asset.selection__ab_fixed_asset_assets_inventory__asset_status__2
 msgid "هالك قبل أوانه"
 msgstr ""
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "A posted acquisition with a positive cost is required."
+msgstr "يجب وجود قيد اقتناء معتمد بتكلفة موجبة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Acquisition dates must be set and cannot be in the future."
+msgstr "يجب تحديد تواريخ الاقتناء وألا تكون في المستقبل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid ""
+"Adjustment values must be positive and cannot increase the transferred "
+"value."
+msgstr "يجب أن تكون قيم التسوية موجبة وألا تزيد القيمة المنقولة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Asset disposal"
+msgstr "استبعاد أصل"
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Configure an active posting account for %(account)s."
+msgstr "قم بإعداد حساب ترحيل نشط لـ %(account)s."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Depreciation for %(days)s days"
+msgstr "إهلاك عن %(days)s يوماً"
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Enter an explanation for this adjustment."
+msgstr "أدخل بياناً لهذه التسوية."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Every transfer line must belong to the selected source asset."
+msgstr "يجب أن يتبع كل بند تحويل الأصل المصدر المحدد."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_inventory_line.py:0
+msgid "Inventory quantities and prices cannot be negative."
+msgstr "لا يجوز أن تكون كميات المخزون وأسعاره سالبة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "No additional depreciation is due for this asset."
+msgstr "لا يوجد إهلاك إضافي مستحق لهذا الأصل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Only a fixed asset manager or accountant can depreciate assets."
+msgstr "يمكن لمدير الأصول الثابتة أو محاسبها فقط إجراء الإهلاك."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Partial depreciation cannot include a destination value."
+msgstr "لا يجوز أن يتضمن الإهلاك الجزئي قيمة للأصل المستلم."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Review the asset cost and accumulated depreciation before posting."
+msgstr "راجع تكلفة الأصل ومجمع إهلاكه قبل الترحيل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Select a destination asset different from the source asset."
+msgstr "اختر أصلاً مستلماً مختلفاً عن الأصل المصدر."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Select a destination store."
+msgstr "اختر المخزن المستلم."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Select at least one source asset."
+msgstr "اختر أصلاً مصدراً واحداً على الأقل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Select inventory lines for the inventory adjustment."
+msgstr "اختر بنود المخزون لتسوية المخزون."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Submitted movement lines cannot be changed."
+msgstr "لا يمكن تغيير بنود حركة معتمدة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "The adjustment exceeds the posted remaining asset value."
+msgstr "تتجاوز التسوية القيمة المتبقية المعتمدة للأصل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid ""
+"The revised useful life must be positive and different from the current "
+"life."
+msgstr "يجب أن يكون العمر الإنتاجي المعدل موجباً ومختلفاً عن العمر الحالي."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "The source value must equal the selected inventory value."
+msgstr "يجب أن تساوي قيمة المصدر قيمة بنود المخزون المحددة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "There is no amount to post."
+msgstr "لا يوجد مبلغ للترحيل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "This record is read-only. Only chatter is allowed."
+msgstr "هذا السجل للقراءة فقط. يُسمح بالمراسلات فقط."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Transfer quantities and prices must be positive."
+msgstr "يجب أن تكون كميات التحويل وأسعاره موجبة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Transfer quantities exceed the available inventory."
+msgstr "تتجاوز كميات التحويل المخزون المتاح."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Transfer quantities must be positive."
+msgstr "يجب أن تكون كميات التحويل موجبة."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Use an asset movement to scrap or dispose of an asset."
+msgstr "استخدم حركة أصل للتخريد أو الاستبعاد."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_move_wizard.py:0
+msgid "Use the submission and confirmation actions to change workflow state."
+msgstr "استخدم إجراءات الاعتماد والتأكيد لتغيير حالة سير العمل."
+
+#. module: ab_fixed_asset
+#. odoo-python
+#: code:addons/ab_fixed_asset/models/ab_fixed_asset_assets_inventory.py:0
+msgid "Useful life must be positive for depreciation."
+msgstr "يجب أن يكون العمر الإنتاجي موجباً لإجراء الإهلاك."
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__journal_ids
+msgid "Posted Journals"
+msgstr "القيود المرحلة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,help:ab_fixed_asset.field_ab_fixed_asset_move_wizard__scrapping_value
+msgid "Estimated scrap value for reference. Record sale proceeds separately."
+msgstr "قيمة تخريد تقديرية للرجوع إليها. سجل متحصلات البيع بشكل منفصل."
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Source Inventory Lines"
+msgstr "بنود مخزون المصدر"
+
+#. module: ab_fixed_asset
+#: model_terms:ir.ui.view,arch_db:ab_fixed_asset.ab_fixed_asset_move_wizard_view_form
+msgid "Destination Inventory Lines"
+msgstr "بنود مخزون الوجهة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__src_inventory_line_ids
+msgid "Source Asset Inventory Lines"
+msgstr "بنود مخزون أصل المصدر"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__dst_inventory_line_ids
+msgid "Destination Asset Inventory Lines"
+msgstr "بنود مخزون أصل الوجهة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_assets_inventory__costcenter_id
+msgid "Costcenter"
+msgstr "مركز التكلفة"
+
+#. module: ab_fixed_asset
+#: model:ir.model.fields,field_description:ab_fixed_asset.field_ab_fixed_asset_move_wizard__new_costcenter_id
+msgid "New Costcenter"
+msgstr "مركز التكلفة الجديد"

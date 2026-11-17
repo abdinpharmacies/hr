@@ -370,5 +370,70 @@
             </field>
         </record>
 
+    <record id="asset_form_workflow_safety" model="ir.ui.view">
+  <field name="name">asset.form.workflow.safety</field>
+  <field name="model">ab_fixed_asset_assets_inventory</field>
+  <field name="inherit_id" ref="ab_fixed_asset_assets_inventory_form"/>
+  <field name="priority">100</field>
+  <field name="arch" type="xml">
+    <xpath expr="//field[@name='current_store_id']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='final_level']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='asset_source']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='asset_type']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='costcenter_id']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='is_company_ownership']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='manual_value']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='useful_life']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='description']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='image']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='active']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//field[@name='inventory_standards_ids']" position="attributes">
+      <attribute name="readonly">je_count &gt; 0</attribute>
+    </xpath>
+    <xpath expr="//sheet" position="before">
+      <header>
+        <button name="action_asset_movement" type="object" string="Asset Movement" groups="ab_fixed_asset.group_ab_fixed_asset_manager"/>
+      </header>
+    </xpath>
+    <xpath expr="//button[@name='btn_depreciate']" position="attributes">
+      <attribute name="groups">ab_fixed_asset.group_ab_fixed_asset_manager,ab_fixed_asset.group_ab_fixed_asset_accountant</attribute>
+    </xpath>
+  </field>
+</record>
+
+    <record id="asset_list_workflow_safety" model="ir.ui.view">
+  <field name="name">asset.list.workflow.safety</field>
+  <field name="model">ab_fixed_asset_assets_inventory</field>
+  <field name="inherit_id" ref="ab_fixed_asset_assets_inventory_list"/>
+  <field name="priority">100</field>
+  <field name="arch" type="xml">
+    <xpath expr="//button[@name='btn_depreciate']" position="attributes">
+      <attribute name="groups">ab_fixed_asset.group_ab_fixed_asset_manager,ab_fixed_asset.group_ab_fixed_asset_accountant</attribute>
+    </xpath>
+  </field>
+</record>
+
     </data>
 </odoo>

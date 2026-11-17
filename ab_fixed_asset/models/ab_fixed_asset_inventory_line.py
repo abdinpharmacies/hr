@@ -1,4 +1,5 @@
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class AbFixedAssetCurrInvInventory(models.Model):
@@ -10,6 +11,16 @@ class AbFixedAssetCurrInvInventory(models.Model):
     qty = fields.Integer()
     price = fields.Float(default=0.0, digits=(18, 2))
     total_price = fields.Float(compute='_compute_total_price')
+
+    @api.constrains('qty', 'price')
+    def _check_inventory_values(self):
+        if any(line.qty < 0 or line.price < 0 for line in self):
+            raise ValidationError(_('Inventory quantities and prices cannot be negative.'))
+
+    def write(self, vals):
+        parents = self.fixed_asset_header_id | self.env['ab_fixed_asset_assets_inventory'].browse(vals.get('fixed_asset_header_id', []))
+        parents._lock_workflow_rows(parents)
+        return super().write(vals)
 
     @api.depends('qty', 'price')
     def _compute_total_price(self):

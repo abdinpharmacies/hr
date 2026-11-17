@@ -32,14 +32,11 @@ class AbAccountingJeLine(models.Model):
         if operator not in ['=', '!='] or not isinstance(val, bool):
             raise UserError(_('Operation not supported'))
 
-        self.env.cr.execute("select je.id from ab_accounting_je_line je "
-                            "join ab_accounting_account_guide gg on gg.id=je.account_id "
-                            "where gg.internal_type in ('fixed_assets','fixed_asset_je')")
-        ids = [row[0] for row in self.env.cr.fetchall()]
-
-        if operator != '=':  # that means it is '!='
+        if operator != '=':
             val = not val
-        return [('id', 'in' if val else 'not in', ids)]
+        return [('account_id.internal_type', 'in' if val else 'not in',
+                 ['fixed_asset', 'fixed_asset_je'])]
+
 
 
 class AbAccountingJeHeader(models.Model):
