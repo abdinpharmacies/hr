@@ -23,7 +23,7 @@
           <group>
             <field name="name"/>
             <field name="source" readonly="id"/>
-            <field name="website_id" readonly="id"/>
+            <field name="website_id" readonly="id" domain="[('company_id', 'in', allowed_company_ids)]" options="{'no_create': True}"/>
             <field name="company_id"/>
             <field name="service_user_id"/>
             <field name="cutoff"/>

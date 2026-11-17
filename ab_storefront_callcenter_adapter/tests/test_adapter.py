@@ -2,9 +2,12 @@ from datetime import timedelta
 from unittest.mock import patch
 from uuid import uuid4
 
+from lxml import etree
+
 from odoo import fields
 from odoo.exceptions import AccessError, ValidationError
-from odoo.tests import tagged
+from odoo.tests import Form, tagged
+from odoo.tools.safe_eval import safe_eval
 from odoo.addons.ab_ecommerce_storefront.tests.test_checkout_reservation import (
     TestStorefrontReservations,
 )
@@ -45,6 +48,60 @@ class TestCapture(TestStorefrontReservations):
                 'cutoff': fields.Datetime.now() - timedelta(days=1),
             }
         )
+
+    def test_adapter_endpoint_selector_before_company_is_derived(self):
+        endpoints = self.env['ab_storefront_callcenter_endpoint'].with_context(
+            allowed_company_ids=self.company.ids
+        )
+        self.assertFalse(endpoints.new({}).company_id)
+        view = endpoints.get_view(
+            self.env.ref('ab_storefront_callcenter_adapter.endpoint_form').id,
+            'form',
+        )
+        field = etree.fromstring(view['arch']).xpath("//field[@name='website_id']")[0]
+        domain = safe_eval(
+            field.get('domain'), {'allowed_company_ids': self.company.ids}
+        )
+        self.assertIn(self.website, self.env['website'].search(domain))
+        self.assertTrue(safe_eval(field.get('options'))['no_create'])
+        website = self.env['website'].create(
+            {'name': self.website.name, 'company_id': self.company.id}
+        )
+        with Form(endpoints, view='ab_storefront_callcenter_adapter.endpoint_form') as form:
+            form.name = 'New website endpoint'
+            form.website_id = website
+            self.assertEqual(form.company_id, self.company)
+            form.service_user_id = self.worker
+        self.assertEqual(form.record.website_id, website)
+        self.assertEqual(form.record.company_id, self.company)
+        with self.assertRaises(AccessError):
+            form.record.write({'website_id': self.website.id})
+
+    def test_adapter_endpoint_selector_company_scope(self):
+        company = self.env['res.company'].create({'name': 'Other adapter company'})
+        website = self.env['website'].create(
+            {'name': self.website.name, 'company_id': company.id}
+        )
+        endpoints = self.env['ab_storefront_callcenter_endpoint'].with_context(
+            allowed_company_ids=self.company.ids
+        )
+        view = endpoints.get_view(
+            self.env.ref('ab_storefront_callcenter_adapter.endpoint_form').id,
+            'form',
+        )
+        field = etree.fromstring(view['arch']).xpath("//field[@name='website_id']")[0]
+        domain = safe_eval(
+            field.get('domain'), {'allowed_company_ids': self.company.ids}
+        )
+        self.assertNotIn(website, self.env['website'].search(domain))
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            endpoints.create(
+                {
+                    'name': 'Unauthorized company endpoint',
+                    'website_id': website.id,
+                    'service_user_id': self.worker.id,
+                }
+            )
 
     def test_adapter_browser_cod(self):
         self.test_cash_on_delivery_post_processing_confirms_and_reserves_once()
