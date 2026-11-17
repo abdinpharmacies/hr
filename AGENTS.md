@@ -1,5 +1,14 @@
 # Odoo 19 custom addons: callcenter19
 
+## Notification delivery
+
+Use `/home/abdin_04/.agents/skills/task-finished-notify/scripts/notify.py` for the
+required response notifications. In restricted Codex sessions, invoke this helper
+with `sandbox_permissions="require_escalated"` so it can access its private state,
+Telegram, the user desktop session and the originating Codex daemon. Request only
+this helper's required access; do not relax the project's general sandbox or
+network settings. Inspect delivery and reply-routing results separately.
+
 Checkout: `/opt/odoo19/worktrees/callcenter19`. Branch at consolidation: `callcenter19`;
 verify the current branch and working diff before editing. Preserve unrelated work.
 
