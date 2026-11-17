@@ -1,4 +1,46 @@
-Current changes before commit (branch ledger removal):
+Current changes before commit:
+
+- Hide the Inventory Stores section on the user form by deactivating its inherited view.
+- Retain the underlying field, saved store assignments and all existing permission logic. No cashier or cash-shift files are changed.
+- Bump the branch module to 19.0.1.1.3 and document this UI-only change.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/__manifest__.py
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/views/res_users_stores.xml
+
+Verification:
+
+- Transactionally load the view and inspect the resolved user form: inventory_store_ids is absent, the model field remains available, and every record-rule domain is unchanged. Test metadata changes rolled back.
+- Source syntax and both Arabic catalog format checks passed. Worktree changes only; no running instance upgrade or remote deployment was performed.
+
+Commit: 52233dce8914609d00111e4e433d743fa1d83140
+Author: hossam elsheikh <hossam.m.elsheikh@gmail.com>
+Date: 2026-11-08T11:20:30+02:00
+Original subject: refactor(ab_sales_inventory): use central stock cache without local ledger
+
+- Previous module change: refactor(ab_sales_inventory): use central stock cache without local ledger.
+
+Files changed:
+
+- ab_sales_inventory/README.md
+- ab_sales_inventory/__manifest__.py
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/i18n/ar.po
+- ab_sales_inventory/i18n/ar_001.po
+- ab_sales_inventory/models/__init__.py
+- ab_sales_inventory/models/allocation.py
+- ab_sales_inventory/models/backend.py
+- ab_sales_inventory/models/pos.py
+- ab_sales_inventory/models/returns.py
+- ab_sales_inventory/models/sale.py
+- ab_sales_inventory/models/stock_support.py
+- ab_sales_inventory/security/security_groups.xml
+- ab_sales_inventory/views/res_users_stores.xml
+
+Historical change details (branch ledger removal):
 
 - Keep branch store assignments, stock-scope locking, and product-UoM conversion available without installing the inventory ledger.
 - Require central snapshots for native stock reads and approvals; remove branch movement fields and local movement posting paths.

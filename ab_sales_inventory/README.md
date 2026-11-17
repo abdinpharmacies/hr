@@ -48,3 +48,6 @@ The sold-without-stock report is read-only, independently permissioned and scope
 by the user's authorized branches. It records the sold, deducted and shortage
 quantities with the approval reason. No scheduled or automatic shortage
 reconciliation is performed.
+
+The Inventory Stores section is hidden on the user form. The field, saved assignments
+and existing permission checks remain unchanged.
