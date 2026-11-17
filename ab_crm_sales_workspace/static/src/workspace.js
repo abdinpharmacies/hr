@@ -575,10 +575,12 @@ export class SalesWorkspace extends Component {
         });
     }
     requestContact() { return this.conversationAction("action_request_contact"); }
+    get replyDestinationKwargs() { return {}; }
+    get replyMethod() { return "action_reply"; }
     async send() {
         if (this.sendDisabledReason) return;
         await this.run(async () => {
-            await this.call("ab_crm_conversation", "action_reply", [[this.state.detail.id], this.state.reply], {attachments: this.state.attachments.map(({url, ...attachment}) => attachment), reply_id: this.state.replyTo?.id || false});
+            await this.call("ab_crm_conversation", this.replyMethod, [[this.state.detail.id], this.state.reply], {...this.replyDestinationKwargs, attachments: this.state.attachments.map(({url, ...attachment}) => attachment), reply_id: this.state.replyTo?.id || false});
             this.clearAttachments();
             this.state.replyTo = null;
             this.state.reply = "";
