@@ -5,7 +5,7 @@ from psycopg2 import IntegrityError
 
 from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tests import tagged
+from odoo.tests import Form, tagged
 from odoo.tests.common import TransactionCase, new_test_user
 
 from ..controllers import second_item_offer
@@ -388,6 +388,39 @@ class TestStorefrontOffers(TransactionCase):
         self.pricelist.currency_id = self.env.ref("base.USD")
         with self.assertRaises(ValidationError), self.env.cr.savepoint():
             self.offer(offer_type="amount")
+
+    def test_fixed_discount_equal_or_above_price_keeps_input_and_raises(self):
+        self.pricelist.currency_id = self.env.ref("base.EGP")
+        self.company.currency_id = self.env.ref("base.EGP")
+        self.product.list_price = 75
+        form = Form(self.env["ab_storefront_offer"], view=self.env.ref("ab_ecommerce_storefront.storefront_offer_form"))
+        form.website_id = self.website
+        form.product_id = self.product
+        form.offer_type = "amount"
+        form.pricelist_id = self.pricelist
+        form.amount_discount = "custom"
+        form.custom_amount_discount = 75
+        self.assertEqual(form.custom_amount_discount, 75)
+        for amount in (75, 76):
+            with self.subTest(amount=amount), self.assertRaises(ValidationError), self.env.cr.savepoint():
+                self.offer(offer_type="amount", amount_discount="custom", custom_amount_discount=amount)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.offer(offer_type="amount", amount_discount="80")
+
+    def test_custom_amount_discount_keeps_one_egp_product_price(self):
+        self.pricelist.currency_id = self.env.ref("base.EGP")
+        self.company.currency_id = self.env.ref("base.EGP")
+        self.product.list_price = 36
+        offer = self.offer(
+            offer_type="amount", amount_discount="custom", custom_amount_discount=35,
+        )
+        self.assertEqual(offer.discounted_price, 1)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.custom_amount_discount = 35.01
+        with self.assertRaisesRegex(ValidationError, "جنيه مصري واحد"), self.env.cr.savepoint():
+            offer.with_context(lang="ar_001").custom_amount_discount = 35.01
+        self.product.list_price = 35
+        self.assertEqual(self.cart().amount_total, 70)
 
     def test_custom_amount_discount_updates_price_and_rejects_excess(self):
         self.pricelist.currency_id = self.env.ref("base.EGP")

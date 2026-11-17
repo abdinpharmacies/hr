@@ -14695,6 +14695,12 @@ msgid ""
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The discounted product price must be at least EGP 1."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
 msgid ""
 "The discounted product price stays fixed even if its original price rises."

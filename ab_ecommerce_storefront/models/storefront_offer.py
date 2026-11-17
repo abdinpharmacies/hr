@@ -121,6 +121,11 @@ class StorefrontOffer(models.Model):
         self.ensure_one()
         return self.custom_amount_discount if self.amount_discount == "custom" else float(self.amount_discount or 0)
 
+    def _maximum_fixed_discount(self):
+        self.ensure_one()
+        price = self.currency_id.round(self.current_price) if self.currency_id else self.current_price
+        return max(0.0, price - 1)
+
     def _benefit_products(self):
         self.ensure_one()
         return self.product_id if self.second_item_mode == "same" else self.second_product_ids
@@ -285,8 +290,8 @@ class StorefrontOffer(models.Model):
                     discount_amount = offer._fixed_discount_amount()
                     if not isfinite(discount_amount) or discount_amount <= 0:
                         raise ValidationError(_("Enter a positive fixed discount amount."))
-                    if discount_amount >= offer.current_price:
-                        raise ValidationError(_("The fixed discount amount must be less than the original product price."))
+                    if discount_amount > offer._maximum_fixed_discount():
+                        raise ValidationError(_("The discounted product price must be at least EGP 1."))
                     if offer.currency_id != self.env.ref("base.EGP"):
                         raise ValidationError(_("Select an EGP pricelist and a discount amount below the current product price."))
             if offer.active:
@@ -722,7 +727,7 @@ class ProductPricelist(models.Model):
             offer = rule.sudo().ab_storefront_offer_id
             if offer.offer_type == "amount" and (
                 offer.currency_id != self.env.ref("base.EGP")
-                or offer.current_price <= offer._fixed_discount_amount()
+                or offer._fixed_discount_amount() > offer._maximum_fixed_discount()
             ):
                 continue
             eligible_rules |= rule
