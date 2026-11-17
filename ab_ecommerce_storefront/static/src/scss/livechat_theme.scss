@@ -8,7 +8,8 @@
     font-family: var(--bs-body-font-family);
     color: #19352b;
 
-    [part="openChatButton"] {
+    [part="openChatButton"],
+    .o-mail-ChatHub-bubbles {
         display: none !important;
     }
 
