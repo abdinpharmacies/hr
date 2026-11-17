@@ -5,6 +5,10 @@
             <link type="image/png" rel="shortcut icon" t-att-href="website.image_url(website, 'logo')"/>
         </xpath>
 
+        <xpath expr="//html" position="attributes">
+            <attribute name="t-att-dir">request.lang.direction</attribute>
+        </xpath>
+
         <xpath expr="//body" position="attributes">
             <attribute name="t-att-class">((body_classname + ' ') if body_classname else '') + 'ab-storefront'</attribute>
         </xpath>

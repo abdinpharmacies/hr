@@ -63,7 +63,7 @@ body.ab-storefront .ab-contact-page {
     .ab-contact-form .s_website_form_label { display: block; width: auto !important; font-size: .95rem; font-weight: 600; margin-bottom: 8px; }
     .ab-contact-form .s_website_form_mark { color: var(--ab-primary); }
     .ab-contact-form .form-control { min-height: 48px; border: 1px solid var(--ab-border); border-radius: 8px; padding: 11px 14px; background: #fff; color: var(--ab-ink); text-align: start; }
-    .ab-contact-form input[type=email], .ab-contact-form input[type=tel], .ab-contact-form input[type=url] { direction: ltr; }
+    .ab-contact-form input[type=email], .ab-contact-form input[type=tel], .ab-contact-form input[type=url] { direction: ltr #{"/*rtl:ignore*/"}; }
     .ab-contact-form .form-control:focus { border-color: var(--ab-primary); box-shadow: 0 0 0 3px rgba(22, 131, 79, .12); }
     .ab-contact-form .o_has_error .form-control, .ab-contact-form .is-invalid { border-color: #b42318; }
     .ab-contact-form .s_website_form_submit { text-align: start !important; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }

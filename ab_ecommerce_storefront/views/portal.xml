@@ -279,7 +279,7 @@
                 <t t-set="display_taxes" t-value="any(line._has_taxes() for line in product_lines)"/>
                 <t t-set="tracking_record" t-value="sale_order"/>
 
-                <div id="content" class="ab-order-dashboard" dir="auto">
+                <div id="content" class="ab-order-dashboard">
                     <header class="ab-order-status-hero">
                         <div class="ab-order-status-copy">
                             <span class="ab-order-eyebrow">Track your pharmacy order</span>

@@ -39,7 +39,7 @@
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
             <t t-set="ab_auth_profile_recovery" t-value="request.session.uid and request.httprequest.path.rstrip('/').endswith('/ab_storefront/auth/recover')"/>
-            <div t-attf-class="ab-auth-page #{'ab-auth-security-page' if ab_auth_security else ''}" dir="rtl">
+            <div t-attf-class="ab-auth-page #{'ab-auth-security-page' if ab_auth_security else ''}">
                 <header class="ab-auth-header">
                     <a href="/" class="ab-auth-brand ab-storefront-brand-logo" aria-label="Abdin Pharmacies">
                         <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}" alt="Abdin Pharmacies"/>

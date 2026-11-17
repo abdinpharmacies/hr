@@ -19,9 +19,17 @@
 
         input {
             order: 1;
-            direction: rtl !important #{"/*rtl:ignore*/"};
-            text-align: right !important #{"/*rtl:ignore*/"};
+            direction: inherit;
+            text-align: start;
             unicode-bidi: plaintext;
+
+            &[type="tel"],
+            &[type="email"],
+            &[type="password"],
+            &[dir="ltr"],
+            &[autocomplete="username"] {
+                direction: ltr #{"/*rtl:ignore*/"};
+            }
         }
     }
 

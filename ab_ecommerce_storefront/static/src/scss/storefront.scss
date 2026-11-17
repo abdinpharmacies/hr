@@ -2128,7 +2128,7 @@ body.ab-storefront-location-picker-open {
         display: flex;
         align-items: center;
         justify-content: center;
-        direction: ltr;
+        direction: ltr #{"/*rtl:ignore*/"};
         pointer-events: none;
         transform: translate(-50%, -50%);
 
@@ -6411,11 +6411,11 @@ body.ab-storefront .ab-storefront-closing-panel {
         --primary: #{$ab-orange};
 
         .multirange-wrapper {
-            direction: ltr;
+            direction: ltr #{"/*rtl:ignore*/"};
         }
 
         input[type="range"].multirange {
-            direction: ltr !important;
+            direction: ltr !important #{"/*rtl:ignore*/"};
         }
 
         input[type="range"].multirange.ghost {
@@ -6441,7 +6441,7 @@ body.ab-storefront .ab-storefront-closing-panel {
         margin: .15rem .2rem .45rem;
         padding: 0 9px;
         grid-template-columns: repeat(16, minmax(3px, 1fr));
-        direction: ltr;
+        direction: ltr #{"/*rtl:ignore*/"};
     }
 
     .ab-storefront-price-meter-bar {
@@ -6460,13 +6460,13 @@ body.ab-storefront .ab-storefront-closing-panel {
 
     .multirange-wrapper,
     .ab-storefront-price-range-wrapper {
-        direction: ltr !important;
+        direction: ltr !important #{"/*rtl:ignore*/"};
         margin-top: .15rem !important;
     }
 
     .multirange-wrapper > small {
         position: relative;
-        direction: ltr !important;
+        direction: ltr !important #{"/*rtl:ignore*/"};
         min-height: 1.35rem;
     }
 
@@ -6489,7 +6489,7 @@ body.ab-storefront .ab-storefront-closing-panel {
     }
 
     input[type="range"].multirange {
-        direction: ltr !important;
+        direction: ltr !important #{"/*rtl:ignore*/"};
         accent-color: $ab-orange;
     }
 
@@ -7278,7 +7278,7 @@ body.ab-storefront .ab-storefront-closing-panel {
         align-items: baseline;
         gap: .16rem;
         color: $ab-green-dark;
-        direction: ltr !important;
+        direction: ltr !important #{"/*rtl:ignore*/"};
         font-variant-numeric: var(--ab-font-variant-numeric-tabular);
         font-weight: var(--ab-font-weight-bold);
         line-height: var(--ab-line-height-100);
@@ -7289,14 +7289,14 @@ body.ab-storefront .ab-storefront-closing-panel {
             display: inline-flex;
             align-items: baseline;
             gap: .16rem;
-            direction: ltr !important;
+            direction: ltr !important #{"/*rtl:ignore*/"};
             unicode-bidi: isolate !important;
         }
 
         .oe_currency_value {
             display: inline-flex;
             align-items: baseline;
-            direction: ltr !important;
+            direction: ltr !important #{"/*rtl:ignore*/"};
             unicode-bidi: isolate !important;
         }
     }
@@ -7307,7 +7307,7 @@ body.ab-storefront .ab-storefront-closing-panel {
         height: 1em;
         align-items: center;
         justify-content: center;
-        direction: ltr !important;
+        direction: ltr !important #{"/*rtl:ignore*/"};
         line-height: var(--ab-line-height-100);
         unicode-bidi: isolate !important;
     }
@@ -10338,8 +10338,8 @@ html[dir="rtl"] {
         background: transparent;
         font-size: var(--ab-font-size-098);
         font-weight: var(--ab-font-weight-bold);
-        direction: rtl;
-        text-align: right;
+        direction: inherit;
+        text-align: start;
         unicode-bidi: plaintext;
 
         &::placeholder {
@@ -10348,8 +10348,8 @@ html[dir="rtl"] {
         }
 
         &[type="tel"] {
-            direction: rtl;
-            text-align: right;
+            direction: ltr #{"/*rtl:ignore*/"};
+            text-align: start;
         }
 
         &.is-invalid {
@@ -10630,7 +10630,7 @@ html[dir="rtl"] {
         font-family: var(--ab-font-family-current);
         font-size: var(--ab-font-size-086);
         font-weight: var(--ab-font-weight-bold);
-        direction: ltr;
+        direction: ltr #{"/*rtl:ignore*/"};
         text-align: start;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -11126,14 +11126,14 @@ html.ab-avatar-picker-open body {
 
     p {
         margin: 0 0 .7rem;
-        direction: ltr;
+        direction: ltr #{"/*rtl:ignore*/"};
         text-align: start;
     }
 }
 
 .ab-account-dashboard {
     padding: clamp(.5rem, 2vw, 1rem) 0 2rem;
-    direction: rtl;
+    direction: inherit;
 }
 
 .ab-account-shell {
@@ -11366,7 +11366,7 @@ html.ab-avatar-picker-open body {
 
     p {
         margin: 0;
-        direction: ltr;
+        direction: ltr #{"/*rtl:ignore*/"};
         color: rgba(#fff, .84);
         font-size: var(--ab-font-size-080);
         font-weight: var(--ab-font-weight-bold);
@@ -11809,7 +11809,7 @@ html.ab-avatar-picker-open body {
 
 .ab-account-password-mask {
     display: inline-block;
-    direction: rtl;
+    direction: inherit;
     min-width: 0;
     text-align: inherit;
     color: $ab-ink;
@@ -19145,7 +19145,7 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
     margin: 0 auto;
     padding: clamp(.65rem, 2vw, 1.2rem) 0 2.5rem;
     color: $ab-ink;
-    direction: rtl;
+    direction: inherit;
 }
 
 .ab-customer-orders-header {
@@ -19204,14 +19204,14 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
-    direction: rtl;
+    direction: inherit;
 
     &::before {
         position: absolute;
         z-index: 0;
         top: 0;
         bottom: 0;
-        right: 0;
+        inset-inline-start: 0;
         width: 33.333333%;
         border: 1px solid rgba($ab-green, .12);
         border-radius: .72rem;
@@ -19219,16 +19219,15 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
         box-shadow: 0 3px 10px rgba($ab-green-dark, .08);
         content: "";
         pointer-events: none;
-        transform: translateX(0);
-        transition: transform .42s cubic-bezier(.22, 1, .36, 1);
+        transition: inset-inline-start .42s cubic-bezier(.22, 1, .36, 1);
     }
 
     &[data-ab-active-filter="order"]::before {
-        transform: translateX(-100%);
+        inset-inline-start: 33.333333%;
     }
 
     &[data-ab-active-filter="prescription"]::before {
-        transform: translateX(-200%);
+        inset-inline-start: 66.666667%;
     }
 
     .is-initializing &::before {
@@ -19256,7 +19255,7 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
         line-height: var(--ab-line-height-130);
         text-align: center;
         white-space: normal;
-        direction: rtl;
+        direction: inherit;
         transition: color .18s ease, background-color .18s ease, box-shadow .18s ease;
 
         svg {

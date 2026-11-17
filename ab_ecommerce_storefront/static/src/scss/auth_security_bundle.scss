@@ -124,16 +124,16 @@
 .ab-security-shell {
     grid-template-columns: minmax(190px, 230px) minmax(0, 1fr);
     grid-template-areas: "account-navigation security-content";
-    direction: ltr #{"/*rtl:ignore*/"};
+    direction: inherit;
 
     > .ab-account-nav {
         grid-area: account-navigation;
-        direction: rtl #{"/*rtl:ignore*/"};
+        direction: inherit;
     }
 
     > .ab-security-content {
         grid-area: security-content;
-        direction: rtl #{"/*rtl:ignore*/"};
+        direction: inherit;
     }
 }
 
@@ -232,7 +232,7 @@
     border-radius: 1rem;
     background: rgba(255, 255, 255, .98);
     box-shadow: 0 18px 48px rgba(11, 67, 43, .16);
-    direction: rtl #{"/*rtl:ignore*/"};
+    direction: inherit;
     opacity: 0;
     pointer-events: auto;
     transform: translateY(-.75rem);
