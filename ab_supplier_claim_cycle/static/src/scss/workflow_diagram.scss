@@ -39,7 +39,9 @@ $scc-diagram-muted: #667085;
 
     &__track {
         display: flex;
-        min-width: max-content;
+        min-width: 0;
+        flex-wrap: wrap;
+        gap: 28px 18px;
         align-items: flex-start;
         overflow: visible;
         padding: 4px 2px 8px;
@@ -52,6 +54,10 @@ $scc-diagram-muted: #667085;
         align-items: center;
         flex-direction: column;
         gap: 24px;
+        min-width: 0;
+        padding: 14px 10px;
+        border: 1px solid $scc-diagram-border;
+        border-radius: 8px;
     }
 
     &__node {
@@ -172,34 +178,22 @@ $scc-diagram-muted: #667085;
         }
     }
 
-    &__connector {
-        width: 72px;
-        min-width: 34px;
-        height: 2px;
-        flex: 1 1 72px;
-        margin-top: 8px;
-        border-radius: 999px;
-        background: rgba($scc-diagram-grey, 0.32);
-    }
 
-    &__connector--complete {
-        background: linear-gradient(
-            90deg,
-            rgba($scc-diagram-success, 0.9),
-            rgba($scc-diagram-success, 0.58)
-        );
-    }
 }
 
 .o_scc_workflow_actions_field {
-    display: contents;
+    display: block;
+    width: 100%;
+    min-width: 0;
 }
 
 .o_scc_workflow_actions {
     display: flex;
     align-items: center;
     gap: 5px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    position: relative;
+    min-width: 0;
 
     .btn {
         white-space: nowrap;
@@ -271,7 +265,8 @@ $scc-diagram-muted: #667085;
 .o_field_widget[name="stage_state_ids"]:has(.o_scc_workflow_diagram) {
     display: block;
     width: 100%;
-    overflow-x: auto;
+    overflow-x: visible;
+    min-width: 0;
 }
 
 @media (max-width: 767px) {
@@ -326,62 +321,58 @@ $scc-diagram-muted: #667085;
             margin-top: 4px;
         }
 
-        &__connector {
-            width: 2px;
-            min-width: 2px;
-            height: 28px;
-            flex: 0 0 28px;
-            margin: 0 0 0 8px;
-        }
+
     }
 }
 
-.o_scc_workflow_diagram {
-    &__track {
-        min-width: 0;
-        flex-wrap: wrap;
-        gap: 28px 18px;
-    }
-
-    // Each sequence is a self-contained tile; row breaks never split a connector.
-    &__group {
-        min-width: 0;
-        padding: 14px 10px;
-        border: 1px solid $scc-diagram-border;
-        border-radius: 8px;
-    }
-
-    &__connector { display: none; }
-}
-
-.o_field_widget[name="stage_state_ids"]:has(.o_scc_workflow_diagram) {
-    overflow-x: visible;
+// Keep each incoming arrow and its destination together when the track wraps.
+.o_scc_workflow_diagram__step {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    max-width: 100%;
     min-width: 0;
+}
+
+.o_scc_workflow_diagram__arrow {
+    flex: 0 0 18px;
+    margin-inline-end: 12px;
+    margin-block-start: 14px;
+    color: $scc-diagram-muted;
+    font-size: 1.15rem;
+    line-height: 1;
+    text-align: center;
+
+    &::before { content: "→"; }
+    &:dir(rtl)::before { content: "←"; }
 }
 
 .o_scc_workflow_actions {
-    flex-wrap: nowrap;
-    min-width: 0;
-
-    &__inline { display: flex; flex-wrap: nowrap; gap: 5px; }
+    &__inline { display: flex; flex-wrap: nowrap; gap: 5px; flex: 0 0 auto; }
     &__compact { display: none; }
-}
 
-// Many parallel actions use a single menu even on a wide screen.
-.o_scc_workflow_actions:has(.o_scc_workflow_actions__inline > button:nth-child(4)) {
-    .o_scc_workflow_actions__inline { display: none; }
-    .o_scc_workflow_actions__compact { display: block; }
-}
-
-@media (max-width: 1199px) {
-    .o_scc_workflow_actions {
-        &__inline { display: none; }
-        &__compact { display: block; }
+    &--compact {
+        overflow: hidden;
+        .o_scc_workflow_actions__inline {
+            // Keep natural width measurable while the menu is displayed.
+            position: absolute;
+            inset-inline-start: 0;
+            top: 0;
+            width: max-content;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .o_scc_workflow_actions__compact { display: block; }
     }
 }
 
-.o_scc_workflow_diagram__sequence {
-    color: $scc-diagram-muted;
-    font-size: 0.75rem;
-    font-weight: 650;
+@media (max-width: 767px) {
+    .o_scc_workflow_diagram__step {
+        width: 100%;
+
+        .o_scc_workflow_diagram__group {
+            width: auto;
+            flex: 1 1 0;
+        }
+    }
 }

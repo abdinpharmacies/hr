@@ -118,6 +118,10 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
                             node?.querySelector('.o_scc_workflow_diagram__action-date')?.textContent.trim()
                         );
                     });
+                    const cleanHeader = !document.querySelector('.o_scc_form .o_field_statusbar') &&
+                        Boolean(document.querySelector('.o_statusbar_buttons .o_scc_workflow_actions'));
+                    const arrows = diagram.querySelectorAll('.o_scc_workflow_diagram__arrow').length === 5 &&
+                        !diagram.querySelector('.o_scc_workflow_diagram__sequence');
                     const cleanOpenStages = ['pending', 'waiting'].every((status) =>
                         !diagram.querySelector(
                             `[data-stage-status="${status}"] .o_scc_workflow_diagram__action`
@@ -127,7 +131,7 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
                             '[data-stage-status]'
                         ).length === 2 && orderedGroups && beforeEntry &&
                         classification && details && dynamicActions && actionMetadata &&
-                        cleanOpenStages &&
+                        cleanOpenStages && cleanHeader && arrows &&
                         document.querySelector('.o-mail-Chatter') &&
                         diagram.querySelector('[data-endpoint="draft"] [data-lifecycle-status="completed"]') &&
                         diagram.querySelector('[data-endpoint="closed"] [data-stage-status="waiting"]')) {
@@ -144,7 +148,7 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
                             details: Boolean(details),
                             dynamicActions,
                             actionMetadata,
-                            cleanOpenStages,
+                            cleanOpenStages, cleanHeader, arrows,
                             chatter: Boolean(document.querySelector('.o-mail-Chatter')),
                             draft: Boolean(diagram.querySelector(
                                 '[data-endpoint="draft"] [data-lifecycle-status="completed"]')),
@@ -181,6 +185,37 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
                 }, 100);
             """,
             login=self.secretarial.login,
+        )
+
+    def test_actual_arabic_bundle_points_arrows_left(self):
+        self.env['res.lang']._activate_lang('ar_001')
+        self.observer.lang = 'ar_001'
+        self.browser_js(
+            f'/odoo/action-ab_supplier_claim_cycle.invoice_action/{self.open_claim.id}',
+            """
+                const deadline = Date.now() + 30000;
+                const timer = setInterval(() => {
+                    const diagram = document.querySelector('.o_scc_workflow_diagram');
+                    const arrows = Array.from(document.querySelectorAll(
+                        '.o_scc_workflow_diagram__arrow'));
+                    const actualRtlBundle = Array.from(document.querySelectorAll(
+                        'link[rel="stylesheet"]')).some(link => link.href.includes('.rtl.'));
+                    if (diagram?.dir === 'rtl' && actualRtlBundle && arrows.length === 5 &&
+                        arrows.every(arrow => {
+                            const group = arrow.parentElement.querySelector(
+                                '.o_scc_workflow_diagram__group');
+                            return getComputedStyle(arrow, '::before').content.includes('←') &&
+                                arrow.getBoundingClientRect().left >= group.getBoundingClientRect().right;
+                        })) {
+                        clearInterval(timer);
+                        console.log('test successful');
+                    } else if (Date.now() > deadline) {
+                        clearInterval(timer);
+                        console.error('Actual Arabic bundle has incorrect timeline arrows');
+                    }
+                }, 100);
+            """,
+            login=self.observer.login,
         )
 
     def test_history_view_is_readable(self):

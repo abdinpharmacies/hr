@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Odoo 19 · version 19.0.7.2.1 · Developer: Alhassan Hossny
+Odoo 19 · version 19.0.7.2.2 · Developer: Alhassan Hossny
 
 ## Dynamic workflow
 

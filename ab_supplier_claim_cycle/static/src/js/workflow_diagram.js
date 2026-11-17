@@ -1,5 +1,6 @@
-import { Component, useState } from "@odoo/owl";
+import { Component, onMounted, onPatched, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
+import { localization } from "@web/core/l10n/localization";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { formatDateTime } from "@web/views/fields/formatters";
@@ -18,6 +19,10 @@ const STATUS_DETAILS = {
 export class SupplierClaimWorkflowDiagram extends Component {
     static template = "ab_supplier_claim_cycle.WorkflowDiagram";
     static props = { ...standardFieldProps };
+
+    get direction() {
+        return localization.direction;
+    }
 
     get stageGroups() {
         const list = this.props.record.data[this.props.name];
@@ -58,12 +63,6 @@ export class SupplierClaimWorkflowDiagram extends Component {
         return STATUS_DETAILS[this.closedStatus].label;
     }
 
-    connectorClass(group) {
-        const complete = group.stages.every((stage) => stage.status === "approved");
-        return `o_scc_workflow_diagram__connector${
-            complete ? " o_scc_workflow_diagram__connector--complete" : ""
-        }`;
-    }
 }
 
 export class SupplierClaimWorkflowActions extends Component {
@@ -74,7 +73,25 @@ export class SupplierClaimWorkflowActions extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
-        this.state = useState({ busy: false });
+        this.state = useState({ busy: false, compact: false });
+        this.actionsRef = useRef("actions");
+        this.inlineRef = useRef("inlineActions");
+        onMounted(() => {
+            this.resizeObserver = new ResizeObserver(() => this.updateCompactMode());
+            this.resizeObserver.observe(this.actionsRef.el);
+            this.resizeObserver.observe(this.inlineRef.el);
+            this.updateCompactMode();
+        });
+        onPatched(() => this.updateCompactMode());
+        onWillUnmount(() => this.resizeObserver?.disconnect());
+    }
+
+    updateCompactMode() {
+        const available = this.actionsRef.el?.clientWidth;
+        if (available) {
+            this.state.compact = this.activeStages.length > 1
+                || this.inlineRef.el.scrollWidth > available + 1;
+        }
     }
 
     get activeStages() {

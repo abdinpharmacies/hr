@@ -61,7 +61,7 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
         background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(255, 255, 255, 1) 64%);
     }
 
-    .o_scc_workflow_header {
+    .o_form_statusbar {
         border-bottom: 1px solid $scc-border;
         background: rgba(255, 255, 255, 0.82);
         backdrop-filter: blur(12px);
@@ -709,15 +709,23 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
     > .o_inner_group { min-width: 0; width: 100%; align-content: start; }
 }
 
-.o_scc_form .o_scc_workflow_header {
+.o_scc_form .o_form_statusbar {
     display: flex;
     align-items: center;
     flex-wrap: nowrap !important;
     gap: 6px;
     min-width: 0;
 
-    .o_statusbar_buttons { flex-wrap: nowrap !important; min-width: 0; }
-    .o_statusbar_status { margin-inline-start: auto; min-width: 0; }
+    min-height: 50px;
+
+    .o_statusbar_buttons {
+        flex: 1 1 auto;
+        width: 100%;
+        flex-wrap: nowrap !important;
+        min-width: 0;
+    }
+
+    .o_scc_header_actions { flex: 1 1 auto; min-width: 0; max-width: 100%; }
 }
 
 @media (max-width: 767px) {

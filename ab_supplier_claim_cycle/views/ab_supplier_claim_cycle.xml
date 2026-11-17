@@ -31,13 +31,13 @@
                     <button name="action_resubmit" string="Resubmit" type="object" class="btn-primary"
                             invisible="state != 'returned' or not active"
                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                    <field name="stage_state_ids" widget="supplier_claim_workflow_actions"
-                           class="o_scc_workflow_actions_field" readonly="True" nolabel="1"
-                           invisible="state != 'in_progress'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,returned,closed"
-                           options="{'clickable': False}"/>
+                    <div class="o_scc_header_actions" invisible="state != 'in_progress'">
+                        <field name="stage_state_ids" widget="supplier_claim_workflow_actions"
+                               class="o_scc_workflow_actions_field" readonly="True" nolabel="1"/>
+                    </div>
                 </header>
                 <sheet>
+                    <field name="state" invisible="True"/>
                     <field name="amounts_mismatch" invisible="True"/>
                     <div class="alert alert-warning o_scc_amount_warning" role="status"
                          invisible="not amounts_mismatch">
@@ -95,37 +95,6 @@
                                            readonly="'net_claim_amount' not in editable_field_names"/>
                                 </group>
                             </page>
-                            <!--                        <page name="workflow_stages" string="Workflow Stages" invisible="state == 'draft'">-->
-                            <!--                            <group string="Current Workflow">-->
-                            <!--                                <field name="workflow_id" readonly="True"/>-->
-                            <!--                                <field name="current_stage_names" readonly="True"/>-->
-                            <!--                            </group>-->
-                            <!--                            <field name="stage_state_ids" readonly="True" nolabel="1">-->
-                            <!--                                <list create="false" edit="false" delete="false" decoration-success="status == 'approved'"-->
-                            <!--                                      decoration-warning="status == 'deferred'" decoration-danger="status == 'rejected'"-->
-                            <!--                                      decoration-muted="status == 'waiting'">-->
-                            <!--                                    <field name="sequence"/>-->
-                            <!--                                    <field name="name"/>-->
-                            <!--                                    <field name="approver_ids" widget="many2many_tags"/>-->
-                            <!--                                    <field name="status" widget="badge"/>-->
-                            <!--                                    <field name="user_id"/>-->
-                            <!--                                    <field name="decision_at"/>-->
-                            <!--                                    <field name="reason" optional="show"/>-->
-                            <!--                                    <field name="followup_date" optional="show"/>-->
-                            <!--                                    <field name="can_decide" column_invisible="True"/>-->
-                            <!--                                    <field name="can_admin_undo" column_invisible="True"/>-->
-                            <!--                                    <button name="action_approve" string="Approve" type="object"-->
-                            <!--                                            class="btn-primary" invisible="not can_decide"/>-->
-                            <!--                                    <button name="action_open_reject" string="Reject" type="object"-->
-                            <!--                                            invisible="not can_decide"/>-->
-                            <!--                                    <button name="action_open_defer" string="Defer" type="object"-->
-                            <!--                                            invisible="not can_decide"/>-->
-                            <!--                                    <button name="action_open_admin_undo" string="Remove Approval" type="object"-->
-                            <!--                                            invisible="not can_admin_undo"-->
-                            <!--                                            groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>-->
-                            <!--                                </list>-->
-                            <!--                            </field>-->
-                            <!--                        </page>-->
                             <page name="claim_documents" string="Documents and Notes">
                                 <div class="alert alert-info" role="status"
                                      invisible="not show_participant_attachment_note">Please prefer Chatter for

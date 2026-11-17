@@ -74,3 +74,18 @@ Local `hr_db_dev` was upgraded to 19.0.7.2.1, with unchanged fingerprints across
 all existing business-table columns, including Claim Month. The 479 existing
 claims and their dates were preserved. The local server restarted on port 8066;
 HTTP and read-only model/view/version checks passed. No remote action was taken.
+
+## 19.0.7.2.2 header and arrow patch
+
+- Existing module suite: 28 tests, 0 failures, 0 errors.
+- Browser verification passed 24 layout cases across LTR/RTL, widths 1440/1024/800/390,
+  and short, long and parallel approval assignments.
+- Confirmed actions are in the native button area without statusbar overlap; compact
+  menus remain accessible. Draft Submit and returned Resubmit visibility passed.
+- No visible Step labels; arrows follow direction and sit on the incoming side of
+  each sequence group, attached during wrapping. No page/timeline horizontal overflow.
+- The sticky amount warning remains below the header on scroll.
+- Evidence: `/opt/playwright/artifacts/hr/claim-header-20261117/`.
+- Local upgrade preserves all business fingerprints (480 claims, 1,595 runtime stages,
+  1,552 history rows and 481 documents, plus workflow configuration and links).
+- Remote files and services are unchanged; deployment/upgrade remains manual.
