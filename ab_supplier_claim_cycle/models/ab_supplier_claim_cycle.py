@@ -1,10 +1,10 @@
 import base64
 import binascii
 import math
-from decimal import Decimal, ROUND_HALF_UP
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tools import float_compare, float_is_zero, float_round
 
 
 CLAIM_STATES = [
@@ -13,6 +13,7 @@ CLAIM_STATES = [
 ]
 PAYMENT_NATURE = [
     ('cash', 'Cash'), ('check', 'Check'), ('bank_transfer', 'Bank Transfer'),
+    ('check_and_transfer', 'Check and Transfer'),
 ]
 TAX_CLASSIFICATION = [
     ('through_supplier', 'Advance Payments'), ('tax_payment', 'Tax Payment'),
@@ -24,7 +25,10 @@ PASSIVE_DECISIONS = [
     ('deferred', 'Deferred'), ('cancelled', 'Cancelled'),
     ('not_required', 'Not Required'),
 ]
-CLAIM_DEFAULT_FIELDS = ('type_of_invoice', 'payment_nature', 'tax_classification', 'section', 'area')
+CLAIM_DEFAULT_FIELDS = (
+    'type_of_invoice', 'payment_nature', 'tax_classification', 'section', 'area',
+    'delivery_representative_phone', 'delivery_representative_name',
+)
 GROUP_PREFIX = 'ab_supplier_claim_cycle.supplier_claim_group_'
 
 
@@ -40,21 +44,25 @@ class SupplierClaimCycle(models.Model):
     _claim_reference_unique = models.Constraint(
         'UNIQUE(claim_reference)', 'Claim ID must be unique.')
     supplier_id = fields.Many2one(
-        'ab_costcenter', required=True, ondelete='restrict', tracking=True,
+        'ab_costcenter', ondelete='restrict', tracking=True,
         domain=fields.Domain('code', '=like', '1-%'))
-    num_of_invoice = fields.Integer(required=True, tracking=True)
+    num_of_invoice = fields.Integer(tracking=True)
+    claim_month = fields.Date(copy=False, tracking=True)
+    confirm_contact_info = fields.Boolean(string='Confirm contact info', default=False, copy=False)
+    show_participant_attachment_note = fields.Boolean(compute='_compute_attachment_note')
+
     state = fields.Selection(
         CLAIM_STATES, default='draft', required=True, readonly=True, copy=False, index=True)
     user_id = fields.Many2one(
         'res.users', default=lambda self: self.env.user, readonly=True, ondelete='set null')
-    area = fields.Selection([('south', 'South'), ('north', 'North')], required=True)
+    area = fields.Selection([('south', 'South'), ('north', 'North')])
     company_id = fields.Many2one(
         'res.company', required=True, default=lambda self: self.env.company,
         readonly=True, index=True)
-    claim_amount = fields.Float(required=True, digits=(16, 2), tracking=True)
+    claim_amount = fields.Float(digits=(16, 2), tracking=True)
     type_of_invoice = fields.Selection([
         ('original', 'Original'), ('copy', 'Copy'), ('bank_statement', 'Bank Statement'),
-    ], required=True, tracking=True)
+    ], tracking=True)
     payment_nature = fields.Selection(PAYMENT_NATURE, copy=False, tracking=True)
     tax_classification = fields.Selection(
         TAX_CLASSIFICATION, string='Tax Type', copy=False, tracking=True,
@@ -65,8 +73,8 @@ class SupplierClaimCycle(models.Model):
     active = fields.Boolean(default=True)
     review_round = fields.Integer(default=0, readonly=True, copy=False)
 
-    delivery_representative_name = fields.Char(string='Company Representative Name', copy=False)
-    delivery_representative_phone = fields.Char(string='Company Representative Phone', copy=False)
+    delivery_representative_name = fields.Char(string='Name', copy=False)
+    delivery_representative_phone = fields.Char(string='Phone', copy=False)
     secretarial_notes = fields.Text()
     attachment = fields.Binary(string='Attachment', attachment=False, copy=False)
     attachment_filename = fields.Char(copy=False)
@@ -82,9 +90,9 @@ class SupplierClaimCycle(models.Model):
     tax_discount_decision = fields.Selection([
         ('apply', 'Apply'), ('do_not_apply', 'Do Not Apply'),
     ], copy=False)
-    tax_discount_rate = fields.Float(compute='_compute_amounts', digits=(16, 2), store=True)
-    tax_discount_amount = fields.Float(compute='_compute_amounts', digits=(16, 2), store=True)
-    net_claim_amount = fields.Float(compute='_compute_amounts', digits=(16, 2), store=True)
+    tax_discount_amount = fields.Float(digits=(16, 2), tracking=True, copy=False)
+    net_claim_amount = fields.Float(digits=(16, 2), tracking=True, copy=False)
+    amounts_mismatch = fields.Boolean(compute='_compute_amounts_mismatch')
 
     document_revision = fields.Integer(default=1, readonly=True, copy=False)
     document_ids = fields.One2many(
@@ -126,23 +134,57 @@ class SupplierClaimCycle(models.Model):
     supplier_accounts_followup_date = fields.Date(copy=False)
     bank_accounts_followup_date = fields.Date(copy=False)
 
-    @api.depends('claim_amount', 'tax_discount_decision')
-    def _compute_amounts(self):
+    @api.depends_context('uid')
+    def _compute_attachment_note(self):
+        participant = self._is_attachment_participant()
         for claim in self:
-            amount = Decimal(str(claim.claim_amount)).quantize(
-                Decimal('0.01'), rounding=ROUND_HALF_UP)
-            discount = Decimal('0')
-            if claim.tax_discount_decision == 'apply':
-                discount = (amount * Decimal('0.01')).quantize(
-                    Decimal('0.01'), rounding=ROUND_HALF_UP)
-            claim.tax_discount_rate = 1.0
-            claim.tax_discount_amount = float(discount)
-            claim.net_claim_amount = float(amount - discount)
+            claim.show_participant_attachment_note = participant
+
+    @api.depends('claim_amount', 'tax_discount_amount', 'net_claim_amount')
+    def _compute_amounts_mismatch(self):
+        for claim in self:
+            claim.amounts_mismatch = (
+                not float_is_zero(claim.tax_discount_amount, precision_digits=2)
+                and float_compare(
+                    float_round(claim.claim_amount - claim.tax_discount_amount, precision_digits=2),
+                    claim.net_claim_amount, precision_digits=2) != 0)
 
     @api.constrains('claim_amount')
     def _check_amount(self):
         for claim in self:
+            claim._validate_amount_value({'claim_amount': claim.claim_amount},
+                                        allow_zero=claim.state == 'draft')
+
+    @api.constrains('num_of_invoice')
+    def _check_invoice_count(self):
+        if any(claim.num_of_invoice < 0 for claim in self):
+            raise ValidationError(_('Number of invoices cannot be negative.'))
+
+    @api.onchange('supplier_id', 'area', 'delivery_representative_phone',
+                  'delivery_representative_name')
+    def _onchange_contact_confirmation(self):
+        self.confirm_contact_info = False
+
+    def _validate_submission_fields(self):
+        required = [
+            ('supplier_id', _('Supplier')), ('area', _('Area')),
+            ('delivery_representative_name', _('Name')),
+            ('delivery_representative_phone', _('Phone')),
+            ('confirm_contact_info', _('Confirm contact info')),
+            ('num_of_invoice', _('Num Of Invoice')), ('claim_amount', _('Claim Amount')),
+            ('claim_month', _('Claim Month')), ('type_of_invoice', _('Type Of Invoice')),
+            ('section', _('Section')), ('payment_nature', _('Payment Nature')),
+            ('tax_classification', _('Tax Type')),
+        ]
+        for claim in self:
+            missing = [label for name, label in required
+                       if not claim[name] or isinstance(claim[name], str) and not claim[name].strip()]
+            if missing:
+                raise ValidationError(_('Complete these fields before submitting:\n%s',
+                                        '\n'.join(missing)))
             claim._validate_amount_value({'claim_amount': claim.claim_amount})
+            if claim.num_of_invoice <= 0:
+                raise ValidationError(_('Number of invoices must be positive before submission.'))
 
     @api.depends('claim_reference', 'supplier_id.display_name')
     def _compute_display_name(self):
@@ -179,15 +221,16 @@ class SupplierClaimCycle(models.Model):
             'secretarial_notes', 'attachment', 'attachment_filename',
             'delivery_representative_name', 'delivery_representative_phone',
             'claim_reference', 'tax_classification', 'section', 'payment_nature',
+            'claim_month', 'confirm_contact_info', 'tax_discount_amount', 'net_claim_amount',
         }
 
     @api.model
-    def _validate_amount_value(self, vals):
+    def _validate_amount_value(self, vals, allow_zero=False):
         if 'claim_amount' not in vals:
             return
         value = vals['claim_amount']
         if (isinstance(value, bool) or not isinstance(value, (int, float))
-                or not math.isfinite(value) or value <= 0):
+                or not math.isfinite(value) or value < 0 or (not allow_zero and value == 0)):
             raise ValidationError(_('The claim amount must be a positive finite number.'))
 
     @api.model
@@ -227,7 +270,7 @@ class SupplierClaimCycle(models.Model):
         self._require_role('user')
         clean_vals_list = []
         for vals in vals_list:
-            self._validate_amount_value(vals)
+            self._validate_amount_value(vals, allow_zero=True)
             unexpected = set(vals) - self._entry_fields() - {'active'}
             if unexpected:
                 raise AccessError(_('Create a draft claim without workflow values.'))
@@ -253,7 +296,7 @@ class SupplierClaimCycle(models.Model):
 
     def write(self, vals):
         self._require_role('user')
-        self._validate_amount_value(vals)
+        self._validate_amount_value(vals, allow_zero=all(claim.state == 'draft' for claim in self))
         if set(vals) == {'active'}:
             self._require_role('admin')
         elif set(vals) - self._entry_fields():
@@ -263,6 +306,10 @@ class SupplierClaimCycle(models.Model):
         self.check_access('write')
         self.lock_for_update()
         values = dict(vals)
+        contact_fields = {'supplier_id', 'area', 'delivery_representative_phone',
+                          'delivery_representative_name'}
+        if contact_fields & vals.keys() and 'confirm_contact_info' not in vals:
+            values['confirm_contact_info'] = False
         if 'claim_reference' in values:
             values['claim_reference'] = self._normalize_claim_reference(values['claim_reference'])
         result = super().write(values)
@@ -300,6 +347,8 @@ class SupplierClaimCycle(models.Model):
         }
         if field_name not in kinds or not isinstance(files, list) or not files:
             raise ValidationError(_('Select at least one valid file to upload.'))
+        if self._is_attachment_participant() and len(files) != 1:
+            raise ValidationError(_('Upload one file here; add additional attachments in Chatter.'))
         for file in files:
             if (not isinstance(file, dict) or not isinstance(file.get('name'), str)
                     or not file['name'].strip() or not isinstance(file.get('data'), str)):
@@ -325,8 +374,20 @@ class SupplierClaimCycle(models.Model):
         return True
 
     def _workflow_write(self, vals):
-        self._validate_amount_value(vals)
+        self._validate_amount_value(vals, allow_zero=all(claim.state == 'draft' for claim in self))
+        if ({'supplier_id', 'area', 'delivery_representative_phone',
+             'delivery_representative_name'} & vals.keys()
+                and 'confirm_contact_info' not in vals):
+            vals = {**vals, 'confirm_contact_info': False}
         return super(SupplierClaimCycle, self.sudo()).write(vals)
+
+    def _is_attachment_participant(self):
+        # Mail upload/delete routes use sudo after checking access tokens. Keep
+        # the originating user's attachment restrictions in those routes too.
+        return (self.env.user.has_group(GROUP_PREFIX + 'participant')
+                and not self.env.user.has_group(GROUP_PREFIX + 'admin')
+                and not self.env.user.has_group('base.group_system')
+                and not self.env.user.has_group(GROUP_PREFIX + 'user'))
 
     @api.ondelete(at_uninstall=True)
     def _prevent_claim_deletion(self):

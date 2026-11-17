@@ -45,6 +45,11 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
             'type_of_invoice': 'original',
             'payment_nature': 'cash',
             'tax_classification': 'non_tax_payment',
+            'section': 'medical',
+            'claim_month': '2026-11-01',
+            'delivery_representative_phone': '01012345678',
+            'delivery_representative_name': 'Representative',
+            'confirm_contact_info': True,
         }
         cls.open_claim = Claim.create(claim_values)
         cls.open_claim.action_submit()
@@ -150,6 +155,32 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
                 }, 100);
             """,
             login=self.observer.login,
+        )
+
+    def test_new_incomplete_draft_renders_and_saves(self):
+        self.browser_js(
+            '/odoo/action-ab_supplier_claim_cycle.invoice_action/new',
+            """
+                const deadline = Date.now() + 30000;
+                let saving = false;
+                const timer = setInterval(() => {
+                    const month = document.querySelector(
+                        '.o_field_widget[name="claim_month"] input[type="text"]');
+                    const save = document.querySelector('[aria-label="Save manually"]');
+                    if (month && save && !saving) {
+                        saving = true;
+                        save.click();
+                    }
+                    if (saving && month && !save && !document.querySelector('.o_error_dialog')) {
+                        clearInterval(timer);
+                        console.log('test successful');
+                    } else if (Date.now() > deadline) {
+                        clearInterval(timer);
+                        console.error('Incomplete draft did not render and save');
+                    }
+                }, 100);
+            """,
+            login=self.secretarial.login,
         )
 
     def test_history_view_is_readable(self):

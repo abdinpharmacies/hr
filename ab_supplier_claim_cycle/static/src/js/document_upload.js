@@ -21,11 +21,14 @@ export class SupplierClaimUpload extends BinaryField {
         return this.props.record.save();
     }
 
-    onUploaded(file) {
+    async onUploaded(file) {
         this.files.push({ name: file.name, data: file.data });
         if (file.objectUrl) {
             URL.revokeObjectURL(file.objectUrl);
         }
+        // FileUploader only invokes onUploadComplete for multi-file inputs.
+        // Single-file fields must finish the upload from this callback.
+        await this.onUploadComplete();
     }
 
     async onUploadComplete() {

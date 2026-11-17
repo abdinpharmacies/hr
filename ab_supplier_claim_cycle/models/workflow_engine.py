@@ -32,6 +32,30 @@ class SupplierClaimWorkflow(models.Model):
     workflow_stage_ids = fields.One2many(
         'ab_supplier_claim_workflow_stage', 'workflow_id', string='Stages', copy=True)
     active = fields.Boolean(default=True)
+    can_reset_to_draft = fields.Boolean(compute='_compute_can_reset_to_draft')
+
+    @api.depends('state')
+    def _compute_can_reset_to_draft(self):
+        used = self.env['ab_supplier_claim_stage_state'].sudo().search([
+            ('stage_id.workflow_id', 'in', self.ids),
+        ]).mapped('stage_id.workflow_id')
+        for workflow in self:
+            workflow.can_reset_to_draft = workflow.state == 'published' and workflow not in used
+
+    def action_reset_to_draft(self):
+        self._require_admin()
+        self.lock_for_update()
+        self.invalidate_recordset()
+        if any(workflow.state != 'published' for workflow in self):
+            raise UserError(_('Only unused published workflows can return to Draft.'))
+        if self.env['ab_supplier_claim_stage_state'].sudo().search_count([
+                ('stage_id.workflow_id', 'in', self.ids)], limit=1):
+            raise UserError(_('This workflow has already been used by a submitted claim.'))
+        result = super().write({'state': 'draft'})
+        self.env['ab_supplier_claim_cycle'].sudo().with_context(active_test=False).search([
+            ('workflow_id', 'in', self.ids), ('state', '=', 'draft'),
+        ])._workflow_write({'workflow_id': False})
+        return result
 
     _name_version_unique = models.Constraint(
         'UNIQUE(name, version)',
@@ -148,7 +172,7 @@ class SupplierClaimWorkflowStage(models.Model):
     allowed_field_ids = fields.Many2many(
         'ir.model.fields', 'ab_supplier_claim_stage_allowed_field_rel',
         'stage_id', 'field_id', string='Allowed Fields',
-        domain=lambda self: self._allowed_field_domain())
+        domain=lambda self: self.env['ab_supplier_claim_workflow_stage']._allowed_field_domain())
     approver_ids = fields.Many2many(
         'res.users', 'ab_supplier_claim_stage_approver_rel',
         'stage_id', 'user_id', string='Approvers',
@@ -222,6 +246,9 @@ class SupplierClaimWorkflowStage(models.Model):
 
     def write(self, vals):
         self.env['ab_supplier_claim_workflow']._require_admin()
+        if vals.get('workflow_id') and self.env['ab_supplier_claim_workflow'].browse(
+                vals['workflow_id']).state != 'draft':
+            raise AccessError(_('Stages can only be moved to draft workflows.'))
         archived = self.filtered(lambda stage: stage.workflow_id.state == 'archived')
         if archived:
             raise AccessError(_('Stages of archived workflow versions are immutable.'))
@@ -234,8 +261,8 @@ class SupplierClaimWorkflowStage(models.Model):
         forbidden_changes = set(vals) - allowed_changes
         if forbidden_changes:
             raise AccessError(_(
-                'Published stages only allow changing the stage name and adding '
-                'approvers or allowed fields. Create a new version for other changes.'))
+                'Published stages only allow changing the stage name '
+                'or updating approvers or allowed fields. Create a new version for other changes.'))
 
         previous_links = {
             stage.id: {
@@ -246,18 +273,16 @@ class SupplierClaimWorkflowStage(models.Model):
         }
         with self.env.cr.savepoint():
             result = super().write(vals)
-            for stage in published:
-                if not previous_links[stage.id]['approver_ids'].issubset(
-                        stage.approver_ids.ids):
-                    raise AccessError(_(
-                        'Approvers cannot be removed from a published stage. '
-                        'Create a new workflow version instead.'))
-                if not previous_links[stage.id]['allowed_field_ids'].issubset(
-                        stage.allowed_field_ids.ids):
-                    raise AccessError(_(
-                        'Allowed fields cannot be removed from a published stage. '
-                        'Create a new workflow version instead.'))
             published._validate_for_publication()
+            rows_by_stage = self.env['ab_supplier_claim_stage_state'].sudo().search([
+                ('stage_id', 'in', published.ids),
+            ]).grouped('stage_id')
+            for stage in published:
+                members = previous_links[stage.id]['approver_ids'] | set(stage.approver_ids.ids)
+                rows = rows_by_stage.get(stage, self.env['ab_supplier_claim_stage_state'])
+                rows._internal_write({
+                    'historical_approver_ids': [fields.Command.link(user_id) for user_id in members],
+                })
         return result
 
     def unlink(self):
@@ -278,7 +303,12 @@ class SupplierClaimStageState(models.Model):
     sequence = fields.Integer(related='stage_id.sequence', store=True, index=True)
     name = fields.Char(related='stage_id.name')
     approver_ids = fields.Many2many(related='stage_id.approver_ids', readonly=True)
-    allowed_field_ids = fields.Many2many(related='stage_id.allowed_field_ids', readonly=True)
+    historical_approver_ids = fields.Many2many(
+        'res.users', 'ab_supplier_claim_stage_historical_user_rel',
+        'stage_state_id', 'user_id', readonly=True, copy=False)
+    allowed_field_ids = fields.Many2many(
+        related='stage_id.allowed_field_ids', readonly=True,
+        domain=lambda self: self.env['ab_supplier_claim_workflow_stage']._allowed_field_domain())
     status = fields.Selection(STAGE_STATUSES, required=True, default='waiting', index=True)
     user_id = fields.Many2one('res.users', readonly=True, ondelete='restrict')
     decision_at = fields.Datetime(readonly=True)
@@ -406,7 +436,7 @@ class SupplierClaimWorkflowEngine(models.Model):
         return claims
 
     @api.depends('supplier_id', 'num_of_invoice', 'area', 'claim_amount', 'type_of_invoice',
-                 'payment_nature', 'tax_classification', 'section', 'company_id', 'state')
+                 'payment_nature', 'tax_classification', 'section', 'claim_month', 'company_id', 'state')
     def _compute_available_workflows(self):
         workflows = self.env['ab_supplier_claim_workflow'].search([
             ('state', '=', 'published'), ('active', '=', True),
@@ -415,7 +445,7 @@ class SupplierClaimWorkflowEngine(models.Model):
             claim.available_workflow_ids = workflows.filtered(lambda workflow: workflow._matches_claim(claim))
 
     @api.onchange('supplier_id', 'num_of_invoice', 'area', 'claim_amount', 'type_of_invoice',
-                  'payment_nature', 'tax_classification', 'section')
+                  'payment_nature', 'tax_classification', 'section', 'claim_month')
     def _onchange_workflow_match(self):
         for claim in self.filtered(lambda record: record.state == 'draft' and record.id):
             matching = claim.available_workflow_ids
@@ -461,11 +491,23 @@ class SupplierClaimWorkflowEngine(models.Model):
             lambda row: row.sequence == self.current_sequence
             and row.status in ('pending', 'deferred')
             and (is_admin or self.env.user in row.approver_ids))
-        return self._binary_companion_names(rows.sudo().mapped('allowed_field_ids.name'))
+        names = self._binary_companion_names(rows.sudo().mapped('allowed_field_ids.name'))
+        if self._is_attachment_participant():
+            for attachment, filename in self._attachment_field_pairs():
+                if self[attachment]:
+                    names -= {attachment, filename}
+        return names
+
+    @api.model
+    def _attachment_field_pairs(self):
+        return [('attachment', 'attachment_filename')] + [
+            (kind + '_attachment', kind + '_filename')
+            for kind in ('supplier_cheque', 'tax_review', 'payment_request', 'bank_cheque')]
 
     @api.depends('state', 'current_sequence', 'stage_state_ids.status',
                  'stage_state_ids.allowed_field_ids', 'stage_state_ids.approver_ids',
-                 'rejection_stage_state_id')
+                 'rejection_stage_state_id', 'attachment', 'supplier_cheque_attachment',
+                 'tax_review_attachment', 'payment_request_attachment', 'bank_cheque_attachment')
     @api.depends_context('uid')
     def _compute_editable_field_names(self):
         for claim in self:
@@ -548,8 +590,13 @@ class SupplierClaimWorkflowEngine(models.Model):
                 continue
             if claim.state != 'draft' or claim.stage_state_ids:
                 raise UserError(_('Only an unsubmitted draft claim can be submitted.'))
+            claim._validate_submission_fields()
             matching = claim.available_workflow_ids
             workflow = claim.workflow_id or (matching if len(matching) == 1 else False)
+            if not workflow:
+                raise ValidationError(_('Select a published workflow that matches this claim.'))
+            workflow.lock_for_update()
+            workflow.invalidate_recordset()
             claim._validate_selected_workflow(workflow)
             stages = workflow.workflow_stage_ids.sorted(lambda stage: (stage.sequence, stage.id))
             if not stages:
@@ -558,6 +605,7 @@ class SupplierClaimWorkflowEngine(models.Model):
             StageState.create([{
                 'claim_id': claim.id,
                 'stage_id': stage.id,
+                'historical_approver_ids': [fields.Command.set(stage.approver_ids.ids)],
                 'status': 'pending' if stage.sequence == first_sequence else 'waiting',
             } for stage in stages])
             claim._workflow_write({

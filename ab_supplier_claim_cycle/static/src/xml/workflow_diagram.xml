@@ -22,6 +22,7 @@
                     <div class="o_scc_workflow_diagram__group" role="group"
                          t-att-data-sequence="group.sequence"
                          t-att-aria-label="'Workflow sequence ' + group.sequence">
+                        <span class="o_scc_workflow_diagram__sequence">Step <t t-esc="group.sequence"/></span>
                         <t t-foreach="group.stages" t-as="stage" t-key="stage.id">
                             <div t-att-class="'o_scc_workflow_diagram__node o_scc_workflow_diagram__node--' + stage.className"
                                  role="listitem" t-att-data-stage-status="stage.status"
@@ -61,20 +62,31 @@
 
     <t t-name="ab_supplier_claim_cycle.WorkflowActions">
         <div class="o_scc_workflow_actions">
-            <t t-foreach="activeStages" t-as="stage" t-key="stage.id">
-                <button type="button" class="btn btn-primary"
-                        t-att-disabled="state.busy"
-                        t-on-click.stop="() => this.approve(stage.id)"
-                        t-esc="actionLabel('approve', stage.name)"/>
-                <button type="button" class="btn btn-secondary"
-                        t-att-disabled="state.busy"
-                        t-on-click.stop="() => this.openDecision(stage.id, 'rejected')"
-                        t-esc="actionLabel('reject', stage.name)"/>
-                <button type="button" class="btn btn-secondary"
-                        t-att-disabled="state.busy"
-                        t-on-click.stop="() => this.openDecision(stage.id, 'deferred')"
-                        t-esc="actionLabel('defer', stage.name)"/>
-            </t>
+            <div class="o_scc_workflow_actions__inline">
+                <t t-foreach="activeStages" t-as="stage" t-key="stage.id">
+                    <button type="button" class="btn btn-primary" t-att-disabled="state.busy"
+                            t-on-click.stop="() => this.approve(stage.id)"
+                            t-esc="actionLabel('approve', stage.name)"/>
+                    <button type="button" class="btn btn-secondary" t-att-disabled="state.busy"
+                            t-on-click.stop="() => this.openDecision(stage.id, 'rejected')"
+                            t-esc="actionLabel('reject', stage.name)"/>
+                    <button type="button" class="btn btn-secondary" t-att-disabled="state.busy"
+                            t-on-click.stop="() => this.openDecision(stage.id, 'deferred')"
+                            t-esc="actionLabel('defer', stage.name)"/>
+                </t>
+            </div>
+            <div class="o_scc_workflow_actions__compact" t-if="activeStages.length">
+                <Dropdown>
+                    <button type="button" class="btn btn-primary" t-att-disabled="state.busy">Stage Actions</button>
+                    <t t-set-slot="content">
+                        <t t-foreach="activeStages" t-as="stage" t-key="stage.id">
+                            <DropdownItem onSelected="() => this.approve(stage.id)" t-esc="actionLabel('approve', stage.name)"/>
+                            <DropdownItem onSelected="() => this.openDecision(stage.id, 'rejected')" t-esc="actionLabel('reject', stage.name)"/>
+                            <DropdownItem onSelected="() => this.openDecision(stage.id, 'deferred')" t-esc="actionLabel('defer', stage.name)"/>
+                        </t>
+                    </t>
+                </Dropdown>
+            </div>
         </div>
     </t>
 </templates>

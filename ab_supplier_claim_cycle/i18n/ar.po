@@ -1632,12 +1632,12 @@ msgstr "تم تغيير المطالبة. أغلق هذه النافذة واف�
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__delivery_representative_name
-msgid "Company Representative Name"
+msgid "Name"
 msgstr "اسم مندوب الشركة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__delivery_representative_phone
-msgid "Company Representative Phone"
+msgid "Phone"
 msgstr "رقم هاتف مندوب الشركة"
 
 #. module: ab_supplier_claim_cycle
@@ -2233,11 +2233,6 @@ msgstr "مبلغ الخصم الضريبي"
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_discount_decision
 msgid "Tax Discount Decision"
 msgstr "قرار الخصم الضريبي"
-
-#. module: ab_supplier_claim_cycle
-#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_discount_rate
-msgid "Tax Discount Rate"
-msgstr "نسبة الخصم الضريبي"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_followup_date

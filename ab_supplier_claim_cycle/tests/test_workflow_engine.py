@@ -2,7 +2,7 @@ from datetime import timedelta
 import base64
 
 from odoo import Command, fields
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 from odoo.tests.common import new_test_user
 
@@ -71,6 +71,11 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
             'type_of_invoice': 'original',
             'payment_nature': 'cash',
             'tax_classification': 'non_tax_payment',
+            'section': 'medical',
+            'claim_month': '2026-11-01',
+            'delivery_representative_phone': '01012345678',
+            'delivery_representative_name': 'Supplier representative',
+            'confirm_contact_info': True,
             **values,
         }
 
@@ -259,16 +264,18 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         self.assertIn(secretarial_notes, stage_state.allowed_field_ids)
         claim.with_user(self.outsider).write({'secretarial_notes': 'Added after submission'})
 
+        stage.with_user(self.admin).write({
+            'approver_ids': [Command.unlink(self.approver_a.id)],
+            'allowed_field_ids': [Command.unlink(secretarial_notes.id)],
+        })
+        self.assertNotIn(self.approver_a, stage.approver_ids)
+        self.assertIn(self.approver_a, stage_state.historical_approver_ids)
+        claim.with_user(self.approver_a).check_access('read')
         with self.assertRaises(AccessError):
-            stage.with_user(self.admin).write({
-                'approver_ids': [Command.unlink(self.approver_a.id)],
-            })
-        self.assertIn(self.approver_a, stage.approver_ids)
+            stage_state.with_user(self.approver_a).action_approve()
         with self.assertRaises(AccessError):
-            stage.with_user(self.admin).write({
-                'allowed_field_ids': [Command.unlink(secretarial_notes.id)],
-            })
-        self.assertIn(secretarial_notes, stage.allowed_field_ids)
+            claim.with_user(self.outsider).write({'secretarial_notes': 'revoked'})
+        self.assertNotIn(secretarial_notes, stage.allowed_field_ids)
 
         with self.assertRaises(AccessError):
             self.workflow.with_user(self.admin).write({'priority': 5})
@@ -359,15 +366,8 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
             })],
         })
         other.action_publish()
-        claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create({
-            'supplier_id': self.supplier.id,
-            'num_of_invoice': 3,
-            'area': 'north',
-            'claim_amount': 50,
-            'type_of_invoice': 'original',
-            'payment_nature': 'cash',
-            'tax_classification': 'non_tax_payment',
-        })
+        claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create(
+            self._claim_values(num_of_invoice=3, claim_amount=50))
         self.assertFalse(claim.workflow_id)
         self.assertEqual(claim.available_workflow_ids[:2].mapped('name'), [
             'Cash workflow', 'Fallback cash workflow'])
@@ -377,3 +377,170 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         claim.action_submit()
         self.assertEqual(claim.workflow_id, self.workflow)
 
+
+    def test_incomplete_draft_and_initial_submission_requirements(self):
+        Claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial)
+        draft = Claim.create({})
+        self.assertEqual(draft.state, 'draft')
+        self.assertFalse(draft.confirm_contact_info)
+        with self.assertRaisesRegex(ValidationError, 'Supplier'):
+            draft.action_submit()
+        values = self._claim_values(confirm_contact_info=False)
+        draft.write(values)
+        with self.assertRaisesRegex(ValidationError, 'Confirm contact info'):
+            draft.action_submit()
+        draft.write({'confirm_contact_info': True})
+        draft.action_submit()
+        self.assertEqual(draft.state, 'in_progress')
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            Claim.create(self._claim_values(claim_amount=-1))
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            Claim.create(self._claim_values(num_of_invoice=-1))
+
+    def test_form_payload_excludes_unassigned_attachment_filenames(self):
+        from odoo.tests import Form
+        Claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial)
+        form = Form(Claim)
+        values = form._get_save_values()
+        self.assertFalse(set(values) - Claim._entry_fields() - {'active', 'workflow_id'})
+        draft = Claim.create(values)
+        self.assertEqual(draft.state, 'draft')
+
+    def test_contact_defaults_include_archived_claims_and_require_confirmation(self):
+        Claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial)
+        previous = Claim.create(self._claim_values())
+        previous.with_user(self.admin).write({'active': False})
+        draft = Claim.create({'supplier_id': self.supplier.id})
+        self.assertEqual(draft.delivery_representative_phone, previous.delivery_representative_phone)
+        self.assertEqual(draft.delivery_representative_name, previous.delivery_representative_name)
+        self.assertEqual(draft.area, previous.area)
+        self.assertFalse(draft.confirm_contact_info)
+        self.assertFalse(draft.claim_month)
+        draft.write({'confirm_contact_info': True})
+        draft.write({'delivery_representative_phone': '01099999999'})
+        self.assertFalse(draft.confirm_contact_info)
+        draft.write({'delivery_representative_phone': '01088888888', 'confirm_contact_info': True})
+        self.assertTrue(draft.confirm_contact_info)
+
+    def test_unused_published_workflow_can_reset_but_used_cannot(self):
+        draft = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create(self._claim_values())
+        self.assertEqual(draft.workflow_id, self.workflow)
+        self.workflow.with_user(self.admin).action_reset_to_draft()
+        self.assertFalse(draft.workflow_id)
+        self.workflow.with_user(self.admin).write({'claim_domain': '[]', 'priority': 42})
+        self.workflow.workflow_stage_ids[:1].with_user(self.admin).write({'sequence': 5})
+        self.workflow.with_user(self.admin).action_publish()
+        self._claim()
+        with self.assertRaises(UserError):
+            self.workflow.with_user(self.admin).action_reset_to_draft()
+        self.assertEqual(self.workflow.state, 'published')
+        with self.assertRaises(AccessError):
+            self.workflow.with_user(self.secretarial).action_reset_to_draft()
+
+    def test_attachment_field_locks_and_chatter_accepts_additional_files(self):
+        claim = self._claim()
+        participant = claim.with_user(self.approver_a)
+        content = base64.b64encode(b'first file').decode()
+        participant.action_upload_documents('attachment', [{'name': 'first.txt', 'data': content}])
+        for values in ({'attachment': False}, {'attachment_filename': 'renamed.txt'},
+                       {'attachment': base64.b64encode(b'replacement')}):
+            with self.assertRaises(AccessError):
+                participant.write(values)
+        with self.assertRaises(AccessError):
+            participant.action_upload_documents('attachment', [{'name': 'second.txt', 'data': content}])
+        with self.assertRaises(AccessError):
+            claim.with_user(self.approver_b).action_upload_documents(
+                'attachment', [{'name': 'unauthorized.txt', 'data': content}])
+        # The other parallel participant has no attachment field permission.
+        message = claim.with_user(self.approver_b).message_post(
+            body='Additional evidence', attachments=[('additional.txt', b'additional')],
+            message_type='comment', subtype_xmlid='mail.mt_note')
+        attachment = message.attachment_ids.with_user(self.approver_b)
+        self.assertTrue(attachment)
+        with self.assertRaises(AccessError):
+            attachment.write({'name': 'renamed.txt'})
+        with self.assertRaises(AccessError):
+            attachment.write({'datas': base64.b64encode(b'replacement')})
+        with self.assertRaises(AccessError):
+            attachment.unlink()
+        with self.assertRaises(AccessError):
+            attachment.sudo()._delete_and_notify()
+        with self.assertRaises(AccessError):
+            message.write({'attachment_ids': [Command.clear()]})
+        with self.assertRaises(AccessError):
+            message.unlink()
+        with self.assertRaises(AccessError):
+            claim.with_user(self.outsider).message_post(body='Not assigned')
+
+    def test_removed_fields_revoke_returned_and_future_stage_edits(self):
+        claim = self._claim()
+        stage = self.workflow.workflow_stage_ids.filtered(lambda row: row.name == 'Amount Review')
+        row = claim.stage_state_ids.filtered(lambda row: row.stage_id == stage)
+        claim.with_user(self.approver_a)._action_stage_decision(
+            row.with_user(self.approver_a), 'rejected', reason='Correct amount')
+        stage.with_user(self.admin).write({'allowed_field_ids': [Command.clear()]})
+        with self.assertRaises(AccessError):
+            claim.with_user(self.secretarial).write({'claim_amount': 200})
+        claim.with_user(self.secretarial).action_resubmit()
+        with self.assertRaises(AccessError):
+            claim.with_user(self.approver_a).write({'claim_amount': 200})
+
+    def test_claim_month_and_combined_payment(self):
+        draft = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create(
+            self._claim_values(payment_nature='check_and_transfer'))
+        self.assertEqual(str(draft.claim_month), '2026-11-01')
+        self.assertEqual(draft.payment_nature, 'check_and_transfer')
+        draft.write({'claim_month': '2026-11-17'})
+        self.assertEqual(str(draft.claim_month), '2026-11-17')
+        draft.write({'claim_month': '2028-02-29'})
+        self.assertEqual(str(draft.claim_month), '2028-02-29')
+
+    def test_historical_membership_does_not_bypass_company_scope(self):
+        claim = self._claim()
+        other_company = self.env['res.company'].create({'name': 'Other claim company'})
+        records_to_check = (claim, claim.stage_state_ids, claim.history_ids)
+        claim._workflow_write({'company_id': other_company.id})
+        for records in records_to_check:
+            with self.assertRaises(AccessError):
+                records.with_user(self.approver_a).check_access('read')
+
+    def test_tax_and_net_amounts_are_independent_draft_entries(self):
+        Claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial)
+        self.assertNotIn('tax_discount_rate', Claim._fields)
+        for name in ('tax_discount_amount', 'net_claim_amount'):
+            self.assertFalse(Claim._fields[name].compute)
+            self.assertFalse(Claim._fields[name].readonly)
+        draft = Claim.create(self._claim_values(tax_discount_amount=7.5, net_claim_amount=88))
+        draft.write({'claim_amount': 250})
+        self.assertEqual(draft.tax_discount_amount, 7.5)
+        self.assertEqual(draft.net_claim_amount, 88)
+        draft.write({'tax_discount_amount': 10, 'net_claim_amount': 239})
+        self.assertEqual(draft.tax_discount_amount, 10)
+        self.assertEqual(draft.net_claim_amount, 239)
+        draft.action_submit()
+        with self.assertRaises(AccessError):
+            draft.with_user(self.approver_a).write({'net_claim_amount': 100})
+
+    def test_amount_mismatch_warning_is_nonblocking_and_discount_conditional(self):
+        draft = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create(
+            self._claim_values(tax_discount_amount=0, net_claim_amount=1))
+        self.assertFalse(draft.amounts_mismatch)
+        draft.write({'tax_discount_amount': 10, 'net_claim_amount': 90})
+        self.assertFalse(draft.amounts_mismatch)
+        draft.write({'net_claim_amount': 89})
+        self.assertTrue(draft.amounts_mismatch)
+        draft.action_submit()
+        self.assertTrue(draft.amounts_mismatch)
+        row = draft.stage_state_ids.filtered(lambda stage: stage.name == 'Amount Review')
+        row.with_user(self.approver_a).action_approve()
+        self.assertTrue(draft.amounts_mismatch)
+
+    def test_submission_errors_follow_form_labels_and_order(self):
+        draft = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial).create({})
+        with self.assertRaises(ValidationError) as error:
+            draft.action_submit()
+        self.assertEqual(str(error.exception).splitlines()[1:], [
+            'Supplier', 'Area', 'Name', 'Phone', 'Confirm contact info',
+            'Num Of Invoice', 'Claim Amount', 'Claim Month', 'Type Of Invoice',
+            'Section', 'Payment Nature', 'Tax Type',
+        ])

@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Odoo 19 · version 19.0.7.1.0 · Developer: Alhassan Hossny
+Odoo 19 · version 19.0.7.2.1 · Developer: Alhassan Hossny
 
 ## Dynamic workflow
 
@@ -18,11 +18,39 @@ Workflow priority orders matching choices. When exactly one published workflow
 matches a saved draft it is selected automatically. When several match,
 Secretarial must select one before submission. Submission revalidates the domain.
 
-On a published workflow, administrators may rename a stage and add approvers or
-allowed fields. Those additions apply immediately to every claim that references
-the stage. Existing approvers and allowed fields cannot be removed, and the
-domain, priority, sequence and stage structure remain immutable. Use **New
-Version** for those structural changes. Archived versions are fully immutable.
+An unused published workflow can return to Draft for full editing and must be
+published again before use. Once used by a submitted claim (including returned,
+closed or archived claims), its domain, priority, sequence and stage structure
+remain fixed. Administrators may rename stages and add or remove approvers and
+allowed fields. Each stage must retain at least one valid approver. Removed
+approvers retain read-only access to previously assigned claims; current
+approvers alone can decide stages and edit allowed fields. Allowed-field removals
+apply immediately to current, future and returned stages. Archived versions are
+immutable. Use **New Version** for structural changes to used workflows.
+
+## Claim entry and attachments
+
+Drafts may be incomplete. Initial submission requires supplier, area,
+representative phone and name, explicit contact confirmation, invoice type and
+count, claim amount and date, section, payment nature and tax type.
+Claim Month uses the standard Odoo calendar with field-local ISO (`YYYY-MM-DD`)
+entry and display, preserving the selected day. Other date formats are unchanged.
+Supplier defaults include representative contact details from the latest claim,
+including archived claims. Confirmation and claim month are not inherited.
+Changing contact details resets confirmation unless explicitly confirmed again.
+
+Tax Discount Amount and Net Claim Amount are normal editable draft entries;
+neither is calculated automatically. Tax Discount Rate has been removed. A
+persistent, non-blocking warning appears across stages when a nonzero discount
+makes Claim Amount minus Tax Discount Amount differ from Net Claim Amount.
+The Taxes and Amounts tab precedes Documents and Notes.
+
+All dedicated attachment fields are visible and optional. A participant may
+upload one file to an empty field allowed in their active stage. Saved attachments
+cannot be replaced, renamed, cleared or deleted by participants. Additional files
+belong in Chatter, which is available to every participant who can access the
+claim, regardless of active-stage field permissions. Saved Chatter attachments
+are also protected. Existing administrator/secretarial privileges are preserved.
 
 ## Runtime behavior
 
@@ -57,7 +85,7 @@ Uploads continue to create immutable document-history records.
 These are the only four supplier-claim groups. Department responsibilities belong
 to workflow stages; there are no department-specific security groups.
 
-Participants can read claims assigned to any of their snapshot stages. Company
+Participants can read claims assigned to any of their historical stage memberships. Company
 record rules still restrict claim, stage-state, history and document access even
 though workflow definitions are globally shared.
 

@@ -699,3 +699,34 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
         }
     }
 }
+
+// Keep entry groups parallel from the medium breakpoint upward.
+.o_scc_form .o_scc_entry_grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+
+    > .o_inner_group { min-width: 0; width: 100%; align-content: start; }
+}
+
+.o_scc_form .o_scc_workflow_header {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap !important;
+    gap: 6px;
+    min-width: 0;
+
+    .o_statusbar_buttons { flex-wrap: nowrap !important; min-width: 0; }
+    .o_statusbar_status { margin-inline-start: auto; min-width: 0; }
+}
+
+@media (max-width: 767px) {
+    .o_scc_form .o_scc_entry_grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.o_scc_form .o_scc_amount_warning {
+    position: sticky;
+    top: 50px;
+    z-index: 5;
+    box-shadow: 0 3px 10px rgba(32, 36, 42, 0.12);
+}

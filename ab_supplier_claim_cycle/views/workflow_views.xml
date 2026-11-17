@@ -22,6 +22,9 @@
                 <header>
                     <button name="action_publish" string="Publish" type="object" class="btn-primary"
                             invisible="state != 'draft'"/>
+                    <field name="can_reset_to_draft" invisible="True"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            invisible="not can_reset_to_draft"/>
                     <button name="action_new_version" string="New Version" type="object"
                             invisible="state == 'draft'"/>
                     <button name="action_archive_workflow" string="Archive" type="object"
@@ -55,9 +58,9 @@
                         <list editable="bottom" create="false" delete="false">
                             <field name="sequence" readonly="True"/>
                             <field name="name"/>
-                            <field name="approver_ids" widget="many2many_tags_add_only"
+                            <field name="approver_ids" widget="many2many_tags"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
-                            <field name="allowed_field_ids" widget="many2many_tags_add_only"
+                            <field name="allowed_field_ids" widget="many2many_tags"
                                    options="{'no_create': True, 'no_create_edit': True}"/>
                         </list>
                     </field>

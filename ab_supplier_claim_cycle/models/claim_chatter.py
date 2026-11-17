@@ -1,5 +1,47 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
+from odoo.addons.mail.tools.discuss import Store
+
+
+class ClaimAttachment(models.Model):
+    _inherit = 'ir.attachment'
+
+    supplier_claim_locked = fields.Boolean(compute='_compute_supplier_claim_locked')
+
+    @api.depends('res_model', 'res_id')
+    @api.depends_context('uid', 'su')
+    def _compute_supplier_claim_locked(self):
+        participant = self.env['ab_supplier_claim_cycle']._is_attachment_participant()
+        for attachment in self:
+            attachment.supplier_claim_locked = bool(
+                participant and attachment.res_model == 'ab_supplier_claim_cycle'
+                and attachment.res_id)
+
+    def _to_store_defaults(self, target):
+        return [*super()._to_store_defaults(target), Store.Attr('supplier_claim_locked')]
+
+    def _protect_supplier_claim_attachment(self, vals=None):
+        if not self.env['ab_supplier_claim_cycle']._is_attachment_participant():
+            return
+        protected = {'name', 'datas', 'raw', 'db_datas', 'store_fname', 'mimetype',
+                     'res_model', 'res_id', 'res_field', 'type', 'url', 'public', 'company_id'}
+        for attachment in self.sudo():
+            if attachment.res_model != 'ab_supplier_claim_cycle' or not attachment.res_id:
+                continue
+            if vals is None or any(
+                    name in protected and attachment[name] != value
+                    for name, value in vals.items()):
+                raise AccessError(_(
+                    'Saved claim attachments cannot be changed or deleted. '
+                    'Add additional attachments in Chatter.'))
+
+    def write(self, vals):
+        self._protect_supplier_claim_attachment(vals)
+        return super().write(vals)
+
+    def unlink(self):
+        self._protect_supplier_claim_attachment()
+        return super().unlink()
 
 
 class MailMessage(models.Model):
@@ -27,6 +69,21 @@ class MailMessage(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
+        if ('attachment_ids' in vals
+                and self.env['ab_supplier_claim_cycle']._is_attachment_participant()):
+            for message in self.filtered(lambda msg: msg.model == 'ab_supplier_claim_cycle'):
+                kept = set(message.attachment_ids.ids)
+                for command in vals['attachment_ids'] or []:
+                    if command[0] == fields.Command.CLEAR:
+                        kept.clear()
+                    elif command[0] == fields.Command.SET:
+                        kept = set(command[2])
+                    elif command[0] in (fields.Command.UNLINK, fields.Command.DELETE):
+                        kept.discard(command[1])
+                    elif command[0] == fields.Command.LINK:
+                        kept.add(command[1])
+                if not set(message.attachment_ids.ids).issubset(kept):
+                    raise AccessError(_('Saved claim attachments cannot be removed from Chatter.'))
         protected = {'body', 'subject', 'model', 'res_id', 'author_id', 'date',
                      'supplier_claim_history_id', 'supplier_claim_document_id',
                      'is_internal', 'subtype_id', 'message_type'}
@@ -35,6 +92,13 @@ class MailMessage(models.Model):
                     any(self.mapped('supplier_claim_history_id')) or any(self.mapped('supplier_claim_document_id'))))):
             raise AccessError(_('Claim audit messages are managed by the workflow.'))
         return super().write(vals)
+
+    def unlink(self):
+        if (self.env['ab_supplier_claim_cycle']._is_attachment_participant()
+                and self.filtered(lambda msg: msg.model == 'ab_supplier_claim_cycle'
+                                  and msg.attachment_ids)):
+            raise AccessError(_('Messages containing saved claim attachments cannot be deleted.'))
+        return super().unlink()
 
     def _link_supplier_claim_history(self, entry):
         self.ensure_one()

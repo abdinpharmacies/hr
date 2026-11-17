@@ -4,6 +4,8 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { formatDateTime } from "@web/views/fields/formatters";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { Dropdown } from "@web/core/dropdown/dropdown";
+import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 
 const STATUS_DETAILS = {
     waiting: { label: _t("Waiting"), className: "waiting" },
@@ -67,6 +69,7 @@ export class SupplierClaimWorkflowDiagram extends Component {
 export class SupplierClaimWorkflowActions extends Component {
     static template = "ab_supplier_claim_cycle.WorkflowActions";
     static props = { ...standardFieldProps };
+    static components = { Dropdown, DropdownItem };
 
     setup() {
         this.orm = useService("orm");

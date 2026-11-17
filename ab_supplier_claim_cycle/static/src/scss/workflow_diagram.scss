@@ -335,3 +335,53 @@ $scc-diagram-muted: #667085;
         }
     }
 }
+
+.o_scc_workflow_diagram {
+    &__track {
+        min-width: 0;
+        flex-wrap: wrap;
+        gap: 28px 18px;
+    }
+
+    // Each sequence is a self-contained tile; row breaks never split a connector.
+    &__group {
+        min-width: 0;
+        padding: 14px 10px;
+        border: 1px solid $scc-diagram-border;
+        border-radius: 8px;
+    }
+
+    &__connector { display: none; }
+}
+
+.o_field_widget[name="stage_state_ids"]:has(.o_scc_workflow_diagram) {
+    overflow-x: visible;
+    min-width: 0;
+}
+
+.o_scc_workflow_actions {
+    flex-wrap: nowrap;
+    min-width: 0;
+
+    &__inline { display: flex; flex-wrap: nowrap; gap: 5px; }
+    &__compact { display: none; }
+}
+
+// Many parallel actions use a single menu even on a wide screen.
+.o_scc_workflow_actions:has(.o_scc_workflow_actions__inline > button:nth-child(4)) {
+    .o_scc_workflow_actions__inline { display: none; }
+    .o_scc_workflow_actions__compact { display: block; }
+}
+
+@media (max-width: 1199px) {
+    .o_scc_workflow_actions {
+        &__inline { display: none; }
+        &__compact { display: block; }
+    }
+}
+
+.o_scc_workflow_diagram__sequence {
+    color: $scc-diagram-muted;
+    font-size: 0.75rem;
+    font-weight: 650;
+}
