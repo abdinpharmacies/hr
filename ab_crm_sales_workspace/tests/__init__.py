@@ -7,3 +7,5 @@ from . import test_branch_browser
 from . import test_pos_handoff
 
 from . import test_pos_runtime
+
+from . import test_customer_locking

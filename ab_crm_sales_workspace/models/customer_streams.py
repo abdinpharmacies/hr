@@ -2,9 +2,20 @@ import hashlib
 import json
 
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.exceptions import AccessError, ConcurrencyError, LockError, UserError, ValidationError
 
 from .workspace import _WORKSPACE, normalized_phone, display_phone
+
+
+class _CustomerLinkBusy(ConcurrencyError):
+    pass
+
+
+def _lock_customer_records(records):
+    try:
+        records.lock_for_update()
+    except LockError:
+        raise _CustomerLinkBusy('Concurrent customer association') from None
 
 
 class Identity(models.Model):
@@ -165,13 +176,13 @@ class Conversation(models.Model):
     def action_confirm_customer_link(self, customer_id, fingerprint, reason='', resolve_conflict=False, customer_confirmed=False):
         with self.env.cr.savepoint():
             customer, account, session = self._customer_link_scope(customer_id)
-            self.branch_id.lock_for_update()
+            _lock_customer_records(self.branch_id)
             self.branch_id.sudo().write({})
             customer, streams, identities, session, preview = self._customer_group_link_preview(customer_id)
-            streams.messaging_account_id.sorted('id').lock_for_update()
-            customer.lock_for_update()
-            streams.lock_for_update()
-            identities.sorted('id').lock_for_update()
+            _lock_customer_records(streams.messaging_account_id.sorted('id'))
+            _lock_customer_records(customer)
+            _lock_customer_records(streams)
+            _lock_customer_records(identities.sorted('id'))
             streams.invalidate_recordset()
             identities.invalidate_recordset()
             customer.invalidate_recordset()
@@ -251,13 +262,17 @@ class Conversation(models.Model):
         return self._customer_unlink_data(customer_id)[4]
 
     def action_unlink_customer(self, customer_id, fingerprint):
+        with self.env.cr.savepoint():
+            return self._unlink_customer(customer_id, fingerprint)
+
+    def _unlink_customer(self, customer_id, fingerprint):
         customer, streams, identities, session, preview = self._customer_unlink_data(customer_id)
-        self.branch_id.lock_for_update()
+        _lock_customer_records(self.branch_id)
         self.branch_id.sudo().write({})
-        streams.messaging_account_id.sorted('id').lock_for_update()
-        customer.lock_for_update()
-        streams.lock_for_update()
-        identities.lock_for_update()
+        _lock_customer_records(streams.messaging_account_id.sorted('id'))
+        _lock_customer_records(customer)
+        _lock_customer_records(streams)
+        _lock_customer_records(identities)
         streams.invalidate_recordset()
         identities.invalidate_recordset()
         customer.invalidate_recordset()
@@ -299,8 +314,22 @@ class Conversation(models.Model):
         matches = self._matching_saved_contacts(phone)
         if len(matches) != 1:
             return False
-        self._customer_link_scope(matches.id)
-        self.branch_id.lock_for_update()
+        customer, account, session = self._customer_link_scope(matches.id)
+        identities = self.env['ab_crm_identity'].with_context(active_test=False).search([
+            ('channel_id', '=', self.channel_id.id), ('external_key', '=', self.external_key),
+            ('branch_id', '=', self.branch_id.id), ('company_id', '=', self.company_id.id),
+        ])
+        identities._authorize('read')
+        if identities and (not identities.active or identities.customer_id != customer):
+            return False
+        try:
+            with self.env.cr.savepoint():
+                return self._auto_link_customer_match(matches)
+        except _CustomerLinkBusy:
+            return False
+
+    def _auto_link_customer_match(self, matches):
+        _lock_customer_records(self.branch_id)
         self.branch_id.sudo().write({})
         self.invalidate_recordset()
         matches.invalidate_recordset()
