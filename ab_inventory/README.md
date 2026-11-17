@@ -20,7 +20,7 @@ does not read E-Plus or perform accounting entries.
 | `models/res_users.py` | Current administrator-managed store assignments (`inventory_store_ids`). |
 | `report/` | Current stock balance and dated period reports. |
 | `security/` | Inventory roles, ACLs, and store-scoped record rules. |
-| `views/` | Movement schedule, menus, and the current user-store assignment form. |
+| `views/` | Movement schedule and menus; the personal Inventory Stores user-form extension is inactive. |
 
 The movement is the audit record. Other addons call the process service; they
 must not set a product's computed stock fields or write a saved movement's
@@ -259,3 +259,12 @@ decisions; do not assume the current API provides them.
   module upgrade.
 
 For API edge cases and integration examples, see [INTEGRATION.md](INTEGRATION.md).
+
+## Movement database identity
+
+New movements normally use the posting server's configured `db_serial`.
+`ab_central_sync` selects the authenticated originating replica serial during
+incoming replay. Client values and RPC context cannot choose this serial, and the
+existing guard prevents changing it after creation. Existing movement history is
+not rewritten by this change. The Inventory Stores section is hidden on the user
+form without removing its stored assignments or changing authorization rules.

@@ -111,10 +111,14 @@ class AbInventory(models.Model):
         if isinstance(value, bool) or not quantity.is_finite() or not quantity or quantity.as_tuple().exponent < -8:
             raise ValidationError(_("Quantity change must be a finite non-zero reference-unit amount with at most eight decimal places."))
 
+    @api.model
+    def _movement_db_serial(self, values):
+        """Server-owned origin for new ledger movements, never a client value."""
+        return int(config.get('db_serial', 0) or 0)
+
     @api.model_create_multi
     def create(self, vals_list):
-        serial = int(config.get('db_serial', 0) or 0)
-        vals_list = [dict(vals, db_serial=serial) for vals in vals_list]
+        vals_list = [dict(vals, db_serial=self._movement_db_serial(vals)) for vals in vals_list]
         identities = []
         store_ids = set()
         source_ids = set()

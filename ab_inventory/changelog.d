@@ -1,5 +1,29 @@
 Current changes before commit:
 
+- 2026-11-17: Hide the Inventory Stores user-form extension without altering its field, assignments, ACLs or record rules.
+- Select new movement database serials through a server-owned method. Ordinary posting keeps the configured database serial; central synchronization can provide the authenticated originating replica serial before creation.
+- Keep the existing immutable-serial guard; no historic movements or quantities are rewritten. Bump to 19.0.1.0.1 and document the behavior.
+
+- Document the 2026-11-16 central database repair: the deployed inventory code expected db_serial, but the database column was missing, causing central sale delivery to fail with HTTP 500.
+- Back up central and run a targeted ab_inventory upgrade to apply the existing field definition. No new runtime code or migration was required.
+- Verify pending branch operations 61 and 62 were automatically accepted with their original identities and hashes, each with exactly one posted sale stock allocation and one matching store-29 ledger movement.
+- Confirm no inventory model columns are missing, branch readiness is restored, and the existing Arabic field and list-view translations load correctly.
+- Existing duplicate stock-cache and nullable allocation-unit warnings remain outside this repair. Historical protocol-2 retries and previously rejected operations were not forced through.
+
+Files changed:
+
+- ab_inventory/README.md
+- ab_inventory/__manifest__.py
+- ab_inventory/changelog.d
+- ab_inventory/models/ab_inventory.py
+- ab_inventory/views/res_users_inventory.xml
+
+commit 71fcb23d369409906d5b04497e721570cf1b6477
+Author: hager yasser <hageryasser2002@gmail.com>
+Date: 2026-11-09T13:19:41+02:00
+
+    ab_inventory/FEAT: Add db_serial column for inventory table
+
 - Show DB Serial beside Store in the Movement Schedule table.
 - Capture the configured database serial for new movements and prevent later changes through ORM calls; retain zero for existing movements.
 - Translate the column label and validation message into Arabic.
