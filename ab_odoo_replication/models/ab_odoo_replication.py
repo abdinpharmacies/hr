@@ -227,6 +227,14 @@ class OdooReplication(models.AbstractModel):
     def _replicate_model(self, model_name, limit, commit, extra_fields,
                          replicate_all, extra_domain):
 
+        if model_name == 'ab_central_sync_operation':
+            return
+        if model_name == 'ab_replica_db':
+            extra_fields = {
+                name: field_type for name, field_type in (extra_fields or {}).items()
+                if not name.startswith('central_')
+            }
+
         if model_name not in self.env.registry:
             _logger.warning(
                 "Skipping replication for unavailable local model %s. Install its addon to enable it.",
@@ -537,7 +545,10 @@ class OdooReplication(models.AbstractModel):
                         ('last_update_date',
                         'message_main_attachment_id')
                     """, (model_name,))
-        return self.env.cr.fetchall()
+        rows = self.env.cr.fetchall()
+        if model_name == 'ab_replica_db':
+            rows = [row for row in rows if not row[0].startswith('central_')]
+        return rows
 
     def _replicate_main_fields(self, rec):
         """
