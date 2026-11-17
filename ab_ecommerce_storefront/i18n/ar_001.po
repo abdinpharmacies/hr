@@ -1531,6 +1531,7 @@ msgstr "<span>إتمام الطلب</span>"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "<span>Order reference</span>"
 msgstr "<span>رقم التتبع</span>"
 
