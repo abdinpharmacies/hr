@@ -117,12 +117,12 @@ class CentralSync(http.Controller):
         return request.make_json_response({'error': _('Upgrade this branch to inventory protocol 3.')}, status=426)
 
     def _apply_as_inventory_writer(self, env, operation, user, replica, payload, store, token):
-        if store not in user._central_inventory_stores():
+        if store not in user._central_inventory_stores(replica):
             raise AccessError(_('The API user has no inventory access to this branch.'))
         actor_env = api.Environment(env.cr, user.id, {'allowed_company_ids': user.company_ids.ids})
         # This server-only ContextVar cannot be supplied through an ORM RPC context.
         origin_token = REPLAY_ORIGIN.set(dict(payload, replica_serial=replica.db_serial,
-            inventory_writer_id=user.id, inventory_store_id=store.id))
+            inventory_writer_id=user.id, inventory_store_id=store.id, inventory_replica_id=replica.id))
         replay_session = False
         try:
             if payload['kind'] != 'sale_cancel' and 'ab_employee_access_sales_pos_session' in env.registry:
@@ -131,8 +131,8 @@ class CentralSync(http.Controller):
                 profile = env['ab_employee_access'].search(fields.Domain('employee_id', '=', employee_id), limit=2)
                 if not employee_id or len(profile) != 1:
                     raise ValidationError(_('Replicate the bill employee and profile before synchronization.'))
-                # Preserve the branch employee on the mirrored bill. API-user scope,
-                # not the employee PIN/profile permissions, authorizes this transport.
+                # Preserve the branch employee on the mirrored bill. The authenticated
+                # replica sales scope authorizes this transport.
                 replay_session = env['ab_employee_access_sales_pos_session'].create({
                     'employee_id': employee_id, 'profile_id': profile.id,
                     'role_id': profile.pos_role_id.id, 'service_user_id': user.id,
@@ -145,6 +145,8 @@ class CentralSync(http.Controller):
             actor_env['ab_sales_backend']._check_store(store.id)
             return operation._apply(actor_env['ab_sales_header'])
         finally:
-            if replay_session:
-                replay_session.close_session()
-            REPLAY_ORIGIN.reset(origin_token)
+            try:
+                if replay_session:
+                    replay_session.close_session()
+            finally:
+                REPLAY_ORIGIN.reset(origin_token)

@@ -45,6 +45,13 @@ def snapshot(record, names):
 class Sale(models.Model):
     _inherit = 'ab_sales_header'
 
+    @api.model
+    def _get_allowed_store_ids(self):
+        store = self.env.user._central_replay_store()
+        if store:
+            return store.ids
+        return super()._get_allowed_store_ids()
+
     def _promotion_eligibility_replica(self, program):
         origin = REPLAY_ORIGIN.get()
         if origin:

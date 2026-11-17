@@ -6,15 +6,20 @@ from odoo.exceptions import AccessError
 class InventoryWriter(models.Model):
     _inherit = 'res.users'
 
-    def _central_inventory_stores(self):
+    def _check_central_inventory_writer(self):
         self.ensure_one()
         if not self.active or not self.has_group('ab_central_sync.group_inventory_writer'):
             raise AccessError(_('An active Inventory Writer user is required.'))
-        # API keys never inherit an administrator's unrestricted branch bypass.
-        stores = self.inventory_store_ids.filtered(
-            lambda store: store.active and store.company_id in self.company_ids)
+
+    def _central_inventory_stores(self, replica):
+        """The replica's sales settings are the sole transport store assignment."""
+        self._check_central_inventory_writer()
+        replica.ensure_one()
+        stores = replica._sync_stores().filtered(
+            lambda store: replica.active and store.active and store.allow_sale
+            and store.company_id in self.company_ids)
         if not stores:
-            raise AccessError(_('Assign inventory stores to the Inventory Writer user.'))
+            raise AccessError(_('The replica has no active sales stores in the API user companies.'))
         return stores
 
 
@@ -38,7 +43,7 @@ class Replica(models.Model):
         if not uid:
             raise AccessError(_('The user API key is invalid or expired.'))
         user = self.env['res.users'].browse(uid)
-        user._central_inventory_stores()
+        user._check_central_inventory_writer()
         return user
 
     @api.model
@@ -46,7 +51,7 @@ class Replica(models.Model):
         replica = self.search(fields.Domain('db_serial', '=', serial) & fields.Domain('active', '=', True), limit=2)
         if len(replica) != 1:
             raise AccessError(_('The branch replica is missing or ambiguous.'))
-        stores = replica._sync_stores() & user._central_inventory_stores()
+        stores = user._central_inventory_stores(replica)
         if not stores or any(not store.code for store in stores):
             raise AccessError(_('The API user has no inventory access to this branch.'))
         default = replica.default_sales_store_id & stores or stores[:1]

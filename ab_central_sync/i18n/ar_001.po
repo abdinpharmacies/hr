@@ -1297,3 +1297,16 @@ msgstr "تحتوي دفعة المخزون على قيم وحدات أو أسع�
 #: code:addons/ab_central_sync/models/product.py:0
 msgid "Unit conversion factors must be positive and finite."
 msgstr "يجب أن تكون معاملات تحويل الوحدات موجبة ومحدودة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "The replica has no active sales stores in the API user companies."
+msgstr ""
+"لا توجد مخازن بيع نشطة لقاعدة البيانات الفرعية ضمن شركات مستخدم واجهة "
+"البرمجة."
+
+#. module: ab_central_sync
+#: model:ir.rule,name:ab_central_sync.replay_inventory_store_rule
+msgid "Authenticated synchronization inventory store"
+msgstr "مخزن المخزون للمزامنة المعتمدة"

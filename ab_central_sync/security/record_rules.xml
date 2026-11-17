@@ -4,4 +4,42 @@
         <field name="model_id" ref="model_ab_central_sync_operation"/>
         <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
     </record>
-    </odoo>
+    <record id="ab_sales_inventory.backend_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.sale_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('native_backend', '=', False), ('store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.line_branch" model="ir.rule">
+        <field name="domain_force">[('header_id.store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('header_id.native_backend', '=', False), ('header_id.store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.return_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('native_origin_id', '=', False), ('store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.return_line_branch" model="ir.rule">
+        <field name="domain_force">[('header_id.store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('header_id.native_origin_id', '=', False), ('header_id.store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.ab_sales_native_payment_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids), ('cashier_id', '=', user.id)])</field>
+    </record>
+    <record id="ab_sales_inventory.ab_sales_native_cash_balance_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids), ('cashier_id', '=', user.id)])</field>
+    </record>
+    <record id="ab_sales_inventory.allocation_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.shortage_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_sales_inventory.reversal_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else ([(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)])</field>
+    </record>
+    <record id="ab_inventory.rule_inventory_branch" model="ir.rule">
+        <field name="domain_force">[('store_id', 'in', user._central_sync_inventory_store_ids())]</field>
+    </record>
+    <record id="replay_inventory_store_rule" model="ir.rule">
+        <field name="name">Authenticated synchronization inventory store</field>
+        <field name="model_id" ref="ab_inventory.model_ab_inventory"/>
+        <field name="domain_force">[('store_id', '=', user._central_replay_store().id)] if user._central_replay_store() else [(1, '=', 1)]</field>
+    </record>
+</odoo>
