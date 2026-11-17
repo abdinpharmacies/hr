@@ -1,0 +1,16 @@
+{
+  "enabled": false,
+  "sources": {
+    "6380a565-0271-4732-85db-eb7cb8ac067f": {
+      "url": "https://store.abdinpharmacies.com",
+      "database": "ecom19",
+      "token": "REPLACE_WITH_DEDICATED_PRODUCTION_WORKER_API_KEY",
+      "account": "wa-callcenter",
+      "sender": "965292690006920",
+      "templates": {
+        "en_US": "abdin_authentication_en",
+        "ar": "abdin_authentication_ar"
+      }
+    }
+  }
+}
