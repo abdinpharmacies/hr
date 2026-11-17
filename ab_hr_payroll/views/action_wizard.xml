@@ -100,7 +100,7 @@
                                     class="oe_stat_button" icon="fa-list-ul">
                                 <field string="Negative" name="negative_salaries_count" widget="statinfo"/>
                             </button>
-                            <button name="btn_show_payroll_report" context="{'status':'for_pay'}" type="object"
+                            <button name="btn_show_payroll_report" context="{'status':'paid'}" type="object"
                                     class="oe_stat_button" icon="fa-list-ul">
                                 <field string="Paid" name="paid_count" widget="statinfo"/>
                             </button>

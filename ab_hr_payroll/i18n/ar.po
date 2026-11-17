@@ -1,0 +1,70 @@
+#
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/action_wizard.py:0
+msgid "No comparable prior salary."
+msgstr "لا يوجد راتب سابق صالح للمقارنة."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid "Only an Accounting Manager can generate salary journal entries."
+msgstr "يمكن لمدير الحسابات فقط إنشاء قيود الرواتب."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid "Posted salary journal entries cannot be removed."
+msgstr "لا يمكن حذف قيود الرواتب المرحلة."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid "Select a salary journal type first."
+msgstr "اختر نوع قيد الراتب أولاً."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/action_wizard.py:0
+msgid "Set the payment type before continuing."
+msgstr "حدد نوع الدفع قبل المتابعة."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid "Set the salary month and employee cost center codes first."
+msgstr "حدد شهر الراتب وأكواد مراكز تكلفة الموظفين أولاً."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/action_wizard.py:0
+msgid "The comparison start month must not be after the end month."
+msgstr "يجب ألا يأتي شهر بداية المقارنة بعد شهر النهاية."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid ""
+"This journal already contains entries or is posted. Existing entries must be"
+" reviewed before generating again."
+msgstr ""
+"يحتوي هذا القيد على بنود بالفعل أو تم ترحيله. يجب مراجعة البنود الحالية قبل "
+"الإنشاء مرة أخرى."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid "This journal is being processed. Please try again."
+msgstr "تجري معالجة هذا القيد حالياً. يرجى المحاولة مرة أخرى."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
+msgid "No unpaid salary balance was found for the selected employees."
+msgstr "لم يتم العثور على رصيد رواتب مستحق للموظفين المحددين."

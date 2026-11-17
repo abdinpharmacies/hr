@@ -58,24 +58,41 @@ class SalariesMoves(models.Model):
 
         return salary_month
 
+    @api.onchange('account_id', 'costcenter_id', 'je_type')
+    def _onchange_account_header(self):
+        had_lines = bool(self.line_ids)
+        result = super()._onchange_account_header()
+        # The general journal form inserts an empty account line. Salary
+        # generation supplies its own balanced lines; discard only the new
+        # onchange placeholder, never an existing or user-entered line.
+        if self.je_type and not had_lines:
+            self.line_ids = [(5, 0, 0)]
+        return result
+
+    def _check_salary_generation(self):
+        self.ensure_one()
+        if not self.try_lock_for_update():
+            raise UserError(_("This journal is being processed. Please try again."))
+        self.invalidate_recordset(['line_ids', 'is_posted'])
+        if self.is_posted or self.line_ids:
+            raise UserError(_("This journal already contains entries or is posted. Existing entries must be reviewed before generating again."))
+        if not self.due_month or not (self.costcenter_codes or '').strip():
+            raise ValidationError(_("Set the salary month and employee cost center codes first."))
+
     def btn_create_je(self):
-        # if only one record in line_ids, remove it.
-        if len(self.line_ids) == 1:
-            self.write({"line_ids": [(5,)]})
-
-        if self.je_type == 'deduction':
-            self.create_deductions(je_type='deduction')
-
-        elif self.je_type == 'firing':
-            self.create_deductions(je_type='firing')
-
+        self._check_salary_generation()
+        if self.je_type in ('deduction', 'firing'):
+            self.create_deductions(je_type=self.je_type)
         elif self.je_type == 'pay':
             self._create_payment_for_bank()
-
         elif self.je_type == 'pay_cash':
             self._create_payment_for_cash()
+        else:
+            raise ValidationError(_("Select a salary journal type first."))
 
     def create_deductions(self, je_type, all_employees=False):
+        if not all_employees:
+            self._check_salary_generation()
         store_id = 78
         due_salaries_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id
         firing_parent_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_firing_parent').id
@@ -231,6 +248,7 @@ class SalariesMoves(models.Model):
 
     ###############################################################################
     def _create_payment_for_bank(self):
+        self._check_salary_generation()
         costcenter_codes_list = self.costcenter_codes.strip().split('\n')
         costcenter_ids = self.env['ab_costcenter'].search([('code', 'in', costcenter_codes_list)]).ids
         self._validate_deductions_is_done(costcenter_ids)
@@ -267,6 +285,8 @@ class SalariesMoves(models.Model):
                 'credit_val': credit_val,
             })
 
+        if not je_list:
+            raise UserError(_("No unpaid salary balance was found for the selected employees."))
         net_val = sum(d['debit_val'] - d['credit_val'] for d in je_list if d['account_id'] == due_salaries_account_id)
         credit_val = net_val > 0 and net_val or 0
         debit_val = net_val < 0 and net_val * -1 or 0
@@ -282,6 +302,7 @@ class SalariesMoves(models.Model):
         self.write({"line_ids": [(0, 0, header_je)] + [(0, 0, d) for d in je_list]})
 
     def _create_payment_for_cash(self):
+        self._check_salary_generation()
         due_salaries_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id
 
         costcenter_codes_list = self.costcenter_codes.strip().split('\n')
@@ -328,9 +349,17 @@ class SalariesMoves(models.Model):
                 'credit_val': debit_val,
             })
 
+        if not je_list:
+            raise UserError(_("No unpaid salary balance was found for the selected employees."))
         self.write({"line_ids": [(0, 0, d) for d in je_list]})
 
     def btn_remove_all_je(self):
+        self.ensure_one()
+        if not self.try_lock_for_update():
+            raise UserError(_("This journal is being processed. Please try again."))
+        self.invalidate_recordset(['is_posted', 'line_ids'])
+        if self.is_posted:
+            raise UserError(_("Posted salary journal entries cannot be removed."))
         self.write({"line_ids": [(5,)]})
 
     def add_costcenters_to_month_prevented_deductions(self, costcenter_ids, till_month):

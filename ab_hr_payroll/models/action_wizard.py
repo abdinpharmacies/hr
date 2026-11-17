@@ -80,35 +80,13 @@ class ActionWizard(models.Model):
     exceptions = fields.Text()
 
     def _compute_status_count(self):
-        cr = self.env.cr
-        cr.execute("""
-        SELECT 
-            status,
-            count(DISTINCT (employee_id)) as count_employees
-        from ab_hr_payroll group by status""")
-        statuses = cr.fetchall()
-        for_entry = for_manager = for_reviewer = suspended_salaries = negative_salaries = paid = 0
-
+        groups = self.env['ab_hr_payroll'].sudo()._read_group([], ['status'], ['employee_id:count_distinct'])
+        counts = dict(groups)
         for rec in self:
-            for status in statuses:
-                if status[0] == 'for_entry':
-                    for_entry = status[1]
-                if status[0] == 'for_manager':
-                    for_manager = status[1]
-                if status[0] == 'for_reviewer':
-                    for_reviewer = status[1]
-                if status[0] == 'suspended_salaries':
-                    suspended_salaries = status[1]
-                if status[0] == 'negative_salaries':
-                    negative_salaries = status[1]
-                if status[0] == 'paid':
-                    paid = status[1]
-            rec.for_entry_count = for_entry
-            rec.for_manager_count = for_manager
-            rec.for_reviewer_count = for_reviewer
-            rec.suspended_salaries_count = suspended_salaries
-            rec.negative_salaries_count = negative_salaries
-            rec.paid_count = paid
+            for status in ('for_entry', 'for_manager', 'for_reviewer',
+                           'suspended_salaries', 'negative_salaries', 'paid'):
+                rec[status + '_count'] = counts.get(status, 0)
+
 
     def btn_sal_payment_type(self):
         """
@@ -168,7 +146,7 @@ class ActionWizard(models.Model):
 
     ##############################################################################################################
     def _get_selection_from_payroll(self):
-        payroll_model = self.env['ab_hr_payroll']
+        payroll_model = self.env['ab_hr_payroll'].sudo()
         selection = payroll_model.fields_get(allfields=['status'])[
             'status']['selection']
         return selection
@@ -218,9 +196,9 @@ class ActionWizard(models.Model):
         """
         self.ensure_one()
         action = self.env.ref('ab_hr_payroll.ab_hr_salary_details_report')
-        action[0].report_file = self.slugify(self.explain)
-        action[0].name = self.slugify(self.explain)
-        return action.report_action(self)
+        result = action.report_action(self)
+        result['name'] = self.slugify(self.explain)
+        return result
 
     ##############################################################################################################
     # Search Button Method #######################################################################################
@@ -318,10 +296,11 @@ class ActionWizard(models.Model):
     ##############################################################################################################
     def reset_criteria_button(self):
         self.ensure_one()
-        self.date_begin = False
-        self.date_end = False
-        self.store_id = False
-        self.store_id = False
+        self.write({
+            'date_begin': False,
+            'date_end': False,
+            'store_ids': [(5, 0, 0)],
+        })
 
     ##############################################################################################################
     def button_delete_salaries(self):
@@ -446,7 +425,7 @@ class ActionWizard(models.Model):
         # ASK USER TO SET PAYMENT TYPE
         if self.env.user.has_group('ab_hr.group_ab_hr_payroll_specialist'):
             if any(not sal.payment_type_id for sal in sals):
-                raise UserError("Set 👉🏻👉🏻 Payment Type 👈🏻👈🏻, PLEASE 🌹")
+                raise UserError(_("Set the payment type before continuing."))
         for sal in self.web_progress_iter(sals, 'Action in progress..'):
             if not sal.status == action:
                 if sal.status == 'paid':
@@ -636,7 +615,7 @@ class ActionWizard(models.Model):
 
     def _compute_salaries_html(self):
         for rec in self:
-            data = self._get_salaries_html()
+            data = rec._get_salaries_html()
             data['NO_OF_ALLOWED_EMPLOYEES'] = False
             if len(data['rows']) > NO_OF_ALLOWED_EMPLOYEES:
                 data['rows'] = data['rows'][0:NO_OF_ALLOWED_EMPLOYEES]
@@ -673,7 +652,7 @@ class ActionWizard(models.Model):
 
     def _get_salaries_compare_html(self):
         self = self.sudo()
-        employee_ids_text = ",".join(str(emp_id) for emp_id in set(self.sal_ids.sudo().mapped('employee_id.id'))) or "0"
+        selected = self.sudo().sal_ids
         sql = """
             SELECT
                 sd.employee_id,
@@ -684,14 +663,14 @@ class ActionWizard(models.Model):
             JOIN ab_hr_section ahs on sd.section = ahs.id
                     WHERE ahs.type='hr'  
                     and date_trunc('month', sd.due_date) between %s and %s 
-                    and sd.employee_id in ({})
+                    and sd.id = ANY(%s)
             GROUP BY
                 sd.employee_id,
                 date_trunc('month', sd.due_date)
                     
             ORDER BY
                 sd.employee_id,due_month
-        """.format(employee_ids_text)
+        """
 
         cr = self.env.cr
         comparing_start_month = (self.comparing_start_month
@@ -699,11 +678,22 @@ class ActionWizard(models.Model):
         comparing_end_month = (self.comparing_end_month
                                or datetime.date.today().replace(day=1))
 
-        cr.execute(sql, (comparing_start_month, comparing_end_month))
+        if comparing_start_month > comparing_end_month:
+            raise ValidationError(_("The comparison start month must not be after the end month."))
+        authorized = self.env['ab_hr_payroll'].sudo().search([
+            ('employee_id', 'in', selected.employee_id.ids),
+            ('due_date', '>=', comparing_start_month.replace(day=1)),
+            ('due_date', '<', comparing_end_month.replace(day=1) + relativedelta(months=1)),
+        ])
+        authorized.flush_recordset()
+        cr.execute(sql, (comparing_start_month.replace(day=1), comparing_end_month.replace(day=1), authorized.ids))
 
         sals = cr.fetchall()
-        mentioned_months = set(sal[-1] for sal in sals)
-        due_months = sorted(list(mentioned_months))
+        due_months = []
+        month = comparing_start_month.replace(day=1)
+        while month <= comparing_end_month.replace(day=1):
+            due_months.append(month)
+            month += relativedelta(months=1)
 
         headers = ['Code', 'Name', 'Job', 'Workplace',
                    'Hiring Date',
@@ -715,7 +705,7 @@ class ActionWizard(models.Model):
 
         groups = itertools.groupby(sals, lambda x: x[0])
         for g_key, sub_iter in groups:
-            salaries = {due_month: 0.001 for due_month in due_months}
+            salaries = {due_month: None for due_month in due_months}
             sub = list(sub_iter)
             employee = self.env['ab_hr_employee'].browse(sub[0][0])
             emp_code = employee.accid
@@ -740,11 +730,15 @@ class ActionWizard(models.Model):
                 due_month = line[2]
                 salaries[due_month] = salary
             salaries_list = list(salaries.values())
-            ratio = salaries_list[-1] / salaries_list[-2]
+            comparable = (len(salaries_list) >= 2 and salaries_list[-1] is not None
+                          and salaries_list[-2] not in (None, 0))
+            ratio = salaries_list[-1] / salaries_list[-2] if comparable else None
             last_month = due_months[-1]
             salary_issue = ''
 
-            if termination_date:
+            if not comparable:
+                salary_issue = _('No comparable prior salary.')
+            elif termination_date:
                 if ratio > self.max_ratio:
                     salary_issue = 'HIGH SALARY ISSUE'
             elif ratio > self.max_ratio and hiring_date and (last_month - hiring_date) > datetime.timedelta(days=45):
@@ -754,7 +748,7 @@ class ActionWizard(models.Model):
 
             rows.append(
                 (emp_code, emp_name, job_name, workplace_name, hiring_date, issue_date, termination_date,
-                 *salaries.values(),
+                 *(value if value is not None else 0 for value in salaries.values()),
                  salary_issue))
 
         return {
@@ -764,21 +758,20 @@ class ActionWizard(models.Model):
 
     def btn_export_excel_salaries(self):
         action = self.env.ref('ab_hr_payroll.action_salaries_xlsx')
-        action[0].name = "Salaries Report"
 
         return action.report_action(self)
 
     def btn_export_excel_salaries_compare(self):
         action = self.env.ref('ab_hr_payroll.action_salaries_compare_xlsx')
-        action[0].name = "Salaries Compare Report"
         return action.report_action(self)
 
     ###########################################################################
     def _get_salaries_html(self):
+        selected = self.sudo().sal_ids
         payroll_model = self.env['ab_hr_payroll'].sudo()
         selection = payroll_model.fields_get(allfields=['status'])[
             'status']['selection']
-        sal_ids = self.sal_ids_text or '0'
+        sal_ids = selected.ids
         sql = """
             SELECT DISTINCT ON (sd.employee_id,sd.status)  
                 sd.employee_id,
@@ -789,7 +782,7 @@ class ActionWizard(models.Model):
                 sd.user_line_owner,
                 sd.payment_type_id
             FROM ab_hr_payroll sd
-                    WHERE id in ({})
+                    WHERE id = ANY(%s)
             GROUP BY
                 sd.employee_id,
                 sd.status,
@@ -799,10 +792,11 @@ class ActionWizard(models.Model):
                 sd.payment_type_id
             ORDER BY
                 sd.employee_id
-        """.format(sal_ids)
+        """
 
         cr = self.env.cr
-        cr.execute(sql)
+        selected.flush_recordset()
+        cr.execute(sql, (sal_ids,))
 
         sals = cr.fetchall()
         headers = ['Code', 'Name', 'Job', 'Workplace', 'Status', 'Payment Method', 'Payment Type', 'Salary', ]
