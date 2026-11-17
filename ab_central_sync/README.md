@@ -1,5 +1,6 @@
 # ab_central_sync
 
+<<<<<<< Updated upstream
 Version 19.0.5.1.2. Central inventory receiver authenticated by Inventory Writer user API keys.
 
 See [workflow.md](workflow.md) for setup, unit mapping, inventory ownership, POS behavior and recovery.
@@ -9,3 +10,10 @@ The API user needs Inventory Writer access, but no personal Inventory Stores ass
 
 New synchronized inventory movements record the authenticated originating replica serial.
 Direct central movements retain central’s configured serial; historical movements are unchanged.
+=======
+Version 19.0.5.1.1. Central inventory receiver authenticated by Inventory Writer user API keys.
+
+See [workflow.md](workflow.md) for setup, unit mapping, inventory ownership, POS behavior and recovery.
+
+Central Synchronization installs and runs independently of `ab_odoo_replication` and `ab_odoo_connect`. Master-data replication remains optional; when installed, its engine excludes Central operation records and replica-local `central_*` status fields.
+>>>>>>> Stashed changes

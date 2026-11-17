@@ -3,7 +3,6 @@ from . import sales
 from . import enrollment
 from . import access
 from . import cache
-from . import replication
 
 from . import product
 

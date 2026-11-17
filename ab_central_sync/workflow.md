@@ -350,11 +350,16 @@ integration behavior changes. Keep both worktrees' role documentation aligned.
 | Integration access | Manage API users, keys, companies and replica Allowed Sales Stores | Configure the correct replica and target; protect the key |
 
 Central's manifest depends on `ab_sales`, `ab_sales_inventory`, `ab_inventory`,
-`ab_sales_contract`, `ab_sales_promo`, `ab_hr`, and `ab_odoo_replication`.
+`ab_sales_contract`, `ab_sales_promo`, and `ab_hr`.
 Branch's synchronization manifest depends on the sales, sales-inventory,
 contract, promotion and HR modules, without central's inventory or replication
-dependency. The central manifest dependency does not imply that branch
-synchronization needs the replication engine installed locally.
+dependency. Central Synchronization also installs and runs without
+`ab_odoo_replication` or `ab_odoo_connect`. Neither synchronization module
+extends the replication engine. When master-data replication is installed,
+`ab_odoo_replication` itself excludes `ab_central_sync_operation` and all
+`central_*` fields on `ab_replica_db`, including `central_last_seen`,
+`central_backlog`, and `central_error`. Existing operations and local replica
+status remain untouched; no data migration or module uninstall is required.
 
 Before enrollment, verify:
 
