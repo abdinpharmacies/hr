@@ -1221,6 +1221,8 @@ msgstr "يتطلب تحويل المخزون وحدة قياس المنتج."
 #: code:addons/ab_central_sync/controllers/main.py:0
 #: code:addons/ab_central_sync/models/cache.py:0
 #: code:addons/ab_central_sync/models/enrollment.py:0
+#: code:addons/ab_central_sync/models/access.py:0
+#: code:addons/ab_central_sync/models/inventory_origin.py:0
 msgid "The API user has no inventory access to this branch."
 msgstr "ليس لدى مستخدم الواجهة صلاحية الوصول إلى مخزون هذا الفرع."
 

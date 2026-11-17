@@ -8,3 +8,5 @@ from . import replication
 from . import product
 
 from . import inventory_units
+
+from . import inventory_origin

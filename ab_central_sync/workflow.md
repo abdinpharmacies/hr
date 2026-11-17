@@ -159,11 +159,18 @@ promotions, returns and employee references. Record-rule caches distinguish repl
 stores from ordinary requests using server-owned state, not RPC context flags.
 No groups or user store assignments are written during synchronization.
 
-The inventory ledger's `store_id` identifies the stock owner. Its `db_serial` is
-stamped from the posting server configuration; it is not proof of the originating
-branch or an access grant. The journal retains the branch origin, token and store,
-and the authenticated request validates the replica serial. Local database IDs
-are resolved through stable store/product codes rather than trusted across databases.
+The inventory ledger's `store_id` identifies the stock owner. New movements made
+during authenticated central replay use the originating replica's `db_serial`.
+Direct central movements use the posting server configuration. Serial values in
+client create values or RPC context cannot override this server-owned attribution;
+posted movement serials remain immutable and historical rows are not rewritten.
+The journal retains the branch origin, token and store, and the authenticated
+request validates the replica serial. Local database IDs are resolved through
+stable store/product codes rather than trusted across databases.
+
+The Inventory Stores section on the user form is hidden on central and branches.
+This UI-only change retains the underlying field, saved assignments and existing
+permission logic. It does not alter cashier or cash-shift rules.
 
 Before approving a connected sale, refresh its products from central. Network
 outages and central HTTP 5xx failures permit the last complete snapshot to be
