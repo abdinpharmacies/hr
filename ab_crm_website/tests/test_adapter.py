@@ -236,7 +236,7 @@ class TestWebsiteAdapter(TransactionCase):
             len(set(orders.conversation_id.mapped('customer_group_key'))), 1
         )
         self.assertFalse(orders.conversation_id.customer_id)
-        self.assertEqual(len(orders.conversation_id), 2)
+        self.assertEqual(len(orders.conversation_id), 1)
 
     def test_views_load_directly_from_source_in_xml_developer_mode(self):
         from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
@@ -325,7 +325,7 @@ class TestWebsiteAdapter(TransactionCase):
                 display = order._display_snapshot(order.snapshot)
             self.assertEqual(display['lines'], event['payload']['lines'])
             self.assertEqual(order.snapshot, event['payload'])
-            self.assertEqual(len(order.conversation_id.message_ids), 1)
+            self.assertEqual(len(order.conversation_id.message_ids.filtered(lambda m: m.website_order_id == order)), 1)
 
     def test_optional_unit_name_validation(self):
         for value in (None, False, 1, [], {}, 'x' * 10001):

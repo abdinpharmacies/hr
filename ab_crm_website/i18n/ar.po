@@ -17,6 +17,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__account_id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__account_id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__account_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__account_id
 msgid "Account"
 msgstr "الحساب"
 
@@ -29,6 +30,7 @@ msgstr "نشط"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__branch_id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__branch_id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__branch_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__branch_id
 msgid "Branch"
 msgstr "الفرع"
 
@@ -46,6 +48,7 @@ msgstr "رسالة العملاء"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__company_id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__company_id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__company_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -57,6 +60,7 @@ msgstr "تعارض في حدث الموقع."
 
 #. module: ab_crm_website
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__conversation_id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__conversation_id
 msgid "Conversation"
 msgstr "المحادثة"
 
@@ -64,6 +68,7 @@ msgstr "المحادثة"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__create_uid
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__create_uid
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__create_uid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__create_uid
 msgid "Created by"
 msgstr "أنشأه"
 
@@ -71,6 +76,7 @@ msgstr "أنشأه"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__create_date
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__create_date
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__create_date
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -90,6 +96,7 @@ msgstr "الخصم"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__display_name
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__display_name
 #: model:ir.model.fields,field_description:ab_crm_website.field_ir_http__display_name
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -123,6 +130,7 @@ msgstr "التحويل إلى نقطة البيع"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__id
 #: model:ir.model.fields,field_description:ab_crm_website.field_ir_http__id
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__id
 msgid "ID"
 msgstr "المعرف"
 
@@ -154,6 +162,7 @@ msgstr "مصدر الموقع غير صالح."
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__write_uid
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__write_uid
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__write_uid
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -161,6 +170,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_event__write_date
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_mapping__write_date
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__write_date
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -347,6 +357,7 @@ msgstr "حدث الموقع"
 
 #. module: ab_crm_website
 #: model:ir.model,name:ab_crm_website.model_ab_crm_website_order
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_message__website_order_id
 msgid "Website Order"
 msgstr "طلب الموقع"
 
@@ -546,3 +557,74 @@ msgstr "غير محدد"
 #: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__public_reference
 msgid "Order Reference"
 msgstr "مرجع الطلب"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__identity_key
+msgid "Identity Key"
+msgstr "مفتاح الهوية"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Invalid read position."
+msgstr "موضع القراءة غير صالح."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_customer__latest_order_id
+msgid "Latest Order"
+msgstr "أحدث طلب"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Only administrators can reconcile website chats."
+msgstr "يمكن للمسؤولين فقط توحيد محادثات الموقع."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__payment_method_codes
+msgid "Payment Method Codes"
+msgstr "رموز طرق الدفع"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Reply to order"
+msgstr "الرد على الطلب"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Select a message from this conversation."
+msgstr "اختر رسالة من هذه المحادثة."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "The reconciliation changed. Preview it again."
+msgstr "تغيرت بيانات التوحيد. اعرض المعاينة مرة أخرى."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "The reconciliation exceeds the configured order limit."
+msgstr "يتجاوز التوحيد الحد المحدد لعدد الطلبات."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_conversation__website_canonical_id
+msgid "Website Canonical"
+msgstr "محادثة الموقع الأساسية"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__website_customer_id
+msgid "Website Customer"
+msgstr "عميل الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_customer
+msgid "Website Customer Identity"
+msgstr "هوية عميل الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_customer_unique_identity
+msgid "Website customer identity already exists."
+msgstr "هوية عميل الموقع موجودة بالفعل."

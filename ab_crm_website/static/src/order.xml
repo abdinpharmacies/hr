@@ -22,7 +22,10 @@
     </div>
 </t>
 <t t-inherit="ab_crm_sales_workspace.Workspace" t-inherit-mode="extension">
-    <xpath expr="//div[hasclass('ab_composer')]/fieldset" position="attributes"><attribute name="t-att-disabled">!state.detail.owned || state.busy || state.navigating || !['telegram', 'website'].includes(state.detail.provider)</attribute></xpath>
+    <xpath expr="//div[hasclass('ab_composer')]" position="attributes"><attribute name="t-if">state.detail.provider !== 'website'</attribute></xpath>
+    <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="before">
+        <small t-if="message.website_order_reference &amp;&amp; !message.website_order" t-esc="message.website_order_reference"/>
+    </xpath>
     <xpath expr="//div[hasclass('ab_attachment_control')]" position="attributes"><attribute name="t-if">state.detail.provider !== 'website'</attribute></xpath>
     <xpath expr="//button[@t-on-click='record']" position="attributes"><attribute name="t-if">!state.recording &amp;&amp; state.detail.provider !== 'website'</attribute></xpath>
     <xpath expr="//article[@t-att-data-message-id]" position="attributes"><attribute name="t-att-class">'ab_message ' + message.direction + (message.website_order ? ' ab_website_message' : '')</attribute></xpath>
@@ -30,5 +33,9 @@
     <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="after">
         <t t-call="ab_crm_website.OrderMessage"/>
     </xpath>
+</t>
+<t t-inherit="ab_crm_sales_workspace.MessageActions" t-inherit-mode="extension">
+    <xpath expr="//button[@t-att-title='props.message.actions.reply.reason']" position="attributes"><attribute name="t-if">!props.message.website_receive_only</attribute></xpath>
+    <xpath expr="//small[@t-esc='props.message.actions.reply.reason']" position="attributes"><attribute name="t-if">!props.message.website_receive_only &amp;&amp; !props.message.actions.reply.enabled</attribute></xpath>
 </t>
 </templates>

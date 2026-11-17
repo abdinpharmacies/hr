@@ -1,12 +1,14 @@
-import json
 
+import json
 from unittest.mock import patch
+
 from uuid import uuid4
 
 from odoo import fields
-from odoo.addons.ab_crm_core.models.core import _INTERNAL
 from odoo.exceptions import AccessError, UserError
-from odoo.tests import HttpCase, no_retry, tagged
+from odoo.tests import HttpCase, tagged, no_retry
+from odoo.addons.ab_crm_messaging.models.messaging import _MUTATION
+from odoo.addons.ab_crm_core.models.core import _INTERNAL
 from odoo.addons.ab_crm_sales_workspace.tests.test_workspace import TestWorkspace
 from ..protocol import fingerprint
 
@@ -54,375 +56,303 @@ class TestWebsiteContactGroups(TestWorkspace):
         conversation.action_confirm_customer_link(self.contact['id'], preview['fingerprint'])
         return preview
 
-    def test_group_link_all_orders_beyond_page_and_repeat_noop(self):
-        first = self.website_order()
-        second = self.website_order('WEB-TWO')
-        token = _INTERNAL.set(True)
+    def legacy_reply(self, conversation, body='Historical reply'):
+        order = self.env['ab_crm_website_order'].search([('conversation_id', '=', conversation.id)], limit=1)
+        mutation, internal = _MUTATION.set(True), _INTERNAL.set(True)
         try:
-            (first | second).sudo().message_ids.write({
-                'original_timestamp': fields.Datetime.subtract(fields.Datetime.now(), days=1)})
+            message = self.env['ab_crm_message'].create({
+                'conversation_id': conversation.id, 'branch_id': conversation.branch_id.id,
+                'company_id': conversation.company_id.id, 'direction': 'out', 'body': body,
+                'website_order_id': order.id, 'delivery_state': 'approved',
+                'approved_by': self.staff.id, 'approved_at': fields.Datetime.now(),
+            })
+            self.env['ab_crm_messaging_operation'].create({
+                'account_id': self.website_account.id, 'message_id': message.id, 'body': body,
+                'destination': order.order_uuid, 'branch_id': order.branch_id.id,
+                'company_id': order.company_id.id, 'approved_by': self.staff.id,
+                'approved_at': fields.Datetime.now(),
+            })
+            return message
         finally:
-            _INTERNAL.reset(token)
+            _INTERNAL.reset(internal)
+            _MUTATION.reset(mutation)
+
+    def test_one_identity_and_no_website_reply(self):
+        first = self.website_order()
+        second = self.website_order('WEB-TWO', '+20 101 234 5678')
+        self.assertEqual(first, second)
+        orders = self.env['ab_crm_website_order'].search([('conversation_id', '=', first.id)], order='id')
+        self.assertEqual(len(orders), 2)
+        self.assertEqual(len(orders.website_customer_id), 1)
+        detail = first.workspace_detail()
+        self.assertEqual(len(detail['streams']), 1)
+        self.assertEqual(len(first.workspace_customer_inbox()['items']), 1)
+        self.assertFalse(detail['can_send'])
+        self.assertNotIn('website_reply_order_id', detail)
+        self.assertEqual({m['website_order']['reference'] for m in detail['messages']}, {'WEB-ONE', 'WEB-TWO'})
+        self.assertTrue(all(not m['actions']['reply']['enabled'] for m in detail['messages']))
+        for method, kwargs in [('action_reply', {}), ('website_action_reply', {'website_order_id': orders[0].id})]:
+            with self.assertRaises(UserError):
+                getattr(first, method)('No website reply', **kwargs)
+        self.assertFalse(first.message_ids.filtered(lambda m: m.direction == 'out'))
+        self.link(first)
+        self.website_order('WEB-THREE')
+        self.assertEqual(first.customer_id.id, self.contact['id'])
+        self.assertEqual(len(first.workspace_detail()['streams']), 1)
+
+    def test_website_link_candidates_do_not_lock_account(self):
+        first = self.website_order()
+        with patch.object(type(self.website_account), 'lock_for_update',
+                          side_effect=AssertionError('A read-only candidate preview must not lock the account')):
+            self.assertTrue(first.action_customer_link_candidates()['phone'])
+            with self.assertRaises(AccessError):
+                first.with_user(self.other).action_customer_link_candidates()
+
+    def test_separate_phones_sources_and_missing_phones(self):
+        first = self.website_order()
+        different = self.website_order('WEB-OTHER', '01199998888')
+        missing = self.website_order('WEB-MISSING', '')
+        missing_again = self.website_order('WEB-MISSING-AGAIN', '')
+        self.assertEqual(len(first | different | missing | missing_again), 4)
+        self.assertEqual(first._website_timeline_streams(), first)
+        other_channel = self.env['ab_crm_channel'].create({
+            'name': 'Other website', 'code': 'other-website', 'provider': 'website', 'branch_id': self.branch.id})
+        self.website_account = self.env['ab_crm_messaging_account'].create({
+            'name': 'Other website', 'code': 'other-website', 'provider': 'website',
+            'provider_account': str(uuid4()), 'channel_id': other_channel.id,
+            'branch_id': self.branch.id, 'service_user_id': self.service.id,
+            'enabled': True, 'legacy_worker_disabled': True, 'outgoing_enabled': True})
+        other = self.website_order('OTHER-SOURCE')
+        self.assertNotEqual(first, other)
+        self.assertNotEqual(first.customer_group_key, other.customer_group_key)
+        with self.assertRaises(UserError):
+            first.website_action_reply('Forged order', website_order_id=self.env['ab_crm_website_order'].search([
+                ('conversation_id', '=', other.id)]).id)
+
+    def test_order_messages_retries_and_pagination(self):
+        first = self.website_order()
+        self.website_order('WEB-TWO')
+        order = self.env['ab_crm_website_order'].search([('conversation_id', '=', first.id)], order='id', limit=1)
+        event = {'version': 1, 'source': self.website_account.provider_account,
+                 'order_uuid': order.order_uuid, 'event_uuid': str(uuid4()), 'revision': 2,
+                 'kind': 'message', 'payload': {'body': 'Original order message'}}
+        event['fingerprint'] = fingerprint(event)
+        gateway = self.env['ab_crm_messaging_api'].with_user(self.service)
+        for unused in range(2):
+            gateway.receive_website_event(self.website_account.code, self.website_account.provider_account, event)
+        incoming = first.message_ids.filtered(lambda m: m.body == 'Original order message')
+        self.assertEqual(len(incoming), 1)
+        self.assertEqual(incoming.website_order_id, order)
         for number in range(55):
-            first.action_reply('Reply %s' % number)
+            event.update(event_uuid=str(uuid4()), revision=number + 3, payload={'body': 'Incoming %s' % number})
+            event['fingerprint'] = fingerprint(event)
+            gateway.receive_website_event(self.website_account.code, self.website_account.provider_account, event)
         detail = first.workspace_detail()
         self.assertEqual(len(detail['messages']), 50)
-        self.assertNotIn(second.message_ids.id, [message['id'] for message in detail['messages']])
-        evidence = (first | second).message_ids.read(['body', 'conversation_id', 'provider_reference'])
-        preview = self.link(first)
-        self.assertEqual(set(preview['conversation_ids']), {first.id, second.id})
-        self.assertEqual(preview['conversation_count'], 2)
-        self.assertEqual((first | second).customer_id.id, self.contact['id'])
-        self.assertEqual(first.customer_group_key, second.customer_group_key)
-        self.assertEqual(first.workspace_detail()['name'], 'Canonical contact')
-        self.assertEqual((first | second).message_ids.read(['body', 'conversation_id', 'provider_reference']), evidence)
-        audits = self.env['ab_crm_workspace_audit'].search([
-            ('conversation_id', 'in', [first.id, second.id]), ('action', '=', 'review_customer_link')])
-        self.assertEqual(len(audits), 2)
-        self.link(first)
-        self.assertEqual(self.env['ab_crm_workspace_audit'].search_count([
-            ('conversation_id', 'in', [first.id, second.id]), ('action', '=', 'review_customer_link')]), 2)
-        self.assertEqual(len(first.workspace_customer_inbox()['items']), 1)
+        older = first.workspace_detail(before_id=detail['messages'][0]['id'])
+        self.assertEqual(len({m['id'] for m in detail['messages'] + older['messages']}), 58)
+        first.workspace_acknowledge(detail['messages'][-1]['id'])
+        self.assertEqual(first.workspace_detail()['unread_count'], 0)
 
-    def test_arrival_and_identity_changes_reject_stale_preview(self):
+    def test_destination_immutable_and_access_enforced(self):
         first = self.website_order()
-        preview = first.action_preview_customer_link(self.contact['id'])
-        second = self.website_order('WEB-TWO')
-        with self.assertRaises(UserError):
-            first.action_confirm_customer_link(self.contact['id'], preview['fingerprint'])
-        self.assertFalse((first | second).customer_id)
-        self.link(first)
-        preview = first.action_preview_customer_link(self.contact['id'])
-        from odoo.addons.ab_crm_sales_workspace.models.workspace import _WORKSPACE
-        token = _WORKSPACE.set(True)
-        try:
-            identity = self.env['ab_crm_identity'].search([('external_key', '=', second.external_key)])
-            identity.write({'active': False})
-        finally:
-            _WORKSPACE.reset(token)
-        with self.assertRaises(UserError):
-            first.action_confirm_customer_link(self.contact['id'], preview['fingerprint'])
-        self.assertFalse(identity.active)
-
-    def test_group_access_and_atomic_rollback(self):
-        first, second = self.website_order(), self.website_order('WEB-TWO')
-        preview = first.action_preview_customer_link(self.contact['id'])
+        order = self.env['ab_crm_website_order'].search([('conversation_id', '=', first.id)])
         for denied in (first.with_user(self.other), first.with_user(self.service),
                        first.with_context(ab_chatter_session_token='forged')):
             with self.assertRaises(AccessError):
-                denied.action_confirm_customer_link(self.contact['id'], preview['fingerprint'])
+                denied.website_action_reply('Denied', website_order_id=order.id)
         with self.assertRaises(AccessError):
-            first.write({'customer_id': self.contact['id']})
-        foreign = self.env['ab_crm_branch'].create({'name': 'Foreign', 'code': 'group-foreign'})
-        customer = self.env['ab_crm_customer'].create({'name': 'Foreign', 'branch_id': foreign.id})
+            first.with_user(self.other).workspace_detail()
         with self.assertRaises(AccessError):
-            first.action_preview_customer_link(customer.id)
-        company = self.env['res.company'].create({'name': 'Foreign group company'})
+            order.with_user(self.other).read(['snapshot'])
         with self.assertRaises(AccessError):
-            first.with_context(allowed_company_ids=company.ids).action_preview_customer_link(self.contact['id'])
-        foreign_channel = self.env['ab_crm_channel'].create({
-            'name': 'Foreign', 'code': 'group-foreign', 'provider': 'website', 'branch_id': foreign.id})
-        foreign_stream = self.env['ab_crm_conversation'].create({
-            'name': 'Foreign', 'channel_id': foreign_channel.id, 'external_key': str(uuid4()), 'branch_id': foreign.id})
-        with patch.object(type(first), '_customer_link_group', return_value=(first | foreign_stream.with_env(first.env))):
-            with self.assertRaises(AccessError):
-                first.action_confirm_customer_link(self.contact['id'], preview['fingerprint'])
-        original = type(first)._apply_customer_link
-        def fail_second(record, *args):
-            if record.id == second.id:
-                raise UserError('Injected failure')
-            return original(record, *args)
-        with patch.object(type(first), '_apply_customer_link', fail_second):
-            with self.assertRaises(UserError):
-                first.action_confirm_customer_link(self.contact['id'], preview['fingerprint'])
-        self.assertFalse((first | second).customer_id)
-        self.assertFalse(self.env['ab_crm_identity'].search([('external_key', 'in', [first.external_key, second.external_key])]))
-        self.assertFalse(self.env['ab_crm_workspace_audit'].search([
-            ('conversation_id', 'in', [first.id, second.id]), ('action', '=', 'review_customer_link')]))
+            order.website_customer_id.with_user(self.other).read(['identity_key'])
+        with self.assertRaises(AccessError):
+            first.write({'website_canonical_id': first.id})
+        message = first.message_ids[:1]
+        with self.assertRaises(AccessError):
+            message.with_user(self.staff).write({'website_order_id': order.id})
+        self.website_order('Newer incoming order')
+        self.assertEqual(message.website_order_id, order)
+        with self.assertRaises(UserError):
+            first.website_action_reply('Invalid', website_order_id=True)
 
-    def test_linked_and_unlinked_phone_groups_stay_separate(self):
+    def test_website_and_telegram_keep_separate_timelines_and_unlink(self):
         first = self.website_order()
-        self.link(first)
-        second = self.website_order('WEB-TWO')
-        self.assertFalse(second.customer_id)
-        self.assertNotEqual(first.customer_group_key, second.customer_group_key)
-        self.assertEqual(second._customer_link_group().ids, second.ids)
-        with self.assertRaises(AccessError):
-            first.workspace_channel(second.id)
-        self.link(second)
-        self.assertEqual(first.customer_group_key, second.customer_group_key)
-        for stream in (first, second):
-            stream.action_reply('Reply to original order')
-            operation = self.env['ab_crm_messaging_operation'].search([
-                ('message_id.conversation_id', '=', stream.id)], order='id desc', limit=1)
-            self.assertEqual(operation.destination, stream.external_key)
-        detail = first.workspace_channel(second.id)
-        self.assertEqual({message['website_order']['reference'] for message in detail['messages']
-                          if message.get('website_order')}, {'WEB-ONE', 'WEB-TWO'})
-        unlink = first.action_preview_customer_unlink(self.contact['id'])
-        first.action_unlink_customer(self.contact['id'], unlink['fingerprint'])
-        first.workspace_customer_inbox()
-        self.assertFalse((first | second).customer_id)
-        self.assertTrue(all(not identity.active for identity in self.env['ab_crm_identity'].with_context(
-            active_test=False).search([('external_key', 'in', [first.external_key, second.external_key])])) )
-
-    def test_cross_channel_navigation_and_website_timeline(self):
-        first, second = self.website_order(), self.website_order('WEB-TWO')
+        self.website_order('WEB-TWO')
         self.link(first)
         received = self.receive('Telegram content', owner='54321')
         telegram = self.env['ab_crm_message'].browse(received['message_id']).conversation_id.with_user(
             self.staff).with_context(ab_chatter_session_token=self.session_token)
         self.link(telegram)
-        extra = self.env['ab_crm_conversation']
-        channel_field = self.env['ab_crm_channel']._fields['provider']
-        account_field = self.env['ab_crm_messaging_account']._fields['provider']
-        with patch.object(channel_field, '_selection', dict(channel_field._selection, future_test='Future test')), patch.object(
-                account_field, '_selection', dict(account_field._selection, whatsapp='WhatsApp', future_test='Future test')):
-            for provider in ('whatsapp', 'future_test'):
-                channel = self.env['ab_crm_channel'].create({
-                    'name': provider, 'code': 'group-' + provider, 'provider': provider,
-                    'branch_id': self.branch.id})
-                self.env['ab_crm_messaging_account'].create({
-                    'name': provider, 'code': 'group-' + provider, 'provider': provider,
-                    'provider_account': str(uuid4()), 'channel_id': channel.id,
-                    'branch_id': self.branch.id, 'service_user_id': self.service.id,
-                    'enabled': True, 'legacy_worker_disabled': True})
-                stream = self.env['ab_crm_conversation'].create({
-                    'name': provider, 'channel_id': channel.id, 'external_key': '201099998888',
-                    'branch_id': self.branch.id}).with_user(self.staff).with_context(
-                        ab_chatter_session_token=self.session_token)
-                self.assertFalse(stream._auto_link_matching_customer())
-                with self.assertRaises(AccessError):
-                    stream.write({'customer_id': self.contact['id']})
-                self.link(stream)
-                extra |= stream.with_env(self.env)
-            detail = first.workspace_detail()
-            self.assertEqual({stream['id'] for stream in detail['streams']},
-                             {first.id, second.id, telegram.id, *extra.ids})
-            for stream in extra:
-                switched = first.workspace_channel(stream.id)
-                self.assertEqual(switched['id'], stream.id)
-                self.assertEqual({entry['display_destination'] for entry in switched['streams']
-                                  if entry['provider'] == 'website'}, {'WEB-ONE', 'WEB-TWO'})
-
-        self.assertNotIn('Telegram content', [message['body'] for message in detail['messages']])
+        self.assertEqual(len(first.workspace_detail()['streams']), 2)
+        self.assertEqual(len(self.chatter_api.contact_accounts(self.session_token, self.contact['id'])['accounts']), 2)
+        self.assertNotIn('Telegram content', [m['body'] for m in first.workspace_detail()['messages']])
         self.assertEqual(first.workspace_channel(telegram.id)['id'], telegram.id)
         self.assertEqual(telegram.workspace_channel(first.id)['id'], first.id)
-        self.assertEqual(len(first.workspace_customer_inbox()['items']), 1)
-        self.assertEqual(self.env['ab_crm_website_order'].search([
-            ('conversation_id', 'in', [first.id, second.id])]).mapped('snapshot')[0]['customer']['name'], 'Submitted name')
+        unlink = first.action_preview_customer_unlink(self.contact['id'])
+        first.action_unlink_customer(self.contact['id'], unlink['fingerprint'])
+        self.website_order('WEB-THREE')
+        self.assertFalse(first.customer_id)
+        self.assertEqual(len(first.workspace_detail()['streams']), 1)
+        self.assertEqual(len(self.env['ab_crm_website_order'].search([('conversation_id', '=', first.id)])), 3)
 
-    def test_conflict_requires_manager_and_explicit_resolution(self):
+    def test_website_scope_in_other_branch_and_company(self):
+        first = self.website_order()
+        for index, company in enumerate((self.env.company, self.env['res.company'].create({
+                'name': 'Website other company', 'country_id': self.env.ref('base.eg').id}))):
+            self.service.company_ids = [fields.Command.link(company.id)]
+            branch = self.env['ab_crm_branch'].create({
+                'name': 'Scoped website', 'code': 'scoped-web-%s' % index,
+                'company_id': company.id, 'user_ids': [fields.Command.set(self.service.ids)]})
+            channel = self.env['ab_crm_channel'].create({
+                'name': 'Scoped website', 'code': 'scoped-web-%s' % index,
+                'provider': 'website', 'branch_id': branch.id, 'company_id': company.id})
+            self.website_account = self.env['ab_crm_messaging_account'].create({
+                'name': 'Scoped website', 'code': 'scoped-web-%s' % index, 'provider': 'website',
+                'provider_account': str(uuid4()), 'channel_id': channel.id, 'branch_id': branch.id,
+                'company_id': company.id, 'service_user_id': self.service.id,
+                'enabled': True, 'legacy_worker_disabled': True, 'outgoing_enabled': True})
+            original_env = self.env
+            try:
+                self.env = self.env(context=dict(self.env.context, allowed_company_ids=company.ids))
+                other = self.website_order('SCOPED')
+            finally:
+                self.env = original_env
+            self.assertNotEqual(first.id, other.id)
+            self.assertEqual(other.branch_id, branch)
+            self.assertEqual(other.company_id, company)
+            with self.assertRaises(UserError):
+                first.website_action_reply('Forged scope', website_order_id=self.env['ab_crm_website_order'].sudo().search([
+                    ('conversation_id', '=', other.id)]).id)
+
+    def test_approvals_and_gateway_dispatch_are_disabled(self):
+        first = self.website_order()
+        draft = first.env['ab_crm_message'].create({
+            'conversation_id': first.id, 'branch_id': first.branch_id.id,
+            'company_id': first.company_id.id, 'direction': 'out', 'body': 'Blocked draft',
+        })
+        with self.assertRaises(UserError):
+            draft.action_approve()
+        self.assertEqual(draft.delivery_state, 'draft')
+        self.assertFalse(draft.messaging_operation_ids)
+        legacy = self.legacy_reply(first)
+        operation = legacy.messaging_operation_ids
+        gateway = self.env['ab_crm_messaging_api'].with_user(self.service)
+        self.assertFalse(gateway.lease_outgoing(self.website_account.code, self.website_account.provider_account))
+        self.assertFalse(gateway.authorize_send(self.website_account.code,
+            self.website_account.provider_account, operation.token, operation.attempt, 'legacy-receipt'))
+        self.assertEqual(operation.state, 'queued')
+        self.assertEqual(self.website_account._queue_eligibility(first)[0], 'outgoing_disabled')
+
+    def test_reconciliation_preview_alias_history_and_queued_destinations(self):
+        first = self.website_order()
+        order = self.env['ab_crm_website_order'].search([('conversation_id', '=', first.id)])
+        second = self.website_order('WEB-TWO', '01111112222')
+        other_order = self.env['ab_crm_website_order'].search([('conversation_id', '=', second.id)])
+        queued = self.legacy_reply(second, 'Keep queued destination')
+        mutation = _MUTATION.set(True)
+        try:
+            other_order.write({'phone': order.phone, 'snapshot': dict(other_order.snapshot, customer=dict(other_order.snapshot['customer'], phone=order.phone))})
+            other_order.write({'website_customer_id': False})
+            order.write({'website_customer_id': False})
+        finally:
+            _MUTATION.reset(mutation)
+        model = self.env['ab_crm_website_order']
+        with self.assertRaises(AccessError):
+            model.with_user(self.staff).website_reconciliation_preview(self.website_account.id)
+        preview = model.website_reconciliation_preview(self.website_account.id)
+        with self.assertRaises(UserError):
+            model.website_reconciliation_apply(self.website_account.id, 'stale')
+        model.website_reconciliation_apply(self.website_account.id, preview['fingerprint'])
+        self.assertEqual(other_order.conversation_id, order.conversation_id)
+        self.assertEqual(second.website_canonical_id.id, first.id)
+        self.assertEqual(queued.messaging_operation_ids.destination, other_order.order_uuid)
+        self.assertEqual(len(first.workspace_detail()['messages']), 3)
+        self.assertEqual(len(first.workspace_detail()['streams']), 1)
+        self.assertEqual(len(first.workspace_customer_inbox()['items']), 1)
+        self.assertEqual(len(first.workspace_customer_inbox(query='01012345678')['items'][0]['streams']), 1)
+        event = {'version': 1, 'source': self.website_account.provider_account,
+                 'order_uuid': other_order.order_uuid, 'event_uuid': str(uuid4()), 'revision': 2,
+                 'kind': 'message', 'payload': {'body': 'Routed from alias'}}
+        event['fingerprint'] = fingerprint(event)
+        self.env['ab_crm_messaging_api'].with_user(self.service).receive_website_event(
+            self.website_account.code, self.website_account.provider_account, event)
+        self.assertEqual(first.message_ids.filtered(lambda m: m.body == 'Routed from alias').website_order_id, other_order)
+        self.assertFalse(second.message_ids.filtered(lambda m: m.body == 'Routed from alias'))
+
+    def test_conflicting_saved_contacts_require_review(self):
         first = self.website_order()
         self.link(first)
-        other = self.chatter_api.contact_save(self.session_token, {
-            'name': 'Different contact', 'phone': '01199998888', 'address': '',
-        }, branch_id=self.branch.id)
-        with self.assertRaises(AccessError):
-            first.action_preview_customer_link(other['id'])
-        self.staff.group_ids = [fields.Command.link(self.env.ref('ab_crm_core.group_manager').id)]
-        preview = first.action_preview_customer_link(other['id'])
-        self.assertTrue(preview['conflict'])
-        with self.assertRaises(UserError):
-            first.action_confirm_customer_link(other['id'], preview['fingerprint'])
-        first.action_confirm_customer_link(other['id'], preview['fingerprint'], resolve_conflict=True)
-        self.assertEqual(first.customer_id.id, other['id'])
-        identity = self.env['ab_crm_identity'].search([('external_key', '=', first.external_key)])
-        self.assertEqual(identity.customer_id.id, other['id'])
-        self.staff.group_ids = [fields.Command.link(self.env.ref('base.group_system').id)]
-        preview = first.action_preview_customer_link(self.contact['id'])
-        first.action_confirm_customer_link(self.contact['id'], preview['fingerprint'], resolve_conflict=True)
-        self.assertEqual(first.customer_id.id, self.contact['id'])
-
-    def test_rollout_is_bounded_and_admin_only(self):
-        first, second = self.website_order(), self.website_order('WEB-TWO')
-        self.link(first)
-        with self.assertRaises(AccessError):
-            first._recompute_website_customer_groups()
-        before = first.customer_group_key
-        ids = self.env['ab_crm_conversation']._recompute_website_customer_groups(limit=1, after_id=first.id - 1)
-        self.assertEqual(ids, first.ids)
-        self.assertEqual(first.customer_group_key, before)
+        second = self.website_order('OTHER', '01111112222')
+        order = self.env['ab_crm_website_order'].search([('conversation_id', '=', second.id)])
+        token = _MUTATION.set(True)
+        try:
+            order.write({'phone': '01012345678', 'snapshot': dict(order.snapshot, customer=dict(order.snapshot['customer'], phone='01012345678')),
+                         'website_customer_id': False})
+        finally:
+            _MUTATION.reset(token)
+        model = self.env['ab_crm_website_order']
+        preview = model.website_reconciliation_preview(self.website_account.id)
+        self.assertTrue(preview['groups'][0]['requires_review'])
+        model.website_reconciliation_apply(self.website_account.id, preview['fingerprint'])
+        self.assertNotEqual(order.conversation_id.id, first.id)
 
 
-@tagged('post_install', '-at_install', 'website_contact_groups_ui')
-class TestWebsiteContactGroupUI(TestWebsiteContactGroups, HttpCase):
-    def _browser_group_link(self, lang):
-        self.staff.lang = lang
+@tagged('post_install', '-at_install', 'website_customer_ui')
+class TestWebsiteCustomerUI(TestWebsiteContactGroups, HttpCase):
+    def _receive_only_browser(self, language):
+        self.env['res.lang']._activate_lang(language)
+        self.staff.lang = language
         self.staff.group_ids = [fields.Command.link(self.env.ref('ab_store.ab_login_from_anywhere').id)]
-        first, second = self.website_order(), self.website_order('WEB-TWO')
-        initial = first.workspace_detail()
-        values = json.dumps({'first': first.id, 'second': second.id, 'contact': self.contact,
-                             'token': self.session_token, 'initial': initial, 'arabic': lang == 'ar_001'})
+        first = self.website_order()
+        self.website_order('WEB-TWO')
+        self.link(first)
+        received = self.receive('Telegram still supports replies', owner='54321')
+        telegram = self.env['ab_crm_message'].browse(received['message_id']).conversation_id
+        data = json.dumps({'conversation': first.id, 'telegram': telegram.id, 'token': self.session_token,
+                           'employee_id': self.employee.id, 'arabic': language == 'ar_001'})
         self.session = None
         self.browser_js('/odoo?debug=assets', '''
             (async () => {
                 const data = DATA;
                 const env = odoo.__WOWL_DEBUG__.root.env;
-                const call = (model, method, args = [], kwargs = {}) => env.services.orm.call(model, method, args,
-                    {...kwargs, context: {ab_chatter_session_token: data.token}});
-                const {ChatterContacts} = odoo.loader.modules.get('@ab_crm_sales_workspace/contacts');
-                const {SalesWorkspace} = odoo.loader.modules.get('@ab_crm_sales_workspace/workspace');
-                const wait = async predicate => {
+                env.services.ab_chatter_session.set({token: data.token, employee_id: data.employee_id});
+                const open = async id => {
+                    await env.services.action.doAction('ab_crm_sales_workspace.action_workspace',
+                        {additionalContext: {chatter_conversation_id: id}});
                     for (let i = 0; i < 100; i++) {
-                        if (predicate()) return;
+                        if (document.querySelector('.ab_chat[data-channel="' + (id === data.conversation ? 'website' : 'telegram') + '"]')) return;
                         await new Promise(resolve => setTimeout(resolve, 50));
                     }
-                    throw new Error('Timed out waiting for linking dialog');
+                    throw new Error('Conversation did not open');
                 };
-                const workspace = {
-                    state: {token: data.token, detail: data.initial, reply: 'Keep this draft', attachments: [],
-                            inboxQuery: '', firstUnread: false, phone: ''},
-                    props: {}, navigationVersion: 1, call, refreshContacts: async () => {},
-                    loadCustomerInbox: async () => call('ab_crm_conversation', 'workspace_customer_inbox'),
-                };
-                let saved = false;
-                env.services.dialog.add(ChatterContacts, {
-                    mode: 'link', channel: 'website', token: data.token, conversationId: data.first,
-                    branchId: data.contact.branch_id, initial: data.contact, call,
-                    onSaved: async () => {
-                        await SalesWorkspace.prototype.refresh.call(workspace);
-                        saved = true;
-                    },
-                });
-                await wait(() => document.querySelector('.ab_chatter_contacts')?.textContent.includes(
-                    data.arabic ? 'المحادثات المتأثرة' : 'Affected conversations'));
-                const dialog = document.querySelector('.ab_chatter_contact_dialog');
-                const labels = data.arabic ? ['المحادثات المتأثرة', 'جهة الاتصال الحالية', 'جهة اتصال الهوية'] :
-                    ['Affected conversations', 'Current contact', 'Identity contact'];
-                if (!labels.every(label => dialog.textContent.includes(label))) throw new Error('Link review labels missing');
-                if (!dialog.textContent.includes('2') || !dialog.textContent.includes(data.initial.streams[0].destination) ||
-                    !dialog.textContent.includes(data.initial.streams[1].destination)) throw new Error('Incomplete group preview');
-                if (data.arabic && getComputedStyle(dialog.querySelector('.ab_chatter_contacts')).direction !== 'rtl')
-                    throw new Error('Arabic dialog direction failed');
-                const save = [...dialog.querySelectorAll('button')].find(button =>
-                    button.textContent.trim() === (data.arabic ? 'حفظ' : 'Save'));
-                if (!save) throw new Error('Save button missing');
-                save.click();
-                await wait(() => saved);
-                if (workspace.state.reply !== 'Keep this draft' || workspace.state.detail.id !== data.first)
-                    throw new Error('Refresh lost selection or draft');
-                if (workspace.state.inbox.length !== 1 || workspace.state.inbox[0].name !== 'Canonical contact')
-                    throw new Error('Canonical Inbox entry missing or duplicated');
-                if (workspace.state.detail.name !== 'Canonical contact' || workspace.state.detail.streams.length !== 2)
-                    throw new Error('Linked detail failed');
-                const switched = await call('ab_crm_conversation', 'workspace_channel', [[data.first], data.second]);
-                if (switched.id !== data.second || switched.messages.filter(message => message.website_order).length !== 2)
-                    throw new Error('Website channel switching lost invoices');
-                if (switched.unread_count !== data.initial.unread_count) throw new Error('Unread count changed on linking');
+                await open(data.conversation);
+                const website = document.querySelector('.ab_chat[data-channel="website"]');
+                if (website.querySelector('.ab_composer, .ab_website_reply_destination, .ab_send'))
+                    throw new Error('Website still exposes reply controls');
+                if (website.querySelectorAll('.ab_website_order').length !== 2)
+                    throw new Error('Grouped website invoices are missing');
+                website.querySelector('.ab_message_menu').click();
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                const replyLabel = odoo.loader.modules.get('@web/core/l10n/translation')._t('Reply');
+                if ([...website.querySelectorAll('[role=menuitem]')].some(button => button.textContent.trim() === replyLabel))
+                    throw new Error('Website message still offers Reply');
+                const detail = await env.services.orm.call('ab_crm_conversation', 'workspace_detail', [[data.conversation]],
+                    {context: {ab_chatter_session_token: data.token}});
+                const expected = data.arabic ? 'الردود على الموقع معطلة.' : 'Website replies are disabled.';
+                if (detail.can_send || detail.send_reason !== expected) throw new Error('Receive-only policy or translation failed');
+                await open(data.telegram);
+                if (!document.querySelector('.ab_chat[data-channel="telegram"] .ab_composer_input'))
+                    throw new Error('Telegram composer was removed');
                 console.log('test successful');
             })().catch(error => console.error(error));
-        '''.replace('DATA', values), ready="!!odoo.__WOWL_DEBUG__?.root && !!document.querySelector('.o_ab_sales_dashboard_actions')", login=self.staff.login, timeout=90)
+        '''.replace('DATA', data), ready="!!odoo.__WOWL_DEBUG__?.root", login=self.staff.login, timeout=90)
 
     @no_retry
-    def test_group_link_browser_english(self):
-        self._browser_group_link('en_US')
+    def test_receive_only_browser_english(self):
+        self._receive_only_browser('en_US')
 
     @no_retry
-    def test_group_link_browser_arabic(self):
-        self.env['res.lang']._activate_lang('ar_001')
-        self._browser_group_link('ar_001')
-
-    @no_retry
-    def test_website_header_opens_shared_timeline_and_restores_destinations(self):
-        from lxml import etree
-        from odoo.tools import file_path
-
-        self.staff.group_ids = [fields.Command.link(self.env.ref('ab_store.ab_login_from_anywhere').id)]
-        self.staff.lang = 'en_US'
-        first, second = self.website_order(), self.website_order('WEB-TWO')
-        self.link(first)
-        received = self.receive('Telegram content', owner='54321')
-        telegram = self.env['ab_crm_message'].browse(received['message_id']).conversation_id.with_user(
-            self.staff).with_context(ab_chatter_session_token=self.session_token)
-        self.link(telegram)
-        account_field = self.env['ab_crm_messaging_account']._fields['provider']
-        channel = self.env['ab_crm_channel'].create({
-            'name': 'WhatsApp', 'code': 'header-wa', 'provider': 'whatsapp', 'branch_id': self.branch.id})
-        with patch.object(account_field, '_selection', dict(account_field._selection, whatsapp='WhatsApp')):
-            self.env['ab_crm_messaging_account'].create({
-                'name': 'WhatsApp', 'code': 'header-wa', 'provider': 'whatsapp',
-                'provider_account': str(uuid4()), 'channel_id': channel.id, 'branch_id': self.branch.id,
-                'service_user_id': self.service.id, 'enabled': True, 'legacy_worker_disabled': True})
-        whatsapp = self.env['ab_crm_conversation'].create({
-            'name': 'WhatsApp', 'channel_id': channel.id, 'external_key': '201099998888',
-            'branch_id': self.branch.id}).with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
-        self.link(whatsapp)
-        document = etree.parse(file_path('ab_crm_sales_workspace/static/src/workspace.xml'))
-        navigation = etree.tostring(document.xpath('//nav[@class="ab_channel_navigation"]')[0], encoding='unicode')
-        values = json.dumps({'first': first.id, 'second': second.id, 'telegram': telegram.id,
-                             'whatsapp': whatsapp.id, 'token': self.session_token,
-                             'initial': telegram.workspace_detail(), 'inbox': first.workspace_customer_inbox()['items'],
-                             'navigation': navigation})
-        self.session = None
-        self.browser_js('/odoo?debug=assets', '''
-            (async () => {
-                const data = DATA;
-                const env = odoo.__WOWL_DEBUG__.root.env;
-                const {useState, xml} = odoo.loader.modules.get('@odoo/owl');
-                const {mountComponent} = odoo.loader.modules.get('@web/env');
-                const {SalesWorkspace} = odoo.loader.modules.get('@ab_crm_sales_workspace/workspace');
-                let view;
-                class HeaderHarness extends SalesWorkspace {
-                    static template = xml`<div class="ab_crm_sales_workspace">${data.navigation}
-                        <div class="header_messages"><p t-foreach="state.detail.messages" t-as="message" t-key="message.id" t-esc="message.body"/></div>
-                        <textarea t-model="state.reply"/></div>`;
-                    setup() {
-                        view = this;
-                        this.state = useState({token: data.token, detail: data.initial, inbox: data.inbox,
-                            reply: 'Telegram draft', attachments: [], replyTo: null, channelChooser: '', busy: false});
-                        this.navigationVersion = 0;
-                        this.drafts = new Map();
-                        this.stopRecording = () => {};
-                        this.clearSearch = () => {};
-                        this.feedback = {report: error => {throw error;}};
-                        this.call = (model, method, args = [], kwargs = {}) => env.services.orm.call(model, method, args,
-                            {...kwargs, context: {ab_chatter_session_token: data.token}});
-                    }
-                }
-                const target = document.createElement('div');
-                document.body.append(target);
-                const app = await mountComponent(HeaderHarness, target, {env});
-                const wait = async predicate => {
-                    for (let i = 0; i < 200; i++) {
-                        if (predicate()) return;
-                        await new Promise(resolve => setTimeout(resolve, 25));
-                    }
-                    throw new Error('Header navigation did not settle: ' + view.state.error);
-                };
-                const switchTo = async provider => {
-                    target.querySelector(`[data-channel="${provider}"]`).click();
-                    await wait(() => view.state.detail.provider === provider && !view.state.navigating);
-                    await new Promise(resolve => requestAnimationFrame(resolve));
-                };
-                try {
-                    await switchTo('website');
-                    if (target.querySelector('.ab_channel_chooser')) throw new Error('Website icon only opened a chooser');
-                    if (view.state.detail.id !== data.second) throw new Error('Website default destination changed');
-                    if (view.state.detail.messages.filter(message => message.website_order).length !== 2 ||
-                        view.state.detail.messages.some(message => message.body === 'Contact shared'))
-                        throw new Error('Website timeline membership is incorrect');
-                    view.state.reply = 'Second order draft';
-                    await switchTo('whatsapp');
-                    await switchTo('website');
-                    if (view.state.reply !== 'Second order draft' || view.state.detail.id !== data.second)
-                        throw new Error('Website draft or destination lost');
-                    target.querySelector('[data-channel="website"]').click();
-                    await wait(() => target.querySelectorAll('.ab_channel_chooser button').length === 2);
-                    const choose = [...target.querySelectorAll('.ab_channel_chooser button')].find(button => button.textContent.includes('WEB-ONE'));
-                    if (!choose) throw new Error('Original order reference missing');
-                    choose.click();
-                    await wait(() => view.state.detail.id === data.first && !view.state.navigating);
-                    view.state.reply = 'First order draft';
-                    view.lastChannelStreams = new Map();
-                    await switchTo('telegram');
-                    if (view.state.reply !== 'Telegram draft') throw new Error('Telegram draft lost');
-                    await switchTo('website');
-                    if (view.state.detail.id !== data.first || view.state.reply !== 'First order draft')
-                        throw new Error('Explicit Website destination was not remembered');
-                    console.log('test successful');
-                } finally { app.destroy(); target.remove(); }
-            })().catch(error => console.error(error));
-        '''.replace('DATA', values),
-            ready="!!odoo.__WOWL_DEBUG__?.root && !!document.querySelector('.o_ab_sales_dashboard_actions')",
-            login=self.staff.login, timeout=90)
+    def test_receive_only_browser_arabic(self):
+        self._receive_only_browser('ar_001')

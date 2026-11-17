@@ -187,20 +187,11 @@ class TestWebsitePos(TestPosHandoff):
             if message.get('website_order')
         ]
         self.assertEqual([quotation['total'] for quotation in quotations], [40, 60])
-        conversation.action_reply('Agent reply')
-        replies = [
-            message
-            for message in conversation.workspace_detail()['messages']
-            if message['body'] == 'Agent reply'
-        ]
-        self.assertEqual(len(replies), 1)
-        self.assertEqual(replies[0]['direction'], 'out')
-        self.assertNotIn('website_order', replies[0])
-        operation = self.env['ab_crm_messaging_operation'].search(
-            [('account_id', '=', account.id)]
-        )
-        self.assertEqual(operation.body, 'Agent reply')
-        self.assertEqual(operation.destination, event['order_uuid'])
+        with self.assertRaises(UserError):
+            conversation.action_reply('Agent reply')
+        self.assertFalse(conversation.message_ids.filtered(lambda m: m.direction == 'out'))
+        self.assertFalse(self.env['ab_crm_messaging_operation'].search([
+            ('account_id', '=', account.id)]))
         self.assertFalse(
             self.env['ab_sales_header'].search(
                 [('pos_client_token', '=', 'website-draft')]
@@ -222,19 +213,19 @@ class TestWebsitePos(TestPosHandoff):
         unrelated['fingerprint'] = fingerprint(unrelated)
         gateway.receive_website_event(account.code, source, unrelated)
         sibling_actor = sibling_order.conversation_id.with_user(self.staff).with_context(ab_chatter_session_token=self.session_token)
-        self.assertFalse(sibling_actor.customer_id)
+        self.assertEqual(sibling_actor.customer_id.id, contact_id)
         preview = sibling_actor.action_preview_customer_link(contact_id)
         sibling_actor.action_confirm_customer_link(contact_id, preview['fingerprint'])
         detail = conversation.workspace_detail()
         self.assertEqual(detail['name'], 'Website Customer')
-        self.assertEqual(len(detail['streams']), 2)
+        self.assertEqual(len(detail['streams']), 1)
         self.assertEqual({stream['id'] for stream in detail['streams']}, {conversation.id, sibling_order.conversation_id.id})
         sibling_conversation = sibling_order.conversation_id.with_user(self.staff).with_context(
             ab_chatter_session_token=self.session_token
         )
         sibling_detail = sibling_conversation.workspace_detail()
         self.assertEqual(sibling_detail['website_order']['reference'], 'WEB-SECOND')
-        self.assertEqual(len(sibling_detail['streams']), 2)
+        self.assertEqual(len(sibling_detail['streams']), 1)
         self.assertEqual(sibling_detail['name'], 'Website Customer')
         inbox = conversation.workspace_customer_inbox(query='01012345678')
         self.assertEqual(
