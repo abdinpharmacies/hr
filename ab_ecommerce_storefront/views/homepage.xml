@@ -131,6 +131,7 @@
                             class="ab-storefront-benefit-more ab-storefront-second-offer-trigger"
                             t-att-data-offer-id="ab_card_offer['offer_id']"
                             data-offer-mode="choice" data-picker-only="true"
+                            t-att-data-offer-type="'gift' if ab_card_offer.get('free_qty') else 'second_half'"
                             t-att-data-offer-description="ab_card_offer['description']"
                             aria-label="Choose your benefit product">
                         +<t t-out="ab_card_offer['benefit_product_count'] - 4"/>
@@ -184,11 +185,11 @@
                                  t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                         </div>
                     </div>
-                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add and not ab_card_offer.get('bundle_offer')" class="ab-storefront-card-quantity" aria-label="Quantity">
+                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add and (not ab_card_offer.get('bundle_offer') or ab_card_offer.get('free_qty'))" class="ab-storefront-card-quantity" aria-label="Quantity">
                         <button type="button" data-ab-card-quantity="decrease" aria-label="Decrease quantity">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
                         </button>
-                        <input type="text" name="add_qty" value="1" min="1" step="1" inputmode="numeric" pattern="[0-9]*" dir="ltr" aria-label="Quantity"/>
+                        <input type="text" name="add_qty" t-att-value="ab_card_offer.get('buy_qty', 1) if ab_card_offer.get('bundle_offer') and ab_card_offer.get('free_qty') else 1" t-att-min="ab_card_offer.get('buy_qty', 1) if ab_card_offer.get('bundle_offer') and ab_card_offer.get('free_qty') else 1" step="1" inputmode="numeric" pattern="[0-9]*" dir="ltr" aria-label="Quantity"/>
                         <button type="button" data-ab-card-quantity="increase" aria-label="Increase quantity">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                         </button>
@@ -200,6 +201,7 @@
                            class="ab-storefront-card-buy-now ab-storefront-second-offer-trigger btn btn-primary"
                            t-att-data-offer-id="ab_card_offer['offer_id']"
                            t-att-data-offer-mode="ab_card_offer['second_item_mode']"
+                           t-att-data-offer-type="'gift' if ab_card_offer.get('free_qty') else 'second_half'"
                            t-att-data-offer-description="ab_card_offer['description']">
                             Get this offer
                         </button>
@@ -212,6 +214,7 @@
                                 class="ab-storefront-card-add ab-storefront-second-offer-trigger btn"
                                 t-att-data-offer-id="ab_card_offer['offer_id']"
                                 t-att-data-offer-mode="ab_card_offer['second_item_mode']"
+                                t-att-data-offer-type="'gift' if ab_card_offer.get('free_qty') else 'second_half'"
                            t-att-data-offer-description="ab_card_offer['description']"
                                 aria-label="Add offer to cart"
                                 title="Add offer to cart">

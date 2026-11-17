@@ -236,7 +236,8 @@ class StorefrontOffer(models.Model):
     )
     def _check_offer(self):
         other_offers = self.search([
-            ("active", "=", True), ("website_id", "in", self.website_id.ids),
+            ("active", "=", True),
+            ("website_id", "in", self.website_id.ids),
             ("product_id", "in", self.product_id.ids),
         ])
         for offer in self:
@@ -627,6 +628,53 @@ class SaleOrder(models.Model):
             if offer.max_applications:
                 for value in values:
                     value["product_uom_qty"] = min(value["product_uom_qty"], offer.max_applications * offer.gift_qty)
+            if offer.second_item_mode == "choice" and values:
+                total = int(values[0]["product_uom_qty"])
+                requested = kwargs.get("gift_allocations")
+                if requested is not None:
+                    if not isinstance(requested, dict) or not requested or len(requested) > 100:
+                        raise UserError(_("Choose the required number of gifts."))
+                    allocations = {}
+                    for product_id, quantity in requested.items():
+                        if (
+                            type(product_id) is not int or type(quantity) is not int
+                            or quantity < 1 or product_id not in offer.second_product_ids.ids
+                        ):
+                            raise UserError(_("Choose eligible gift products and valid quantities."))
+                        allocations[product_id] = quantity
+                    if sum(allocations.values()) != total:
+                        raise UserError(_("Choose exactly %(count)s gifts.", count=total))
+                else:
+                    existing = self.order_line.filtered(
+                        lambda line: line.reward_id == reward and line.coupon_id == coupon
+                        and line.product_id in offer.second_product_ids
+                    )
+                    allocations = {line.product_id.id: int(line.product_uom_qty) for line in existing}
+                    if not allocations:
+                        allocations = {values[0]["product_id"]: total}
+                    remainder = total - sum(allocations.values())
+                    if remainder > 0:
+                        first_id = next(iter(allocations))
+                        allocations[first_id] += remainder
+                    elif remainder < 0:
+                        for product_id in reversed(tuple(allocations)):
+                            removed = min(allocations[product_id], -remainder)
+                            allocations[product_id] -= removed
+                            remainder += removed
+                            if not allocations[product_id]:
+                                del allocations[product_id]
+                            if not remainder:
+                                break
+                base = values[0]
+                values = [
+                    {
+                        **base,
+                        "product_id": product_id,
+                        "product_uom_qty": quantity,
+                        "points_cost": base["points_cost"] if index == 0 else 0,
+                    }
+                    for index, (product_id, quantity) in enumerate(allocations.items())
+                ]
         return values
 
     def _ab_applied_storefront_offers(self):
@@ -741,7 +789,8 @@ class ProductPricelist(models.Model):
         domain &= (
             fields.Domain("ab_storefront_offer_id", "=", False)
             | fields.Domain("ab_storefront_offer_id", "any!", [
-                ("active", "=", True), ("offer_type", "in", ["price", "percent", "amount"]),
+                ("active", "=", True),
+                ("offer_type", "in", ["price", "percent", "amount"]),
                 ("use_odoo_promotion", "=", False), ("website_id", "=", website_id),
             ])
         )

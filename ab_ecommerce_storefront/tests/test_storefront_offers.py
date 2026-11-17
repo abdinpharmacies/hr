@@ -579,6 +579,105 @@ class TestStorefrontOffers(TransactionCase):
         self.assertEqual(gift.product_uom_qty, 2)
         self.assertEqual(order.amount_total, 200)
 
+    def test_gift_controller_splits_multiple_free_units_and_preserves_choices(self):
+        second, third = self.env["product.product"].create([
+            {"name": name, "type": "consu", "list_price": 80,
+             "taxes_id": [Command.clear()], "company_id": self.company.id}
+            for name in ("First gift", "Second gift")
+        ])
+        offer = self.offer(
+            offer_type="gift", second_item_mode="choice", gift_qty=2,
+            second_product_ids=[Command.set((second | third).ids)], once_per_customer=False,
+        )
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+        })
+        fake_request = SimpleNamespace(env=self.env, website=self.website, cart=order)
+        controller = second_item_offer.StorefrontSecondItemOffer()
+        product_class = type(self.product)
+        allocations = [
+            {"product_id": second.id, "quantity": 1},
+            {"product_id": third.id, "quantity": 1},
+        ]
+        with patch.object(second_item_offer, "request", fake_request), patch.object(product_class, "_is_add_to_cart_allowed", return_value=True), patch.object(product_class, "_is_sold_out", return_value=False):
+            with self.assertRaises(UserError), self.env.cr.savepoint():
+                controller.add_second_item(offer.id, gift_allocations=[
+                    {"product_id": second.id, "quantity": 3},
+                ])
+            self.assertFalse(order.order_line)
+            controller.add_second_item(offer.id, gift_allocations=allocations)
+        gift_lines = order.order_line.filtered("is_reward_line")
+        self.assertEqual({line.product_id.id: line.product_uom_qty for line in gift_lines}, {
+            second.id: 1, third.id: 1,
+        })
+        self.assertEqual(sum(gift_lines.mapped("points_cost")), offer.buy_qty)
+        self.assertEqual(order.amount_total, 100)
+        order.order_line.filtered(lambda line: not line.is_reward_line).product_uom_qty = 2
+        self._refresh_offer_cart(order)
+        gift_lines = order.order_line.filtered("is_reward_line")
+        self.assertEqual({line.product_id.id: line.product_uom_qty for line in gift_lines}, {
+            second.id: 3, third.id: 1,
+        })
+        self.assertEqual(order.amount_total, 200)
+
+    def test_gift_controller_reselects_two_gifts_after_second_purchase(self):
+        second, third = self.env["product.product"].create([
+            {"name": name, "type": "consu", "list_price": 80,
+             "taxes_id": [Command.clear()], "company_id": self.company.id}
+            for name in ("First choice", "Second choice")
+        ])
+        offer = self.offer(
+            offer_type="gift", second_item_mode="choice", gift_qty=1,
+            second_product_ids=[Command.set((second | third).ids)], once_per_customer=False,
+        )
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+        })
+        fake_request = SimpleNamespace(env=self.env, website=self.website, cart=order)
+        controller = second_item_offer.StorefrontSecondItemOffer()
+        product_class = type(self.product)
+        with patch.object(second_item_offer, "request", fake_request), patch.object(product_class, "_is_add_to_cart_allowed", return_value=True), patch.object(product_class, "_is_sold_out", return_value=False):
+            controller.add_second_item(offer.id, purchase_quantity=2, gift_allocations=[
+                {"product_id": second.id, "quantity": 1},
+                {"product_id": third.id, "quantity": 1},
+            ])
+        gift_lines = order.order_line.filtered("is_reward_line")
+        self.assertEqual({line.product_id.id: line.product_uom_qty for line in gift_lines}, {
+            second.id: 1, third.id: 1,
+        })
+        self.assertEqual(order.amount_total, 200)
+
+    def test_public_gift_picker_excludes_unpublished_products(self):
+        published, unpublished = self.env["product.product"].create([
+            {"name": name, "type": "consu", "list_price": 80,
+             "taxes_id": [Command.clear()], "company_id": self.company.id}
+            for name in ("Published gift", "Unpublished gift")
+        ])
+        published.product_tmpl_id.website_published = True
+        offer = self.offer(
+            offer_type="gift", second_item_mode="choice", gift_qty=2,
+            second_product_ids=[Command.set((published | unpublished).ids)],
+            once_per_customer=False,
+        )
+        public_env = self.env["product.product"].with_user(self.website.user_id).env
+        fake_request = SimpleNamespace(
+            env=public_env, website=self.website, cart=False, pricelist=self.pricelist,
+        )
+        product_class = type(self.product)
+        template_class = type(self.product.product_tmpl_id)
+        with patch.object(second_item_offer, "request", fake_request), patch.object(
+            product_class, "_is_add_to_cart_allowed", lambda product: bool(product.website_published),
+        ), patch.object(product_class, "_is_sold_out", return_value=False), patch.object(
+            template_class, "_get_sales_prices", lambda templates, website: {
+                template.id: {"price_reduce": 80} for template in templates
+            },
+        ):
+            response = second_item_offer.StorefrontSecondItemOffer().second_items(offer.id)
+        self.assertEqual([item["id"] for item in response["items"]], [published.id])
+        self.assertEqual(response["gift_slots"], 2)
+
     def test_second_item_converts_purchase_units(self):
         self.offer(offer_type="second_half", once_per_customer=False)
         pair = self.env["uom.uom"].create({"name": "Offer pair", "relative_uom_id": self.product.uom_id.id, "relative_factor": 2})

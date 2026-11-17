@@ -2,32 +2,75 @@
 
 ## Current changes before commit:
 
-- Limit gift and second-item benefits within each order while allowing new orders to start a fresh limit.
-- Stop offers after their configured paid primary-product units have sold across customers, including stale cart and direct confirmation checks.
-- Provide preset limits, a custom positive number and No limit in the offer form; show the per-order limit before the total allocation.
-- Keep offer rules scoped by website and company, and reject concurrent confirmations that would exceed the allocation.
-- Translate the updated labels and messages in both Arabic catalogs.
+- Let shoppers divide earned free gifts among eligible products in a dialog with sliders and step buttons.
+- Preserve the selected gift mix when the cart recalculates and validate quantities and eligible products on the server.
+- Respect the product-page purchase quantity when calculating and adding gifts.
+- Let public shoppers read only published, available products from the selected offer in the gift picker.
+- Add English and Arabic text for the gift selector and validation messages.
+- Open the gift selector from the offer card instead of adding the regular product, and center the dialog on mobile screens.
+- Keep the page from scrolling behind the gift dialog and prevent one gift slider from moving when another gift quantity changes.
+- Let shoppers edit the paid quantity directly on gift offer cards, starting at the required buy quantity.
+- Align the gift offer price to the right and its quantity control to the left, including narrow cards.
+- Pass the selected quantity through both same-product and choice gift flows.
 
 Validation:
 
-- The isolated `codex_offer_types_20261112` database ran 43 focused offer tests without failures or errors after the limit changes.
-- The corrected limit dropdown compiled in the backend bundle; targeted local upgrades and `en_US`/`ar_001` label checks passed.
-- Existing one-use settings remained at one, and new paid-unit caps defaulted to No limit in the local runtime checks.
+- The isolated `codex_offer_types_20261112` database passed 48 focused offer tests after a targeted module upgrade, including the public gift picker.
+- Python and JavaScript syntax, both Arabic catalogs, and the diff format passed checks.
+- The isolated frontend served the offers page and generated the RTL CSS and JavaScript bundles with the new selector.
+- Python and browser translation lookups returned Arabic for the new messages.
+- The local `ecom19` database completed a targeted upgrade; the running storefront reloaded smoothly and its public gift picker returned four earned gifts and two eligible choices.
+- A further targeted `ecom19` upgrade passed; the live offer 36 returned three gift slots and two eligible products, and the served JavaScript and RTL CSS contained the card button fix and centered dialog.
+- The scroll and slider fix passed JavaScript syntax, both Arabic catalog checks, diff checks, and another targeted `ecom19` upgrade; the live JavaScript and RTL CSS served the new behavior.
+- The gift-card quantity change passed JavaScript syntax, XML parsing, both Arabic catalog checks, and diff checks; runtime rendering remains to be verified.
+- The isolated `codex_offer_types_20261112` database passed 50 focused offer tests after a targeted upgrade (0 failures or errors).
 
 Files changed:
 
-- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/controllers/second_item_offer.py`
 - `ab_ecommerce_storefront/changelog.d/current.md`
 - `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
 - `ab_ecommerce_storefront/i18n/ar_001.po`
 - `ab_ecommerce_storefront/models/storefront_offer.py`
 - `ab_ecommerce_storefront/tests/test_storefront_offers.py`
-- `ab_ecommerce_storefront/static/src/js/offer_limit_field.js`
-- `ab_ecommerce_storefront/static/src/xml/offer_limit_field.xml`
-- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
+- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
+- `ab_ecommerce_storefront/static/src/js/product_card.js`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/product.xml`
 
 ## Recent commits
+Commit: `29084e7a`
+Author: Mohamed Fawzy
+Date: 2026-11-17
+Original subject: `ab_ecommerce_storefront/I18N: translate order reference on tracking page`
+
+- Show the existing Arabic order reference translation on the order tracking page.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `36d862ab`
+Author: Mohamed Fawzy
+Date: 2026-11-17
+Original subject: `ab_ecommerce_storefront/FIX: keep fixed discount above one egp`
+
+- Reject fixed discounts that leave less than EGP 1 while preserving the entered amount in the form.
+- Stop a fixed-discount offer from applying after a later product price drop breaks that minimum.
+- Translate the validation message in both Arabic catalogs.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
+
 Commit: `70e6da77`
 Author: Mohamed Fawzy
 Date: 2026-11-16

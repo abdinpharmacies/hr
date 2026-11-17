@@ -217,6 +217,9 @@ export class AbStorefrontProductCard extends Interaction {
 
     async onBuyNow(ev) {
         const button = ev.currentTarget;
+        if (button.dataset.offerId) {
+            return;
+        }
         if (button.disabled || button.classList.contains("is-loading")) {
             return;
         }
@@ -237,9 +240,10 @@ export class AbStorefrontProductCard extends Interaction {
             return;
         }
         const direction = ev.currentTarget.dataset.abCardQuantity;
-        const current = Math.max(parseInt(input.value, 10) || 1, 1);
+        const minimum = Math.max(parseInt(input.min, 10) || 1, 1);
+        const current = Math.max(parseInt(input.value, 10) || minimum, minimum);
         const previousValue = getQuantityInputNumber(input);
-        input.value = String(direction === "increase" ? current + 1 : Math.max(current - 1, 1));
+        input.value = String(direction === "increase" ? current + 1 : Math.max(current - 1, minimum));
         input.dispatchEvent(new Event("change", { bubbles: true }));
         animateQuantityChange({
             button: ev.currentTarget,

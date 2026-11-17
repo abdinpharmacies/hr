@@ -14789,3 +14789,71 @@ msgid ""
 "Telegram verification is currently unavailable on this website. Choose "
 "another method or contact support."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Add one gift"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Add selected gifts to cart"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose eligible gift products and valid quantities."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose exactly %(count)s gifts."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose the required number of gifts."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Free gift"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Gift quantity"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Gifts selected"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Remove one gift"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Choose a valid purchase quantity."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Choose your gifts"
+msgstr ""

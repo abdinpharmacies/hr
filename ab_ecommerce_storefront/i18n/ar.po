@@ -15576,3 +15576,71 @@ msgid ""
 msgstr ""
 "التحقق عبر تيليجرام غير متاح حاليًا على هذا الموقع. اختر طريقة أخرى أو تواصل"
 " مع الدعم."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Add one gift"
+msgstr "أضف هدية واحدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Add selected gifts to cart"
+msgstr "أضف الهدايا المختارة إلى السلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose eligible gift products and valid quantities."
+msgstr "اختر أصناف هدايا مؤهلة وكميات صحيحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose exactly %(count)s gifts."
+msgstr "اختر %(count)s هدية بالضبط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose the required number of gifts."
+msgstr "اختر العدد المطلوب من الهدايا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Free gift"
+msgstr "هدية مجانية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Gift quantity"
+msgstr "كمية الهدية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Gifts selected"
+msgstr "الهدايا المختارة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Remove one gift"
+msgstr "أزل هدية واحدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Choose a valid purchase quantity."
+msgstr "اختر كمية شراء صحيحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
+msgid "Choose your gifts"
+msgstr "اختر هداياك"
