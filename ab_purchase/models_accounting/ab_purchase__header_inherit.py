@@ -3,7 +3,7 @@ from time import perf_counter
 import datetime
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 def _normalize_je_amounts(vals):
@@ -21,6 +21,18 @@ class PurchaseHeaderInherit(models.Model):
     is_closed = fields.Boolean(default=False)
 
     def btn_submit_inventory(self):
+        with self.env.cr.savepoint():
+            self._lock_submission_rows(self)
+            for invoice in self.sorted('id'):
+                invoice._submit_purchase_with_accounting()
+        return True
+
+    def _submit_purchase_with_accounting(self):
+        self.ensure_one()
+        if self.status != 'prepending':
+            raise UserError(_("Only an unsubmitted purchase invoice can be submitted."))
+        if self.je_header_id.is_posted or self.je_header_id.line_ids:
+            raise UserError(_("This document already has journal entries. Review them before submitting."))
         start1 = perf_counter()
         res = super().btn_submit_inventory()
         start2 = perf_counter()
@@ -65,8 +77,6 @@ class PurchaseHeaderInherit(models.Model):
                 'explain': f'PURCHASE -- {self.description}',
             }
 
-            if sudo_self.je_header_id.line_ids:
-                sudo_self.je_header_id.sudo().line_ids.unlink()
 
             lines = [
                 (0, 0, _normalize_je_amounts({**fixed_data, **supplier_data, })),

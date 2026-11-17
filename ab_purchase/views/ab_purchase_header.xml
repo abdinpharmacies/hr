@@ -362,6 +362,12 @@
                             }
                         </style>
                 </xpath>
+                <xpath expr="//field[@name=&quot;je_header_id&quot;]" position="attributes">
+                    <attribute name="required">False</attribute>
+                </xpath>
+                <xpath expr="//group/field[@name=&quot;store_id&quot;]" position="attributes">
+                    <attribute name="readonly">status != 'prepending'</attribute>
+                </xpath>
                 <xpath expr="//field[@name=&quot;line_ids&quot;]" position="attributes">
                     <attribute name="invisible">False</attribute>
                 </xpath>

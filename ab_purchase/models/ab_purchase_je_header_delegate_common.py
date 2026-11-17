@@ -1,4 +1,5 @@
 from odoo import api, fields, models, _
+from odoo.tools import SQL
 
 MODEL_MAP = {
     'ab_purchase_header': _('PURCHASE'),
@@ -17,6 +18,26 @@ class AbPurchaseAccountingCommon(models.AbstractModel):
     je_header_id = fields.Many2one('ab_accounting_je_header',
                                    delegate=True,
                                    ondelete='cascade', required=True, index=True)
+
+    def _lock_submission_rows(self, records):
+        """Serialize submissions, including under PostgreSQL repeatable-read.
+
+        The no-op update creates a new row version: a concurrent transaction
+        with an older snapshot must retry before evaluating stock availability.
+        No business values or inventory quantities are changed here.
+        """
+        if not records:
+            return
+        records.flush_recordset()
+        records.env.cr.execute(SQL(
+            "SELECT id FROM %s WHERE id IN %s ORDER BY id FOR UPDATE",
+            SQL.identifier(records._table), tuple(records.ids),
+        ))
+        records.env.cr.execute(SQL(
+            "UPDATE %s SET write_date = write_date WHERE id IN %s",
+            SQL.identifier(records._table), tuple(records.ids),
+        ))
+        records.invalidate_recordset()
 
     @api.model
     def default_get(self, default_fields):

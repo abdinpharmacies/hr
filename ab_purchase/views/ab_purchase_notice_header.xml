@@ -302,6 +302,9 @@
                             }
                         </style>
                 </xpath>
+                <xpath expr="//field[@name='je_header_id']" position="attributes">
+                    <attribute name="required">False</attribute>
+                </xpath>
             </field>
         </record>
 

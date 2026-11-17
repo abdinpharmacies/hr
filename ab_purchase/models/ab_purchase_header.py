@@ -1,6 +1,7 @@
 from datetime import datetime
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools.float_utils import float_compare
 import re
 
 
@@ -152,17 +153,24 @@ class AbdinPurchaseHeader(models.Model):
     #     self.total_extra_discount = 0.0
 
     def _validate_ven_invoice(self):
+        self.ensure_one()
         purchase_details = self.line_ids
         if not purchase_details:
             raise UserError(_("Error: No products found on the supplier invoice."))
-        if abs(self.total_cost - self.net_invoice) > 0.5:
+        for line in purchase_details:
+            if line.qty < 0 or line.bonus < 0 or line.qty + line.bonus <= 0:
+                raise ValidationError(_("Purchase quantities and bonuses must be nonnegative, with a positive total on every line."))
+            if not line.product_id or not line.uom_id or line.uom_id not in line.product_id.uom_ids:
+                raise ValidationError(_("Each purchase line must have a product and one of its units of measure."))
+        # Retain the existing 0.5 tolerance, compared at the stored precision.
+        if float_compare(abs(self.total_cost - self.net_invoice), 0.5, precision_digits=3) > 0:
             raise UserError(
                 _(
                     "Error: Net invoice amount does not match the total cost of the products."
                 )
             )
 
-        if abs(self.total_tax - self.net_tax) > 0.5:
+        if float_compare(abs(self.total_tax - self.net_tax), 0.5, precision_digits=3) > 0:
             raise UserError(
                 _("Error: Net tax amount does not match the total tax of the products.")
             )
@@ -186,8 +194,10 @@ class AbdinPurchaseHeader(models.Model):
 
     def btn_submit_inventory(self):
         inventory_mo = self.env["ab_inventory"].sudo()
-        if not self.line_ids or self.status != 'prepending':
-            return
+        self.ensure_one()
+        if self.status != 'prepending':
+            raise UserError(_("Only an unsubmitted purchase invoice can be submitted."))
+        self._validate_ven_invoice()
 
         try:
 

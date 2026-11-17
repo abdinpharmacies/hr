@@ -3,6 +3,7 @@ import datetime
 import re
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools.float_utils import float_compare
 
 
 class PurchaseNoticeHeader(models.Model):
@@ -140,42 +141,64 @@ class PurchaseNoticeHeader(models.Model):
         return re.match(r'^[a-zA-Z0-9-]+$', doc_code)
 
     def _validate_notice(self):
-        for rec in self.line_ids:
-            unit_size = rec.uom_id.unit_size
-
-            # if user enter product on more than one line
-            notice_qty_s = sum(line.product_id.qty_to_small(line.qty, unit_size)
-                               for line in self.line_ids if line.source_id.id == rec.source_id.id)
-
-            available_qty_s = rec.product_id.qty_to_small(rec.available_qty, unit_size)
-            # @todo: activate this condition again
-            # if notice_qty_s > available_qty_s or rec.bonus > rec.available_bonus:
-            #     raise ValidationError(_(f"Not Enough Pending Balance For {rec.source_id.product_id.name}"))
+        self.ensure_one()
+        if not self.line_ids:
+            raise ValidationError(_("Add at least one notice line before submitting."))
+        grouped = {}
+        for line in self.line_ids:
+            if not line.source_id or not line.product_id or not line.uom_id:
+                raise ValidationError(_("Every notice line must have a valid purchase source and unit."))
+            if line.qty < 0 or line.bonus < 0 or line.qty + line.bonus <= 0:
+                raise ValidationError(_("Notice quantities and bonuses must be nonnegative, with a positive total on every line."))
+            inventory = line.last_inventory_id
+            if not inventory or not inventory.store_id:
+                raise ValidationError(_("No pending inventory is available for this notice source."))
+            if self.purchase_header_id and inventory.store_id != self.purchase_header_id.store_id:
+                raise ValidationError(_("Notice inventory must belong to the purchase invoice store."))
+            key = (line.source_id.id, inventory.store_id.id)
+            bucket = grouped.setdefault(key, {'line': line, 'qty': 0.0, 'bonus': 0.0})
+            bucket['qty'] += line.qty
+            bucket['bonus'] += line.bonus
+        if len({store for source, store in grouped}) != 1:
+            raise ValidationError(_("All notice lines must belong to the same store."))
+        if self.notice_type != 'credit_notice':
+            return
+        for (source_id, store_id), bucket in grouped.items():
+            line = bucket['line']
+            # Read fresh, store-scoped balances after locking the source rows.
+            inventory = self.env['ab_inventory'].sudo().search([
+                ('source_id', '=', source_id), ('store_id', '=', store_id),
+            ])
+            available_small = min(
+                sum(inventory.filtered(lambda move: move.status == 'pending_main').mapped('qty')),
+                sum(inventory.mapped('qty')),
+            )
+            total_small = line.product_id.qty_to_small(bucket['qty'] + bucket['bonus'], line.uom_id.unit_size)
+            prior_lines = self.env['ab_purchase_notice_line'].sudo().search([
+                ('source_id', '=', source_id), ('header_id.status', '=', 'saved'),
+                ('header_id', '!=', self.id),
+            ])
+            # A debit notice restores the paid/bonus quantity separately.
+            returned_qty = sum(item.qty * (1 if item.header_id.notice_type == 'credit_notice' else -1) for item in prior_lines)
+            returned_bonus = sum(item.bonus * (1 if item.header_id.notice_type == 'credit_notice' else -1) for item in prior_lines)
+            if (float_compare(total_small, available_small, precision_digits=6) > 0
+                    or float_compare(bucket['qty'], line.source_id.qty - returned_qty, precision_digits=6) > 0
+                    or float_compare(bucket['bonus'], line.source_id.bonus - returned_bonus, precision_digits=6) > 0):
+                raise ValidationError(_("Notice quantities exceed the available purchase quantity or bonus."))
 
     def btn_submit_inventory(self):
-        # remove zero qty zero bonus lines
-        self.line_ids.filtered(lambda l: (l.qty == 0 and l.bonus == 0)).unlink()
-
-        inventory = self.env['ab_inventory']
+        self.ensure_one()
+        if self.status != 'pending':
+            raise UserError(_("Only an unsubmitted purchase notice can be submitted."))
         self._validate_notice()
-        purchase_notice_lines = self.line_ids
-        print(self.line_ids)
-
-        # negative will be true if credit_notice
+        inventory = self.env['ab_inventory']
         sign = -1 if self.notice_type == 'credit_notice' else 1
-        for line in purchase_notice_lines:
-            inventory_line = inventory.search(
-                [('model_ref', '=', line._name), ('res_id', '=', line.id)])
-            if len(inventory_line) == 1:
+        for line in self.line_ids:
+            if inventory.search_count([('model_ref', '=', line._name), ('res_id', '=', line.id)]):
                 raise ValidationError(_("Product is returned before."))
-            elif len(inventory_line) == 0:
-                qty_total = line.qty + line.bonus
-                store_id = line.last_inventory_id.store_id.id
-                self.inventory_write(line, qty_total, store_id, sign=sign, status='pending_main')
-
-            else:
-                raise UserError(_("Error in Invoice, Contact Support"))
-
+            self.inventory_write(line, line.qty + line.bonus,
+                                 line.last_inventory_id.store_id.id,
+                                 sign=sign, status='pending_main')
         self.status = 'saved'
 
     def write(self, vals):

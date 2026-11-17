@@ -1,0 +1,132 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"PO-Revision-Date: 2026-11-15 13:00+0200\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_purchase
+#: model:ir.ui.menu,name:ab_purchase.ab_purchase_notice_line_menu
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_notice_header_view_form
+msgid "Purchase Notice Lines"
+msgstr "بنود إشعار الشراء"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid ""
+"Purchase quantities and bonuses must be nonnegative, with a positive total "
+"on every line."
+msgstr ""
+"يجب ألا تكون كميات الشراء والبونص سالبة، ويجب أن يكون مجموعها موجباً في كل "
+"بند."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid ""
+"Each purchase line must have a product and one of its units of measure."
+msgstr "يجب أن يحتوي كل بند شراء على منتج وإحدى وحدات القياس الخاصة به."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+#: code:addons/ab_purchase/models_accounting/ab_purchase__header_inherit.py:0
+msgid "Only an unsubmitted purchase invoice can be submitted."
+msgstr "يمكن اعتماد فاتورة الشراء غير المعتمدة فقط."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models_accounting/ab_purchase__header_inherit.py:0
+#: code:addons/ab_purchase/models_accounting/ab_purchase__notice_inherit.py:0
+msgid ""
+"This document already has journal entries. Review them before submitting."
+msgstr "توجد قيود محاسبية لهذا المستند بالفعل. راجعها قبل الاعتماد."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Add at least one notice line before submitting."
+msgstr "أضف بنداً واحداً على الأقل إلى الإشعار قبل الاعتماد."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Every notice line must have a valid purchase source and unit."
+msgstr "يجب أن يحتوي كل بند إشعار على مصدر شراء ووحدة صالحين."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid ""
+"Notice quantities and bonuses must be nonnegative, with a positive total on "
+"every line."
+msgstr ""
+"يجب ألا تكون كميات الإشعار والبونص سالبة، ويجب أن يكون مجموعها موجباً في كل "
+"بند."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "No pending inventory is available for this notice source."
+msgstr "لا يوجد مخزون معلق متاح لمصدر هذا الإشعار."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Notice inventory must belong to the purchase invoice store."
+msgstr "يجب أن يتبع مخزون الإشعار مخزن فاتورة الشراء."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "All notice lines must belong to the same store."
+msgstr "يجب أن تتبع جميع بنود الإشعار المخزن نفسه."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Notice quantities exceed the available purchase quantity or bonus."
+msgstr "كميات الإشعار تتجاوز كمية الشراء أو البونص المتاح."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+#: code:addons/ab_purchase/models_accounting/ab_purchase__notice_inherit.py:0
+msgid "Only an unsubmitted purchase notice can be submitted."
+msgstr "يمكن اعتماد إشعار الشراء غير المعتمد فقط."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: No products found on the supplier invoice."
+msgstr "خطأ: لا توجد منتجات في فاتورة المورد."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid ""
+"Error: Net invoice amount does not match the total cost of the products."
+msgstr "خطأ: صافي الفاتورة لا يطابق إجمالي تكلفة المنتجات."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: Net tax amount does not match the total tax of the products."
+msgstr "خطأ: صافي الضريبة لا يطابق إجمالي ضريبة المنتجات."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid ""
+"Error: Total cost cannot be equal to or greater than the total selling price"
+" of the products."
+msgstr ""
+"خطأ: لا يجوز أن تكون التكلفة الإجمالية مساوية لإجمالي سعر بيع المنتجات أو "
+"أكبر منه."

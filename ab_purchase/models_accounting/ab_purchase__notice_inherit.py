@@ -15,6 +15,19 @@ class PurchaseNoticeHeader(models.Model):
     _inherit = ['ab_purchase_notice_header']
 
     def btn_submit_inventory(self):
+        with self.env.cr.savepoint():
+            self._lock_submission_rows(self)
+            self._lock_submission_rows(self.line_ids.source_id)
+            for notice in self.sorted('id'):
+                notice._submit_notice_with_accounting()
+        return True
+
+    def _submit_notice_with_accounting(self):
+        self.ensure_one()
+        if self.status != 'pending':
+            raise UserError(_("Only an unsubmitted purchase notice can be submitted."))
+        if self.je_header_id.is_posted or self.je_header_id.line_ids:
+            raise UserError(_("This document already has journal entries. Review them before submitting."))
         res = super().btn_submit_inventory()
         if not self.line_ids:
             return res
@@ -47,6 +60,9 @@ class PurchaseNoticeHeader(models.Model):
             'debit_val': 0,
             'credit_val': self.total_taxes_value
         }
+        if self.notice_type == 'debit_notice':
+            for amounts in (supplier_data, inventory_data, taxes_data):
+                amounts['debit_val'], amounts['credit_val'] = amounts['credit_val'], amounts['debit_val']
         pur_doc_codes = self.purchase_header_id.doc_code
         doc_code = (pur_doc_codes and pur_doc_codes) or self.doc_code or '0'
 
@@ -66,8 +82,6 @@ class PurchaseNoticeHeader(models.Model):
             ),
         ]
         lines = [line for line in lines if line]
-        if sudo_self.je_header_id.line_ids:
-            sudo_self.je_header_id.line_ids.unlink()
 
         sudo_self.je_header_id.write({
             'is_posted': True,
@@ -96,11 +110,12 @@ class PurchaseNoticeHeader(models.Model):
                 inventory_line = lines.filtered(lambda l: l.account_id == inventory_account)
                 tax_line = lines.filtered(lambda l: l.account_id == tax_account)
 
-                total_cost = n.total_cost
+                direction = -1 if n.notice_type == 'debit_notice' else 1
+                total_cost = n.total_cost * direction
                 supplier_debit_val = total_cost if total_cost > 0 else 0
                 supplier_credit_val = total_cost * -1 if total_cost < 0 else 0
 
-                total_taxes = n.total_taxes_value
+                total_taxes = n.total_taxes_value * direction
                 taxes_credit_val = total_taxes if total_taxes > 0 else 0
                 taxes_debit_val = total_taxes * -1 if total_taxes < 0 else 0
 
