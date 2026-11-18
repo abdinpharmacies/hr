@@ -17,7 +17,9 @@ class AbCustodyRequestConfig(models.Model):
     def name_get(self):
         res = []
         for rec in self:
-            res.append((rec.id, f"[{rec.date1.date()}]:[{rec.date2.date()}]"))
+            date1 = rec.date1.date() if rec.date1 else ''
+            date2 = rec.date2.date() if rec.date2 else ''
+            res.append((rec.id, f"[{date1}]:[{date2}]"))
         return res
 
     @api.depends('date1', 'date2')
