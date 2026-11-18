@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Odoo 19 · version 19.0.7.2.2 · Developer: Alhassan Hossny
+Odoo 19 · version 19.0.7.2.4 · Developer: Alhassan Hossny
 
 ## Dynamic workflow
 
@@ -27,6 +27,31 @@ approvers retain read-only access to previously assigned claims; current
 approvers alone can decide stages and edit allowed fields. Allowed-field removals
 apply immediately to current, future and returned stages. Archived versions are
 immutable. Use **New Version** for structural changes to used workflows.
+
+## Draft route templates
+
+The module seeds 12 **Draft** workflows: Medicine (01–06) and Cosmetics (07–12),
+with tax/non-tax routes for bank transfer, northern cheque delivery and southern
+cheque delivery. Each route is fully sequential. Tax routes include Tax Accounts
+and Supplier Accounts After Tax; non-tax routes omit both. Cheque routes include
+Cheque Treasury, followed by Upper Egypt Supplier Accounts for southern delivery.
+Every route ends with Secretarial Closure.
+
+Matching uses Section (`medical` / `cosmo`), Tax Type (`tax_payment` /
+`non_tax_payment`), Payment Nature (`bank_transfer` / `check`) and, for cheques,
+Area (`north` / `south`). Transfers match either area. Advance Payments
+(`through_supplier`), Cash, Check and Transfer, and Other purchases are outside
+these templates. Existing overlapping published workflows remain unchanged.
+
+Administrators must assign active Workflow Participants as approvers and configure
+any editable fields before publishing. The templates initially have neither
+assignment; drafts cannot be selected for claim submission. English source names
+and standard Odoo Arabic PO translations cover all workflows and stages.
+
+Seed XML uses `noupdate="1"`: module upgrades create missing seed records without
+resetting existing administrator edits or publication states. Future changes to
+existing seed configuration require explicit administrator edits or a new workflow
+version, rather than changing XML alone.
 
 ## Claim entry and attachments
 

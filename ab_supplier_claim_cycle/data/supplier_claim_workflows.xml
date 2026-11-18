@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Draft templates: configure approvers and allowed fields before publishing.
+         Unique sequence values preserve the specified departmental handoffs.
+         noupdate preserves administrator edits and publication on upgrades. -->
+
+    <!-- Route 01 -->
+    <record id="workflow_medical_tax_bank_transfer" model="ab_supplier_claim_workflow">
+        <field name="name">01 - Medicine - Tax - Bank Transfer</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'medical'), ('tax_classification', '=', 'tax_payment'), ('payment_nature', '=', 'bank_transfer')]</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Medicine)</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_tax_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Tax Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_supplier_accounts_after_tax" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts After Tax</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_medical_tax_bank_transfer_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_medical_tax_bank_transfer"/>
+        <field name="sequence">70</field>
+    </record>
+
+    <!-- Route 02 -->
+    <record id="workflow_medical_tax_cheque_north" model="ab_supplier_claim_workflow">
+        <field name="name">02 - Medicine - Tax - Cheque / North</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'medical'), ('tax_classification', '=', 'tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'north')]</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Medicine)</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_tax_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Tax Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_supplier_accounts_after_tax" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts After Tax</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">70</field>
+    </record>
+    <record id="stage_medical_tax_cheque_north_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_north"/>
+        <field name="sequence">80</field>
+    </record>
+
+    <!-- Route 03 -->
+    <record id="workflow_medical_tax_cheque_south" model="ab_supplier_claim_workflow">
+        <field name="name">03 - Medicine - Tax - Cheque / South</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'medical'), ('tax_classification', '=', 'tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'south')]</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Medicine)</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_tax_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Tax Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_supplier_accounts_after_tax" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts After Tax</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">70</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_upper_egypt_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Upper Egypt Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">80</field>
+    </record>
+    <record id="stage_medical_tax_cheque_south_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_medical_tax_cheque_south"/>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Route 04 -->
+    <record id="workflow_medical_non_tax_bank_transfer" model="ab_supplier_claim_workflow">
+        <field name="name">04 - Medicine - Non-tax - Bank Transfer</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'medical'), ('tax_classification', '=', 'non_tax_payment'), ('payment_nature', '=', 'bank_transfer')]</field>
+    </record>
+    <record id="stage_medical_non_tax_bank_transfer_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_bank_transfer"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_medical_non_tax_bank_transfer_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Medicine)</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_bank_transfer"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_medical_non_tax_bank_transfer_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_bank_transfer"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_medical_non_tax_bank_transfer_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_bank_transfer"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_medical_non_tax_bank_transfer_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_bank_transfer"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Route 05 -->
+    <record id="workflow_medical_non_tax_cheque_north" model="ab_supplier_claim_workflow">
+        <field name="name">05 - Medicine - Non-tax - Cheque / North</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'medical'), ('tax_classification', '=', 'non_tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'north')]</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_north_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_north"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_north_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Medicine)</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_north"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_north_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_north"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_north_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_north"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_north_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_north"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_north_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_north"/>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- Route 06 -->
+    <record id="workflow_medical_non_tax_cheque_south" model="ab_supplier_claim_workflow">
+        <field name="name">06 - Medicine - Non-tax - Cheque / South</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'medical'), ('tax_classification', '=', 'non_tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'south')]</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Medicine)</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_upper_egypt_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Upper Egypt Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_medical_non_tax_cheque_south_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_medical_non_tax_cheque_south"/>
+        <field name="sequence">70</field>
+    </record>
+
+    <!-- Route 07 -->
+    <record id="workflow_cosmo_tax_bank_transfer" model="ab_supplier_claim_workflow">
+        <field name="name">07 - Cosmetics - Tax - Bank Transfer</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'cosmo'), ('tax_classification', '=', 'tax_payment'), ('payment_nature', '=', 'bank_transfer')]</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Cosmetics)</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_tax_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Tax Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_supplier_accounts_after_tax" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts After Tax</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_cosmo_tax_bank_transfer_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_bank_transfer"/>
+        <field name="sequence">70</field>
+    </record>
+
+    <!-- Route 08 -->
+    <record id="workflow_cosmo_tax_cheque_north" model="ab_supplier_claim_workflow">
+        <field name="name">08 - Cosmetics - Tax - Cheque / North</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'cosmo'), ('tax_classification', '=', 'tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'north')]</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Cosmetics)</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_tax_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Tax Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_supplier_accounts_after_tax" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts After Tax</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">70</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_north_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_north"/>
+        <field name="sequence">80</field>
+    </record>
+
+    <!-- Route 09 -->
+    <record id="workflow_cosmo_tax_cheque_south" model="ab_supplier_claim_workflow">
+        <field name="name">09 - Cosmetics - Tax - Cheque / South</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'cosmo'), ('tax_classification', '=', 'tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'south')]</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Cosmetics)</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_tax_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Tax Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_supplier_accounts_after_tax" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts After Tax</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">70</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_upper_egypt_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Upper Egypt Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">80</field>
+    </record>
+    <record id="stage_cosmo_tax_cheque_south_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_cosmo_tax_cheque_south"/>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Route 10 -->
+    <record id="workflow_cosmo_non_tax_bank_transfer" model="ab_supplier_claim_workflow">
+        <field name="name">10 - Cosmetics - Non-tax - Bank Transfer</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'cosmo'), ('tax_classification', '=', 'non_tax_payment'), ('payment_nature', '=', 'bank_transfer')]</field>
+    </record>
+    <record id="stage_cosmo_non_tax_bank_transfer_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_bank_transfer"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_cosmo_non_tax_bank_transfer_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Cosmetics)</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_bank_transfer"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_cosmo_non_tax_bank_transfer_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_bank_transfer"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_cosmo_non_tax_bank_transfer_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_bank_transfer"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_cosmo_non_tax_bank_transfer_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_bank_transfer"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Route 11 -->
+    <record id="workflow_cosmo_non_tax_cheque_north" model="ab_supplier_claim_workflow">
+        <field name="name">11 - Cosmetics - Non-tax - Cheque / North</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'cosmo'), ('tax_classification', '=', 'non_tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'north')]</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_north_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_north"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_north_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Cosmetics)</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_north"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_north_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_north"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_north_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_north"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_north_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_north"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_north_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_north"/>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- Route 12 -->
+    <record id="workflow_cosmo_non_tax_cheque_south" model="ab_supplier_claim_workflow">
+        <field name="name">12 - Cosmetics - Non-tax - Cheque / South</field>
+        <field name="version">1</field>
+        <field name="state">draft</field>
+        <field name="active" eval="True"/>
+        <field name="priority">10</field>
+        <field name="claim_domain">[('section', '=', 'cosmo'), ('tax_classification', '=', 'non_tax_payment'), ('payment_nature', '=', 'check'), ('area', '=', 'south')]</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_inventory" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Inventory</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_purchasing" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Purchasing (Cosmetics)</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_bank_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Bank Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_cheque_treasury" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Cheque Treasury</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_upper_egypt_supplier_accounts" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Upper Egypt Supplier Accounts</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="stage_cosmo_non_tax_cheque_south_secretarial_closure" model="ab_supplier_claim_workflow_stage">
+        <field name="name">Secretarial Closure</field>
+        <field name="workflow_id" ref="workflow_cosmo_non_tax_cheque_south"/>
+        <field name="sequence">70</field>
+    </record>
+</odoo>

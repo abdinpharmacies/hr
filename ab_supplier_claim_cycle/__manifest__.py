@@ -1,6 +1,6 @@
 {
     'name': 'Supplier Claim Cycle',
-    'version': '19.0.7.2.3',
+    'version': '19.0.7.2.4',
     'description': 'Supplier claims with versioned, domain-selected dynamic approval workflows.',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
@@ -12,6 +12,7 @@
         'security/groups.xml',
         'security/record_rules.xml',
         'security/ir.model.access.csv',
+        'data/supplier_claim_workflows.xml',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
         'views/department_notes.xml',

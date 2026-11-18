@@ -1,5 +1,22 @@
 # Supplier Claim Dynamic Workflow Validation
 
+## 19.0.7.2.4 draft route templates
+
+- Installed locally in isolated database `codex_claim_templates_20261118`.
+- Selected workflow-engine and template suite: 29 tests, 0 failures, 0 errors.
+- Verified 12 draft workflows, 84 stages, exact sequential order, draft matching
+  exclusion and publication blocking until approvers are configured.
+- The 72-case domain matrix covers all existing section, tax, payment and area
+  combinations, including exclusions, mutual exclusivity and both transfer areas.
+- Representative tax transfer and non-tax southern cheque routes progress one
+  stage at a time and close after Secretarial Closure approval.
+- Verified configuration access restrictions and XML update preservation of
+  administrator edits, approvers and publication state, without duplicate seeds.
+- Both Arabic PO catalogs statically cover every seeded name/reference. Standard
+  Odoo translation loading and English/Arabic record reads passed in the ORM.
+- XML/PO checks, Python compilation and `git diff --check` passed.
+- No live database upgrade, service restart or access to `abdinctrl` occurred.
+
 Validated on 2026-11-17 against the local Odoo 19 runtime and PostgreSQL using
 an isolated database (`codex_claim_workflow_20261117`).
 
