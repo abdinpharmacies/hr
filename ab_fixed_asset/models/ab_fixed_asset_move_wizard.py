@@ -4,6 +4,7 @@ from odoo import api, fields, models, _, Command
 from odoo.tools.float_utils import float_compare
 from markupsafe import Markup, escape
 from odoo.exceptions import ValidationError, UserError
+from lxml import etree
 
 
 class AbFixedAssetInventoryLine(models.Model):
@@ -50,6 +51,28 @@ class AbFixedAsseInvMoveWizard(models.Model):
     _description = 'ab_fixed_asset_move_wizard'
     _order = 'id desc'
     _inherit = ['mail.thread', 'abdin_telegram']
+
+    @api.model
+    def get_view(self, view_id=None, view_type='form', **options):
+        result = super().get_view(view_id, view_type, **options)
+        if view_type != 'form':
+            return result
+        hidden = set()
+        if not self.env['ab_accounting_je_header'].has_access('read'):
+            hidden.add('journal_ids')
+        if not self.env['ab_fixed_asset_inventory_transfer_line'].has_access('read'):
+            hidden.add('src_inventory_line_transfer_ids')
+        if not self.env['ab_costcenter'].has_access('read'):
+            hidden.update(('new_costcenter_id', 'remove_costcenter'))
+        if hidden:
+            # Work on this response after the shared cache, never on the cached
+            # architecture. Existing ACLs/rules still govern every operation.
+            arch = etree.fromstring(result['arch'])
+            for node in arch.xpath('//field | //label'):
+                if node.get('name') in hidden or node.get('for') in hidden:
+                    node.getparent().remove(node)
+            result['arch'] = etree.tostring(arch, encoding='unicode')
+        return result
 
     src_fixed_asset_ids = fields.Many2many(
         comodel_name='ab_fixed_asset_assets_inventory',

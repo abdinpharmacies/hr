@@ -4,6 +4,7 @@ import logging
 import re
 
 import json
+from lxml import etree
 from odoo import models, fields, api, _, Command
 from odoo.tools import SQL
 from odoo.tools.float_utils import float_compare, float_is_zero
@@ -19,6 +20,18 @@ class AbdinInventory(models.Model):
     _rec_name = 'final_level'
     _order = 'id desc'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'abdin_telegram']
+
+    @api.model
+    def get_view(self, view_id=None, view_type='form', **options):
+        result = super().get_view(view_id, view_type, **options)
+        if view_type == 'form' and not self.env['ab_accounting_je_line'].has_access('read'):
+            # Filter this response after the shared view cache. Existing record
+            # permissions still govern journal access and asset operations.
+            arch = etree.fromstring(result['arch'])
+            for node in arch.xpath("//field[@name='je_line_ids'] | //label[@for='je_line_ids']"):
+                node.getparent().remove(node)
+            result['arch'] = etree.tostring(arch, encoding='unicode')
+        return result
 
     je_header_id = fields.Many2one('ab_accounting_je_header')
     je_line_id = fields.Many2one('ab_accounting_je_line', required=False, ondelete='restrict')
