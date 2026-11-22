@@ -34,14 +34,24 @@ def settings(path):
     c = configparser.ConfigParser(interpolation=None)
     if not c.read(path):
         raise MigrationError(f'Cannot read configuration: {path}')
-    return dict(c['options'])
+    from local_peer import connection_settings
+    return connection_settings(dict(c['options']))
 
 
 def connect(config, database, readonly=True):
     opts = settings(config)
     args = {k[3:]: opts[k] for k in ('db_host', 'db_port', 'db_user', 'db_password')
             if opts.get(k) not in (None, '', 'False', 'false')}
-    con = psycopg2.connect(dbname=database, connect_timeout=10, **args)
+    try:
+        con = psycopg2.connect(dbname=database, connect_timeout=10, **args)
+    except psycopg2.OperationalError as exc:
+        # Never surface native connection strings, passwords, or server payloads.
+        if 'peer authentication failed' in str(exc).lower():
+            reason = ('peer authentication rejected the operating-system user. '
+                      'For local CSV migration, run migrate.py --local-peer with sudo')
+        else:
+            reason = 'check the database name, PostgreSQL availability, and connection/authentication settings'
+        raise MigrationError(f'PostgreSQL connection failed for {database!r} using {str(config)!r}: {reason}') from None
     con.set_session(readonly=readonly, isolation_level='REPEATABLE READ' if readonly else 'READ COMMITTED')
     return con
 

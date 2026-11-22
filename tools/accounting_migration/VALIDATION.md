@@ -1,5 +1,29 @@
 # Prepared-target migration validation
 
+## Explicit local peer authentication (2026-11-23)
+
+- Full discovery: 433 tests, OK; 216 opt-in tests skipped (217 executed).
+- New local-peer coverage: normal configuration preservation, both configured
+  database roles and custom socket/port, read-only versus maintenance sessions,
+  privilege/environment handoff, root-only entry, TCP/wrong-user refusal,
+  private-directory/symlink checks, filestore/legacy refusal, help without side
+  effects, private CSV defaults, backup role consistency, and secret-free errors.
+- Disposable UTF-8 PostgreSQL 16 cluster: 50 tests passed across
+  `test_csv_postgres`, `test_database_repair`, and `test_prepared_progress`,
+  including actual CSV imports, target backups, repairs, and availability recovery.
+- Additional real socket checks used configs naming `odoo15` and `odoo19` with
+  no password, verified the in-memory `postgres` override and transaction
+  read-only setting, and opened progress/maintenance connections. Configuration
+  files remained byte-identical. The disposable cluster used trust authentication;
+  the Linux identity guard was mocked for these local non-root socket checks.
+- Launcher privilege dropping is covered with mocks; it was not executed locally
+  as root. Prior read-only investigation on `abdinpharmacies` verified local
+  `postgres` administrator access, both original peer-authentication failures,
+  service-config readability, and the server's script/workspace locations. No new
+  code was deployed and no production export/import was run for this change.
+- All database-writing regression work used generated disposable databases in a
+  temporary cluster, which was stopped and removed afterward.
+
 ## Global installed-module XML-ID repair (2026-11-13)
 
 Full suite: **416 tests, 406 passed and 10 optional tests skipped**, in 217.354

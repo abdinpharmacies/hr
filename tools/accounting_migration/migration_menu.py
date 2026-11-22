@@ -81,6 +81,9 @@ def collect(defaults, choice):
 def run_menu(dispatch, root):
     path = Path(root) / 'menu-defaults.json'
     defaults = load_defaults(path)
+    from local_peer import enabled
+    if enabled() and defaults == DEFAULTS:
+        defaults = dict(defaults, csv_path=str(Path(root) / 'table-plan.csv'))
     while True:
         try:
             print('\n1. Export migration CSV\n2. Import migration CSV\n3. Fix database\n0. Exit script')

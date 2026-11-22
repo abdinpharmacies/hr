@@ -1,5 +1,66 @@
 # Odoo 15 to Odoo 19 migration tools
 
+## Local peer authentication (sudo on the database server)
+
+When the Odoo 15 and Odoo 19 configs use Unix sockets (`db_host = False`) and
+separate PostgreSQL roles, running the normal script as root can fail peer
+authentication for both roles. An explicit local-only mode runs the entire tool
+as the Linux/PostgreSQL **postgres administrator**, using in-memory connection
+settings. It does not modify service configs, database passwords, PostgreSQL
+roles/authentication rules, or service state. Source connections remain read-only.
+Both databases must be on the local PostgreSQL installation, and its `postgres`
+role must accept peer authentication for the Linux `postgres` account. TCP hosts
+are refused. Both configuration files and installed addon directories must be
+readable by that account.
+
+After pulling the change on `ssh abdinpharmacies`:
+
+```bash
+cd /opt/odoo19/addons-erp19
+sudo /opt/odoo19/venv19/bin/python3 tools/accounting_migration/migrate.py --local-peer
+```
+
+Select `1` to export. Enter:
+
+| Setting | Value |
+|---|---|
+| Source config | `/opt/odoo15/odoo15.conf` |
+| Source database | `abdinpharmacies` |
+| Target config | `/opt/odoo19/conf-erp19.conf` |
+| Target database | `erp19` |
+| New CSV path | `/opt/odoo19/migration-runs/local-peer/erp19-pilot.csv` |
+
+The new workspace is owned by `postgres`, mode 0700. CSVs and their metadata
+sidecars, menu defaults, backups, and run reports remain inside it by default.
+Existing migration artifacts and their ownership are not changed. Use paths
+writable by `postgres`; the parent `/opt/odoo19/migration-runs` may belong to
+`odoo19` and is not made writable by this mode. Root can inspect/edit these
+private files using `sudo`; preserve their ownership and permissions.
+
+Export requires no downtime. Review the new CSV's operational settings and keep
+its matching sidecar. For final import, stop application writers, start the same
+`--local-peer` menu, select `2`, and explicitly choose the target backup option.
+Use the same mode for export, import, fixes, and retries: the sidecar/checkpoints
+bind to the effective `postgres` connection identity. Older plans exported under
+other database roles are not silently rebound; export and review a new pair.
+The backup process, progress connections, and availability watchdog inherit the
+same local settings. The tool does not stop or restart Odoo or PostgreSQL.
+
+This mode supports CSV export/import and the separate menu database fixes. It
+refuses the legacy ORM workflow, reset, and filestore extra actions; it does not
+solve cross-user filestore ownership/access. For read-only progress observation:
+
+```bash
+sudo -u postgres env ACCOUNTING_MIGRATION_LOCAL_PEER=1 \
+  /opt/odoo19/venv19/bin/python3 tools/accounting_migration/watch_progress.py \
+  --target-config /opt/odoo19/conf-erp19.conf \
+  --stage /opt/odoo19/migration-runs/local-peer/YOUR_RUN_DIRECTORY --once
+```
+
+Normal mode retains the configured database roles and paths. Connection failures
+now identify the affected database/config and give a safe authentication hint,
+without exposing native error payloads or credentials.
+
 ## Interactive menu
 
 Start without arguments in a terminal:

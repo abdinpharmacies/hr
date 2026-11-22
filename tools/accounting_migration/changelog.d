@@ -2,6 +2,26 @@
 
 ## Current changes before commit:
 
+- Add explicit `--local-peer` CSV migration mode for sudo sessions on the database server: run as Linux/PostgreSQL postgres with in-memory connection overrides, preserving service configs, passwords, PostgreSQL authentication rules, and source read-only access.
+- Isolate local-peer menu defaults, CSV exports, backups, reports, and checkpoints in a private postgres-owned workspace; preserve existing artifacts and reject wrong-user, TCP, unsafe workspace, legacy ORM/reset, and filestore-action cases.
+- Report safe, actionable database/config-specific connection errors instead of a bare OperationalError; propagate the effective peer role to backups, monitoring, and the availability watchdog.
+- Document the server's actual repository/configuration paths and push/pull run command, new CSV path, consistent-mode retries, and the administrator privileges required.
+- Verify 10 focused authentication tests, full discovery (217 executed, 216 opt-in skips), and 50 disposable PostgreSQL regression tests; record the limits of local privilege-drop testing.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `common.py`
+- `local_peer.py`
+- `migrate.py`
+- `migration_menu.py`
+- `tests/test_local_peer.py`
+
+## 7d46b0e6a — emadco88 — 2026-11-15
+
+Original commit subject: `tools/ UPD set iso date format`
+
 - Add Fix database option 6 to set all active target language dates to YYYY-MM-DD, with language/code and old/new previews; preserve inactive languages, unrelated settings, and source data.
 - Reuse backup choice, confirmation, exclusive access, stale-preview checks, guarded updates, rollback, before-images, and atomic receipts; skip already-correct formats and include the fix in all-supported selection.
 - Derive valid fix numbers from menu labels, preserve options 1–5, and explain restarting running Odoo workers and refreshing browsers after applying SQL language changes.

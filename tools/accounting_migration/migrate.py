@@ -5,13 +5,16 @@ from pathlib import Path
 import sys
 import shlex
 from common import MigrationError
+from local_peer import enabled as local_peer_enabled, run_root
 
 HERE = Path(__file__).resolve().parent
-RUN_ROOT = HERE.parents[2] / 'migration-runs'
+DEFAULT_RUN_ROOT = HERE.parents[2] / 'migration-runs'
+RUN_ROOT = run_root(DEFAULT_RUN_ROOT)
 
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
+    p.add_argument('--local-peer', action='store_true', default=argparse.SUPPRESS, help='Explicitly run local CSV migration as Linux/PostgreSQL postgres via sudo, using a private local-peer workspace; no service config changes.')
     for name in ('source-config', 'source-db', 'target-config', 'target-db'):
         p.add_argument('--' + name, required=True)
     mode = p.add_mutually_exclusive_group()
@@ -29,6 +32,12 @@ def parser():
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
+    if '--local-peer' in argv:
+        if '--help' in argv or '-h' in argv:
+            parser().print_help()
+            return 0
+        from local_peer import launch
+        return launch([value for value in argv if value != '--local-peer'], DEFAULT_RUN_ROOT)
     if not argv:
         if not sys.stdin.isatty():
             parser().print_help()
@@ -37,6 +46,10 @@ def main(argv=None):
         return run_menu(main, RUN_ROOT)
     p=parser()
     args = p.parse_args(argv)
+    if local_peer_enabled() and not (args.table_plan or args.export_table_plan):
+        p.error('Local peer mode supports CSV export/import and menu database fixes only; the legacy ORM workflow is not supported.')
+    if local_peer_enabled() and args.extra_actions:
+        p.error('Local peer mode does not support filestore actions; use the normal migration workflow for file copying.')
     if args.extra_actions and not args.table_plan:
         p.error('--extra-actions requires --table-plan')
     if not args.reset and not args.export_table_plan:
