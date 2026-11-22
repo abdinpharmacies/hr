@@ -1,3 +1,4 @@
+from datetime import timedelta
 from unittest.mock import patch
 
 from lxml import html
@@ -117,11 +118,14 @@ class TestStorefrontCatalogCache(TransactionCase):
             raise ValueError("rollback")
         self.assertEqual(before, self.public._ab_storefront_category_rows())
 
-    def render(self, page=0, headers=None, params=None):
+    def render(self, page=0, headers=None, params=None, pricelist_id=None):
         params = params or {}
         path = "/shop" if not page else f"/shop/page/{page}"
         env = self.public.env
-        with MockRequest(env, website=self.public, path=path, context=env.context, routing=False) as req:
+        with MockRequest(
+            env, website=self.public, path=path, context=env.context, routing=False,
+            website_sale_current_pl=pricelist_id,
+        ) as req:
             req.httprequest = EnvironBuilder(path=path, base_url="http://localhost", headers=headers).get_request()
             req.httprequest.app = root
             req.params = params.copy()
@@ -176,6 +180,59 @@ class TestStorefrontCatalogCache(TransactionCase):
         for product in response.qcontext["products"]:
             price = response.qcontext["get_product_prices"](product)
             self.assertTrue(price.get("ab_offer") or price.get("base_price", 0) > price["price_reduce"])
+
+    def test_offers_navigation_opens_discount_filter_with_visible_selection(self):
+        document = html.fromstring(self.render(params={"deal": "discount"}).get_data())
+        links = document.xpath("//a[contains(@class, 'ab-storefront-offers-link')]/@href")
+        self.assertEqual(links, ["/shop/category?deal=discount"])
+        choices = document.xpath("//*[@data-ab-deal]")
+        self.assertEqual({choice.get("data-ab-deal") for choice in choices}, {"discount", "coupon", "today"})
+        selected = next(choice for choice in choices if choice.get("data-ab-deal") == "discount")
+        self.assertIn("active", selected.get("class").split())
+        self.assertEqual(selected.get("aria-checked"), "true")
+        self.assertNotIn("d-none", selected.getparent().get("class").split())
+        self.assertFalse(document.xpath("//*[@data-ab-deal-clear]"))
+
+    def test_today_deals_excludes_future_and_expired_offers(self):
+        today = fields.Date.context_today(self.public)
+        yesterday = today - timedelta(days=1)
+        tomorrow = today + timedelta(days=1)
+        products = self.env["product.template"].create([
+            {
+                "name": name, "type": "consu", "sale_ok": True,
+                "is_published": True, "website_id": self.website.id, "list_price": 100,
+            }
+            for name in (
+                "Today filter current", "Today filter future", "Today filter expired",
+                "Today filter ongoing", "Today filter price",
+            )
+        ])
+        for product, date_from, date_to in zip(
+            products[:4],
+            (today, tomorrow, yesterday, yesterday),
+            (today, tomorrow, yesterday, tomorrow),
+        ):
+            self.env["ab_storefront_offer"].create({
+                "name": product.name, "website_id": self.website.id,
+                "product_id": product.product_variant_id.id, "offer_type": "gift",
+                "date_from": date_from, "date_to": date_to,
+            })
+        pricelist = self.env.ref("ab_ecommerce_storefront.pricelist_storefront_standard")
+        self.env["ab_storefront_offer"].create({
+            "name": products[4].name, "website_id": self.website.id,
+            "product_id": products[4].product_variant_id.id, "offer_type": "percent",
+            "pricelist_id": pricelist.id, "percentage_rate": "20",
+            "date_from": yesterday, "date_to": tomorrow,
+        })
+        response = self.render(params={
+            "deal": "today", "include_oos": "1", "search": "Today filter",
+        }, pricelist_id=pricelist.id)
+        shown = response.qcontext["products"]
+        self.assertIn(products[0], shown)
+        self.assertNotIn(products[1], shown)
+        self.assertNotIn(products[2], shown)
+        self.assertIn(products[3], shown)
+        self.assertIn(products[4], shown)
 
     def test_live_prices_and_availability_are_not_cached(self):
         product = self.env["product.template"].create({

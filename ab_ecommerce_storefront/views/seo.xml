@@ -22,9 +22,6 @@
         <xpath expr="//div[hasclass('ab-storefront-feedback-panel')]/div/h2" position="replace">
             <h1 class="h2">Your pharmacy essentials in one place</h1>
         </xpath>
-        <xpath expr="//a[@href='/shop/category?deal=discount']" position="attributes">
-            <attribute name="href">/offers</attribute>
-        </xpath>
     </template>
 
     <template id="contact_seo" inherit_id="ab_ecommerce_storefront.contact_us_abdin" name="Abdin Contact SEO" priority="150">
@@ -69,9 +66,6 @@
         </xpath>
         <xpath expr="//link[@hreflang='x-default']" position="attributes">
             <attribute name="t-att-href">url_localized(url=ab_seo_canonical_path, lang_code=website.default_lang_id.code, canonical_domain=canonical_domain)</attribute>
-        </xpath>
-        <xpath expr="//t[@t-set='ab_offers_href']" position="attributes">
-            <attribute name="t-value">'/offers'</attribute>
         </xpath>
     </template>
 

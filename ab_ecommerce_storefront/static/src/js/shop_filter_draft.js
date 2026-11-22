@@ -31,7 +31,6 @@
         function syncChoices() {
             const url = draftUrl || new URL(window.location.href);
             const selectedDeals = new Set((url.searchParams.get("deal") || "").split(","));
-            const hasDeals = DEAL_ORDER.some((deal) => selectedDeals.has(deal));
             const selectedBrand = url.searchParams.get("brand") || "";
             const selectedNeed = url.searchParams.get("need") || "";
             const selection = url.searchParams.get("include_oos");
@@ -42,12 +41,6 @@
                 const checked = selectedDeals.has(link.dataset.abDeal);
                 link.classList.toggle("active", checked);
                 link.setAttribute("aria-checked", String(checked));
-            }
-            for (const link of dialog.querySelectorAll("[data-ab-deal-clear]")) {
-                link.classList.toggle("d-none", !hasDeals);
-            }
-            for (const choices of dialog.querySelectorAll(".ab-storefront-filter-choice-list")) {
-                choices.classList.toggle("d-none", hasDeals);
             }
             for (const link of dialog.querySelectorAll("[data-ab-brand]")) {
                 const active = link.dataset.abBrand === selectedBrand;
@@ -174,9 +167,7 @@
             }
             const draft = currentDraft();
             const params = draft.searchParams;
-            if (link.hasAttribute("data-ab-deal-clear")) {
-                params.delete("deal");
-            } else if (link.hasAttribute("data-ab-deal")) {
+            if (link.hasAttribute("data-ab-deal")) {
                 const selected = new Set((params.get("deal") || "").split(",").filter(Boolean));
                 const deal = link.dataset.abDeal;
                 if (selected.has(deal)) {

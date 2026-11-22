@@ -107,10 +107,7 @@
             </section>
             <section class="ab-storefront-extra-filter-section" aria-label="Deals and discounts">
                 <h2>Deals &amp; Discounts</h2>
-                <a t-att-href="keep(deal=None)"
-                   data-ab-deal-clear=""
-                   t-attf-class="ab-storefront-deal-clear #{'' if ab_storefront_deals else 'd-none'}">Clear</a>
-                <div t-attf-class="ab-storefront-filter-choice-list #{'d-none' if ab_storefront_deals else ''}">
+                <div class="ab-storefront-filter-choice-list">
                     <a t-att-href="keep(deal=ab_storefront_deal_toggles['discount'])"
                        data-ab-deal="discount"
                        t-attf-class="ab-storefront-filter-choice ab-storefront-filter-toggle #{'active' if 'discount' in ab_storefront_deals else ''}"

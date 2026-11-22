@@ -6657,28 +6657,6 @@ body.ab-storefront .ab-storefront-closing-panel {
         font-weight: var(--ab-font-weight-bold);
     }
 
-    .ab-storefront-deal-clear {
-        display: inline-flex;
-        align-items: center;
-        gap: .3rem;
-        color: $ab-ink;
-        font-size: var(--ab-font-size-077);
-        text-decoration: none;
-
-        &::before {
-            font-family: FontAwesome;
-            content: "\f104";
-        }
-
-        &:hover {
-            color: $ab-green-dark;
-        }
-    }
-
-    html[dir="rtl"] & .ab-storefront-deal-clear::before {
-        content: "\f105";
-    }
-
     .ab-storefront-brand-list {
         max-height: 15rem;
         overflow-y: auto;

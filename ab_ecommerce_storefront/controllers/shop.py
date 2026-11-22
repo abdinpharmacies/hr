@@ -101,9 +101,28 @@ class AbEcommerceStorefrontShop(WebsiteSale):
                 ).ids)
         if 'discount' in deals or 'today' in deals:
             prices = products._get_sales_prices(website)
+            today_price_offer_products = set()
+            if 'today' in deals and products:
+                applied_rules = request.pricelist._compute_price_rule(products, 1.0)
+                rule_ids = {rule_id for _price, rule_id in applied_rules.values() if rule_id}
+                offers_by_rule = {
+                    item.id: item.ab_storefront_offer_id
+                    for item in request.env['product.pricelist.item'].sudo().browse(rule_ids)
+                }
+                today = fields.Date.context_today(website)
+                today_price_offer_products = {
+                    product_id for product_id, (_price, rule_id) in applied_rules.items()
+                    if (offer := offers_by_rule.get(rule_id))
+                    and offer.active and offer.offer_type in ('price', 'percent', 'amount')
+                    and not offer.use_odoo_promotion
+                    and offer.website_id == website and offer.company_id == website.company_id
+                    and (not offer.date_from or offer.date_from <= today)
+                    and (not offer.date_to or offer.date_to >= today)
+                }
             matching_ids.update(product.id for product in products if (
                 bool(prices[product.id].get('ab_offer'))
-                or ('discount' in deals and prices[product.id].get('base_price', 0)
+                or (('discount' in deals or product.id in today_price_offer_products)
+                    and prices[product.id].get('base_price', 0)
                     > prices[product.id]['price_reduce'])
             ))
         if deals:
