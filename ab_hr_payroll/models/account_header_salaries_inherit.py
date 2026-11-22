@@ -94,8 +94,8 @@ class SalariesMoves(models.Model):
         if not all_employees:
             self._check_salary_generation()
         store_id = 78
-        due_salaries_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id
-        firing_parent_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_firing_parent').id
+        due_salaries_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries').id
+        firing_parent_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_firing_parent').id
         precision = 0.01
 
         due_salaries_account_id = due_salaries_account_id
@@ -252,7 +252,7 @@ class SalariesMoves(models.Model):
         costcenter_codes_list = self.costcenter_codes.strip().split('\n')
         costcenter_ids = self.env['ab_costcenter'].search([('code', 'in', costcenter_codes_list)]).ids
         self._validate_deductions_is_done(costcenter_ids)
-        due_salaries_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id
+        due_salaries_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries').id
 
         domain = [
             ('account_id', '=', due_salaries_account_id),
@@ -303,7 +303,7 @@ class SalariesMoves(models.Model):
 
     def _create_payment_for_cash(self):
         self._check_salary_generation()
-        due_salaries_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id
+        due_salaries_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries').id
 
         costcenter_codes_list = self.costcenter_codes.strip().split('\n')
         costcenter_ids = self.env['ab_costcenter'].search([('code', 'in', costcenter_codes_list)]).ids
@@ -321,7 +321,7 @@ class SalariesMoves(models.Model):
         store_id = 78
         due_salaries_account_id = due_salaries_account_id
         je_list = []
-        due_salaries_cash_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries_cash').id
+        due_salaries_cash_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries_cash').id
         for costcenter in balances_groups:
             costcenter_id = costcenter[0]
             costcenter_due_salaries_list = list(costcenter[1])
@@ -369,7 +369,7 @@ class SalariesMoves(models.Model):
         self.env['ab_due_salaries_wizard'].add_forbidden_ids(costcenter_ids)
 
     def _validate_deductions_is_done(self, costcenter_ids):
-        firing_parent_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_firing_parent').id
+        firing_parent_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_firing_parent').id
 
         costcenters_working = self.env['ab_hr_employee'].search([('internal_working_employee', '=', True)]).mapped(
             'costcenter_id')

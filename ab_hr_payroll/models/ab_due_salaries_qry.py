@@ -34,8 +34,8 @@ class DueSalariesReport(models.Model):
         je = self.env['ab_accounting_je_line_qry'].sudo()
         headers = [_('Account'), _('Value'), _('Explain')]
         rows = []
-        due_salaries_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id
-        firing_parent_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_firing_parent').id
+        due_salaries_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries').id
+        firing_parent_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_firing_parent').id
 
         last_due_salary = je.search([('costcenter_id', '=', rec.costcenter_id.id),
                                      ('account_id', '=', due_salaries_account_id),
@@ -72,10 +72,10 @@ class DueSalariesReport(models.Model):
 
     def init(self):
         due_salaries_account_id = 267
-        firing_parent_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_firing_parent').id
+        firing_parent_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_firing_parent').id
 
         try:
-            due_salaries_cash = self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries_cash').id
+            due_salaries_cash = self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries_cash').id
         except:
             due_salaries_cash = due_salaries_account_id
         self._cr.execute(f"""
@@ -113,7 +113,7 @@ class DueSalariesReport(models.Model):
         # ids = self.search([
         #     ('costcenter_id', 'in', self.env.user.costcenter_ids.ids),
         #     ('balance', '>', 0),
-        #     ('account_id', '=', self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries_cash').id),
+        #     ('account_id', '=', self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries_cash').id),
         # ]).ids
         #
         # if operator != '=':  # that means it is '!='
@@ -121,5 +121,5 @@ class DueSalariesReport(models.Model):
         return [
             ('costcenter_id', 'in', self.env.user.costcenter_ids.ids),
             ('balance', '>', 0),
-            ('account_id', '=', self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries_cash').id),
+            ('account_id', '=', self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries_cash').id),
         ]
