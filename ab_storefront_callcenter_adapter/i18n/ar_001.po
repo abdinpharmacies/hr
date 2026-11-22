@@ -369,3 +369,15 @@ msgstr "إرسال تحديث إلى مركز الاتصال"
 #: model:ir.module.category,name:ab_storefront_callcenter_adapter.category_callcenter
 msgid "Website Callcenter"
 msgstr "مركز اتصال الموقع"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "An enabled endpoint requires a website."
+msgstr "يجب ربط نقطة الاتصال المفعلة بموقع إلكتروني."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+msgid "Select a website for a new endpoint."
+msgstr "اختر موقعًا إلكترونيًا لنقطة الاتصال الجديدة."

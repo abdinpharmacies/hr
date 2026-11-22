@@ -17,9 +17,9 @@ class Endpoint(models.Model):
     name = fields.Char(required=True)
     source = fields.Char(required=True, default=lambda self: str(uuid4()), copy=False)
     website_id = fields.Many2one(
-        'website', required=True, ondelete='restrict', check_company=True
+        'website', ondelete='restrict', check_company=True
     )
-    company_id = fields.Many2one(related='website_id.company_id', store=True)
+    company_id = fields.Many2one('res.company', required=True, readonly=True, index=True)
     service_user_id = fields.Many2one('res.users', required=True, ondelete='restrict')
     enabled = fields.Boolean(default=False)
     cutoff = fields.Datetime(required=True, default=fields.Datetime.now)
@@ -27,6 +27,26 @@ class Endpoint(models.Model):
     _website_unique = models.Constraint(
         'UNIQUE(website_id)', 'Website endpoint already exists.'
     )
+
+    @api.onchange('website_id')
+    def _onchange_website_id(self):
+        self.company_id = self.website_id.company_id
+
+    @api.model_create_multi
+    def create(self, values_list):
+        prepared = []
+        for values in values_list:
+            website = self.env['website'].browse(values.get('website_id')).exists()
+            if not website:
+                raise ValidationError(_('Select a website for a new endpoint.'))
+            prepared.append(dict(values, company_id=website.company_id.id))
+        return super().create(prepared)
+
+    @api.constrains('enabled', 'website_id')
+    def _check_enabled_website(self):
+        for record in self:
+            if record.enabled and not record.website_id:
+                raise ValidationError(_('An enabled endpoint requires a website.'))
 
     @api.constrains('service_user_id', 'website_id', 'source')
     def _check_service(self):
@@ -46,7 +66,13 @@ class Endpoint(models.Model):
                 raise ValidationError(_('Use a dedicated callcenter exchange user.'))
 
     def write(self, values):
-        if {'source', 'website_id'} & values.keys():
+        if {'source', 'company_id'} & values.keys():
+            raise AccessError(_('Endpoint identity is immutable.'))
+        if 'website_id' in values and (
+            values['website_id']
+            or not self.env.user.has_group('base.group_system')
+            or self.filtered('enabled')
+        ):
             raise AccessError(_('Endpoint identity is immutable.'))
         return super().write(values)
 

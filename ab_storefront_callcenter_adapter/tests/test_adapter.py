@@ -39,15 +39,20 @@ class TestCapture(TestStorefrontReservations):
                 ],
             }
         )
-        cls.endpoint = cls.env['ab_storefront_callcenter_endpoint'].create(
-            {
-                'name': 'Adapter',
-                'website_id': cls.website.id,
-                'service_user_id': cls.worker.id,
-                'enabled': True,
-                'cutoff': fields.Datetime.now() - timedelta(days=1),
-            }
+        values = {
+            'service_user_id': cls.worker.id,
+            'enabled': True,
+            'cutoff': fields.Datetime.now() - timedelta(days=1),
+        }
+        cls.endpoint = cls.env['ab_storefront_callcenter_endpoint'].search(
+            [('website_id', '=', cls.website.id)], limit=1
         )
+        if cls.endpoint:
+            cls.endpoint.write(values)
+        else:
+            cls.endpoint = cls.env['ab_storefront_callcenter_endpoint'].create(
+                dict(values, name='Adapter', website_id=cls.website.id)
+            )
 
     def test_adapter_endpoint_selector_before_company_is_derived(self):
         endpoints = self.env['ab_storefront_callcenter_endpoint'].with_context(
@@ -102,6 +107,31 @@ class TestCapture(TestStorefrontReservations):
                     'service_user_id': self.worker.id,
                 }
             )
+
+    def test_disabled_endpoint_can_be_detached_for_website_cleanup(self):
+        website = self.env['website'].create(
+            {'name': 'Retired test website', 'company_id': self.company.id}
+        )
+        endpoint = self.env['ab_storefront_callcenter_endpoint'].create({
+            'name': 'Retired test endpoint',
+            'website_id': website.id,
+            'service_user_id': self.worker.id,
+            'enabled': True,
+        })
+        source = endpoint.source
+        with self.assertRaises(AccessError):
+            endpoint.write({'website_id': False})
+        endpoint.write({'enabled': False})
+        with self.assertRaises(AccessError):
+            endpoint.with_user(self.worker).write({'website_id': False})
+        endpoint.write({'website_id': False})
+        self.assertEqual(endpoint.company_id, self.company)
+        self.assertEqual(endpoint.source, source)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            endpoint.write({'enabled': True})
+        website.unlink()
+        self.assertTrue(endpoint.exists())
+        self.assertEqual(endpoint.company_id, self.company)
 
     def test_adapter_browser_cod(self):
         self.test_cash_on_delivery_post_processing_confirms_and_reserves_once()
