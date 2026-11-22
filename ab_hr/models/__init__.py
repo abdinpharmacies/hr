@@ -15,3 +15,4 @@ from . import export_xlsx
 from . import res_users_inherit
 
 from . import ir_ui_view
+from . import costcenter

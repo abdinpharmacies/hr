@@ -3272,3 +3272,9 @@ msgstr "وظيفة مدير مكان العمل"
 #: code:addons/ab_hr/models/job_wizard.py:0
 msgid "The workplace must belong to one of your assigned branches."
 msgstr "يجب أن يكون مكان العمل تابعاً لأحد الفروع المسندة إليك."
+
+#. module: ab_hr
+#. odoo-python
+#: code:addons/ab_hr/models/costcenter.py:0
+msgid "HR Basic Data users cannot export ID numbers or birth dates."
+msgstr "لا يمكن لمستخدمي دور البيانات الأساسية للموارد البشرية تصدير أرقام الهوية أو تواريخ الميلاد."

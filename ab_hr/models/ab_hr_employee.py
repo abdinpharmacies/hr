@@ -388,7 +388,13 @@ class Employees(models.Model):
 
     _ab_hr_employees_employee_unique = models.Constraint('check(1=1)', 'Employee CAN NOT BE DUPLICATED!')
 
-    @api.depends('job_occupied_ids')
+    @api.depends(
+        'job_occupied_ids.workplace',
+        'job_occupied_ids.job_id.internal_job',
+        'job_occupied_ids.job_status',
+        'job_occupied_ids.is_main_job',
+        'job_occupied_ids.hiring_date',
+    )
     def _compute_main_job_data(self):
         for rec in self:
             jobs = rec.job_occupied_ids.search([('employee_id', '=', rec.id),
