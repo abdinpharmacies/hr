@@ -180,7 +180,7 @@ class AbdinInventory(models.Model):
         accounts = self.env['ab_accounting_account_guide'].with_context(active_test=False).search([
             ('internal_type', '=', 'fixed_asset'),
         ])
-        return accounts | self.env.ref('ab_accounting.ab_accounting_account_guide_fixed_asset_inventory')
+        return accounts | self.env.ref('ab_accounting_base.ab_accounting_account_guide_fixed_asset_inventory')
 
     def _posted_asset_lines(self, accounts):
         return self.env['ab_accounting_je_line'].sudo().search([
@@ -190,7 +190,7 @@ class AbdinInventory(models.Model):
 
     @api.depends('je_line_ids.account_id', 'je_line_ids.due_date', 'je_line_ids.active', 'je_line_ids.header_id.is_posted')
     def _compute_last_depreciation_date(self):
-        account = self.env.ref('ab_accounting.ab_accounting_account_guide_depreciation')
+        account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_depreciation')
         dates = {}
         for line in self._posted_asset_lines(account):
             if line.due_date:
@@ -233,7 +233,7 @@ class AbdinInventory(models.Model):
     def _compute_total_depr(self):
         # Remaining accumulated depreciation, not lifetime expense. Disposal and
         # direct cost write-downs must not be subtracted a second time.
-        account = self.env.ref('ab_accounting.ab_accounting_account_guide_accumulated_depreciation')
+        account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_accumulated_depreciation')
         totals = {}
         for line in self._posted_asset_lines(account):
             key = line.fixed_asset_id.id
@@ -369,7 +369,7 @@ class AbdinInventory(models.Model):
 
 
     def _asset_account(self, suffix):
-        account = self.env.ref('ab_accounting.ab_accounting_account_guide_' + suffix)
+        account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_' + suffix)
         if not account.active or not account.is_final:
             raise UserError(_('Configure an active posting account for %(account)s.', account=account.name))
         return account
