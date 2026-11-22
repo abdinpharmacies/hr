@@ -44,9 +44,9 @@ class AbPurchaseAccountingCommon(models.AbstractModel):
         rec = super().default_get(default_fields)
         ref = self.env.ref
         if self._name == 'ab_purchase_ob_header':
-            account_id = ref('ab_accounting.ab_accounting_account_guide_inventory').id
+            account_id = ref('ab_accounting_base.ab_accounting_account_guide_inventory').id
         else:
-            account_id = ref('ab_accounting.ab_accounting_account_guide_suppliers').id
+            account_id = ref('ab_accounting_base.ab_accounting_account_guide_suppliers').id
         rec.update(
             account_id=account_id,
             doctype_id=ref('ab_accounting.ab_accounting_doctype_auto_je').id,

@@ -38,9 +38,9 @@ class PurchaseNoticeHeader(models.Model):
         store_id = self.line_ids[0].last_inventory_id.store_id.id
 
         costcenter_id = self.supplier_id.costcenter_id.id
-        supplier_account_id = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers').id
-        vat_account_id = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_vat').id
-        inventory_account_id = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_inventory').id
+        supplier_account_id = sudo_self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers').id
+        vat_account_id = sudo_self.env.ref('ab_accounting_base.ab_accounting_account_guide_vat').id
+        inventory_account_id = sudo_self.env.ref('ab_accounting_base.ab_accounting_account_guide_inventory').id
         # Preparing data
         supplier_data = {
             'account_id': supplier_account_id,
@@ -101,9 +101,9 @@ class PurchaseNoticeHeader(models.Model):
             self = self.with_context(from_header=True, sudo_confirm=True)
             pur_notice_mo = self.env['ab_purchase_notice_header'].sudo()
             notices = pur_notice_mo.search(domain)
-            supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
-            inventory_account = self.env.ref('ab_accounting.ab_accounting_account_guide_inventory')
-            tax_account = self.env.ref('ab_accounting.ab_accounting_account_guide_vat')
+            supplier_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers')
+            inventory_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_inventory')
+            tax_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_vat')
             for n in self.web_progress_iter(notices, msg='Looping Notices ...'):
                 lines = n.je_header_id.line_ids
                 supplier_line = lines.filtered(lambda l: l.account_id == supplier_account)

@@ -121,7 +121,7 @@ class SupplierClaim(models.Model):
 
     @api.constrains('costcenter_id', 'line_ids', 'account_id', 'je_line_ids')
     def _constrains_ab_purchase_claim(self):
-        supplier_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers').id
+        supplier_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers').id
         for rec in self:
             if rec.account_id.id != supplier_account_id:
                 raise ValidationError(_("Account Must Be 'Supplier Account'"))
@@ -157,7 +157,7 @@ class SupplierClaim(models.Model):
             rec.costcenter_id_domain = json.dumps(domain)
 
     def _get_je_lines_search_ids_domain(self):
-        supplier_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers').id
+        supplier_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers').id
         return [('account_id', '=', supplier_account_id)]
 
     def btn_search_available_invoices(self):
@@ -165,8 +165,8 @@ class SupplierClaim(models.Model):
 
     @api.depends('je_line_ids', 'je_line_ids.debit_val', 'je_line_ids.credit_val')
     def _compute_totals(self):
-        vat_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_vat').id
-        inventory_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_inventory').id
+        vat_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_vat').id
+        inventory_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_inventory').id
 
         for rec in self:
             rec.total_supplier_je_debit = sum(line.debit_val for line in rec.je_line_ids
@@ -262,7 +262,7 @@ class SupplierClaim(models.Model):
         try:
             code_value_found = set()
             code_value_set = set()
-            supplier_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers').id
+            supplier_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers').id
             domain = [('account_id', '=', supplier_account_id), ]
             pur_mo = self.env['ab_purchase_header'].sudo()
             je_mo = self.env['ab_accounting_je_line'].sudo()

@@ -54,7 +54,7 @@ class PurchaseNoticeHeader(models.Model):
 
     @api.depends('je_header_id')
     def _compute_related_claim_id(self):
-        supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
+        supplier_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers')
         for rec in self:
             claim = False
 

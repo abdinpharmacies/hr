@@ -45,9 +45,9 @@ class PurchaseHeaderInherit(models.Model):
             sudo_self = self.sudo()
             # today = datetime.date.today()
             costcenter_id = self.supplier_id.costcenter_id.id
-            supplier_account_id = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers').id
-            vat_account_id = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_vat').id
-            inventory_account_id = sudo_self.env.ref('ab_accounting.ab_accounting_account_guide_inventory').id
+            supplier_account_id = sudo_self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers').id
+            vat_account_id = sudo_self.env.ref('ab_accounting_base.ab_accounting_account_guide_vat').id
+            inventory_account_id = sudo_self.env.ref('ab_accounting_base.ab_accounting_account_guide_inventory').id
 
             # Preparing data
             supplier_data = {

@@ -65,7 +65,7 @@ class AbAccountingJeLine(models.Model):
         try:
             msg = ''
             # Get bill details from BeConnect
-            supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
+            supplier_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers')
 
             je_line_mo = self.env['ab_accounting_je_line'].sudo()
             je_lines = je_line_mo.search([

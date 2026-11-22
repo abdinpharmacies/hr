@@ -45,7 +45,7 @@ class AbPurchaseReportWizard(models.TransientModel):
 
     def get_je_data(self):
         start = perf_counter()
-        supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
+        supplier_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers')
         due_supplier_account = self.env['ab_accounting_account_guide'].browse(486)
         supplier_account_id = supplier_account.id
         due_supplier_account_id = due_supplier_account.id
@@ -167,7 +167,7 @@ class AbPurchaseReportWizard(models.TransientModel):
         }
     # def get_je_data(self):
     #     start = perf_counter()
-    #     supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
+    #     supplier_account = self.env.ref('ab_accounting_base.ab_accounting_account_guide_suppliers')
     #     due_supplier_account = self.env['ab_accounting_account_guide'].browse(486)
     #     supplier_account_id = supplier_account.id
     #     due_supplier_account_id = due_supplier_account.id
