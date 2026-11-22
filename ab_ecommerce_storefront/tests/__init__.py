@@ -9,3 +9,4 @@ from . import test_legacy_activation
 from . import test_storefront_offers
 from . import test_storefront_tax_free
 from . import test_image_sync_upload
+from . import test_image_filter

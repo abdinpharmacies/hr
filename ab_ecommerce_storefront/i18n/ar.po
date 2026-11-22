@@ -12507,6 +12507,7 @@ msgstr "حقوقك وحل الشكاوى"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_product__ab_storefront_has_real_image
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__ab_storefront_has_real_image
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.ab_product_search_view_storefront_image
 msgid "Has Storefront Image"
 msgstr "له صورة في المتجر"
 

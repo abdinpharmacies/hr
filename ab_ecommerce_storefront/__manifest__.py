@@ -49,6 +49,7 @@
         "views/contact_message_views.xml",
         "views/business_partnership_views.xml",
         "views/management_menus.xml",
+        "views/ab_product_views.xml",
         "views/legacy_seo_import_views.xml",
         "views/image_sync_wizard_views.xml",
         "views/staff_user_views.xml",

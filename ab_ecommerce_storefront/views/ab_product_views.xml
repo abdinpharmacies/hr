@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_product_search_view_storefront_image" model="ir.ui.view">
+        <field name="name">ab.product.search.storefront.image</field>
+        <field name="model">ab_product</field>
+        <field name="inherit_id" ref="ab_website_sale_product.ab_product_search_view_inherit_website_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='filter_website_published']" position="after">
+                <filter name="filter_storefront_image"
+                        string="Has Storefront Image"
+                        domain="[('website_sync_template_ids', 'any', [('ab_storefront_has_real_image', '=', True)])]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -41,11 +41,11 @@ _AB_PRODUCT_VARIANT_IMAGE_FIELDS = (
 )
 
 
-def _storefront_image_flags(records, image_fields):
+def _storefront_image_flags(records, original_image_field):
     attachments = records.env["ir.attachment"].sudo().search_fetch([
         ("res_model", "=", records._name),
         ("res_id", "in", records.ids),
-        ("res_field", "in", image_fields),
+        ("res_field", "=", original_image_field),
     ], ["res_id", "checksum"])
     flags = {}
     for attachment in attachments:
@@ -72,6 +72,8 @@ class ProductTemplate(models.Model):
     ab_storefront_has_real_image = fields.Boolean(
         string="Has Storefront Image",
         compute="_compute_ab_storefront_has_real_image",
+        store=True,
+        index=True,
     )
 
     ab_storefront_brand_id = fields.Many2one(
@@ -118,7 +120,7 @@ class ProductTemplate(models.Model):
 
     @api.depends(*_AB_PRODUCT_TEMPLATE_IMAGE_FIELDS)
     def _compute_ab_storefront_has_real_image(self):
-        flags = _storefront_image_flags(self, _AB_PRODUCT_TEMPLATE_IMAGE_FIELDS)
+        flags = _storefront_image_flags(self, "image_1920")
         for product in self:
             product.ab_storefront_has_real_image = flags.get(product.id, False)
 
@@ -188,7 +190,7 @@ class ProductProduct(models.Model):
 
     @api.depends(*_AB_PRODUCT_VARIANT_IMAGE_FIELDS, "product_tmpl_id.ab_storefront_has_real_image")
     def _compute_ab_storefront_has_real_image(self):
-        flags = _storefront_image_flags(self, _AB_PRODUCT_VARIANT_IMAGE_FIELDS)
+        flags = _storefront_image_flags(self, "image_variant_1920")
         templates = (self.filtered(lambda product: product.id not in flags)).product_tmpl_id
         template_flags = {template.id: template.ab_storefront_has_real_image for template in templates}
         for product in self:
