@@ -20,7 +20,7 @@
     'version': '19.0.0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'ab_store', 'ab_accounting', 'abdin_telegram'],
+    'depends': ['base', 'mail', 'ab_store', 'ab_hr', 'ab_accounting', 'abdin_telegram'],
 
     # always loaded
     'data': [

@@ -6,3 +6,4 @@ from . import ab_fixed_asset_inventory_line
 from . import ab_fixed_asset_assets_inventory
 from . import ab_fixed_asset_move_wizard
 from . import ab_fixed_asset_move_wizard_line
+from . import ab_store

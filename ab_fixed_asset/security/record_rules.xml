@@ -45,5 +45,32 @@
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
+        <record id="rule_ab_fixed_asset_assets_inventory_branch" model="ir.rule">
+            <field name="name">Fixed assets in assigned branches</field>
+            <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
+            <field name="domain_force">
+                ([] if user.has_group('base.group_system') or user.has_group('ab_fixed_asset.group_ab_fixed_asset_manager')
+                else [('current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])])
+            </field>
+        </record>
+
+        <record id="rule_ab_fixed_asset_inventory_line_branch" model="ir.rule">
+            <field name="name">Fixed assets in assigned branches</field>
+            <field name="model_id" ref="model_ab_fixed_asset_inventory_line"/>
+            <field name="domain_force">
+                ([] if user.has_group('base.group_system') or user.has_group('ab_fixed_asset.group_ab_fixed_asset_manager')
+                else [('fixed_asset_header_id.current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])])
+            </field>
+        </record>
+
+        <record id="rule_ab_fixed_asset_inventory_standards_branch" model="ir.rule">
+            <field name="name">Fixed assets in assigned branches</field>
+            <field name="model_id" ref="model_ab_fixed_asset_inventory_standards"/>
+            <field name="domain_force">
+                ([] if user.has_group('base.group_system') or user.has_group('ab_fixed_asset.group_ab_fixed_asset_manager')
+                else [('asset_id.current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])])
+            </field>
+        </record>
+
     </data>
 </odoo>
