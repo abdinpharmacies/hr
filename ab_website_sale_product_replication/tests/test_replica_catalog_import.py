@@ -1,6 +1,8 @@
 from unittest.mock import patch
 
-from odoo.exceptions import AccessError
+from odoo.addons.integration_queue_job.exception import RetryableJobError
+from odoo.addons.integration_queue_job.tests.common import trap_jobs
+from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase, new_test_user
 from odoo.addons.ab_odoo_replication.models.ab_odoo_replication import OdooReplication
@@ -142,3 +144,49 @@ class TestReplicaCatalogImport(TransactionCase):
             self.product.with_user(self.reader).write({"website_sync_pending": False})
         with self.assertRaises(AccessError):
             self.snapshot.with_user(self.reader)._import_eplus_catalog_batch()
+
+    def test_completed_barcode_replication_queues_stock_then_inventory(self):
+        replication = self.env["ab_odoo_replication"].with_user(self.admin)
+        Snapshot = self.env["ab_eplus_stock_snapshot"].with_user(self.admin)
+        Inventory = self.env["ab_eplus_inventory_sync_job"].with_user(self.admin)
+        with patch.object(OdooReplication, "_replicate_model", return_value=None), trap_jobs() as trap:
+            replication.replicate_model("ab_product_barcode", commit=True)
+            trap.assert_jobs_count(3)
+            trap.assert_enqueued_job(Snapshot._refresh_after_replication)
+            trap.assert_enqueued_job(Snapshot._refresh_branches_after_replication)
+            trap.assert_enqueued_job(Inventory._start_after_replication)
+
+    def test_uncommitted_scoped_and_failed_replication_do_not_queue_stock(self):
+        replication = self.env["ab_odoo_replication"].with_user(self.admin)
+        with patch.object(OdooReplication, "_replicate_model", return_value=None), trap_jobs() as trap:
+            replication.replicate_model("ab_product_barcode", commit=False)
+            replication.replicate_model(
+                "ab_product_barcode", commit=True, extra_domain=[("id", "=", self.product.id)],
+            )
+            replication.replicate_model("ab_product", commit=False)
+            trap.assert_jobs_count(0)
+        with patch.object(OdooReplication, "_replicate_model", side_effect=RuntimeError("offline")):
+            with patch.object(type(replication), "_queue_eplus_stock_refresh") as enqueue:
+                with self.assertRaises(RuntimeError):
+                    replication.replicate_model("ab_product_barcode", commit=True)
+                enqueue.assert_not_called()
+
+    def test_reader_cannot_run_post_replication_refresh_or_inventory_sync(self):
+        with self.assertRaises(AccessError):
+            self.env["ab_eplus_stock_snapshot"].with_user(self.reader)._refresh_after_replication()
+        with self.assertRaises(AccessError):
+            self.env["ab_eplus_stock_snapshot"].with_user(self.reader)._refresh_branches_after_replication()
+        with self.assertRaises(AccessError):
+            self.env["ab_eplus_inventory_sync_job"].with_user(self.reader)._start_after_replication()
+
+    def test_stock_refresh_rejects_sharp_drop_and_retries_source_failure(self):
+        snapshot = self.env["ab_eplus_stock_snapshot"].with_user(self.admin)
+        with (
+            patch.object(type(snapshot), "search_count", side_effect=[100, 1]),
+            patch.object(type(snapshot), "action_refresh_from_eplus"),
+        ):
+            with self.assertRaises(UserError):
+                snapshot._refresh_after_replication()
+        with patch.object(type(snapshot), "action_refresh_from_eplus", side_effect=UserError("offline")):
+            with self.assertRaises(RetryableJobError):
+                snapshot._refresh_after_replication()

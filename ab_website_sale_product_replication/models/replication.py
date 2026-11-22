@@ -1,6 +1,7 @@
 import logging
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.addons.integration_queue_job.delay import chain
 
 
 _logger = logging.getLogger(__name__)
@@ -16,7 +17,28 @@ class OdooReplication(models.AbstractModel):
         )
         if model_name == "ab_product" and not extra_domain:
             self._reconcile_website_base_prices(commit=commit)
+        if model_name == "ab_product_barcode" and not extra_domain and commit:
+            self._queue_eplus_stock_refresh()
         return result
+
+    def _queue_eplus_stock_refresh(self):
+        snapshot = self.env["ab_eplus_stock_snapshot"]
+        inventory = self.env["ab_eplus_inventory_sync_job"]
+        chain(
+            snapshot.delayable(
+                identity_key="eplus-stock-after-replication",
+                description=_("Refresh Eplus stock after replication"),
+                max_retries=3,
+            )._refresh_after_replication(),
+            snapshot.delayable(
+                description=_("Refresh Eplus branch stock after replication"),
+                max_retries=3,
+            )._refresh_branches_after_replication(),
+            inventory.delayable(
+                description=_("Start Odoo inventory sync after Eplus refresh"),
+                max_retries=6,
+            )._start_after_replication(),
+        ).delay()
 
     def _reconcile_website_base_prices(self, commit=False):
         Template = self.env["product.template"].with_context(active_test=False)

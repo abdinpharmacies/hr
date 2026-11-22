@@ -6,7 +6,7 @@
     "category": "Website/eCommerce",
     "author": "Abdin Pharmacies",
     "developer": "Mohamed Fawzy",
-    "depends": ["ab_website_sale_product", "ab_odoo_replication"],
+    "depends": ["ab_website_sale_product", "ab_odoo_replication", "integration_queue_job"],
     "data": ["security/website_sync_rule.xml"],
     "auto_install": True,
     "installable": True,

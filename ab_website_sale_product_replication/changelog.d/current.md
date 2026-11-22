@@ -2,26 +2,47 @@
 
 ## Current changes before commit:
 
-- Reconcile linked website base prices after each successful unrestricted ab_product replication, including runs with no new source rows.
-- Scan linked templates in batches and write only price differences through Odoo, retaining the existing price audit messages.
-- Respect caller permissions, company rules, and caller-controlled transactions; skip reconciliation for failed, scoped, or unrelated replication calls.
+- Queue Eplus aggregate and branch stock refreshes after each successful unrestricted barcode replication, then start the Odoo inventory sync.
+- Preserve the existing product replication flow and reject sharply reduced stock snapshots before inventory sync.
+- Restrict scheduled refresh methods to administrators and retry transient source failures or concurrent inventory jobs.
+- Cover queue triggering, excluded replication calls, and denied reader access in focused tests.
+- Add English source strings and both Arabic catalogs for queue descriptions and errors.
 
 Files changed:
 
+- `ab_website_sale_product_replication/__manifest__.py`
+- `ab_website_sale_product_replication/i18n/ab_website_sale_product_replication.pot`
+- `ab_website_sale_product_replication/i18n/ar.po`
+- `ab_website_sale_product_replication/i18n/ar_001.po`
 - `ab_website_sale_product_replication/models/__init__.py`
 - `ab_website_sale_product_replication/models/replication.py`
+- `ab_website_sale_product_replication/models/stock_sync.py`
 - `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 - `ab_website_sale_product_replication/changelog.d/current.md`
 
 Validation:
 
-- Targeted upgrade on development database `codex_eplus_sync_20261104`, alternate ports `5069/5072`, HTTP and cron disabled: 11 tests passed, zero failures/errors; `/tmp/ab_replica_price_reconcile_test2.log`.
-- Covered unchanged-source repair, audit creation, repeated no-op runs, caller transactions, skipped scopes, source failure, denied reader writes, and company isolation alongside the existing integration tests.
-- The development database logged an existing missing filestore attachment; the price tests completed successfully.
-- No new user-facing strings or translation entries are needed. Price changes use the existing bilingual audit message.
-- Deployment requires reloading the Python integration; no schema, XML, or translation upgrade is needed.
+- Targeted development upgrade on `codex_eplus_sync_20261104` with alternate ports `5069/5072`: four new replication tests passed; `/tmp/eplus_deploy_preflight_tests.log`.
+- Both new Arabic catalogs pass `msgfmt --check-format`.
+- Production upgrade and storefront verification are required after deployment.
 
 ## Recent commits
+
+Commit: `bb979570`
+Author: Mohamed Fawzy
+Date: 2026-11-16
+Original subject: `ab_website_sale_product_replication/FIX: reconcile website prices after replication`
+
+User-facing changes:
+
+- Reconcile linked website prices after product replication, including runs with no new source rows.
+
+Files changed:
+
+- `ab_website_sale_product_replication/changelog.d/current.md`
+- `ab_website_sale_product_replication/models/__init__.py`
+- `ab_website_sale_product_replication/models/replication.py`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 
 Commit: `05ba003d`
 Author: Mohamed Fawzy
