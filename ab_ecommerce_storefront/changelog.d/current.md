@@ -1,46 +1,65 @@
 # Storefront change log
 
-## Current changes before commit:
+## Recent commits
 
-- Let shoppers divide earned free gifts among eligible products in a dialog with sliders and step buttons.
-- Preserve the selected gift mix when the cart recalculates and validate quantities and eligible products on the server.
-- Respect the product-page purchase quantity when calculating and adding gifts.
-- Let public shoppers read only published, available products from the selected offer in the gift picker.
-- Add English and Arabic text for the gift selector and validation messages.
-- Open the gift selector from the offer card instead of adding the regular product, and center the dialog on mobile screens.
-- Keep the page from scrolling behind the gift dialog and prevent one gift slider from moving when another gift quantity changes.
-- Let shoppers edit the paid quantity directly on gift offer cards, starting at the required buy quantity.
-- Align the gift offer price to the right and its quantity control to the left, including narrow cards.
-- Pass the selected quantity through both same-product and choice gift flows.
+Commit: `0f6aaddc68297127ce1a7cc85d48bc223921c09a`
+Author: Mohamed Fawzy
+Date: 2026-11-22
+Original subject: `ab_ecommerce_storefront/IMP: publish approved storefront terms`
 
-Validation:
-
-- The isolated `codex_offer_types_20261112` database passed 48 focused offer tests after a targeted module upgrade, including the public gift picker.
-- Python and JavaScript syntax, both Arabic catalogs, and the diff format passed checks.
-- The isolated frontend served the offers page and generated the RTL CSS and JavaScript bundles with the new selector.
-- Python and browser translation lookups returned Arabic for the new messages.
-- The local `ecom19` database completed a targeted upgrade; the running storefront reloaded smoothly and its public gift picker returned four earned gifts and two eligible choices.
-- A further targeted `ecom19` upgrade passed; the live offer 36 returned three gift slots and two eligible products, and the served JavaScript and RTL CSS contained the card button fix and centered dialog.
-- The scroll and slider fix passed JavaScript syntax, both Arabic catalog checks, diff checks, and another targeted `ecom19` upgrade; the live JavaScript and RTL CSS served the new behavior.
-- The gift-card quantity change passed JavaScript syntax, XML parsing, both Arabic catalog checks, and diff checks; runtime rendering remains to be verified.
-- The isolated `codex_offer_types_20261112` database passed 50 focused offer tests after a targeted upgrade (0 failures or errors).
+- Publish the approved general and order and delivery terms in English and Arabic.
+- Link the correct terms from the footer and order pages.
 
 Files changed:
 
-- `ab_ecommerce_storefront/controllers/second_item_offer.py`
-- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/changelog.d/2026-11-22-legal-documents.md`
+- `ab_ecommerce_storefront/controllers/contact.py`
 - `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
 - `ab_ecommerce_storefront/i18n/ar_001.po`
-- `ab_ecommerce_storefront/models/storefront_offer.py`
-- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
-- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
-- `ab_ecommerce_storefront/static/src/js/product_card.js`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
-- `ab_ecommerce_storefront/views/homepage.xml`
-- `ab_ecommerce_storefront/views/product.xml`
+- `ab_ecommerce_storefront/models/sale_order.py`
+- `ab_ecommerce_storefront/static/src/scss/contact.scss`
+- `ab_ecommerce_storefront/views/layout.xml`
+- `ab_ecommerce_storefront/views/legal_templates.xml`
+- `ab_ecommerce_storefront/views/portal.xml`
 
-## Recent commits
+Commit: `d0e957e245c0a73071f091321deb78995aec45fc`
+Author: Mohamed Fawzy
+Date: 2026-11-22
+Original subject: `ab_ecommerce_storefront/IMP: filter products by storefront image`
+
+- Add a backend filter for products with a real storefront image.
+- Keep placeholder images out of the filter and cover image changes and Arabic labeling.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/product_template.py`
+- `ab_ecommerce_storefront/tests/__init__.py`
+- `ab_ecommerce_storefront/tests/test_image_filter.py`
+- `ab_ecommerce_storefront/views/ab_product_views.xml`
+
+Commit: `ee06934a816fede8666f444a79aedff483447d5f`
+Author: Mohamed Fawzy
+Date: 2026-11-22
+Original subject: `ab_ecommerce_storefront/IMP: improve storefront deal filters`
+
+- Keep deal selections visible and include active price offers in Today's Deals.
+- Send Offers links to the discount-filtered shop and cover the behavior with focused tests.
+
+Files changed:
+
+- `ab_ecommerce_storefront/controllers/shop.py`
+- `ab_ecommerce_storefront/static/src/js/shop_filter_draft.js`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/tests/test_catalog_cache.py`
+- `ab_ecommerce_storefront/views/seo.xml`
+- `ab_ecommerce_storefront/views/shop.xml`
+
 Commit: `29084e7a`
 Author: Mohamed Fawzy
 Date: 2026-11-17
