@@ -325,6 +325,9 @@ body.ab-storefront .ab-terms-page {
     }
 
     .ab-terms-index {
+        summary { min-height: 44px; cursor: pointer; color: var(--ab-ink); font-size: 1.125rem; font-weight: 700; }
+        summary:focus-visible { outline: 3px solid var(--ab-primary); outline-offset: 3px; }
+        nav { max-height: #{'min(65vh, 680px)'}; overflow-y: auto; margin-top: 16px; }
         ol { margin: 0; padding-inline-start: 22px; }
         li { padding-inline-start: 4px; }
         li::marker { color: var(--ab-primary); font-weight: 700; }
@@ -360,6 +363,7 @@ body.ab-storefront .ab-terms-page {
 
     @media (max-width: 575.98px) {
         .ab-terms-index ol { columns: 1; }
+        .ab-terms-index nav { max-height: none; }
         .ab-terms-index,
         .ab-terms-help { padding: 20px; }
         .ab-terms-document { padding: 22px 18px; }

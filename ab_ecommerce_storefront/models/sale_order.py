@@ -2,7 +2,7 @@ import secrets
 
 from odoo import Command, api, fields, models
 from odoo.exceptions import AccessError, UserError
-from odoo.tools import format_amount, format_datetime, formatLang
+from odoo.tools import format_amount, format_datetime, formatLang, html2plaintext
 from odoo.tools.urls import urljoin
 
 
@@ -954,7 +954,18 @@ class SaleOrder(models.Model):
         )
         if not use_invoice_terms or self.company_id.terms_type != "html":
             return False
-        return urljoin(self.get_base_url(), "/terms")
+        return urljoin(self.get_base_url(), "/order-delivery-terms")
+
+    def _ab_storefront_has_standard_terms_note(self):
+        self.ensure_one()
+        if not self.website_id or self.terms_type != "html" or not self.note:
+            return False
+        note = html2plaintext(self.note, include_references=False).strip()
+        terms_url = urljoin(self._get_note_url(), "/terms")
+        if not note.endswith(terms_url):
+            return False
+        prefix = note[:-len(terms_url)].strip()
+        return prefix.endswith(":") and "\n" not in prefix and len(prefix) <= 30
 
     def _ab_storefront_report_discount_amount(self):
         self.ensure_one()

@@ -410,7 +410,10 @@
                             <span>Order terms</span>
                             <h2>Terms and conditions</h2>
                         </header>
-                        <div t-field="sale_order.note"/>
+                        <div t-if="sale_order._ab_storefront_has_standard_terms_note()">
+                            <a href="/order-delivery-terms" target="_blank" rel="noopener">View terms and conditions</a>
+                        </div>
+                        <div t-else="" t-field="sale_order.note"/>
                     </section>
 
                     <section t-if="sale_order.payment_term_id and sale_order.payment_term_id.note" class="ab-order-terms-card">

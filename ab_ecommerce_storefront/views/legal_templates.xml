@@ -60,14 +60,14 @@
 
     <template id="product_policy_links" name="Abdin Product Policy Links">
         <div class="ab-product-policy-links d-flex flex-wrap gap-3 mt-3">
-            <a href="/terms-and-conditions">Terms and Conditions</a>
+            <a href="/terms">Terms and Conditions</a>
             <a href="/return-policy">Returns and refunds</a>
         </div>
     </template>
     <template id="terms_conditions_page" name="Abdin Terms and Conditions">
         <t t-call="website.layout">
-            <t t-set="additional_title">Terms and Conditions | Abdin Pharmacies</t>
-            <t t-set="website_meta_description">Draft terms for shopping with Abdin Pharmacies in Egypt, including orders, payment, delivery and consumer rights.</t>
+            <t t-set="additional_title">General Terms and Conditions | Abdin Pharmacies</t>
+            <t t-set="website_meta_description">General terms for website use and online purchases at Abdin Pharmacies.</t>
             <div id="wrap" class="ab-legal-page ab-terms-page">
                 <section class="ab-legal-hero">
                     <div class="container">
@@ -79,123 +79,1124 @@
                         <div class="ab-legal-hero-content">
                             <span class="ab-storefront-kicker">Shopping with Abdin</span>
                             <h1>Terms and Conditions</h1>
-                            <p>A clear guide to your order, our service and your rights.</p>
+                            <p>General terms for using the Abdin Pharmacies website and shopping online.</p>
                         </div>
                     </div>
                 </section>
                 <div class="ab-legal-content">
                     <div class="container">
                         <aside class="ab-terms-sidebar">
-                            <nav class="ab-terms-index" aria-labelledby="ab-terms-index-title">
-                                <h2 id="ab-terms-index-title">On this page</h2>
-                                <ol>
-                                    <li>
-                                        <a href="#ab-terms-scope">About these terms</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-account">Your account and information</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-orders">Orders and availability</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-payment">Prices, payment and offers</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-pharmacy">Pharmacy products</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-delivery">Delivery and receiving your order</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-returns">Cancellation, returns and refunds</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-privacy">Privacy and communications</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-rights">Your rights and resolving concerns</a>
-                                    </li>
-                                    <li>
-                                        <a href="#ab-terms-updates">Updates to these terms</a>
-                                    </li>
-                                </ol>
-                            </nav>
+                            <details class="ab-terms-index">
+                                <summary>Browse all 49 articles</summary>
+                                <nav aria-label="Article index">
+                                    <ol>
+                                    <li><a href="#ab-terms-introduction">Introduction</a></li>
+                                    <li><a href="#ab-terms-article-1">Article 1: Definitions and Terms</a></li>
+                                    <li><a href="#ab-terms-article-2">Article 2: Scope of These Terms</a></li>
+                                    <li><a href="#ab-terms-article-3">Article 3: Legal Identity and Service Provider</a></li>
+                                    <li><a href="#ab-terms-article-4">Article 4: Eligibility to Use the Website</a></li>
+                                    <li><a href="#ab-terms-article-5">Article 5: User Accounts and Registration Information</a></li>
+                                    <li><a href="#ab-terms-article-6">Article 6: Lawful Use of the Website</a></li>
+                                    <li><a href="#ab-terms-article-7">Article 7: Nature of Online Services</a></li>
+                                    <li><a href="#ab-terms-article-8">Article 8: Medical and Pharmaceutical Information</a></li>
+                                    <li><a href="#ab-terms-article-9">Article 9: Medical Emergencies</a></li>
+                                    <li><a href="#ab-terms-article-10">Article 10: Products, Descriptions and Images</a></li>
+                                    <li><a href="#ab-terms-article-11">Article 11: Prices and Updates</a></li>
+                                    <li><a href="#ab-terms-article-12">Article 12: Stock Availability</a></li>
+                                    <li><a href="#ab-terms-article-13">Article 13: Placing and Confirming Orders</a></li>
+                                    <li><a href="#ab-terms-article-14">Article 14: Prescriptions and Dispensing Medicines</a></li>
+                                    <li><a href="#ab-terms-article-15">Article 15: Products Subject to Special Restrictions</a></li>
+                                    <li><a href="#ab-terms-article-16">Article 16: Alternative and Equivalent Medicines</a></li>
+                                    <li><a href="#ab-terms-article-17">Article 17: Online Payment</a></li>
+                                    <li><a href="#ab-terms-article-18">Article 18: Promotions and Discounts</a></li>
+                                    <li><a href="#ab-terms-article-19">Article 19: Delivery Services</a></li>
+                                    <li><a href="#ab-terms-article-20">Article 20: Delivery Address Information</a></li>
+                                    <li><a href="#ab-terms-article-21">Article 21: Receiving Orders</a></li>
+                                    <li><a href="#ab-terms-article-22">Article 22: Storing Products After Receipt</a></li>
+                                    <li><a href="#ab-terms-article-23">Article 23: Proper Use of Medicines</a></li>
+                                    <li><a href="#ab-terms-article-24">Article 24: Allergies and Side Effects</a></li>
+                                    <li><a href="#ab-terms-article-25">Article 25: General Exchange and Return Policy</a></li>
+                                    <li><a href="#ab-terms-article-26">Article 26: Special Rules for Medicine Returns</a></li>
+                                    <li><a href="#ab-terms-article-27">Article 27: How to Request a Return</a></li>
+                                    <li><a href="#ab-terms-article-28">Article 28: Refunds</a></li>
+                                    <li><a href="#ab-terms-article-29">Article 29: Changing and Cancelling Orders</a></li>
+                                    <li><a href="#ab-terms-article-30">Article 30: Fraudulent Orders and Misuse</a></li>
+                                    <li><a href="#ab-terms-article-31">Article 31: Personal Data Protection</a></li>
+                                    <li><a href="#ab-terms-article-32">Article 32: Sensitive Health Data</a></li>
+                                    <li><a href="#ab-terms-article-33">Article 33: Cookies and Analytics</a></li>
+                                    <li><a href="#ab-terms-article-34">Article 34: Communications and Messages</a></li>
+                                    <li><a href="#ab-terms-article-35">Article 35: Website Security and Service Availability</a></li>
+                                    <li><a href="#ab-terms-article-36">Article 36: External Links and Services</a></li>
+                                    <li><a href="#ab-terms-article-37">Article 37: Intellectual Property Rights</a></li>
+                                    <li><a href="#ab-terms-article-38">Article 38: Limits of Legal Liability</a></li>
+                                    <li><a href="#ab-terms-article-39">Article 39: No Guarantee of Individual Results</a></li>
+                                    <li><a href="#ab-terms-article-40">Article 40: Exceptional Circumstances and Force Majeure</a></li>
+                                    <li><a href="#ab-terms-article-41">Article 41: User Responsibility for Unlawful Acts</a></li>
+                                    <li><a href="#ab-terms-article-42">Article 42: Complaints and Customer Service</a></li>
+                                    <li><a href="#ab-terms-article-43">Article 43: Updates and Changes to These Terms</a></li>
+                                    <li><a href="#ab-terms-article-44">Article 44: Electronic Records and Evidence</a></li>
+                                    <li><a href="#ab-terms-article-45">Article 45: Applicable Law</a></li>
+                                    <li><a href="#ab-terms-article-46">Article 46: Severability</a></li>
+                                    <li><a href="#ab-terms-article-47">Article 47: No Waiver of Rights</a></li>
+                                    <li><a href="#ab-terms-article-48">Article 48: Patient and Customer Safety First</a></li>
+                                    <li><a href="#ab-terms-article-49">Article 49: General and Final Provisions</a></li>
+                                    <li><a href="#ab-terms-acknowledgement">User Acknowledgement</a></li>
+                                    </ol>
+                                </nav>
+                            </details>
                             <div class="ab-terms-help">
                                 <i class="fa fa-headphones" aria-hidden="true"/>
                                 <h2>Need help with your order?</h2>
-                                <a href="tel:19036">
-                                    <bdi>19036</bdi>
-                                </a>
+                                <a href="tel:19036"><bdi>19036</bdi></a>
                                 <a href="/contactus">Contact customer service</a>
                             </div>
                         </aside>
-                        <article class="ab-legal-card ab-terms-document" aria-label="Terms and conditions draft">
-                            <section id="ab-terms-scope" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">01</span>About these terms</h2>
-                                <p>These draft terms describe the proposed use of the Abdin Pharmacies online store and purchases delivered in Egypt. They are awaiting brand and legal review and are not the final approved policy.</p>
-                                <p>The seller responsible for your purchase must be identified in your order documents and invoice. Keep a copy of your order confirmation, invoice and the terms provided when you place your order.</p>
+                        <article class="ab-legal-card ab-terms-document" aria-label="Terms and Conditions">
+                            <h2>General Terms and Conditions for Website Use and Online Purchases</h2>
+                            <section id="ab-terms-introduction" tabindex="-1">
+                            <h2>Introduction</h2>
+                            <p>Welcome to the Abdin Pharmacies pharmacy website.</p>
+                            <p>Please read these terms and provisions carefully before using the website, scanning its contents, making a request for purchase or benefiting from any services available through it.</p>
+                            <p>Abdin Pharmacies provide professional and transparent pharmacological, commercial and electronic services, taking into account the legislation and rules governing pharmacy, the circulation of pharmaceuticals, consumer protection and personal data protection in the Arab Republic of Egypt.</p>
+                            <p>These conditions and provisions constitute the general framework governing the relationship between users of the site and Abdin Pharmacies, without prejudice to any rights or obligations established under applicable laws and regulations.</p>
+                            <p>The use of the site, the continuation of its navigation or the completion of a procurement process through it, after these conditions are made available to the user, is recognized for its access and acceptance of the provisions that apply law to the use or transaction in question.</p>
+                            <p>Abdin Pharmacies retain the rights established by law in the management, organization and development of their electronic services, take appropriate action to prevent their misuse and protect their clients, employees, installations and legitimate interests.</p>
                             </section>
-                            <section id="ab-terms-account" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">02</span>Your account and information</h2>
-                                <p>Provide accurate contact and delivery details, and use a payment method you are authorised to use. Keep your account credentials private and contact us if you suspect unauthorised access.</p>
-                                <p>Use the store lawfully. Do not submit false orders, misuse promotions, interfere with the service or attempt to access another customer’s information.</p>
+                            <section id="ab-terms-article-1" tabindex="-1">
+                            <h2>Article 1: Definitions and Terms</h2>
+                            <p>For the purposes of the application of these conditions and provisions, the following words and phrases shall have the meanings set out in their respective centuries, unless the context otherwise requires:</p>
+                            <p>1. Pharmacies or company: Pharmaceuticals Abdin Pharmacies, legal entities or licensed branches providing the products and services in question.</p>
+                            <p>2. Location: website, applications and official digital fronts of Abdin Pharmacies dedicated to their services.</p>
+                            <p>3. User: any person who visits or searches the site, interacts with its contents or uses one of its services.</p>
+                            <p>4. Agent: User applying for product or service.</p>
+                            <p>5. Products: All items that may be legally presented or provided through activity, including health products, personal care, cosmetics, medical and other supplies, and pharmaceuticals, within the limits permitted by legislation and regulated licences.</p>
+                            <p>6. Application: data provided by the client for the purpose of purchasing a product, obtaining a service or inquiring about the availability of a item.</p>
+                            <p>7. Confirmation of the application: notice of acceptance of the request or confirmation of items, quantities, prices and other conditions of execution, in accordance with the nature of the transaction.</p>
+                            <p>8. Products restricted: products traded, disbursed or delivered are subject to special legal or pharmaceutical requirements.</p>
+                            <p>9. Medical recipe: a document issued by a health practitioner authorized by law to prescribe treatment, if required to dismiss a formulation.</p>
+                            <p>10. External service provider: any independent party contributing to the operation of payment, shipping, hosting, technical or other site-related services.</p>
+                            <p>The terms are interpreted in accordance with the nature of the transaction and the provisions of the Egyptian law in force.</p>
                             </section>
-                            <section id="ab-terms-orders" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">03</span>Orders and availability</h2>
-                                <p>Submitting an order starts a request to purchase. An automatic receipt message does not by itself confirm stock availability or acceptance. We will communicate acceptance or any issue using the contact details you provide.</p>
-                                <p>If an item is unavailable, we will contact you about the available options. A different product, strength, pack size or price requires your agreement before fulfilment. Amounts paid for cancelled items must be refunded in accordance with applicable rights.</p>
+                            <section id="ab-terms-article-2" tabindex="-1">
+                            <h2>Article 2: Scope of These Terms</h2>
+                            <p>These conditions apply to the use of the website, the navigation of products, the establishment of accounts, the transmission of queries, purchase orders, payments, delivery services, post-sale services and transactional electronic communication.</p>
+                            <p>The relevant provisions also apply to the use of official channels of communication associated with the electronic commerce, to the extent permitted by law and the nature of each channel.</p>
+                            <p>Some products or services may be subject to additional specialized conditions, which shall be declared to the user prior to completion of the transaction or upon request for service.</p>
+                            <p>In the event of a conflict between general conditions and jus cogens or consumer rights, the priority of legal provisions is applicable.</p>
+                            <p>No provision in this document shall be interpreted as a waiver by the agent of a right which may not be waived by law.</p>
                             </section>
-                            <section id="ab-terms-payment" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">04</span>Prices, payment and offers</h2>
-                                <p>Review the total in Egyptian pounds, including any applicable taxes and delivery charges, before confirming your order. Available payment methods and offer conditions are shown during checkout or with the relevant offer.</p>
-                                <p>If a pricing or product-information error affects your order, we will explain it and seek your agreement to any correction. We will not impose a higher price without your agreement. This does not limit your statutory rights.</p>
+                            <section id="ab-terms-article-3" tabindex="-1">
+                            <h2>Article 3: Legal Identity and Service Provider</h2>
+                            <p>The commercial name " Abdin Pharmacies " is used to define the activity and services it provides.</p>
+                            <p>The legal entity responsible for a particular transaction shall be the designated entity in the invoice or transaction document, in accordance with the official licences and statements of the establishment concerned.</p>
+                            <p>The existence of an electronic site or a producer ' s offer does not constitute an independent licence to engage in a pharmacist activity outside the scope allowed by organized laws and decisions.</p>
+                            <p>Pharmaceutical activities subject to licensing are carried out through legally authorized installations and persons and within the prescribed limits of each activity.</p>
+                            <p>Pharmacies may update branch data, work schedules, communication channels and service ranges according to operational changes.</p>
                             </section>
-                            <section id="ab-terms-pharmacy" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">05</span>Pharmacy products</h2>
-                                <p>Orders for pharmacy products remain subject to applicable Egyptian requirements and pharmacist verification where required. A prescription or further information may be requested before an order can be fulfilled.</p>
-                                <p>Product pages provide general information and do not replace advice from a qualified healthcare professional. Follow the product leaflet and professional instructions. Do not use this store to request emergency care.</p>
+                            <section id="ab-terms-article-4" tabindex="-1">
+                            <h2>Article 4: Eligibility to Use the Website</h2>
+                            <p>The employee is required to have the necessary legal capacity to conduct his or her actions through the site.</p>
+                            <p>If the site is used by a minor or a person who does not have full capacity, this must be done under the supervision and consent of his or her guardian or legal representative where necessary.</p>
+                            <p>The user is responsible for the validity of his or her identity, parenthood and description data in demand for products or services, without exempting pharmacies from the law ' s verification obligations.</p>
+                            <p>Pharmacies may request documents or data necessary to verify the capacity or legal status when the nature of the product or service so requires.</p>
+                            <p>Pharmacies retain the right to refrain from implementing a request that does not meet the relevant legal or regulatory requirements.</p>
                             </section>
-                            <section id="ab-terms-delivery" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">06</span>Delivery and receiving your order</h2>
-                                <p>Delivery coverage, charges and the expected delivery time should be confirmed for your address before purchase. Timing may vary by location and product availability; we will notify you of material delays.</p>
-                                <p>Check the items and packaging when you receive them, where possible. Report missing, incorrect or damaged items with your order reference. A delivery signature does not remove your rights concerning defects discovered later.</p>
+                            <section id="ab-terms-article-5" tabindex="-1">
+                            <h2>Article 5: User Accounts and Registration Information</h2>
+                            <p>If the site makes it possible to establish personal accounts, the user is obliged to provide accurate, up-to-date and complete information as required to benefit from the services.</p>
+                            <p>The user undertakes not to impersonate the third person, to use incorrect data or to establish accounts with a view to circumventing or harming electronic systems.</p>
+                            <p>The user is responsible for maintaining the confidentiality of its entry data and taking reasonable precautions to prevent unauthorized access to its account.</p>
+                            <p>The location management must be notified when the account is suspected of unauthorized use.</p>
+                            <p>Pharmacies are not responsible for the consequences arising exclusively from the disclosure of the user ' s income data by their will or as a result of its constant failure to protect them, without prejudice to their legal responsibility to secure the regulations and data under their control.</p>
+                            <p>The account may be temporarily restricted or suspended if serious indications of its misuse or threat of site security arise, taking into account user rights and existing transactions.</p>
                             </section>
-                            <section id="ab-terms-returns" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">07</span>Cancellation, returns and refunds</h2>
-                                <p>Contact customer service promptly if you wish to cancel or change an order. The available steps depend on whether the order has been prepared or dispatched, without prejudice to your legal rights.</p>
-                                <p>Egyptian consumer guidance distinguishes returns without a reason within 14 days of receipt, subject to legal exceptions, from remedies for defective goods within 30 days of receipt. Product type, condition and applicable law determine the relevant rights; this is not an unconditional return promise for all medicines or personal-care products.</p>
-                                <p>See the separate return policy for the request process. Any policy condition or processing estimate remains subject to mandatory consumer rights and applicable refund deadlines.</p>
-                                <a class="ab-terms-inline-link" href="/return-policy">Read the return policy</a>
+                            <section id="ab-terms-article-6" tabindex="-1">
+                            <h2>Article 6: Lawful Use of the Website</h2>
+                            <p>The user is committed to using the site only for legitimate purposes, in accordance with Egyptian laws, public morals and the rights of others.</p>
+                            <p>In particular, it is prohibited:</p>
+                            <p>1. Attempt unauthorized access to site regulations or databases.</p>
+                            <p>2. Use harmful programmes or technical means that threaten the integrity of the site.</p>
+                            <p>3. Sending false or intentionally misleading requests.</p>
+                            <p>4. Attempt to fraudulently pay or recover funds.</p>
+                            <p>5. Use of statements by other persons without legitimate support.</p>
+                            <p>6. Copy or redeploy protected content in violation of the rights of its owners.</p>
+                            <p>7. Use of the site for commercial resale without an agreement to do so.</p>
+                            <p>8. Send content containing threats, defamation, abuse or violation of the rights of others.</p>
+                            <p>9. Disposal of controls for the sale or exchange of restricted products.</p>
+                            <p>10. Extensive automated processes that affect the stability or disruption of the project use of the site.</p>
+                            <p>Appropriate action may be taken to stop any unlawful activity, including restricting access to services or notifying the competent authorities where there is a legal requirement.</p>
                             </section>
-                            <section id="ab-terms-privacy" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">08</span>Privacy and communications</h2>
-                                <p>Personal information used to manage orders and customer service must be handled in accordance with applicable data-protection requirements. Provide only the information needed for your request; avoid sending medical details through public reviews or comments.</p>
-                                <p>Order updates and service messages are separate from promotional communications. Marketing preferences must be respected, and customers should be able to request help with their personal information through customer service.</p>
+                            <section id="ab-terms-article-7" tabindex="-1">
+                            <h2>Article 7: Nature of Online Services</h2>
+                            <p>The site aims to facilitate client access to information, services and products provided by Abdin Pharmacies.</p>
+                            <p>Services may include providing information on products, receiving inquiries, verifying availability, managing requests, identifying payment and delivery options and providing means of communicating with customer service.</p>
+                            <p>Inclusion of a product on site does not necessarily mean that it is available for purchase or delivery at all times or in all regions.</p>
+                            <p>Nor does its electronic presentation mean that it may be disbursed without meeting its legal and pharmaceutical requirements.</p>
+                            <p>Actual service is subject to the availability of products, the validity of licences, regulatory requirements, implementation possibilities and restrictions on the handling of certain items.</p>
                             </section>
-                            <section id="ab-terms-rights" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">09</span>Your rights and resolving concerns</h2>
-                                <p>These terms are intended for transactions in Egypt and are subject to applicable Egyptian law. Nothing in them excludes mandatory consumer rights or liability that cannot lawfully be excluded.</p>
-                                <p>Contact us with your order reference and a clear description of the issue so we can investigate. You retain the right to contact the Egyptian Consumer Protection Agency or the competent authorities and courts.</p>
+                            <section id="ab-terms-article-8" tabindex="-1">
+                            <h2>Article 8: Medical and Pharmaceutical Information</h2>
+                            <p>The site may contain health, pharmaceutical or tariff information on products, including common uses, components, warnings, precautions and general instructions.</p>
+                            <p>Published information is provided for purposes of definition and awareness, and may not be considered an automatic alternative to individual medical diagnosis, clinical examination or description of treatment by specialists.</p>
+                            <p>The product ' s suitability may vary from one person to another depending on age, state of health, sick history, pregnancy, breastfeeding, other medicines, sensitivity, vital functions and other medical considerations.</p>
+                            <p>The user is required to consult the competent doctor or pharmacist before using the formulations that require it, and not rely on site information alone to make remedial decisions requiring professional evaluation.</p>
+                            <p>Pharmacies shall not bear the consequences of the user ' s reliance on public information outside their context, or the use of a product in a manner contrary to stated guidance and warnings, unless such results are linked to a firm legal or professional breach by pharmacies.</p>
                             </section>
-                            <section id="ab-terms-updates" tabindex="-1">
-                                <h2>
-                                    <span class="ab-terms-number" aria-hidden="true">10</span>Updates to these terms</h2>
-                                <p>The approved version should display its effective date. Later changes should not retrospectively reduce rights attached to an existing order. Material changes should be communicated clearly before new purchases.</p>
+                            <section id="ab-terms-article-9" tabindex="-1">
+                            <h2>Article 9: Medical Emergencies</h2>
+                            <p>The website is not a medical emergency reception facility and does not ensure an immediate response to urgent inquiries.</p>
+                            <p>Communication or electronic conversations should not be used to request urgent medical intervention in cases such as severe respiratory difficulty, lack of awareness, acute chest pain, severe bleeding, stroke symptoms, poisoning, overdoses, excessive sensitivity, or any situation suspected of threatening life or requiring immediate intervention.</p>
+                            <p>In such cases, an appropriate medical facility or liaison with the competent emergency services must be immediately approached.</p>
+                            <p>The availability of an electronic communication service is not interpreted as an undertaking to provide emergency medical consultations or continuous clinical follow-up.</p>
                             </section>
+                            <section id="ab-terms-article-10" tabindex="-1">
+                            <h2>Article 10: Products, Descriptions and Images</h2>
+                            <p>Pharmaceuticals give reasonable care to present product data as clearly and accurately as possible.</p>
+                            <p>However, some packaging details, packaging designs or illustrative images may differ as a result of approved changes from manufacturers or product updates.</p>
+                            <p>Official statements printed on the packaging and approved pamphlets are of fundamental importance in identifying user instructions, warnings and components, taking into account the supplier ' s obligation to provide accurate and uncontested information.</p>
+                            <p>The images presented do not necessarily imply a match to each visual detail in the Muslim product, as long as the product conforms to agreed substantive specifications.</p>
+                            <p>In the event of an influential difference in the effective substance, concentration, size or basic specifications, the rules of conformity and consumer rights are applied, and an alternative product may not be imposed on the client without the consent of the client where necessary.</p>
+                            </section>
+                            <section id="ab-terms-article-11" tabindex="-1">
+                            <h2>Article 11: Prices and Updates</h2>
+                            <p>Product prices are presented according to data available at the time of supply, with mandatory pricing rules as applicable.</p>
+                            <p>Prices may change in the future as a result of modifications by producers, competent authorities or legitimate trade policies.</p>
+                            <p>Subsequent price changes are not applied retroactively to confirmed transactions in violation of the law.</p>
+                            <p>If a technical error is detected in the price offer, pharmacies may review the transaction, notify the customer of the error and offer the right price or appropriate legal alternatives.</p>
+                            <p>The client is not required to pay additional amounts that have not been properly approved, nor may payments made for an application not executed without the settlement of his rights in accordance with the law be retained.</p>
+                            <p>Any additional expenses, such as delivery fees, are clearly identified before the completion of the contract.</p>
+                            </section>
+                            <section id="ab-terms-article-12" tabindex="-1">
+                            <h2>Article 12: Stock Availability</h2>
+                            <p>Products offered are subject to the actual availability of branches or legitimate sources of supply.</p>
+                            <p>There may be a temporary difference between electronic inventory data and actual inventory as a result of synchronization of requests, direct sale or operational updates.</p>
+                            <p>The emergence of a product as available is not an absolute guarantee of its continued existence throughout the time.</p>
+                            <p>Where a required item cannot be provided, the client is informed of the options available, which may include waiting for savings or choosing an appropriate alternative with his or her consent or removing the unavailable item.</p>
+                            <p>Medicines may not be replaced or their basic specifications changed in a manner contrary to professional assets or regulations.</p>
+                            <p>If the client has paid the value of a product that cannot be provided, the amount due shall be adjusted in accordance with the law and the agreed method of payment.</p>
+                            </section>
+                            <section id="ab-terms-article-13" tabindex="-1">
+                            <h2>Article 13: Placing and Confirming Orders</h2>
+                            <p>The client must review items, quantities, prices, address and means of payment before the request is sent.</p>
+                            <p>The client may receive an electronic notice of receipt and processing of the application.</p>
+                            <p>The automated notice alone shall not be interpreted as confirmation of the availability of all items, unless the declared contracting mechanism does so.</p>
+                            <p>Applications containing restricted products are subject to review and the necessary documentation and requirements are met.</p>
+                            <p>Pharmacies are obliged to make available material information on remote contracting, and methods of confirmation, correction and modification of the application, in accordance with the legal provisions of the Organization.</p>
+                            <p>The client may be contacted to confirm the data, address the differences in availability or clarify information necessary for the execution of the request.</p>
+                            <p>The conditions of final treatment must be clear to the client, while preserving his or her right to induce or amend when determined by law.</p>
+                            </section>
+                            <section id="ab-terms-article-14" tabindex="-1">
+                            <h2>Article 14: Prescriptions and Dispensing Medicines</h2>
+                            <p>The offer of a pharmaceutical or the receipt of a request relating to it shall not entail the exemption of the client or the pharmacy from the requirements governing its discharge.</p>
+                            <p>Pharmaceuticals retain the right and obligation to demand a proper and confidential prescription when required by law.</p>
+                            <p>The recipe data may be verified, valid and appropriate to the product required by the authorized specialists.</p>
+                            <p>A request for medication may not be implemented if the legal requirements are not met, or if there are legitimate professional or regulatory reasons to prevent implementation.</p>
+                            <p>It is prohibited to provide false or unlawfully modified prescriptions or to use a recipe of another person in violation of the law.</p>
+                            <p>The posting of a medical recipe through the site does not allow any spontaneous medicine to be disbursed, as implementation remains subject to legal and professional controls.</p>
+                            </section>
+                            <section id="ab-terms-article-15" tabindex="-1">
+                            <h2>Article 15: Products Subject to Special Restrictions</h2>
+                            <p>Some pharmaceuticals may be subject to special requirements relating to description, preservation, circulation, exchange, registration or delivery.</p>
+                            <p>Pharmacies are obliged not to carry out transactions contrary to those requirements.</p>
+                            <p>The application may be rejected or suspended when there is a lack of documentation or contrary to regulatory restrictions.</p>
+                            <p>The user may not attempt to dismember requests, use multiple accounts or provide improper data to circumvent the restrictions imposed.</p>
+                            <p>Nor is the availability of tariff data on a formulation an invitation to use it without professional supervision, or a declaration of its possible sale by unauthorized means.</p>
+                            </section>
+                            <section id="ab-terms-article-16" tabindex="-1">
+                            <h2>Article 16: Alternative and Equivalent Medicines</h2>
+                            <p>Multiple products containing similar effective substances or performing convergent remedial purposes may be available.</p>
+                            <p>This does not mean that any formulation may be replaced by another without taking into account differences in concentration, pharmaceutical form, dose, grounds of use or prohibitions of use.</p>
+                            <p>The proposal for alternatives is subject to professional evaluation, legal controls and the consent of the client or doctor where necessary.</p>
+                            <p>Pharmacies are not responsible for the customer ' s self-sustaining change of treatment, dose or pharmaceutical form without reference to specialists, unless a breach by pharmacies of their legal or professional duties is established.</p>
+                            </section>
+                            <section id="ab-terms-article-17" tabindex="-1">
+                            <h2>Article 17: Online Payment</h2>
+                            <p>Pharmacies may provide multiple means of reimbursing the value of applications, depending on the services actually available.</p>
+                            <p>Electronic payments are subject to payment service providers ' conditions, in addition to the conditions for the treatment of the sale itself.</p>
+                            <p>The client must correctly enter the payment data and not use the means of payment that they do not have the right to use.</p>
+                            <p>Some transactions may be subject to additional verification procedures with a view to preventing fraud and protecting proprietors.</p>
+                            <p>Pharmaceuticals do not guarantee the uninterrupted functioning of the external payers ' regulations, but are committed to dealing with payment and settlement problems under their responsibility in accordance with the law.</p>
+                            <p>In the event that a financial adversary emerges without clear confirmation of the request, the client should communicate with the customer service to verify the status of the transaction.</p>
+                            </section>
+                            <section id="ab-terms-article-18" tabindex="-1">
+                            <h2>Article 18: Promotions and Discounts</h2>
+                            <p>Presentations, discounts and coupons shall be subject to the stated requirements of each offer, including the duration of confidentiality, the range of products, the quantitative limits and any other legal requirements.</p>
+                            <p>No more than one offer may be combined unless the rules of offers permit it.</p>
+                            <p>Pharmacies may suspend or modify a future offer for legitimate commercial reasons, without prejudice to rights arising out of confirmed transactions.</p>
+                            <p>The use of coupons found to be obtained by fraudulent means may also be refused, modified or reused in contravention of declared conditions.</p>
+                            <p>The offers do not apply to products against which regulated laws or decisions are prohibited.</p>
+                            <p>No promotional declaration should be interpreted as a promise of a specificrapeutic or health outcome.</p>
+                            </section>
+                            <section id="ab-terms-article-19" tabindex="-1">
+                            <h2>Article 19: Delivery Services</h2>
+                            <p>Delivery services are provided in areas where operational potential and legal rules permit service.</p>
+                            <p>Delivery dates and costs may vary depending on geographical location, volume of demand, nature of products and operating conditions.</p>
+                            <p>The dates given shall be estimated, unless a binding date is expressly agreed upon in accordance with the nature of the transaction.</p>
+                            <p>Delivery dates may be affected by conditions of passage, air conditions, malfunctions or exceptional circumstances beyond reasonable control.</p>
+                            <p>This is not interpreted as an exemption from the obligation to extradite or from the client ' s rights established upon delay or non-implementation.</p>
+                            <p>The client is obliged to provide a proper address and appropriate communication information to facilitate delivery.</p>
+                            <p>Products requiring special conditions of transport or storage remain subject to applicable technical requirements.</p>
+                            </section>
+                            <section id="ab-terms-article-20" tabindex="-1">
+                            <h2>Article 20: Delivery Address Information</h2>
+                            <p>The client is responsible for providing accurate, clear and sufficient address data to determine the place of delivery.</p>
+                            <p>The required data include, as needed, the number of real estate, street, area, role, apartment, extension mark and telephone number.</p>
+                            <p>The client may be contacted to clarify the address or confirm access.</p>
+                            <p>If delivery is not possible because of improper data provided by the client, delivery may be recoordinated in accordance with the declared policies and the legal rights of the parties.</p>
+                            <p>Pharmacies are not responsible for the delay arising exclusively from the client ' s constant error in the address data, with a commitment to provide reasonable care to address the problem when it is possible.</p>
+                            </section>
+                            <section id="ab-terms-article-21" tabindex="-1">
+                            <h2>Article 21: Receiving Orders</h2>
+                            <p>The client or person authorized to receive the request shall be obliged to review the application upon receipt to the extent possible and reasonable.</p>
+                            <p>It would be preferable to verify the number of packagings, the prima facie situation and the absence of clear damage in the packaging.</p>
+                            <p>If there is a lack, apparent damage or discrepancy in the items, customer service should be notified as soon as possible to facilitate examination and treatment.</p>
+                            <p>Failure to report promptly does not mean that legal rights relating to defects or non-conformity are lost.</p>
+                            <p>Some products may require delivery to the person concerned or verification of specific documents according to the regulations of the organization.</p>
+                            <p>Delivery of a restricted product may be refrained if the legal requirements for its extradition cannot be met.</p>
+                            </section>
+                            <section id="ab-terms-article-22" tabindex="-1">
+                            <h2>Article 22: Storing Products After Receipt</h2>
+                            <p>The client must adhere to the conservation and storage instructions received on the packaging or approved bulletin.</p>
+                            <p>These instructions include, depending on the nature of the product, appropriate temperatures, protection against light, humidity, non-freezing or exposure to excessive heat.</p>
+                            <p>Incorrect storage may alter the characteristics of some formulations, reduce their quality or their inability to use.</p>
+                            <p>Pharmacies shall not bear the damage caused solely by the poor storage after the client ' s transfer of possession, if proved, without prejudice to its responsibility for the safety of the product and the conditions for its preservation and transfer prior to delivery.</p>
+                            <p>The client must return to the pharmacist when a product is suspected of being subjected to inappropriate preservation conditions.</p>
+                            </section>
+                            <section id="ab-terms-article-23" tabindex="-1">
+                            <h2>Article 23: Proper Use of Medicines</h2>
+                            <p>Products must be used in accordance with their purpose and the instructions and warnings adopted.</p>
+                            <p>Purchase of a pharmaceutical product may not be considered to ensure that it is fit for every person or for every health condition.</p>
+                            <p>Doses, dates and duration of use identified by specialists should be adhered to when needed.</p>
+                            <p>The doctor or pharmacist should also disclose the health information necessary to make a sound professional decision, while respecting personal data protection controls.</p>
+                            <p>The response to formulations varies among individuals, and a unified remedial outcome or the absence of all side effects of each user cannot be guaranteed.</p>
+                            <p>Pharmacies shall not bear the consequences exclusively of misuse, contravention of instructions or use of the product for its illicit purposes, without prejudice to any established legal liability.</p>
+                            </section>
+                            <section id="ab-terms-article-24" tabindex="-1">
+                            <h2>Article 24: Allergies and Side Effects</h2>
+                            <p>Some pharmaceuticals, cosmetics or health products may cause side effects or sensory interactions among some users.</p>
+                            <p>Components and warnings must be reviewed before use, especially when there is a known history of sensitivity.</p>
+                            <p>In the event of unusual symptoms, use should be discontinued when medical guidance so requires and appropriate professional advice.</p>
+                            <p>Serious symptoms require urgent medical intervention.</p>
+                            <p>Legal liability for the known and declared side effect of the formulation upon its proper use varies from liability arising from a product ' s defect, failure to conserve, process, provide or disburse the product.</p>
+                            <p>Liability is determined in each case in accordance with applicable facts, evidence and laws.</p>
+                            </section>
+                            <section id="ab-terms-article-25" tabindex="-1">
+                            <h2>Article 25: General Exchange and Return Policy</h2>
+                            <p>Abdin Pharmacies respect the consumer ' s rights under the Egyptian Consumer Protection Act and its implementing regulations, including those relating to substitution, retrieval and discontinuation.</p>
+                            <p>In general, consumers enjoy the right to replace and retrieve during legally prescribed periods, including the right to replace or retrieve within 14 days of receipt of the goods without reason, taking into account the legal exceptions relating to the nature and condition of certain goods.</p>
+                            <p>Consumer also enjoys rights with respect to defective or non-conforming products, including rights established within 30 days of receipt, extensions and best or special guarantees when applicable.</p>
+                            <p>This policy may not be interpreted as depriving the consumer of its legal rights.</p>
+                            <p>Exceptions are applied according to the nature and circumstances of the product, the relevant legal texts and regulatory decisions.</p>
+                            </section>
+                            <section id="ab-terms-article-26" tabindex="-1">
+                            <h2>Article 26: Special Rules for Medicine Returns</h2>
+                            <p>Pharmaceuticals and products whose safety is affected by storage and handling conditions are subject to special controls that require the safety of patients and the quality of products.</p>
+                            <p>The nature or characteristics of certain products, the manner in which they are mobilized or the requirements for their preservation may prevent their return from being accepted in cases where the exception is permitted by law.</p>
+                            <p>In particular, consideration is given to whether the integrity of the product can be ascertained and not exposed to conditions affecting its viability or characteristics.</p>
+                            <p>A renegotiation of a refrigerated formulation may be possible only if the legal and technical rules permit it.</p>
+                            <p>This provision does not dismiss the client ' s right to claim compensation, replacement or recovery of value when there is a defect, failure or error in the execution of the application, where the requirements of the right are provided by law.</p>
+                            <p>Each request for retrieval is evaluated according to the nature of the item, available evidence and regulatory controls.</p>
+                            </section>
+                            <section id="ab-terms-article-27" tabindex="-1">
+                            <h2>Article 27: How to Request a Return</h2>
+                            <p>The client may apply for replacement or retrieval through approved customer service channels.</p>
+                            <p>It would be preferable to provide the number of demand or invoice, to describe the problem and information that would help to identify the product and treatment.</p>
+                            <p>Explanatory photographs or examination of the product may be requested when needed, but this may not become an unlawful impediment to the exercise of legal rights.</p>
+                            <p>Applications are examined according to the nature and duration of the problem.</p>
+                            <p>In the event of a proven defect, error or non-conformity with a legal right to replace or retrieve, treatment measures shall be taken without charge to the consumer of costs for which the law prohibits them.</p>
+                            <p>The application is not denied simply because the outer casing is not retained if the refusal is contrary to an existing legal right.</p>
+                            </section>
+                            <section id="ab-terms-article-28" tabindex="-1">
+                            <h2>Article 28: Refunds</h2>
+                            <p>The amounts owed to the client are reimbursed in accordance with the laws governing the nature of the transaction and the means of payment used.</p>
+                            <p>The payment shall be made in the same way as the original payment, unless the parties agree on another means of a law award.</p>
+                            <p>The amounts assessed for reimbursement are taken into account, including provisions for remote contracting and returns of products.</p>
+                            <p>Some e-recovery operations may require additional time to appear in the client ' s account as a result of the actions of the banker or payment service provider.</p>
+                            <p>Pharmacies may not reserve a receivable of restitution without legal authority.</p>
+                            <p>In the event of a disagreement as to the value or components of the amount, the client is available to communicate with the customer service and to provide the necessary documentation for the examination of the transaction.</p>
+                            </section>
+                            <section id="ab-terms-article-29" tabindex="-1">
+                            <h2>Article 29: Changing and Cancelling Orders</h2>
+                            <p>The client may request that the request be amended or cancelled in accordance with the declared mechanisms and legal rights relating to remote contracting.</p>
+                            <p>The possibility of operational adjustment may vary depending on the demand processing stage and the nature of the products.</p>
+                            <p>The start-up or shipment of the request does not result in the loss of a client ' s statutory right to induce or retrieve.</p>
+                            <p>Provisions relating to the right to rectify or modify a request and to refrain from contracting are applied in accordance with the Consumer Protection Act and its implementing regulations.</p>
+                            <p>If a specific amendment cannot be implemented for legitimate reasons, the client shall be notified of the options available without prejudice to his or her rights.</p>
+                            </section>
+                            <section id="ab-terms-article-30" tabindex="-1">
+                            <h2>Article 30: Fraudulent Orders and Misuse</h2>
+                            <p>Pharmacies retain the right to take appropriate action when there are serious indications of fraud or misuse.</p>
+                            <p>Such cases may include the use of unauthorized means of payment, false statements, repeated fictitious requests for damage, or attempts to obtain illicitly restricted formulations.</p>
+                            <p>The execution of the transaction may be suspended to the extent necessary to verify its legality, taking into account the legal rights of the client.</p>
+                            <p>When an unlawful act of damage is established, pharmacists may claim their rights before the competent authorities.</p>
+                            <p>These provisions may not be used to restrict legitimate complaints or to exercise the legal rights of consumers.</p>
+                            </section>
+                            <section id="ab-terms-article-31" tabindex="-1">
+                            <h2>Article 31: Personal Data Protection</h2>
+                            <p>Abdin Pharmacies respect the privacy and personal data of users of their location.</p>
+                            <p>Services may require the collection and processing of some data necessary to implement requests, communication, accounting or legal obligations.</p>
+                            <p>Data are dealt with at the borders, purposes and legal bases established under the relevant Egyptian legislation, in particular the Personal Data Protection Act No. 151 of 2020 and its implementing regulations.</p>
+                            <p>Data may not be used or disclosed in violation of the law.</p>
+                            <p>The addressee is obliged to take the necessary regulatory and technical measures to protect the data and to enable its owners to exercise their legal rights.</p>
+                            <p>Details of data collection, processing, retention, disclosure and rights of authors are subject to applicable legal provisions and disclosures of privacy.</p>
+                            </section>
+                            <section id="ab-terms-article-32" tabindex="-1">
+                            <h2>Article 32: Sensitive Health Data</h2>
+                            <p>Some requests or inquiries may include information of a healthy nature, such as prescriptions, formulation names or data on the satisfactory situation.</p>
+                            <p>Such information shall be subject to the protection of sensitive personal data when applicable to it by legal description.</p>
+                            <p>Such data shall be collected, used, maintained or shared only in accordance with the grounds, approvals, licences and permits required by law.</p>
+                            <p>It must be limited to persons authorized and to the extent necessary for the performance of their legitimate functions.</p>
+                            <p>The transmission of health information to the site does not automatically allow the user to be used for any marketing or commercial purpose not related to the required service.</p>
+                            <p>Children ' s statements and parents ' consent shall be taken into account whenever necessary.</p>
+                            </section>
+                            <section id="ab-terms-article-33" tabindex="-1">
+                            <h2>Article 33: Cookies and Analytics</h2>
+                            <p>The site may use attachment identification files and similar techniques for operational, security or analytical purposes or to improve user experience, depending on the techniques actually used.</p>
+                            <p>The use of these techniques is subject to the requirements of notification, approval and selections established by law.</p>
+                            <p>The disruption of some of the necessary correlation files may affect the core functions of the site.</p>
+                            <p>The categories of these techniques, their use and duration of retention and their associates are subject to legal controls and relevant privacy disclosures.</p>
+                            <p>General consent to conditions and conditions may not be used as a substitute for separate consent when such consent is required by law.</p>
+                            </section>
+                            <section id="ab-terms-article-34" tabindex="-1">
+                            <h2>Article 34: Communications and Messages</h2>
+                            <p>Pharmaceuticals may send notices concerning requests, payments, delivery, retrieval, account security or operational matters necessary for the implementation of the transaction.</p>
+                            <p>Promotional messages and marketing presentations are subject to relevant legal approvals and controls.</p>
+                            <p>The employee may exercise his or her right to refuse or withdraw his or her consent to marketing contacts through the means provided by pharmacies in accordance with the law.</p>
+                            <p>Abolition of participation in marketing letters does not necessarily result in the suspension of notices required to implement existing requests or to fulfil legal obligations.</p>
+                            </section>
+                            <section id="ab-terms-article-35" tabindex="-1">
+                            <h2>Article 35: Website Security and Service Availability</h2>
+                            <p>Pharmacists seek to operate the site in a stable and secure manner, applying appropriate measures for the nature of the service.</p>
+                            <p>However, temporary interruptions may occur as a result of maintenance, technical updates, malfunctions, electronic attacks or conditions beyond reasonable control.</p>
+                            <p>The provision of the site is not an undertaking to ensure its uninterrupted operation at all times.</p>
+                            <p>Maintenance, updates or temporary suspension of certain functions may be carried out to protect regulations or improve performance.</p>
+                            <p>Pharmacies shall not bear losses arising exclusively from interruptions beyond their legal and actual control, to the extent permitted by law, without prejudice to their liability for any fixed default or obligations existing towards customers.</p>
+                            </section>
+                            <section id="ab-terms-article-36" tabindex="-1">
+                            <h2>Article 36: External Links and Services</h2>
+                            <p>The site may contain links to sites or services of independent parties, such as payment companies, manufacturers or technical service providers.</p>
+                            <p>The reference to an external party does not imply the adoption of all its contents, policies or guarantees.</p>
+                            <p>Independent services are subject to the requirements of their providers, to the extent that they do not conflict with the client ' s rights to be treated with pharmacies.</p>
+                            <p>Pharmacies do not have responsibility for the content or practices of an independent external party that did not have control over it or a legal contribution to the damage caused.</p>
+                            <p>This regulation does not prejudice any liability established by law for pharmacies to select service providers or their work or to breach their consumer obligations.</p>
+                            </section>
+                            <section id="ab-terms-article-37" tabindex="-1">
+                            <h2>Article 37: Intellectual Property Rights</h2>
+                            <p>Intellectual property rights relating to emblems, commercial identity, original content, designs and materials published belong to their legitimate owners.</p>
+                            <p>The content shall not be copied, redisseminated or commercially exploited without a permit or legal authority.</p>
+                            <p>The use of the site does not give the user any ownership or commercial licence in the labels or protected materials.</p>
+                            <p>Information available for legitimate personal use may be used within the limits permitted by law.</p>
+                            <p>Pharmacies retain the right to take appropriate legal action to protect their markings, content and legitimate rights.</p>
+                            </section>
+                            <section id="ab-terms-article-38" tabindex="-1">
+                            <h2>Article 38: Limits of Legal Liability</h2>
+                            <p>Abdin Pharmacies are bound by the law ' s responsibilities for the safety and conformity of products, storage, circulation, exchange and delivery, consumer protection and personal data, and any other applicable obligations.</p>
+                            <p>To the extent permitted by the law, pharmacies are not liable for damages found to have arisen exclusively from:</p>
+                            <p>1. intentional use of products in contravention of proper instructions and warnings.</p>
+                            <p>2. Incorrect or misleading material information provided by the user.</p>
+                            <p>3. Use of formulations by persons not assigned to them in violation of medical controls.</p>
+                            <p>4. Modification of packagings or tampering with contents of products after delivery.</p>
+                            <p>5. Poor storage after the transfer of possession to the client.</p>
+                            <p>6. Unlawful use of the account as a result of an independent act of the user or other, with no breach of the duty of proof by pharmacies.</p>
+                            <p>7. External circumstances that cannot reasonably be expected or paid, if the conditions of the foreign cause are legally available.</p>
+                            <p>The limits of liability set forth in this article do not apply to situations where exemption or restriction is prohibited by law, including responsibilities arising from a product ' s defect, failure to conserve, trade or breach of legal and professional obligations where the requirements are met.</p>
+                            </section>
+                            <section id="ab-terms-article-39" tabindex="-1">
+                            <h2>Article 39: No Guarantee of Individual Results</h2>
+                            <p>Pharmacies do not provide a general guarantee of a specific remedial or cosmetic result for each user simply to purchase a product from the site.</p>
+                            <p>The results may vary depending on individual characteristics, method of use, state of health and other factors.</p>
+                            <p>Public opinions or personal assessments published on a product, if any, are not conclusive evidence of access by all users to the same results.</p>
+                            <p>Nor does general information explain the potential benefits of formulations as a personal promise of healing or improvement.</p>
+                            <p>This does not prejudice the obligation of pharmacists not to publish misleading information or unaccredited remedial allegations, or their responsibility for any relevant legal offence.</p>
+                            </section>
+                            <section id="ab-terms-article-40" tabindex="-1">
+                            <h2>Article 40: Exceptional Circumstances and Force Majeure</h2>
+                            <p>Pharmacies are not liable for non-implementation or delay, which is established to be a direct result of force majeure or a foreign cause in which legal requirements are met.</p>
+                            <p>Exceptional circumstances, depending on their nature and the applicability of force majeure clauses, may include natural disasters, emergency government decisions, public disturbances or severe malfunctions beyond control.</p>
+                            <p>Pharmacies are obliged to take reasonable action to limit the effects of these circumstances when possible.</p>
+                            <p>The occurrence of an exceptional circumstance does not entail the loss of consumer rights in the recovery of funds, termination of contract or claiming other rights when determined by law.</p>
+                            </section>
+                            <section id="ab-terms-article-41" tabindex="-1">
+                            <h2>Article 41: User Responsibility for Unlawful Acts</h2>
+                            <p>The user is obliged not to engage in unlawful acts that cause harm to pharmacies, their employees or other users.</p>
+                            <p>If an employee is found to have committed an unlawful act resulting in direct harm, pharmacies may claim compensation in accordance with general legal rules.</p>
+                            <p>This article is not interpreted as requiring the user to compensate pharmacies for merely filing a complaint, exercising a legal right or objecting to a transaction.</p>
+                            <p>Nor are any liability imposed by law on pharmacies or their service providers transferred to the user.</p>
+                            </section>
+                            <section id="ab-terms-article-42" tabindex="-1">
+                            <h2>Article 42: Complaints and Customer Service</h2>
+                            <p>Pharmacies are obliged to provide an appropriate means of receiving client complaints and inquiries regarding products, services and transactions.</p>
+                            <p>The client can lodge a complaint through official communication channels posted on the site.</p>
+                            <p>It would be preferable to include the number of requests, the description of the problem and any information or documents that would assist in its examination.</p>
+                            <p>Complaints are reviewed in accordance with their nature and the relevant legal and professional obligations.</p>
+                            <p>Client service procedures do not prevent consumers from resorting to the Consumer Protection Service, the Egyptian Medicine Authority or competent supervisory and judicial bodies.</p>
+                            <p>Access to pharmacies ' consent is not required before the exercise of legal rights to file complaints or communications.</p>
+                            </section>
+                            <section id="ab-terms-article-43" tabindex="-1">
+                            <h2>Article 43: Updates and Changes to These Terms</h2>
+                            <p>Pharmacies may update these conditions and provisions from time to time to keep pace with operational, technical, regulatory or legal developments.</p>
+                            <p>The updated version is advertised through the site, with its entry into force in accordance with legal requirements.</p>
+                            <p>Amendments may not be applied retroactively to existing transactions if they result in a reduction in acquired rights or breaches of legal obligations.</p>
+                            <p>The user is advised to review the requirements periodically, especially before new transactions are completed.</p>
+                            <p>In cases where the law requires new approval or specific notification, pharmacies are bound by due process.</p>
+                            </section>
+                            <section id="ab-terms-article-44" tabindex="-1">
+                            <h2>Article 44: Electronic Records and Evidence</h2>
+                            <p>Pharmacies may keep transaction logs, requests, invoices, confirmation notices and correspondence to the extent and to the extent permitted or imposed by law.</p>
+                            <p>These records may be used to establish business processes, to process complaints or to meet accounting and regulatory obligations.</p>
+                            <p>Electronic records and methods of reference are subject to evidence, electronic signature and data protection.</p>
+                            <p>This article does not deprive the client of providing counter-substantiation or challenging the validity or content of any record by legal means.</p>
+                            </section>
+                            <section id="ab-terms-article-45" tabindex="-1">
+                            <h2>Article 45: Applicable Law</h2>
+                            <p>Transactions and services provided by Abdin Pharmacies within the Arab Republic of Egypt are subject to applicable Egyptian laws.</p>
+                            <p>These laws include, depending on the nature of the transaction, consumer protection legislation, pharmacology, regulation of the handling of formulations, personal data and electronic transactions.</p>
+                            <p>Disputes are brought to the attention of the competent judicial authorities by law, without prejudice to the established competences of the regulatory and administrative bodies or consumer protection rights.</p>
+                            <p>This requirement does not include any prior waiver of jurisdiction or legal right that cannot be waived.</p>
+                            </section>
+                            <section id="ab-terms-article-46" tabindex="-1">
+                            <h2>Article 46: Severability</h2>
+                            <p>If it is found that one of the provisions of this document is ineffective, invalid or contrary to a legal order, this does not automatically invalidate the other provisions that can be applied independently and legitimately.</p>
+                            <p>The provision in question shall be interpreted and applied to the extent permitted by law, without creating new obligations contrary to the will of the parties or the legal rules.</p>
+                            <p>This principle may not be used to maintain a requirement that is unjust or contrary to consumer rights established by law.</p>
+                            </section>
+                            <section id="ab-terms-article-47" tabindex="-1">
+                            <h2>Article 47: No Waiver of Rights</h2>
+                            <p>Failure to exercise pharmacies of any right established by law on a given occasion is not a permanent waiver of this right.</p>
+                            <p>The failure of the client to claim him immediately shall not be considered a waiver if the law allows him to exercise it within a specified period of time.</p>
+                            <p>Any settlement or waiver of a right is applicable only in accordance with the conditions and forms required by law.</p>
+                            </section>
+                            <section id="ab-terms-article-48" tabindex="-1">
+                            <h2>Article 48: Patient and Customer Safety First</h2>
+                            <p>Abdin Pharmacies place the safety of patients and clients as a fundamental consideration in the delivery of their services.</p>
+                            <p>Therefore, it may make a legitimate professional or regulatory decision to suspend or reject the exchange of a producer when there are legal or pharmaceutical grounds for doing so.</p>
+                            <p>No electronic request or payment process may be interpreted as an obligation to dispose of a formulation in violation of the law or professional assets.</p>
+                            <p>In such cases, payments and unimplemented requests are dealt with in accordance with the client ' s legal rights.</p>
+                            </section>
+                            <section id="ab-terms-article-49" tabindex="-1">
+                            <h2>Article 49: General and Final Provisions</h2>
+                            <p>These conditions and provisions represent the general framework for the use and handling of the website, together with the policies of privacy, replacement, retrieval, delivery and any special conditions clearly declared prior to contracting.</p>
+                            <p>This document is applied in accordance with Egyptian laws, consumer protection provisions and professional and regulatory rules.</p>
+                            <p>No provision may be interpreted as authorizing unauthorized activity, depriving the consumer of a legal right, or exempting from liability from which the law does not permit exemption.</p>
+                            <p>These conditions are aimed at regulating the contractual relationship, at clarifying rights and obligations, at protecting electronic transactions against misuse and at facilitating the clear and fair handling of disputes.</p>
+                            </section>
+                            <section id="ab-terms-acknowledgement" tabindex="-1">
+                            <h2>User Acknowledgement</h2>
+                            <p>Using or through the website of Abdin Pharmacies, the user acknowledges that it has had access to these conditions and provisions, and understands the nature of the services, products and legal and professional constraints involved.</p>
+                            <p>It also recognizes its obligation to provide valid data, to use services for legitimate purposes, to follow product instructions and warnings and to respect the regulated controls of transactions.</p>
+                            <p>Acceptance of these conditions remains subject to all consumer rights, safeguards and responsibilities established by Egyptian laws.</p>
+                            </section>
+                            <p class="ab-terms-copyright">© Abdin Pharmacies – All rights reserved to their lawful owners.</p>
                         </article>
                     </div>
                 </div>
             </div>
         </t>
     </template>
+    <template id="order_delivery_terms_page" name="Abdin Order and Delivery Terms">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Order and Delivery Terms | Abdin Pharmacies</t>
+            <t t-set="website_meta_description">Terms for online sales, order fulfilment and delivery at Abdin Pharmacies.</t>
+            <div id="wrap" class="ab-legal-page ab-terms-page">
+                <section class="ab-legal-hero">
+                    <div class="container">
+                        <nav class="ab-legal-breadcrumb" aria-label="Breadcrumb">
+                            <a href="/">Home</a>
+                            <i class="fa fa-angle-right" aria-hidden="true"/>
+                            <span aria-current="page">Order and Delivery Terms</span>
+                        </nav>
+                        <div class="ab-legal-hero-content">
+                            <span class="ab-storefront-kicker">Shopping with Abdin</span>
+                            <h1>Order and Delivery Terms</h1>
+                            <p>Review the complete terms for online orders, fulfilment and delivery.</p>
+                        </div>
+                    </div>
+                </section>
+                <div class="ab-legal-content">
+                    <div class="container">
+                        <aside class="ab-terms-sidebar">
+                            <details class="ab-terms-index">
+                                <summary>Browse all 49 articles</summary>
+                                <nav aria-label="Article index">
+                                    <ol>
+                                    <li><a href="#ab-terms-introduction">Introduction</a></li>
+                                    <li><a href="#ab-terms-article-1">Article 1: Definitions and Terms</a></li>
+                                    <li><a href="#ab-terms-article-2">Article 2: Scope of These Terms</a></li>
+                                    <li><a href="#ab-terms-article-3">Article 3: Legal Identity and Service Provider</a></li>
+                                    <li><a href="#ab-terms-article-4">Article 4: Eligibility to Use the Website</a></li>
+                                    <li><a href="#ab-terms-article-5">Article 5: User Accounts and Registration Information</a></li>
+                                    <li><a href="#ab-terms-article-6">Article 6: Lawful Use of the Website</a></li>
+                                    <li><a href="#ab-terms-article-7">Article 7: Nature of Online Services</a></li>
+                                    <li><a href="#ab-terms-article-8">Article 8: Medical and Pharmaceutical Information</a></li>
+                                    <li><a href="#ab-terms-article-9">Article 9: Medical Emergencies</a></li>
+                                    <li><a href="#ab-terms-article-10">Article 10: Products, Descriptions and Images</a></li>
+                                    <li><a href="#ab-terms-article-11">Article 11: Prices and Updates</a></li>
+                                    <li><a href="#ab-terms-article-12">Article 12: Stock Availability</a></li>
+                                    <li><a href="#ab-terms-article-13">Article 13: Placing and Confirming Orders</a></li>
+                                    <li><a href="#ab-terms-article-14">Article 14: Prescriptions and Dispensing Medicines</a></li>
+                                    <li><a href="#ab-terms-article-15">Article 15: Products Subject to Special Restrictions</a></li>
+                                    <li><a href="#ab-terms-article-16">Article 16: Alternative and Equivalent Medicines</a></li>
+                                    <li><a href="#ab-terms-article-17">Article 17: Online Payment</a></li>
+                                    <li><a href="#ab-terms-article-18">Article 18: Promotions and Discounts</a></li>
+                                    <li><a href="#ab-terms-article-19">Article 19: Delivery Services</a></li>
+                                    <li><a href="#ab-terms-article-20">Article 20: Delivery Address Information</a></li>
+                                    <li><a href="#ab-terms-article-21">Article 21: Receiving Orders</a></li>
+                                    <li><a href="#ab-terms-article-22">Article 22: Storing Products After Receipt</a></li>
+                                    <li><a href="#ab-terms-article-23">Article 23: Proper Use of Medicines</a></li>
+                                    <li><a href="#ab-terms-article-24">Article 24: Allergies and Side Effects</a></li>
+                                    <li><a href="#ab-terms-article-25">Article 25: General Exchange and Return Policy</a></li>
+                                    <li><a href="#ab-terms-article-26">Article 26: Special Rules for Medicine Returns</a></li>
+                                    <li><a href="#ab-terms-article-27">Article 27: How to Request a Return</a></li>
+                                    <li><a href="#ab-terms-article-28">Article 28: Refunds</a></li>
+                                    <li><a href="#ab-terms-article-29">Article 29: Changing and Cancelling Orders</a></li>
+                                    <li><a href="#ab-terms-article-30">Article 30: Fraudulent Orders and Misuse</a></li>
+                                    <li><a href="#ab-terms-article-31">Article 31: Personal Data Protection</a></li>
+                                    <li><a href="#ab-terms-article-32">Article 32: Sensitive Health Data</a></li>
+                                    <li><a href="#ab-terms-article-33">Article 33: Cookies and Analytics</a></li>
+                                    <li><a href="#ab-terms-article-34">Article 34: Communications and Messages</a></li>
+                                    <li><a href="#ab-terms-article-35">Article 35: Website Security and Service Availability</a></li>
+                                    <li><a href="#ab-terms-article-36">Article 36: External Links and Services</a></li>
+                                    <li><a href="#ab-terms-article-37">Article 37: Intellectual Property Rights</a></li>
+                                    <li><a href="#ab-terms-article-38">Article 38: Limits of Legal Liability</a></li>
+                                    <li><a href="#ab-terms-article-39">Article 39: No Guarantee of Individual Results</a></li>
+                                    <li><a href="#ab-terms-article-40">Article 40: Exceptional Circumstances and Force Majeure</a></li>
+                                    <li><a href="#ab-terms-article-41">Article 41: User Responsibility for Unlawful Acts</a></li>
+                                    <li><a href="#ab-terms-article-42">Article 42: Complaints and Customer Service</a></li>
+                                    <li><a href="#ab-terms-article-43">Article 43: Updates and Changes to These Terms</a></li>
+                                    <li><a href="#ab-terms-article-44">Article 44: Electronic Records and Evidence</a></li>
+                                    <li><a href="#ab-terms-article-45">Article 45: Applicable Law</a></li>
+                                    <li><a href="#ab-terms-article-46">Article 46: Severability</a></li>
+                                    <li><a href="#ab-terms-article-47">Article 47: No Waiver of Rights</a></li>
+                                    <li><a href="#ab-terms-article-48">Article 48: Patient and Customer Safety First</a></li>
+                                    <li><a href="#ab-terms-article-49">Article 49: General and Final Provisions</a></li>
+                                    <li><a href="#ab-terms-acknowledgement">User Acknowledgement</a></li>
+                                    </ol>
+                                </nav>
+                            </details>
+                            <div class="ab-terms-help">
+                                <i class="fa fa-headphones" aria-hidden="true"/>
+                                <h2>Need help with your order?</h2>
+                                <a href="tel:19036"><bdi>19036</bdi></a>
+                                <a href="/contactus">Contact customer service</a>
+                            </div>
+                        </aside>
+                        <article class="ab-legal-card ab-terms-document" aria-label="Order and Delivery Terms">
+                            <h2>General Terms and Conditions for Online Sales, Order Fulfilment and Delivery Services</h2>
+                            <section id="ab-terms-introduction" tabindex="-1">
+                            <h2>Introduction</h2>
+                            <p>Welcome to the Abdin Pharmacies pharmacy website.</p>
+                            <p>Please read these terms and provisions carefully before using the website, scanning its contents, making a request for purchase or benefiting from any services available through it.</p>
+                            <p>Abdin Pharmacies provide professional and transparent pharmacological, commercial and electronic services, taking into account the legislation and rules governing pharmacy, the circulation of pharmaceuticals, consumer protection and personal data protection in the Arab Republic of Egypt.</p>
+                            <p>These conditions and provisions constitute the general framework governing the relationship between users of the site and Abdin Pharmacies, without prejudice to any rights or obligations established under applicable laws and regulations.</p>
+                            <p>The use of the site, the continuation of its navigation or the completion of a procurement process through it, after these conditions are made available to the user, is recognized for its access and acceptance of the provisions that apply law to the use or transaction in question.</p>
+                            <p>Abdin Pharmacies retain the rights established by law in the management, organization and development of their electronic services, take appropriate action to prevent their misuse and protect their clients, employees, installations and legitimate interests.</p>
+                            <p>These provisions deal, as applicable to each transaction, with the stages of filing, reviewing, implementing and settling the cost of the application, the relationship between the e-supply and the invoice issued by the Branch, the delivery options and associated fees, the inability to provide, delay or damage, complaints mechanisms, disincentives and payments.</p>
+                            <p>Any transaction is subject to jus cogens, and the regulatory formulations here do not create a right to collect amounts that the client has not properly accepted, or to deprive him of a due invoice or of a fixed right to restitution or compensation, and the practical procedures are applied to the extent permitted by the nature of the formulation, licences and applicable pharmaceutical rules.</p>
+                            </section>
+                            <section id="ab-terms-article-1" tabindex="-1">
+                            <h2>Article 1: Definitions and Terms</h2>
+                            <p>For the purposes of the application of these conditions and provisions, the following words and phrases shall have the meanings set out in their respective centuries, unless the context otherwise requires:</p>
+                            <p>1. Pharmacies or company: Pharmaceuticals Abdin Pharmacies, legal entities or licensed branches providing the products and services in question.</p>
+                            <p>2. Location: website, applications and official digital fronts of Abdin Pharmacies dedicated to their services.</p>
+                            <p>3. User: any person who visits or searches the site, interacts with its contents or uses one of its services.</p>
+                            <p>4. Agent: User applying for product or service.</p>
+                            <p>5. Products: All items that may be legally presented or provided through activity, including health products, personal care, cosmetics, medical and other supplies, and pharmaceuticals, within the limits permitted by legislation and regulated licences.</p>
+                            <p>6. Application: data provided by the client for the purpose of purchasing a product, obtaining a service or inquiring about the availability of a item.</p>
+                            <p>7. Confirmation of the application: notice of acceptance of the request or confirmation of items, quantities, prices and other conditions of execution, in accordance with the nature of the transaction.</p>
+                            <p>8. Products restricted: products traded, disbursed or delivered are subject to special legal or pharmaceutical requirements.</p>
+                            <p>9. Medical recipe: a document issued by a health practitioner authorized by law to prescribe treatment, if required to dismiss a formulation.</p>
+                            <p>10. External service provider: any independent party contributing to the operation of payment, shipping, hosting, technical or other site-related services.</p>
+                            <p>The terms are interpreted in accordance with the nature of the transaction and the provisions of the Egyptian law in force.</p>
+                            <p>The summary of the electronic request refers to the statement which appears to the client or is sent upon the introduction of the items, and may initially be if prices, availability, delivery area or delivery costs require subsequent verification; the document section issued by the branch or facility implementing the transaction is intended to include the sale or service data to be established by law, whether paper or electronic, to meet its requirements.</p>
+                            <p>Delivery fees shall mean amounts owed for the transfer of the request or the processing of the delivery trip where such fees are properly rewarded and publicized to the client; the adoption of the request shall inform the customer of the acceptance of the delivery of the material items and conditions after the necessary review, and shall mean that it is not possible to execute the entire or some of the application for actual, legal or professional reasons, without assuming that the mere registration of the inadmissibility exempts any party from its legal responsibility.</p>
+                            </section>
+                            <section id="ab-terms-article-2" tabindex="-1">
+                            <h2>Article 2: Scope of These Terms</h2>
+                            <p>These conditions apply to the use of the website, the navigation of products, the establishment of accounts, the transmission of queries, purchase orders, payments, delivery services, post-sale services and transactional electronic communication.</p>
+                            <p>The relevant provisions also apply to the use of official channels of communication associated with the electronic commerce, to the extent permitted by law and the nature of each channel.</p>
+                            <p>Some products or services may be subject to additional specialized conditions, which shall be declared to the user prior to completion of the transaction or upon request for service.</p>
+                            <p>In the event of a conflict between general conditions and jus cogens or consumer rights, the priority of legal provisions is applicable.</p>
+                            <p>No provision in this document shall be interpreted as a waiver by the agent of a right which may not be waived by law.</p>
+                            <p>The request may pass through the location and then be reviewed and completed by the competent branch, customer service or focal point; the transfer of treatment between these channels does not alter the nature of the rights acquired by the consumer, and the disaggregation of information is not permitted in such a way as to conceal the cost of the duty to disclose them before the completion of the contract.</p>
+                            <p>Pharmacies may establish updated operational rules for the distribution of applications between branches and the determination of the scopes of delivery, dates and quantitative limits, provided that the essential conditions of customers are demonstrated in a timely manner and that no later change applies to a confirmed transaction derogating from the rights of their owner.</p>
+                            </section>
+                            <section id="ab-terms-article-3" tabindex="-1">
+                            <h2>Article 3: Legal Identity and Service Provider</h2>
+                            <p>The commercial name " Abdin Pharmacies " is used to define the activity and services it provides.</p>
+                            <p>The legal entity responsible for a particular transaction shall be the designated entity in the invoice or transaction document, in accordance with the official licences and statements of the establishment concerned.</p>
+                            <p>The existence of an electronic site or a producer ' s offer does not constitute an independent licence to engage in a pharmacist activity outside the scope allowed by organized laws and decisions.</p>
+                            <p>Pharmaceutical activities subject to licensing are carried out through legally authorized installations and persons and within the prescribed limits of each activity.</p>
+                            <p>Pharmacies may update branch data, work schedules, communication channels and service ranges according to operational changes.</p>
+                            <p>The issuer of the bill for the sale of products may differ from the person who coordinates the delivery service or uses an independent implementer; when determining the party to the transaction, it is referred to the valid documents, the actual reality and the provisions of the law, the different roles between the location, branches and service providers may not be used to dismiss an obligation that is legally binding on the supplier.</p>
+                            <p>When the branch ' s financial adjustment is effected, the final payment of the delivery may be established in the branch ' s invoice or appropriate legal document, even if the electronic commerce site does not show a final clause to it, provided that the amount or basis of its estimate is disclosed and the client ' s acceptance is obtained where it is required prior to the receipt or execution of the service.</p>
+                            </section>
+                            <section id="ab-terms-article-4" tabindex="-1">
+                            <h2>Article 4: Eligibility to Use the Website</h2>
+                            <p>The employee is required to have the necessary legal capacity to conduct his or her actions through the site.</p>
+                            <p>If the site is used by a minor or a person who does not have full capacity, this must be done under the supervision and consent of his or her guardian or legal representative where necessary.</p>
+                            <p>The user is responsible for the validity of his or her identity, parenthood and description data in demand for products or services, without exempting pharmacies from the law ' s verification obligations.</p>
+                            <p>Pharmacies may request documents or data necessary to verify the capacity or legal status when the nature of the product or service so requires.</p>
+                            <p>Pharmacies retain the right to refrain from implementing a request that does not meet the relevant legal or regulatory requirements.</p>
+                            <p>An applicant for a formulation subject to special controls shall provide the necessary information and documentation correctly, and permission to enter the application on the site shall not be an undertaking to disburse a minor or a person not meeting the requirements for receipt; the request may be redirected to or rejected by the competent branch when it is contrary to the legal requirements.</p>
+                            </section>
+                            <section id="ab-terms-article-5" tabindex="-1">
+                            <h2>Article 5: User Accounts and Registration Information</h2>
+                            <p>If the site makes it possible to establish personal accounts, the user is obliged to provide accurate, up-to-date and complete information as required to benefit from the services.</p>
+                            <p>The user undertakes not to impersonate the third person, to use incorrect data or to establish accounts with a view to circumventing or harming electronic systems.</p>
+                            <p>The user is responsible for maintaining the confidentiality of its entry data and taking reasonable precautions to prevent unauthorized access to its account.</p>
+                            <p>The location management must be notified when the account is suspected of unauthorized use.</p>
+                            <p>Pharmacies are not responsible for the consequences arising exclusively from the disclosure of the user ' s income data by their will or as a result of its constant failure to protect them, without prejudice to their legal responsibility to secure the regulations and data under their control.</p>
+                            <p>The account may be temporarily restricted or suspended if serious indications of its misuse or threat of site security arise, taking into account user rights and existing transactions.</p>
+                            <p>The user must ascertain the validity of the telephone number, mode of communication, delivery address and any directives on access to the property; old or inaccurate data may delay delivery or lack of access, and delays are not attributable to pharmacies if it is proved to be exclusively due to misleading or incorrect information from the client without default.</p>
+                            </section>
+                            <section id="ab-terms-article-6" tabindex="-1">
+                            <h2>Article 6: Lawful Use of the Website</h2>
+                            <p>The user is committed to using the site only for legitimate purposes, in accordance with Egyptian laws, public morals and the rights of others.</p>
+                            <p>In particular, it is prohibited:</p>
+                            <p>1. Attempt unauthorized access to site regulations or databases.</p>
+                            <p>2. Use harmful programmes or technical means that threaten the integrity of the site.</p>
+                            <p>3. Sending false or intentionally misleading requests.</p>
+                            <p>4. Attempt to fraudulently pay or recover funds.</p>
+                            <p>5. Use of statements by other persons without legitimate support.</p>
+                            <p>6. Copy or redeploy protected content in violation of the rights of its owners.</p>
+                            <p>7. Use of the site for commercial resale without an agreement to do so.</p>
+                            <p>8. Send content containing threats, defamation, abuse or violation of the rights of others.</p>
+                            <p>9. Disposal of controls for the sale or exchange of restricted products.</p>
+                            <p>10. Extensive automated processes that affect the stability or disruption of the project use of the site.</p>
+                            <p>Appropriate action may be taken to stop any unlawful activity, including restricting access to services or notifying the competent authorities where there is a legal requirement.</p>
+                            <p>The use of multiple accounts is prohibited for the purpose of abuse of delivery offers or the minimum demand, the creation of large applications without real intention to receive, or the introduction of fictitious titles for the intentional cost of pharmacies or carriers, and each user has the right to cancel his or her application or to object to a price or service in accordance with legal rights, which is not in itself an abuse.</p>
+                            </section>
+                            <section id="ab-terms-article-7" tabindex="-1">
+                            <h2>Article 7: Nature of Online Services</h2>
+                            <p>The site aims to facilitate client access to information, services and products provided by Abdin Pharmacies.</p>
+                            <p>Services may include providing information on products, receiving inquiries, verifying availability, managing requests, identifying payment and delivery options and providing means of communicating with customer service.</p>
+                            <p>Inclusion of a product on site does not necessarily mean that it is available for purchase or delivery at all times or in all regions.</p>
+                            <p>Nor does its electronic presentation mean that it may be disbursed without meeting its legal and pharmaceutical requirements.</p>
+                            <p>Actual service is subject to the availability of products, the validity of licences, regulatory requirements, implementation possibilities and restrictions on the handling of certain items.</p>
+                            <p>The site may offer an approximate scope or indicative timing of delivery, and the branch may differ from the closest branch of the client due to the availability of the item or operating conditions, and the receipt of the request does not imply a reservation of a quantity already specified prior to the completion of verification and certification, unless the reservation or final acceptance is expressly declared.</p>
+                            <p>The actual potential for service varies by region, branch, working hours and type of formulation; pharmacies may temporarily suspend receipt of new applications in certain areas, or adjust their capabilities in future applications, while settling existing applications in accordance with acceptable conditions and legal provisions.</p>
+                            </section>
+                            <section id="ab-terms-article-8" tabindex="-1">
+                            <h2>Article 8: Medical and Pharmaceutical Information</h2>
+                            <p>The site may contain health, pharmaceutical or tariff information on products, including common uses, components, warnings, precautions and general instructions.</p>
+                            <p>Published information is provided for purposes of definition and awareness, and may not be considered an automatic alternative to individual medical diagnosis, clinical examination or description of treatment by specialists.</p>
+                            <p>The product ' s suitability may vary from one person to another depending on age, state of health, sick history, pregnancy, breastfeeding, other medicines, sensitivity, vital functions and other medical considerations.</p>
+                            <p>The user is required to consult the competent doctor or pharmacist before using the formulations that require it, and not rely on site information alone to make remedial decisions requiring professional evaluation.</p>
+                            <p>Pharmacies shall not bear the consequences of the user ' s reliance on public information outside their context, or the use of a product in a manner contrary to stated guidance and warnings, unless such results are linked to a firm legal or professional breach by pharmacies.</p>
+                            <p>The description of the formulation may include a reference to special conservation or transport conditions, prohibitions of the use or necessity of a recipe; the customer shall not deal with the mere option of " add to the basket " as a medical consent to the convenience of the formulation; the competent pharmacist shall have the duty to examine professionally within the limits applicable to each item and the treatment.</p>
+                            </section>
+                            <section id="ab-terms-article-9" tabindex="-1">
+                            <h2>Article 9: Medical Emergencies</h2>
+                            <p>The website is not a medical emergency reception facility and does not ensure an immediate response to urgent inquiries.</p>
+                            <p>Communication or electronic conversations should not be used to request urgent medical intervention in cases such as severe respiratory difficulty, lack of awareness, acute chest pain, severe bleeding, stroke symptoms, poisoning, overdoses, excessive sensitivity, or any situation suspected of threatening life or requiring immediate intervention.</p>
+                            <p>In such cases, an appropriate medical facility or liaison with the competent emergency services must be immediately approached.</p>
+                            <p>The availability of an electronic communication service is not interpreted as an undertaking to provide emergency medical consultations or continuous clinical follow-up.</p>
+                            </section>
+                            <section id="ab-terms-article-10" tabindex="-1">
+                            <h2>Article 10: Products, Descriptions and Images</h2>
+                            <p>Pharmaceuticals give reasonable care to present product data as clearly and accurately as possible.</p>
+                            <p>However, some packaging details, packaging designs or illustrative images may differ as a result of approved changes from manufacturers or product updates.</p>
+                            <p>Official statements printed on the packaging and approved pamphlets are of fundamental importance in identifying user instructions, warnings and components, taking into account the supplier ' s obligation to provide accurate and uncontested information.</p>
+                            <p>The images presented do not necessarily imply a match to each visual detail in the Muslim product, as long as the product conforms to agreed substantive specifications.</p>
+                            <p>In the event of an influential difference in the effective substance, concentration, size or basic specifications, the rules of conformity and consumer rights are applied, and an alternative product may not be imposed on the client without the consent of the client where necessary.</p>
+                            <p>Pictures of products may be taken on dates prior to the change of packaging, bulletin, trade name or packaging; pharmacies seek to correct pre-delivery differences, and the right to update images is not used to justify the supply of an effective substance, concentration or size of a different person required without updating the replacement and approval rules.</p>
+                            <p>When there is prima facie damage to the packaging or breach in statements of validity or integrity of closure, the delivery of the item may be discontinued for re-examination or exclusion, and the pre-delivery deficiency or damage is treated as an implementation problem that needs to be settled in accordance with the law, and the client is not required to accept a suspected product in his/her safety simply to complete payment.</p>
+                            </section>
+                            <section id="ab-terms-article-11" tabindex="-1">
+                            <h2>Article 11: Prices and Updates</h2>
+                            <p>Product prices are presented according to data available at the time of supply, with mandatory pricing rules as applicable.</p>
+                            <p>Prices may change in the future as a result of modifications by producers, competent authorities or legitimate trade policies.</p>
+                            <p>Subsequent price changes are not applied retroactively to confirmed transactions in violation of the law.</p>
+                            <p>If a technical error is detected in the price offer, pharmacies may review the transaction, notify the customer of the error and offer the right price or appropriate legal alternatives.</p>
+                            <p>The client is not required to pay additional amounts that have not been properly approved, nor may payments made for an application not executed without the settlement of his rights in accordance with the law be retained.</p>
+                            <p>Any additional expenses, such as delivery fees, are clearly identified before the completion of the contract.</p>
+                            <p>The cost of the delivery may vary from one request to another depending on the scope of the region, distance, time of flight, nature of the address, volume or weight of demand, number of legitimate extradition attempts, need for special processing or transfer, availability of delivery service at the time of implementation and remuneration of independent transport providers; these factors are not necessarily a single fixed equivalence, and pharmacies choose the pricing method applicable to service under the law.</p>
+                            <p>In cases where the site does not specify a final delivery fee, or provides an indicative amount that changes after the examination of the address or items, the branch may determine the fees in accordance with its applicable operational policy and establish them in its invoice or the correct accounting document; the customer shall be informed of the final cost and of any material difference before he or she is obliged to pay, and shall remain entitled not to complete the transaction or to waive it in general and shall not be imposed on such conditions.</p>
+                            <p>If the site is delayed by the price policy or service fee approved by the Branch, the final settlement of applications that have not been completed is presented in accordance with the correct data of the branch at the time of confirmation, indicating the difference and approving the client, while the price or fee that has become part of a binding contract is not modified unilaterally in contravention of the law; and mandatory pricing rules remain applicable in all cases.</p>
+                            </section>
+                            <section id="ab-terms-article-12" tabindex="-1">
+                            <h2>Article 12: Stock Availability</h2>
+                            <p>Products offered are subject to the actual availability of branches or legitimate sources of supply.</p>
+                            <p>There may be a temporary difference between electronic inventory data and actual inventory as a result of synchronization of requests, direct sale or operational updates.</p>
+                            <p>The emergence of a product as available is not an absolute guarantee of its continued existence throughout the time.</p>
+                            <p>Where a required item cannot be provided, the client is informed of the options available, which may include waiting for savings or choosing an appropriate alternative with his or her consent or removing the unavailable item.</p>
+                            <p>Medicines may not be replaced or their basic specifications changed in a manner contrary to professional assets or regulations.</p>
+                            <p>If the client has paid the value of a product that cannot be provided, the amount due shall be adjusted in accordance with the law and the agreed method of payment.</p>
+                            <p>Availability data are periodically updated and the purchase of the item from the branch may be synchronized with the inclusion of a request on the site; some quantities may not be implemented owing, inter alia, to the depletion of the inventory, its pre-treatment, the discovery or termination of the validity, the inappropriateness of the product to deliver by the available means, or the issuance of a control directive concerning the formulation.</p>
+                            <p>Pharmaceuticals may offer partial implementation after the clarification, cost and new delivery fee of available items, if they change, and the client ' s acceptance of part of the request does not imply the implicit approval of the replacement or retention of the value of the remaining items; what is due in non-implementation is provided in the manner and duration prescribed by law.</p>
+                            <p>Pharmacies are not obliged to provide a item that is not present by any means contrary to the rules of supply and pharmacies, nor are they required to accept an unqualified prescription or to execute a request that has been proven to be illicit, taking into account the impact on the client ' s amounts and rights.</p>
+                            </section>
+                            <section id="ab-terms-article-13" tabindex="-1">
+                            <h2>Article 13: Placing and Confirming Orders</h2>
+                            <p>The client must review items, quantities, prices, address and means of payment before the request is sent.</p>
+                            <p>The client may receive an electronic notice of receipt and processing of the application.</p>
+                            <p>The automated notice alone shall not be interpreted as confirmation of the availability of all items, unless the declared contracting mechanism does so.</p>
+                            <p>Applications containing restricted products are subject to review and the necessary documentation and requirements are met.</p>
+                            <p>Pharmacies are obliged to make available material information on remote contracting, and methods of confirmation, correction and modification of the application, in accordance with the legal provisions of the Organization.</p>
+                            <p>The client may be contacted to confirm the data, address the differences in availability or clarify information necessary for the execution of the request.</p>
+                            <p>The conditions of final treatment must be clear to the client, while preserving his or her right to induce or amend when determined by law.</p>
+                            <p>The request journey may consist of data entry, automatic receipt of the request, review by branch, confirmation of availability, cost and mode of delivery, then processing, payment or dispatch of the delegate; no notice of the contractual meaning itself; and the letters shall be interpreted as declared by the request mechanism and in accordance with the content of the notice, facts and contract provisions remotely.</p>
+                            <p>If implementation requires the determination of the delivery fee in the branch, the option of an alternative to an unavailable item or the modification of the address, these elements shall be clarified before the client is required to pay the new amount, and the site may issue a technical summary or reception notice that does not include the final delivery fee, while the invoice issued by the branch shall establish the actual cost approved after acceptance and completion of the transaction.</p>
+                            <p>Pharmacies retain the right to request telephone or electronic confirmation of unusual or specially cared requests, without making non-response a reason for maintaining unpaid amounts for products or services that have not been implemented, and without assuming that silence is accepted by an increase in fees.</p>
+                            </section>
+                            <section id="ab-terms-article-14" tabindex="-1">
+                            <h2>Article 14: Prescriptions and Dispensing Medicines</h2>
+                            <p>The offer of a pharmaceutical or the receipt of a request relating to it shall not entail the exemption of the client or the pharmacy from the requirements governing its discharge.</p>
+                            <p>Pharmaceuticals retain the right and obligation to demand a proper and confidential prescription when required by law.</p>
+                            <p>The recipe data may be verified, valid and appropriate to the product required by the authorized specialists.</p>
+                            <p>A request for medication may not be implemented if the legal requirements are not met, or if there are legitimate professional or regulatory reasons to prevent implementation.</p>
+                            <p>It is prohibited to provide false or unlawfully modified prescriptions or to use a recipe of another person in violation of the law.</p>
+                            <p>The posting of a medical recipe through the site does not allow any spontaneous medicine to be disbursed, as implementation remains subject to legal and professional controls.</p>
+                            <p>Professional review may require contact with the client to satisfy a prescription or query about concentration or pharmaceutical form, and the application may be suspended until the completion of legal requirements. If exchange cannot be completed, payments relating to the non-implemented item are dealt with in accordance with the recovery rules, and the mere electronic transmission of the recipe is not exempt from the requirements of origin or verification where necessary.</p>
+                            </section>
+                            <section id="ab-terms-article-15" tabindex="-1">
+                            <h2>Article 15: Products Subject to Special Restrictions</h2>
+                            <p>Some pharmaceuticals may be subject to special requirements relating to description, preservation, circulation, exchange, registration or delivery.</p>
+                            <p>Pharmacies are obliged not to carry out transactions contrary to those requirements.</p>
+                            <p>The application may be rejected or suspended when there is a lack of documentation or contrary to regulatory restrictions.</p>
+                            <p>The user may not attempt to dismember requests, use multiple accounts or provide improper data to circumvent the restrictions imposed.</p>
+                            <p>Nor is the availability of tariff data on a formulation an invitation to use it without professional supervision, or a declaration of its possible sale by unauthorized means.</p>
+                            <p>Some items may require direct delivery from the Branch, transfer on special terms or additional verification procedures prior to receipt, and may be excluded from delivery service if regulatory restrictions or conservation potential do not allow for safe transfer, and the emergence of the delivery option in a basket of these items is not interpreted as exceeding the pharmacist decision or legal requirement.</p>
+                            </section>
+                            <section id="ab-terms-article-16" tabindex="-1">
+                            <h2>Article 16: Alternative and Equivalent Medicines</h2>
+                            <p>Multiple products containing similar effective substances or performing convergent remedial purposes may be available.</p>
+                            <p>This does not mean that any formulation may be replaced by another without taking into account differences in concentration, pharmaceutical form, dose, grounds of use or prohibitions of use.</p>
+                            <p>The proposal for alternatives is subject to professional evaluation, legal controls and the consent of the client or doctor where necessary.</p>
+                            <p>Pharmacies are not responsible for the customer ' s self-sustaining change of treatment, dose or pharmaceutical form without reference to specialists, unless a breach by pharmacies of their legal or professional duties is established.</p>
+                            </section>
+                            <section id="ab-terms-article-17" tabindex="-1">
+                            <h2>Article 17: Online Payment</h2>
+                            <p>Pharmacies may provide multiple means of reimbursing the value of applications, depending on the services actually available.</p>
+                            <p>Electronic payments are subject to payment service providers ' conditions, in addition to the conditions for the treatment of the sale itself.</p>
+                            <p>The client must correctly enter the payment data and not use the means of payment that they do not have the right to use.</p>
+                            <p>Some transactions may be subject to additional verification procedures with a view to preventing fraud and protecting proprietors.</p>
+                            <p>Pharmaceuticals do not guarantee the uninterrupted functioning of the external payers ' regulations, but are committed to dealing with payment and settlement problems under their responsibility in accordance with the law.</p>
+                            <p>In the event that a financial adversary emerges without clear confirmation of the request, the client should communicate with the customer service to verify the status of the transaction.</p>
+                            <p>The user may appear to reserve an amount, attempt to deduct or a " processed " case before the completion of the reconciliation between the payment system and the branch system; the transaction is returned to the payment, invoice and valid confirmation notices, taking into account the client ' s right to recover duplicated damages or amounts relating to a service not provided in accordance with the law.</p>
+                            <p>If the review of the application entails charges of delivery not included in the site summary, the payment of the client is not automatically discounted without proper bond or consent and the fees approved by the branch at the time of delivery or in the legally available manner may be collected, provided that they are presented and agreed before the client is obligated and documented in the appropriate accounting document.</p>
+                            </section>
+                            <section id="ab-terms-article-18" tabindex="-1">
+                            <h2>Article 18: Promotions and Discounts</h2>
+                            <p>Presentations, discounts and coupons shall be subject to the stated requirements of each offer, including the duration of confidentiality, the range of products, the quantitative limits and any other legal requirements.</p>
+                            <p>No more than one offer may be combined unless the rules of offers permit it.</p>
+                            <p>Pharmacies may suspend or modify a future offer for legitimate commercial reasons, without prejudice to rights arising out of confirmed transactions.</p>
+                            <p>The use of coupons found to be obtained by fraudulent means may also be refused, modified or reused in contravention of declared conditions.</p>
+                            <p>The offers do not apply to products against which regulated laws or decisions are prohibited.</p>
+                            <p>No promotional declaration should be interpreted as a promise of a specificrapeutic or health outcome.</p>
+                            <p>Some offers may be limited to specific products, areas, subsidiaries or payment methods, and a reduced or free delivery may be announced on terms such as the value of the request or geographical scope; the applicable and declared terms of the offer at the time of the transaction, and the errors of modernization do not justify the discernment of a confirmed advantage or the imposition of an undeclared fee which the customer correctly agrees to.</p>
+                            <p>If removal of an unavailable item reduces the value of the application from a particular supply of delivery, the client shall be informed of the adjusted cost if any and the choice between the legitimate solutions; the recalculation of the floor shall not be deemed to be an unacceptable or unlawful increase.</p>
+                            </section>
+                            <section id="ab-terms-article-19" tabindex="-1">
+                            <h2>Article 19: Delivery Services</h2>
+                            <p>Delivery services are provided in areas where operational potential and legal rules permit service.</p>
+                            <p>Delivery dates and costs may vary depending on geographical location, volume of demand, nature of products and operating conditions.</p>
+                            <p>The dates given shall be estimated, unless a binding date is expressly agreed upon in accordance with the nature of the transaction.</p>
+                            <p>Delivery dates may be affected by conditions of passage, air conditions, malfunctions or exceptional circumstances beyond reasonable control.</p>
+                            <p>This is not interpreted as an exemption from the obligation to extradite or from the client ' s rights established upon delay or non-implementation.</p>
+                            <p>The client is obliged to provide a proper address and appropriate communication information to facilitate delivery.</p>
+                            <p>Products requiring special conditions of transport or storage remain subject to applicable technical requirements.</p>
+                            <p>Delivery service is subject to updated geographical and operational ranges and may include delivery to the property door or a specific unit in acceptable order, location suitability and security and safety procedures; the cost of the journey may vary according to the implementing section and after the address, the timing of the request, the overcrowding, weather conditions or the high demand for service.</p>
+                            <p>The site does not need to offer a final value of the delivery fee in all cases; however, the fee may be calculated at the branch when the request is processed or the delegate ' s course is determined in the invoice or document issued by the branch according to its system, even if the summary of electronic commerce is free of this statement or has shown a different estimate; however, the cost of shipment, delivery and all additional amounts must be properly disclosed before the binding contract is completed or collected, and the customer must be accepted as approved by law.</p>
+                            <p>The client ' s acceptance of a delivery fee for a previous request does not constitute an open approval for future fees; the operational policy may change or the branch or scope of service may change; if a new delivery fee is not accepted before the confirmation of the request, the client may apply for an available alternative, receive the branch or cancel the application, and settle the payment in accordance with the law.</p>
+                            <p>If the delivery of a particular item becomes unsafe due to temperature requirements, pregnancy restrictions or transportation conditions, pharmacies are entitled to suspend transmission or to propose a legitimate alternative means, and a product whose safety has been compromised must not be sent to meet an estimated date.</p>
+                            </section>
+                            <section id="ab-terms-article-20" tabindex="-1">
+                            <h2>Article 20: Delivery Address Information</h2>
+                            <p>The client is responsible for providing accurate, clear and sufficient address data to determine the place of delivery.</p>
+                            <p>The required data include, as needed, the number of real estate, street, area, role, apartment, extension mark and telephone number.</p>
+                            <p>The client may be contacted to clarify the address or confirm access.</p>
+                            <p>If delivery is not possible because of improper data provided by the client, delivery may be recoordinated in accordance with the declared policies and the legal rights of the parties.</p>
+                            <p>Pharmacies are not responsible for the delay arising exclusively from the client ' s constant error in the address data, with a commitment to provide reasonable care to address the problem when it is possible.</p>
+                            <p>The discretionary delivery fee may be adjusted if it is found that the address is outside the scope of the client or requires a different distance or time, provided that the change is reported to the client prior to its final commitment to the new amount; some restricted entry sites, unmanned roads or areas with special security procedures may be considered outside the normal service in accordance with established or available pre-contracting criteria.</p>
+                            <p>The client is obliged to provide secure and legitimate access instructions, and the delegate is not obliged to enter a prohibited place or to implement instructions that threaten his safety or the integrity of the request, and an alternative point of receipt may be arranged with the consent of the client, without prejudice to his or her rights if the service cannot be provided.</p>
+                            </section>
+                            <section id="ab-terms-article-21" tabindex="-1">
+                            <h2>Article 21: Receiving Orders</h2>
+                            <p>The client or person authorized to receive the request shall be obliged to review the application upon receipt to the extent possible and reasonable.</p>
+                            <p>It would be preferable to verify the number of packagings, the prima facie situation and the absence of clear damage in the packaging.</p>
+                            <p>If there is a lack, apparent damage or discrepancy in the items, customer service should be notified as soon as possible to facilitate examination and treatment.</p>
+                            <p>Failure to report promptly does not mean that legal rights relating to defects or non-conformity are lost.</p>
+                            <p>Some products may require delivery to the person concerned or verification of specific documents according to the regulations of the organization.</p>
+                            <p>Delivery of a restricted product may be refrained if the legal requirements for its extradition cannot be met.</p>
+                            <p>Actual delivery is an important subject of verification of items, quantities and apparent status, and extradition may be documented by signature, verification code, record or electronic record as available, without making any individual evidence conclusive evidence undisputable to the integrity of each product or the validity of each claim.</p>
+                            <p>If the product is broken, damaged or unconformed at the time of its delivery, it should not be used and pharmacies should be reported for examination and treatment, and the client is not obliged to bear damage that has been established before the transfer of possession to it in circumstances where the supplier ' s obligation is established by law, nor is his right to manifest defects simply to sign receipt or not to open the packaging to the delegate.</p>
+                            </section>
+                            <section id="ab-terms-article-22" tabindex="-1">
+                            <h2>Article 22: Storing Products After Receipt</h2>
+                            <p>The client must adhere to the conservation and storage instructions received on the packaging or approved bulletin.</p>
+                            <p>These instructions include, depending on the nature of the product, appropriate temperatures, protection against light, humidity, non-freezing or exposure to excessive heat.</p>
+                            <p>Incorrect storage may alter the characteristics of some formulations, reduce their quality or their inability to use.</p>
+                            <p>Pharmacies shall not bear the damage caused solely by the poor storage after the client ' s transfer of possession, if proved, without prejudice to its responsibility for the safety of the product and the conditions for its preservation and transfer prior to delivery.</p>
+                            <p>The client must return to the pharmacist when a product is suspected of being subjected to inappropriate preservation conditions.</p>
+                            <p>Some formulations may require a refrigeration chain or protection from light, humidity or vibration; the choice of means of transport shall take into account specifications and regulations and shall not offer a means of delivery that cannot maintain the integrity of the formulation when the law or professional assets require a special technical requirement.</p>
+                            <p>If pre-delivery shows that a formulation is subject to heat or damage that may affect its validity, it may be discontinued, reassessed, replaced or reimbursed according to the legal situation and rights, the delay in delivery resulting from the protection of the safety of the customer shall not be considered an absolute leave to dismiss all responsibilities.</p>
+                            </section>
+                            <section id="ab-terms-article-23" tabindex="-1">
+                            <h2>Article 23: Proper Use of Medicines</h2>
+                            <p>Products must be used in accordance with their purpose and the instructions and warnings adopted.</p>
+                            <p>Purchase of a pharmaceutical product may not be considered to ensure that it is fit for every person or for every health condition.</p>
+                            <p>Doses, dates and duration of use identified by specialists should be adhered to when needed.</p>
+                            <p>The doctor or pharmacist should also disclose the health information necessary to make a sound professional decision, while respecting personal data protection controls.</p>
+                            <p>The response to formulations varies among individuals, and a unified remedial outcome or the absence of all side effects of each user cannot be guaranteed.</p>
+                            <p>Pharmacies shall not bear the consequences exclusively of misuse, contravention of instructions or use of the product for its illicit purposes, without prejudice to any established legal liability.</p>
+                            <p>Pharmacies shall not bear the consequences of the redistribution of medicines among family members or of giving them to an unintended person or the alteration of dose and duration after receipt contrary to the proper instructions, once the damage has been proved to have arisen exclusively from such behaviour and without prejudice to the duties of pharmacies in exchange, awareness and warning.</p>
+                            </section>
+                            <section id="ab-terms-article-24" tabindex="-1">
+                            <h2>Article 24: Allergies and Side Effects</h2>
+                            <p>Some pharmaceuticals, cosmetics or health products may cause side effects or sensory interactions among some users.</p>
+                            <p>Components and warnings must be reviewed before use, especially when there is a known history of sensitivity.</p>
+                            <p>In the event of unusual symptoms, use should be discontinued when medical guidance so requires and appropriate professional advice.</p>
+                            <p>Serious symptoms require urgent medical intervention.</p>
+                            <p>Legal liability for the known and declared side effect of the formulation upon its proper use varies from liability arising from a product ' s defect, failure to conserve, process, provide or disburse the product.</p>
+                            <p>Liability is determined in each case in accordance with applicable facts, evidence and laws.</p>
+                            </section>
+                            <section id="ab-terms-article-25" tabindex="-1">
+                            <h2>Article 25: General Exchange and Return Policy</h2>
+                            <p>Abdin Pharmacies respect the consumer ' s rights under the Egyptian Consumer Protection Act and its implementing regulations, including those relating to substitution, retrieval and discontinuation.</p>
+                            <p>In general, consumers enjoy the right to replace and retrieve during legally prescribed periods, including the right to replace or retrieve within 14 days of receipt of the goods without reason, taking into account the legal exceptions relating to the nature and condition of certain goods.</p>
+                            <p>Consumer also enjoys rights with respect to defective or non-conforming products, including rights established within 30 days of receipt, extensions and best or special guarantees when applicable.</p>
+                            <p>This policy may not be interpreted as depriving the consumer of its legal rights.</p>
+                            <p>Exceptions are applied according to the nature and circumstances of the product, the relevant legal texts and regulatory decisions.</p>
+                            <p>The substitution and retrieval rules established shall be applied by law, taking into account the specific exceptions to the product ' s quality and condition, and in terms of origin, the consumer protection system shall reflect the consumer ' s right to return or replace the goods within fourteen days without reason, with exceptions, and the right to deal with defective goods within 30 days, without prejudice to better or special guarantees.</p>
+                            <p>Recharge provisions may differ depending on the reason for restitution, the nature of the right exercised and the terms of the remote contract and the regulations. Where a defect has been established, a failure to conform or an error of pharmacies is established, the customer may not be charged expenses for which the charge is prohibited by law; the previous delivery fee is not used as a reason for withholding the value of a product for which the law requires payment.</p>
+                            </section>
+                            <section id="ab-terms-article-26" tabindex="-1">
+                            <h2>Article 26: Special Rules for Medicine Returns</h2>
+                            <p>Pharmaceuticals and products whose safety is affected by storage and handling conditions are subject to special controls that require the safety of patients and the quality of products.</p>
+                            <p>The nature or characteristics of certain products, the manner in which they are mobilized or the requirements for their preservation may prevent their return from being accepted in cases where the exception is permitted by law.</p>
+                            <p>In particular, consideration is given to whether the integrity of the product can be ascertained and not exposed to conditions affecting its viability or characteristics.</p>
+                            <p>A renegotiation of a refrigerated formulation may be possible only if the legal and technical rules permit it.</p>
+                            <p>This provision does not dismiss the client ' s right to claim compensation, replacement or recovery of value when there is a defect, failure or error in the execution of the application, where the requirements of the right are provided by law.</p>
+                            <p>Each request for retrieval is evaluated according to the nature of the item, available evidence and regulatory controls.</p>
+                            <p>Some formulations are not suitable for return to the circulation cycle after they are transferred to the client ' s possession if the circumstances of their preservation cannot be verified, and any treatment of drug residues shall be subject to the controls of the Egyptian medicine authority and the professional and organizational rules of each category; the exception to the restitution of medicine may not be circulated as an absolute prohibition of each claim relating to exchange error, defect or non-conformity.</p>
+                            <p>In the event of cancellation or non-execution of the request prior to delivery, the settlement differs from the attempt to return a formulation received; it takes into account whether the value has already been obtained, whether the service has been performed, and what is required by law to reimburse or recalculate amounts.</p>
+                            </section>
+                            <section id="ab-terms-article-27" tabindex="-1">
+                            <h2>Article 27: How to Request a Return</h2>
+                            <p>The client may apply for replacement or retrieval through approved customer service channels.</p>
+                            <p>It would be preferable to provide the number of demand or invoice, to describe the problem and information that would help to identify the product and treatment.</p>
+                            <p>Explanatory photographs or examination of the product may be requested when needed, but this may not become an unlawful impediment to the exercise of legal rights.</p>
+                            <p>Applications are examined according to the nature and duration of the problem.</p>
+                            <p>In the event of a proven defect, error or non-conformity with a legal right to replace or retrieve, treatment measures shall be taken without charge to the consumer of costs for which the law prohibits them.</p>
+                            <p>The application is not denied simply because the outer casing is not retained if the refusal is contrary to an existing legal right.</p>
+                            <p>An enforcement or delivery complaint may be examined on the basis of demand data, notices, invoices, delivery records and damage photographs where necessary, and pharmacies do not require evidence that the consumer cannot reasonably obtain if a legal right is impaired.</p>
+                            <p>Pharmaceuticals may examine communications alleging non-access, deficiency or incorrect receipt of an item, reconcile the data with the records of the branch, the delegate and the propellant, while preserving the client ' s right to resort to the competent authorities without requiring prior internal settlement.</p>
+                            </section>
+                            <section id="ab-terms-article-28" tabindex="-1">
+                            <h2>Article 28: Refunds</h2>
+                            <p>The amounts owed to the client are reimbursed in accordance with the laws governing the nature of the transaction and the means of payment used.</p>
+                            <p>The payment shall be made in the same way as the original payment, unless the parties agree on another means of a law award.</p>
+                            <p>The amounts assessed for reimbursement are taken into account, including provisions for remote contracting and returns of products.</p>
+                            <p>Some e-recovery operations may require additional time to appear in the client ' s account as a result of the actions of the banker or payment service provider.</p>
+                            <p>Pharmacies may not reserve a receivable of restitution without legal authority.</p>
+                            <p>In the event of a disagreement as to the value or components of the amount, the client is available to communicate with the customer service and to provide the necessary documentation for the examination of the transaction.</p>
+                            <p>If the application cannot be fully implemented owing to the depletion of a item or the impossibility of a project in the supply, the interruption of the delivery service or a foreign cause, the original financial adjustment of the unimplemented application includes the restitution of previously collected products or services that have not been provided, in accordance with the terms and means prescribed by law; if a portion of the request is executed, the amounts due shall be calculated for the refund of the unimplemented portion after the receipt has been properly stated independent fee has been shown.</p>
+                            <p>To the extent permitted by law, pharmacies are not considered as guarantors for any hypothetical benefit or alleged commercial profit as a result of the non-completion of an ordinary application, nor does an automatic obligation to pay additional compensation arise simply because of a request cancelled for reasons beyond their control, but the consideration of payment as a fundamental settlement does not exclude compensation, reimbursement of expenses, any sanction or other right established by law if the cause of entitlement is established, and does not limit liability for the safety or serious breach of the patient.</p>
+                            <p>Refunds take into account whether the financial deduction has already been made or is merely a bank authorization or reservation not completed, and the duration of its appearance in the account may depend on paid procedures with the obligation of pharmacies to carry out the procedures to which they are subject by law.</p>
+                            </section>
+                            <section id="ab-terms-article-29" tabindex="-1">
+                            <h2>Article 29: Changing and Cancelling Orders</h2>
+                            <p>The client may request that the request be amended or cancelled in accordance with the declared mechanisms and legal rights relating to remote contracting.</p>
+                            <p>The possibility of operational adjustment may vary depending on the demand processing stage and the nature of the products.</p>
+                            <p>The start-up or shipment of the request does not result in the loss of a client ' s statutory right to induce or retrieve.</p>
+                            <p>Provisions relating to the right to rectify or modify a request and to refrain from contracting are applied in accordance with the Consumer Protection Act and its implementing regulations.</p>
+                            <p>If a specific amendment cannot be implemented for legitimate reasons, the client shall be notified of the options available without prejudice to his or her rights.</p>
+                            <p>Items may not be modified after processing or dispatching for operational reasons, but legal rights relating to remote contracting, delay, non-delivery and recovery remain in place where applicable; a request that has not met a legal requirement, is not possible to provide or has shown serious fraud indicators, with notice of the customer and settlement of outstanding payments may be cancelled.</p>
+                            <p>If the client requests that the place of delivery be changed after the cost is approved, this may require a new account of the transportation fee in accordance with the branch ' s policy, the client ' s acceptance is required prior to the receipt of the increase, and the refusal of the adjusted wage does not result in automatic loss of the client ' s rights for payment or expenses to be reimbursed by the law.</p>
+                            </section>
+                            <section id="ab-terms-article-30" tabindex="-1">
+                            <h2>Article 30: Fraudulent Orders and Misuse</h2>
+                            <p>Pharmacies retain the right to take appropriate action when there are serious indications of fraud or misuse.</p>
+                            <p>Such cases may include the use of unauthorized means of payment, false statements, repeated fictitious requests for damage, or attempts to obtain illicitly restricted formulations.</p>
+                            <p>The execution of the transaction may be suspended to the extent necessary to verify its legality, taking into account the legal rights of the client.</p>
+                            <p>When an unlawful act of damage is established, pharmacists may claim their rights before the competent authorities.</p>
+                            <p>These provisions may not be used to restrict legitimate complaints or to exercise the legal rights of consumers.</p>
+                            <p>Unauthorized payment requests, intentional incorrect addresses or repeated requests for decommissioning may be treated with caution, and records may be consulted to establish facts; these provisions shall not be interpreted as allowing pharmacies to punish an agent simply for repeating a legitimate complaint or rejecting an unaccepted fee.</p>
+                            </section>
+                            <section id="ab-terms-article-31" tabindex="-1">
+                            <h2>Article 31: Personal Data Protection</h2>
+                            <p>Abdin Pharmacies respect the privacy and personal data of users of their location.</p>
+                            <p>Services may require the collection and processing of some data necessary to implement requests, communication, accounting or legal obligations.</p>
+                            <p>Data are dealt with at the borders, purposes and legal bases established under the relevant Egyptian legislation, in particular the Personal Data Protection Act No. 151 of 2020 and its implementing regulations.</p>
+                            <p>Data may not be used or disclosed in violation of the law.</p>
+                            <p>The addressee is obliged to take the necessary regulatory and technical measures to protect the data and to enable its owners to exercise their legal rights.</p>
+                            <p>Details of data collection, processing, retention, disclosure and rights of authors are subject to applicable legal provisions and disclosures of privacy.</p>
+                            <p>Data necessary to assign the request to a branch, organize the route of the delivery delegate, communicate with the client, prove delivery or recover payment may be processed within the prescribed legal purposes and grounds, and data on prescriptions or health cases may be used for marketing or participation for other purposes only where the law permits and meets its requirements.</p>
+                            </section>
+                            <section id="ab-terms-article-32" tabindex="-1">
+                            <h2>Article 32: Sensitive Health Data</h2>
+                            <p>Some requests or inquiries may include information of a healthy nature, such as prescriptions, formulation names or data on the satisfactory situation.</p>
+                            <p>Such information shall be subject to the protection of sensitive personal data when applicable to it by legal description.</p>
+                            <p>Such data shall be collected, used, maintained or shared only in accordance with the grounds, approvals, licences and permits required by law.</p>
+                            <p>It must be limited to persons authorized and to the extent necessary for the performance of their legitimate functions.</p>
+                            <p>The transmission of health information to the site does not automatically allow the user to be used for any marketing or commercial purpose not related to the required service.</p>
+                            <p>Children ' s statements and parents ' consent shall be taken into account whenever necessary.</p>
+                            </section>
+                            <section id="ab-terms-article-33" tabindex="-1">
+                            <h2>Article 33: Cookies and Analytics</h2>
+                            <p>The site may use attachment identification files and similar techniques for operational, security or analytical purposes or to improve user experience, depending on the techniques actually used.</p>
+                            <p>The use of these techniques is subject to the requirements of notification, approval and selections established by law.</p>
+                            <p>The disruption of some of the necessary correlation files may affect the core functions of the site.</p>
+                            <p>The categories of these techniques, their use and duration of retention and their associates are subject to legal controls and relevant privacy disclosures.</p>
+                            <p>General consent to conditions and conditions may not be used as a substitute for separate consent when such consent is required by law.</p>
+                            </section>
+                            <section id="ab-terms-article-34" tabindex="-1">
+                            <h2>Article 34: Communications and Messages</h2>
+                            <p>Pharmaceuticals may send notices concerning requests, payments, delivery, retrieval, account security or operational matters necessary for the implementation of the transaction.</p>
+                            <p>Promotional messages and marketing presentations are subject to relevant legal approvals and controls.</p>
+                            <p>The employee may exercise his or her right to refuse or withdraw his or her consent to marketing contacts through the means provided by pharmacies in accordance with the law.</p>
+                            <p>Abolition of participation in marketing letters does not necessarily result in the suspension of notices required to implement existing requests or to fulfil legal obligations.</p>
+                            <p>The communication, text message or communication method chosen by the client may be used to inform him that no item is available, an initial delivery fee is modified or a new date is proposed, and it is not simply to send a notice at a higher cost acceptable to the client if the nature of the contract or the law requires its consent, and the proof of acceptance of the amendment should be preserved where necessary.</p>
+                            </section>
+                            <section id="ab-terms-article-35" tabindex="-1">
+                            <h2>Article 35: Website Security and Service Availability</h2>
+                            <p>Pharmacists seek to operate the site in a stable and secure manner, applying appropriate measures for the nature of the service.</p>
+                            <p>However, temporary interruptions may occur as a result of maintenance, technical updates, malfunctions, electronic attacks or conditions beyond reasonable control.</p>
+                            <p>The provision of the site is not an undertaking to ensure its uninterrupted operation at all times.</p>
+                            <p>Maintenance, updates or temporary suspension of certain functions may be carried out to protect regulations or improve performance.</p>
+                            <p>Pharmacies shall not bear losses arising exclusively from interruptions beyond their legal and actual control, to the extent permitted by law, without prejudice to their liability for any fixed default or obligations existing towards customers.</p>
+                            <p>The synchronization of e-commerce information with branch regulations, delivery company records or propellant may be delayed, which explains the possibility of an unfinished request or offering a different indicative fee; pharmacies address the conflicting situation by reviewing the actual situation and informing the client of the correct data before it is obligated to do so and correct the error without dropping the effect of any binding contractual confirmation.</p>
+                            </section>
+                            <section id="ab-terms-article-36" tabindex="-1">
+                            <h2>Article 36: External Links and Services</h2>
+                            <p>The site may contain links to sites or services of independent parties, such as payment companies, manufacturers or technical service providers.</p>
+                            <p>The reference to an external party does not imply the adoption of all its contents, policies or guarantees.</p>
+                            <p>Independent services are subject to the requirements of their providers, to the extent that they do not conflict with the client ' s rights to be treated with pharmacies.</p>
+                            <p>Pharmacies do not have responsibility for the content or practices of an independent external party that did not have control over it or a legal contribution to the damage caused.</p>
+                            <p>This regulation does not prejudice any liability established by law for pharmacies to select service providers or their work or to breach their consumer obligations.</p>
+                            <p>Delivery may be accomplished by a branch delegate, an independent transporter or a technical service provider who organizes trips; it does not mean that all the responsibilities of the supplier are transferred automatically; responsibilities are determined depending on contracts, facts and legal rules, in particular those relating to the safety of formulations and consumer rights.</p>
+                            <p>Pharmacies do not ensure that there is no incidental circumstance beyond their control by an independent party, but they are bound by the law ' s appropriate selection, reasonable procedures, follow-up and settlement of requests; in turn, they are not responsible for acts separate from the transaction that are not attributable to them by law, provided that the dispute is decided by evidence and by law.</p>
+                            </section>
+                            <section id="ab-terms-article-37" tabindex="-1">
+                            <h2>Article 37: Intellectual Property Rights</h2>
+                            <p>Intellectual property rights relating to emblems, commercial identity, original content, designs and materials published belong to their legitimate owners.</p>
+                            <p>The content shall not be copied, redisseminated or commercially exploited without a permit or legal authority.</p>
+                            <p>The use of the site does not give the user any ownership or commercial licence in the labels or protected materials.</p>
+                            <p>Information available for legitimate personal use may be used within the limits permitted by law.</p>
+                            <p>Pharmacies retain the right to take appropriate legal action to protect their markings, content and legitimate rights.</p>
+                            </section>
+                            <section id="ab-terms-article-38" tabindex="-1">
+                            <h2>Article 38: Limits of Legal Liability</h2>
+                            <p>Abdin Pharmacies are bound by the law ' s responsibilities for the safety and conformity of products, storage, circulation, exchange and delivery, consumer protection and personal data, and any other applicable obligations.</p>
+                            <p>To the extent permitted by the law, pharmacies are not liable for damages found to have arisen exclusively from:</p>
+                            <p>1. intentional use of products in contravention of proper instructions and warnings.</p>
+                            <p>2. Incorrect or misleading material information provided by the user.</p>
+                            <p>3. Use of formulations by persons not assigned to them in violation of medical controls.</p>
+                            <p>4. Modification of packagings or tampering with contents of products after delivery.</p>
+                            <p>5. Poor storage after the transfer of possession to the client.</p>
+                            <p>6. Unlawful use of the account as a result of an independent act of the user or other, with no breach of the duty of proof by pharmacies.</p>
+                            <p>7. External circumstances that cannot reasonably be expected or paid, if the conditions of the foreign cause are legally available.</p>
+                            <p>The limits of liability set forth in this article do not apply to situations where exemption or restriction is prohibited by law, including responsibilities arising from a product ' s defect, failure to conserve, trade or breach of legal and professional obligations where the requirements are met.</p>
+                            <p>If a product cannot be provided because of the depletion or exclusion of inventory for lack of safety, network failure, regulatory restriction or force majeure that meets the legal requirements and is not supplied to the client, the treatment of the amount paid for the non-implemented part shall be the basic financial obligation in cases where no other liability is established; pharmacies shall not be obliged to ensure that the customer obtains an unavailable product or seizes it from an illicit source or to compensate claims without legal support.</p>
+                            <p>Such limits of liability, however, are not a general exemption from professional errors, delivery of defective producer, concealment of fees, non-payments or breach of obligations to declare prices or a peremptory obligation; if a fixed error entails damage to which the law requires reparation, the legal provisions are applied, and a general condition of the site cannot invalidate the client ' s right to compensation.</p>
+                            <p>Pharmacies shall not be liable solely for damages arising from the intentional filing of an intentional wrong address or the rejection of a project for the delivery or mispreservation of the product after receipt or abuse, if the reasons for the absence of legal liability are available, and the burden of proof shall be borne by the claimant or the other party, in accordance with applicable rules, without the unlawful reversal of the burden of proof on the consumer.</p>
+                            </section>
+                            <section id="ab-terms-article-39" tabindex="-1">
+                            <h2>Article 39: No Guarantee of Individual Results</h2>
+                            <p>Pharmacies do not provide a general guarantee of a specific remedial or cosmetic result for each user simply to purchase a product from the site.</p>
+                            <p>The results may vary depending on individual characteristics, method of use, state of health and other factors.</p>
+                            <p>Public opinions or personal assessments published on a product, if any, are not conclusive evidence of access by all users to the same results.</p>
+                            <p>Nor does general information explain the potential benefits of formulations as a personal promise of healing or improvement.</p>
+                            <p>This does not prejudice the obligation of pharmacists not to publish misleading information or unaccredited remedial allegations, or their responsibility for any relevant legal offence.</p>
+                            </section>
+                            <section id="ab-terms-article-40" tabindex="-1">
+                            <h2>Article 40: Exceptional Circumstances and Force Majeure</h2>
+                            <p>Pharmacies are not liable for non-implementation or delay, which is established to be a direct result of force majeure or a foreign cause in which legal requirements are met.</p>
+                            <p>Exceptional circumstances, depending on their nature and the applicability of force majeure clauses, may include natural disasters, emergency government decisions, public disturbances or severe malfunctions beyond control.</p>
+                            <p>Pharmacies are obliged to take reasonable action to limit the effects of these circumstances when possible.</p>
+                            <p>The occurrence of an exceptional circumstance does not entail the loss of consumer rights in the recovery of funds, termination of contract or claiming other rights when determined by law.</p>
+                            <p>The sequence of requests may affect conditions such as large-scale disruption of electricity or communications, closure of roads, natural disasters, urgent formal decisions, severe disruptions to transport or interruption of supply for reasons beyond reasonable control; not all of these are automatically force majeure; rather, the extent to which they meet the requirements of the foreign cause and their real impact on the treatment is considered.</p>
+                            <p>When the reason for the project to implement the application is finally prevented, pharmacies shall report to the client as far as possible and take steps to reimburse the unimplemented part or agree on a legitimate alternative, and shall not invoke the exceptional circumstance of maintaining an exchange for goods that have not been delivered without legal authority or for the termination of jus cogens.</p>
+                            </section>
+                            <section id="ab-terms-article-41" tabindex="-1">
+                            <h2>Article 41: User Responsibility for Unlawful Acts</h2>
+                            <p>The user is obliged not to engage in unlawful acts that cause harm to pharmacies, their employees or other users.</p>
+                            <p>If an employee is found to have committed an unlawful act resulting in direct harm, pharmacies may claim compensation in accordance with general legal rules.</p>
+                            <p>This article is not interpreted as requiring the user to compensate pharmacies for merely filing a complaint, exercising a legal right or objecting to a transaction.</p>
+                            <p>Nor are any liability imposed by law on pharmacies or their service providers transferred to the user.</p>
+                            </section>
+                            <section id="ab-terms-article-42" tabindex="-1">
+                            <h2>Article 42: Complaints and Customer Service</h2>
+                            <p>Pharmacies are obliged to provide an appropriate means of receiving client complaints and inquiries regarding products, services and transactions.</p>
+                            <p>The client can lodge a complaint through official communication channels posted on the site.</p>
+                            <p>It would be preferable to include the number of requests, the description of the problem and any information or documents that would assist in its examination.</p>
+                            <p>Complaints are reviewed in accordance with their nature and the relevant legal and professional obligations.</p>
+                            <p>Client service procedures do not prevent consumers from resorting to the Consumer Protection Service, the Egyptian Medicine Authority or competent supervisory and judicial bodies.</p>
+                            <p>Access to pharmacies ' consent is not required before the exercise of legal rights to file complaints or communications.</p>
+                            <p>The subjects of the complaints include the difference in the actual remuneration for delivery from the site, the absence of additional charges, the absence of access by the delegate, the lack of items, apparent or hidden damage, or the delay in the payment of a payment, and the complaint is examined by reference to invoice, demand data, confirmations, available correspondence and relevant evidence.</p>
+                            <p>The client is not required to accept a settlement which is less than his legal right in exchange for simply receiving his complaint and does not prevent any operational restriction from filing a complaint with the Consumer Protection Service, the Egyptian Medicine Authority or the competent authority.</p>
+                            </section>
+                            <section id="ab-terms-article-43" tabindex="-1">
+                            <h2>Article 43: Updates and Changes to These Terms</h2>
+                            <p>Pharmacies may update these conditions and provisions from time to time to keep pace with operational, technical, regulatory or legal developments.</p>
+                            <p>The updated version is advertised through the site, with its entry into force in accordance with legal requirements.</p>
+                            <p>Amendments may not be applied retroactively to existing transactions if they result in a reduction in acquired rights or breaches of legal obligations.</p>
+                            <p>The user is advised to review the requirements periodically, especially before new transactions are completed.</p>
+                            <p>In cases where the law requires new approval or specific notification, pharmacies are bound by due process.</p>
+                            <p>The policy of calculating fees for deliveries, areas or means of reimbursement available to future requests can be changed, with substantive updates being published and duly disclosed; a general amendment declaration is not used to reprimand a completed application without the necessary bond or approval, nor to change the rights of retrieval that arose prior to the amendment.</p>
+                            </section>
+                            <section id="ab-terms-article-44" tabindex="-1">
+                            <h2>Article 44: Electronic Records and Evidence</h2>
+                            <p>Pharmacies may keep transaction logs, requests, invoices, confirmation notices and correspondence to the extent and to the extent permitted or imposed by law.</p>
+                            <p>These records may be used to establish business processes, to process complaints or to meet accounting and regulatory obligations.</p>
+                            <p>Electronic records and methods of reference are subject to evidence, electronic signature and data protection.</p>
+                            <p>This article does not deprive the client of providing counter-substantiation or challenging the validity or content of any record by legal means.</p>
+                            <p>The application numbers generated by the site may differ from the invoices issued by the branches and from the payment and transportation references, and may be administratively linked to establish the course of the transaction; the different number of the document does not preclude the proof of the transaction, nor does the registry of the application on the site make an alternative to a legally binding invoice if its data are not met.</p>
+                            <p>Where the value of the delivery fee is different in the site summary and the branch ' s invoice, the letters presented to the client and the statements before them, the nature of the confirmation and the requirements of the law shall be reviewed. The bill adopted shall be considered as an important record of settlement, without having any effect on correcting a fee that the client has not consented to or dismissing a right arising from a binding offer or contract.</p>
+                            </section>
+                            <section id="ab-terms-article-45" tabindex="-1">
+                            <h2>Article 45: Applicable Law</h2>
+                            <p>Transactions and services provided by Abdin Pharmacies within the Arab Republic of Egypt are subject to applicable Egyptian laws.</p>
+                            <p>These laws include, depending on the nature of the transaction, consumer protection legislation, pharmacology, regulation of the handling of formulations, personal data and electronic transactions.</p>
+                            <p>Disputes are brought to the attention of the competent judicial authorities by law, without prejudice to the established competences of the regulatory and administrative bodies or consumer protection rights.</p>
+                            <p>This requirement does not include any prior waiver of jurisdiction or legal right that cannot be waived.</p>
+                            <p>Items relating to electronic sale, delivery, fees and discards shall be read, in particular, in the light of the Consumer Protection Act No. 181 of 2018, its implementing regulations and the relevant rules, in a manner not inconsistent with the provisions of the Egyptian Medicine Authority and the competent regulatory bodies, and the general wording shall not give priority to an internal policy on a legally binding or regulatory decision.</p>
+                            </section>
+                            <section id="ab-terms-article-46" tabindex="-1">
+                            <h2>Article 46: Severability</h2>
+                            <p>If it is found that one of the provisions of this document is ineffective, invalid or contrary to a legal order, this does not automatically invalidate the other provisions that can be applied independently and legitimately.</p>
+                            <p>The provision in question shall be interpreted and applied to the extent permitted by law, without creating new obligations contrary to the will of the parties or the legal rules.</p>
+                            <p>This principle may not be used to maintain a requirement that is unjust or contrary to consumer rights established by law.</p>
+                            </section>
+                            <section id="ab-terms-article-47" tabindex="-1">
+                            <h2>Article 47: No Waiver of Rights</h2>
+                            <p>Failure to exercise pharmacies of any right established by law on a given occasion is not a permanent waiver of this right.</p>
+                            <p>The failure of the client to claim him immediately shall not be considered a waiver if the law allows him to exercise it within a specified period of time.</p>
+                            <p>Any settlement or waiver of a right is applicable only in accordance with the conditions and forms required by law.</p>
+                            </section>
+                            <section id="ab-terms-article-48" tabindex="-1">
+                            <h2>Article 48: Patient and Customer Safety First</h2>
+                            <p>Abdin Pharmacies place the safety of patients and clients as a fundamental consideration in the delivery of their services.</p>
+                            <p>Therefore, it may make a legitimate professional or regulatory decision to suspend or reject the exchange of a producer when there are legal or pharmaceutical grounds for doing so.</p>
+                            <p>No electronic request or payment process may be interpreted as an obligation to dispose of a formulation in violation of the law or professional assets.</p>
+                            <p>In such cases, payments and unimplemented requests are dealt with in accordance with the client ' s legal rights.</p>
+                            <p>If the expected speed of delivery is in conflict with the safety requirements of a pharmaceutical, safety and professional compliance shall be a priority. Pharmacies may suspend transmission, request receipt from the branch or arrange an appropriate means, indicating options and adjusting the value as required by law, without an unlawful undertaking of a remedial outcome or an untimely date.</p>
+                            </section>
+                            <section id="ab-terms-article-49" tabindex="-1">
+                            <h2>Article 49: General and Final Provisions</h2>
+                            <p>These conditions and provisions represent the general framework for the use and handling of the website, together with the policies of privacy, replacement, retrieval, delivery and any special conditions clearly declared prior to contracting.</p>
+                            <p>This document is applied in accordance with Egyptian laws, consumer protection provisions and professional and regulatory rules.</p>
+                            <p>No provision may be interpreted as authorizing unauthorized activity, depriving the consumer of a legal right, or exempting from liability from which the law does not permit exemption.</p>
+                            <p>These conditions are aimed at regulating the contractual relationship, at clarifying rights and obligations, at protecting electronic transactions against misuse and at facilitating the clear and fair handling of disputes.</p>
+                            <p>All texts on product prices, delivery fees and intra-branch operations are understood as mechanisms for the regulation of service, disclosure and settlement, and do not allow for the concealment or charging of material financial information on the client to be properly unapproved; where there are fees that were not definitively determined upon request, they are presented before the adoption or collection of the transaction in accordance with the law, if proved in the Branch ' s bill instead of the site screen.</p>
+                            <p>In cases of non-implementation where no other liability is established, reimbursement of payments due for service or non-executed product shall be the basis for financial adjustment; this shall not preclude any established right of the consumer or liability that cannot be agreed to forfeiture; these provisions shall aim at delineating the de facto operational limits of the services, in compliance with the laws and regulations in force in the Arab Republic of Egypt.</p>
+                            </section>
+                            <section id="ab-terms-acknowledgement" tabindex="-1">
+                            <h2>User Acknowledgement</h2>
+                            <p>Using or through the website of Abdin Pharmacies, the user acknowledges that it has had access to these conditions and provisions, and understands the nature of the services, products and legal and professional constraints involved.</p>
+                            <p>It also recognizes its obligation to provide valid data, to use services for legitimate purposes, to follow product instructions and warnings and to respect the regulated controls of transactions.</p>
+                            <p>Acceptance of these conditions remains subject to all consumer rights, safeguards and responsibilities established by Egyptian laws.</p>
+                            </section>
+                            <p class="ab-terms-copyright">© Abdin Pharmacies – All rights reserved to their lawful owners.</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="checkout_order_delivery_terms" inherit_id="website_sale.navigation_buttons" name="Abdin Checkout Order and Delivery Terms" active="False"/>
+    <record id="checkout_order_delivery_terms" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
 </odoo>

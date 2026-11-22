@@ -7,6 +7,7 @@
     "author": "Abdin Pharmacies",
     "developer": "Mohamed Fawzy",
     "depends": [
+        "account",
         "ab_store",
         "ab_website",
         "ab_website_admin_content",

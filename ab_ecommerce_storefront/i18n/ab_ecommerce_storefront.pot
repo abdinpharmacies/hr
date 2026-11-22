@@ -5468,6 +5468,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "View terms and conditions"
 msgstr ""
 
@@ -14857,4 +14858,3562 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/second_item_offer.js:0
 msgid "Choose your gifts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "1. Attempt unauthorized access to site regulations or databases."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"1. Pharmacies or company: Pharmaceuticals Abdin Pharmacies, legal entities "
+"or licensed branches providing the products and services in question."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"1. intentional use of products in contravention of proper instructions and "
+"warnings."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"10. Extensive automated processes that affect the stability or disruption of"
+" the project use of the site."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"10. External service provider: any independent party contributing to the "
+"operation of payment, shipping, hosting, technical or other site-related "
+"services."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "2. Incorrect or misleading material information provided by the user."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"2. Location: website, applications and official digital fronts of Abdin "
+"Pharmacies dedicated to their services."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"2. Use harmful programmes or technical means that threaten the integrity of "
+"the site."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "3. Sending false or intentionally misleading requests."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"3. Use of formulations by persons not assigned to them in violation of "
+"medical controls."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"3. User: any person who visits or searches the site, interacts with its "
+"contents or uses one of its services."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "4. Agent: User applying for product or service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "4. Attempt to fraudulently pay or recover funds."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"4. Modification of packagings or tampering with contents of products after "
+"delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "5. Poor storage after the transfer of possession to the client."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"5. Products: All items that may be legally presented or provided through "
+"activity, including health products, personal care, cosmetics, medical and "
+"other supplies, and pharmaceuticals, within the limits permitted by "
+"legislation and regulated licences."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "5. Use of statements by other persons without legitimate support."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"6. Application: data provided by the client for the purpose of purchasing a "
+"product, obtaining a service or inquiring about the availability of a item."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"6. Copy or redeploy protected content in violation of the rights of its "
+"owners."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"6. Unlawful use of the account as a result of an independent act of the user"
+" or other, with no breach of the duty of proof by pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"7. Confirmation of the application: notice of acceptance of the request or "
+"confirmation of items, quantities, prices and other conditions of execution,"
+" in accordance with the nature of the transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"7. External circumstances that cannot reasonably be expected or paid, if the"
+" conditions of the foreign cause are legally available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"7. Use of the site for commercial resale without an agreement to do so."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"8. Products restricted: products traded, disbursed or delivered are subject "
+"to special legal or pharmaceutical requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"8. Send content containing threats, defamation, abuse or violation of the "
+"rights of others."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"9. Disposal of controls for the sale or exchange of restricted products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"9. Medical recipe: a document issued by a health practitioner authorized by "
+"law to prescribe treatment, if required to dismiss a formulation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"<i class=\"fa fa-angle-right\" aria-hidden=\"true\"/>\n"
+"                            <span aria-current=\"page\">Order and Delivery Terms</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.checkout_order_delivery_terms
+msgid "<span>I agree to the</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"A renegotiation of a refrigerated formulation may be possible only if the "
+"legal and technical rules permit it."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"A request for medication may not be implemented if the legal requirements "
+"are not met, or if there are legitimate professional or regulatory reasons "
+"to prevent implementation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abdin Pharmacies are bound by the law ' s responsibilities for the safety "
+"and conformity of products, storage, circulation, exchange and delivery, "
+"consumer protection and personal data, and any other applicable obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abdin Pharmacies place the safety of patients and clients as a fundamental "
+"consideration in the delivery of their services."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abdin Pharmacies provide professional and transparent pharmacological, "
+"commercial and electronic services, taking into account the legislation and "
+"rules governing pharmacy, the circulation of pharmaceuticals, consumer "
+"protection and personal data protection in the Arab Republic of Egypt."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abdin Pharmacies respect the consumer ' s rights under the Egyptian Consumer"
+" Protection Act and its implementing regulations, including those relating "
+"to substitution, retrieval and discontinuation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abdin Pharmacies respect the privacy and personal data of users of their "
+"location."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abdin Pharmacies retain the rights established by law in the management, "
+"organization and development of their electronic services, take appropriate "
+"action to prevent their misuse and protect their clients, employees, "
+"installations and legitimate interests."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Abolition of participation in marketing letters does not necessarily result "
+"in the suspension of notices required to implement existing requests or to "
+"fulfil legal obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Acceptance of these conditions remains subject to all consumer rights, "
+"safeguards and responsibilities established by Egyptian laws."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Access to pharmacies ' consent is not required before the exercise of legal "
+"rights to file complaints or communications."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Actual delivery is an important subject of verification of items, quantities"
+" and apparent status, and extradition may be documented by signature, "
+"verification code, record or electronic record as available, without making "
+"any individual evidence conclusive evidence undisputable to the integrity of"
+" each product or the validity of each claim."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Actual service is subject to the availability of products, the validity of "
+"licences, regulatory requirements, implementation possibilities and "
+"restrictions on the handling of certain items."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"All texts on product prices, delivery fees and intra-branch operations are "
+"understood as mechanisms for the regulation of service, disclosure and "
+"settlement, and do not allow for the concealment or charging of material "
+"financial information on the client to be properly unapproved; where there "
+"are fees that were not definitively determined upon request, they are "
+"presented before the adoption or collection of the transaction in accordance"
+" with the law, if proved in the Branch ' s bill instead of the site screen."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Amendments may not be applied retroactively to existing transactions if they"
+" result in a reduction in acquired rights or breaches of legal obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"An applicant for a formulation subject to special controls shall provide the"
+" necessary information and documentation correctly, and permission to enter "
+"the application on the site shall not be an undertaking to disburse a minor "
+"or a person not meeting the requirements for receipt; the request may be "
+"redirected to or rejected by the competent branch when it is contrary to the"
+" legal requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"An enforcement or delivery complaint may be examined on the basis of demand "
+"data, notices, invoices, delivery records and damage photographs where "
+"necessary, and pharmacies do not require evidence that the consumer cannot "
+"reasonably obtain if a legal right is impaired."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Any additional expenses, such as delivery fees, are clearly identified "
+"before the completion of the contract."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Any settlement or waiver of a right is applicable only in accordance with "
+"the conditions and forms required by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Any transaction is subject to jus cogens, and the regulatory formulations "
+"here do not create a right to collect amounts that the client has not "
+"properly accepted, or to deprive him of a due invoice or of a fixed right to"
+" restitution or compensation, and the practical procedures are applied to "
+"the extent permitted by the nature of the formulation, licences and "
+"applicable pharmaceutical rules."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Applications are examined according to the nature and duration of the "
+"problem."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Applications containing restricted products are subject to review and the "
+"necessary documentation and requirements are met."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Appropriate action may be taken to stop any unlawful activity, including "
+"restricting access to services or notifying the competent authorities where "
+"there is a legal requirement."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 10: Products, Descriptions and Images"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 11: Prices and Updates"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 12: Stock Availability"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 13: Placing and Confirming Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 14: Prescriptions and Dispensing Medicines"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 15: Products Subject to Special Restrictions"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 16: Alternative and Equivalent Medicines"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 17: Online Payment"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 18: Promotions and Discounts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 19: Delivery Services"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 1: Definitions and Terms"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 20: Delivery Address Information"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 21: Receiving Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 22: Storing Products After Receipt"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 23: Proper Use of Medicines"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 24: Allergies and Side Effects"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 25: General Exchange and Return Policy"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 26: Special Rules for Medicine Returns"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 27: How to Request a Return"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 28: Refunds"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 29: Changing and Cancelling Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 2: Scope of These Terms"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 30: Fraudulent Orders and Misuse"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 31: Personal Data Protection"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 32: Sensitive Health Data"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 33: Cookies and Analytics"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 34: Communications and Messages"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 35: Website Security and Service Availability"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 36: External Links and Services"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 37: Intellectual Property Rights"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 38: Limits of Legal Liability"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 39: No Guarantee of Individual Results"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 3: Legal Identity and Service Provider"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 40: Exceptional Circumstances and Force Majeure"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 41: User Responsibility for Unlawful Acts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 42: Complaints and Customer Service"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 43: Updates and Changes to These Terms"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 44: Electronic Records and Evidence"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 45: Applicable Law"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 46: Severability"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 47: No Waiver of Rights"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 48: Patient and Customer Safety First"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 49: General and Final Provisions"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 4: Eligibility to Use the Website"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 5: User Accounts and Registration Information"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 6: Lawful Use of the Website"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 7: Nature of Online Services"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 8: Medical and Pharmaceutical Information"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article 9: Medical Emergencies"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Article index"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Availability data are periodically updated and the purchase of the item from"
+" the branch may be synchronized with the inclusion of a request on the site;"
+" some quantities may not be implemented owing, inter alia, to the depletion "
+"of the inventory, its pre-treatment, the discovery or termination of the "
+"validity, the inappropriateness of the product to deliver by the available "
+"means, or the issuance of a control directive concerning the formulation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Browse all 49 articles"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Children ' s statements and parents ' consent shall be taken into account "
+"whenever necessary."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Client service procedures do not prevent consumers from resorting to the "
+"Consumer Protection Service, the Egyptian Medicine Authority or competent "
+"supervisory and judicial bodies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Communication or electronic conversations should not be used to request "
+"urgent medical intervention in cases such as severe respiratory difficulty, "
+"lack of awareness, acute chest pain, severe bleeding, stroke symptoms, "
+"poisoning, overdoses, excessive sensitivity, or any situation suspected of "
+"threatening life or requiring immediate intervention."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Complaints are reviewed in accordance with their nature and the relevant "
+"legal and professional obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Components and warnings must be reviewed before use, especially when there "
+"is a known history of sensitivity."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Consumer also enjoys rights with respect to defective or non-conforming "
+"products, including rights established within 30 days of receipt, extensions"
+" and best or special guarantees when applicable."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Data are dealt with at the borders, purposes and legal bases established "
+"under the relevant Egyptian legislation, in particular the Personal Data "
+"Protection Act No. 151 of 2020 and its implementing regulations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Data may not be used or disclosed in violation of the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Data necessary to assign the request to a branch, organize the route of the "
+"delivery delegate, communicate with the client, prove delivery or recover "
+"payment may be processed within the prescribed legal purposes and grounds, "
+"and data on prescriptions or health cases may be used for marketing or "
+"participation for other purposes only where the law permits and meets its "
+"requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Delivery dates and costs may vary depending on geographical location, volume"
+" of demand, nature of products and operating conditions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Delivery dates may be affected by conditions of passage, air conditions, "
+"malfunctions or exceptional circumstances beyond reasonable control."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Delivery fees shall mean amounts owed for the transfer of the request or the"
+" processing of the delivery trip where such fees are properly rewarded and "
+"publicized to the client; the adoption of the request shall inform the "
+"customer of the acceptance of the delivery of the material items and "
+"conditions after the necessary review, and shall mean that it is not "
+"possible to execute the entire or some of the application for actual, legal "
+"or professional reasons, without assuming that the mere registration of the "
+"inadmissibility exempts any party from its legal responsibility."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Delivery may be accomplished by a branch delegate, an independent "
+"transporter or a technical service provider who organizes trips; it does not"
+" mean that all the responsibilities of the supplier are transferred "
+"automatically; responsibilities are determined depending on contracts, facts"
+" and legal rules, in particular those relating to the safety of formulations"
+" and consumer rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Delivery of a restricted product may be refrained if the legal requirements "
+"for its extradition cannot be met."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Delivery service is subject to updated geographical and operational ranges "
+"and may include delivery to the property door or a specific unit in "
+"acceptable order, location suitability and security and safety procedures; "
+"the cost of the journey may vary according to the implementing section and "
+"after the address, the timing of the request, the overcrowding, weather "
+"conditions or the high demand for service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Delivery services are provided in areas where operational potential and "
+"legal rules permit service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Details of data collection, processing, retention, disclosure and rights of "
+"authors are subject to applicable legal provisions and disclosures of "
+"privacy."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Disputes are brought to the attention of the competent judicial authorities "
+"by law, without prejudice to the established competences of the regulatory "
+"and administrative bodies or consumer protection rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Doses, dates and duration of use identified by specialists should be adhered"
+" to when needed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Each request for retrieval is evaluated according to the nature of the item,"
+" available evidence and regulatory controls."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Electronic payments are subject to payment service providers ' conditions, "
+"in addition to the conditions for the treatment of the sale itself."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Electronic records and methods of reference are subject to evidence, "
+"electronic signature and data protection."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Exceptional circumstances, depending on their nature and the applicability "
+"of force majeure clauses, may include natural disasters, emergency "
+"government decisions, public disturbances or severe malfunctions beyond "
+"control."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Exceptions are applied according to the nature and circumstances of the "
+"product, the relevant legal texts and regulatory decisions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Explanatory photographs or examination of the product may be requested when "
+"needed, but this may not become an unlawful impediment to the exercise of "
+"legal rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Failure to exercise pharmacies of any right established by law on a given "
+"occasion is not a permanent waiver of this right."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Failure to report promptly does not mean that legal rights relating to "
+"defects or non-conformity are lost."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"For the purposes of the application of these conditions and provisions, the "
+"following words and phrases shall have the meanings set out in their "
+"respective centuries, unless the context otherwise requires:"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"General Terms and Conditions for Online Sales, Order Fulfilment and Delivery"
+" Services"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "General Terms and Conditions for Website Use and Online Purchases"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "General Terms and Conditions | Abdin Pharmacies"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"General consent to conditions and conditions may not be used as a substitute"
+" for separate consent when such consent is required by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"General terms for using the Abdin Pharmacies website and shopping online."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"General terms for website use and online purchases at Abdin Pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"However, some packaging details, packaging designs or illustrative images "
+"may differ as a result of approved changes from manufacturers or product "
+"updates."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"However, temporary interruptions may occur as a result of maintenance, "
+"technical updates, malfunctions, electronic attacks or conditions beyond "
+"reasonable control."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If a product cannot be provided because of the depletion or exclusion of "
+"inventory for lack of safety, network failure, regulatory restriction or "
+"force majeure that meets the legal requirements and is not supplied to the "
+"client, the treatment of the amount paid for the non-implemented part shall "
+"be the basic financial obligation in cases where no other liability is "
+"established; pharmacies shall not be obliged to ensure that the customer "
+"obtains an unavailable product or seizes it from an illicit source or to "
+"compensate claims without legal support."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If a specific amendment cannot be implemented for legitimate reasons, the "
+"client shall be notified of the options available without prejudice to his "
+"or her rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If a technical error is detected in the price offer, pharmacies may review "
+"the transaction, notify the customer of the error and offer the right price "
+"or appropriate legal alternatives."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If an employee is found to have committed an unlawful act resulting in "
+"direct harm, pharmacies may claim compensation in accordance with general "
+"legal rules."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If delivery is not possible because of improper data provided by the client,"
+" delivery may be recoordinated in accordance with the declared policies and "
+"the legal rights of the parties."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If implementation requires the determination of the delivery fee in the "
+"branch, the option of an alternative to an unavailable item or the "
+"modification of the address, these elements shall be clarified before the "
+"client is required to pay the new amount, and the site may issue a technical"
+" summary or reception notice that does not include the final delivery fee, "
+"while the invoice issued by the branch shall establish the actual cost "
+"approved after acceptance and completion of the transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If it is found that one of the provisions of this document is ineffective, "
+"invalid or contrary to a legal order, this does not automatically invalidate"
+" the other provisions that can be applied independently and legitimately."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If pre-delivery shows that a formulation is subject to heat or damage that "
+"may affect its validity, it may be discontinued, reassessed, replaced or "
+"reimbursed according to the legal situation and rights, the delay in "
+"delivery resulting from the protection of the safety of the customer shall "
+"not be considered an absolute leave to dismiss all responsibilities."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If removal of an unavailable item reduces the value of the application from "
+"a particular supply of delivery, the client shall be informed of the "
+"adjusted cost if any and the choice between the legitimate solutions; the "
+"recalculation of the floor shall not be deemed to be an unacceptable or "
+"unlawful increase."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the application cannot be fully implemented owing to the depletion of a "
+"item or the impossibility of a project in the supply, the interruption of "
+"the delivery service or a foreign cause, the original financial adjustment "
+"of the unimplemented application includes the restitution of previously "
+"collected products or services that have not been provided, in accordance "
+"with the terms and means prescribed by law; if a portion of the request is "
+"executed, the amounts due shall be calculated for the refund of the "
+"unimplemented portion after the receipt has been properly stated independent"
+" fee has been shown."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If the client has paid the value of a product that cannot be provided, the "
+"amount due shall be adjusted in accordance with the law and the agreed "
+"method of payment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the client requests that the place of delivery be changed after the cost "
+"is approved, this may require a new account of the transportation fee in "
+"accordance with the branch ' s policy, the client ' s acceptance is required"
+" prior to the receipt of the increase, and the refusal of the adjusted wage "
+"does not result in automatic loss of the client ' s rights for payment or "
+"expenses to be reimbursed by the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the delivery of a particular item becomes unsafe due to temperature "
+"requirements, pregnancy restrictions or transportation conditions, "
+"pharmacies are entitled to suspend transmission or to propose a legitimate "
+"alternative means, and a product whose safety has been compromised must not "
+"be sent to meet an estimated date."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the expected speed of delivery is in conflict with the safety "
+"requirements of a pharmaceutical, safety and professional compliance shall "
+"be a priority. Pharmacies may suspend transmission, request receipt from the"
+" branch or arrange an appropriate means, indicating options and adjusting "
+"the value as required by law, without an unlawful undertaking of a remedial "
+"outcome or an untimely date."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the product is broken, damaged or unconformed at the time of its "
+"delivery, it should not be used and pharmacies should be reported for "
+"examination and treatment, and the client is not obliged to bear damage that"
+" has been established before the transfer of possession to it in "
+"circumstances where the supplier ' s obligation is established by law, nor "
+"is his right to manifest defects simply to sign receipt or not to open the "
+"packaging to the delegate."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the review of the application entails charges of delivery not included in"
+" the site summary, the payment of the client is not automatically discounted"
+" without proper bond or consent and the fees approved by the branch at the "
+"time of delivery or in the legally available manner may be collected, "
+"provided that they are presented and agreed before the client is obligated "
+"and documented in the appropriate accounting document."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"If the site is delayed by the price policy or service fee approved by the "
+"Branch, the final settlement of applications that have not been completed is"
+" presented in accordance with the correct data of the branch at the time of "
+"confirmation, indicating the difference and approving the client, while the "
+"price or fee that has become part of a binding contract is not modified "
+"unilaterally in contravention of the law; and mandatory pricing rules remain"
+" applicable in all cases."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If the site is used by a minor or a person who does not have full capacity, "
+"this must be done under the supervision and consent of his or her guardian "
+"or legal representative where necessary."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If the site makes it possible to establish personal accounts, the user is "
+"obliged to provide accurate, up-to-date and complete information as required"
+" to benefit from the services."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If there is a lack, apparent damage or discrepancy in the items, customer "
+"service should be notified as soon as possible to facilitate examination and"
+" treatment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"In cases of non-implementation where no other liability is established, "
+"reimbursement of payments due for service or non-executed product shall be "
+"the basis for financial adjustment; this shall not preclude any established "
+"right of the consumer or liability that cannot be agreed to forfeiture; "
+"these provisions shall aim at delineating the de facto operational limits of"
+" the services, in compliance with the laws and regulations in force in the "
+"Arab Republic of Egypt."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In cases where the law requires new approval or specific notification, "
+"pharmacies are bound by due process."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"In cases where the site does not specify a final delivery fee, or provides "
+"an indicative amount that changes after the examination of the address or "
+"items, the branch may determine the fees in accordance with its applicable "
+"operational policy and establish them in its invoice or the correct "
+"accounting document; the customer shall be informed of the final cost and of"
+" any material difference before he or she is obliged to pay, and shall "
+"remain entitled not to complete the transaction or to waive it in general "
+"and shall not be imposed on such conditions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In general, consumers enjoy the right to replace and retrieve during legally"
+" prescribed periods, including the right to replace or retrieve within 14 "
+"days of receipt of the goods without reason, taking into account the legal "
+"exceptions relating to the nature and condition of certain goods."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In particular, consideration is given to whether the integrity of the "
+"product can be ascertained and not exposed to conditions affecting its "
+"viability or characteristics."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "In particular, it is prohibited:"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In such cases, an appropriate medical facility or liaison with the competent"
+" emergency services must be immediately approached."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In such cases, payments and unimplemented requests are dealt with in "
+"accordance with the client ' s legal rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In the event of a conflict between general conditions and jus cogens or "
+"consumer rights, the priority of legal provisions is applicable."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In the event of a disagreement as to the value or components of the amount, "
+"the client is available to communicate with the customer service and to "
+"provide the necessary documentation for the examination of the transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In the event of a proven defect, error or non-conformity with a legal right "
+"to replace or retrieve, treatment measures shall be taken without charge to "
+"the consumer of costs for which the law prohibits them."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In the event of an influential difference in the effective substance, "
+"concentration, size or basic specifications, the rules of conformity and "
+"consumer rights are applied, and an alternative product may not be imposed "
+"on the client without the consent of the client where necessary."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"In the event of cancellation or non-execution of the request prior to "
+"delivery, the settlement differs from the attempt to return a formulation "
+"received; it takes into account whether the value has already been obtained,"
+" whether the service has been performed, and what is required by law to "
+"reimburse or recalculate amounts."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In the event of unusual symptoms, use should be discontinued when medical "
+"guidance so requires and appropriate professional advice."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"In the event that a financial adversary emerges without clear confirmation "
+"of the request, the client should communicate with the customer service to "
+"verify the status of the transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Inclusion of a product on site does not necessarily mean that it is "
+"available for purchase or delivery at all times or in all regions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Incorrect storage may alter the characteristics of some formulations, reduce"
+" their quality or their inability to use."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Independent services are subject to the requirements of their providers, to "
+"the extent that they do not conflict with the client ' s rights to be "
+"treated with pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Information available for legitimate personal use may be used within the "
+"limits permitted by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Intellectual property rights relating to emblems, commercial identity, "
+"original content, designs and materials published belong to their legitimate"
+" owners."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Introduction"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"It also recognizes its obligation to provide valid data, to use services for"
+" legitimate purposes, to follow product instructions and warnings and to "
+"respect the regulated controls of transactions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"It is prohibited to provide false or unlawfully modified prescriptions or to"
+" use a recipe of another person in violation of the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"It must be limited to persons authorized and to the extent necessary for the"
+" performance of their legitimate functions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"It would be preferable to include the number of requests, the description of"
+" the problem and any information or documents that would assist in its "
+"examination."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"It would be preferable to provide the number of demand or invoice, to "
+"describe the problem and information that would help to identify the product"
+" and treatment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"It would be preferable to verify the number of packagings, the prima facie "
+"situation and the absence of clear damage in the packaging."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Items may not be modified after processing or dispatching for operational "
+"reasons, but legal rights relating to remote contracting, delay, non-"
+"delivery and recovery remain in place where applicable; a request that has "
+"not met a legal requirement, is not possible to provide or has shown serious"
+" fraud indicators, with notice of the customer and settlement of outstanding"
+" payments may be cancelled."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Items relating to electronic sale, delivery, fees and discards shall be "
+"read, in particular, in the light of the Consumer Protection Act No. 181 of "
+"2018, its implementing regulations and the relevant rules, in a manner not "
+"inconsistent with the provisions of the Egyptian Medicine Authority and the "
+"competent regulatory bodies, and the general wording shall not give priority"
+" to an internal policy on a legally binding or regulatory decision."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Legal liability for the known and declared side effect of the formulation "
+"upon its proper use varies from liability arising from a product ' s defect,"
+" failure to conserve, process, provide or disburse the product."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Liability is determined in each case in accordance with applicable facts, "
+"evidence and laws."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Maintenance, updates or temporary suspension of certain functions may be "
+"carried out to protect regulations or improve performance."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Medicines may not be replaced or their basic specifications changed in a "
+"manner contrary to professional assets or regulations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Multiple products containing similar effective substances or performing "
+"convergent remedial purposes may be available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"No electronic request or payment process may be interpreted as an obligation"
+" to dispose of a formulation in violation of the law or professional assets."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"No more than one offer may be combined unless the rules of offers permit it."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"No promotional declaration should be interpreted as a promise of a "
+"specificrapeutic or health outcome."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"No provision in this document shall be interpreted as a waiver by the agent "
+"of a right which may not be waived by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"No provision may be interpreted as authorizing unauthorized activity, "
+"depriving the consumer of a legal right, or exempting from liability from "
+"which the law does not permit exemption."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Nor are any liability imposed by law on pharmacies or their service "
+"providers transferred to the user."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Nor does general information explain the potential benefits of formulations "
+"as a personal promise of healing or improvement."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Nor does its electronic presentation mean that it may be disbursed without "
+"meeting its legal and pharmaceutical requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Nor is the availability of tariff data on a formulation an invitation to use"
+" it without professional supervision, or a declaration of its possible sale "
+"by unauthorized means."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Official statements printed on the packaging and approved pamphlets are of "
+"fundamental importance in identifying user instructions, warnings and "
+"components, taking into account the supplier ' s obligation to provide "
+"accurate and uncontested information."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid "Order and Delivery Terms"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid "Order and Delivery Terms | Abdin Pharmacies"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmaceutical activities subject to licensing are carried out through "
+"legally authorized installations and persons and within the prescribed "
+"limits of each activity."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmaceuticals and products whose safety is affected by storage and "
+"handling conditions are subject to special controls that require the safety "
+"of patients and the quality of products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmaceuticals do not guarantee the uninterrupted functioning of the "
+"external payers ' regulations, but are committed to dealing with payment and"
+" settlement problems under their responsibility in accordance with the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmaceuticals give reasonable care to present product data as clearly and "
+"accurately as possible."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmaceuticals may examine communications alleging non-access, deficiency "
+"or incorrect receipt of an item, reconcile the data with the records of the "
+"branch, the delegate and the propellant, while preserving the client ' s "
+"right to resort to the competent authorities without requiring prior "
+"internal settlement."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmaceuticals may offer partial implementation after the clarification, "
+"cost and new delivery fee of available items, if they change, and the client"
+" ' s acceptance of part of the request does not imply the implicit approval "
+"of the replacement or retention of the value of the remaining items; what is"
+" due in non-implementation is provided in the manner and duration prescribed"
+" by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmaceuticals may send notices concerning requests, payments, delivery, "
+"retrieval, account security or operational matters necessary for the "
+"implementation of the transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmaceuticals retain the right and obligation to demand a proper and "
+"confidential prescription when required by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are not liable for non-implementation or delay, which is "
+"established to be a direct result of force majeure or a foreign cause in "
+"which legal requirements are met."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmacies are not obliged to provide a item that is not present by any "
+"means contrary to the rules of supply and pharmacies, nor are they required "
+"to accept an unqualified prescription or to execute a request that has been "
+"proven to be illicit, taking into account the impact on the client ' s "
+"amounts and rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are not responsible for the consequences arising exclusively from"
+" the disclosure of the user ' s income data by their will or as a result of "
+"its constant failure to protect them, without prejudice to their legal "
+"responsibility to secure the regulations and data under their control."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are not responsible for the customer ' s self-sustaining change "
+"of treatment, dose or pharmaceutical form without reference to specialists, "
+"unless a breach by pharmacies of their legal or professional duties is "
+"established."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are not responsible for the delay arising exclusively from the "
+"client ' s constant error in the address data, with a commitment to provide "
+"reasonable care to address the problem when it is possible."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are obliged not to carry out transactions contrary to those "
+"requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are obliged to make available material information on remote "
+"contracting, and methods of confirmation, correction and modification of the"
+" application, in accordance with the legal provisions of the Organization."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are obliged to provide an appropriate means of receiving client "
+"complaints and inquiries regarding products, services and transactions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies are obliged to take reasonable action to limit the effects of "
+"these circumstances when possible."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmacies do not ensure that there is no incidental circumstance beyond "
+"their control by an independent party, but they are bound by the law ' s "
+"appropriate selection, reasonable procedures, follow-up and settlement of "
+"requests; in turn, they are not responsible for acts separate from the "
+"transaction that are not attributable to them by law, provided that the "
+"dispute is decided by evidence and by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies do not have responsibility for the content or practices of an "
+"independent external party that did not have control over it or a legal "
+"contribution to the damage caused."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies do not provide a general guarantee of a specific remedial or "
+"cosmetic result for each user simply to purchase a product from the site."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmacies may establish updated operational rules for the distribution of "
+"applications between branches and the determination of the scopes of "
+"delivery, dates and quantitative limits, provided that the essential "
+"conditions of customers are demonstrated in a timely manner and that no "
+"later change applies to a confirmed transaction derogating from the rights "
+"of their owner."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may keep transaction logs, requests, invoices, confirmation "
+"notices and correspondence to the extent and to the extent permitted or "
+"imposed by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may not reserve a receivable of restitution without legal "
+"authority."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may provide multiple means of reimbursing the value of "
+"applications, depending on the services actually available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may request documents or data necessary to verify the capacity or"
+" legal status when the nature of the product or service so requires."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may suspend or modify a future offer for legitimate commercial "
+"reasons, without prejudice to rights arising out of confirmed transactions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may update branch data, work schedules, communication channels "
+"and service ranges according to operational changes."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies may update these conditions and provisions from time to time to "
+"keep pace with operational, technical, regulatory or legal developments."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies retain the right to refrain from implementing a request that does"
+" not meet the relevant legal or regulatory requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmacies retain the right to request telephone or electronic confirmation "
+"of unusual or specially cared requests, without making non-response a reason"
+" for maintaining unpaid amounts for products or services that have not been "
+"implemented, and without assuming that silence is accepted by an increase in"
+" fees."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies retain the right to take appropriate action when there are "
+"serious indications of fraud or misuse."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies retain the right to take appropriate legal action to protect "
+"their markings, content and legitimate rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmacies shall not be liable solely for damages arising from the "
+"intentional filing of an intentional wrong address or the rejection of a "
+"project for the delivery or mispreservation of the product after receipt or "
+"abuse, if the reasons for the absence of legal liability are available, and "
+"the burden of proof shall be borne by the claimant or the other party, in "
+"accordance with applicable rules, without the unlawful reversal of the "
+"burden of proof on the consumer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies shall not bear losses arising exclusively from interruptions "
+"beyond their legal and actual control, to the extent permitted by law, "
+"without prejudice to their liability for any fixed default or obligations "
+"existing towards customers."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies shall not bear the consequences exclusively of misuse, "
+"contravention of instructions or use of the product for its illicit "
+"purposes, without prejudice to any established legal liability."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pharmacies shall not bear the consequences of the redistribution of "
+"medicines among family members or of giving them to an unintended person or "
+"the alteration of dose and duration after receipt contrary to the proper "
+"instructions, once the damage has been proved to have arisen exclusively "
+"from such behaviour and without prejudice to the duties of pharmacies in "
+"exchange, awareness and warning."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies shall not bear the consequences of the user ' s reliance on "
+"public information outside their context, or the use of a product in a "
+"manner contrary to stated guidance and warnings, unless such results are "
+"linked to a firm legal or professional breach by pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacies shall not bear the damage caused solely by the poor storage after"
+" the client ' s transfer of possession, if proved, without prejudice to its "
+"responsibility for the safety of the product and the conditions for its "
+"preservation and transfer prior to delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Pharmacists seek to operate the site in a stable and secure manner, applying"
+" appropriate measures for the nature of the service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Pictures of products may be taken on dates prior to the change of packaging,"
+" bulletin, trade name or packaging; pharmacies seek to correct pre-delivery "
+"differences, and the right to update images is not used to justify the "
+"supply of an effective substance, concentration or size of a different "
+"person required without updating the replacement and approval rules."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Please read these terms and provisions carefully before using the website, "
+"scanning its contents, making a request for purchase or benefiting from any "
+"services available through it."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Presentations, discounts and coupons shall be subject to the stated "
+"requirements of each offer, including the duration of confidentiality, the "
+"range of products, the quantitative limits and any other legal requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Prices may change in the future as a result of modifications by producers, "
+"competent authorities or legitimate trade policies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Product prices are presented according to data available at the time of "
+"supply, with mandatory pricing rules as applicable."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Products must be used in accordance with their purpose and the instructions "
+"and warnings adopted."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Products offered are subject to the actual availability of branches or "
+"legitimate sources of supply."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Products requiring special conditions of transport or storage remain subject"
+" to applicable technical requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Professional review may require contact with the client to satisfy a "
+"prescription or query about concentration or pharmaceutical form, and the "
+"application may be suspended until the completion of legal requirements. If "
+"exchange cannot be completed, payments relating to the non-implemented item "
+"are dealt with in accordance with the recovery rules, and the mere "
+"electronic transmission of the recipe is not exempt from the requirements of"
+" origin or verification where necessary."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Promotional messages and marketing presentations are subject to relevant "
+"legal approvals and controls."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Provisions relating to the right to rectify or modify a request and to "
+"refrain from contracting are applied in accordance with the Consumer "
+"Protection Act and its implementing regulations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Public opinions or personal assessments published on a product, if any, are "
+"not conclusive evidence of access by all users to the same results."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Published information is provided for purposes of definition and awareness, "
+"and may not be considered an automatic alternative to individual medical "
+"diagnosis, clinical examination or description of treatment by specialists."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Purchase of a pharmaceutical product may not be considered to ensure that it"
+" is fit for every person or for every health condition."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Recharge provisions may differ depending on the reason for restitution, the "
+"nature of the right exercised and the terms of the remote contract and the "
+"regulations. Where a defect has been established, a failure to conform or an"
+" error of pharmacies is established, the customer may not be charged "
+"expenses for which the charge is prohibited by law; the previous delivery "
+"fee is not used as a reason for withholding the value of a product for which"
+" the law requires payment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Refunds take into account whether the financial deduction has already been "
+"made or is merely a bank authorization or reservation not completed, and the"
+" duration of its appearance in the account may depend on paid procedures "
+"with the obligation of pharmacies to carry out the procedures to which they "
+"are subject by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid "Review the complete terms for online orders, fulfilment and delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Serious symptoms require urgent medical intervention."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Services may include providing information on products, receiving inquiries,"
+" verifying availability, managing requests, identifying payment and delivery"
+" options and providing means of communicating with customer service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Services may require the collection and processing of some data necessary to"
+" implement requests, communication, accounting or legal obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some e-recovery operations may require additional time to appear in the "
+"client ' s account as a result of the actions of the banker or payment "
+"service provider."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Some formulations are not suitable for return to the circulation cycle after"
+" they are transferred to the client ' s possession if the circumstances of "
+"their preservation cannot be verified, and any treatment of drug residues "
+"shall be subject to the controls of the Egyptian medicine authority and the "
+"professional and organizational rules of each category; the exception to the"
+" restitution of medicine may not be circulated as an absolute prohibition of"
+" each claim relating to exchange error, defect or non-conformity."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Some formulations may require a refrigeration chain or protection from "
+"light, humidity or vibration; the choice of means of transport shall take "
+"into account specifications and regulations and shall not offer a means of "
+"delivery that cannot maintain the integrity of the formulation when the law "
+"or professional assets require a special technical requirement."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Some items may require direct delivery from the Branch, transfer on special "
+"terms or additional verification procedures prior to receipt, and may be "
+"excluded from delivery service if regulatory restrictions or conservation "
+"potential do not allow for safe transfer, and the emergence of the delivery "
+"option in a basket of these items is not interpreted as exceeding the "
+"pharmacist decision or legal requirement."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Some offers may be limited to specific products, areas, subsidiaries or "
+"payment methods, and a reduced or free delivery may be announced on terms "
+"such as the value of the request or geographical scope; the applicable and "
+"declared terms of the offer at the time of the transaction, and the errors "
+"of modernization do not justify the discernment of a confirmed advantage or "
+"the imposition of an undeclared fee which the customer correctly agrees to."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some pharmaceuticals may be subject to special requirements relating to "
+"description, preservation, circulation, exchange, registration or delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some pharmaceuticals, cosmetics or health products may cause side effects or"
+" sensory interactions among some users."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some products may require delivery to the person concerned or verification "
+"of specific documents according to the regulations of the organization."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some products or services may be subject to additional specialized "
+"conditions, which shall be declared to the user prior to completion of the "
+"transaction or upon request for service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some requests or inquiries may include information of a healthy nature, such"
+" as prescriptions, formulation names or data on the satisfactory situation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Some transactions may be subject to additional verification procedures with "
+"a view to preventing fraud and protecting proprietors."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Subsequent price changes are not applied retroactively to confirmed "
+"transactions in violation of the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Such cases may include the use of unauthorized means of payment, false "
+"statements, repeated fictitious requests for damage, or attempts to obtain "
+"illicitly restricted formulations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Such data shall be collected, used, maintained or shared only in accordance "
+"with the grounds, approvals, licences and permits required by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Such information shall be subject to the protection of sensitive personal "
+"data when applicable to it by legal description."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Such limits of liability, however, are not a general exemption from "
+"professional errors, delivery of defective producer, concealment of fees, "
+"non-payments or breach of obligations to declare prices or a peremptory "
+"obligation; if a fixed error entails damage to which the law requires "
+"reparation, the legal provisions are applied, and a general condition of the"
+" site cannot invalidate the client ' s right to compensation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Terms for online sales, order fulfilment and delivery at Abdin Pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The account may be temporarily restricted or suspended if serious "
+"indications of its misuse or threat of site security arise, taking into "
+"account user rights and existing transactions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The actual potential for service varies by region, branch, working hours and"
+" type of formulation; pharmacies may temporarily suspend receipt of new "
+"applications in certain areas, or adjust their capabilities in future "
+"applications, while settling existing applications in accordance with "
+"acceptable conditions and legal provisions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The addressee is obliged to take the necessary regulatory and technical "
+"measures to protect the data and to enable its owners to exercise their "
+"legal rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The amounts assessed for reimbursement are taken into account, including "
+"provisions for remote contracting and returns of products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The amounts owed to the client are reimbursed in accordance with the laws "
+"governing the nature of the transaction and the means of payment used."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The application is not denied simply because the outer casing is not "
+"retained if the refusal is contrary to an existing legal right."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The application may be rejected or suspended when there is a lack of "
+"documentation or contrary to regulatory restrictions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The application numbers generated by the site may differ from the invoices "
+"issued by the branches and from the payment and transportation references, "
+"and may be administratively linked to establish the course of the "
+"transaction; the different number of the document does not preclude the "
+"proof of the transaction, nor does the registry of the application on the "
+"site make an alternative to a legally binding invoice if its data are not "
+"met."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The automated notice alone shall not be interpreted as confirmation of the "
+"availability of all items, unless the declared contracting mechanism does "
+"so."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The availability of an electronic communication service is not interpreted "
+"as an undertaking to provide emergency medical consultations or continuous "
+"clinical follow-up."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The categories of these techniques, their use and duration of retention and "
+"their associates are subject to legal controls and relevant privacy "
+"disclosures."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The client ' s acceptance of a delivery fee for a previous request does not "
+"constitute an open approval for future fees; the operational policy may "
+"change or the branch or scope of service may change; if a new delivery fee "
+"is not accepted before the confirmation of the request, the client may apply"
+" for an available alternative, receive the branch or cancel the application,"
+" and settle the payment in accordance with the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client can lodge a complaint through official communication channels "
+"posted on the site."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The client is not required to accept a settlement which is less than his "
+"legal right in exchange for simply receiving his complaint and does not "
+"prevent any operational restriction from filing a complaint with the "
+"Consumer Protection Service, the Egyptian Medicine Authority or the "
+"competent authority."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client is not required to pay additional amounts that have not been "
+"properly approved, nor may payments made for an application not executed "
+"without the settlement of his rights in accordance with the law be retained."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client is obliged to provide a proper address and appropriate "
+"communication information to facilitate delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The client is obliged to provide secure and legitimate access instructions, "
+"and the delegate is not obliged to enter a prohibited place or to implement "
+"instructions that threaten his safety or the integrity of the request, and "
+"an alternative point of receipt may be arranged with the consent of the "
+"client, without prejudice to his or her rights if the service cannot be "
+"provided."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client is responsible for providing accurate, clear and sufficient "
+"address data to determine the place of delivery."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client may apply for replacement or retrieval through approved customer "
+"service channels."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "The client may be contacted to clarify the address or confirm access."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client may be contacted to confirm the data, address the differences in "
+"availability or clarify information necessary for the execution of the "
+"request."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client may receive an electronic notice of receipt and processing of the"
+" application."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client may request that the request be amended or cancelled in "
+"accordance with the declared mechanisms and legal rights relating to remote "
+"contracting."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client must adhere to the conservation and storage instructions received"
+" on the packaging or approved bulletin."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client must correctly enter the payment data and not use the means of "
+"payment that they do not have the right to use."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client must return to the pharmacist when a product is suspected of "
+"being subjected to inappropriate preservation conditions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client must review items, quantities, prices, address and means of "
+"payment before the request is sent."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The client or person authorized to receive the request shall be obliged to "
+"review the application upon receipt to the extent possible and reasonable."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The commercial name \" Abdin Pharmacies \" is used to define the activity "
+"and services it provides."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The communication, text message or communication method chosen by the client"
+" may be used to inform him that no item is available, an initial delivery "
+"fee is modified or a new date is proposed, and it is not simply to send a "
+"notice at a higher cost acceptable to the client if the nature of the "
+"contract or the law requires its consent, and the proof of acceptance of the"
+" amendment should be preserved where necessary."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The conditions of final treatment must be clear to the client, while "
+"preserving his or her right to induce or amend when determined by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The content shall not be copied, redisseminated or commercially exploited "
+"without a permit or legal authority."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The cost of the delivery may vary from one request to another depending on "
+"the scope of the region, distance, time of flight, nature of the address, "
+"volume or weight of demand, number of legitimate extradition attempts, need "
+"for special processing or transfer, availability of delivery service at the "
+"time of implementation and remuneration of independent transport providers; "
+"these factors are not necessarily a single fixed equivalence, and pharmacies"
+" choose the pricing method applicable to service under the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The dates given shall be estimated, unless a binding date is expressly "
+"agreed upon in accordance with the nature of the transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The description of the formulation may include a reference to special "
+"conservation or transport conditions, prohibitions of the use or necessity "
+"of a recipe; the customer shall not deal with the mere option of \" add to "
+"the basket \" as a medical consent to the convenience of the formulation; "
+"the competent pharmacist shall have the duty to examine professionally "
+"within the limits applicable to each item and the treatment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The discretionary delivery fee may be adjusted if it is found that the "
+"address is outside the scope of the client or requires a different distance "
+"or time, provided that the change is reported to the client prior to its "
+"final commitment to the new amount; some restricted entry sites, unmanned "
+"roads or areas with special security procedures may be considered outside "
+"the normal service in accordance with established or available pre-"
+"contracting criteria."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The disruption of some of the necessary correlation files may affect the "
+"core functions of the site."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The doctor or pharmacist should also disclose the health information "
+"necessary to make a sound professional decision, while respecting personal "
+"data protection controls."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The emergence of a product as available is not an absolute guarantee of its "
+"continued existence throughout the time."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The employee is required to have the necessary legal capacity to conduct his"
+" or her actions through the site."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The employee may exercise his or her right to refuse or withdraw his or her "
+"consent to marketing contacts through the means provided by pharmacies in "
+"accordance with the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The execution of the transaction may be suspended to the extent necessary to"
+" verify its legality, taking into account the legal rights of the client."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The existence of an electronic site or a producer ' s offer does not "
+"constitute an independent licence to engage in a pharmacist activity outside"
+" the scope allowed by organized laws and decisions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The failure of the client to claim him immediately shall not be considered a"
+" waiver if the law allows him to exercise it within a specified period of "
+"time."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The images presented do not necessarily imply a match to each visual detail "
+"in the Muslim product, as long as the product conforms to agreed substantive"
+" specifications."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The issuer of the bill for the sale of products may differ from the person "
+"who coordinates the delivery service or uses an independent implementer; "
+"when determining the party to the transaction, it is referred to the valid "
+"documents, the actual reality and the provisions of the law, the different "
+"roles between the location, branches and service providers may not be used "
+"to dismiss an obligation that is legally binding on the supplier."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The legal entity responsible for a particular transaction shall be the "
+"designated entity in the invoice or transaction document, in accordance with"
+" the official licences and statements of the establishment concerned."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The limits of liability set forth in this article do not apply to situations"
+" where exemption or restriction is prohibited by law, including "
+"responsibilities arising from a product ' s defect, failure to conserve, "
+"trade or breach of legal and professional obligations where the requirements"
+" are met."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The location management must be notified when the account is suspected of "
+"unauthorized use."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The nature or characteristics of certain products, the manner in which they "
+"are mobilized or the requirements for their preservation may prevent their "
+"return from being accepted in cases where the exception is permitted by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The occurrence of an exceptional circumstance does not entail the loss of "
+"consumer rights in the recovery of funds, termination of contract or "
+"claiming other rights when determined by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The offer of a pharmaceutical or the receipt of a request relating to it "
+"shall not entail the exemption of the client or the pharmacy from the "
+"requirements governing its discharge."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The offers do not apply to products against which regulated laws or "
+"decisions are prohibited."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The payment shall be made in the same way as the original payment, unless "
+"the parties agree on another means of a law award."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The policy of calculating fees for deliveries, areas or means of "
+"reimbursement available to future requests can be changed, with substantive "
+"updates being published and duly disclosed; a general amendment declaration "
+"is not used to reprimand a completed application without the necessary bond "
+"or approval, nor to change the rights of retrieval that arose prior to the "
+"amendment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The possibility of operational adjustment may vary depending on the demand "
+"processing stage and the nature of the products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The posting of a medical recipe through the site does not allow any "
+"spontaneous medicine to be disbursed, as implementation remains subject to "
+"legal and professional controls."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The product ' s suitability may vary from one person to another depending on"
+" age, state of health, sick history, pregnancy, breastfeeding, other "
+"medicines, sensitivity, vital functions and other medical considerations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The proposal for alternatives is subject to professional evaluation, legal "
+"controls and the consent of the client or doctor where necessary."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The provision in question shall be interpreted and applied to the extent "
+"permitted by law, without creating new obligations contrary to the will of "
+"the parties or the legal rules."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The provision of the site is not an undertaking to ensure its uninterrupted "
+"operation at all times."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The recipe data may be verified, valid and appropriate to the product "
+"required by the authorized specialists."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The reference to an external party does not imply the adoption of all its "
+"contents, policies or guarantees."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The relevant provisions also apply to the use of official channels of "
+"communication associated with the electronic commerce, to the extent "
+"permitted by law and the nature of each channel."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The request journey may consist of data entry, automatic receipt of the "
+"request, review by branch, confirmation of availability, cost and mode of "
+"delivery, then processing, payment or dispatch of the delegate; no notice of"
+" the contractual meaning itself; and the letters shall be interpreted as "
+"declared by the request mechanism and in accordance with the content of the "
+"notice, facts and contract provisions remotely."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The request may pass through the location and then be reviewed and completed"
+" by the competent branch, customer service or focal point; the transfer of "
+"treatment between these channels does not alter the nature of the rights "
+"acquired by the consumer, and the disaggregation of information is not "
+"permitted in such a way as to conceal the cost of the duty to disclose them "
+"before the completion of the contract."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The required data include, as needed, the number of real estate, street, "
+"area, role, apartment, extension mark and telephone number."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The response to formulations varies among individuals, and a unified "
+"remedial outcome or the absence of all side effects of each user cannot be "
+"guaranteed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The results may vary depending on individual characteristics, method of use,"
+" state of health and other factors."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The sequence of requests may affect conditions such as large-scale "
+"disruption of electricity or communications, closure of roads, natural "
+"disasters, urgent formal decisions, severe disruptions to transport or "
+"interruption of supply for reasons beyond reasonable control; not all of "
+"these are automatically force majeure; rather, the extent to which they meet"
+" the requirements of the foreign cause and their real impact on the "
+"treatment is considered."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The site aims to facilitate client access to information, services and "
+"products provided by Abdin Pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The site does not need to offer a final value of the delivery fee in all "
+"cases; however, the fee may be calculated at the branch when the request is "
+"processed or the delegate ' s course is determined in the invoice or "
+"document issued by the branch according to its system, even if the summary "
+"of electronic commerce is free of this statement or has shown a different "
+"estimate; however, the cost of shipment, delivery and all additional amounts"
+" must be properly disclosed before the binding contract is completed or "
+"collected, and the customer must be accepted as approved by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The site may contain health, pharmaceutical or tariff information on "
+"products, including common uses, components, warnings, precautions and "
+"general instructions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The site may contain links to sites or services of independent parties, such"
+" as payment companies, manufacturers or technical service providers."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The site may offer an approximate scope or indicative timing of delivery, "
+"and the branch may differ from the closest branch of the client due to the "
+"availability of the item or operating conditions, and the receipt of the "
+"request does not imply a reservation of a quantity already specified prior "
+"to the completion of verification and certification, unless the reservation "
+"or final acceptance is expressly declared."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The site may use attachment identification files and similar techniques for "
+"operational, security or analytical purposes or to improve user experience, "
+"depending on the techniques actually used."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The start-up or shipment of the request does not result in the loss of a "
+"client ' s statutory right to induce or retrieve."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The subjects of the complaints include the difference in the actual "
+"remuneration for delivery from the site, the absence of additional charges, "
+"the absence of access by the delegate, the lack of items, apparent or hidden"
+" damage, or the delay in the payment of a payment, and the complaint is "
+"examined by reference to invoice, demand data, confirmations, available "
+"correspondence and relevant evidence."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The substitution and retrieval rules established shall be applied by law, "
+"taking into account the specific exceptions to the product ' s quality and "
+"condition, and in terms of origin, the consumer protection system shall "
+"reflect the consumer ' s right to return or replace the goods within "
+"fourteen days without reason, with exceptions, and the right to deal with "
+"defective goods within 30 days, without prejudice to better or special "
+"guarantees."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The summary of the electronic request refers to the statement which appears "
+"to the client or is sent upon the introduction of the items, and may "
+"initially be if prices, availability, delivery area or delivery costs "
+"require subsequent verification; the document section issued by the branch "
+"or facility implementing the transaction is intended to include the sale or "
+"service data to be established by law, whether paper or electronic, to meet "
+"its requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The synchronization of e-commerce information with branch regulations, "
+"delivery company records or propellant may be delayed, which explains the "
+"possibility of an unfinished request or offering a different indicative fee;"
+" pharmacies address the conflicting situation by reviewing the actual "
+"situation and informing the client of the correct data before it is "
+"obligated to do so and correct the error without dropping the effect of any "
+"binding contractual confirmation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The terms are interpreted in accordance with the nature of the transaction "
+"and the provisions of the Egyptian law in force."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The transmission of health information to the site does not automatically "
+"allow the user to be used for any marketing or commercial purpose not "
+"related to the required service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The updated version is advertised through the site, with its entry into "
+"force in accordance with legal requirements."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The use of coupons found to be obtained by fraudulent means may also be "
+"refused, modified or reused in contravention of declared conditions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The use of multiple accounts is prohibited for the purpose of abuse of "
+"delivery offers or the minimum demand, the creation of large applications "
+"without real intention to receive, or the introduction of fictitious titles "
+"for the intentional cost of pharmacies or carriers, and each user has the "
+"right to cancel his or her application or to object to a price or service in"
+" accordance with legal rights, which is not in itself an abuse."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The use of the site does not give the user any ownership or commercial "
+"licence in the labels or protected materials."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The use of the site, the continuation of its navigation or the completion of"
+" a procurement process through it, after these conditions are made available"
+" to the user, is recognized for its access and acceptance of the provisions "
+"that apply law to the use or transaction in question."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The use of these techniques is subject to the requirements of notification, "
+"approval and selections established by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user is advised to review the requirements periodically, especially "
+"before new transactions are completed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user is committed to using the site only for legitimate purposes, in "
+"accordance with Egyptian laws, public morals and the rights of others."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user is obliged not to engage in unlawful acts that cause harm to "
+"pharmacies, their employees or other users."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user is required to consult the competent doctor or pharmacist before "
+"using the formulations that require it, and not rely on site information "
+"alone to make remedial decisions requiring professional evaluation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user is responsible for maintaining the confidentiality of its entry "
+"data and taking reasonable precautions to prevent unauthorized access to its"
+" account."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user is responsible for the validity of his or her identity, parenthood "
+"and description data in demand for products or services, without exempting "
+"pharmacies from the law ' s verification obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The user may appear to reserve an amount, attempt to deduct or a \" "
+"processed \" case before the completion of the reconciliation between the "
+"payment system and the branch system; the transaction is returned to the "
+"payment, invoice and valid confirmation notices, taking into account the "
+"client ' s right to recover duplicated damages or amounts relating to a "
+"service not provided in accordance with the law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user may not attempt to dismember requests, use multiple accounts or "
+"provide improper data to circumvent the restrictions imposed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"The user must ascertain the validity of the telephone number, mode of "
+"communication, delivery address and any directives on access to the "
+"property; old or inaccurate data may delay delivery or lack of access, and "
+"delays are not attributable to pharmacies if it is proved to be exclusively "
+"due to misleading or incorrect information from the client without default."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The user undertakes not to impersonate the third person, to use incorrect "
+"data or to establish accounts with a view to circumventing or harming "
+"electronic systems."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The website is not a medical emergency reception facility and does not "
+"ensure an immediate response to urgent inquiries."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"There may be a temporary difference between electronic inventory data and "
+"actual inventory as a result of synchronization of requests, direct sale or "
+"operational updates."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Therefore, it may make a legitimate professional or regulatory decision to "
+"suspend or reject the exchange of a producer when there are legal or "
+"pharmaceutical grounds for doing so."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These conditions and provisions constitute the general framework governing "
+"the relationship between users of the site and Abdin Pharmacies, without "
+"prejudice to any rights or obligations established under applicable laws and"
+" regulations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These conditions and provisions represent the general framework for the use "
+"and handling of the website, together with the policies of privacy, "
+"replacement, retrieval, delivery and any special conditions clearly declared"
+" prior to contracting."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These conditions apply to the use of the website, the navigation of "
+"products, the establishment of accounts, the transmission of queries, "
+"purchase orders, payments, delivery services, post-sale services and "
+"transactional electronic communication."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These conditions are aimed at regulating the contractual relationship, at "
+"clarifying rights and obligations, at protecting electronic transactions "
+"against misuse and at facilitating the clear and fair handling of disputes."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These instructions include, depending on the nature of the product, "
+"appropriate temperatures, protection against light, humidity, non-freezing "
+"or exposure to excessive heat."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These laws include, depending on the nature of the transaction, consumer "
+"protection legislation, pharmacology, regulation of the handling of "
+"formulations, personal data and electronic transactions."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"These provisions deal, as applicable to each transaction, with the stages of"
+" filing, reviewing, implementing and settling the cost of the application, "
+"the relationship between the e-supply and the invoice issued by the Branch, "
+"the delivery options and associated fees, the inability to provide, delay or"
+" damage, complaints mechanisms, disincentives and payments."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These provisions may not be used to restrict legitimate complaints or to "
+"exercise the legal rights of consumers."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These records may be used to establish business processes, to process "
+"complaints or to meet accounting and regulatory obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This article does not deprive the client of providing counter-substantiation"
+" or challenging the validity or content of any record by legal means."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This article is not interpreted as requiring the user to compensate "
+"pharmacies for merely filing a complaint, exercising a legal right or "
+"objecting to a transaction."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This document is applied in accordance with Egyptian laws, consumer "
+"protection provisions and professional and regulatory rules."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This does not mean that any formulation may be replaced by another without "
+"taking into account differences in concentration, pharmaceutical form, dose,"
+" grounds of use or prohibitions of use."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This does not prejudice the obligation of pharmacists not to publish "
+"misleading information or unaccredited remedial allegations, or their "
+"responsibility for any relevant legal offence."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This is not interpreted as an exemption from the obligation to extradite or "
+"from the client ' s rights established upon delay or non-implementation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This policy may not be interpreted as depriving the consumer of its legal "
+"rights."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This principle may not be used to maintain a requirement that is unjust or "
+"contrary to consumer rights established by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This provision does not dismiss the client ' s right to claim compensation, "
+"replacement or recovery of value when there is a defect, failure or error in"
+" the execution of the application, where the requirements of the right are "
+"provided by law."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This regulation does not prejudice any liability established by law for "
+"pharmacies to select service providers or their work or to breach their "
+"consumer obligations."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"This requirement does not include any prior waiver of jurisdiction or legal "
+"right that cannot be waived."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"To the extent permitted by law, pharmacies are not considered as guarantors "
+"for any hypothetical benefit or alleged commercial profit as a result of the"
+" non-completion of an ordinary application, nor does an automatic obligation"
+" to pay additional compensation arise simply because of a request cancelled "
+"for reasons beyond their control, but the consideration of payment as a "
+"fundamental settlement does not exclude compensation, reimbursement of "
+"expenses, any sanction or other right established by law if the cause of "
+"entitlement is established, and does not limit liability for the safety or "
+"serious breach of the patient."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"To the extent permitted by the law, pharmacies are not liable for damages "
+"found to have arisen exclusively from:"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Transactions and services provided by Abdin Pharmacies within the Arab "
+"Republic of Egypt are subject to applicable Egyptian laws."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Unauthorized payment requests, intentional incorrect addresses or repeated "
+"requests for decommissioning may be treated with caution, and records may be"
+" consulted to establish facts; these provisions shall not be interpreted as "
+"allowing pharmacies to punish an agent simply for repeating a legitimate "
+"complaint or rejecting an unaccepted fee."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "User Acknowledgement"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Using or through the website of Abdin Pharmacies, the user acknowledges that"
+" it has had access to these conditions and provisions, and understands the "
+"nature of the services, products and legal and professional constraints "
+"involved."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Welcome to the Abdin Pharmacies pharmacy website."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"When an unlawful act of damage is established, pharmacists may claim their "
+"rights before the competent authorities."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"When the branch ' s financial adjustment is effected, the final payment of "
+"the delivery may be established in the branch ' s invoice or appropriate "
+"legal document, even if the electronic commerce site does not show a final "
+"clause to it, provided that the amount or basis of its estimate is disclosed"
+" and the client ' s acceptance is obtained where it is required prior to the"
+" receipt or execution of the service."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"When the reason for the project to implement the application is finally "
+"prevented, pharmacies shall report to the client as far as possible and take"
+" steps to reimburse the unimplemented part or agree on a legitimate "
+"alternative, and shall not invoke the exceptional circumstance of "
+"maintaining an exchange for goods that have not been delivered without legal"
+" authority or for the termination of jus cogens."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"When there is prima facie damage to the packaging or breach in statements of"
+" validity or integrity of closure, the delivery of the item may be "
+"discontinued for re-examination or exclusion, and the pre-delivery "
+"deficiency or damage is treated as an implementation problem that needs to "
+"be settled in accordance with the law, and the client is not required to "
+"accept a suspected product in his/her safety simply to complete payment."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Where a required item cannot be provided, the client is informed of the "
+"options available, which may include waiting for savings or choosing an "
+"appropriate alternative with his or her consent or removing the unavailable "
+"item."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+msgid ""
+"Where the value of the delivery fee is different in the site summary and the"
+" branch ' s invoice, the letters presented to the client and the statements "
+"before them, the nature of the confirmation and the requirements of the law "
+"shall be reviewed. The bill adopted shall be considered as an important "
+"record of settlement, without having any effect on correcting a fee that the"
+" client has not consented to or dismissing a right arising from a binding "
+"offer or contract."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.checkout_order_delivery_terms
+msgid "order and delivery terms"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_delivery_terms_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "© Abdin Pharmacies – All rights reserved to their lawful owners."
 msgstr ""

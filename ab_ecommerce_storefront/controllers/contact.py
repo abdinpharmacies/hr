@@ -3,6 +3,7 @@ import re
 import time
 
 from odoo import http, _
+from odoo.addons.account.controllers.terms import TermsController
 from odoo.addons.website.controllers.form import WebsiteForm
 from odoo.http import request
 from odoo.tools import email_normalize
@@ -11,7 +12,11 @@ from odoo.tools import email_normalize
 class AbBusinessPages(http.Controller):
     @http.route("/terms-and-conditions", type="http", auth="public", website=True, sitemap=False)
     def terms_and_conditions(self, **kwargs):
-        response = request.render("ab_ecommerce_storefront.terms_conditions_page")
+        return request.redirect("/terms", code=301)
+
+    @http.route("/order-delivery-terms", type="http", auth="public", website=True, sitemap=False)
+    def order_delivery_terms(self, **kwargs):
+        response = request.render("ab_ecommerce_storefront.order_delivery_terms_page")
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         return response
 
@@ -35,6 +40,12 @@ class AbBusinessPages(http.Controller):
         response.headers["Cache-Control"] = "private, no-store"
         response.headers["X-Robots-Tag"] = "noindex"
         return response
+
+
+class AbTermsController(TermsController):
+    @http.route()
+    def terms_conditions(self, **kwargs):
+        return request.render("ab_ecommerce_storefront.terms_conditions_page")
 
 
 class AbBusinessWebsiteForm(WebsiteForm):
