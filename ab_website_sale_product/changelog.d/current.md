@@ -2,19 +2,17 @@
 
 ## Current changes before commit:
 
-- Synchronize a linked website product's base price in the same transaction when `ab_product.default_price` changes.
-- Reject independent base-price changes on linked website templates and variants, while leaving unlinked E-Plus fallback products independent.
-- Record website price changes with old and new values, actor, and timestamp in product chatter.
-- Update the affected sync and image-publication tests for immediate price propagation.
-- Translate the price validation and audit messages in both Arabic catalogs.
+- Convert Eplus quantities from small units to large packs before updating Odoo inventory and website availability.
+- Skip products with missing or invalid pack conversion and show each skipped product in the inventory sync lines.
+- Cover pack conversion, skipped products, and prepared inventory quantities in a focused test.
+- Translate new skipped-product messages in both Arabic catalogs.
 
 Files changed:
 
-- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/eplus_inventory_sync_job.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
 - `ab_website_sale_product/models/product_template.py`
 - `ab_website_sale_product/tests/test_eplus_catalog_import.py`
-- `ab_website_sale_product/tests/test_website_category_mapping.py`
-- `ab_website_sale_product/tests/test_website_product_sync.py`
 - `ab_website_sale_product/i18n/ab_website_sale_product.pot`
 - `ab_website_sale_product/i18n/ar.po`
 - `ab_website_sale_product/i18n/ar_001.po`
@@ -22,14 +20,35 @@ Files changed:
 
 Validation:
 
-- Targeted upgrades used development databases and alternate ports `5069/5072`; no production database was changed.
-- Four focused sync and import tests passed on `codex_eplus_sync_20261104`; `/tmp/ab_price_source_validation.log`.
-- English/Arabic price and direct ORM tests passed on `codex_ecom_offers_20261013`: two tests in `/tmp/ab_price_translation_validation4.log` and one additional direct ORM test in `/tmp/ab_price_direct_orm_validation.log`.
-- A wider sync run executed 41 tests: 37 passed, two existing category/status assertions failed, and two user-creation tests errored on an unrelated `res_partner.ab_storefront_avatar` constraint; `/tmp/ab_price_source_full_sync_validation.log`.
-- Both Arabic catalogs and the POT pass `msgfmt --check-format`; Odoo loaded the new `ar_001` messages at runtime, and the product action renders as `Abdin Products` in `en_US` versus `منتجات عابدين` in `ar_001`.
-- Existing linked price mismatches need one initial reconciliation through the existing website sync action after deployment. Future source-price changes synchronize automatically.
+- Targeted development upgrade on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; no production database changed.
+- Five focused conversion and replication tests passed in `/tmp/eplus_deploy_preflight_tests.log`.
+- The earlier broad catalog test run had existing replica-policy test setup failures; see `/tmp/eplus_six_hour_validation.log`.
+- Both Arabic catalogs pass `msgfmt --check-format`.
+- Inventory preparation and skipped-line assertions passed after reusing `ab_product.qty_from_small`; `/tmp/eplus_pack_inventory_validation_final.log`.
+- The Eplus stock action reads `Eplus Stock` in `en_US` and `مخزون Eplus` in `ar_001` after the targeted upgrade.
 
 ## Recent commits
+
+Commit: `b21e8869`
+Author: Mohamed Fawzy
+Date: 2026-11-15
+Original subject: `ab_website_sale_product/IMP: synchronize linked website base prices`
+
+User-facing changes:
+
+- Keep linked website base prices aligned with Abdin product prices and record changes in product chatter.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/models/product_template.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
+- `ab_website_sale_product/tests/test_website_category_mapping.py`
+- `ab_website_sale_product/tests/test_website_product_sync.py`
 
 Commit: `d78d69be`
 Author: Mohamed Fawzy

@@ -210,3 +210,45 @@ class TestEplusCatalogImport(TransactionCase):
 
         self.assertIn("Could not refresh Eplus stock", str(raised.exception))
         self.assertNotIn("connection timed out", str(raised.exception))
+
+    def test_inventory_target_converts_small_units_to_large_packs(self):
+        policies = self.env["ab_odoo_replication_override"].search([
+            ("model_name", "in", ["ab_product", "ab_product_card", "ab_uom"]),
+            ("active", "=", True),
+        ])
+        policies.write({"active": False})
+        try:
+            small_unit = self.env["ab_uom"].create({"unit_size": "small", "unit_no": 10})
+            product = self.Product.create({
+                "product_card_name": "Pack conversion test",
+                "code": "PACK-CONVERSION-TEST",
+                "unit_s_id": small_unit.id,
+            })
+            missing_conversion = self.Product.create({
+                "product_card_name": "Missing conversion test",
+                "code": "MISSING-CONVERSION-TEST",
+            })
+        finally:
+            policies.write({"active": True})
+
+        self.assertEqual(self.Snapshot._get_odoo_inventory_target_qty(product, 30), 3)
+        self.assertEqual(self.Snapshot._get_odoo_inventory_target_qty(product, 0), 0)
+        self.assertIsNone(self.Snapshot._get_odoo_inventory_target_qty(missing_conversion, 30))
+
+        odoo_product = self.env["product.product"].create({
+            "name": "Pack conversion stock product", "is_storable": True,
+        })
+        job = self.env["ab_eplus_inventory_sync_job"].create({})
+        with (
+            patch.object(type(self.Snapshot), "_get_inventory_sync_stock_groups", return_value=[
+                (product, 30), (missing_conversion, 20),
+            ]),
+            patch.object(type(self.Snapshot), "_get_inventory_sync_products", return_value={
+                product.id: odoo_product, missing_conversion.id: odoo_product,
+            }),
+            patch.object(type(self.Snapshot), "_get_inventory_sync_current_quantities", return_value={}),
+        ):
+            job._prepare_full_sync()
+        self.assertEqual(job.line_ids.filtered(lambda line: line.state == "pending").target_qty, 3)
+        self.assertEqual(len(job.line_ids.filtered(lambda line: line.state == "skipped")), 1)
+        self.assertEqual(job.skipped_count, 1)

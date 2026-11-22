@@ -250,7 +250,9 @@ class ProductProduct(models.Model):
             ["itm_qty:sum"],
         )
         eplus_qty = groups[0][0] if groups else 0.0
-        eplus_qty = max(eplus_qty or 0.0, 0.0)
+        eplus_qty = self.env["ab_eplus_stock_snapshot"].sudo()._get_odoo_inventory_target_qty(ab_product, eplus_qty)
+        if eplus_qty is None:
+            return 0.0
         template = product.product_tmpl_id.sudo()
         shown_qty = max(template.eplus_stock_shown_qty_value or 0.0, 0.0)
         if template.eplus_stock_shown_qty_type == "percentage":

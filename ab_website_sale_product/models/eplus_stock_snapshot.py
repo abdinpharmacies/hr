@@ -470,6 +470,14 @@ class EplusStockSnapshot(models.Model):
             quantities[product] = quantities.get(product, 0.0) + ((quantity or 0.0) if active else 0.0)
         return list(quantities.items())
 
+    @api.model
+    def _get_odoo_inventory_target_qty(self, ab_product, eplus_qty):
+        small_unit = ab_product.unit_s_id
+        if not small_unit or small_unit.unit_size != "small" or small_unit.unit_no <= 0:
+            _logger.warning("Skipping Eplus inventory sync for product %s without a valid small-unit conversion", ab_product.id)
+            return None
+        return ab_product.qty_from_small(max(eplus_qty or 0.0, 0.0), "large")
+
     def _sync_to_odoo_inventory(self):
         warehouse = self._get_inventory_sync_warehouse()
         location = warehouse.lot_stock_id
@@ -507,7 +515,10 @@ class EplusStockSnapshot(models.Model):
                 skipped_count += 1
                 continue
 
-            target_qty = max(eplus_qty or 0.0, 0.0)
+            target_qty = self._get_odoo_inventory_target_qty(ab_product, eplus_qty)
+            if target_qty is None:
+                skipped_count += 1
+                continue
             current_qty = current_qty_by_product.get(product.id, 0.0)
             rounding = product.uom_id.rounding
             if float_compare(current_qty, target_qty, precision_rounding=rounding) == 0:

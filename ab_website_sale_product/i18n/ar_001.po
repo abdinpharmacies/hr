@@ -6575,3 +6575,16 @@ msgstr "يجب أن يطابق السعر الأساسي على الموقع س�
 #: code:addons/ab_website_sale_product/models/product_template.py:0
 msgid "Website base price changed from %(old)s to %(new)s by %(actor)s on %(date)s."
 msgstr "تغيّر السعر الأساسي على الموقع من %(old)s إلى %(new)s بواسطة %(actor)s في %(date)s."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "No eligible Odoo stock product is linked."
+msgstr "لا يوجد منتج مخزني صالح مرتبط في Odoo."
+
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "The small-unit pack conversion is missing or invalid."
+msgstr "عدد الوحدات الصغيرة في العبوة ناقص أو غير صحيح."

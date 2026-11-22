@@ -6283,3 +6283,16 @@ msgstr ""
 #: code:addons/ab_website_sale_product/models/product_template.py:0
 msgid "Website base price changed from %(old)s to %(new)s by %(actor)s on %(date)s."
 msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "No eligible Odoo stock product is linked."
+msgstr ""
+
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "The small-unit pack conversion is missing or invalid."
+msgstr ""

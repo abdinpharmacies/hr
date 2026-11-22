@@ -125,18 +125,33 @@ class EplusInventorySyncJob(models.Model):
 
         products_by_ab_product = Snapshot._get_inventory_sync_products(groups)
         candidate_vals = []
-        skipped_count = 0
+        skipped_vals = []
         for ab_product, eplus_qty in groups:
             product = products_by_ab_product.get(ab_product.id)
             if not product or product.type == "service":
-                skipped_count += 1
+                skipped_vals.append({
+                    "ab_product_id": ab_product.id,
+                    "product_product_id": product.id if product else False,
+                    "state": "skipped",
+                    "message": _("No eligible Odoo stock product is linked."),
+                })
+                continue
+            target_qty = Snapshot._get_odoo_inventory_target_qty(ab_product, eplus_qty)
+            if target_qty is None:
+                skipped_vals.append({
+                    "ab_product_id": ab_product.id,
+                    "product_product_id": product.id,
+                    "state": "skipped",
+                    "message": _("The small-unit pack conversion is missing or invalid."),
+                })
                 continue
             candidate_vals.append({
                 "ab_product_id": ab_product.id,
                 "product_product_id": product.id,
-                "target_qty": max(eplus_qty or 0.0, 0.0),
+                "target_qty": target_qty,
             })
 
+        skipped_count = len(skipped_vals)
         if not candidate_vals and not skipped_count:
             raise UserError(_("No syncable products were found."))
 
@@ -180,7 +195,7 @@ class EplusInventorySyncJob(models.Model):
             },
         })
         Line = self.env["ab_eplus_inventory_sync_job_line"].sudo()
-        line_vals = unchanged_vals + pending_vals
+        line_vals = unchanged_vals + pending_vals + skipped_vals
         for index in range(0, len(line_vals), 5000):
             Line.create([
                 dict(vals, job_id=self.id)
