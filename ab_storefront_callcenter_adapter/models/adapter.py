@@ -34,7 +34,6 @@ class Endpoint(models.Model):
         'UNIQUE(website_id)', 'Website endpoint already exists.'
     )
 
-<<<<<<< Updated upstream
     @api.onchange('website_id')
     def _onchange_website_id(self):
         self.company_id = self.website_id.company_id
@@ -55,10 +54,7 @@ class Endpoint(models.Model):
             if record.enabled and not record.website_id:
                 raise ValidationError(_('An enabled endpoint requires a website.'))
 
-    @api.constrains('service_user_id', 'website_id', 'source')
-=======
     @api.constrains('service_user_id', 'website_id', 'source', 'chat_enabled', 'livechat_channel_id', 'bridge_operator_id')
->>>>>>> Stashed changes
     def _check_service(self):
         for record in self:
             try:

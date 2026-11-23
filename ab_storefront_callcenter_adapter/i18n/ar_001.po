@@ -371,12 +371,10 @@ msgid "Website Callcenter"
 msgstr "مركز اتصال الموقع"
 
 #. module: ab_storefront_callcenter_adapter
-<<<<<<< Updated upstream
 #. odoo-python
 #: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
 msgid "An enabled endpoint requires a website."
 msgstr "يجب ربط نقطة الاتصال المفعلة بموقع إلكتروني."
-=======
 #: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_chat_ready
 msgid "Ab Callcenter Chat Ready"
 msgstr "جاهزية محادثة مركز الاتصال"
@@ -497,15 +495,12 @@ msgstr "استخدم مشغّلاً مخصصاً لربط المحادثة ال�
 #: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__discuss_channel__ab_callcenter_identity_kind__visitor
 msgid "Visitor"
 msgstr "زائر"
->>>>>>> Stashed changes
 
 #. module: ab_storefront_callcenter_adapter
 #. odoo-python
 #: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
-<<<<<<< Updated upstream
 msgid "Select a website for a new endpoint."
 msgstr "اختر موقعًا إلكترونيًا لنقطة الاتصال الجديدة."
-=======
 #: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
 msgid "Website replies are disabled."
 msgstr "الردود على الموقع معطّلة."
@@ -693,4 +688,3 @@ msgstr "تفعيل هوية الدفع الموثقة بعد ترقية النظ
 #: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__ab_storefront_submission__callcenter_origin__guest
 msgid "Guest"
 msgstr "زائر"
->>>>>>> Stashed changes

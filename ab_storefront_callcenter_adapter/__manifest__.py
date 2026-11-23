@@ -1,10 +1,6 @@
 {
     'name': 'Storefront Callcenter Adapter',
-<<<<<<< Updated upstream
-    'version': '19.0.1.0.2',
-=======
     'version': '19.0.1.5.1',
->>>>>>> Stashed changes
     'license': 'LGPL-3',
     'category': 'Sales',
     'author': 'Abdin Pharmacies',
