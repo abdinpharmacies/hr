@@ -22,12 +22,53 @@
     </div>
 </t>
 <t t-inherit="ab_crm_sales_workspace.Workspace" t-inherit-mode="extension">
-    <xpath expr="//div[hasclass('ab_composer')]" position="attributes"><attribute name="t-if">state.detail.provider !== 'website'</attribute></xpath>
-    <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="before">
-        <small t-if="message.website_order_reference &amp;&amp; !message.website_order" t-esc="message.website_order_reference"/>
+    <xpath expr="//button[hasclass('ab_channel_button')]" position="attributes">
+        <attribute name="t-att-title">group.provider === 'website' &amp;&amp; state.detail.provider === 'website' ? (state.replyTo?.website_origin || state.detail.website_header_origin || this.channelLabel(group.provider)) : this.channelLabel(group.provider)</attribute>
+        <attribute name="t-att-aria-label">group.provider === 'website' &amp;&amp; state.detail.provider === 'website' ? (state.replyTo?.website_origin || state.detail.website_header_origin || this.channelLabel(group.provider)) : this.channelLabel(group.provider)</attribute>
     </xpath>
-    <xpath expr="//div[hasclass('ab_attachment_control')]" position="attributes"><attribute name="t-if">state.detail.provider !== 'website'</attribute></xpath>
-    <xpath expr="//button[@t-on-click='record']" position="attributes"><attribute name="t-if">!state.recording &amp;&amp; state.detail.provider !== 'website'</attribute></xpath>
+    <xpath expr="//button[hasclass('ab_channel_button')]/i" position="replace">
+        <t t-if="group.provider === 'website'">
+            <t t-set="websiteOriginKind" t-value="state.replyTo?.website_origin_kind || state.detail.website_header_origin_kind || 'livechat'"/>
+            <img t-if="websiteOriginKind === 'order'" class="ab_website_header_icon" src="/ab_crm_website/static/src/img/callcenter_support.png" alt="Order chat"/>
+            <img t-else="" class="ab_website_header_icon" src="/ab_crm_website/static/src/img/abdin_bot.jpg" alt="Floating chat"/>
+        </t>
+        <i t-else="" class="fa" t-att-class="this.icon(group.provider)"/>
+    </xpath>
+    <xpath expr="//div[hasclass('ab_composer')]" position="before">
+        <p t-if="state.detail.provider === 'website' &amp;&amp; state.detail.website_session_ended &amp;&amp; !state.detail.website_has_closure_notice" class="ab_website_chat_ended px-3 py-2 mb-0 text-muted" role="status">This website chat has ended.</p>
+    </xpath>
+    <xpath expr="//div[hasclass('ab_composer')]" position="attributes">
+        <attribute name="t-if">state.detail.provider !== 'website' || (state.detail.website_target ? !state.detail.website_target_closed : state.detail.can_send)</attribute>
+    </xpath>
+    <xpath expr="//div[hasclass('ab_composer')]/fieldset" position="attributes">
+        <attribute name="t-if">state.detail.provider !== 'website'</attribute>
+    </xpath>
+    <xpath expr="//div[hasclass('ab_composer')]/fieldset" position="before">
+<div t-if="state.detail.provider === 'website'" class="ab_website_composer"><fieldset t-att-disabled="!state.detail.owned || state.busy || state.navigating || !state.detail.can_send">
+                            <div class="ab_attachment_drafts"><div t-foreach="state.attachments" t-as="attachment" t-key="attachment.url"><img t-if="attachment.kind === 'image'" t-att-src="attachment.url" t-att-alt="attachment.name" class="ab_media_preview"/><video t-if="attachment.kind === 'video'" t-att-src="attachment.url" controls="controls" preload="metadata" class="ab_media_preview"/><audio t-if="['audio', 'voice'].includes(attachment.kind)" t-att-src="attachment.url" controls="controls"/><span t-esc="attachment.name"/><button class="btn btn-outline-danger" t-on-click="() =&gt; this.removeAttachment(attachment_index)" aria-label="Remove attachment"><i class="fa fa-times"/></button></div></div>
+                            <div class="ab_composer_box">
+                                <div class="ab_attachment_control" t-on-mouseenter="openAttachments" t-on-mouseleave="leaveAttachments" t-on-focusout="leaveAttachmentFocus">
+                                    <button class="btn ab_attach_toggle" t-ref="attachToggle" t-on-click="toggleAttachments" title="Attach" aria-label="Attach" aria-haspopup="true" t-att-aria-expanded="state.attachmentMenu ? 'true' : 'false'" t-att-disabled="state.recording || state.preparing"><i class="fa fa-paperclip" aria-hidden="true"/></button>
+                                    <div t-if="state.attachmentMenu" class="ab_attachment_menu" role="group" aria-label="Attachments">
+                                        <button class="btn" t-on-click="() =&gt; this.chooseAttachment('media')"><i class="fa fa-picture-o" aria-hidden="true"/> Photo/video</button>
+                                        <button t-if="['telegram', 'whatsapp'].includes(state.detail.provider)" class="btn" t-on-click="location"><i class="fa fa-map-marker" aria-hidden="true"/> Location</button>
+                                        <button class="btn" t-on-click="() =&gt; this.chooseAttachment('document')"><i class="fa fa-file-o" aria-hidden="true"/> Document</button>
+                                        <button class="btn" t-on-click="() =&gt; this.chooseAttachment('music')"><i class="fa fa-music" aria-hidden="true"/> Music</button>
+                                        <button class="btn" t-on-click="attachmentTemplates"><i class="fa fa-clone" aria-hidden="true"/> Saved replies</button>
+                                    </div>
+                                </div>
+                                <textarea class="form-control ab_composer_input" dir="auto" t-ref="reply" t-model="state.reply" maxlength="4096" t-on-paste="paste" t-on-keydown="composerKeydown" placeholder="Write a message..." aria-label="Reply"/>
+                                <div class="ab_composer_tools">
+                                    <button class="btn btn-light ab_emoji_toggle" t-on-click="() =&gt; state.emoji = !state.emoji" title="Emoji" aria-label="Emoji" t-att-aria-expanded="state.emoji ? 'true' : 'false'"><i class="fa fa-smile-o" aria-hidden="true"/></button>
+                                    <button t-if="!state.recording" class="btn btn-light" t-on-click="record" title="Record audio" aria-label="Record audio" t-att-disabled="state.preparing"><i class="fa fa-microphone" aria-hidden="true"/></button>
+                                    <t t-else=""><button class="btn btn-warning" t-on-click="() =&gt; this.stopRecording()" title="Stop recording" aria-label="Stop recording"><i class="fa fa-stop" aria-hidden="true"/></button><button class="btn btn-light" t-on-click="() =&gt; this.stopRecording(true)" title="Cancel recording" aria-label="Cancel recording"><i class="fa fa-times" aria-hidden="true"/></button></t>
+                                    <button class="btn btn-primary ab_send" t-on-click="send" t-att-disabled="!!sendDisabledReason" t-att-title="sendDisabledReason || sendLabel" aria-label="Send message"><i class="fa fa-paper-plane" aria-hidden="true"/></button>
+                                </div>
+                                <div t-if="state.emoji" class="ab_emoji_panel" role="group" aria-label="Emoji"><button t-foreach="emojis" t-as="emoji" t-key="emoji" class="btn btn-light" t-att-aria-label="emoji" t-on-click="() =&gt; this.insertEmoji(emoji)" t-esc="emoji"/></div>
+                            </div>
+                            <input type="file" multiple="multiple" class="d-none" t-ref="files" t-on-change="filesChanged"/>
+                        </fieldset>
+                    </div>    </xpath>
     <xpath expr="//article[@t-att-data-message-id]" position="attributes"><attribute name="t-att-class">'ab_message ' + message.direction + (message.website_order ? ' ab_website_message' : '')</attribute></xpath>
     <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="attributes"><attribute name="t-if">message.body &amp;&amp; !message.location &amp;&amp; !message.website_order</attribute></xpath>
     <xpath expr="//article[@t-att-data-message-id]/p[@t-esc='message.body']" position="after">

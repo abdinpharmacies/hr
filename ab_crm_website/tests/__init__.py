@@ -4,3 +4,5 @@ from . import test_ui
 from . import test_http
 
 from . import test_contact_groups
+
+from . import test_chat_ux

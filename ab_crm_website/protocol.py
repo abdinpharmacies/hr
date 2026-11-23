@@ -16,6 +16,49 @@ def fingerprint(event):
     ).hexdigest()
 
 
+def validate_chat(event):
+    if isinstance(event, dict) and type(event.get('version')) is int and event.get('version') == 4:
+        from .media_protocol import validate_attachments
+        validate_attachments(event.get('attachments'))
+        if not event['attachments']:
+            raise ValueError('Invalid website media')
+        legacy = {key: value for key, value in event.items() if key != 'attachments'}
+        legacy.update(version=2, body=event.get('body').strip() or 'Attachment' if isinstance(event.get('body'), str) else 'Attachment')
+        legacy['fingerprint'] = fingerprint(legacy)
+        validate_chat(legacy)
+        if not isinstance(event.get('body'), str) or len(event['body']) > 4096 or event.get('fingerprint') != fingerprint(event):
+            raise ValueError('Invalid website media')
+        return event
+    if not isinstance(event, dict) or set(event) != {
+        'version', 'source', 'event_uuid', 'destination', 'identity', 'body', 'fingerprint'
+    } or type(event['version']) is not int or event['version'] != 2:
+        raise ValueError('Invalid website chat')
+    for key in ('source', 'event_uuid'):
+        if not isinstance(event[key], str) or str(UUID(event[key])) != event[key]:
+            raise ValueError('Invalid website identity')
+    destination, identity = event['destination'], event['identity']
+    if not isinstance(destination, dict) or set(destination) != {'kind', 'uuid'}:
+        raise ValueError('Invalid website destination')
+    if destination['kind'] not in ('order', 'livechat'):
+        raise ValueError('Invalid website destination')
+    if not isinstance(identity, dict) or not {'kind', 'uuid'} <= identity.keys() or set(identity) - {'kind', 'uuid', 'name', 'phone'}:
+        raise ValueError('Invalid website identity')
+    if identity['kind'] not in ('customer', 'visitor'):
+        raise ValueError('Invalid website identity')
+    if 'name' in identity and (identity['kind'] != 'customer' or not isinstance(identity['name'], str)
+                               or not identity['name'].strip() or len(identity['name']) > 256):
+        raise ValueError('Invalid website identity')
+    if 'phone' in identity and (identity['kind'] != 'customer' or not isinstance(identity['phone'], str) or len(identity['phone']) > 64):
+        raise ValueError('Invalid website identity')
+    for value in (destination['uuid'], identity['uuid']):
+        if not isinstance(value, str) or str(UUID(value)) != value:
+            raise ValueError('Invalid website identity')
+    if (not isinstance(event['body'], str) or not 1 <= len(event['body'].strip()) <= 4096
+            or event['fingerprint'] != fingerprint(event)):
+        raise ValueError('Invalid website message')
+    return event
+
+
 def validate(event):
     if not isinstance(event, dict) or set(event) != {
         "version",
@@ -47,6 +90,16 @@ def validate(event):
     ] != fingerprint(event):
         raise ValueError("Invalid website fingerprint")
     payload = event["payload"]
+    if 'origin_kind' in payload and (event['kind'] != 'order' or payload['origin_kind'] not in ('guest', 'account')):
+        raise ValueError('Invalid website origin')
+    if 'visitor_identity' in payload:
+        value = payload['visitor_identity']
+        if event['kind'] != 'order' or not isinstance(value, str) or str(UUID(value)) != value or payload.get('origin_kind') != 'guest':
+            raise ValueError('Invalid website identity')
+    if 'account_identity' in payload:
+        value = payload['account_identity']
+        if event['kind'] != 'order' or not isinstance(value, str) or str(UUID(value)) != value:
+            raise ValueError('Invalid website identity')
     if event["kind"] == "message":
         if (
             set(payload) != {"body"}
@@ -112,4 +165,26 @@ def validate(event):
                 raise ValueError("Invalid website value")
         if line["quantity"] <= 0 or not 0 <= line["discount"] <= 100:
             raise ValueError("Invalid website quantity")
+    return event
+
+
+def validate_lifecycle(event):
+    if not isinstance(event, dict) or set(event) != {
+        'version', 'source', 'event_uuid', 'kind', 'destination', 'identity', 'fingerprint'
+    } or type(event['version']) is not int or event['version'] != 3:
+        raise ValueError('Invalid website lifecycle')
+    if event['kind'] not in ('identity_bound', 'session_ended', 'order_dispatched'):
+        raise ValueError('Invalid website lifecycle')
+    sample = {key: value for key, value in event.items() if key != 'kind'}
+    sample.update(version=2, body='lifecycle')
+    sample['fingerprint'] = fingerprint(sample)
+    validate_chat(sample)
+    if event['fingerprint'] != fingerprint(event):
+        raise ValueError('Invalid website lifecycle')
+    if event['kind'] == 'session_ended' and event['destination']['kind'] != 'livechat':
+        raise ValueError('Invalid website lifecycle')
+    if event['kind'] == 'order_dispatched' and event['destination']['kind'] != 'order':
+        raise ValueError('Invalid website lifecycle')
+    if event['kind'] == 'identity_bound' and event['identity']['kind'] != 'customer':
+        raise ValueError('Invalid website identity')
     return event

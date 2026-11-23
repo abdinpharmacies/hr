@@ -224,7 +224,7 @@ class TestWebsiteAdapter(TransactionCase):
             )
         )
 
-    def test_unverified_orders_share_customer_screen_without_contact_merge(self):
+    def test_unverified_orders_keep_separate_customer_screens(self):
         first, second = self.event(), self.event()
         self.receive(first)
         self.receive(second)
@@ -233,10 +233,10 @@ class TestWebsiteAdapter(TransactionCase):
         )
         self.assertEqual(len(orders), 2)
         self.assertEqual(
-            len(set(orders.conversation_id.mapped('customer_group_key'))), 1
+            len(set(orders.conversation_id.mapped('customer_group_key'))), 2
         )
         self.assertFalse(orders.conversation_id.customer_id)
-        self.assertEqual(len(orders.conversation_id), 1)
+        self.assertEqual(len(orders.conversation_id), 2)
 
     def test_views_load_directly_from_source_in_xml_developer_mode(self):
         from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file

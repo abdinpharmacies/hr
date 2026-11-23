@@ -85,4 +85,14 @@
     <field name="view_mode">list,form</field>
   </record>
   <menuitem id="mappings_menu" active="0" name="Website Unit Mappings" action="mappings_action" groups="ab_crm_core.group_manager"/>
+<record id="website_operation_retry" model="ir.ui.view">
+    <field name="name">website.operation.retry</field>
+    <field name="model">ab_crm_messaging_operation</field>
+    <field name="inherit_id" ref="ab_crm_messaging.view_operation_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header" position="inside">
+        <field name="website_provider" invisible="1"/>
+        <button name="action_website_retry" type="object" string="Retry website send with same token" groups="ab_crm_core.group_manager" invisible="website_provider != 'website' or state != 'review' or error_code not in ['unavailable', 'ambiguous', 'media']"/>
+    </xpath></field>
+</record>
 </odoo>

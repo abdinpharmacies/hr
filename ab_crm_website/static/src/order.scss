@@ -30,3 +30,20 @@
     .ab_website_invoice_total { text-align: end; font-weight: 700; margin-block: 12px 8px; }
     .ab_website_payment_method { margin-block-end: 10px; }
 }
+
+.ab_crm_sales_workspace {
+    .ab_channels .fa-globe,
+    .ab_channel_button[data-channel="website"] > .fa-globe {
+        display: inline-block;
+        flex-shrink: 0;
+        width: 1.4em;
+        height: 1.4em;
+        border-radius: 50%;
+        background: url("/ab_crm_website/static/src/img/abdin_bot.jpg") center / cover no-repeat;
+        vertical-align: middle;
+
+        &::before { content: none; }
+    }
+}
+
+.ab_crm_sales_workspace .ab_website_header_icon { width: 1.4em; height: 1.4em; object-fit: contain; flex-shrink: 0; }

@@ -77,6 +77,7 @@ class TestWebsitePos(TestPosHandoff):
                 'fulfillment': {'state': 'sale'},
             },
         }
+        event['payload']['account_identity'] = str(uuid4())
         event['payload']['lines'].append(
             {
                 'serial': '',
@@ -187,11 +188,9 @@ class TestWebsitePos(TestPosHandoff):
             if message.get('website_order')
         ]
         self.assertEqual([quotation['total'] for quotation in quotations], [40, 60])
-        with self.assertRaises(UserError):
-            conversation.action_reply('Agent reply')
-        self.assertFalse(conversation.message_ids.filtered(lambda m: m.direction == 'out'))
-        self.assertFalse(self.env['ab_crm_messaging_operation'].search([
-            ('account_id', '=', account.id)]))
+        reply = self.env['ab_crm_message'].browse(conversation.website_action_reply('Agent reply', website_order_id=order.id))
+        self.assertEqual(reply.website_order_id, order)
+        self.assertEqual(len(reply.messaging_operation_ids), 1)
         self.assertFalse(
             self.env['ab_sales_header'].search(
                 [('pos_client_token', '=', 'website-draft')]
@@ -209,6 +208,7 @@ class TestWebsitePos(TestPosHandoff):
         unrelated = deepcopy(sibling)
         unrelated.update(order_uuid=str(uuid4()), event_uuid=str(uuid4()))
         unrelated['payload']['customer']['phone'] = '01099998888'
+        unrelated['payload']['account_identity'] = str(uuid4())
         unrelated['payload']['reference'] = 'WEB-OTHER-PHONE'
         unrelated['fingerprint'] = fingerprint(unrelated)
         gateway.receive_website_event(account.code, source, unrelated)
@@ -223,7 +223,7 @@ class TestWebsitePos(TestPosHandoff):
         sibling_conversation = sibling_order.conversation_id.with_user(self.staff).with_context(
             ab_chatter_session_token=self.session_token
         )
-        sibling_detail = sibling_conversation.workspace_detail()
+        sibling_detail = sibling_conversation.workspace_detail(target={'kind': 'order', 'uuid': sibling_order.order_uuid})
         self.assertEqual(sibling_detail['website_order']['reference'], 'WEB-SECOND')
         self.assertEqual(len(sibling_detail['streams']), 1)
         self.assertEqual(sibling_detail['name'], 'Website Customer')
@@ -232,13 +232,13 @@ class TestWebsitePos(TestPosHandoff):
             {item['id'] for item in inbox['items']},
             {sibling_conversation.id},
         )
-        combined = conversation.workspace_channel(sibling_conversation.id)
+        combined = conversation.workspace_detail(combine=True)
         self.assertEqual(
             {message['website_order']['reference'] for message in combined['messages']
              if message.get('website_order')}, {'WEB-POS', 'WEB-SECOND'},
         )
-        self.assertEqual(len(combined['messages']), len(detail['messages']))
-        conversation.workspace_acknowledge(combined['messages'][-1]['id'])
+        self.assertGreater(len(combined['messages']), len(detail['messages']))
+        conversation.workspace_acknowledge(combined['messages'][-1]['id'], target=combined['messages'][-1]['website_target'], combine=True)
         self.assertEqual(conversation.workspace_detail()['unread_count'], 0)
         other = self.env['ab_crm_website_order'].search([('order_uuid', '=', unrelated['order_uuid'])])
         with self.assertRaises(AccessError):
@@ -246,7 +246,7 @@ class TestWebsitePos(TestPosHandoff):
         with self.assertRaises(AccessError):
             conversation.workspace_acknowledge(other.conversation_id.message_ids.id)
 
-        searched = conversation.workspace_detail(query='WEB-SECOND')
+        searched = conversation.workspace_detail(query='WEB-SECOND', combine=True)
         self.assertEqual(len(searched['messages']), 1)
         self.assertEqual(searched['messages'][0]['conversation_id'], sibling_conversation.id)
         for original, start in [(event, 3), (sibling, 2)]:
@@ -256,10 +256,10 @@ class TestWebsitePos(TestPosHandoff):
                 chat['payload'] = {'body': 'Customer text %s' % offset}
                 chat['fingerprint'] = fingerprint(chat)
                 gateway.receive_website_event(account.code, source, chat)
-        first_page = conversation.workspace_detail()
+        first_page = conversation.workspace_detail(combine=True)
         self.assertEqual(len(first_page['messages']), 50)
         self.assertTrue(first_page['has_older'])
-        older = conversation.workspace_detail(before_id=first_page['messages'][0]['id'])
+        older = conversation.workspace_detail(before_id=first_page['messages'][0]['id'], combine=True)
         all_ids = {message['id'] for message in first_page['messages'] + older['messages']}
         self.assertEqual(
             len(all_ids),

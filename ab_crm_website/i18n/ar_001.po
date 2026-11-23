@@ -628,3 +628,421 @@ msgstr "هوية عميل الموقع"
 #: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_customer_unique_identity
 msgid "Website customer identity already exists."
 msgstr "هوية عميل الموقع موجودة بالفعل."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__chat_ready
+msgid "Chat Ready"
+msgstr "المحادثة جاهزة"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_session__identity_kind__customer
+msgid "Customer"
+msgstr "عميل"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_session__identity_kind
+msgid "Identity Kind"
+msgstr "نوع الهوية"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_session__identity_uuid
+msgid "Identity Uuid"
+msgstr "معرّف الهوية"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Invalid website reply."
+msgstr "رد الموقع غير صالح."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Reply about order"
+msgstr "الرد بشأن الطلب"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_session__session_uuid
+msgid "Session Uuid"
+msgstr "معرّف الجلسة"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_session__identity_kind__visitor
+msgid "Visitor"
+msgstr "زائر"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_chat_event
+msgid "Website Chat Event"
+msgstr "حدث محادثة الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_session
+msgid "Website Live Chat Session"
+msgstr "جلسة المحادثة المباشرة للموقع"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_message__website_session_id
+msgid "Website Session"
+msgstr "جلسة الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_session_unique_session
+msgid "Website session already exists."
+msgstr "جلسة الموقع موجودة بالفعل."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Reply"
+msgstr "رد"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Send message"
+msgstr "إرسال رسالة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Write a message..."
+msgstr "اكتب رسالة..."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__account_identity
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_session__account_identity
+msgid "Account Identity"
+msgstr "هوية الحساب"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_session__ended
+msgid "Ended"
+msgstr "منتهية"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Floating chat"
+msgstr "المحادثة العائمة"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Only managers can retry website sends."
+msgstr "يمكن للمديرين فقط إعادة محاولة إرسال رسائل الموقع."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Only uncertain website sends can be retried."
+msgstr "يمكن إعادة محاولة رسائل الموقع غير المؤكد إرسالها فقط."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Order chat"
+msgstr "محادثة الطلب"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_messaging_operation
+msgid "Outgoing Messaging Operation"
+msgstr "عملية إرسال رسالة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/reply.js:0
+msgid "Replies must contain between 1 and 4096 characters."
+msgstr "يجب أن تحتوي الردود على ما بين حرف واحد و4096 حرفًا."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Reply destination"
+msgstr "وجهة الرد"
+
+#. module: ab_crm_website
+#: model_terms:ir.ui.view,arch_db:ab_crm_website.website_operation_retry
+msgid "Retry website send with same token"
+msgstr "إعادة محاولة إرسال رسالة الموقع بنفس الرمز"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Saved replies"
+msgstr "الردود المحفوظة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "This website chat has ended."
+msgstr "انتهت محادثة الموقع هذه."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_conversation__website_account_identity
+msgid "Website Account Identity"
+msgstr "هوية حساب الموقع"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_operation__website_provider
+msgid "Messaging provider"
+msgstr "مزود المراسلة"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Attach"
+msgstr "إرفاق"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Attachments"
+msgstr "المرفقات"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Emoji"
+msgstr "رموز تعبيرية"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/media.py:0
+msgid "Conflicting website reply."
+msgstr "رد الموقع متعارض."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+#: code:addons/ab_crm_website/models/media.py:0
+msgid "Invalid website media."
+msgstr "وسائط الموقع غير صالحة."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/reply.js:0
+msgid "Retry the pending message before sending another."
+msgstr "أعد محاولة إرسال الرسالة المعلقة قبل إرسال رسالة أخرى."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_website/models/media.py:0
+#: code:addons/ab_crm_website/static/src/reply.js:0
+msgid "Website media is unavailable."
+msgstr "وسائط الموقع غير متاحة."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Cancel recording"
+msgstr "إلغاء التسجيل"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Document"
+msgstr "مستند"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Location"
+msgstr "الموقع"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Music"
+msgstr "موسيقى"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Photo/video"
+msgstr "صورة/فيديو"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Record audio"
+msgstr "تسجيل صوت"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Remove attachment"
+msgstr "إزالة المرفق"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "Stop recording"
+msgstr "إيقاف التسجيل"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/reply.js:0
+msgid "Media captions must not exceed 1024 characters."
+msgstr "يجب ألا يتجاوز وصف المرفق 1024 حرفًا."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_message__website_closure_notice
+msgid "Chat closure notice"
+msgstr "إشعار انتهاء المحادثة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__chat_closed
+msgid "Order chat ended"
+msgstr "انتهت محادثة الطلب"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "The guest has left the conversation."
+msgstr "غادر الزائر المحادثة."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "This chat has ended. Your order has been sent for delivery."
+msgstr "انتهت هذه المحادثة. تم إرسال طلبك للتوصيل."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_conversation__website_customer_name
+msgid "Verified customer name"
+msgstr "اسم العميل الموثّق"
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_target_preference__archived
+msgid "Archived"
+msgstr "المؤرشفة"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_target_preference__archived_through
+msgid "Archived Through"
+msgstr "مؤرشف حتى"
+
+#. module: ab_crm_website
+#: model:ir.model.constraint,message:ab_crm_website.constraint_ab_crm_website_target_preference_unique_target
+msgid "Chat preference already exists."
+msgstr "تفضيل المحادثة موجود بالفعل."
+
+#. module: ab_crm_website
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_order__origin_kind__guest
+msgid "Guest"
+msgstr "زائر"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "Invalid archive selection."
+msgstr "تحديد الأرشفة غير صالح."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/media.py:0
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "Invalid website target."
+msgstr "وجهة محادثة الموقع غير صالحة."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "Only ended guest chats can be archived."
+msgstr "يمكن أرشفة محادثات الزوار المنتهية فقط."
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "Orders"
+msgstr "الطلبات"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__origin_kind
+msgid "Origin Kind"
+msgstr "نوع المصدر"
+
+#. module: ab_crm_website
+#: model:ir.model,name:ab_crm_website.model_ab_crm_website_target_preference
+msgid "Personal Website Chat Preference"
+msgstr "تفضيل شخصي لمحادثة الموقع"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "Select a Support session or order."
+msgstr "اختر جلسة دعم أو طلباً."
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+#: code:addons/ab_crm_website/models/targets.py:0
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_target_preference__kind__livechat
+msgid "Support"
+msgstr "الدعم"
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_target_preference__target_uuid
+msgid "Target Uuid"
+msgstr "معرّف الوجهة"
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/reservation.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.js:0
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "This conversation is reserved by %s."
+msgstr "هذه المحادثة محجوزة بواسطة %s."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "Use personal chat controls."
+msgstr "استخدم أدوات التحكم الشخصية بالمحادثات."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_order__visitor_identity
+msgid "Visitor Identity"
+msgstr "هوية الزائر"
+
+#. module: ab_crm_website
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_crm_website
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_crm_website
+msgid "Last Message"
+msgstr "آخر رسالة"
+
+#. module: ab_crm_website
+msgid "Order"
+msgstr "طلب"
+
+#. module: ab_crm_website
+msgid "User"
+msgstr "المستخدم"

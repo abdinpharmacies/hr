@@ -1,6 +1,6 @@
 {
     'name': 'Website Sales Chatter',
-    'version': '19.0.1.4.1',
+    'version': '19.0.1.15.0',
     'license': 'LGPL-3',
     'category': 'Sales',
     'author': 'Abdin Pharmacies',
