@@ -1,11 +1,9 @@
-from odoo import fields, models, api
-from odoo.tools.translate import _
-from odoo.exceptions import AccessError
+from odoo import fields, models
 
 
 class CustomerInherit(models.Model):
     _name = 'ab_customer'
-    _inherit = ['ab_costcenter_second_auth', 'ab_customer', ]
+    _inherit = 'ab_customer'
 
     eplus_serial = fields.Integer(index=True, readonly=True)
 
