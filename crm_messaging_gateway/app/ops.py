@@ -21,12 +21,18 @@ def main():
             'backup',
         ),
     )
+    parser.add_argument('--account')
     parser.add_argument('--event-id', type=int)
     parser.add_argument('--note')
     parser.add_argument('--file')
     parser.add_argument('--quiesced', action='store_true')
     args = parser.parse_args()
     config = settings(load_provider_tokens=False)
+    if args.account is not None:
+        if args.command != 'status':
+            parser.error('--account is only supported for status')
+        if args.account not in config.accounts:
+            parser.error('Unknown account')
     store = Store(config.database_url.get_secret_value())
     sqlite = store.database_url.startswith('sqlite:')
     if args.command in ('export', 'import', 'backup'):
@@ -49,39 +55,45 @@ def main():
         store.migrate()
     elif args.command == 'status':
         with store.connect() as conn:
+            placeholder = '?' if sqlite else '%s'
+            scope = f' AND account={placeholder}' if args.account is not None else ''
+            parameters = (args.account,) if args.account is not None else ()
+            polling_scope = f' WHERE provider_account={placeholder}' if args.account is not None else ''
+            polling_parameters = (config.accounts[args.account].provider_account,) if args.account is not None else ()
             incoming = conn.execute(
-                'SELECT account,state,count(*) AS count FROM incoming_event GROUP BY account,state ORDER BY account,state'
+                'SELECT account,state,count(*) AS count FROM incoming_event WHERE 1=1' + scope + ' GROUP BY account,state ORDER BY account,state', parameters
             ).fetchall()
             outgoing = conn.execute(
-                'SELECT account,state,count(*) AS count FROM outgoing_operation GROUP BY account,state ORDER BY account,state'
+                'SELECT account,state,count(*) AS count FROM outgoing_operation WHERE 1=1' + scope + ' GROUP BY account,state ORDER BY account,state', parameters
             ).fetchall()
             polling = conn.execute(
-                'SELECT provider_account,next_offset,updated_at FROM telegram_polling ORDER BY provider_account'
+                'SELECT provider_account,next_offset,updated_at FROM telegram_polling' + polling_scope + ' ORDER BY provider_account', polling_parameters
             ).fetchall()
             from .health import reception_health, website_queue_health
 
             backlog = conn.execute(
-                "SELECT account,MIN(created_at) AS oldest FROM incoming_event WHERE state NOT IN ('done','ignored') GROUP BY account"
+                "SELECT account,MIN(created_at) AS oldest FROM incoming_event WHERE state NOT IN ('done','ignored') " + scope + " GROUP BY account", parameters
             ).fetchall()
-            health = reception_health(config, polling, backlog)
+            health_config = config.model_copy(update={'accounts': {args.account: config.accounts[args.account]}}) if args.account is not None else config
+            health = reception_health(health_config, polling, backlog)
             website_queue = conn.execute(
                 "SELECT id,account,state,sends,created_at,payload->>'website_destination' AS destination,"
                 "outcome->>'status' AS outcome_status,outcome->>'website_failure' AS failure "
                 "FROM outgoing_operation WHERE payload->>'provider'='website' "
-                "AND state!='superseded' AND (state!='done' OR outcome->>'status'='review') ORDER BY created_at"
+                "AND state!='superseded' AND (state!='done' OR outcome->>'status'='review')" + scope + ' ORDER BY created_at', parameters
             ).fetchall()
             metrics = {'website': website_queue_health(website_queue)}
             if not sqlite:
                 for table in ('incoming_event', 'outgoing_operation'):
                     row = conn.execute(
-                        f"SELECT EXTRACT(EPOCH FROM now()-MIN(created_at)) AS age FROM {table} WHERE state NOT IN ('done','ignored')"
+                        f"SELECT EXTRACT(EPOCH FROM now()-MIN(created_at)) AS age FROM {table} WHERE state NOT IN ('done','ignored')" + scope, parameters
                     ).fetchone()
                     metrics[table + '_oldest_seconds'] = float(row['age'] or 0)
                 metrics['polling_heartbeat_age_seconds'] = [float(row['age']) for row in conn.execute(
-                    'SELECT EXTRACT(EPOCH FROM now()-updated_at) AS age FROM telegram_polling'
+                    'SELECT EXTRACT(EPOCH FROM now()-updated_at) AS age FROM telegram_polling' + polling_scope, polling_parameters
                 ).fetchall()]
                 metrics['uncertain'] = conn.execute(
-                    "SELECT count(*) AS count FROM outgoing_operation WHERE outcome->>'status'='review'"
+                    "SELECT count(*) AS count FROM outgoing_operation WHERE outcome->>'status'='review'" + scope, parameters
                 ).fetchone()['count']
             if sqlite:
                 import shutil
@@ -89,7 +101,7 @@ def main():
 
                 for table in ('incoming_event', 'outgoing_operation'):
                     row = conn.execute(
-                        f"SELECT MIN(created_at) AS oldest FROM {table} WHERE state NOT IN ('done','ignored')"
+                        f"SELECT MIN(created_at) AS oldest FROM {table} WHERE state NOT IN ('done','ignored')" + scope, parameters
                     ).fetchone()
                     metrics[table + '_oldest_seconds'] = (
                         max(0, time.time() - row['oldest']) if row['oldest'] else 0
@@ -102,7 +114,7 @@ def main():
                     max(0, time.time() - r['updated_at']) for r in polling
                 ]
                 metrics['uncertain'] = conn.execute(
-                    "SELECT count(*) AS count FROM outgoing_operation WHERE outcome->>'status'='review'"
+                    "SELECT count(*) AS count FROM outgoing_operation WHERE outcome->>'status'='review'" + scope, parameters
                 ).fetchone()['count']
         print(
             json.dumps(

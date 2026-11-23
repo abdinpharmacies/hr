@@ -19,12 +19,23 @@ class WebsiteChatUnavailable(OdooUnavailable):
 
 
 class WebsiteExchangeError(OdooUnavailable):
-    def __init__(self, category):
+    def __init__(self, category, status=None):
         self.category = category
+        self.status = status
         super().__init__('Website exchange unavailable')
 
 
+def log_failure(code, phase, version, error):
+    cause = (error.category if isinstance(error, WebsiteExchangeError) else
+             'unsupported' if isinstance(error, WebsiteChatUnavailable) else
+             'transient' if isinstance(error, (httpx.HTTPError, OdooUnavailable)) else
+             'validation' if isinstance(error, (ValueError, TypeError, KeyError)) else 'internal')
+    logging.warning('Website failure account=%s phase=%s version=%s status=%s cause=%s',
+                    code, phase, version, getattr(error, 'status', None), cause)
+
+
 def exchange(client, account, operation, version=1, **values):
+    status = None
     try:
         response = client.post(
             account.website_url.rstrip('/') + f'/storefront-callcenter/v{version}/' + operation,
@@ -34,6 +45,7 @@ def exchange(client, account, operation, version=1, **values):
             },
             json={'source': account.provider_account, **values},
         )
+        status = response.status_code
         if version == 4 and operation == 'capabilities' and response.status_code == 404:
             return {'version': 0}
         if version > 1 and operation == 'fetch' and response.status_code == 404:
@@ -43,10 +55,10 @@ def exchange(client, account, operation, version=1, **values):
                         'ended' if response.status_code == 410 else
                         'transient' if response.status_code in (404, 408, 409, 425, 429) or response.status_code >= 500 else
                         'validation')
-            raise WebsiteExchangeError(category)
+            raise WebsiteExchangeError(category, response.status_code)
         return response.json()
     except (httpx.HTTPError, ValueError):
-        raise WebsiteExchangeError('transient') from None
+        raise WebsiteExchangeError('transient', status) from None
 
 
 def upload_media(client, url, database, token, path, metadata, raw):
@@ -57,14 +69,14 @@ def upload_media(client, url, database, token, path, metadata, raw):
         }, content=raw)
         if response.status_code != 200:
             category = 'authentication' if response.status_code in (401, 403) else 'transient' if response.status_code >= 500 or response.status_code in (408, 409, 425, 429) else 'validation'
-            raise WebsiteExchangeError(category)
+            raise WebsiteExchangeError(category, response.status_code)
         if response.json() != {'digest': metadata['attachment']['digest']}:
             raise OdooUnavailable('Invalid website media receipt')
     except (httpx.HTTPError, ValueError):
         raise OdooUnavailable('Website media upload unavailable') from None
 
 
-def send_reply(client, account, operation):
+def send_reply(client, account, operation, account_code=None):
     try:
         destination = operation.get('website_destination')
         if not isinstance(destination, dict) or set(destination) != {'kind', 'uuid'} or destination['kind'] not in ('order', 'livechat'):
@@ -82,6 +94,7 @@ def send_reply(client, account, operation):
             try:
                 capable = exchange(client, account, 'capabilities', version=4) == {'version': 4}
             except WebsiteExchangeError as error:
+                log_failure(account_code or account.provider_account, 'capabilities', 4, error)
                 if error.category == 'transient':
                     raise
                 capable = False
@@ -113,14 +126,17 @@ def send_reply(client, account, operation):
         if result != {'reference': operation['token']}:
             raise OdooUnavailable('Invalid website receipt')
         return {'status': 'accepted', 'reference': operation['token'], 'error': 'none'}
-    except (ValueError, KeyError, TypeError):
+    except (ValueError, KeyError, TypeError) as error:
+        log_failure(account_code or account.provider_account, 'reply', 4 if operation.get('media') else 2, error)
         return {'status': 'review', 'reference': '', 'error': 'media', 'website_failure': 'validation'}
     except WebsiteExchangeError as error:
+        log_failure(account_code or account.provider_account, 'reply', 4 if operation.get('media') else 2, error)
         return {'status': 'failed' if error.category == 'transient' else 'review',
                 'reference': '', 'error': {'transient': 'unavailable', 'authentication': 'rejected',
                                          'validation': 'rejected', 'ended': 'rejected'}[error.category],
                 'website_failure': error.category}
-    except OdooUnavailable:
+    except OdooUnavailable as error:
+        log_failure(account_code or account.provider_account, 'reply', 4 if operation.get('media') else 2, error)
         return {'status': 'failed', 'reference': '', 'error': 'unavailable', 'website_failure': 'uncertain'}
 
 
@@ -142,7 +158,8 @@ class WebsiteWorker(Worker):
                 supported = result.get('version', 0) if isinstance(result, dict) else 0
                 if type(supported) is not int or supported not in (3, 4):
                     supported = 0
-            except Exception:
+            except Exception as error:
+                log_failure(code, 'receiver_capabilities', 3, error)
                 supported = 0
             self.lifecycle_capability[code] = (supported, now + 60)
         capability_version = self.lifecycle_capability[code][0]
@@ -154,10 +171,11 @@ class WebsiteWorker(Worker):
                 self._store_events(code, events, version)
                 if version > 1:
                     self.chat_unavailable.pop((code, version), None)
-            except WebsiteChatUnavailable:
+            except WebsiteChatUnavailable as error:
+                log_failure(code, 'fetch', version, error)
                 self.chat_unavailable[(code, version)] = time.monotonic() + 60
-            except Exception:
-                logging.warning('Website fetch deferred account=%s version=%s', code, version)
+            except Exception as error:
+                log_failure(code, 'fetch', version, error)
 
     def _store_events(self, code, events, version):
         account = self.config.accounts[code]
@@ -195,15 +213,20 @@ class WebsiteWorker(Worker):
         row = self.store.claim_incoming(self.accounts)
         if not row:
             return
+        phase = 'receiver_intake'
+        version = row['payload'].get('version', 1)
         try:
             event = row['payload']['website_event']
             if event.get('version') == 4:
+                phase = 'incoming_media'
                 self.transfer_media(row['account'], event)
+                phase = 'receiver_intake'
             result = self.odoo.call(
                 {1: 'receive_website_event', 2: 'receive_website_chat', 3: 'receive_website_lifecycle', 4: 'receive_website_chat'}[row['payload'].get('version', 1)], row['account'], event=event
             )
             if result != {'received': True, 'event_uuid': event['event_uuid']}:
                 raise ValueError('Invalid destination receipt')
+            phase = 'acknowledge'
             acknowledged = exchange(
                 self.client,
                 self.config.accounts[row['account']],
@@ -214,10 +237,12 @@ class WebsiteWorker(Worker):
             )
             if acknowledged is not True:
                 raise OdooUnavailable('Invalid website acknowledgement')
-        except OdooUnavailable:
+        except OdooUnavailable as error:
+            log_failure(row['account'], phase, version, error)
             self.store.defer_incoming(row)
             return
-        except Exception:
+        except Exception as error:
+            log_failure(row['account'], phase, version, error)
             self.store.finish_incoming(row, False)
             return
         self.store.finish_incoming(row, True)
@@ -239,7 +264,7 @@ class WebsiteWorker(Worker):
                     }, params={'provider_account': account.provider_account, 'attempt': row['attempt'], 'receipt': row['receipt']}) as response:
                         if response.status_code != 200:
                             category = 'transient' if response.status_code >= 500 or response.status_code in (408, 429) else 'validation'
-                            raise WebsiteExchangeError(category)
+                            raise WebsiteExchangeError(category, response.status_code)
                         raw = bytearray()
                         for chunk in response.iter_bytes():
                             raw.extend(chunk)
@@ -249,13 +274,16 @@ class WebsiteWorker(Worker):
                     downloaded.append({key: value for key, value in item.items() if key not in ('id', 'digest')} |
                         {'data': base64.b64encode(raw).decode()})
                 operation['media'] = downloaded
-            return send_reply(self.client, account, operation)
-        except (ValueError, TypeError, KeyError):
+            return send_reply(self.client, account, operation, account_code=row['account'])
+        except (ValueError, TypeError, KeyError) as error:
+            log_failure(row['account'], 'outgoing_media', 4, error)
             return {'status': 'review', 'reference': '', 'error': 'media', 'website_failure': 'validation'}
         except WebsiteExchangeError as error:
+            log_failure(row['account'], 'outgoing_media', 4, error)
             return {'status': 'failed' if error.category == 'transient' else 'review',
                 'reference': '', 'error': 'unavailable' if error.category == 'transient' else 'media', 'website_failure': error.category}
-        except (httpx.HTTPError, OdooUnavailable):
+        except (httpx.HTTPError, OdooUnavailable) as error:
+            log_failure(row['account'], 'outgoing_media', 4, error)
             return {'status': 'failed', 'reference': '', 'error': 'unavailable', 'website_failure': 'transient'}
 
     def transfer_media(self, code, event):
@@ -266,7 +294,9 @@ class WebsiteWorker(Worker):
                 'Authorization': 'Bearer ' + account.token.get_secret_value(), 'X-Odoo-Database': account.website_database,
             }) as response:
                 if response.status_code != 200:
-                    raise OdooUnavailable('Website media unavailable')
+                    raise WebsiteExchangeError('authentication' if response.status_code in (401, 403) else
+                                               'transient' if response.status_code >= 500 or response.status_code in (408, 409, 425, 429) else
+                                               'validation', response.status_code)
                 raw = bytearray()
                 for chunk in response.iter_bytes():
                     raw.extend(chunk)
@@ -283,8 +313,8 @@ class WebsiteWorker(Worker):
         for code in self.accounts:
             try:
                 self.fetch(code)
-            except Exception:
-                logging.warning('Website fetch deferred account=%s', code)
+            except Exception as error:
+                log_failure(code, 'fetch', 1, error)
         super().tick()
 
     def read_receipts(self, code):
