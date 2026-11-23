@@ -2,18 +2,34 @@
 
 ## Current changes before commit:
 
-- Make the active duplicate regression assertion independent of the runtime language.
+- Ignore archived source duplicates explicitly even when the full sync runs with archived products visible.
+- Exercise the archived-product context in the regression test.
 
 Files changed:
 
+- `ab_website_sale_product/models/ab_product.py`
 - `ab_website_sale_product/tests/test_website_product_sync.py`
 - `ab_website_sale_product/changelog.d/current.md`
 
 Validation:
 
-- The equivalent focused replica test passed on `codex_eplus_sync_20261104`; `/tmp/ecommerce_archived_duplicate_replica_validation_pass.log`. The base module test class still cannot start on that replica database because its setup creates an `ab_product_group` blocked by replica policy.
+- The equivalent focused replica test passed on `codex_eplus_sync_20261104` with archived products visible; `/tmp/ecommerce_archived_context_replica_validation.log`. The base module test class cannot start on that replica database because its setup creates an `ab_product_group` blocked by replica policy.
 
 ## Recent commits
+
+Commit: `75378e8d`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product/TEST: accept translated conflict errors`
+
+User-facing changes:
+
+- Keep the duplicate-code regression assertion independent of the runtime language.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/tests/test_website_product_sync.py`
 
 Commit: `eb1024ec`
 Author: Mohamed Fawzy

@@ -87,12 +87,12 @@ class TestWebsiteProductSync(TransactionCase):
         archived = self.product(product.code)
         archived.active = False
 
-        self.assertEqual(product._sync_website_products(), template)
+        self.assertEqual(product.with_context(active_test=False)._sync_website_products(), template)
         self.assertEqual(template.ab_product_id, product)
 
         archived.active = True
         with self.assertRaises(UserError):
-            product._sync_website_products()
+            product.with_context(active_test=False)._sync_website_products()
 
     def test_add_many_by_codes_skips_ineligible_product(self):
         product = self.product('SYNC-CODES-INACTIVE')
