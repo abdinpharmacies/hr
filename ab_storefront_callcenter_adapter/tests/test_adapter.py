@@ -96,6 +96,88 @@ class TestCapture(TestStorefrontReservations):
         with self.assertRaises(AccessError):
             api.receive_v2(self.endpoint.source, 'order', cart.ab_callcenter_uuid, str(uuid4()), 'Disabled')
 
+    def test_bridge_fault_does_not_block_delivery_or_accepted_replays(self):
+        channel = self._chat_configuration()
+        self.endpoint.write({'media_enabled': True, 'lifecycle_enabled': True})
+        cart = self.cart()
+        cart._cart_add(self.product.id, 1)
+        cart.action_confirm()
+        api = self.env['ab_storefront_callcenter_api'].with_user(self.worker)
+        accepted = str(uuid4())
+        api.receive_v2(self.endpoint.source, 'order', cart.ab_callcenter_uuid, accepted, 'Accepted')
+        operator = self.endpoint.bridge_operator_id
+        for fault in ('membership', 'inactive'):
+            with self.subTest(fault=fault):
+                if fault == 'membership':
+                    channel.user_ids = [fields.Command.clear()]
+                else:
+                    operator.active = False
+                self.assertEqual(api.capabilities_v4(self.endpoint.source), {'version': 4})
+                self.assertEqual(api.receive_v2(self.endpoint.source, 'order', cart.ab_callcenter_uuid,
+                                               accepted, 'Accepted'), {'reference': accepted})
+                with self.assertRaises(ValidationError):
+                    api.receive_v2(self.endpoint.source, 'order', cart.ab_callcenter_uuid, str(uuid4()), 'New')
+                with self.assertRaises(ValidationError):
+                    channel._get_operator_info()
+                with self.assertRaises(ValidationError):
+                    self.endpoint._check_service()
+                cart._ab_callcenter_customer_post('Queued during ' + fault, str(uuid4()))
+                for event in api.fetch_v1(self.endpoint.source):
+                    self.assertTrue(api.acknowledge_v1(self.endpoint.source, event['event_uuid'], event['fingerprint']))
+                for event in api.fetch_v2(self.endpoint.source):
+                    self.assertTrue(api.acknowledge_v2(self.endpoint.source, event['event_uuid'], event['fingerprint']))
+                self.assertFalse(api.fetch_v2(self.endpoint.source))
+                self.assertFalse(api.fetch_v4(self.endpoint.source))
+                channel.user_ids = [fields.Command.set(operator.ids)]
+                operator.active = True
+        self.assertEqual(self.env['ab_storefront_callcenter_chat_reply'].search_count([('token', '=', accepted)]), 1)
+        self.endpoint.enabled = False
+        with self.assertRaises(AccessError):
+            api.capabilities_v4(self.endpoint.source)
+
+    def test_outbound_media_replay_after_bridge_fault(self):
+        import hashlib
+        import json
+        from types import SimpleNamespace
+        from unittest.mock import Mock
+        from werkzeug.exceptions import Forbidden
+        from ..controllers.media import Media
+        from odoo.http import Response
+
+        channel = self._chat_configuration()
+        self.endpoint.media_enabled = True
+        cart = self.cart()
+        cart._cart_add(self.product.id, 1)
+        cart.action_confirm()
+        raw = b'%PDF-1.4 accepted media'
+        item = {'id': '0', 'name': 'reply.pdf', 'mimetype': 'application/pdf', 'kind': 'document',
+                'size': len(raw), 'duration': 0, 'digest': hashlib.sha256(raw).hexdigest()}
+        token = str(uuid4())
+        metadata = {'source': self.endpoint.source, 'kind': 'order', 'destination': cart.ab_callcenter_uuid,
+                    'token': token, 'attachment': item}
+        transport = SimpleNamespace(content_length=len(raw), scheme='https', get_data=lambda: raw,
+            headers={'Authorization': 'Bearer synthetic-test', 'X-Website-Media': json.dumps(metadata)})
+        request = SimpleNamespace(env=self.env(user=self.worker), httprequest=transport,
+                                  make_json_response=Mock(side_effect=lambda value, **kwargs: Response(
+                                      json.dumps(value), content_type='application/json')))
+        with patch('odoo.addons.ab_storefront_callcenter_adapter.controllers.media.request', request):
+            self.assertEqual(Media().upload().get_json(), {'digest': item['digest']})
+            api = self.env['ab_storefront_callcenter_api'].with_user(self.worker)
+            api.receive_v4(self.endpoint.source, 'order', cart.ab_callcenter_uuid, token, '', [item])
+            channel.user_ids = [fields.Command.clear()]
+            self.assertEqual(Media().upload().get_json(), {'digest': item['digest']})
+            self.assertEqual(api.receive_v4(self.endpoint.source, 'order', cart.ab_callcenter_uuid,
+                                          token, '', [item]), {'reference': token})
+            metadata['token'] = str(uuid4())
+            transport.headers['X-Website-Media'] = json.dumps(metadata)
+            with self.assertRaises(ValidationError):
+                Media().upload()
+            metadata['token'] = token
+            metadata['attachment'] = dict(item, name='conflicting.pdf')
+            transport.headers['X-Website-Media'] = json.dumps(metadata)
+            with self.assertRaises(Forbidden):
+                Media().upload()
+
     def test_dispatch_closes_one_order_and_preserves_acknowledgements(self):
         from ..models.chat import SessionEnded
         self._chat_configuration()

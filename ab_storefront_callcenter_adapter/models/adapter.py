@@ -62,6 +62,11 @@ class Endpoint(models.Model):
                     raise ValueError()
             except (ValueError, TypeError, AttributeError):
                 raise ValidationError(_('Invalid website source.')) from None
+            record._check_bridge_operator()
+            record._check_exchange_service()
+
+    def _check_bridge_operator(self):
+        for record in self:
             operator = record.bridge_operator_id
             if record.chat_enabled and (
                     not operator.active or operator.share
@@ -70,6 +75,9 @@ class Endpoint(models.Model):
                     or operator.has_group('base.group_system')
                     or (record.livechat_channel_id and operator not in record.livechat_channel_id.sudo().user_ids)):
                 raise ValidationError(_('Use a dedicated Live Chat bridge operator.'))
+
+    def _check_exchange_service(self):
+        for record in self:
             user = record.service_user_id
             if (
                 not user.has_group('ab_storefront_callcenter_adapter.group_service')
@@ -535,7 +543,10 @@ class Exchange(models.AbstractModel):
         )
         if not endpoint:
             raise AccessError(_('Website intake is disabled.'))
-        endpoint._check_service()
+        endpoint._check_enabled_website()
+        endpoint._check_exchange_service()
+        if endpoint.website_id.company_id != endpoint.company_id:
+            raise AccessError(_('Invalid website source.'))
         endpoint.lock_for_update()
         return endpoint
 

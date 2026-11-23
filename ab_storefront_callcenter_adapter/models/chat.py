@@ -123,7 +123,8 @@ class LiveChat(models.Model):
         result = super()._get_available_operators_by_livechat_channel(users)
         for channel in self:
             endpoint = channel._ab_callcenter_endpoint()
-            if endpoint and endpoint.bridge_operator_id.active:
+            if endpoint:
+                endpoint._check_bridge_operator()
                 result[channel] = endpoint.bridge_operator_id
         return result
 
@@ -133,6 +134,7 @@ class LiveChat(models.Model):
             from odoo.http import request
             if request and endpoint.website_id != request.env['website'].get_current_website():
                 raise AccessError(_('Invalid website source.'))
+            endpoint._check_bridge_operator()
             operator = endpoint.bridge_operator_id
             if not operator.active:
                 raise AccessError(_('Website intake is disabled.'))
@@ -444,6 +446,7 @@ class Exchange(models.AbstractModel):
             target._ab_callcenter_require_open()
         if destination_kind == 'livechat' and target.livechat_end_dt:
             raise SessionEnded(_('This website chat has ended.'))
+        endpoint._check_bridge_operator()
         author = endpoint.bridge_operator_id
         if not author.active or author.share or endpoint.company_id not in author.company_ids:
             raise AccessError(_('Use a dedicated Live Chat bridge operator.'))

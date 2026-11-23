@@ -49,6 +49,17 @@ class Media(http.Controller):
         if not endpoint.media_enabled or not endpoint.outgoing_enabled or not endpoint.chat_enabled:
             raise Forbidden()
         endpoint.lock_for_update()
+        replies = request.env['ab_storefront_callcenter_chat_reply'].sudo().search([
+            ('endpoint_id', '=', endpoint.id), ('token', '=', values['token']),
+        ], limit=1)
+        if replies:
+            key = request.env['ir.attachment']._ab_exchange_key(
+                endpoint, values['kind'], values['destination'], values['token'], item)
+            if (replies.destination_kind != values['kind'] or replies.destination_uuid != values['destination']
+                    or not replies.message_id.attachment_ids.filtered(lambda file: file.description == key)):
+                raise Forbidden()
+            return request.make_json_response({'digest': item['digest']}, headers=[('Cache-Control', 'no-store')])
+        endpoint._check_bridge_operator()
         model, uuid_field = ('sale.order', 'ab_callcenter_uuid') if values['kind'] == 'order' else ('discuss.channel', 'ab_callcenter_session_uuid')
         target = request.env[model].sudo().search([
             ('ab_callcenter_endpoint_id', '=', endpoint.id), (uuid_field, '=', values['destination']),
