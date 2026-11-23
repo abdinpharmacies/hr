@@ -2,27 +2,40 @@
 
 ## Current changes before commit:
 
-- Start the website product full sync after the six-hour barcode replication to update linked product names and prices.
-- Start Odoo inventory sync after the aggregate Eplus stock refresh, while refreshing branch stock independently so a branch connection failure does not block quantities.
-- Restrict the scheduled website sync to administrators and cover queue creation, worker triggering, and denied reader access.
-- Translate the new website sync messages in both Arabic catalogs.
+- Store the scheduled website job's background flag explicitly so the cron worker can find and finish it.
+- Confirm in a focused regression test that the cron worker can find the scheduled website job.
 
 Files changed:
 
-- `ab_website_sale_product_replication/i18n/ab_website_sale_product_replication.pot`
-- `ab_website_sale_product_replication/i18n/ar.po`
-- `ab_website_sale_product_replication/i18n/ar_001.po`
-- `ab_website_sale_product_replication/models/replication.py`
 - `ab_website_sale_product_replication/models/stock_sync.py`
 - `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 - `ab_website_sale_product_replication/changelog.d/current.md`
 
 Validation:
 
-- Targeted development upgrade on `codex_eplus_sync_20261104` with alternate ports `5069/5072`: 16 replication tests passed; `/tmp/ecommerce_six_hour_validation.log`.
-- Both Arabic catalogs pass `msgfmt --check-format`.
+- Focused worker pickup test passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_six_hour_worker_validation.log`.
 
 ## Recent commits
+
+Commit: `542d8518`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product_replication/FIX: run website and stock sync after replication`
+
+User-facing changes:
+
+- Start the website product sync after replication and keep inventory sync independent of branch stock refresh failures.
+- Translate the scheduled website sync messages into Arabic.
+
+Files changed:
+
+- `ab_website_sale_product_replication/changelog.d/current.md`
+- `ab_website_sale_product_replication/i18n/ab_website_sale_product_replication.pot`
+- `ab_website_sale_product_replication/i18n/ar.po`
+- `ab_website_sale_product_replication/i18n/ar_001.po`
+- `ab_website_sale_product_replication/models/replication.py`
+- `ab_website_sale_product_replication/models/stock_sync.py`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 
 Commit: `7e6ea239`
 Author: Mohamed Fawzy

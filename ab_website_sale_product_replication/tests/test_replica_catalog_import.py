@@ -217,6 +217,7 @@ class TestReplicaCatalogImport(TransactionCase):
         self.assertTrue(job)
         self.assertEqual(job.total_count, 1)
         self.assertEqual(job.line_ids.ab_product_id, self.product)
+        self.assertEqual(Website.search([("state", "=", "running"), ("background_requested", "=", False)]), job)
         trigger.assert_called_once()
 
     def test_stock_refresh_rejects_sharp_drop_and_retries_source_failure(self):

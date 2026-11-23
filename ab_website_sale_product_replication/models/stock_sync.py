@@ -72,5 +72,6 @@ class WebsiteProductSyncJob(models.Model):
             if result.get("tag") == "reload":
                 raise RetryableJobError(_("Another website product sync is already running."), seconds=300)
         if job.state == "running":
+            job.write({"background_requested": False})
             self.env.ref("ab_website_sale_product.ir_cron_process_website_product_sync_jobs").sudo()._trigger()
         _logger.info("Website product sync started after replication: job=%s state=%s", job.id, job.state)
