@@ -82,14 +82,14 @@ class TestReplicaCatalogImport(TransactionCase):
         })
         policies.write({"active": True})
 
-        self.assertEqual(self.product._sync_website_products(), template)
+        self.assertEqual(self.product.with_context(active_test=False)._sync_website_products(), template)
         self.assertEqual(template.ab_product_id, self.product)
 
         policies.write({"active": False})
         duplicate.active = True
         policies.write({"active": True})
         with self.assertRaises(UserError):
-            self.product._sync_website_products()
+            self.product.with_context(active_test=False)._sync_website_products()
 
     def test_missing_master_product_does_not_block_matched_website_draft(self):
         unmatched = self.env["ab_eplus_stock_snapshot"].create({

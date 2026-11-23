@@ -2,7 +2,7 @@
 
 ## Current changes before commit:
 
-- Verify that archived duplicate codes do not block a linked active website product while active duplicates remain blocked.
+- Exercise the full sync's archived-product context while checking archived and active duplicate codes.
 
 Files changed:
 
@@ -11,9 +11,23 @@ Files changed:
 
 Validation:
 
-- Focused replica regression passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_archived_duplicate_replica_validation_pass.log`.
+- Focused replica regression passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_archived_context_replica_validation.log`.
 
 ## Recent commits
+
+Commit: `251279a5`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product_replication/TEST: cover archived duplicate sync`
+
+User-facing changes:
+
+- Verify that archived duplicate codes do not block linked product sync and active duplicates remain blocked.
+
+Files changed:
+
+- `ab_website_sale_product_replication/changelog.d/current.md`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 
 Commit: `ab1e15a5`
 Author: Mohamed Fawzy
