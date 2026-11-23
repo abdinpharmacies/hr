@@ -2,6 +2,23 @@
 
 ## Current changes before commit:
 
+- Fix local-peer startup when an installation ancestor such as `/opt/odoo19` is 0750: grant only the launched process the runtime-required supplementary groups before dropping to postgres, without changing permanent memberships or directory permissions.
+- Check runtime traversal and show filesystem permission paths instead of a bare PermissionError; reject private ancestors that cannot be reached with applicable group access.
+- Document the process-only access and the supplementary runtime group required for separate progress observation.
+- Verify 12 local-peer tests and full discovery (219 executed, 216 opt-in skips); confirm both real server connections are read-only and runtime/workspace access works using a temporary postgres subprocess with the odoo19 group.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `local_peer.py`
+- `migrate.py`
+- `tests/test_local_peer.py`
+
+## 6d029a37d — emadco88 — 2026-11-23
+
+Original commit subject: `tools/ FIX peer auth`
+
 - Add explicit `--local-peer` CSV migration mode for sudo sessions on the database server: run as Linux/PostgreSQL postgres with in-memory connection overrides, preserving service configs, passwords, PostgreSQL authentication rules, and source read-only access.
 - Isolate local-peer menu defaults, CSV exports, backups, reports, and checkpoints in a private postgres-owned workspace; preserve existing artifacts and reject wrong-user, TCP, unsafe workspace, legacy ORM/reset, and filestore-action cases.
 - Report safe, actionable database/config-specific connection errors instead of a bare OperationalError; propagate the effective peer role to backups, monitoring, and the availability watchdog.

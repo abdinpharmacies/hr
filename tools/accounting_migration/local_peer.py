@@ -50,6 +50,29 @@ def prepare_workspace(path, account):
     return path
 
 
+def runtime_groups(paths, account):
+    """Grant this process group traversal of its runtime, not global membership."""
+    from common import MigrationError
+    groups = set(os.getgrouplist(account.pw_name, account.pw_gid))
+    directories = {parent for path in paths for parent in (Path(path), *Path(path).parents)}
+    for directory in directories:
+        info = directory.stat()
+        mode = info.st_mode
+        if info.st_uid == account.pw_uid:
+            accessible = bool(mode & stat.S_IXUSR)
+        elif info.st_gid in groups:
+            accessible = bool(mode & stat.S_IXGRP)
+        else:
+            accessible = bool(mode & stat.S_IXOTH)
+            if not accessible and mode & stat.S_IXGRP:
+                groups.add(info.st_gid)
+                accessible = True
+        if not accessible:
+            raise MigrationError('Local peer runtime directory is not traversable by postgres: ' + str(directory)
+                                 + '. Grant narrowly scoped access; do not use chmod 777.')
+    return sorted(groups)
+
+
 def launch(argv, default_root):
     from common import MigrationError
     flags = {value.split('=', 1)[0] for value in argv}
@@ -64,6 +87,7 @@ def launch(argv, default_root):
     if os.geteuid() not in (0, account.pw_uid):
         raise MigrationError('Run --local-peer with sudo, or as the Linux postgres account.')
     workspace = prepare_workspace(Path(default_root) / 'local-peer', account)
+    groups = runtime_groups((HERE, Path(sys.executable).parent, workspace), account)
     environ = os.environ.copy()
     # Prevent inherited libpq environment settings from redirecting local access.
     for key in ('PGHOST', 'PGHOSTADDR', 'PGPORT', 'PGUSER', 'PGPASSWORD',
@@ -76,7 +100,12 @@ def launch(argv, default_root):
     os.umask(0o077)
     os.chdir(HERE)
     if os.geteuid() == 0:
-        os.initgroups(account.pw_name, account.pw_gid)
+        # Retain only groups needed by this runtime (e.g. /opt/odoo19 is 0750).
+        # This never changes /etc/group or grants access to other processes.
+        os.setgroups(groups)
         os.setgid(account.pw_gid)
         os.setuid(account.pw_uid)
+    for directory in (HERE, Path(sys.executable).parent, workspace):
+        if not os.access(directory, os.X_OK):
+            raise MigrationError('Local peer runtime directory is not traversable by postgres: ' + str(directory))
     os.execve(sys.executable, [sys.executable, '-B', str(HERE / 'migrate.py'), *argv], environ)

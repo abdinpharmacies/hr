@@ -101,6 +101,9 @@ if __name__ == '__main__':
     except (MigrationError, KeyboardInterrupt) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         sys.exit(2)
+    except PermissionError as exc:
+        print(f'ERROR: Filesystem access denied for {exc.filename!r}; check access for the migration operating-system user.', file=sys.stderr)
+        sys.exit(2)
     except Exception as exc:
         print(f'ERROR: {type(exc).__name__}; SQL/config values are not logged.', file=sys.stderr)
         sys.exit(2)

@@ -1,5 +1,24 @@
 # Prepared-target migration validation
 
+## Restricted runtime ancestor access (2026-11-23)
+
+- The server's `/opt/odoo19` is 0750, owned by `odoo19:odoo19`. This blocks the
+  original launcher after dropping privileges, before opening the menu.
+- Add per-process supplementary group selection for runtime ancestors, followed
+  by traversal checks after dropping privileges. Preserve permanent memberships,
+  all directory modes, and existing file ownership. Private 0700 ancestors without
+  applicable group access fail with a path-specific message.
+- Add regression coverage for 0750 ancestors, refusal of 0700 ancestors, and
+  exclusion of unnecessary group memberships. Full discovery: 435 tests, OK,
+  with 216 opt-in tests skipped (219 executed, including 12 local-peer tests).
+- Read-only verification on the actual server dropped a subprocess to postgres
+  with the odoo19 supplementary group: both source and target connected as postgres
+  with transaction_read_only=on. Workspace read/write/traversal, script reading,
+  and venv execution checks all passed. No files, permissions, groups, service
+  settings, or business data were changed on the server by this verification.
+- The revised launcher is a local change pending git deployment; no production
+  export/import was run. Previous disposable PostgreSQL coverage remains below.
+
 ## Explicit local peer authentication (2026-11-23)
 
 - Full discovery: 433 tests, OK; 216 opt-in tests skipped (217 executed).

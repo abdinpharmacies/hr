@@ -11,7 +11,11 @@ roles/authentication rules, or service state. Source connections remain read-onl
 Both databases must be on the local PostgreSQL installation, and its `postgres`
 role must accept peer authentication for the Linux `postgres` account. TCP hosts
 are refused. Both configuration files and installed addon directories must be
-readable by that account.
+readable by that account. When invoked with sudo, the launcher grants only its
+process the supplementary groups required to traverse its runtime ancestors
+(for example, `/opt/odoo19` with mode 0750 and group `odoo19`). Permanent group
+membership and directory permissions remain unchanged. Direct invocation as
+`postgres` still requires the necessary existing filesystem access.
 
 After pulling the change on `ssh abdinpharmacies`:
 
@@ -51,7 +55,7 @@ refuses the legacy ORM workflow, reset, and filestore extra actions; it does not
 solve cross-user filestore ownership/access. For read-only progress observation:
 
 ```bash
-sudo -u postgres env ACCOUNTING_MIGRATION_LOCAL_PEER=1 \
+sudo -u postgres -g odoo19 env ACCOUNTING_MIGRATION_LOCAL_PEER=1 \
   /opt/odoo19/venv19/bin/python3 tools/accounting_migration/watch_progress.py \
   --target-config /opt/odoo19/conf-erp19.conf \
   --stage /opt/odoo19/migration-runs/local-peer/YOUR_RUN_DIRECTORY --once

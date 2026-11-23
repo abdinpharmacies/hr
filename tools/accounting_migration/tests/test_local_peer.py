@@ -86,14 +86,16 @@ class LocalPeerTests(unittest.TestCase):
         with patch('local_peer.pwd.getpwnam', return_value=self.account), \
                 patch('local_peer.os.geteuid', return_value=0), \
                 patch('local_peer.prepare_workspace', return_value=Path('/runs/local-peer')) as workspace, \
-                patch('local_peer.os.initgroups') as groups, patch('local_peer.os.setgid') as gid, \
+                patch('local_peer.runtime_groups', return_value=[456, 789]), \
+                patch('local_peer.os.setgroups') as groups, patch('local_peer.os.setgid') as gid, \
                 patch('local_peer.os.setuid') as uid, patch('local_peer.os.chdir'), \
+                patch('local_peer.os.access', return_value=True), \
                 patch('local_peer.os.umask'), patch('local_peer.os.execve') as execute, \
                 patch.dict(os.environ, {'PGHOST': 'remote', 'PGPASSWORD': 'secret'}), \
                 contextlib.redirect_stdout(io.StringIO()):
             local_peer.launch(argv, Path('/runs'))
             workspace.assert_called_once_with(Path('/runs/local-peer'), self.account)
-            groups.assert_called_once_with('postgres', 456)
+            groups.assert_called_once_with([456, 789])
             gid.assert_called_once_with(456)
             uid.assert_called_once_with(123)
             executable, command, env = execute.call_args.args
@@ -114,6 +116,29 @@ class LocalPeerTests(unittest.TestCase):
         for extra in (['--extra-actions', 'copy-filestore'], ['--extra-actions=menu']):
             with self.assertRaisesRegex(MigrationError, 'filestore actions'):
                 local_peer.launch(['--table-plan=/plan.csv', *extra], Path('/runs'))
+
+    def test_runtime_adds_only_group_needed_for_restricted_ancestor(self):
+        with tempfile.TemporaryDirectory() as root, patch('local_peer.os.getgrouplist', return_value=[456]):
+            root = Path(root)
+            root.chmod(0o755)
+            restricted = root / 'odoo19'
+            restricted.mkdir(mode=0o750)
+            restricted.chmod(0o750)
+            runtime = restricted / 'tools'
+            runtime.mkdir(mode=0o755)
+            runtime.chmod(0o755)
+            groups = local_peer.runtime_groups([runtime], self.account)
+            self.assertEqual(set(groups), {456, restricted.stat().st_gid})
+            self.assertEqual(restricted.stat().st_mode & 0o777, 0o750)
+            restricted.chmod(0o700)
+            with self.assertRaisesRegex(MigrationError, 'not traversable'):
+                local_peer.runtime_groups([runtime], self.account)
+
+    def test_runtime_does_not_inherit_unnecessary_parent_groups(self):
+        with tempfile.TemporaryDirectory() as root, patch('local_peer.os.getgrouplist', return_value=[456]):
+            root = Path(root)
+            root.chmod(0o755)
+            self.assertEqual(local_peer.runtime_groups([root], self.account), [456])
 
     def test_workspace_refuses_symlink_and_does_not_chown_existing_artifacts(self):
         account = SimpleNamespace(pw_uid=os.getuid(), pw_gid=os.getgid())
