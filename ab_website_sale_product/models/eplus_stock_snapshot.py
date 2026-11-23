@@ -631,7 +631,7 @@ class EplusStockSnapshot(models.Model):
     @api.model
     def _fetch_eplus_stock_store_rows(self):
         try:
-            with self.connect_eplus(param_str="?", charset="CP1256", propagate_error=True) as conn:
+            with self._connect_eplus_read(param_str="?", charset="CP1256", propagate_error=True) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT sto_id FROM Store ORDER BY sto_id")
                     store_ids = [row[0] for row in cursor.fetchall()]

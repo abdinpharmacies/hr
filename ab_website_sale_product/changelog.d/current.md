@@ -2,32 +2,38 @@
 
 ## Current changes before commit:
 
-- Convert Eplus quantities from small units to large packs before updating Odoo inventory and website availability.
-- Skip products with missing or invalid pack conversion and show each skipped product in the inventory sync lines.
-- Cover pack conversion, skipped products, and prepared inventory quantities in a focused test.
-- Translate new skipped-product messages in both Arabic catalogs.
+- Retry the Eplus read connection when refreshing branch stock so a transient connection failure has the same retry protection as the aggregate stock refresh.
 
 Files changed:
 
-- `ab_website_sale_product/models/eplus_inventory_sync_job.py`
 - `ab_website_sale_product/models/eplus_stock_snapshot.py`
-- `ab_website_sale_product/models/product_template.py`
-- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
-- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
-- `ab_website_sale_product/i18n/ar.po`
-- `ab_website_sale_product/i18n/ar_001.po`
 - `ab_website_sale_product/changelog.d/current.md`
 
 Validation:
 
-- Targeted development upgrade on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; no production database changed.
-- Five focused conversion and replication tests passed in `/tmp/eplus_deploy_preflight_tests.log`.
-- The earlier broad catalog test run had existing replica-policy test setup failures; see `/tmp/eplus_six_hour_validation.log`.
-- Both Arabic catalogs pass `msgfmt --check-format`.
-- Inventory preparation and skipped-line assertions passed after reusing `ab_product.qty_from_small`; `/tmp/eplus_pack_inventory_validation_final.log`.
-- The Eplus stock action reads `Eplus Stock` in `en_US` and `مخزون Eplus` in `ar_001` after the targeted upgrade.
+- Targeted development upgrade on `codex_eplus_sync_20261104` loaded this Python change; `/tmp/ecommerce_six_hour_validation.log`.
 
 ## Recent commits
+
+Commit: `9843f798`
+Author: Mohamed Fawzy
+Date: 2026-11-22
+Original subject: `ab_website_sale_product/IMP: convert eplus stock to large packs`
+
+User-facing changes:
+
+- Convert Eplus quantities to the website's large-pack units and skip invalid conversions.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/i18n/ab_website_sale_product.pot`
+- `ab_website_sale_product/i18n/ar.po`
+- `ab_website_sale_product/i18n/ar_001.po`
+- `ab_website_sale_product/models/eplus_inventory_sync_job.py`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/models/product_template.py`
+- `ab_website_sale_product/tests/test_eplus_catalog_import.py`
 
 Commit: `b21e8869`
 Author: Mohamed Fawzy
