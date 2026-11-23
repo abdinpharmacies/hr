@@ -50,7 +50,7 @@ class TestStorefrontReservations(TransactionCase):
         return self.website._get_product_available_qty(self.product)
 
     def link_eplus_stock(self):
-        source = self.env["ab_product"].create({"name": "External stock", "code": "HOLD-EXTERNAL-TEST"})
+        source = self.env["ab_product"].create({"name": "External stock", "code": "HOLD-EXTERNAL-TEST", "default_price": self.product.list_price})
         self.product.product_tmpl_id.write({"ab_product_id": source.id, "eplus_stock_shown_qty_value": 10})
         self.env["ab_eplus_stock_snapshot"].create({
             "itm_id": -15152026, "product_id": source.id, "itm_qty": 10,
