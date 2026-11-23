@@ -1,6 +1,33 @@
 # Storefront change log
 
+## Current changes before commit:
+
+- Update branch stock connector tests to expect the native, parameterized Eplus read path.
+
+Files changed:
+
+- `ab_ecommerce_storefront/tests/test_stock_availability.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
+Validation:
+
+- The storefront test class could not start on the replica development database because its existing setup creates an `ab_product` blocked by replica policy; `/tmp/ecommerce_native_branch_validation.log`.
+- Equivalent focused native connector and fallback tests passed in `ab_website_sale_product_replication`; `/tmp/ecommerce_native_branch_validation_final.log`.
+
 ## Recent commits
+
+Commit: `90048532`
+Author: Mohamed Fawzy
+Date: 2026-11-22
+Original subject: `ab_ecommerce_storefront/DOCS: record recent storefront changes`
+
+User-facing changes:
+
+- Record recent storefront changes in the module change log.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
 
 Commit: `0f6aaddc68297127ce1a7cc85d48bc223921c09a`
 Author: Mohamed Fawzy

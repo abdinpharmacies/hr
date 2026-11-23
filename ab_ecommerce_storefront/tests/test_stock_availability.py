@@ -188,9 +188,9 @@ class TestStorefrontStockAvailability(TransactionCase):
         cursor = MagicMock()
         cursor.description = [("itm_id",), ("itm_code",), ("sto_id",), ("itm_qty",)]
         cursor.fetchmany.side_effect = [[(123, "P123", 1, 2)], [(124, "P124", 1, 3)], []]
-        batches = list(self.snapshot._execute_eplus_stock_store_query(cursor, "SELECT stock WHERE sto_id = ?", (1,)))
+        batches = list(self.snapshot._execute_eplus_stock_store_query(cursor, "SELECT stock WHERE sto_id = %s", (1,)))
         self.assertEqual([batch[0]["itm_qty"] for batch in batches], [2.0, 3.0])
-        cursor.execute.assert_called_once_with("SELECT stock WHERE sto_id = ?", (1,))
+        cursor.execute.assert_called_once_with("SELECT stock WHERE sto_id = %s", (1,))
         cursor.fetchall.assert_not_called()
         self.assertEqual(cursor.fetchmany.call_count, 3)
 
@@ -200,21 +200,21 @@ class TestStorefrontStockAvailability(TransactionCase):
         cursor.fetchall.return_value = [(7001,), (7002,)]
         return connection, cursor
 
-    def test_branch_queries_are_scoped_and_use_odbc(self):
+    def test_branch_queries_are_scoped_and_use_native_connection(self):
         connection, cursor = self.branch_connection()
-        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection) as connect, patch.object(
+        with patch.object(type(self.snapshot), "_connect_eplus_read", return_value=connection) as connect, patch.object(
             type(self.snapshot), "_execute_eplus_stock_store_query", return_value=iter([]),
         ) as query:
             list(self.snapshot._fetch_eplus_stock_store_rows())
-        self.assertEqual(connect.call_args.kwargs["param_str"], "?")
+        self.assertNotIn("param_str", connect.call_args.kwargs)
         self.assertTrue(connect.call_args.kwargs["propagate_error"])
         self.assertEqual([call.args[2] for call in query.call_args_list], [(7001,), (7002,)])
         for call in query.call_args_list:
-            self.assertIn("WHERE ics.sto_id = ?", call.args[1])
+            self.assertIn("WHERE ics.sto_id = %s", call.args[1])
 
     def test_branch_timeout_does_not_retry_metadata_query(self):
         connection, cursor = self.branch_connection()
-        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection), patch.object(
+        with patch.object(type(self.snapshot), "_connect_eplus_read", return_value=connection), patch.object(
             type(self.snapshot), "_execute_eplus_stock_store_query", side_effect=RuntimeError("HYT00 timeout"),
         ) as query:
             with self.assertRaisesRegex(UserError, "previous snapshot has been kept"):
@@ -224,9 +224,9 @@ class TestStorefrontStockAvailability(TransactionCase):
     def test_branch_missing_columns_use_basic_query(self):
         connection, cursor = self.branch_connection()
         cursor.fetchall.return_value = [(7001,)]
-        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection), patch.object(
+        with patch.object(type(self.snapshot), "_connect_eplus_read", return_value=connection), patch.object(
             type(self.snapshot), "_execute_eplus_stock_store_query",
-            side_effect=[RuntimeError("42S22 invalid column"), iter([[self.branch_row(7001, 7)]])],
+            side_effect=[RuntimeError("Invalid column name"), iter([[self.branch_row(7001, 7)]])],
         ) as query:
             rows = list(self.snapshot._fetch_eplus_stock_store_rows())
         self.assertEqual(rows[0][0]["itm_qty"], 7)
@@ -241,7 +241,7 @@ class TestStorefrontStockAvailability(TransactionCase):
             yield [self.branch_row(7001, 7)]
             raise RuntimeError("source disconnected")
 
-        with patch.object(type(self.snapshot), "connect_eplus", return_value=connection), patch.object(
+        with patch.object(type(self.snapshot), "_connect_eplus_read", return_value=connection), patch.object(
             type(self.snapshot), "_execute_eplus_stock_store_query", side_effect=failing_query,
         ) as query:
             with self.assertRaisesRegex(UserError, "previous snapshot has been kept"):
