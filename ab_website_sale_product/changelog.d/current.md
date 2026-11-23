@@ -2,7 +2,8 @@
 
 ## Current changes before commit:
 
-- Retry the Eplus read connection when refreshing branch stock so a transient connection failure has the same retry protection as the aggregate stock refresh.
+- Use the native SQL Server read connection for branch stock because the demo server has no working ODBC library.
+- Keep each branch query parameterized and scoped by store, with a fallback when optional store name columns are missing.
 
 Files changed:
 
@@ -11,9 +12,23 @@ Files changed:
 
 Validation:
 
-- Targeted development upgrade on `codex_eplus_sync_20261104` loaded this Python change; `/tmp/ecommerce_six_hour_validation.log`.
+- The focused native-connection and fallback tests passed on `codex_eplus_sync_20261104`; `/tmp/ecommerce_native_branch_validation_final.log`.
 
 ## Recent commits
+
+Commit: `331103a5`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product/FIX: retry branch stock source connection`
+
+User-facing changes:
+
+- Retry transient connection failures when refreshing Eplus branch stock.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
 
 Commit: `9843f798`
 Author: Mohamed Fawzy

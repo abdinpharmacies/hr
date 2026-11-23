@@ -35,7 +35,7 @@ EPLUS_STOCK_STORE_SQL = """
     FROM Item_Class_Store ics
     JOIN Item_Catalog ic ON ic.itm_id = ics.itm_id
     LEFT JOIN Store s ON s.sto_id = ics.sto_id
-    WHERE ics.sto_id = ?
+    WHERE ics.sto_id = %s
     GROUP BY ics.itm_id, ic.itm_code, ics.sto_id, s.sto_code, s.sto_name_ar, s.sto_name_en
 """
 
@@ -47,7 +47,7 @@ EPLUS_STOCK_STORE_BASIC_SQL = """
         SUM(ics.itm_qty) AS itm_qty
     FROM Item_Class_Store ics
     JOIN Item_Catalog ic ON ic.itm_id = ics.itm_id
-    WHERE ics.sto_id = ?
+    WHERE ics.sto_id = %s
     GROUP BY ics.itm_id, ic.itm_code, ics.sto_id
 """
 
@@ -631,7 +631,7 @@ class EplusStockSnapshot(models.Model):
     @api.model
     def _fetch_eplus_stock_store_rows(self):
         try:
-            with self._connect_eplus_read(param_str="?", charset="CP1256", propagate_error=True) as conn:
+            with self._connect_eplus_read(charset="CP1256", propagate_error=True) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT sto_id FROM Store ORDER BY sto_id")
                     store_ids = [row[0] for row in cursor.fetchall()]
@@ -644,7 +644,10 @@ class EplusStockSnapshot(models.Model):
                                 started = True
                                 yield rows
                         except Exception as error:
-                            if started or "42S22" not in str(error):
+                            if started or not any(
+                                marker in str(error).lower()
+                                for marker in ("42s22", "invalid column name")
+                            ):
                                 raise
                             _logger.warning("Eplus branch metadata columns unavailable; loading stock without names.")
                             yield from self._execute_eplus_stock_store_query(
