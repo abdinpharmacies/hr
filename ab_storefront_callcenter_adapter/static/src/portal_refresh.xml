@@ -1,0 +1,17 @@
+<templates xml:space="preserve">
+    <t t-name="ab_storefront_callcenter_adapter.ScopedOrderChatter">
+        <t t-component="component" t-props="props"/>
+    </t>
+    <t t-name="ab_storefront_callcenter_adapter.OrderChatter" t-inherit="portal.Chatter" t-inherit-mode="primary">
+        <xpath expr="//Composer" position="attributes">
+            <attribute name="t-if">!abRefresh.closed &amp;&amp; (props.composer || abRefresh.ready)</attribute>
+        </xpath>
+        <xpath expr="//div[@t-ref='root']" position="inside">
+            <div t-if="websiteOrder" class="ab_order_chat_refresh">
+                <span t-if="abRefresh.closed" role="status">This chat has ended. Your order has been sent for delivery.</span>
+                <button type="button" class="btn btn-secondary" t-on-click="refreshWebsiteMessages" t-att-disabled="abRefresh.running">Refresh</button>
+                <span t-if="abRefresh.unavailable" role="status">Chat unavailable. Please retry.</span>
+            </div>
+        </xpath>
+    </t>
+</templates>

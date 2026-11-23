@@ -3,4 +3,18 @@
 <record id="endpoint_service_scope" model="ir.rule"><field name="name">Assigned callcenter endpoint</field><field name="model_id" ref="model_ab_storefront_callcenter_endpoint"/><field name="domain_force">[('service_user_id', '=', user.id)]</field><field name="groups" eval="[(4, ref('group_service'))]"/></record>
 <record id="ab_storefront_callcenter_event_company" model="ir.rule"><field name="name">Callcenter company isolation</field><field name="model_id" ref="model_ab_storefront_callcenter_event"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
 <record id="ab_storefront_callcenter_reply_company" model="ir.rule"><field name="name">Callcenter company isolation</field><field name="model_id" ref="model_ab_storefront_callcenter_reply"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="user_callcenter_bridge" model="res.users">
+<field name="name">Callcenter Support</field>
+<field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/abdin_pharmacy_bot_avatar.jpg"/>
+<field name="login">ab_callcenter_bridge</field>
+<field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('im_livechat.im_livechat_group_user')])]"/>
+</record>
+<record id="ab_storefront_callcenter_chat_event_company" model="ir.rule"><field name="name">Callcenter company isolation</field><field name="model_id" ref="model_ab_storefront_callcenter_chat_event"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="ab_storefront_callcenter_chat_reply_company" model="ir.rule"><field name="name">Callcenter company isolation</field><field name="model_id" ref="model_ab_storefront_callcenter_chat_reply"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="lifecycle_company" model="ir.rule"><field name="name">Website lifecycle company</field><field name="model_id" ref="model_ab_storefront_callcenter_lifecycle"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="native_verified_account_read" model="ir.rule">
+<field name="name">Verified website conversation owner</field>
+<field name="model_id" ref="mail.model_discuss_channel"/>
+<field name="domain_force">[] if user.has_group('base.group_user') else ['|', ('ab_callcenter_endpoint_id', '=', False), '|', ('ab_callcenter_identity_kind', '!=', 'customer'), ('ab_callcenter_user_id', '=', user.id)]</field>
+</record>
 </odoo>

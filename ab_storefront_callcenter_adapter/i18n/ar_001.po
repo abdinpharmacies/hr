@@ -371,13 +371,326 @@ msgid "Website Callcenter"
 msgstr "مركز اتصال الموقع"
 
 #. module: ab_storefront_callcenter_adapter
+<<<<<<< Updated upstream
 #. odoo-python
 #: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
 msgid "An enabled endpoint requires a website."
 msgstr "يجب ربط نقطة الاتصال المفعلة بموقع إلكتروني."
+=======
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_chat_ready
+msgid "Ab Callcenter Chat Ready"
+msgstr "جاهزية محادثة مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_discuss_channel__ab_callcenter_identity_kind
+msgid "Ab Callcenter Identity Kind"
+msgstr "نوع هوية مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_discuss_channel__ab_callcenter_identity_uuid
+msgid "Ab Callcenter Identity Uuid"
+msgstr "معرّف هوية مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_discuss_channel__ab_callcenter_queued
+msgid "Ab Callcenter Queued"
+msgstr "في انتظار مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_discuss_channel__ab_callcenter_session_uuid
+msgid "Ab Callcenter Session Uuid"
+msgstr "معرّف جلسة مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__bridge_operator_id
+msgid "Bridge Operator"
+msgstr "مشغّل ربط المحادثة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_chat_event
+msgid "Callcenter Chat Event"
+msgstr "حدث محادثة مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_chat_reply
+msgid "Callcenter Native Chat Reply"
+msgstr "رد مركز الاتصال في المحادثة الأصلية"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__chat_enabled
+msgid "Chat Enabled"
+msgstr "المحادثة مفعّلة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__discuss_channel__ab_callcenter_identity_kind__customer
+msgid "Customer"
+msgstr "عميل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_chat_reply__destination_kind
+msgid "Destination Kind"
+msgstr "نوع الوجهة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_chat_reply__destination_uuid
+msgid "Destination Uuid"
+msgstr "معرّف الوجهة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_discuss_channel
+msgid "Discussion Channel"
+msgstr "قناة المناقشة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__ab_storefront_callcenter_chat_reply__destination_kind__livechat
+msgid "Live Chat"
+msgstr "المحادثة المباشرة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_ab_storefront_callcenter_endpoint_livechat_unique
+msgid "Live Chat endpoint already exists."
+msgstr "نقطة اتصال المحادثة المباشرة موجودة بالفعل."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_im_livechat_channel
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__livechat_channel_id
+msgid "Livechat Channel"
+msgstr "قناة المحادثة المباشرة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_ab_storefront_callcenter_chat_event_unique_message
+msgid "Message already captured."
+msgstr "تم تسجيل الرسالة بالفعل."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+msgid "Order chat is waiting for Callcenter acknowledgement."
+msgstr "محادثة الطلب في انتظار تأكيد الاستلام من مركز الاتصال."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__outgoing_enabled
+msgid "Outgoing Enabled"
+msgstr "الإرسال مفعّل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.constraint,message:ab_storefront_callcenter_adapter.constraint_discuss_channel_unique_session
+msgid "Session already exists."
+msgstr "الجلسة موجودة بالفعل."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+msgid "Start a new chat after signing in."
+msgstr "ابدأ محادثة جديدة بعد تسجيل الدخول."
 
 #. module: ab_storefront_callcenter_adapter
 #. odoo-python
 #: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+msgid "Use a dedicated Live Chat bridge operator."
+msgstr "استخدم مشغّلاً مخصصاً لربط المحادثة المباشرة."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__discuss_channel__ab_callcenter_identity_kind__visitor
+msgid "Visitor"
+msgstr "زائر"
+>>>>>>> Stashed changes
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
+<<<<<<< Updated upstream
 msgid "Select a website for a new endpoint."
 msgstr "اختر موقعًا إلكترونيًا لنقطة الاتصال الجديدة."
+=======
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+msgid "Website replies are disabled."
+msgstr "الردود على الموقع معطّلة."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+msgid "Your message is queued for Callcenter. An agent will reply here."
+msgstr "رسالتك في انتظار مركز الاتصال. سيرد عليك أحد الموظفين هنا."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/native.js:0
+#: code:addons/ab_storefront_callcenter_adapter/static/src/native_history.xml:0
+msgid "Chat unavailable. Your draft is saved. Please retry."
+msgstr "المحادثة غير متاحة. تم حفظ المسودة. يرجى إعادة المحاولة."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__lifecycle_enabled
+msgid "Enable verified conversation lifecycle"
+msgstr "تفعيل دورة حياة المحادثات الموثقة"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+msgid "Message needs review. Submit again to retry."
+msgstr "تحتاج الرسالة إلى مراجعة. أرسلها مرة أخرى لإعادة المحاولة."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/native_history.xml:0
+msgid "Message pending acknowledgement."
+msgstr "الرسالة في انتظار تأكيد الاستلام."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/native_history.xml:0
+msgid "Previous conversations"
+msgstr "المحادثات السابقة"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/native_history.xml:0
+msgid "Retry pending message"
+msgstr "إعادة محاولة الرسالة المعلقة"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/native.js:0
+msgid "Retry the pending message before sending another."
+msgstr "أعد محاولة الرسالة المعلقة قبل إرسال رسالة أخرى."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+msgid "This website chat has ended."
+msgstr "انتهت محادثة الموقع هذه."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_storefront_callcenter_lifecycle
+msgid "Website Conversation Lifecycle"
+msgstr "دورة حياة محادثة الموقع"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_account_uuid
+msgid "Verified account identity"
+msgstr "هوية الحساب الموثقة"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_discuss_channel__ab_callcenter_user_id
+msgid "Verified conversation owner"
+msgstr "مالك المحادثة الموثق"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ir_attachment__ab_website_media
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_product_document__ab_website_media
+msgid "Ab Website Media"
+msgstr "بيانات وسائط الموقع"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ir_attachment
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_storefront_callcenter_adapter
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.chat
+msgid "Attachments"
+msgstr "المرفقات"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__media_enabled
+msgid "Enable v4 website media"
+msgstr "تفعيل وسائط الموقع بالإصدار الرابع"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+#: code:addons/ab_storefront_callcenter_adapter/models/media.py:0
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+msgid "Invalid website media."
+msgstr "وسائط الموقع غير صالحة."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_chat_reply__media_fingerprint
+msgid "Media Fingerprint"
+msgstr "بصمة الوسائط"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#: code:addons/ab_storefront_callcenter_adapter/static/src/portal_refresh.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_storefront_callcenter_adapter.chat
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
+#: code:addons/ab_storefront_callcenter_adapter/models/media.py:0
+msgid "Website media is unavailable."
+msgstr "وسائط الموقع غير متاحة."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_chat_event__exchange_version
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_lifecycle__exchange_version
+msgid "Exchange version"
+msgstr "إصدار تبادل الرسائل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__dispatch_lifecycle_enabled
+msgid "Enable dispatch lifecycle after receiver upgrade"
+msgstr "تفعيل إنهاء محادثة الطلب عند الإرسال بعد تحديث النظام المستقبِل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_chat_closed
+msgid "Order chat ended"
+msgstr "انتهت محادثة الطلب"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_ab_prescription_order
+msgid "Prescription Order"
+msgstr "طلب وصفة طبية"
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_storefront_callcenter_adapter/models/lifecycle.py:0
+#: code:addons/ab_storefront_callcenter_adapter/static/src/chat.js:0
+#: code:addons/ab_storefront_callcenter_adapter/static/src/portal_refresh.xml:0
+msgid "This chat has ended. Your order has been sent for delivery."
+msgstr "انتهت هذه المحادثة. تم إرسال طلبك للتوصيل."
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model,name:ab_storefront_callcenter_adapter.model_stock_picking
+msgid "Transfer"
+msgstr "تحويل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__ab_storefront_submission__callcenter_origin__account
+msgid "Account"
+msgstr "حساب"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_submission__callcenter_account_identity
+msgid "Callcenter Account Identity"
+msgstr "هوية حساب مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_submission__callcenter_origin
+msgid "Callcenter Origin"
+msgstr "مصدر هوية مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_submission__callcenter_visitor_identity
+msgid "Callcenter Visitor Identity"
+msgstr "هوية زائر مركز الاتصال"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_ab_storefront_callcenter_endpoint__guest_metadata_enabled
+msgid "Enable verified checkout identity after receiver upgrade"
+msgstr "تفعيل هوية الدفع الموثقة بعد ترقية النظام المستقبِل"
+
+#. module: ab_storefront_callcenter_adapter
+#: model:ir.model.fields.selection,name:ab_storefront_callcenter_adapter.selection__ab_storefront_submission__callcenter_origin__guest
+msgid "Guest"
+msgstr "زائر"
+>>>>>>> Stashed changes

@@ -28,6 +28,10 @@
             <field name="service_user_id"/>
             <field name="cutoff"/>
             <field name="enabled"/>
+            <field name="media_enabled"/><field name="dispatch_lifecycle_enabled"/><field name="lifecycle_enabled"/><field name="guest_metadata_enabled"/><field name="chat_enabled"/>
+            <field name="outgoing_enabled"/>
+            <field name="livechat_channel_id" options="{'no_create': True}"/>
+            <field name="bridge_operator_id" options="{'no_create': True}"/>
           </group>
         </sheet>
       </form>
@@ -59,18 +63,30 @@
       <a t-if="sale_order.ab_callcenter_uuid" t-att-href="'/my/website-chat/' + sale_order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
     </xpath>
   </template>
+  <template id="portal_chat_readiness" inherit_id="sale.sale_order_portal_template">
+    <xpath expr="//t[@t-call='portal.message_thread']" position="attributes">
+      <attribute name="disable_composer">(disable_composer or sale_order.ab_callcenter_chat_closed or not sale_order.ab_callcenter_chat_ready or not sale_order.ab_callcenter_endpoint_id.sudo().chat_enabled) if sale_order.ab_callcenter_uuid else disable_composer</attribute>
+    </xpath>
+    <xpath expr="//t[@t-call='portal.message_thread']" position="before">
+      <span t-if="sale_order.ab_callcenter_uuid" t-att-data-ab-order-chatter="sale_order.id" t-att-data-closed="'1' if sale_order.ab_callcenter_chat_closed else None"/>
+      <p t-if="sale_order.ab_callcenter_uuid and not sale_order.ab_callcenter_chat_closed and not sale_order.ab_callcenter_chat_ready" role="status">Order chat is waiting for Callcenter acknowledgement.</p>
+    </xpath>
+  </template>
   <template id="chat" name="Website Order Chat">
     <t t-call="website.layout">
-      <main class="container py-4 ab_website_chat">
+      <main class="container py-4 ab_website_chat" t-att-data-chat-identity="chat_identity">
         <h1>Order chat</h1>
         <p t-esc="order.name"/>
         <div data-chat-history="" aria-live="polite"/>
         <p data-chat-status="" role="status"/>
+        <button type="button" data-chat-refresh="" class="btn btn-secondary">Refresh</button>
         <form t-att-action="'/storefront-callcenter/chat/' + order.ab_callcenter_uuid" method="post">
           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
           <label for="ab_chat_body">Message</label>
-          <textarea id="ab_chat_body" name="body" maxlength="4096" required="required" class="form-control"/>
-          <button type="submit" class="btn btn-primary mt-2">Send</button>
+          <input t-if="order.ab_callcenter_endpoint_id.sudo().media_enabled" type="file" multiple="multiple" data-chat-upload="" aria-label="Attachments"/>
+          <div data-chat-uploads=""/>
+          <textarea t-att-disabled="order.ab_callcenter_chat_closed or not order.ab_callcenter_chat_ready" id="ab_chat_body" name="body" maxlength="4096" class="form-control"/>
+          <button t-att-disabled="order.ab_callcenter_chat_closed or not order.ab_callcenter_chat_ready" type="submit" class="btn btn-primary mt-2">Send</button>
         </form>
       </main>
     </t>

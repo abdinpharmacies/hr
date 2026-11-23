@@ -22,12 +22,19 @@ class Endpoint(models.Model):
     company_id = fields.Many2one('res.company', required=True, readonly=True, index=True)
     service_user_id = fields.Many2one('res.users', required=True, ondelete='restrict')
     enabled = fields.Boolean(default=False)
+    chat_enabled = fields.Boolean(default=False)
+    outgoing_enabled = fields.Boolean(default=False)
+    livechat_channel_id = fields.Many2one('im_livechat.channel', ondelete='restrict')
+    bridge_operator_id = fields.Many2one('res.users', ondelete='restrict',
+        default=lambda self: self.env.ref('ab_storefront_callcenter_adapter.user_callcenter_bridge', raise_if_not_found=False))
     cutoff = fields.Datetime(required=True, default=fields.Datetime.now)
     _source_unique = models.Constraint('UNIQUE(source)', 'Source must be unique.')
+    _livechat_unique = models.Constraint('UNIQUE(livechat_channel_id)', 'Live Chat endpoint already exists.')
     _website_unique = models.Constraint(
         'UNIQUE(website_id)', 'Website endpoint already exists.'
     )
 
+<<<<<<< Updated upstream
     @api.onchange('website_id')
     def _onchange_website_id(self):
         self.company_id = self.website_id.company_id
@@ -49,6 +56,9 @@ class Endpoint(models.Model):
                 raise ValidationError(_('An enabled endpoint requires a website.'))
 
     @api.constrains('service_user_id', 'website_id', 'source')
+=======
+    @api.constrains('service_user_id', 'website_id', 'source', 'chat_enabled', 'livechat_channel_id', 'bridge_operator_id')
+>>>>>>> Stashed changes
     def _check_service(self):
         for record in self:
             try:
@@ -56,6 +66,14 @@ class Endpoint(models.Model):
                     raise ValueError()
             except (ValueError, TypeError, AttributeError):
                 raise ValidationError(_('Invalid website source.')) from None
+            operator = record.bridge_operator_id
+            if record.chat_enabled and (
+                    not operator.active or operator.share
+                    or record.company_id not in operator.company_ids
+                    or operator == record.service_user_id
+                    or operator.has_group('base.group_system')
+                    or (record.livechat_channel_id and operator not in record.livechat_channel_id.sudo().user_ids)):
+                raise ValidationError(_('Use a dedicated Live Chat bridge operator.'))
             user = record.service_user_id
             if (
                 not user.has_group('ab_storefront_callcenter_adapter.group_service')
@@ -100,10 +118,113 @@ class Order(models.Model):
     ab_callcenter_capability_expires = fields.Datetime(
         copy=False, groups='base.group_system'
     )
+    ab_callcenter_account_uuid = fields.Char(string='Verified account identity', copy=False, readonly=True, groups='base.group_system')
     ab_callcenter_owner_hash = fields.Char(copy=False, groups='base.group_system')
+    ab_callcenter_chat_ready = fields.Boolean(compute='_compute_ab_callcenter_chat_ready')
     _callcenter_uuid_unique = models.Constraint(
         'UNIQUE(ab_callcenter_uuid)', 'Order UUID must be unique.'
     )
+
+    def _compute_ab_callcenter_chat_ready(self):
+        for order in self:
+            initial = self.env['ab_storefront_callcenter_event'].sudo().search([
+                ('order_id', '=', order.id),
+            ], order='id', limit=1) if order.ab_callcenter_uuid else False
+            order.ab_callcenter_chat_ready = bool(
+                initial and initial.envelope['kind'] == 'order' and initial.acknowledged)
+
+    def _ab_callcenter_require_chat(self):
+        self.ensure_one()
+        self.invalidate_recordset(['ab_callcenter_chat_ready'])
+        endpoint = self.ab_callcenter_endpoint_id.sudo()
+        if (not endpoint.enabled or not endpoint.chat_enabled
+                or endpoint.website_id != self.website_id or endpoint.company_id != self.company_id
+                or not self.ab_callcenter_chat_ready):
+            raise AccessError(_('Order chat is waiting for Callcenter acknowledgement.'))
+
+    def message_post(self, **kwargs):
+        if (self.ab_callcenter_uuid and kwargs.get('message_type', 'notification') == 'comment'
+                and not self.env.user._is_internal() and not _CAPTURE.get()):
+            from odoo.http import request
+            from ..controllers.chat import Chat
+            if not request:
+                raise AccessError(_('Invalid website order.'))
+            allowed = Chat()._order(self.ab_callcenter_uuid)
+            if allowed != self:
+                raise AccessError(_('Invalid website order.'))
+            self._ab_callcenter_require_chat()
+            self._ab_callcenter_require_open()
+        return super().message_post(**kwargs)
+
+    def _message_post_after_hook(self, message, msg_vals):
+        result = super()._message_post_after_hook(message, msg_vals)
+        if (self.ab_callcenter_uuid and not _CAPTURE.get()
+                and not self.env.user._is_internal()
+                and message.message_type == 'comment'
+                and not message.subtype_id.internal
+                and message.author_id
+                and not message.author_id.sudo().user_ids.filtered(lambda u: not u.share)):
+            self._ab_callcenter_require_chat()
+            self._ab_callcenter_capture_message(message)
+        return result
+
+    def _ab_callcenter_capture_message(self, message, event_uuid=None):
+        from odoo.tools import html2plaintext
+        body = html2plaintext(message.body or '').strip()
+        if len(body) > 4096 or (not body and not message.attachment_ids):
+            raise ValidationError(_('Invalid website message.'))
+        endpoint = self.ab_callcenter_endpoint_id.sudo()
+        from .chat import opaque, customer_metadata
+        identity = opaque(endpoint.source, 'account:' + str(self.env.uid)) if not self.env.user._is_public() else opaque(endpoint.source, 'order:' + self.ab_callcenter_uuid)
+        if endpoint.lifecycle_enabled and not self.env.user._is_public():
+            self._ab_callcenter_bind_order(identity)
+        metadata = {'kind': 'customer' if not self.env.user._is_public() else 'visitor', 'uuid': identity}
+        if not self.env.user._is_public():
+            metadata.update(customer_metadata(self.env.user))
+        return self.env['ab_storefront_callcenter_chat_event']._capture(
+            endpoint, {'kind': 'order', 'uuid': self.ab_callcenter_uuid},
+            metadata,
+            body, message, event_uuid=event_uuid)
+
+    def _ab_callcenter_bind_order(self, identity):
+        from uuid import uuid5, UUID
+        endpoint = self.ab_callcenter_endpoint_id.sudo()
+        event = {'version': 3, 'source': endpoint.source,
+            'event_uuid': str(uuid5(UUID(self.ab_callcenter_uuid), 'identity:' + identity)),
+            'kind': 'identity_bound', 'destination': {'kind': 'order', 'uuid': self.ab_callcenter_uuid},
+            'identity': {'kind': 'customer', 'uuid': identity}}
+        if not self.env.user._is_public():
+            from .chat import customer_metadata
+            event['identity'].update(customer_metadata(self.env.user))
+        event['fingerprint'] = fingerprint(event)
+        events = self.env['ab_storefront_callcenter_lifecycle'].sudo()
+        guard = _CAPTURE.set(True)
+        try:
+            if not events.search_count([('endpoint_id', '=', endpoint.id), ('event_uuid', '=', event['event_uuid'])]):
+                events.create({'endpoint_id': endpoint.id, 'event_uuid': event['event_uuid'], 'envelope': event})
+        finally:
+            _CAPTURE.reset(guard)
+
+    def _ab_callcenter_customer_post(self, body, event_uuid, attachment_ids=None):
+        self._ab_callcenter_require_chat()
+        self.lock_for_update()
+        events = self.env['ab_storefront_callcenter_chat_event'].sudo()
+        existing = events.search([('endpoint_id', '=', self.ab_callcenter_endpoint_id.id),
+                                  ('event_uuid', '=', event_uuid)], limit=1)
+        if existing:
+            if existing.envelope['destination'] != {'kind': 'order', 'uuid': self.ab_callcenter_uuid} or existing.envelope['body'] != body or sorted(item['id'] for item in existing.envelope.get('attachments', [])) != sorted(str(i) for i in (attachment_ids or [])):
+                raise ValidationError(_('Conflicting website event.'))
+            return
+        self._ab_callcenter_require_open()
+        from markupsafe import Markup, escape
+        guard = _CAPTURE.set(True)
+        try:
+            message = self.message_post(body=Markup('<p>%s</p>') % escape(body),
+                message_type='comment', subtype_xmlid='mail.mt_comment',
+                author_id=self.env.user.partner_id.id, attachment_ids=attachment_ids or [])
+            self._ab_callcenter_capture_message(message, event_uuid=event_uuid)
+        finally:
+            _CAPTURE.reset(guard)
 
     @api.model_create_multi
     def create(self, values_list):
@@ -194,7 +315,7 @@ class Order(models.Model):
                     'total': line.price_total,
                 }
             )
-        return {
+        result = {
             'reference': self.name,
             'public_reference': self.ab_public_reference or '',
             'customer': {
@@ -237,6 +358,25 @@ class Order(models.Model):
                 ],
             },
         }
+
+        submission = self.ab_checkout_submission_id.sudo()
+        if self.ab_callcenter_endpoint_id.guest_metadata_enabled and submission.callcenter_origin:
+            result['origin_kind'] = submission.callcenter_origin
+            if submission.callcenter_visitor_identity:
+                result['visitor_identity'] = submission.callcenter_visitor_identity
+            if submission.callcenter_account_identity:
+                result['account_identity'] = submission.callcenter_account_identity
+
+        if self.ab_callcenter_endpoint_id.lifecycle_enabled and self.ab_callcenter_owner_hash:
+            import hashlib
+            from .chat import opaque
+            users = self.partner_id.sudo().user_ids.filtered('active')
+            owner = users.filtered(lambda user: hashlib.sha256(f'user:{user.id}'.encode()).hexdigest() == self.ab_callcenter_owner_hash)
+            if self.ab_callcenter_account_uuid:
+                result['account_identity'] = self.ab_callcenter_account_uuid
+            elif len(owner) == 1:
+                result['account_identity'] = opaque(self.ab_callcenter_endpoint_id.source, 'account:' + str(owner.id))
+        return result
 
     def _ab_callcenter_event(self, kind, payload, event_uuid=None):
         self.ensure_one()
@@ -444,45 +584,8 @@ class Exchange(models.AbstractModel):
 
     @api.model
     def receive_v1(self, source, order_uuid, token, body):
-        endpoint = self._endpoint(source)
-        if (
-            not isinstance(token, str)
-            or not 1 <= len(token) <= 128
-            or not isinstance(body, str)
-            or not 1 <= len(body.strip()) <= 4096
-        ):
-            raise ValidationError(_('Invalid website reply.'))
-        order = (
-            self.env['sale.order']
-            .sudo()
-            .search(
-                [
-                    ('ab_callcenter_endpoint_id', '=', endpoint.id),
-                    ('ab_callcenter_uuid', '=', order_uuid),
-                    ('website_id', '=', endpoint.website_id.id),
-                    ('company_id', '=', endpoint.company_id.id),
-                ],
-                limit=1,
-            )
-        )
-        if not order:
-            raise AccessError(_('Invalid website order.'))
-        reply = (
-            self.env['ab_storefront_callcenter_reply']
-            .sudo()
-            .search([('order_id', '=', order.id), ('token', '=', token)], limit=1)
-        )
-        if reply and reply.body != body:
-            raise ValidationError(_('Conflicting website reply.'))
-        guard = _CAPTURE.set(True)
-        try:
-            if not reply:
-                self.env['ab_storefront_callcenter_reply'].sudo().create(
-                    {'order_id': order.id, 'token': token, 'body': body}
-                )
-        finally:
-            _CAPTURE.reset(guard)
-        return {'reference': token}
+        self._endpoint(source)
+        raise AccessError(_('Website replies are disabled.'))
 
 
 class Http(models.AbstractModel):
