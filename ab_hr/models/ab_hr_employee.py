@@ -14,6 +14,7 @@ class Employee(models.Model):
     english_name = fields.Char()
     costcenter_id = fields.Many2one('ab_costcenter', string='Cost Center', index=True)
     accid = fields.Char(string='ePlus Code', index=True)
+    barcode = fields.Char()
     work_email = fields.Char()
     parent_id = fields.Many2one('ab_hr_employee', string='Manager', index=True, ondelete='restrict')
     parent_path = fields.Char(index=True)
