@@ -2,7 +2,7 @@
 
 ## Current changes before commit:
 
-- Cover the branch stock read and optional metadata fallback using the native, parameterized Eplus connector.
+- Verify that archived duplicate codes do not block a linked active website product while active duplicates remain blocked.
 
 Files changed:
 
@@ -11,9 +11,23 @@ Files changed:
 
 Validation:
 
-- Focused native connector test passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_native_branch_focused_validation.log`.
+- Focused replica regression passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_archived_duplicate_replica_validation_pass.log`.
 
 ## Recent commits
+
+Commit: `ab1e15a5`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product_replication/TEST: cover native branch stock read`
+
+User-facing changes:
+
+- Cover native, parameterized branch stock reads and optional store metadata fallback.
+
+Files changed:
+
+- `ab_website_sale_product_replication/changelog.d/current.md`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 
 Commit: `152b71f6`
 Author: Mohamed Fawzy

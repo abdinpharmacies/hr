@@ -68,6 +68,29 @@ class TestReplicaCatalogImport(TransactionCase):
         })
         self.assertEqual(template.list_price, 73.0)
 
+    def test_archived_duplicate_does_not_block_linked_product_sync(self):
+        template = self.product._sync_website_products(create_missing=True)
+        policies = self.env["ab_odoo_replication_override"].search([
+            ("model_name", "in", ["ab_product", "ab_product_card"]), ("active", "=", True),
+        ])
+        policies.write({"active": False})
+        duplicate = self.env["ab_product"].create({
+            "product_card_name": "Archived duplicate",
+            "code": self.product.code,
+            "eplus_serial": self.product.eplus_serial + 1,
+            "active": False,
+        })
+        policies.write({"active": True})
+
+        self.assertEqual(self.product._sync_website_products(), template)
+        self.assertEqual(template.ab_product_id, self.product)
+
+        policies.write({"active": False})
+        duplicate.active = True
+        policies.write({"active": True})
+        with self.assertRaises(UserError):
+            self.product._sync_website_products()
+
     def test_missing_master_product_does_not_block_matched_website_draft(self):
         unmatched = self.env["ab_eplus_stock_snapshot"].create({
             "itm_id": 99177102, "itm_code": "UNMATCHED-REPLICA-TEST", "itm_qty": 1,
