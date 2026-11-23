@@ -1,0 +1,61 @@
+name: Telegram Commit Notifications
+
+on:
+  push:
+    branches:
+      - '**'
+
+permissions: {}
+
+jobs:
+  notify:
+    name: Notify Telegram Group
+    runs-on: ubuntu-latest
+
+    if: github.event.deleted == false
+
+    steps:
+      - name: Send commit notifications
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+        shell: bash
+
+        run: |
+          if [[ -z "$TELEGRAM_BOT_TOKEN" || -z "$TELEGRAM_CHAT_ID" ]]; then
+            echo "Error: Missing Telegram secrets"
+            exit 1
+          fi
+
+          jq -c '.commits[]?' "$GITHUB_EVENT_PATH" | while IFS= read -r commit; do
+
+            SHA=$(jq -r '.id' <<< "$commit")
+            MESSAGE=$(jq -r '.message | split("\n")[0]' <<< "$commit")
+            AUTHOR=$(jq -r '.author.name' <<< "$commit")
+
+            MESSAGE="${MESSAGE:0:500}"
+
+            COMMIT_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}"
+
+            TEXT=$(printf '🚀 New GitHub Commit\n\n📦 Repository: %s\n🌿 Branch: %s\n👤 Author: %s\n\n📝 Message: %s\n🔖 SHA: %s\n\n🔗 View Commit:\n%s' \
+              "$GITHUB_REPOSITORY" \
+              "$GITHUB_REF_NAME" \
+              "$AUTHOR" \
+              "$MESSAGE" \
+              "${SHA:0:7}" \
+              "$COMMIT_URL")
+
+            curl --fail-with-body --silent --show-error \
+              --retry 3 \
+              --request POST \
+              "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=${TEXT}" \
+              > /dev/null
+
+            echo "Telegram notification sent for commit: ${SHA}"
+
+            sleep 1
+
+          done
