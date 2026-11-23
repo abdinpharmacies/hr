@@ -418,16 +418,93 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
             self.assertFalse(self.env.ref(
                 'ab_supplier_claim_cycle.' + role, raise_if_not_found=False))
 
-    def test_reviewer_role_remains_read_only(self):
-        claim = self._claim()
+    def test_reviewer_and_participant_roles_are_additive(self):
         reviewer_group = self.env.ref(
             'ab_supplier_claim_cycle.supplier_claim_group_reviewer')
         self.approver_a.group_ids = [Command.link(reviewer_group.id)]
+        self.outsider.group_ids = [Command.link(reviewer_group.id)]
+        claim = self._claim()
         stage = claim.stage_state_ids.filtered(lambda row: row.name == 'Amount Review')
+        assigned_claim = claim.with_user(self.approver_a)
+        assigned_stage = stage.with_user(self.approver_a)
+        self.assertIn('claim_amount', assigned_claim.editable_field_names)
+        self.assertTrue(assigned_stage.can_decide)
+        assigned_claim.write({'claim_amount': 300})
+        self.assertEqual(claim.claim_amount, 300)
+
+        unassigned_claim = claim.with_user(self.outsider)
+        unassigned_claim.check_access('read')
+        self.assertFalse(stage.with_user(self.outsider).can_decide)
+        with self.assertRaises(AccessError):
+            stage.with_user(self.outsider).action_approve()
+        with self.assertRaises(AccessError):
+            unassigned_claim.write({'claim_amount': 400})
+
+        assigned_stage.action_approve()
+        self.assertEqual(stage.status, 'approved')
+
+        for decision in ('deferred', 'rejected'):
+            with self.subTest(decision=decision):
+                next_claim = self._claim()
+                stage = next_claim.stage_state_ids.filtered(lambda row: row.name == 'Amount Review')
+                assigned_stage = stage.with_user(self.approver_a)
+                if decision == 'deferred':
+                    action = assigned_stage.action_open_defer()
+                else:
+                    action = assigned_stage.action_open_reject()
+                wizard = self.env[action['res_model']].with_user(self.approver_a).browse(action['res_id'])
+                wizard.write({'reason': 'More evidence needed', 'followup_date': fields.Date.today()})
+                wizard.action_confirm()
+                self.assertEqual(stage.status, decision)
+
+    def test_reviewer_cannot_act_after_losing_participant_membership(self):
+        claim = self._claim()
+        self.approver_a.group_ids = [Command.set(self.env.ref(
+            'ab_supplier_claim_cycle.supplier_claim_group_reviewer').ids)]
+        stage = claim.stage_state_ids.filtered(lambda row: row.name == 'Amount Review')
+        self.assertIn(self.approver_a, stage.approver_ids)
+        claim.with_user(self.approver_a).check_access('read')
+        self.assertFalse(stage.with_user(self.approver_a).can_decide)
         with self.assertRaises(AccessError):
             stage.with_user(self.approver_a).action_approve()
         with self.assertRaises(AccessError):
             claim.with_user(self.approver_a).write({'claim_amount': 300})
+
+    def test_reviewer_notes_on_readable_claims(self):
+        reviewer = new_test_user(
+            self.env, login='claim_note_reviewer',
+            groups='ab_supplier_claim_cycle.supplier_claim_group_reviewer')
+        wizard_model = self.env['ab_supplier_claim_reviewer_note']
+        wizard_values = {'body': 'Check <the amount> before payment.'}
+        claim = self._claim()
+        closed_claim = self._claim()
+        closed_claim._workflow_write({'state': 'closed', 'current_sequence': 0})
+
+        for readable_claim in (claim, closed_claim):
+            values = {**wizard_values, 'claim_id': readable_claim.id}
+            wizard = wizard_model.with_user(reviewer).create(values)
+            wizard.action_post_note()
+            note = readable_claim.message_ids.filtered(lambda msg: '&lt;the amount&gt;' in msg.body)
+            self.assertEqual(len(note), 1)
+            self.assertEqual(note.author_id, reviewer.partner_id)
+            self.assertEqual(note.subtype_id, self.env.ref('mail.mt_note'))
+            self.assertEqual(note.with_user(reviewer).body, note.body)
+
+        wizard = wizard_model.with_user(reviewer).create({'claim_id': claim.id, 'body': '   '})
+        with self.assertRaises(ValidationError):
+            wizard.action_post_note()
+
+        with self.assertRaises(AccessError):
+            wizard_model.with_user(self.approver_a).create({**wizard_values, 'claim_id': claim.id})
+
+        draft = self.env[claim._name].with_user(self.secretarial).create(self._claim_values())
+        other_company = self.env['res.company'].create({'name': 'Other note company'})
+        claim._workflow_write({'company_id': other_company.id})
+        for unreadable_claim in (draft, claim):
+            with self.assertRaises(AccessError):
+                wizard_model.with_user(reviewer).create({
+                    **wizard_values, 'claim_id': unreadable_claim.id,
+                }).action_post_note()
 
     def test_published_workflow_allows_only_safe_stage_extensions(self):
         claim = self._claim()

@@ -163,6 +163,7 @@
                         </notebook>
                     </div>
                     <field name="show_participant_attachment_note" invisible="True"/></sheet>
+                <field name="can_log_reviewer_note" invisible="True"/>
                 <chatter/>
             </form>
         </field>

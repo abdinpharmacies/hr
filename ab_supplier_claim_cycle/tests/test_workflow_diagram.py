@@ -68,6 +68,53 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
         cls.closed_claim.stage_state_ids._internal_write({'status': 'approved'})
         cls.closed_claim._workflow_write({'state': 'closed', 'current_sequence': 0})
 
+    def test_reviewer_logs_note_on_closed_claim(self):
+        reviewer = new_test_user(
+            self.env, login='diagram_reviewer',
+            groups='ab_supplier_claim_cycle.supplier_claim_group_reviewer')
+        self.browser_js(
+            f'/odoo/action-ab_supplier_claim_cycle.invoice_action/{self.closed_claim.id}',
+            """
+                const note = "Reviewed the closed claim";
+                const deadline = Date.now() + 25000;
+                let opened = false;
+                let submitted = false;
+                const timer = setInterval(() => {
+                    const logNote = document.querySelector('.o-mail-Chatter-logNote');
+                    if (!opened && logNote && !logNote.disabled) {
+                        if (!document.querySelector('.o-mail-Chatter-sendMessage')?.disabled) {
+                            clearInterval(timer);
+                            console.error('Reviewer gained Send message access');
+                            return;
+                        }
+                        opened = true;
+                        logNote.click();
+                    }
+                    const input = document.querySelector('.o_dialog textarea');
+                    const submit = document.querySelector('.o_dialog button[name="action_post_note"]');
+                    if (!submitted && input && submit) {
+                        submitted = true;
+                        input.value = note;
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                        submit.click();
+                    }
+                    if (submitted && document.querySelector('.o-mail-Chatter-content')?.textContent.includes(note)) {
+                        clearInterval(timer);
+                        console.log('test successful');
+                    } else if (Date.now() > deadline) {
+                        clearInterval(timer);
+                        console.error('Reviewer note did not appear in Chatter');
+                    }
+                }, 100);
+            """,
+            login=reviewer.login,
+        )
+        note = self.closed_claim.message_ids.filtered(lambda msg: 'Reviewed the closed claim' in msg.body)
+        self.assertEqual(len(note), 1)
+        self.assertEqual(note.author_id, reviewer.partner_id)
+        self.assertEqual(note.subtype_id, self.env.ref('mail.mt_note'))
+
     def test_used_published_workflow_reset_button_explains_restriction(self):
         administrator = new_test_user(
             self.env, login='workflow_configuration_admin', password='claim-test-password',

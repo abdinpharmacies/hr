@@ -115,7 +115,8 @@ Uploads continue to create immutable document-history records.
 - **Workflow Participant** reads assigned claims and their complete workflow, history,
   documents, and supplier details. Only an assigned active-stage approver can edit
   that stage’s allowed fields or decide it.
-- **Reviewer** has read-only access.
+- **Reviewer** can read claims within the role's visibility rules and log internal
+  Chatter notes on any claim they can open.
 - **Administrator** configures workflows, overrides active decisions and removes
   approvals.
 
@@ -134,8 +135,9 @@ uninstall/reinstall. Version 19.0.7.1.0 migrates effective department-group memb
 rules and groups. The four retained XML IDs and all business records stay intact.
 Unknown custom dependencies stop the upgrade instead of being silently removed.
 Participants lose the former department-wide submitted-claim visibility and see
-only assigned claims. Reviewer remains read-only, including when also assigned
-as an approver, unless the user is an Administrator.
+only assigned claims through that role. Users with both Reviewer and Workflow
+Participant keep Reviewer visibility and can edit allowed fields or record
+decisions for their assigned active stages.
 
 ```bash
 odoo-bin -c /path/to/instance.conf -d existing_database \

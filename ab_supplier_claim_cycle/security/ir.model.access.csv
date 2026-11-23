@@ -29,4 +29,5 @@ stage_state_admin,stage state admin,model_ab_supplier_claim_stage_state,supplier
 stage_decision_participant,stage decision participant,model_ab_supplier_claim_stage_decision,supplier_claim_group_participant,1,1,1,1
 stage_decision_admin,stage decision admin,model_ab_supplier_claim_stage_decision,supplier_claim_group_admin,1,1,1,1
 workflow_field_admin,workflow field metadata admin,base.model_ir_model_fields,supplier_claim_group_admin,1,0,0,0
+reviewer_note,reviewer note,model_ab_supplier_claim_reviewer_note,supplier_claim_group_reviewer,1,1,1,0
 ab_costcenter_participant,cost center participant,ab_costcenter.model_ab_costcenter,supplier_claim_group_participant,1,0,0,0

@@ -379,16 +379,13 @@ class SupplierClaimStageState(models.Model):
     @api.depends_context('uid')
     def _compute_action_permissions(self):
         is_admin = self.env.su or self.env.user.has_group(WORKFLOW_ADMIN_GROUP)
-        is_reviewer = self.env.user.has_group(
-            'ab_supplier_claim_cycle.supplier_claim_group_reviewer') and not is_admin
         for stage_state in self:
             stage_state.can_decide = bool(
                 stage_state.claim_id.active
                 and stage_state.claim_id.state == 'in_progress'
                 and stage_state.sequence == stage_state.claim_id.current_sequence
                 and stage_state.status in ('pending', 'deferred')
-                and not is_reviewer
-                and (is_admin or self.env.user in stage_state.approver_ids)
+                and stage_state.claim_id._is_stage_actor(stage_state)
             )
             stage_state.can_admin_undo = bool(
                 is_admin and stage_state.claim_id.active
@@ -532,9 +529,6 @@ class SupplierClaimWorkflowEngine(models.Model):
     def _editable_names_for_user(self):
         self.ensure_one()
         is_admin = self._is_admin()
-        if (not is_admin and self.env.user.has_group(
-                'ab_supplier_claim_cycle.supplier_claim_group_reviewer')):
-            return set()
         is_secretarial = is_admin or self.env.user.has_group(SECRETARIAL_GROUP)
         if self.state == 'draft' and is_secretarial:
             return set(self._entry_fields()) | {'workflow_id'}
@@ -542,6 +536,8 @@ class SupplierClaimWorkflowEngine(models.Model):
             return self._binary_companion_names(
                 self.rejection_stage_state_id.sudo().allowed_field_ids.mapped('name'))
         if self.state != 'in_progress':
+            return set()
+        if not (is_admin or self.env.user.has_group(WORKFLOW_PARTICIPANT_GROUP)):
             return set()
         rows = self.stage_state_ids.filtered(
             lambda row: row.sequence == self.current_sequence
@@ -743,12 +739,11 @@ class SupplierClaimWorkflowEngine(models.Model):
             claim._log_generic('workflow_resubmitted', from_state='returned', stage_state=rejected)
         return True
 
-    def _check_stage_actor(self, stage_state):
-        if (not self._is_admin() and self.env.user.has_group(
-                'ab_supplier_claim_cycle.supplier_claim_group_reviewer')):
-            raise AccessError(_('Reviewers are read-only.'))
-        if not (self._is_admin() or self.env.user in stage_state.approver_ids):
-            raise AccessError(_('You are not an approver for this stage.'))
+    def _is_stage_actor(self, stage_state):
+        return self._is_admin() or (
+            self.env.user.has_group(WORKFLOW_PARTICIPANT_GROUP)
+            and self.env.user in stage_state.approver_ids
+        )
 
     def _action_stage_decision(self, stage_state, decision, reason=None, followup_date=None):
         self.ensure_one()
@@ -758,7 +753,8 @@ class SupplierClaimWorkflowEngine(models.Model):
         if decision not in ('approved', 'rejected', 'deferred'):
             raise ValidationError(_('Invalid stage decision.'))
         self._prepare_action()
-        self._check_stage_actor(stage_state)
+        if not self._is_stage_actor(stage_state):
+            raise AccessError(_('You are not an approver for this stage.'))
         if (self.state != 'in_progress' or stage_state.sequence != self.current_sequence
                 or stage_state.status not in ('pending', 'deferred')):
             raise UserError(_('This stage is not currently actionable.'))

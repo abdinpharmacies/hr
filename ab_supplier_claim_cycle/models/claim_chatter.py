@@ -3,6 +3,18 @@ from odoo.exceptions import AccessError
 from odoo.addons.mail.tools.discuss import Store
 
 
+class SupplierClaimCycle(models.Model):
+    _inherit = 'ab_supplier_claim_cycle'
+
+    can_log_reviewer_note = fields.Boolean(compute='_compute_can_log_reviewer_note')
+
+    @api.depends_context('uid')
+    def _compute_can_log_reviewer_note(self):
+        reviewer = self.env.user.has_group('ab_supplier_claim_cycle.supplier_claim_group_reviewer')
+        for claim in self:
+            claim.can_log_reviewer_note = reviewer
+
+
 class ClaimAttachment(models.Model):
     _inherit = 'ir.attachment'
 

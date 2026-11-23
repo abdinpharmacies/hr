@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_supplier_claim_cycle.ReviewerChatterNote" t-inherit="mail.Chatter" t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o-mail-Chatter-logNote')]" position="before">
+            <t t-set="reviewerNoteOnly"
+               t-value="props.threadModel === 'ab_supplier_claim_cycle' &amp;&amp; props.threadId &amp;&amp; props.record?.data?.can_log_reviewer_note &amp;&amp; state.thread.hasReadAccess &amp;&amp; !state.thread.canPostMessage"/>
+        </xpath>
+        <xpath expr="//button[hasclass('o-mail-Chatter-logNote')]" position="attributes">
+            <attribute name="t-att-disabled">!reviewerNoteOnly &amp;&amp; !state.thread.canPostMessage &amp;&amp; props.threadId</attribute>
+            <attribute name="t-on-click">() => reviewerNoteOnly ? this.env.services.action.doAction(
+                'ab_supplier_claim_cycle.action_supplier_claim_reviewer_note',
+                {
+                    additionalContext: { default_claim_id: props.threadId },
+                    onClose: () => state.thread.fetchNewMessages(),
+                }
+            ) : this.toggleComposer('note')</attribute>
+        </xpath>
+    </t>
+</templates>

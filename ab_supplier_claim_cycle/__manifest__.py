@@ -19,6 +19,7 @@
         'views/department_notes.xml',
         'views/workflow_views.xml',
         'wizard/workflow_decision_views.xml',
+        'wizard/reviewer_note_views.xml',
     ],
     'assets': {'web.assets_backend': [
         'ab_supplier_claim_cycle/static/src/scss/claim_design.scss',
@@ -30,6 +31,7 @@
         'ab_supplier_claim_cycle/static/src/js/workflow_diagram.js',
         'ab_supplier_claim_cycle/static/src/xml/document_upload.xml',
         'ab_supplier_claim_cycle/static/src/xml/workflow_diagram.xml',
+        'ab_supplier_claim_cycle/static/src/xml/reviewer_note.xml',
     ]},
     'installable': True,
 }
