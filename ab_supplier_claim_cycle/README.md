@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Odoo 19 · version 19.0.7.2.4 · Developer: Alhassan Hossny
+Odoo 19 · version 19.0.7.2.5 · Developer: Alhassan Hossny
 
 ## Dynamic workflow
 
@@ -27,6 +27,18 @@ approvers retain read-only access to previously assigned claims; current
 approvers alone can decide stages and edit allowed fields. Allowed-field removals
 apply immediately to current, future and returned stages. Archived versions are
 immutable. Use **New Version** for structural changes to used workflows.
+
+**Reset to Draft** is visible on every published workflow. For used workflows,
+clicking it explains why the reset is blocked and directs the administrator to
+**New Version**. Submission snapshots keep this protection in place even when a
+claim is reset to Draft.
+
+Archiving sets the workflow to Archived and inactive. Unarchiving a used workflow
+restores the same version to Published and active, making it available for new
+matching claims without changing existing claim history. An unused workflow
+returns to Draft and active; its linked draft claims have their workflow selection
+cleared, including archived drafts. Unarchive never creates a new version; use
+**New Version** explicitly when an editable copy is needed.
 
 ## Draft route templates
 

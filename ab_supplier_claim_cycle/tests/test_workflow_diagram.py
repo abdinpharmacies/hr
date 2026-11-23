@@ -68,6 +68,39 @@ class TestSupplierClaimWorkflowDiagram(HttpCase):
         cls.closed_claim.stage_state_ids._internal_write({'status': 'approved'})
         cls.closed_claim._workflow_write({'state': 'closed', 'current_sequence': 0})
 
+    def test_used_published_workflow_reset_button_explains_restriction(self):
+        administrator = new_test_user(
+            self.env, login='workflow_configuration_admin', password='claim-test-password',
+            groups='ab_supplier_claim_cycle.supplier_claim_group_admin')
+        workflow = self.open_claim.workflow_id
+        snapshots = self.open_claim.stage_state_ids.ids
+        self.browser_js(
+            f'/odoo/action-ab_supplier_claim_cycle.supplier_claim_workflow_action/{workflow.id}',
+            """
+                const deadline = Date.now() + 30000;
+                let clicked = false;
+                const timer = setInterval(() => {
+                    const reset = document.querySelector('button[name="action_reset_to_draft"]');
+                    if (!clicked && reset?.getClientRects().length) {
+                        clicked = true;
+                        reset.click();
+                    }
+                    const message = document.querySelector('.o_dialog')?.textContent || '';
+                    if (clicked && message.includes('cannot return to Draft') &&
+                        message.includes('Use New Version')) {
+                        clearInterval(timer);
+                        console.log('test successful');
+                    } else if (Date.now() > deadline) {
+                        clearInterval(timer);
+                        console.error('Reset button was hidden or did not explain the restriction');
+                    }
+                }, 100);
+            """,
+            login=administrator.login,
+        )
+        self.assertEqual(workflow.state, 'published')
+        self.assertEqual(self.open_claim.stage_state_ids.ids, snapshots)
+
     def test_dynamic_workflow_diagram_renders(self):
         self.authenticate(self.observer.login, 'claim-test-password')
         self.browser_js(

@@ -50,7 +50,10 @@ class SupplierClaimWorkflow(models.Model):
             raise UserError(_('Only unused published workflows can return to Draft.'))
         if self.env['ab_supplier_claim_stage_state'].sudo().search_count([
                 ('stage_id.workflow_id', 'in', self.ids)], limit=1):
-            raise UserError(_('This workflow has already been used by a submitted claim.'))
+            raise UserError(_(
+                'This workflow cannot return to Draft because it has already been used by a '
+                'submitted claim, even if that claim is now closed, archived, or reset to Draft. '
+                'Use New Version to create an editable draft workflow.'))
         result = super().write({'state': 'draft'})
         self.env['ab_supplier_claim_cycle'].sudo().with_context(active_test=False).search([
             ('workflow_id', 'in', self.ids), ('state', '=', 'draft'),
@@ -109,6 +112,8 @@ class SupplierClaimWorkflow(models.Model):
 
     def action_archive_workflow(self):
         self._require_admin()
+        self.lock_for_update()
+        self.invalidate_recordset()
         if any(workflow.state != 'published' for workflow in self):
             raise UserError(_('Only published workflows can be archived.'))
         return super(SupplierClaimWorkflow, self).write({'state': 'archived', 'active': False})
@@ -144,7 +149,7 @@ class SupplierClaimWorkflow(models.Model):
             raise UserError(_('Create a new version from a published or archived workflow.'))
         return self._workflow_form_action(self._copy_as_new_version())
 
-    def _unarchive_to_draft(self):
+    def _restore_archived_workflows(self):
         self._require_admin()
         self.lock_for_update()
         self.invalidate_recordset()
@@ -156,7 +161,11 @@ class SupplierClaimWorkflow(models.Model):
         ]).mapped('stage_id.workflow_id').ids
         used = self.filtered(lambda workflow: workflow.id in used_ids)
         unused = self - used
-        restored = self.browse()
+        if used:
+            super(SupplierClaimWorkflow, used).write({
+                'state': 'published',
+                'active': True,
+            })
         if unused:
             super(SupplierClaimWorkflow, unused).write({
                 'state': 'draft',
@@ -166,18 +175,15 @@ class SupplierClaimWorkflow(models.Model):
                 ('workflow_id', 'in', unused.ids),
                 ('state', '=', 'draft'),
             ])._workflow_write({'workflow_id': False})
-            restored |= unused
-        for workflow in used:
-            restored |= workflow._copy_as_new_version()
-        return restored
+        return self
 
     def action_unarchive(self):
-        self._unarchive_to_draft()
+        self._restore_archived_workflows()
         return True
 
     def action_unarchive_workflow(self):
         self.ensure_one()
-        workflow = self._unarchive_to_draft()
+        workflow = self._restore_archived_workflows()
         return self._workflow_form_action(workflow)
 
     def _require_admin(self):

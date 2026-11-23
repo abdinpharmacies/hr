@@ -1,6 +1,8 @@
 from datetime import timedelta
 import base64
 
+from lxml import etree
+
 from odoo import Command, fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
@@ -627,6 +629,9 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
     def test_unarchive_unused_workflow_restores_same_draft(self):
         draft_claim = self.env['ab_supplier_claim_cycle'].with_user(
             self.secretarial).create(self._claim_values())
+        archived_draft = self.env['ab_supplier_claim_cycle'].with_user(
+            self.secretarial).create(self._claim_values(num_of_invoice=2))
+        archived_draft.with_user(self.admin).write({'active': False})
         self.assertEqual(draft_claim.workflow_id, self.workflow)
         self.workflow.with_user(self.admin).action_archive_workflow()
         self.assertEqual(self.workflow.state, 'archived')
@@ -643,27 +648,89 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         self.assertEqual(self.workflow.state, 'draft')
         self.assertTrue(self.workflow.active)
         self.assertFalse(draft_claim.workflow_id)
+        self.assertFalse(archived_draft.workflow_id)
         self.workflow.with_user(self.admin).write({'priority': 42})
         self.assertEqual(self.workflow.priority, 42)
 
-    def test_unarchive_used_workflow_creates_editable_draft_version(self):
+    def test_unarchive_used_workflow_restores_same_published_version(self):
         claim = self._claim()
+        claim.stage_state_ids.filtered(
+            lambda row: row.name == 'Amount Review').with_user(self.approver_a).action_approve()
         historical_stages = claim.stage_state_ids.mapped('stage_id')
+        snapshots = claim.stage_state_ids.read([
+            'stage_id', 'status', 'user_id', 'decision_at', 'historical_approver_ids'])
+        history_ids = claim.history_ids.ids
+        original_version = self.workflow.version
+        Workflow = self.env['ab_supplier_claim_workflow'].with_context(active_test=False)
+        original_count = Workflow.search_count([('name', '=', self.workflow.name)])
         self.workflow.with_user(self.admin).action_archive_workflow()
 
         action = self.workflow.with_user(self.admin).action_unarchive_workflow()
         restored = self.env['ab_supplier_claim_workflow'].browse(action['res_id'])
-        self.assertNotEqual(restored, self.workflow)
-        self.assertEqual((self.workflow.state, self.workflow.active), ('archived', False))
-        self.assertEqual((restored.state, restored.active), ('draft', True))
-        self.assertEqual(restored.name, self.workflow.name)
-        self.assertEqual(restored.version, self.workflow.version + 1)
-        self.assertEqual(len(restored.workflow_stage_ids), len(self.workflow.workflow_stage_ids))
+        self.assertEqual(restored, self.workflow)
+        self.assertEqual((restored.state, restored.active), ('published', True))
+        self.assertEqual(restored.version, original_version)
+        self.assertEqual(Workflow.search_count([('name', '=', restored.name)]), original_count)
+        self.assertEqual(claim.workflow_id, restored)
         self.assertEqual(claim.stage_state_ids.mapped('stage_id'), historical_stages)
-        self.assertTrue(all(
-            stage.workflow_id == self.workflow for stage in historical_stages))
-        restored.with_user(self.admin).write({'priority': 43})
-        self.assertEqual(restored.priority, 43)
+        self.assertEqual(claim.stage_state_ids.read([
+            'stage_id', 'status', 'user_id', 'decision_at', 'historical_approver_ids']), snapshots)
+        self.assertEqual(claim.history_ids.ids, history_ids)
+        with self.assertRaisesRegex(UserError, 'Use New Version'):
+            restored.with_user(self.admin).action_reset_to_draft()
+        with self.assertRaises(AccessError):
+            restored.with_user(self.admin).write({'priority': 43})
+        new_claim = self.env['ab_supplier_claim_cycle'].with_user(
+            self.secretarial).create(self._claim_values(num_of_invoice=2))
+        self.assertIn(restored, new_claim.available_workflow_ids)
+        new_claim.action_submit()
+        self.assertEqual(new_claim.workflow_id, restored)
+
+        restored.with_user(self.admin).action_archive_workflow()
+        restored.with_user(self.admin).action_unarchive()
+        self.assertEqual((restored.state, restored.active), ('published', True))
+        action = restored.with_user(self.admin).action_new_version()
+        new_version = Workflow.browse(action['res_id'])
+        self.assertNotEqual(new_version, restored)
+        self.assertEqual((new_version.state, new_version.active), ('draft', True))
+        new_version.with_user(self.admin).write({'priority': 43})
+
+    def test_submission_history_protects_every_claim_state(self):
+        for claim_state in ('in_progress', 'returned', 'closed', 'archived', 'draft'):
+            with self.subTest(claim_state=claim_state):
+                workflow = self.workflow.with_user(self.admin).copy({
+                    'name': 'Protected workflow %s' % claim_state,
+                    'state': 'draft',
+                })
+                workflow.action_publish()
+                claim = self.env['ab_supplier_claim_cycle'].with_user(
+                    self.secretarial).create(self._claim_values(workflow_id=workflow.id))
+                claim.action_submit()
+                if claim_state == 'returned':
+                    row = claim.stage_state_ids.filtered(lambda row: row.name == 'Amount Review')
+                    claim.with_user(self.approver_a)._action_stage_decision(
+                        row.with_user(self.approver_a), 'rejected', reason='Correct the claim')
+                elif claim_state == 'closed':
+                    for name, approver in (
+                            ('Amount Review', self.approver_a), ('Notes Review', self.approver_b),
+                            ('Preparation', self.approver_a), ('Close', self.approver_a)):
+                        claim.stage_state_ids.filtered(lambda row: row.name == name).with_user(
+                            approver).action_approve()
+                elif claim_state == 'archived':
+                    claim._workflow_write({'active': False})
+                elif claim_state == 'draft':
+                    claim.with_user(self.admin).action_reset_to_draft()
+                if claim_state != 'archived':
+                    self.assertEqual(claim.state, claim_state)
+                snapshots = claim.stage_state_ids
+                workflow.action_archive_workflow()
+                workflow.action_unarchive_workflow()
+                self.assertEqual((workflow.state, workflow.active), ('published', True))
+                self.assertEqual(claim.workflow_id, workflow)
+                self.assertEqual(claim.stage_state_ids, snapshots)
+                with self.assertRaisesRegex(UserError, 'Use New Version'):
+                    workflow.action_reset_to_draft()
+                self.assertFalse(workflow.can_reset_to_draft)
 
     def test_standard_unarchive_handles_used_and_unused_workflows_together(self):
         claim = self._claim()
@@ -675,24 +742,69 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         self.assertEqual(draft_claim.workflow_id, unused)
         unused.action_archive_workflow()
 
+        Workflow = self.env['ab_supplier_claim_workflow'].with_context(active_test=False)
+        original_count = Workflow.search_count([('name', '=', self.workflow.name)])
         (self.workflow | unused).with_user(self.admin).action_unarchive()
-        self.assertEqual((self.workflow.state, self.workflow.active), ('archived', False))
+        self.assertEqual((self.workflow.state, self.workflow.active), ('published', True))
         self.assertEqual((unused.state, unused.active), ('draft', True))
         self.assertFalse(draft_claim.workflow_id)
-        copied = self.env['ab_supplier_claim_workflow'].with_context(active_test=False).search([
-            ('name', '=', self.workflow.name),
-            ('version', '>', unused.version),
-        ])
-        self.assertEqual(len(copied), 1)
-        self.assertEqual((copied.state, copied.active), ('draft', True))
+        self.assertEqual(Workflow.search_count([('name', '=', self.workflow.name)]), original_count)
         self.assertTrue(all(
             row.stage_id.workflow_id == self.workflow for row in claim.stage_state_ids))
+
+    def test_hidden_company_claim_still_protects_workflow(self):
+        company = self.env['res.company'].create({'name': 'Other claim company'})
+        claim = self.env['ab_supplier_claim_cycle'].with_company(company).create(
+            self._claim_values())
+        claim.action_submit()
+        with self.assertRaises(AccessError):
+            claim.with_user(self.admin).with_context(
+                allowed_company_ids=self.admin.company_ids.ids).check_access('read')
+        workflow = self.workflow.with_user(self.admin)
+        workflow.action_archive_workflow()
+        workflow.action_unarchive_workflow()
+        self.assertEqual((workflow.state, workflow.active), ('published', True))
+        with self.assertRaisesRegex(UserError, 'Use New Version'):
+            workflow.action_reset_to_draft()
 
     def test_workflow_form_exposes_unarchive_only_for_archived_state(self):
         arch = self.env.ref(
             'ab_supplier_claim_cycle.supplier_claim_workflow_form').arch_db
         self.assertIn('name="action_unarchive_workflow"', arch)
         self.assertIn('invisible="state != \'archived\'"', arch)
+
+    def test_reset_button_is_visible_for_every_published_workflow(self):
+        form = self.env.ref('ab_supplier_claim_cycle.supplier_claim_workflow_form')
+        arch = etree.fromstring(form.arch_db)
+        button = arch.xpath("//button[@name='action_reset_to_draft']")
+        self.assertEqual(len(button), 1)
+        self.assertEqual(button[0].get('invisible'), "state != 'published'")
+        self.assertTrue(self.workflow.can_reset_to_draft)
+        self._claim()
+        self.workflow.invalidate_recordset(['can_reset_to_draft'])
+        self.assertFalse(self.workflow.can_reset_to_draft)
+        with self.assertRaisesRegex(UserError, 'Use New Version'):
+            self.workflow.with_user(self.admin).action_reset_to_draft()
+
+    def test_invalid_or_unauthorized_lifecycle_batches_do_not_change_workflows(self):
+        unused = self.workflow.with_user(self.admin)._copy_as_new_version()
+        unused.action_publish()
+        unused.action_archive_workflow()
+        workflows = unused | self.workflow
+        with self.assertRaises(UserError):
+            workflows.with_user(self.admin).action_unarchive()
+        with self.assertRaises(AccessError):
+            unused.with_user(self.secretarial).action_unarchive()
+        with self.assertRaises(AccessError):
+            unused.with_user(self.admin).write({'state': 'draft', 'active': True})
+        self.assertEqual((unused.state, unused.active), ('archived', False))
+        self.assertEqual((self.workflow.state, self.workflow.active), ('published', True))
+        self._claim()
+        unused.action_unarchive()
+        unused.action_publish()
+        with self.assertRaisesRegex(UserError, 'Use New Version'):
+            (unused | self.workflow).with_user(self.admin).action_reset_to_draft()
+        self.assertEqual((unused.state, self.workflow.state), ('published', 'published'))
 
     def test_attachment_field_locks_and_chatter_accepts_additional_files(self):
         claim = self._claim()

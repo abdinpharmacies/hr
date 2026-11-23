@@ -1,5 +1,37 @@
 # Supplier Claim Dynamic Workflow Validation
 
+## 19.0.7.2.5 workflow restoration and reset feedback
+
+Validated on 2026-11-23 in isolated database `codex_claim_restore_20261123`.
+
+- Final selected suite: 48 tests, 0 failures, 0 errors. This includes all 44
+  backend tests and four browser tests. The new browser case clicks Reset to
+  Draft on a used Published workflow and verifies the explanatory rejection.
+- Lifecycle coverage includes same-version restoration without copies, mixed
+  bulk restoration, archived draft selection cleanup, reset-to-Draft snapshots,
+  returned/closed/archived claims, hidden-company claims, administrator access,
+  unchanged decisions/history, repeat cycles and eligibility for new claims.
+- Two existing browser cases fail in both the changed code and an unchanged
+  `HEAD` export: `test_actual_arabic_bundle_points_arrows_left` and
+  `test_new_incomplete_draft_renders_and_saves`. Both were excluded from the
+  final selected run; their failures remain outside this patch.
+- Independent two-transaction ORM checks passed: an archive lock rejects
+  competing initial submission, a committed archive rejects submission without
+  snapshots, a submission lock rejects competing archive, and archive after a
+  committed submission restores the same Published workflow and snapshots.
+- Python syntax, workflow XML, both Arabic catalogs (including duplicate checks)
+  and `git diff --check` passed.
+- Browser verification used temporary `websocket-client` dependencies under
+  `/tmp`, with test HTTP ports and an exact test-database filter. An earlier
+  attempt inherited the development filter and made read-only GET requests to
+  `hr_db_dev`; it was stopped before any form submissions and the filter corrected.
+- No development/live module upgrade, service restart or remote deployment.
+
+Local logs: `/tmp/codex-claim-restore-acceptance-20261123.log` (48-test pass),
+`/tmp/codex-claim-restore-verified-20261123.log` (full run),
+`/tmp/codex-claim-restore-baseline-20261123.log` (unchanged-baseline comparison),
+and `/tmp/codex-claim-restore-concurrency-20261123.log` (two-transaction checks).
+
 ## 19.0.7.2.4 draft route templates
 
 - Installed locally in isolated database `codex_claim_templates_20261118`.

@@ -2803,3 +2803,9 @@ msgstr "11 - مشتريات التجميل - غير ضريبي - شيك وتسل
 #: model:ab_supplier_claim_workflow,name:ab_supplier_claim_cycle.workflow_cosmo_non_tax_cheque_south
 msgid "12 - Cosmetics - Non-tax - Cheque / South"
 msgstr "12 - مشتريات التجميل - غير ضريبي - شيك وتسليم بالقطاع الجنوبي"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/workflow_engine.py:0
+msgid "This workflow cannot return to Draft because it has already been used by a submitted claim, even if that claim is now closed, archived, or reset to Draft. Use New Version to create an editable draft workflow."
+msgstr "لا يمكن إعادة سير العمل هذا إلى المسودة لأنه استُخدم بالفعل في مطالبة تم تقديمها، حتى لو كانت المطالبة الآن مغلقة أو مؤرشفة أو أُعيدت إلى المسودة. استخدم إصدارًا جديدًا لإنشاء مسودة قابلة للتعديل لسير العمل."

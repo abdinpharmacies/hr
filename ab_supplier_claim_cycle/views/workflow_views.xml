@@ -22,9 +22,8 @@
                 <header>
                     <button name="action_publish" string="Publish" type="object" class="btn-primary"
                             invisible="state != 'draft'"/>
-                    <field name="can_reset_to_draft" invisible="True"/>
                     <button name="action_reset_to_draft" string="Reset to Draft" type="object"
-                            invisible="not can_reset_to_draft"/>
+                            invisible="state != 'published'"/>
                     <button name="action_new_version" string="New Version" type="object"
                             invisible="state == 'draft'"/>
                     <button name="action_archive_workflow" string="Archive" type="object"
