@@ -2,20 +2,34 @@
 
 ## Current changes before commit:
 
-- Let a linked active website product sync when another source product with the same code is archived.
-- Keep active duplicate codes blocked to protect website product identity.
+- Make the active duplicate regression assertion independent of the runtime language.
 
 Files changed:
 
-- `ab_website_sale_product/models/ab_product.py`
 - `ab_website_sale_product/tests/test_website_product_sync.py`
 - `ab_website_sale_product/changelog.d/current.md`
 
 Validation:
 
-- Python compilation passed. The focused test class could not start on replica database `codex_eplus_sync_20261104` because its setup creates an `ab_product_group` blocked by replica policy; `/tmp/ecommerce_archived_duplicate_validation.log`.
+- The equivalent focused replica test passed on `codex_eplus_sync_20261104`; `/tmp/ecommerce_archived_duplicate_replica_validation_pass.log`. The base module test class still cannot start on that replica database because its setup creates an `ab_product_group` blocked by replica policy.
 
 ## Recent commits
+
+Commit: `eb1024ec`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product/FIX: ignore archived duplicate codes for linked products`
+
+User-facing changes:
+
+- Let an active linked website product sync when another product with the same code is archived.
+- Keep active duplicate codes blocked to protect website product identity.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/tests/test_website_product_sync.py`
 
 Commit: `4e16956b`
 Author: Mohamed Fawzy

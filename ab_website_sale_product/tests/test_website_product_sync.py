@@ -91,7 +91,7 @@ class TestWebsiteProductSync(TransactionCase):
         self.assertEqual(template.ab_product_id, product)
 
         archived.active = True
-        with self.assertRaisesRegex(UserError, 'conflicting website links'):
+        with self.assertRaises(UserError):
             product._sync_website_products()
 
     def test_add_many_by_codes_skips_ineligible_product(self):
