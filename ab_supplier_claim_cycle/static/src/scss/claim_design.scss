@@ -20,721 +20,974 @@ $scc-radius: 8px;
 $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
 
 @keyframes sccFadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes sccPulseSoft {
-    0% {
-        box-shadow: 0 0 0 0 rgba($scc-timeline-yellow, 0.28);
-    }
-    100% {
-        box-shadow: 0 0 0 10px rgba($scc-timeline-yellow, 0);
-    }
+  0% {
+    box-shadow: 0 0 0 0 rgba($scc-timeline-yellow, 0.28);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba($scc-timeline-yellow, 0);
+  }
 }
 
 @keyframes sccTimelineDotGlow {
-    0% {
-        opacity: 0.34;
-        transform: scale(0.72);
-    }
-    70% {
-        opacity: 0.08;
-        transform: scale(1.65);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1.9);
-    }
+  0% {
+    opacity: 0.34;
+    transform: scale(0.72);
+  }
+  70% {
+    opacity: 0.08;
+    transform: scale(1.65);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
 }
 
 .o_scc_form {
-    color: $scc-ink;
+  color: $scc-ink;
 
-    .o_form_sheet_bg {
-        background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(255, 255, 255, 1) 64%);
+  .o_form_sheet_bg {
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.94) 0%, rgba(255, 255, 255, 1) 64%);
+  }
+
+  .o_form_statusbar {
+    border-bottom: 1px solid $scc-border;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+
+    .btn {
+      border-radius: 6px;
+      font-weight: 650;
+      transition: transform 180ms $scc-ease,
+      box-shadow 180ms $scc-ease,
+      background-color 180ms $scc-ease,
+      border-color 180ms $scc-ease;
     }
 
-    .o_form_statusbar {
-        border-bottom: 1px solid $scc-border;
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(12px);
-
-        .btn {
-            border-radius: 6px;
-            font-weight: 650;
-            transition:
-                transform 180ms $scc-ease,
-                box-shadow 180ms $scc-ease,
-                background-color 180ms $scc-ease,
-                border-color 180ms $scc-ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .btn-primary {
-            border-color: rgba($scc-primary-strong, 0.86);
-            background: linear-gradient(180deg, $scc-primary 0%, $scc-primary-strong 100%);
-            box-shadow:
-                0 0 0 1px rgba($scc-primary, 0.18),
-                0 8px 22px rgba($scc-primary, 0.22);
-        }
-
-        .btn-primary:hover {
-            box-shadow:
-                0 0 0 1px rgba($scc-primary, 0.22),
-                0 10px 26px rgba($scc-primary, 0.28);
-        }
+    .btn:hover {
+      transform: translateY(-1px);
     }
 
-    .o_form_sheet {
-        max-width: 1320px;
-        margin: 18px auto 28px;
-        padding: 28px 30px 34px;
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: $scc-radius;
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: $scc-shadow;
-        animation: sccFadeUp 220ms $scc-ease both;
+    .btn-primary {
+      border-color: rgba($scc-primary-strong, 0.86);
+      background: linear-gradient(180deg, $scc-primary 0%, $scc-primary-strong 100%);
+      box-shadow: 0 0 0 1px rgba($scc-primary, 0.18),
+      0 8px 22px rgba($scc-primary, 0.22);
     }
 
-    .o_scc_title {
-        margin-bottom: 18px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid $scc-border;
+    .btn-primary:hover {
+      box-shadow: 0 0 0 1px rgba($scc-primary, 0.22),
+      0 10px 26px rgba($scc-primary, 0.28);
+    }
+  }
 
-        label {
-            color: $scc-muted;
-            font-size: 0.72rem;
-            font-weight: 750;
-            letter-spacing: 0;
-            text-transform: uppercase;
-        }
+  .o_form_sheet {
+    max-width: 1320px;
+    margin: 18px auto 28px;
+    padding: 28px 30px 34px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: $scc-radius;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: $scc-shadow;
+    animation: sccFadeUp 220ms $scc-ease both;
+  }
 
-        h1 {
-            margin-top: 2px;
-            color: $scc-ink;
-            font-size: 1.9rem;
-            font-weight: 760;
-            line-height: 1.2;
-        }
+  .o_scc_title {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid $scc-border;
+
+    label {
+      color: $scc-muted;
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0;
+      text-transform: uppercase;
     }
 
-    .o_scc_top_tracking {
-        margin-bottom: 18px;
-        padding: 18px;
-        border: 1px solid $scc-border;
-        border-radius: $scc-radius;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
-        box-shadow: $scc-shadow-soft;
-        animation: sccFadeUp 220ms $scc-ease both;
+    h1 {
+      margin-top: 2px;
+      color: $scc-ink;
+      font-size: 1.9rem;
+      font-weight: 760;
+      line-height: 1.2;
     }
+  }
 
-    .o_scc_top_tracking_header {
-        margin-bottom: 16px;
+  .o_scc_top_tracking {
+    margin-bottom: 18px;
+    padding: 18px;
+    border: 1px solid $scc-border;
+    border-radius: $scc-radius;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+    box-shadow: $scc-shadow-soft;
+    animation: sccFadeUp 220ms $scc-ease both;
+  }
 
-        strong, summary {
-            display: block;
-            color: $scc-ink;
-            font-size: 1.08rem;
-            font-weight: 800;
-            line-height: 1.25;
-        }
+  .o_scc_top_tracking_header {
+    margin-bottom: 16px;
+
+    strong, summary {
+      display: block;
+      color: $scc-ink;
+      font-size: 1.08rem;
+      font-weight: 800;
+      line-height: 1.25;
     }
+  }
 
-    .o_scc_top_timeline {
-        display: grid;
-        grid-template-columns:
+  .o_scc_top_timeline {
+    display: grid;
+    grid-template-columns:
             minmax(0, 1fr) minmax(34px, 72px)
             minmax(0, 1fr) minmax(34px, 72px)
             minmax(0, 1fr) minmax(34px, 72px)
             minmax(0, 1fr) minmax(34px, 72px)
             minmax(0, 1fr);
-        gap: 10px;
-        align-items: start;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .o_scc_top_timeline_step {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    transition: transform 180ms $scc-ease,
+    color 180ms $scc-ease;
+
+    &:hover {
+      transform: translateY(-1px);
     }
 
-    .o_scc_top_timeline_step {
-        display: flex;
-        min-width: 0;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-        transition:
-            transform 180ms $scc-ease,
-            color 180ms $scc-ease;
+    strong, summary {
+      display: block;
+      margin: 8px 0 4px;
+      color: $scc-ink;
+      font-size: 0.82rem;
+      font-weight: 820;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
 
-        &:hover {
-            transform: translateY(-1px);
-        }
+    .o_field_widget {
+      display: block;
+      max-width: 100%;
+      color: $scc-muted;
+      font-size: 0.84rem;
+      font-weight: 650;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
 
-        strong, summary {
-            display: block;
-            margin: 8px 0 4px;
-            color: $scc-ink;
-            font-size: 0.82rem;
-            font-weight: 820;
-            line-height: 1.2;
-            text-transform: uppercase;
-        }
+    .o_field_widget,
+    .o_field_widget *,
+    .o_form_uri {
+      color: inherit;
+    }
+  }
 
-        .o_field_widget {
-            display: block;
-            max-width: 100%;
-            color: $scc-muted;
-            font-size: 0.84rem;
-            font-weight: 650;
-            line-height: 1.35;
-            overflow-wrap: anywhere;
-            white-space: normal;
-        }
+  .o_scc_top_timeline_dot {
+    position: relative;
+    display: block;
+    width: 18px;
+    height: 18px;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.28);
+    transition: background-color 180ms $scc-ease,
+    box-shadow 180ms $scc-ease,
+    transform 180ms $scc-ease;
+  }
 
-        .o_field_widget,
-        .o_field_widget *,
-        .o_form_uri {
-            color: inherit;
-        }
+  .o_scc_timeline_completed {
+    strong, summary {
+      color: #15803d;
+    }
+
+    .o_field_widget,
+    .o_field_widget *,
+    .o_form_uri {
+      color: $scc-timeline-value-blue;
     }
 
     .o_scc_top_timeline_dot {
-        position: relative;
-        display: block;
-        width: 18px;
-        height: 18px;
-        border: 4px solid #fff;
+      background: $scc-success;
+      box-shadow: 0 0 0 1px rgba($scc-success, 0.24),
+      0 0 18px rgba($scc-success, 0.13);
+    }
+  }
+
+  .o_scc_timeline_current {
+    transform: translateY(-1px);
+
+    strong, summary,
+    .o_field_widget,
+    .o_field_widget *,
+    .o_form_uri {
+      color: $scc-timeline-yellow-text;
+    }
+
+    .o_scc_top_timeline_dot {
+      z-index: 0;
+      background: $scc-timeline-yellow;
+      box-shadow: 0 0 0 1px rgba($scc-timeline-yellow, 0.42),
+      0 0 0 6px rgba($scc-timeline-yellow, 0.18),
+      0 0 28px rgba($scc-timeline-yellow, 0.36);
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        z-index: -1;
         border-radius: 50%;
-        background: #fff;
-        box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.28);
-        transition:
-            background-color 180ms $scc-ease,
-            box-shadow 180ms $scc-ease,
-            transform 180ms $scc-ease;
+        background: radial-gradient(circle, rgba($scc-timeline-yellow, 0.42) 0%, rgba($scc-timeline-yellow, 0.2) 42%, rgba($scc-timeline-yellow, 0) 72%);
+        animation: sccTimelineDotGlow 1600ms $scc-ease infinite;
+      }
+    }
+  }
+
+  .o_scc_timeline_upcoming {
+    opacity: 0.58;
+
+    strong, summary,
+    .o_field_widget,
+    .o_field_widget *,
+    .o_form_uri {
+      color: rgba($scc-muted, 0.72);
     }
 
-    .o_scc_timeline_completed {
-        strong, summary {
-            color: #15803d;
-        }
-
-        .o_field_widget,
-        .o_field_widget *,
-        .o_form_uri {
-            color: $scc-timeline-value-blue;
-        }
-
-        .o_scc_top_timeline_dot {
-            background: $scc-success;
-            box-shadow:
-                0 0 0 1px rgba($scc-success, 0.24),
-                0 0 18px rgba($scc-success, 0.13);
-        }
+    .o_scc_top_timeline_dot {
+      border-color: #fff;
+      background: #f8fafc;
+      box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.3);
     }
+  }
 
-    .o_scc_timeline_current {
-        transform: translateY(-1px);
+  .o_scc_top_timeline_line {
+    height: 2px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.28);
+    transition: background-color 180ms $scc-ease;
+  }
 
-        strong, summary,
-        .o_field_widget,
-        .o_field_widget *,
-        .o_form_uri {
-            color: $scc-timeline-yellow-text;
-        }
+  .o_scc_timeline_line_completed {
+    background: linear-gradient(90deg, rgba($scc-success, 0.86), rgba($scc-success, 0.56));
+  }
 
-        .o_scc_top_timeline_dot {
-            z-index: 0;
-            background: $scc-timeline-yellow;
-            box-shadow:
-                0 0 0 1px rgba($scc-timeline-yellow, 0.42),
-                0 0 0 6px rgba($scc-timeline-yellow, 0.18),
-                0 0 28px rgba($scc-timeline-yellow, 0.36);
-
-            &::before {
-                content: "";
-                position: absolute;
-                inset: -8px;
-                z-index: -1;
-                border-radius: 50%;
-                background:
-                    radial-gradient(circle, rgba($scc-timeline-yellow, 0.42) 0%, rgba($scc-timeline-yellow, 0.2) 42%, rgba($scc-timeline-yellow, 0) 72%);
-                animation: sccTimelineDotGlow 1600ms $scc-ease infinite;
-            }
-        }
-    }
-
-    .o_scc_timeline_upcoming {
-        opacity: 0.58;
-
-        strong, summary,
-        .o_field_widget,
-        .o_field_widget *,
-        .o_form_uri {
-            color: rgba($scc-muted, 0.72);
-        }
-
-        .o_scc_top_timeline_dot {
-            border-color: #fff;
-            background: #f8fafc;
-            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.3);
-        }
-    }
-
-    .o_scc_top_timeline_line {
-        height: 2px;
-        margin-top: 8px;
-        border-radius: 999px;
-        background: rgba(148, 163, 184, 0.28);
-        transition: background-color 180ms $scc-ease;
-    }
-
-    .o_scc_timeline_line_completed {
-        background: linear-gradient(90deg, rgba($scc-success, 0.86), rgba($scc-success, 0.56));
-    }
-
-    .o_scc_timeline_line_upcoming {
-        background: rgba(148, 163, 184, 0.28);
-    }
+  .o_scc_timeline_line_upcoming {
+    background: rgba(148, 163, 184, 0.28);
+  }
 }
 
 .o_scc_form {
-    .o_scc_top_timeline { display: flex; gap: 0; overflow-x: auto; padding: 12px 0; }
-    .o_scc_route_step { flex: 1 0 112px; position: relative; }
+  .o_scc_top_timeline {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 12px 0;
+  }
+
+  .o_scc_route_step {
+    flex: 1 0 112px;
+    position: relative;
+  }
+
+  .o_scc_route_step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 58%;
+    width: 84%;
+    height: 2px;
+    background: rgba(148, 163, 184, .28);
+  }
+
+  .o_scc_route_step:has(.o_scc_timeline_completed:not(.o_invisible_modifier))::after {
+    background: linear-gradient(90deg, rgba($scc-success, .86), rgba($scc-success, .56));
+  }
+
+  .o_scc_top_timeline_dot {
+    z-index: 1;
+  }
+
+  .o_scc_step_status {
+    font-size: .8rem;
+    color: $scc-muted;
+  }
+
+  .o_group.o_scc_panel {
+    margin-inline: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  // Same card measurements and surfaces as Shipment record panels.
+  .o_scc_panel, .o_scc_history_section {
+    min-width: 0;
+    padding: 16px 16px 14px;
+    border: 1px solid $scc-border;
+    border-radius: $scc-radius;
+    background: $scc-surface;
+    box-shadow: $scc-shadow-soft;
+    overflow: visible;
+    transition: transform 180ms $scc-ease, box-shadow 180ms $scc-ease, border-color 180ms $scc-ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      border-color: rgba($scc-primary, .18);
+      box-shadow: 0 16px 32px rgba(32, 36, 42, .1);
+    }
+  }
+
+  .o_horizontal_separator {
+    color: $scc-ink;
+    font-weight: 750;
+  }
+
+  .o_scc_history_section {
+    margin-top: 18px;
+  }
+
+  .o_scc_history_section h3 {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $scc-border;
+    color: $scc-ink;
+    font-size: .82rem;
+    font-weight: 780;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 767px) {
+    .o_form_sheet {
+      padding: 16px;
+      margin: 8px;
+    }
+    .o_scc_top_tracking, .o_scc_panel, .o_scc_history_section {
+      padding: 12px;
+    }
+    .o_scc_top_timeline {
+      flex-direction: column;
+      gap: 16px;
+      overflow: visible;
+    }
+    .o_scc_route_step {
+      flex: 0 0 auto;
+    }
+    .o_scc_top_timeline_step {
+      align-items: flex-start;
+      text-align: start;
+      padding-inline-start: 34px;
+    }
+    .o_scc_top_timeline_step strong, .o_scc_top_timeline_step summary {
+      margin-top: 0;
+    }
+    .o_scc_top_timeline_dot {
+      position: absolute;
+      inset-inline-start: 0;
+      top: 2px;
+    }
     .o_scc_route_step:not(:last-child)::after {
-        content: ""; position: absolute; top: 8px; inset-inline-start: 58%;
-        width: 84%; height: 2px; background: rgba(148, 163, 184, .28);
+      inset-inline-start: 8px;
+      top: 22px;
+      width: 2px;
+      height: calc(100% - 8px);
     }
-    .o_scc_route_step:has(.o_scc_timeline_completed:not(.o_invisible_modifier))::after {
-        background: linear-gradient(90deg, rgba($scc-success, .86), rgba($scc-success, .56));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before {
+      animation: none !important;
+      transition: none !important;
     }
-    .o_scc_top_timeline_dot { z-index: 1; }
-    .o_scc_step_status { font-size: .8rem; color: $scc-muted; }
-    .o_group.o_scc_panel {
-        margin-inline: 0;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    // Same card measurements and surfaces as Shipment record panels.
-    .o_scc_panel, .o_scc_history_section {
-        min-width: 0; padding: 16px 16px 14px;
-        border: 1px solid $scc-border; border-radius: $scc-radius;
-        background: $scc-surface; box-shadow: $scc-shadow-soft;
-        overflow: visible;
-        transition: transform 180ms $scc-ease, box-shadow 180ms $scc-ease, border-color 180ms $scc-ease;
-        &:hover {
-            transform: translateY(-1px); border-color: rgba($scc-primary, .18);
-            box-shadow: 0 16px 32px rgba(32, 36, 42, .1);
-        }
-    }
-    .o_horizontal_separator { color: $scc-ink; font-weight: 750; }
-    .o_scc_history_section { margin-top: 18px; }
-    .o_scc_history_section h3 {
-        margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid $scc-border;
-        color: $scc-ink; font-size: .82rem; font-weight: 780; text-transform: uppercase;
-    }
-    @media (max-width: 767px) {
-        .o_form_sheet { padding: 16px; margin: 8px; }
-        .o_scc_top_tracking, .o_scc_panel, .o_scc_history_section { padding: 12px; }
-        .o_scc_top_timeline { flex-direction: column; gap: 16px; overflow: visible; }
-        .o_scc_route_step { flex: 0 0 auto; }
-        .o_scc_top_timeline_step { align-items: flex-start; text-align: start; padding-inline-start: 34px; }
-        .o_scc_top_timeline_step strong, .o_scc_top_timeline_step summary { margin-top: 0; }
-        .o_scc_top_timeline_dot { position: absolute; inset-inline-start: 0; top: 2px; }
-        .o_scc_route_step:not(:last-child)::after {
-            inset-inline-start: 8px; top: 22px; width: 2px; height: calc(100% - 8px);
-        }
-    }
-    @media (prefers-reduced-motion: reduce) {
-        *, *::before { animation: none !important; transition: none !important; }
-    }
+  }
 }
 
 // Shipment badge palette, scoped to the supplier claim list's State column.
 .o_scc_claim_list td[name="state"] {
-    .badge {
-        display: inline-flex; align-items: center; gap: 6px; min-height: 28px;
-        padding: .34rem .66rem; border-radius: 999px; border: 1px solid transparent;
-        font-size: .78rem; font-weight: 760; line-height: 1; white-space: nowrap;
-        &::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .82; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: .34rem .66rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: .78rem;
+    font-weight: 760;
+    line-height: 1;
+    white-space: nowrap;
+
+    &::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .82;
     }
-    @each $name, $base, $text in (
-        ("300", #94a3b8, #64748b),
-        ("info", #6b94f0, #386dd8),
-        ("primary", #2563eb, #1d4ed8),
-        ("warning", #facc15, #8a5a00),
-        ("success", #16a34a, #15803d),
-        ("danger", #dc2626, #b91c1c)
-    ) {
-        .text-bg-#{$name} {
-            background: rgba($base, .12) !important;
-            border-color: rgba($base, .22);
-            color: $text !important;
-        }
+  }
+
+  @each $name, $base, $text in (
+                  ("300", #94a3b8, #64748b),
+                  ("info", #6b94f0, #386dd8),
+                  ("primary", #2563eb, #1d4ed8),
+                  ("warning", #facc15, #8a5a00),
+                  ("success", #16a34a, #15803d),
+                  ("danger", #dc2626, #b91c1c)
+  ) {
+    .text-bg-#{$name} {
+      background: rgba($base, .12) !important;
+      border-color: rgba($base, .22);
+      color: $text !important;
     }
+  }
 }
 
 // Shipment request-table presentation, limited to the claims list.
 .o_scc_claim_list {
-    .o_list_table {
-        --table-striped-bg: transparent;
-        table-layout: fixed;
-    }
-    .o_data_row {
-        transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
-    }
-    .o_data_row:hover {
-        background: #f8fbfe;
-        box-shadow: inset 0 0 0 999px rgba(47, 111, 221, .025);
-        transform: translateY(-1px);
-    }
-    .o_data_cell { overflow: visible; }
-    .o_list_renderer th[data-name="state"], .o_data_cell[name="state"] {
-        text-align: center; vertical-align: middle;
-    }
-    .o_data_cell[name="state"] { padding-inline: .75rem; }
-    .o_list_renderer th[data-name="supplier_id"], .o_data_cell[name="supplier_id"] {
-        width: 24vw; min-width: 15rem; max-width: 24rem;
-    }
-    .o_list_record_selector { text-align: center; }
+  .o_list_table {
+    --table-striped-bg: transparent;
+    table-layout: fixed;
+  }
+
+  .o_data_row {
+    transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+  }
+
+  .o_data_row:hover {
+    background: #f8fbfe;
+    box-shadow: inset 0 0 0 999px rgba(47, 111, 221, .025);
+    transform: translateY(-1px);
+  }
+
+  .o_data_cell {
+    overflow: visible;
+  }
+
+  .o_list_renderer th[data-name="state"], .o_data_cell[name="state"] {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .o_data_cell[name="state"] {
+    padding-inline: .75rem;
+  }
+
+  .o_list_renderer th[data-name="supplier_id"], .o_data_cell[name="supplier_id"] {
+    width: 24vw;
+    min-width: 15rem;
+    max-width: 24rem;
+  }
+
+  .o_list_record_selector {
+    text-align: center;
+  }
 }
 
 // Shipment-style 3px top accents on each visible form section.
 .o_scc_form {
-    .o_scc_entry_grid {
-        margin-inline: 0; width: 100%; gap: 16px;
-        > .o_inner_group { flex: 1 1 0; min-width: 0; margin-bottom: 0; }
+  .o_scc_entry_grid {
+    margin-inline: 0;
+    width: 100%;
+    gap: 16px;
+
+    > .o_inner_group {
+      flex: 1 1 0;
+      min-width: 0;
+      margin-bottom: 0;
     }
-    .o_scc_top_tracking { border-top: 3px solid rgba($scc-primary, .25); }
-    .o_scc_classification, .o_scc_classification:hover { border-top: 3px solid rgba($scc-cyan, .25); }
-    .o_scc_details, .o_scc_details:hover { border-top: 3px solid rgba(#7c3aed, .25); }
-    .o_scc_reviews { margin-top: 16px; }
-    .o_scc_reviews, .o_scc_reviews:hover { border-top: 3px solid rgba($scc-warning, .25); }
-    .o_scc_rejection {
-        margin-top: 16px;
-        &, &:hover { border-top: 3px solid rgba($scc-danger, .25); }
+  }
+
+  .o_scc_top_tracking {
+    border-top: 3px solid rgba($scc-primary, .25);
+  }
+
+  .o_scc_classification, .o_scc_classification:hover {
+    border-top: 3px solid rgba($scc-cyan, .25);
+  }
+
+  .o_scc_details, .o_scc_details:hover {
+    border-top: 3px solid rgba(#7c3aed, .25);
+  }
+
+  .o_scc_reviews {
+    margin-top: 16px;
+  }
+
+  .o_scc_reviews, .o_scc_reviews:hover {
+    border-top: 3px solid rgba($scc-warning, .25);
+  }
+
+  .o_scc_rejection {
+    margin-top: 16px;
+
+    &, &:hover {
+      border-top: 3px solid rgba($scc-danger, .25);
     }
-    .o_scc_exception_history td[name="reason"] {
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
+  }
+
+  .o_scc_exception_history td[name="reason"] {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .o_scc_history_section, .o_scc_history_section:hover {
+    border-top: 3px solid rgba($scc-success, .25);
+  }
+
+  @media (max-width: 767px) {
+    .o_scc_entry_grid > .o_inner_group {
+      flex-basis: 100%;
     }
-    .o_scc_history_section, .o_scc_history_section:hover { border-top: 3px solid rgba($scc-success, .25); }
-    @media (max-width: 767px) {
-        .o_scc_entry_grid > .o_inner_group { flex-basis: 100%; }
-    }
+  }
 }
 
 .o_scc_form .o_scc_top_timeline_step .o_scc_stage_details,
 .o_scc_form .o_scc_top_timeline_step .o_scc_stage_details * {
-    white-space: pre-line;
-    color: $scc-muted;
-    font-size: .75rem;
-    font-weight: 400;
-    line-height: 1.5;
+  white-space: pre-line;
+  color: $scc-muted;
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .o_scc_form .o_scc_stage_date_toggle {
-    summary { list-style: none; cursor: pointer; }
-    summary::-webkit-details-marker { display: none; }
-    summary:focus-visible { outline: 2px solid $scc-primary; outline-offset: 3px; border-radius: 3px; }
-    .o_scc_stage_date { margin-top: 4px; font-size: .75rem; font-weight: 400; }
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:focus-visible {
+    outline: 2px solid $scc-primary;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .o_scc_stage_date {
+    margin-top: 4px;
+    font-size: .75rem;
+    font-weight: 400;
+  }
 }
 
 .o_scc_form .o_scc_history_table {
-    .o_list_table { table-layout: fixed; }
-    th[data-name="user_id"], td[name="user_id"] { width: 28%; }
-    td[name="user_id"], td[name="display_note"] {
-        white-space: pre-wrap !important; overflow-wrap: anywhere; vertical-align: top;
-        text-overflow: clip;
-        .text-truncate, a, span { white-space: normal !important; text-overflow: clip; }
+  .o_list_table {
+    table-layout: fixed;
+  }
+
+  th[data-name="user_id"], td[name="user_id"] {
+    width: 28%;
+  }
+
+  td[name="user_id"], td[name="display_note"] {
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+    text-overflow: clip;
+
+    .text-truncate, a, span {
+      white-space: normal !important;
+      text-overflow: clip;
     }
-    @media (max-width: 767px) {
-        th[data-name="user_id"], td[name="user_id"] { width: 36%; }
+  }
+
+  @media (max-width: 767px) {
+    th[data-name="user_id"], td[name="user_id"] {
+      width: 36%;
     }
+  }
 }
 
 .o_scc_form {
-    .o_scc_secretarial_review {
-        margin-top: 16px;
-        &, &:hover { border-top: 3px solid rgba($scc-cyan, .25); }
+  .o_scc_secretarial_review {
+    margin-top: 16px;
+
+    &, &:hover {
+      border-top: 3px solid rgba($scc-cyan, .25);
     }
-    .o_scc_history_table {
-        .o_list_renderer { border: 0; border-radius: 8px; background: transparent; }
-        .o_list_table {
-            --table-striped-bg: transparent;
-            --table-bg: transparent;
-            border: 0; border-collapse: separate; border-spacing: 0 6px;
-            background: transparent;
-        }
-        .o_list_table thead th {
-            background: #f1f6f8 !important; color: $scc-muted !important;
-            border: 0 !important; padding: 10px 14px; font-size: .8rem; font-weight: 600;
-        }
-        .o_list_table .o_data_row > td {
-            background: #f8fafc; box-shadow: none; border: 0;
-            padding: 12px 14px; line-height: 1.6;
-        }
-        .o_list_table .o_data_row:hover > td { background: #f0f7f5; }
-        .o_list_table td[name="user_id"] {
-            font-weight: 600; color: $scc-ink;
-            border-inline-start: 3px solid rgba($scc-success, .25);
-        }
-        .o_list_table tr > :first-child { border-start-start-radius: 6px; border-end-start-radius: 6px; }
-        .o_list_table tr > :last-child { border-start-end-radius: 6px; border-end-end-radius: 6px; }
-        .o_list_table tfoot, .o_list_table tbody tr:not(.o_data_row) { display: none; }
+  }
+
+  .o_scc_history_table {
+    .o_list_renderer {
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
     }
+
+    .o_list_table {
+      --table-striped-bg: transparent;
+      --table-bg: transparent;
+      border: 0;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      background: transparent;
+    }
+
+    .o_list_table thead th {
+      background: #f1f6f8 !important;
+      color: $scc-muted !important;
+      border: 0 !important;
+      padding: 10px 14px;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+
+    .o_list_table .o_data_row > td {
+      background: #f8fafc;
+      box-shadow: none;
+      border: 0;
+      padding: 12px 14px;
+      line-height: 1.6;
+    }
+
+    .o_list_table .o_data_row:hover > td {
+      background: #f0f7f5;
+    }
+
+    .o_list_table td[name="user_id"] {
+      font-weight: 600;
+      color: $scc-ink;
+      border-inline-start: 3px solid rgba($scc-success, .25);
+    }
+
+    .o_list_table tr > :first-child {
+      border-start-start-radius: 6px;
+      border-end-start-radius: 6px;
+    }
+
+    .o_list_table tr > :last-child {
+      border-start-end-radius: 6px;
+      border-end-end-radius: 6px;
+    }
+
+    .o_list_table tfoot, .o_list_table tbody tr:not(.o_data_row) {
+      display: none;
+    }
+  }
 }
 
 .o_scc_form .o_scc_history_table {
-    th[data-name="user_id"], td[name="user_id"] { width: 22%; }
-    th[data-name="occurred_at"], td[name="occurred_at"] { width: 18%; }
-    th[data-name="cheque_attachment"], td[name="cheque_attachment"] { width: 22%; }
-    td[name="occurred_at"], td[name="cheque_attachment"] { white-space: normal; overflow-wrap: anywhere; }
-    @media (max-width: 767px) {
-        .o_list_table { min-width: 680px; }
+  th[data-name="user_id"], td[name="user_id"] {
+    width: 22%;
+  }
+
+  th[data-name="occurred_at"], td[name="occurred_at"] {
+    width: 18%;
+  }
+
+  th[data-name="cheque_attachment"], td[name="cheque_attachment"] {
+    width: 22%;
+  }
+
+  td[name="occurred_at"], td[name="cheque_attachment"] {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 767px) {
+    .o_list_table {
+      min-width: 680px;
     }
+  }
 }
 
 .o_scc_form .o_scc_history_table .o_data_cell:not([name="cheque_attachment"]) {
-    cursor: default;
+  cursor: default;
 }
 
 
 // Historical exceptions are additional steps in the existing route, without cards.
 .o_scc_form .o_scc_top_timeline .o_scc_timeline_exceptions {
-    &, .o_kanban_view, .o_kanban_renderer { display: contents !important; }
-    .o_x2m_control_panel, .o_kanban_ghost { display: none !important; }
+  &, .o_kanban_view, .o_kanban_renderer {
+    display: contents !important;
+  }
+
+  .o_x2m_control_panel, .o_kanban_ghost {
+    display: none !important;
+  }
+
+  .o_kanban_record {
+    flex: 1 0 112px !important;
+    position: relative;
+    min-width: 112px;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    cursor: default;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      inset-inline-start: 58%;
+      width: 84%;
+      height: 2px;
+      background: rgba(148, 163, 184, .28);
+    }
+  }
+
+  .o_scc_top_timeline_step {
+    width: 100%;
+  }
+
+  .o_scc_exception_deferred {
+    summary {
+      color: $scc-warning;
+    }
+
+    .o_scc_top_timeline_dot {
+      background: $scc-warning;
+    }
+  }
+
+  .o_scc_exception_rejected {
+    summary {
+      color: $scc-danger;
+    }
+
+    .o_scc_top_timeline_dot {
+      background: $scc-danger;
+    }
+  }
+
+  @media (max-width: 767px) {
     .o_kanban_record {
-        flex: 1 0 112px !important;
-        position: relative;
-        min-width: 112px;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        cursor: default;
-        &::after {
-            content: ""; position: absolute; top: 8px; inset-inline-start: 58%;
-            width: 84%; height: 2px; background: rgba(148, 163, 184, .28);
-        }
+      flex: 0 0 auto !important;
+      width: 100% !important;
+
+      &::after {
+        inset-inline-start: 8px;
+        top: 22px;
+        width: 2px;
+        height: calc(100% - 8px);
+      }
     }
-    .o_scc_top_timeline_step { width: 100%; }
-    .o_scc_exception_deferred {
-        summary { color: $scc-warning; }
-        .o_scc_top_timeline_dot { background: $scc-warning; }
-    }
-    .o_scc_exception_rejected {
-        summary { color: $scc-danger; }
-        .o_scc_top_timeline_dot { background: $scc-danger; }
-    }
-    @media (max-width: 767px) {
-        .o_kanban_record {
-            flex: 0 0 auto !important;
-            width: 100% !important;
-            &::after {
-                inset-inline-start: 8px; top: 22px; width: 2px; height: calc(100% - 8px);
-            }
-        }
-    }
+  }
 }
 
 .o_scc_form .o_scc_parallel_stage {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
 
-    > .o_scc_route_step {
-        flex: 0 0 auto;
-        width: 100%;
+  > .o_scc_route_step {
+    flex: 0 0 auto;
+    width: 100%;
 
-        &::after {
-            display: none;
-        }
+    &::after {
+      display: none;
     }
+  }
 
-    .o_scc_timeline_exceptions .o_kanban_record {
-        flex: 0 0 auto !important;
+  .o_scc_timeline_exceptions .o_kanban_record {
+    flex: 0 0 auto !important;
 
-        &::after {
-            display: none;
-        }
+    &::after {
+      display: none;
     }
+  }
 }
 
 .o_scc_form {
+  .o_scc_entry_grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: stretch !important;
+    margin-bottom: 24px;
+
+    > .o_scc_panel {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+  }
+
+  .o_scc_details > .o_inner_group {
+    min-width: 0;
+  }
+
+  .o_scc_workflow_details {
+    margin-top: 24px;
+
+    .nav-tabs {
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .o_scc_panel {
+      margin: 0;
+      padding: 12px 0 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .o_scc_reviews {
+      align-items: stretch !important;
+      row-gap: 20px;
+    }
+  }
+
+  .o_scc_documents {
+    margin-top: 24px;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 991px) {
     .o_scc_entry_grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-        align-items: stretch !important;
-        margin-bottom: 24px;
-
-        > .o_scc_panel {
-            width: 100%;
-            max-width: none;
-            margin: 0;
-        }
+      grid-template-columns: minmax(0, 1fr);
     }
+  }
+}
 
-    .o_scc_details > .o_inner_group {
-        min-width: 0;
-    }
+.o_scc_form {
+  .o_scc_workflow_box {
+    margin-top: 24px;
 
     .o_scc_workflow_details {
-        margin-top: 24px;
-
-        .nav-tabs {
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .o_scc_panel {
-            margin: 0;
-            padding: 12px 0 0;
-            border: 0;
-            background: transparent;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .o_scc_reviews {
-            align-items: stretch !important;
-            row-gap: 20px;
-        }
+      margin-top: 0;
     }
-
-    .o_scc_documents {
-        margin-top: 24px;
-        margin-bottom: 0;
-    }
-
-    @media (max-width: 991px) {
-        .o_scc_entry_grid {
-            grid-template-columns: minmax(0, 1fr);
-        }
-    }
-}
-
-.o_scc_form {
-    .o_scc_workflow_box {
-        margin-top: 24px;
-
-        .o_scc_workflow_details {
-            margin-top: 0;
-        }
-    }
+  }
 
 }
 
 .o_scc_form {
-    .o_scc_workflow_box,
-    .o_scc_workflow_details,
-    .o_scc_workflow_details .o_notebook_content,
-    .o_scc_workflow_details .tab-pane,
-    .o_field_x2many {
-        min-width: 0;
-        max-width: 100%;
-    }
+  .o_scc_workflow_box,
+  .o_scc_workflow_details,
+  .o_scc_workflow_details .o_notebook_content,
+  .o_scc_workflow_details .tab-pane,
+  .o_field_x2many {
+    min-width: 0;
+    max-width: 100%;
+  }
 
-    .o_field_x2many {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-    }
+  .o_field_x2many {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
 
-    .o_field_x2many .o_list_renderer {
-        min-width: 0;
-        max-width: 100%;
-        overflow-x: auto;
-    }
-}
-
-.o_scc_claim_list {
+  .o_field_x2many .o_list_renderer {
     min-width: 0;
     max-width: 100%;
     overflow-x: auto;
+  }
+}
+
+.o_scc_claim_list {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .o_scc_form .o_field_x2many[name="document_ids"] .o_list_table {
-    thead th[data-name],
-    .o_data_row > td.o_data_cell {
-        padding-inline: 16px !important;
+  thead th[data-name],
+  .o_data_row > td.o_data_cell {
+    padding-inline: 16px !important;
+    text-align: center !important;
+    vertical-align: middle;
+  }
+
+  .o_data_cell .o_field_widget {
+    text-align: center !important;
+    justify-content: center;
+  }
+
+  thead th[data-name] {
+    text-align: center !important;
+
+    > .d-flex {
+      position: relative;
+      padding-inline: 16px;
+      justify-content: center;
+      width: 100%;
+
+      > span {
         text-align: center !important;
-        vertical-align: middle;
+        flex-basis: 0;
+      }
     }
 
-    .o_data_cell .o_field_widget {
-        text-align: center !important;
-        justify-content: center;
+    .o_list_header_label_spacer {
+      display: none;
     }
 
-    thead th[data-name] {
-        text-align: center !important;
-
-        > .d-flex {
-            position: relative;
-            padding-inline: 16px;
-            justify-content: center;
-            width: 100%;
-
-            > span {
-                text-align: center !important;
-                flex-basis: 0;
-            }
-        }
-
-        .o_list_header_label_spacer {
-            display: none;
-        }
-
-        .o_list_sortable_icon {
-            position: absolute;
-            inset-inline-end: 0;
-        }
+    .o_list_sortable_icon {
+      position: absolute;
+      inset-inline-end: 0;
     }
+  }
 }
 
 // Keep entry groups parallel from the medium breakpoint upward.
 .o_scc_form .o_scc_entry_grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
 
-    > .o_inner_group { min-width: 0; width: 100%; align-content: start; }
+  > .o_inner_group {
+    min-width: 0;
+    width: 100%;
+    align-content: start;
+  }
 }
 
 .o_scc_form .o_form_statusbar {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  gap: 6px;
+  min-width: 0;
+
+  min-height: 50px;
+
+  .o_statusbar_buttons {
+    flex: 1 1 auto;
+    width: 100%;
     flex-wrap: nowrap !important;
-    gap: 6px;
     min-width: 0;
+  }
 
-    min-height: 50px;
-
-    .o_statusbar_buttons {
-        flex: 1 1 auto;
-        width: 100%;
-        flex-wrap: nowrap !important;
-        min-width: 0;
-    }
-
-    .o_scc_header_actions { flex: 1 1 auto; min-width: 0; max-width: 100%; }
+  .o_scc_header_actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 767px) {
-    .o_scc_form .o_scc_entry_grid { grid-template-columns: minmax(0, 1fr); }
+  .o_scc_form .o_scc_entry_grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .o_scc_form .o_scc_amount_warning {
-    position: sticky;
-    top: 50px;
-    z-index: 5;
-    box-shadow: 0 3px 10px rgba(32, 36, 42, 0.12);
+  position: sticky;
+  top: 50px;
+  z-index: 5;
+  box-shadow: 0 3px 10px rgba(32, 36, 42, 0.12);
 }

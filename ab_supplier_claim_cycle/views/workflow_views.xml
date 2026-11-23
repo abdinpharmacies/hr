@@ -22,14 +22,14 @@
                 <header>
                     <button name="action_publish" string="Publish" type="object" class="btn-primary"
                             invisible="state != 'draft'"/>
-                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
-                            invisible="state != 'published'"/>
                     <button name="action_new_version" string="New Version" type="object"
                             invisible="state == 'draft'"/>
                     <button name="action_archive_workflow" string="Archive" type="object"
                             invisible="state != 'published'"/>
                     <button name="action_unarchive_workflow" string="Unarchive" type="object"
                             class="btn-primary" invisible="state != 'archived'"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'published'" class="ms-md-auto"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
                 </header>
                 <sheet>

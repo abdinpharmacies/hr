@@ -31,14 +31,14 @@
                     <button name="action_resubmit" string="Resubmit" type="object" class="btn-primary"
                             invisible="state != 'returned' or not active"
                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
-                            class="btn-secondary" invisible="state == 'draft' or not active"
-                            groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
-                            confirm="Reset this claim to Draft? Its workflow progress will be restarted."/>
                     <div class="o_scc_header_actions" invisible="state != 'in_progress'">
                         <field name="stage_state_ids" widget="supplier_claim_workflow_actions"
                                class="o_scc_workflow_actions_field" readonly="True" nolabel="1"/>
                     </div>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            class="btn-secondary ms-md-auto" invisible="state == 'draft' or not active"
+                            groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
+                            confirm="Reset this claim to Draft? Its workflow progress will be restarted."/>
                 </header>
                 <sheet>
                     <field name="state" invisible="True"/>
