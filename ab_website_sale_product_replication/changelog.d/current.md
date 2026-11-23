@@ -2,19 +2,16 @@
 
 ## Current changes before commit:
 
-- Queue Eplus aggregate and branch stock refreshes after each successful unrestricted barcode replication, then start the Odoo inventory sync.
-- Preserve the existing product replication flow and reject sharply reduced stock snapshots before inventory sync.
-- Restrict scheduled refresh methods to administrators and retry transient source failures or concurrent inventory jobs.
-- Cover queue triggering, excluded replication calls, and denied reader access in focused tests.
-- Add English source strings and both Arabic catalogs for queue descriptions and errors.
+- Start the website product full sync after the six-hour barcode replication to update linked product names and prices.
+- Start Odoo inventory sync after the aggregate Eplus stock refresh, while refreshing branch stock independently so a branch connection failure does not block quantities.
+- Restrict the scheduled website sync to administrators and cover queue creation, worker triggering, and denied reader access.
+- Translate the new website sync messages in both Arabic catalogs.
 
 Files changed:
 
-- `ab_website_sale_product_replication/__manifest__.py`
 - `ab_website_sale_product_replication/i18n/ab_website_sale_product_replication.pot`
 - `ab_website_sale_product_replication/i18n/ar.po`
 - `ab_website_sale_product_replication/i18n/ar_001.po`
-- `ab_website_sale_product_replication/models/__init__.py`
 - `ab_website_sale_product_replication/models/replication.py`
 - `ab_website_sale_product_replication/models/stock_sync.py`
 - `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
@@ -22,11 +19,32 @@ Files changed:
 
 Validation:
 
-- Targeted development upgrade on `codex_eplus_sync_20261104` with alternate ports `5069/5072`: four new replication tests passed; `/tmp/eplus_deploy_preflight_tests.log`.
-- Both new Arabic catalogs pass `msgfmt --check-format`.
-- Production upgrade and storefront verification are required after deployment.
+- Targeted development upgrade on `codex_eplus_sync_20261104` with alternate ports `5069/5072`: 16 replication tests passed; `/tmp/ecommerce_six_hour_validation.log`.
+- Both Arabic catalogs pass `msgfmt --check-format`.
 
 ## Recent commits
+
+Commit: `7e6ea239`
+Author: Mohamed Fawzy
+Date: 2026-11-22
+Original subject: `ab_website_sale_product_replication/IMP: refresh stock after product replication`
+
+User-facing changes:
+
+- Queue Eplus aggregate and branch stock refreshes after product replication, followed by Odoo inventory sync.
+- Check snapshot size before applying the scheduled inventory sync.
+
+Files changed:
+
+- `ab_website_sale_product_replication/__manifest__.py`
+- `ab_website_sale_product_replication/changelog.d/current.md`
+- `ab_website_sale_product_replication/i18n/ab_website_sale_product_replication.pot`
+- `ab_website_sale_product_replication/i18n/ar.po`
+- `ab_website_sale_product_replication/i18n/ar_001.po`
+- `ab_website_sale_product_replication/models/__init__.py`
+- `ab_website_sale_product_replication/models/replication.py`
+- `ab_website_sale_product_replication/models/stock_sync.py`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 
 Commit: `bb979570`
 Author: Mohamed Fawzy

@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from odoo import fields
 from odoo.addons.integration_queue_job.exception import RetryableJobError
 from odoo.addons.integration_queue_job.tests.common import trap_jobs
 from odoo.exceptions import AccessError, UserError
@@ -145,16 +146,34 @@ class TestReplicaCatalogImport(TransactionCase):
         with self.assertRaises(AccessError):
             self.snapshot.with_user(self.reader)._import_eplus_catalog_batch()
 
-    def test_completed_barcode_replication_queues_stock_then_inventory(self):
+    def test_completed_barcode_replication_queues_website_and_stock_sync(self):
         replication = self.env["ab_odoo_replication"].with_user(self.admin)
         Snapshot = self.env["ab_eplus_stock_snapshot"].with_user(self.admin)
         Inventory = self.env["ab_eplus_inventory_sync_job"].with_user(self.admin)
+        Website = self.env["ab_website_product_sync_job"].with_user(self.admin)
         with patch.object(OdooReplication, "_replicate_model", return_value=None), trap_jobs() as trap:
             replication.replicate_model("ab_product_barcode", commit=True)
-            trap.assert_jobs_count(3)
+            trap.assert_jobs_count(4)
+            trap.assert_enqueued_job(Website._start_after_replication)
             trap.assert_enqueued_job(Snapshot._refresh_after_replication)
             trap.assert_enqueued_job(Snapshot._refresh_branches_after_replication)
             trap.assert_enqueued_job(Inventory._start_after_replication)
+            aggregate = next(
+                job for job in trap.enqueued_jobs
+                if job.func.__self__._name == "ab_eplus_stock_snapshot"
+                and job.func.__name__ == "_refresh_after_replication"
+            )
+            branch = next(
+                job for job in trap.enqueued_jobs
+                if job.func.__self__._name == "ab_eplus_stock_snapshot"
+                and job.func.__name__ == "_refresh_branches_after_replication"
+            )
+            inventory = next(
+                job for job in trap.enqueued_jobs
+                if job.func.__self__._name == "ab_eplus_inventory_sync_job"
+            )
+            self.assertEqual(inventory.depends_on, {aggregate})
+            self.assertFalse(branch.depends_on)
 
     def test_uncommitted_scoped_and_failed_replication_do_not_queue_stock(self):
         replication = self.env["ab_odoo_replication"].with_user(self.admin)
@@ -166,7 +185,7 @@ class TestReplicaCatalogImport(TransactionCase):
             replication.replicate_model("ab_product", commit=False)
             trap.assert_jobs_count(0)
         with patch.object(OdooReplication, "_replicate_model", side_effect=RuntimeError("offline")):
-            with patch.object(type(replication), "_queue_eplus_stock_refresh") as enqueue:
+            with patch.object(type(replication), "_queue_website_refresh") as enqueue:
                 with self.assertRaises(RuntimeError):
                     replication.replicate_model("ab_product_barcode", commit=True)
                 enqueue.assert_not_called()
@@ -178,6 +197,27 @@ class TestReplicaCatalogImport(TransactionCase):
             self.env["ab_eplus_stock_snapshot"].with_user(self.reader)._refresh_branches_after_replication()
         with self.assertRaises(AccessError):
             self.env["ab_eplus_inventory_sync_job"].with_user(self.reader)._start_after_replication()
+        with self.assertRaises(AccessError):
+            self.env["ab_website_product_sync_job"].with_user(self.reader)._start_after_replication()
+
+    def test_scheduled_website_sync_queues_changed_product_and_triggers_worker(self):
+        template = self.product._sync_website_products(create_missing=True)
+        template.name = "Stale website name"
+        self.assertTrue(self.product.website_sync_pending)
+        Website = self.env["ab_website_product_sync_job"].with_user(self.admin)
+        with (
+            patch.object(
+                type(Website), "_full_sync_product_domain",
+                return_value=fields.Domain("id", "=", self.product.id),
+            ),
+            patch.object(type(self.env["ir.cron"]), "_trigger") as trigger,
+        ):
+            Website._start_after_replication()
+        job = Website.search([("state", "=", "running")], order="id desc", limit=1)
+        self.assertTrue(job)
+        self.assertEqual(job.total_count, 1)
+        self.assertEqual(job.line_ids.ab_product_id, self.product)
+        trigger.assert_called_once()
 
     def test_stock_refresh_rejects_sharp_drop_and_retries_source_failure(self):
         snapshot = self.env["ab_eplus_stock_snapshot"].with_user(self.admin)

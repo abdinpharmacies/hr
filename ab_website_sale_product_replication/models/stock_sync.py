@@ -56,3 +56,21 @@ class EplusInventorySyncJob(models.Model):
         if job.state == "running":
             self.env.ref("ab_website_sale_product.ir_cron_process_eplus_inventory_sync_jobs").sudo()._trigger()
         _logger.info("Odoo inventory sync started after Eplus refresh: job=%s state=%s", job.id, job.state)
+
+
+class WebsiteProductSyncJob(models.Model):
+    _inherit = "ab_website_product_sync_job"
+
+    @api.model
+    def _start_after_replication(self):
+        if not self.env.user.has_group("base.group_system"):
+            raise AccessError(_("Only administrators can run the scheduled website product sync."))
+        action = self.sudo().action_open_full_sync_console()
+        job = self.sudo().browse(action["res_id"])
+        if job.state != "running":
+            result = job.action_start_full_sync()
+            if result.get("tag") == "reload":
+                raise RetryableJobError(_("Another website product sync is already running."), seconds=300)
+        if job.state == "running":
+            self.env.ref("ab_website_sale_product.ir_cron_process_website_product_sync_jobs").sudo()._trigger()
+        _logger.info("Website product sync started after replication: job=%s state=%s", job.id, job.state)

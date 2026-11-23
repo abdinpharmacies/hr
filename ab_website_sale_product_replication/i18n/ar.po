@@ -28,10 +28,17 @@ msgid "Another Eplus inventory sync is already running."
 msgstr "توجد مزامنة أخرى لمخزون Eplus قيد التشغيل."
 
 #. module: ab_website_sale_product_replication
+#. odoo-python
+#: code:addons/ab_website_sale_product_replication/models/stock_sync.py:0
+msgid "Another website product sync is already running."
+msgstr "توجد مزامنة أخرى لمنتجات الموقع قيد التشغيل."
+
+#. module: ab_website_sale_product_replication
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_eplus_inventory_sync_job__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_eplus_stock_snapshot__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_odoo_replication__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_website_product_sync_job__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -69,6 +76,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_eplus_stock_snapshot__id
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_odoo_replication__id
 #: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_website_sale_product_replication.field_ab_website_product_sync_job__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -77,6 +85,12 @@ msgstr "المعرّف"
 #: code:addons/ab_website_sale_product_replication/models/stock_sync.py:0
 msgid "Only administrators can run the scheduled Eplus stock refresh."
 msgstr "يُسمح للمسؤولين فقط بتشغيل تحديث مخزون Eplus المجدول."
+
+#. module: ab_website_sale_product_replication
+#. odoo-python
+#: code:addons/ab_website_sale_product_replication/models/stock_sync.py:0
+msgid "Only administrators can run the scheduled website product sync."
+msgstr "يُسمح للمسؤولين فقط بتشغيل مزامنة منتجات الموقع المجدولة."
 
 #. module: ab_website_sale_product_replication
 #. odoo-python
@@ -95,6 +109,17 @@ msgstr "تحديث مخزون Eplus بعد الريبلكيشن"
 #: code:addons/ab_website_sale_product_replication/models/replication.py:0
 msgid "Start Odoo inventory sync after Eplus refresh"
 msgstr "بدء مزامنة مخزون Odoo بعد تحديث Eplus"
+
+#. module: ab_website_sale_product_replication
+#. odoo-python
+#: code:addons/ab_website_sale_product_replication/models/replication.py:0
+msgid "Start website product sync after replication"
+msgstr "بدء مزامنة منتجات الموقع بعد الريبلكيشن"
+
+#. module: ab_website_sale_product_replication
+#: model:ir.model,name:ab_website_sale_product_replication.model_ab_website_product_sync_job
+msgid "Website Product Sync Job"
+msgstr "مهمة مزامنة منتجات الموقع"
 
 #. module: ab_website_sale_product_replication
 #: model:ir.model,name:ab_website_sale_product_replication.model_ab_odoo_replication
