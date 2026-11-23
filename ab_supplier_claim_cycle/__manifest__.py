@@ -13,6 +13,7 @@
         'security/record_rules.xml',
         'security/ir.model.access.csv',
         'data/supplier_claim_workflows.xml',
+        'data/supplier_claim_actions.xml',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
         'views/department_notes.xml',

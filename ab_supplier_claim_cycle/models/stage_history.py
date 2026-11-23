@@ -40,6 +40,7 @@ class SupplierClaimHistory(models.Model):
         ('stage_decision', 'Stage Decision'),
         ('stage_invalidated', 'Stage Invalidated'),
         ('approval_removed', 'Approval Removed'),
+        ('reset_to_draft', 'Reset to Draft'),
         ('claim_updated', 'Claim Details Updated'),
         ('secretarial_note', 'Secretarial Note'),
         # Passive values keep already-created history readable.

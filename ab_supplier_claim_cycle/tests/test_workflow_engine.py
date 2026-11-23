@@ -173,6 +173,193 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
             claim.stage_state_ids.filtered(lambda row: row.sequence == 3).status,
             'waiting')
 
+    def test_reject_and_defer_decision_wizards(self):
+        rejected_claim = self._claim()
+        rejected_stage = rejected_claim.stage_state_ids.filtered(
+            lambda row: row.name == 'Amount Review')
+        reject_action = rejected_stage.with_user(self.approver_a).action_open_reject()
+        self.assertEqual(reject_action['type'], 'ir.actions.act_window')
+        self.assertEqual(reject_action['res_model'], 'ab_supplier_claim_stage_decision')
+        self.assertEqual(reject_action['view_mode'], 'form')
+        self.assertEqual(reject_action['views'], [(
+            self.env.ref(
+                'ab_supplier_claim_cycle.view_supplier_claim_stage_decision_form').id,
+            'form',
+        )])
+        self.assertEqual(reject_action['target'], 'new')
+        reject_wizard = self.env[reject_action['res_model']].with_user(
+            self.approver_a).browse(reject_action['res_id'])
+        self.assertEqual(reject_wizard.stage_state_id, rejected_stage)
+        self.assertEqual(reject_wizard.decision, 'rejected')
+
+        reject_wizard.reason = '   '
+        with self.assertRaisesRegex(ValidationError, 'A reason is required'):
+            reject_wizard.action_confirm()
+        reject_wizard.reason = 'Correct the submitted amount'
+        reject_wizard.action_confirm()
+        self.assertEqual(rejected_claim.state, 'returned')
+        self.assertEqual(rejected_stage.status, 'rejected')
+        self.assertEqual(rejected_stage.reason, 'Correct the submitted amount')
+        rejection_history = rejected_claim.history_ids.sorted('id')[-1]
+        self.assertEqual(rejection_history.event, 'stage_decision')
+        self.assertEqual(rejection_history.decision, 'rejected')
+        self.assertEqual(rejection_history.reason, 'Correct the submitted amount')
+
+        deferred_claim = self._claim()
+        deferred_stage = deferred_claim.stage_state_ids.filtered(
+            lambda row: row.name == 'Amount Review')
+        defer_action = deferred_stage.with_user(self.approver_a).action_open_defer()
+        self.assertEqual(defer_action['type'], 'ir.actions.act_window')
+        self.assertEqual(defer_action['res_model'], 'ab_supplier_claim_stage_decision')
+        self.assertEqual(defer_action['views'], [(
+            self.env.ref(
+                'ab_supplier_claim_cycle.view_supplier_claim_stage_decision_form').id,
+            'form',
+        )])
+        self.assertEqual(defer_action['target'], 'new')
+        defer_wizard = self.env[defer_action['res_model']].with_user(
+            self.approver_a).browse(defer_action['res_id'])
+        self.assertEqual(defer_wizard.stage_state_id, deferred_stage)
+        self.assertEqual(defer_wizard.decision, 'deferred')
+
+        defer_wizard.reason = 'Need supporting evidence'
+        with self.assertRaisesRegex(ValidationError, 'Deferral requires a follow-up date'):
+            defer_wizard.action_confirm()
+        defer_wizard.followup_date = fields.Date.today() - timedelta(days=1)
+        with self.assertRaisesRegex(ValidationError, 'Deferral requires a follow-up date'):
+            defer_wizard.action_confirm()
+        followup_date = fields.Date.today() + timedelta(days=1)
+        defer_wizard.followup_date = followup_date
+        defer_wizard.action_confirm()
+        self.assertEqual(deferred_claim.state, 'in_progress')
+        self.assertEqual(deferred_stage.status, 'deferred')
+        self.assertEqual(deferred_stage.reason, 'Need supporting evidence')
+        self.assertEqual(deferred_stage.followup_date, followup_date)
+        deferral_history = deferred_claim.history_ids.sorted('id')[-1]
+        self.assertEqual(deferral_history.event, 'stage_decision')
+        self.assertEqual(deferral_history.decision, 'deferred')
+        self.assertEqual(deferral_history.reason, 'Need supporting evidence')
+        self.assertEqual(deferral_history.followup_date, followup_date)
+
+    def test_decision_wizard_rechecks_stage_access_on_open_and_confirm(self):
+        claim = self._claim()
+        stage = claim.stage_state_ids.filtered(lambda row: row.name == 'Amount Review')
+        with self.assertRaises(AccessError):
+            stage.with_user(self.outsider).action_open_reject()
+
+        action = stage.with_user(self.approver_a).action_open_reject()
+        wizard = self.env[action['res_model']].with_user(self.approver_a).browse(
+            action['res_id'])
+        wizard.reason = 'This decision became stale'
+        stage.with_user(self.approver_a).action_approve()
+        with self.assertRaisesRegex(AccessError, 'You cannot decide this stage'):
+            wizard.action_confirm()
+        self.assertEqual(stage.status, 'approved')
+        self.assertEqual(claim.state, 'in_progress')
+
+    def test_admin_resets_multiple_workflow_states_to_draft_and_resubmits(self):
+        in_progress = self._claim()
+
+        returned = self._claim()
+        rejected = returned.stage_state_ids.filtered(
+            lambda row: row.name == 'Amount Review')
+        returned.with_user(self.approver_a)._action_stage_decision(
+            rejected.with_user(self.approver_a), 'rejected', reason='Correct the claim')
+
+        closed = self._claim()
+        first_rows = closed.stage_state_ids.filtered(lambda row: row.sequence == 1)
+        first_rows.filtered(lambda row: row.name == 'Amount Review').with_user(
+            self.approver_a).action_approve()
+        first_rows.filtered(lambda row: row.name == 'Notes Review').with_user(
+            self.approver_b).action_approve()
+        closed.stage_state_ids.filtered(lambda row: row.sequence == 2).with_user(
+            self.approver_a).action_approve()
+        closed.stage_state_ids.filtered(lambda row: row.sequence == 3).with_user(
+            self.approver_a).action_approve()
+        self.assertEqual(closed.state, 'closed')
+
+        claims = in_progress | returned | closed
+        previous_history_counts = {claim.id: len(claim.history_ids) for claim in claims}
+        self.env.ref(
+            'ab_supplier_claim_cycle.action_reset_supplier_claims_to_draft'
+        ).with_user(self.admin).with_context(
+            active_model=claims._name,
+            active_id=claims[0].id,
+            active_ids=claims.ids,
+        ).run()
+
+        for claim in claims:
+            self.assertEqual(claim.state, 'draft')
+            self.assertEqual(claim.current_sequence, 0)
+            self.assertFalse(claim.rejection_stage_state_id)
+            self.assertEqual(set(claim.stage_state_ids.mapped('status')), {'waiting'})
+            self.assertFalse(any(claim.stage_state_ids.mapped('user_id')))
+            self.assertFalse(any(claim.stage_state_ids.mapped('decision_at')))
+            self.assertEqual(len(claim.history_ids), previous_history_counts[claim.id] + 1)
+            self.assertEqual(claim.history_ids.sorted('id')[-1].event, 'reset_to_draft')
+
+        claims.with_user(self.admin).action_submit()
+        for claim in claims:
+            self.assertEqual(claim.state, 'in_progress')
+            self.assertEqual(claim.current_sequence, 1)
+            self.assertEqual(
+                set(claim.stage_state_ids.filtered(
+                    lambda row: row.sequence == 1).mapped('status')), {'pending'})
+            self.assertEqual(
+                set(claim.stage_state_ids.filtered(
+                    lambda row: row.sequence > 1).mapped('status')), {'waiting'})
+            self.assertEqual(claim.review_round, 2)
+
+    def test_only_admin_can_reset_claim_to_draft(self):
+        claim = self._claim()
+        with self.assertRaises(AccessError):
+            claim.with_user(self.secretarial).action_reset_to_draft()
+        self.assertEqual(claim.state, 'in_progress')
+
+    def test_admin_reset_requires_an_eligible_selection(self):
+        Claim = self.env['ab_supplier_claim_cycle'].with_user(self.admin)
+        with self.assertRaisesRegex(UserError, 'Select at least one claim'):
+            Claim.action_reset_to_draft()
+
+        draft = Claim.create(self._claim_values())
+        with self.assertRaisesRegex(UserError, 'already in Draft'):
+            draft.action_reset_to_draft()
+
+        in_progress = self._claim()
+        (draft | in_progress).with_user(self.admin).action_reset_to_draft()
+        self.assertEqual((draft.state, in_progress.state), ('draft', 'draft'))
+        self.assertFalse(draft.history_ids.filtered(
+            lambda entry: entry.event == 'reset_to_draft'))
+        self.assertTrue(in_progress.history_ids.filtered(
+            lambda entry: entry.event == 'reset_to_draft'))
+
+    def test_reset_uses_admin_list_server_action_and_keeps_form_button(self):
+        arch = self.env.ref('ab_supplier_claim_cycle.invoice_view_tree').arch_db
+        self.assertNotIn('name="action_reset_to_draft"', arch)
+
+        form_arch = self.env.ref('ab_supplier_claim_cycle.invoice_view_form').arch_db
+        self.assertIn('name="action_reset_to_draft"', form_arch)
+        action = self.env.ref(
+            'ab_supplier_claim_cycle.action_reset_supplier_claims_to_draft')
+        claim_model = self.env.ref('ab_supplier_claim_cycle.model_ab_supplier_claim_cycle')
+        admin_group = self.env.ref(
+            'ab_supplier_claim_cycle.supplier_claim_group_admin')
+        self.assertEqual(action.model_id, claim_model)
+        self.assertEqual(action.binding_model_id, claim_model)
+        self.assertEqual(action.binding_view_types, 'list')
+        self.assertEqual(action.group_ids, admin_group)
+        self.assertEqual(action.state, 'code')
+        with self.assertRaises(AccessError):
+            action.with_user(self.secretarial).with_context(
+                active_model='ab_supplier_claim_cycle', active_ids=[]).run()
+
+    def test_archived_claim_cannot_be_reset_to_draft(self):
+        claim = self._claim()
+        claim._workflow_write({'active': False})
+        with self.assertRaises(UserError):
+            claim.with_user(self.admin).action_reset_to_draft()
+        self.assertEqual(claim.state, 'in_progress')
+
     def test_unassigned_participant_cannot_read_claim(self):
         claim = self._claim()
         with self.assertRaises(AccessError):
@@ -436,6 +623,76 @@ class TestDynamicSupplierClaimWorkflow(TransactionCase):
         self.assertEqual(self.workflow.state, 'published')
         with self.assertRaises(AccessError):
             self.workflow.with_user(self.secretarial).action_reset_to_draft()
+
+    def test_unarchive_unused_workflow_restores_same_draft(self):
+        draft_claim = self.env['ab_supplier_claim_cycle'].with_user(
+            self.secretarial).create(self._claim_values())
+        self.assertEqual(draft_claim.workflow_id, self.workflow)
+        self.workflow.with_user(self.admin).action_archive_workflow()
+        self.assertEqual(self.workflow.state, 'archived')
+        self.assertFalse(self.workflow.active)
+
+        with self.assertRaises(AccessError):
+            self.workflow.with_user(self.secretarial).action_unarchive_workflow()
+        action = self.workflow.with_user(self.admin).action_unarchive_workflow()
+        self.assertEqual(action['res_id'], self.workflow.id)
+        self.assertEqual(action['views'], [(
+            self.env.ref('ab_supplier_claim_cycle.supplier_claim_workflow_form').id,
+            'form',
+        )])
+        self.assertEqual(self.workflow.state, 'draft')
+        self.assertTrue(self.workflow.active)
+        self.assertFalse(draft_claim.workflow_id)
+        self.workflow.with_user(self.admin).write({'priority': 42})
+        self.assertEqual(self.workflow.priority, 42)
+
+    def test_unarchive_used_workflow_creates_editable_draft_version(self):
+        claim = self._claim()
+        historical_stages = claim.stage_state_ids.mapped('stage_id')
+        self.workflow.with_user(self.admin).action_archive_workflow()
+
+        action = self.workflow.with_user(self.admin).action_unarchive_workflow()
+        restored = self.env['ab_supplier_claim_workflow'].browse(action['res_id'])
+        self.assertNotEqual(restored, self.workflow)
+        self.assertEqual((self.workflow.state, self.workflow.active), ('archived', False))
+        self.assertEqual((restored.state, restored.active), ('draft', True))
+        self.assertEqual(restored.name, self.workflow.name)
+        self.assertEqual(restored.version, self.workflow.version + 1)
+        self.assertEqual(len(restored.workflow_stage_ids), len(self.workflow.workflow_stage_ids))
+        self.assertEqual(claim.stage_state_ids.mapped('stage_id'), historical_stages)
+        self.assertTrue(all(
+            stage.workflow_id == self.workflow for stage in historical_stages))
+        restored.with_user(self.admin).write({'priority': 43})
+        self.assertEqual(restored.priority, 43)
+
+    def test_standard_unarchive_handles_used_and_unused_workflows_together(self):
+        claim = self._claim()
+        self.workflow.with_user(self.admin).action_archive_workflow()
+        unused = self.workflow.with_user(self.admin)._copy_as_new_version()
+        unused.action_publish()
+        draft_claim = self.env['ab_supplier_claim_cycle'].with_user(
+            self.secretarial).create(self._claim_values(num_of_invoice=2))
+        self.assertEqual(draft_claim.workflow_id, unused)
+        unused.action_archive_workflow()
+
+        (self.workflow | unused).with_user(self.admin).action_unarchive()
+        self.assertEqual((self.workflow.state, self.workflow.active), ('archived', False))
+        self.assertEqual((unused.state, unused.active), ('draft', True))
+        self.assertFalse(draft_claim.workflow_id)
+        copied = self.env['ab_supplier_claim_workflow'].with_context(active_test=False).search([
+            ('name', '=', self.workflow.name),
+            ('version', '>', unused.version),
+        ])
+        self.assertEqual(len(copied), 1)
+        self.assertEqual((copied.state, copied.active), ('draft', True))
+        self.assertTrue(all(
+            row.stage_id.workflow_id == self.workflow for row in claim.stage_state_ids))
+
+    def test_workflow_form_exposes_unarchive_only_for_archived_state(self):
+        arch = self.env.ref(
+            'ab_supplier_claim_cycle.supplier_claim_workflow_form').arch_db
+        self.assertIn('name="action_unarchive_workflow"', arch)
+        self.assertIn('invisible="state != \'archived\'"', arch)
 
     def test_attachment_field_locks_and_chatter_accepts_additional_files(self):
         claim = self._claim()

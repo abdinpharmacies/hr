@@ -13,7 +13,10 @@ class SupplierClaimStageDecisionWizard(models.TransientModel):
         ('deferred', 'Defer Stage'),
         ('undo', 'Remove Approval'),
     ], required=True, readonly=True)
-    reason = fields.Text(required=True)
+    # The wizard record is created before the modal is displayed. An empty
+    # string satisfies the database-level NOT NULL constraint while the form
+    # and action_confirm still require the user to provide a meaningful value.
+    reason = fields.Text(required=True, default='')
     followup_date = fields.Date(string='Follow-up Date')
 
     def action_confirm(self):

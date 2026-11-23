@@ -113,25 +113,72 @@ class SupplierClaimWorkflow(models.Model):
             raise UserError(_('Only published workflows can be archived.'))
         return super(SupplierClaimWorkflow, self).write({'state': 'archived', 'active': False})
 
-    def action_new_version(self):
+    def _copy_as_new_version(self):
         self.ensure_one()
-        self._require_admin()
-        if self.state not in ('published', 'archived'):
-            raise UserError(_('Create a new version from a published or archived workflow.'))
-        next_version = max(self.search([('name', '=', self.name)]).mapped('version'), default=0) + 1
-        workflow = self.copy({
+        next_version = max(self.with_context(active_test=False).search([
+            ('name', '=', self.name),
+        ]).mapped('version'), default=0) + 1
+        return self.copy({
             'version': next_version,
             'state': 'draft',
             'active': True,
         })
+
+    def _workflow_form_action(self, workflow):
+        workflow.ensure_one()
+        view = self.env.ref('ab_supplier_claim_cycle.supplier_claim_workflow_form')
         return {
             'type': 'ir.actions.act_window',
             'name': _('Workflow Version'),
             'res_model': self._name,
             'res_id': workflow.id,
             'view_mode': 'form',
+            'views': [(view.id, 'form')],
             'target': 'current',
         }
+
+    def action_new_version(self):
+        self.ensure_one()
+        self._require_admin()
+        if self.state not in ('published', 'archived'):
+            raise UserError(_('Create a new version from a published or archived workflow.'))
+        return self._workflow_form_action(self._copy_as_new_version())
+
+    def _unarchive_to_draft(self):
+        self._require_admin()
+        self.lock_for_update()
+        self.invalidate_recordset()
+        if any(workflow.state != 'archived' for workflow in self):
+            raise UserError(_('Only archived workflows can be unarchived.'))
+
+        used_ids = self.env['ab_supplier_claim_stage_state'].sudo().search([
+            ('stage_id.workflow_id', 'in', self.ids),
+        ]).mapped('stage_id.workflow_id').ids
+        used = self.filtered(lambda workflow: workflow.id in used_ids)
+        unused = self - used
+        restored = self.browse()
+        if unused:
+            super(SupplierClaimWorkflow, unused).write({
+                'state': 'draft',
+                'active': True,
+            })
+            self.env['ab_supplier_claim_cycle'].sudo().with_context(active_test=False).search([
+                ('workflow_id', 'in', unused.ids),
+                ('state', '=', 'draft'),
+            ])._workflow_write({'workflow_id': False})
+            restored |= unused
+        for workflow in used:
+            restored |= workflow._copy_as_new_version()
+        return restored
+
+    def action_unarchive(self):
+        self._unarchive_to_draft()
+        return True
+
+    def action_unarchive_workflow(self):
+        self.ensure_one()
+        workflow = self._unarchive_to_draft()
+        return self._workflow_form_action(workflow)
 
     def _require_admin(self):
         if not (self.env.su or self.env.user.has_group(WORKFLOW_ADMIN_GROUP)
@@ -385,12 +432,15 @@ class SupplierClaimStageState(models.Model):
             'stage_state_id': self.id,
             'decision': decision,
         })
+        view = self.env.ref(
+            'ab_supplier_claim_cycle.view_supplier_claim_stage_decision_form')
         return {
             'type': 'ir.actions.act_window',
             'name': dict(wizard._fields['decision']._description_selection(self.env))[decision],
             'res_model': wizard._name,
             'res_id': wizard.id,
             'view_mode': 'form',
+            'views': [(view.id, 'form')],
             'target': 'new',
         }
 
@@ -588,9 +638,31 @@ class SupplierClaimWorkflowEngine(models.Model):
             if claim.state == 'returned':
                 claim.action_resubmit()
                 continue
-            if claim.state != 'draft' or claim.stage_state_ids:
-                raise UserError(_('Only an unsubmitted draft claim can be submitted.'))
+            if claim.state != 'draft':
+                raise UserError(_('Only a draft claim can be submitted.'))
             claim._validate_submission_fields()
+            if claim.stage_state_ids:
+                if not claim.workflow_id:
+                    raise UserError(_('The reset claim has no workflow snapshot to resume.'))
+                stage_states = claim.stage_state_ids.sorted(
+                    lambda row: (row.sequence, row.id))
+                first_sequence = stage_states[0].sequence
+                stage_states._internal_write({
+                    'status': 'waiting', 'user_id': False, 'decision_at': False,
+                    'reason': False, 'followup_date': False,
+                })
+                stage_states.filtered(
+                    lambda row: row.sequence == first_sequence)._internal_write({
+                        'status': 'pending',
+                    })
+                claim._workflow_write({
+                    'state': 'in_progress',
+                    'current_sequence': first_sequence,
+                    'review_round': claim.review_round + 1,
+                    'rejection_stage_state_id': False,
+                })
+                claim._log_generic('workflow_submitted', from_state='draft')
+                continue
             matching = claim.available_workflow_ids
             workflow = claim.workflow_id or (matching if len(matching) == 1 else False)
             if not workflow:
@@ -616,6 +688,33 @@ class SupplierClaimWorkflowEngine(models.Model):
                 'rejection_stage_state_id': False,
             })
             claim._log_generic('workflow_submitted', from_state='draft')
+        return True
+
+    def action_reset_to_draft(self):
+        self._require_role('admin')
+        if not self:
+            raise UserError(_('Select at least one claim to reset to Draft.'))
+        self.check_access('write')
+        self.lock_for_update()
+        self.invalidate_recordset()
+        self.check_access('write')
+        if any(not claim.active for claim in self):
+            raise UserError(_('Archived claims must be restored before resetting them to Draft.'))
+        claims_to_reset = self.filtered(lambda record: record.state != 'draft')
+        if not claims_to_reset:
+            raise UserError(_('The selected claims are already in Draft.'))
+        for claim in claims_to_reset:
+            previous_state = claim.state
+            claim.stage_state_ids._internal_write({
+                'status': 'waiting', 'user_id': False, 'decision_at': False,
+                'reason': False, 'followup_date': False,
+            })
+            claim._workflow_write({
+                'state': 'draft',
+                'current_sequence': 0,
+                'rejection_stage_state_id': False,
+            })
+            claim._log_generic('reset_to_draft', from_state=previous_state)
         return True
 
     def action_resubmit(self):

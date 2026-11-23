@@ -29,6 +29,8 @@
                             invisible="state == 'draft'"/>
                     <button name="action_archive_workflow" string="Archive" type="object"
                             invisible="state != 'published'"/>
+                    <button name="action_unarchive_workflow" string="Unarchive" type="object"
+                            class="btn-primary" invisible="state != 'archived'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
                 </header>
                 <sheet>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_reset_supplier_claims_to_draft" model="ir.actions.server">
+        <field name="name">Reset to Draft</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="binding_model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="state">code</field>
+        <field name="code">records.action_reset_to_draft()</field>
+    </record>
+</odoo>
