@@ -1,0 +1,37 @@
+
+name: Telegram Commit Notifications
+
+on:
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Telegram notification
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          commits=$(jq -r '
+            .commits[] |
+            "- " + (.message | split("\n")[0]) +
+            "\nhttps://github.com/" +
+            env.GITHUB_REPOSITORY +
+            "/commit/" + .id
+          ' "$GITHUB_EVENT_PATH")
+
+          message="🚀 New GitHub Push!
+
+          📦 Repository: $GITHUB_REPOSITORY
+          🌿 Branch: $GITHUB_REF_NAME
+          👤 Author: $GITHUB_ACTOR
+
+          📝 Commits:
+          $commits"
+
+          curl -sS --fail \
+            -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${message}"
