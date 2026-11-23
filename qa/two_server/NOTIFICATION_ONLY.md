@@ -1,0 +1,15 @@
+# Notification-only and endpoint access validation
+
+Source adapter: 19.0.1.5.2. Production remains on 19.0.1.5.1 until the operator deploys and upgrades it. The isolated implementation validation did not change production. A later separately authorized guest smoke test submitted a demo chat and attempted a COD checkout; that checkout failed the existing stock-reservation guard.
+
+The isolated source database is two_server_qa_20261123_store_validation. The storefront and adapter were upgraded together after an initial stale-schema diagnostic. The successful focused run recorded 44 cases, zero failures and zero errors, including one skipped optional Customer API case. Its log is /tmp/website-notifications-focused.log. The separate recovery run recorded ten cases, zero failures and zero errors, in /tmp/website-notifications-recovery.log. Two browser methods occur in both runs; execution counts must not be summed as distinct methods.
+
+Coverage includes native customer comments before remote acknowledgement, notification-only chatter with forwarding and intake disabled, queued media and lifecycle ordering, stable submission identity, ownership and dispatch restrictions, administrator visibility, ordinary exchange-user isolation and browser draft preservation. Existing full two-server soak evidence applies to 19.0.1.5.1 only; a new complete production-configuration soak has not been run.
+
+Callcenter helper checks used normal ORM operations in a task QA transaction and rolled back: creating a scoped disabled account is idempotent and leaves the base account and message count unchanged. Gateway helper checks used a temporary synthetic private configuration: preview, private backup, disabled new account, preservation of existing settings and idempotency passed.
+
+After the user reinstalled the production source module, a read-only service API check found the new endpoint source 62c18ac9-3a5b-472d-a75c-86d8edb575f5. The matching local account website-production-reinstalled and private gateway entry were initially prepared disabled. The operator later aligned and enabled the account and restarted the Website worker. A subsequent read-only recheck found three completed incoming events and exactly one receiver capture of the earlier demo chat. Agent-to-website replies have not been verified. Older receiver identities and message history were not rewritten.
+
+Static validation passed for adapter Python, XML and ES module syntax. Both Arabic catalogs passed msgfmt --check-format. A current POT export succeeded; the runtime action name differs between en_US (Callcenter Endpoints) and ar_001. The four-file storefront deployment helper passed synthetic preview, unknown-source refusal, backup, apply and idempotency checks.
+
+After integrating remote branch updates, the pre-push focused run in /tmp/website-notifications-prepush.log completed 44 cases in 76.66 seconds with zero failures and zero errors; the optional Customer API case remained skipped. Both portal browser methods and both endpoint access methods were included.
