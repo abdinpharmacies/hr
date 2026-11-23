@@ -1,7 +1,7 @@
 {
     "name": "Abdin eCommerce Storefront",
     "summary": "Abdin-branded storefront for native Odoo eCommerce",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "license": "LGPL-3",
     "category": "Website/eCommerce",
     "author": "Abdin Pharmacies",

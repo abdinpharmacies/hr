@@ -40,7 +40,7 @@
         <field name="title_color">#FFFFFF</field>
         <field name="button_background_color">#16834F</field>
         <field name="button_text_color">#FFFFFF</field>
-        <field name="user_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="livechat_channel_rule" model="im_livechat.channel.rule">
