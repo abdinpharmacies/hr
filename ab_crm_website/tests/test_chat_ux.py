@@ -10,6 +10,86 @@ from odoo.addons.ab_crm_messaging.models.messaging import _MUTATION
 
 @tagged('post_install', '-at_install', 'chat_ux')
 class TestChatUX(TestWebsiteContactGroups):
+    def test_preference_conflict_retries_only_the_target_constraint(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from psycopg2.errors import UniqueViolation, NotNullViolation
+        from odoo.exceptions import ConcurrencyError
+        from ..models.targets import _PREFERENCE
+
+        class PreferenceConflict(UniqueViolation):
+            @property
+            def diag(self):
+                return SimpleNamespace(constraint_name=constraint)
+
+        conversation, orders, identity = self.pair()
+        preferences = self.env['ab_crm_website_target_preference']
+        for constraint in ('ab_crm_website_target_preference_unique_target', 'unrelated_unique'):
+            expected = ConcurrencyError if constraint.endswith('_unique_target') else UniqueViolation
+            with patch.object(type(preferences), 'create', side_effect=PreferenceConflict()):
+                with self.assertRaises(expected):
+                    conversation._website_preference('order', orders[0], create=True)
+            self.assertFalse(_PREFERENCE.get())
+            self.env.cr.execute('SELECT 1')
+        with patch.object(type(preferences), 'create', side_effect=NotNullViolation()):
+            with self.assertRaises(NotNullViolation):
+                conversation._website_preference('order', orders[0], create=True)
+        self.assertFalse(_PREFERENCE.get())
+
+    def test_target_read_positions_and_notification_guards(self):
+        conversation, orders, identity = self.pair()
+        target = self.target(orders[0])
+        self.chat(conversation, orders[0], identity=identity)
+        self.chat(conversation, orders[0], identity=identity)
+        detail = conversation.workspace_detail(target=target)
+        incoming = [item['id'] for item in detail['messages'] if item['direction'] == 'in']
+        newest, oldest = max(incoming), min(incoming)
+        for ids in ([True], [False], [], ['1'], [-1]):
+            with self.assertRaises(AccessError):
+                self.chatter_api.acknowledge_alert(self.session_token, conversation.id, ids)
+        self.chatter_api.acknowledge_alert(self.session_token, conversation.id, [newest])
+        self.chatter_api.acknowledge_alert(self.session_token, conversation.id, [oldest])
+        self.chatter_api.acknowledge_alert(self.session_token, conversation.id, [newest])
+        notifications = self.chatter_api.notifications(self.session_token)
+        pending = {mid for item in notifications['items'] if item['conversation_id'] == conversation.id
+                   for mid in item['message_ids']}
+        self.assertFalse({newest, oldest} & pending)
+        conversation.workspace_acknowledge(newest, target=target)
+        conversation.workspace_acknowledge(oldest, target=target)
+        self.assertEqual(conversation._website_preference('order', orders[0]).last_message_id, newest)
+        for position in (True, False, '1', -1):
+            with self.assertRaises(AccessError):
+                conversation.workspace_acknowledge(position, target=target)
+        for position in (True, False, '1', -1):
+            with self.assertRaises(AccessError):
+                self.chatter_api.notifications(self.session_token, after_id=position)
+        first = self.chatter_api.notifications(self.session_token)
+        second = self.chatter_api.notifications(self.session_token)
+        self.assertEqual(first, second)
+
+    def test_shared_login_keeps_distinct_employee_target_preferences(self):
+        conversation, orders, identity = self.pair()
+        support = self.chat(conversation, identity=identity)
+        targets = [self.target(orders[0]), support['destination']]
+        employee = self.env['ab_hr_employee'].create({
+            'name': 'Preference colleague', 'barcode': 'PREFERENCE-COLLEAGUE', 'user_id': self.staff.id})
+        profile = self.profile.copy({'employee_id': employee.id, 'pos_pin': '1234'})
+        token = self.chatter_api.employee_login(profile.id, '1234', 'preference-colleague')['token']
+        colleague = conversation.with_context(ab_chatter_session_token=token)
+        for target in targets:
+            first = conversation.workspace_detail(target=target)
+            second = colleague.workspace_detail(target=target)
+            incoming = [item['id'] for item in first['messages'] if item['direction'] == 'in']
+            self.assertGreater(first['unread_count'], 0)
+            self.assertEqual(first['unread_count'], second['unread_count'])
+            conversation.workspace_acknowledge(max(incoming), target=target)
+            self.assertEqual(conversation.workspace_detail(target=target)['unread_count'], 0)
+            self.assertGreater(colleague.workspace_detail(target=target)['unread_count'], 0)
+            preferences = self.env['ab_crm_website_target_preference'].sudo().search([
+                ('target_uuid', '=', target['uuid']), ('user_id', '=', self.staff.id)])
+            self.assertEqual(set(preferences.employee_id.ids), {self.employee.id, employee.id})
+            self.assertEqual(len(preferences), 2)
+
     def target(self, order):
         return {'kind': 'order', 'uuid': order.order_uuid}
 

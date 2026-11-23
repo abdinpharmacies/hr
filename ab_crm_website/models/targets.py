@@ -1,6 +1,8 @@
 from contextvars import ContextVar
 from uuid import UUID
 
+from psycopg2.errors import UniqueViolation
+
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ConcurrencyError, LockError, UserError, ValidationError
 
@@ -135,8 +137,15 @@ class Conversation(models.Model):
                 initial = max(messages.filtered(lambda item: not unread or item.id < unread[0].id).ids, default=0)
                 flag = _PREFERENCE.set(True)
                 try:
-                    preference = preferences.create({key: value for key, operator, value in domain} | {
-                        'last_message_id': initial})
+                    try:
+                        with self.env.cr.savepoint():
+                            preference = preferences.create({key: value for key, operator, value in domain} | {
+                                'last_message_id': initial})
+                            preference.flush_recordset()
+                    except UniqueViolation as error:
+                        if error.diag.constraint_name != 'ab_crm_website_target_preference_unique_target':
+                            raise
+                        raise ConcurrencyError('Concurrent website chat preference creation') from None
                 finally:
                     _PREFERENCE.reset(flag)
         return preference
