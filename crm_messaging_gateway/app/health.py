@@ -23,3 +23,15 @@ def reception_health(config, polling, backlog, now=None):
             'backlog_age_seconds': age_seconds(oldest.get(code), now),
         }
     return result
+
+
+def website_queue_health(rows, now=None):
+    now = time.time() if now is None else now
+    pending = [row for row in rows if row['state'] not in ('done', 'superseded')]
+    blocked = {(row['account'], row['destination']) for row in rows
+               if row.get('outcome_status') == 'review' and row['state'] != 'superseded'}
+    return {
+        'oldest_pending_age_seconds': max((age_seconds(row['created_at'], now) for row in pending), default=0),
+        'blocked_streams': len(blocked),
+        'retrying': sum(row['state'] == 'ready' and row['sends'] > 0 for row in rows),
+    }

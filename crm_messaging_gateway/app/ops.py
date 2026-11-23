@@ -58,13 +58,19 @@ def main():
             polling = conn.execute(
                 'SELECT provider_account,next_offset,updated_at FROM telegram_polling ORDER BY provider_account'
             ).fetchall()
-            from .health import reception_health
+            from .health import reception_health, website_queue_health
 
             backlog = conn.execute(
                 "SELECT account,MIN(created_at) AS oldest FROM incoming_event WHERE state NOT IN ('done','ignored') GROUP BY account"
             ).fetchall()
             health = reception_health(config, polling, backlog)
-            metrics = {}
+            website_queue = conn.execute(
+                "SELECT id,account,state,sends,created_at,payload->>'website_destination' AS destination,"
+                "outcome->>'status' AS outcome_status,outcome->>'website_failure' AS failure "
+                "FROM outgoing_operation WHERE payload->>'provider'='website' "
+                "AND state!='superseded' AND (state!='done' OR outcome->>'status'='review') ORDER BY created_at"
+            ).fetchall()
+            metrics = {'website': website_queue_health(website_queue)}
             if not sqlite:
                 for table in ('incoming_event', 'outgoing_operation'):
                     row = conn.execute(
@@ -106,6 +112,7 @@ def main():
                     'polling': polling,
                     'metrics': metrics,
                     'reception_health': health,
+                    'website_queue': website_queue,
                 },
                 default=str,
             )

@@ -159,6 +159,11 @@ class Store:
             ).fetchone()
             if row['payload'] != frozen:
                 raise Conflict('Conflicting outgoing operation')
+            if payload.get('provider') == 'website':
+                conn.execute(
+                    "UPDATE outgoing_operation SET state='superseded' WHERE account=%s AND token=%s AND attempt<%s AND state IN ('done','report') AND outcome->>'status'='review'",
+                    (account, payload['token'], payload['attempt']),
+                )
             return row
 
     def stored(self, accounts=None):
@@ -190,24 +195,37 @@ class Store:
                 (Jsonb({'status': 'review', 'reference': '', 'error': 'ambiguous'}), None if accounts is None else 1, accounts),
             )
 
+    def recover_website_sending(self, accounts):
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT * FROM outgoing_operation WHERE state='sending' AND lease_until<now() AND account =ANY(%s) AND payload->>'provider'='website'",
+                (accounts,),
+            ).fetchall()
+        for row in rows:
+            self.outcome(row, {'status': 'failed', 'reference': '', 'error': 'unavailable',
+                               'website_failure': 'expired_lease'})
+
     def claim_outgoing(self, accounts):
         with self.connect() as conn:
             return conn.execute(
                 """UPDATE outgoing_operation SET state='sending', sends=sends+1, lease_until=now()+interval '120 seconds'
                 WHERE id=(SELECT candidate.id FROM outgoing_operation candidate WHERE candidate.state='ready' AND candidate.available_at<=now() AND candidate.account=ANY(%s)
                 AND NOT EXISTS (SELECT 1 FROM outgoing_operation earlier WHERE earlier.account=candidate.account
-                    AND earlier.payload->>'destination'=candidate.payload->>'destination' AND earlier.id<candidate.id
-                    AND (earlier.state!='done' OR earlier.outcome->>'status'='review'))
+                    AND COALESCE(earlier.payload->>'website_destination',earlier.payload->>'destination')=COALESCE(candidate.payload->>'website_destination',candidate.payload->>'destination') AND earlier.id<candidate.id
+                    AND earlier.state!='superseded' AND (earlier.state!='done' OR earlier.outcome->>'status'='review'))
                 ORDER BY candidate.id FOR UPDATE OF candidate SKIP LOCKED LIMIT 1) RETURNING *""",
                 (accounts,),
             ).fetchone()
 
     def outcome(self, row, outcome):
+        website = row['payload'].get('provider') == 'website'
         retry = (
             outcome['status'] == 'failed'
             and outcome['error'] in ('rate_limit', 'unavailable')
-            and row['sends'] < 5
+            and row['sends'] < (8 if website else 5)
         )
+        if website and not retry and outcome['status'] == 'failed' and outcome['error'] in ('rate_limit', 'unavailable'):
+            outcome = dict(outcome, status='review')
         with self.connect() as conn:
             conn.execute(
                 """UPDATE outgoing_operation SET state=%s, outcome=%s, available_at=now()+(%s * interval '1 second')
@@ -215,7 +233,7 @@ class Store:
                 (
                     'ready' if retry else 'report',
                     Jsonb(outcome),
-                    outcome.get('retry_after', 30),
+                    min(300, 5 * 2 ** (row['sends'] - 1)) if website else outcome.get('retry_after', 30),
                     row['id'],
                     row['sends'],
                 ),

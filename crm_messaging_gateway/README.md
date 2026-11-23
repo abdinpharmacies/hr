@@ -196,3 +196,16 @@ outgoing operation. See the [implementation, validation and rollout report](../d
 The optional Website transport runs with `python -m app.website`. Its Odoo companions capture confirmed website orders and supply text chat without using the customer API. See [Website adapter setup and rollout](../docs/website-callcenter-adapter.md).
 
 Use `python -m app.worker --provider telegram` and `--provider whatsapp` for separate durable provider workers. Incoming claims, expired-send recovery, stored receipts and delivery reporting are filtered by assigned accounts on PostgreSQL and SQLite. Replace the previous shared worker before enabling these service templates; keep one Telegram receiver per bot. HTTP/Uvicorn workers remain independent of channel workers. Existing ambiguous-send review behavior is preserved.
+
+Website chat v2 is delivered by the existing dedicated Website worker alongside v1 order events. The consumer must support `receive_website_chat` and `/crm/website/v2/receive`; the source exposes `/storefront-callcenter/v2/fetch`, `acknowledge` and `receive`. Replies require a frozen `website_destination` with `kind` (`order` or `livechat`) and a canonical UUID. Historical untyped replies are never sent. Source/account queues and credentials remain separate. See `../docs/website-chat-rollout.md` for activation and rollback.
+
+When a source returns 404 for the v2 chat fetch, the worker keeps v1 intake running and stops probing that source for v2 until its next restart. Restart the Website worker after upgrading an older source to enable chat there. Other source accounts keep their own capability state.
+
+Website recovery and verified identity are described in `docs/website-reliable-conversations.md` in the callcenter checkout. Version 3 producers require the receiver and gateway upgrade first; the endpoint lifecycle switch defaults to disabled. Pending sends retain their original UUID and destination. A website acknowledgement proves acceptance, never customer reading.
+
+
+### Website media exchange v4
+
+Website messages may carry up to four private files of 20 MB each. The queue stores immutable descriptors (stable ID, name, MIME type, byte length, SHA-256 digest, kind and available recording duration). Incoming bytes stream from the authenticated storefront media endpoint and upload to callcenter staging before the message is received. Acknowledgement follows durable storage of every attachment and the complete message. Partial uploads are safe to retry.
+
+Outgoing files use authenticated binary uploads before the small v4 receive request. The submission token, destination and complete descriptor list protect retries; an unsupported peer produces a media review result. Text-only v1/v2 and lifecycle v3 remain independent. Upgrade both adapters and this worker together, validate the round trip, then enable the storefront endpoint's v4 media flag. This change does not activate endpoints or restart services.

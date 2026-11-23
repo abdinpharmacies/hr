@@ -137,6 +137,9 @@ class Worker:
             except Exception:
                 pass
 
+    def _send_operation(self, row):
+        return send(self.client, self.config.accounts[row['account']], row['payload'])
+
     def dispatch(self):
         if not self.config.sending_enabled:
             return
@@ -175,9 +178,7 @@ class Worker:
                 self.store.defer_send(row)
                 return
             with latency('provider_dispatch'):
-                outcome = send(
-                    self.client, self.config.accounts[row['account']], row['payload']
-                )
+                outcome = self._send_operation(row)
             self.store.outcome(row, outcome)
 
     def report(self):

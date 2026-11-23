@@ -25,12 +25,18 @@ class Odoo:
         payload = dict(
             account_code=code, provider_account=account.provider_account, **values
         )
-        controller = self.config.odoo_transport == 'controller_v1' and method != 'receive_website_event'
+        controller = self.config.odoo_transport == 'controller_v1' and method not in ('receive_website_event', 'receive_website_chat', 'receive_website_lifecycle', 'website_capabilities')
         path = '/crm/messaging/v1/' if controller else '/json/2/ab_crm_messaging_api/'
+        if method == 'receive_website_lifecycle':
+            path = '/crm/website/v3/'
+            method = 'receive'
+        if method == 'receive_website_chat':
+            path = '/crm/website/v4/' if values.get('event', {}).get('version') == 4 else '/crm/website/v2/'
+            method = 'receive'
         if method == 'receive_website_event':
             path = '/crm/website/v1/'
             method = 'receive'
-        attempts = 4 if method == 'get_provider_credentials' else 1
+        attempts = 4 if method == 'get_provider_credentials' or account.provider == 'website' else 1
         for attempt in range(attempts):
             try:
                 response = self.client.post(
@@ -53,6 +59,8 @@ class Odoo:
             if response.status_code != 409 or attempt == attempts - 1:
                 break
             time.sleep(0.2 * (2**attempt))
+        if response.status_code == 409 and account.provider == 'website':
+            raise OdooUnavailable('Odoo transaction conflict')
         if response.status_code != 200:
             raise RuntimeError('Odoo request failed')
         data = response.json()
