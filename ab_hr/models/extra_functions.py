@@ -1,21 +1,14 @@
-from collections.abc import Iterable
+from odoo import fields
 
 
-def get_modified_name(name):
-    if isinstance(name, str):
-        replacement = 'أإآ'
-        for s in replacement:
-            name = name.replace(s, 'ا')
-
-        name = name.replace('ؤ', 'و')
-        name = name.replace('ى', 'ي')
-        name = name.replace('  ', '%')
-        return name
-
-    if isinstance(name, Iterable) and not isinstance(name, (bytes, dict)):
-        return type(name)(
-            get_modified_name(item) if isinstance(item, str) else item
-            for item in name
-        )
-
-    return name
+def with_normalized_name(domain, operator, value):
+    """Also match the normalized Arabic spelling used by existing HR lookups."""
+    if not isinstance(value, str) or not operator.endswith('like'):
+        return domain
+    spelling = value.translate(str.maketrans("أإآؤى", "اااوي")).replace("  ", "%")
+    if spelling == value:
+        return domain
+    alternative = fields.Domain('name', operator, spelling)
+    if operator in fields.Domain.NEGATIVE_OPERATORS:
+        return domain & alternative
+    return domain | alternative

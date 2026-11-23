@@ -1,0 +1,332 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_hr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-22 14:12+0000\n"
+"PO-Revision-Date: 2026-11-22 14:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"ms-1\">Working</span>"
+msgstr "<span class=\"ms-1\">يعمل</span>"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">Department</span>"
+msgstr "<span class=\"text-muted me-2\">القسم</span>"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">Job</span>"
+msgstr "<span class=\"text-muted me-2\">الوظيفة</span>"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">Manager</span>"
+msgstr "<span class=\"text-muted me-2\">المدير</span>"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">ePlus Code</span>"
+msgstr "<span class=\"text-muted me-2\">كود الموظف</span>"
+
+#. module: ab_hr
+#. odoo-python
+#: code:addons/ab_hr/models/ab_hr_department.py:0
+msgid "A department cannot be its own direct or indirect parent."
+msgstr "لا يمكن أن يكون القسم تابعًا لنفسه بشكل مباشر أو غير مباشر."
+
+#. module: ab_hr
+#: model:ir.module.category,name:ab_hr.category_ab_hr
+#: model:res.groups.privilege,name:ab_hr.privilege_ab_hr
+msgid "Abdin HR"
+msgstr "الموارد البشرية لعبدين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__active
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__job_status__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_hr
+#. odoo-python
+#: code:addons/ab_hr/models/ab_hr_employee.py:0
+msgid "An employee cannot be their own direct or indirect manager."
+msgstr "لا يمكن أن يكون الموظف مديرًا لنفسه بشكل مباشر أو غير مباشر."
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Assignment"
+msgstr "التكليف الوظيفي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__territory__3
+msgid "Both"
+msgstr "إدارة عامة"
+
+#. module: ab_hr
+#: model:ir.module.category,description:ab_hr.category_ab_hr
+msgid "Category For Abdin HR"
+msgstr "فئة الموارد البشرية لعبدين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__child_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+msgid "Child Departments"
+msgstr "الأقسام التابعة"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__costcenter_id
+msgid "Cost Center"
+msgstr "مركز التكلفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__create_uid
+msgid "Created by"
+msgstr "إنشاء بواسطة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_department
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__department_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__manager_id
+msgid "Department Manager"
+msgstr "مدير القسم"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_department_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_department_config_menu
+msgid "Departments"
+msgstr "الأقسام"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__child_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Direct Reports"
+msgstr "المرؤوسون المباشرون"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__display_name
+msgid "Display Name"
+msgstr "الاسم الظاهر في العرض"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_employee
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_employee_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_employee_menu
+#: model:ir.ui.menu,name:ab_hr.ab_hr_employee_sub_menu
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Employment"
+msgstr "بيانات التوظيف"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__english_name
+msgid "English Name"
+msgstr "الاسم بالإنجليزي"
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.menu_root
+msgid "HR"
+msgstr "الموارد البشرية"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_admin
+msgid "HR Administrator"
+msgstr "مسؤول إدارة الموارد البشرية"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_basic_data
+msgid "HR Basic Data"
+msgstr "البيانات الأساسية للموارد البشرية"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_co
+msgid "HR Coordinator"
+msgstr "منسق الموارد البشرية"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_manager
+msgid "HR Manager"
+msgstr "مدير الموارد البشرية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__hiring_date
+msgid "Hiring Date"
+msgstr "تاريخ التعيين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Identity"
+msgstr "بيانات الهوية"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__job_status__inactive
+msgid "Inactive"
+msgstr "غير نشط"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__internal_job
+msgid "Internal Job"
+msgstr "وظيفة داخلية"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__issue_date
+msgid "Issue Date"
+msgstr "تاريخ التنبيه"
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_job
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__job_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__job_status
+msgid "Job Status"
+msgstr "حالة الوظيفة(يعمل/لا يعمل)"
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_job_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_job_config_menu
+msgid "Jobs"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__write_date
+msgid "Last Updated on"
+msgstr "حدث آخر مرة بتاريخ"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__parent_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__territory__1
+msgid "North"
+msgstr "الشمالي"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Not Working"
+msgstr "لا يعمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__parent_path
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__parent_path
+msgid "Parent Path"
+msgstr "مسار التسلسل الهرمي"
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__territory__2
+msgid "South"
+msgstr "الجنوبي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__parent_id
+msgid "Superior Department"
+msgstr "القسم الأعلى"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__termination_date
+msgid "Termination Date"
+msgstr "تاريخ نهاية التعاقد"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__territory
+msgid "Territory"
+msgstr "الإقليم"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__work_email
+msgid "Work Email"
+msgstr "ايميل العمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__is_working
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Working"
+msgstr "يعمل"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__accid
+msgid "ePlus Code"
+msgstr "كود الموظف"

@@ -1,0 +1,331 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_hr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-22 14:12+0000\n"
+"PO-Revision-Date: 2026-11-22 14:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"ms-1\">Working</span>"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">Department</span>"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">Job</span>"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">Manager</span>"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_kanban
+msgid "<span class=\"text-muted me-2\">ePlus Code</span>"
+msgstr ""
+
+#. module: ab_hr
+#. odoo-python
+#: code:addons/ab_hr/models/ab_hr_department.py:0
+msgid "A department cannot be its own direct or indirect parent."
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.module.category,name:ab_hr.category_ab_hr
+#: model:res.groups.privilege,name:ab_hr.privilege_ab_hr
+msgid "Abdin HR"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__active
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__active
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__job_status__active
+msgid "Active"
+msgstr ""
+
+#. module: ab_hr
+#. odoo-python
+#: code:addons/ab_hr/models/ab_hr_employee.py:0
+msgid "An employee cannot be their own direct or indirect manager."
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_job_view_search
+msgid "Archived"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Assignment"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__territory__3
+msgid "Both"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.module.category,description:ab_hr.category_ab_hr
+msgid "Category For Abdin HR"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__child_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_department_view_form
+msgid "Child Departments"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.config
+msgid "Configuration"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__costcenter_id
+msgid "Cost Center"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__create_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__create_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_department
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__department_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Department"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__manager_id
+msgid "Department Manager"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_department_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_department_config_menu
+msgid "Departments"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__child_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Direct Reports"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__display_name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_employee
+msgid "Employee"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_employee_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_employee_menu
+#: model:ir.ui.menu,name:ab_hr.ab_hr_employee_sub_menu
+msgid "Employees"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Employment"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__english_name
+msgid "English Name"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.ui.menu,name:ab_hr.menu_root
+msgid "HR"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_admin
+msgid "HR Administrator"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_basic_data
+msgid "HR Basic Data"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_co
+msgid "HR Coordinator"
+msgstr ""
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_manager
+msgid "HR Manager"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__hiring_date
+msgid "Hiring Date"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__id
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_form
+msgid "Identity"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__job_status__inactive
+msgid "Inactive"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__internal_job
+msgid "Internal Job"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__issue_date
+msgid "Issue Date"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model,name:ab_hr.model_ab_hr_job
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__job_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Job"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__job_status
+msgid "Job Status"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.actions.act_window,name:ab_hr.ab_hr_job_action
+#: model:ir.ui.menu,name:ab_hr.ab_hr_job_config_menu
+msgid "Jobs"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__write_uid
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__write_date
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__parent_id
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Manager"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__name
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_job__name
+msgid "Name"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__territory__1
+msgid "North"
+msgstr ""
+
+#. module: ab_hr
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Not Working"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__parent_path
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__parent_path
+msgid "Parent Path"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_employee__territory__2
+msgid "South"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__store_id
+msgid "Store"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_department__parent_id
+msgid "Superior Department"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__termination_date
+msgid "Termination Date"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__territory
+msgid "Territory"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__work_email
+msgid "Work Email"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__is_working
+#: model_terms:ir.ui.view,arch_db:ab_hr.ab_hr_employee_view_search
+msgid "Working"
+msgstr ""
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_employee__accid
+msgid "ePlus Code"
+msgstr ""
