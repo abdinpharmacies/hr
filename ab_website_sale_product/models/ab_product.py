@@ -668,7 +668,7 @@ class AbProduct(models.Model):
             | fields.Domain("default_code", "in", codes)
             | fields.Domain("website_eplus_item_id", "in", item_ids)
         )
-        source_products = self.sudo().with_context(active_test=False).search(fields.Domain("code", "in", codes))
+        source_products = self.sudo().search(fields.Domain("code", "in", codes))
         source_ids_by_code = {}
         for product in source_products:
             source_ids_by_code.setdefault(product.code, set()).add(product.id)

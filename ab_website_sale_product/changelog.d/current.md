@@ -2,19 +2,35 @@
 
 ## Current changes before commit:
 
-- Use the native SQL Server read connection for branch stock because the demo server has no working ODBC library.
-- Keep each branch query parameterized and scoped by store, with a fallback when optional store name columns are missing.
+- Let a linked active website product sync when another source product with the same code is archived.
+- Keep active duplicate codes blocked to protect website product identity.
 
 Files changed:
 
-- `ab_website_sale_product/models/eplus_stock_snapshot.py`
+- `ab_website_sale_product/models/ab_product.py`
+- `ab_website_sale_product/tests/test_website_product_sync.py`
 - `ab_website_sale_product/changelog.d/current.md`
 
 Validation:
 
-- The focused native-connection and fallback tests passed on `codex_eplus_sync_20261104`; `/tmp/ecommerce_native_branch_validation_final.log`.
+- Python compilation passed. The focused test class could not start on replica database `codex_eplus_sync_20261104` because its setup creates an `ab_product_group` blocked by replica policy; `/tmp/ecommerce_archived_duplicate_validation.log`.
 
 ## Recent commits
+
+Commit: `4e16956b`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product/FIX: read branch stock through native connector`
+
+User-facing changes:
+
+- Read branch stock through the native SQL Server connector and keep store queries parameterized.
+- Fall back to basic stock rows when optional store name columns are unavailable.
+
+Files changed:
+
+- `ab_website_sale_product/changelog.d/current.md`
+- `ab_website_sale_product/models/eplus_stock_snapshot.py`
 
 Commit: `331103a5`
 Author: Mohamed Fawzy

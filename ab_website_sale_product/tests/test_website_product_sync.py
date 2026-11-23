@@ -81,6 +81,19 @@ class TestWebsiteProductSync(TransactionCase):
         self.assertFalse(product.website_product_tmpl_id)
         self.assertEqual(job.skipped_count, 1)
 
+    def test_archived_duplicate_code_does_not_block_linked_active_product(self):
+        product = self.product('SYNC-ARCHIVED-DUPLICATE')
+        template = product._sync_website_products(create_missing=True)
+        archived = self.product(product.code)
+        archived.active = False
+
+        self.assertEqual(product._sync_website_products(), template)
+        self.assertEqual(template.ab_product_id, product)
+
+        archived.active = True
+        with self.assertRaisesRegex(UserError, 'conflicting website links'):
+            product._sync_website_products()
+
     def test_add_many_by_codes_skips_ineligible_product(self):
         product = self.product('SYNC-CODES-INACTIVE')
         product.active = False
