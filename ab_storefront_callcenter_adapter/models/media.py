@@ -111,9 +111,7 @@ class MediaExchange(models.AbstractModel):
         endpoint = self._endpoint(source)
         if not endpoint.media_enabled:
             raise AccessError(_('Website media is unavailable.'))
-        return self.env['ab_storefront_callcenter_chat_event'].sudo().search([
-            ('endpoint_id', '=', endpoint.id), ('acknowledged', '=', False), ('exchange_version', '=', 4),
-        ], order='id', limit=50).mapped('envelope')
+        return self._fetch_chat_events(endpoint, 4)
 
     @api.model
     def acknowledge_v4(self, source, event_uuid, fingerprint):

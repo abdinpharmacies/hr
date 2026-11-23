@@ -42,3 +42,14 @@ trusted browser checkout owner before asynchronous confirmation. The original
 guest/account origin remains fixed; later verified login handoff can link the
 conversation without changing that origin. Names and phone numbers do not
 establish ownership. Existing submissions are not backfilled.
+
+
+## Notification-only operation and offline order chatter
+
+Version 19.0.1.5.2 keeps native portal order comments available without Callcenter acknowledgement, including when endpoint intake or chat forwarding is disabled. Existing order ownership, website/company isolation and dispatch closure still apply. Enabling notification intake does not authorize Callcenter to validate purchases, payments or stock operations.
+
+Use Enabled for order notifications. Chat Enabled controls the optional chat bridge; Outgoing Enabled controls remote replies. Both can remain off for notifications only. Native comments saved while forwarding is off are retained in Odoo and are not backfilled to Callcenter. When forwarding is enabled, customer messages and uploads are stored locally before acknowledgement; transport withholds them and order lifecycle events until the initial order is captured.
+
+Settings administrators can list endpoints in their selected companies even when another role implies Callcenter Exchange Service. Ordinary exchange users remain limited to their own endpoints. Upgrade the module to load this rule; uninstalling is unnecessary and can remove integration records.
+
+If using the optional Live Chat bridge, select an active internal bridge operator in the endpoint company, different from the exchange user and without Settings administrator access. Add this user to the selected Live Chat channel's operators. The supplied user is Callcenter Support. A notification-only endpoint does not require a Live Chat channel.

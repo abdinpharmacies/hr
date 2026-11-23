@@ -55,21 +55,20 @@
   </record>
   <template id="confirmation_chat" inherit_id="website_sale.confirmation">
     <xpath expr="//div[@id='order_name']" position="after">
-      <a t-if="order.ab_callcenter_uuid" t-att-href="'/my/website-chat/' + order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
+      <a t-if="order.ab_callcenter_uuid and order.ab_callcenter_endpoint_id.sudo().chat_enabled" t-att-href="'/my/website-chat/' + order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
     </xpath>
   </template>
   <template id="portal_chat" inherit_id="sale.sale_order_portal_content">
     <xpath expr="//div[@id='introduction']" position="after">
-      <a t-if="sale_order.ab_callcenter_uuid" t-att-href="'/my/website-chat/' + sale_order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
+      <a t-if="sale_order.ab_callcenter_uuid and sale_order.ab_callcenter_endpoint_id.sudo().chat_enabled" t-att-href="'/my/website-chat/' + sale_order.ab_callcenter_uuid" class="btn btn-secondary">Chat about this order</a>
     </xpath>
   </template>
   <template id="portal_chat_readiness" inherit_id="sale.sale_order_portal_template">
     <xpath expr="//t[@t-call='portal.message_thread']" position="attributes">
-      <attribute name="disable_composer">(disable_composer or sale_order.ab_callcenter_chat_closed or not sale_order.ab_callcenter_chat_ready or not sale_order.ab_callcenter_endpoint_id.sudo().chat_enabled) if sale_order.ab_callcenter_uuid else disable_composer</attribute>
+      <attribute name="disable_composer">(disable_composer or sale_order.ab_callcenter_chat_closed) if sale_order.ab_callcenter_uuid else disable_composer</attribute>
     </xpath>
     <xpath expr="//t[@t-call='portal.message_thread']" position="before">
       <span t-if="sale_order.ab_callcenter_uuid" t-att-data-ab-order-chatter="sale_order.id" t-att-data-closed="'1' if sale_order.ab_callcenter_chat_closed else None"/>
-      <p t-if="sale_order.ab_callcenter_uuid and not sale_order.ab_callcenter_chat_closed and not sale_order.ab_callcenter_chat_ready" role="status">Order chat is waiting for Callcenter acknowledgement.</p>
     </xpath>
   </template>
   <template id="chat" name="Website Order Chat">

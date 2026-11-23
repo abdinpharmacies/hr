@@ -127,7 +127,7 @@ class Order(models.Model):
                 ('order_id', '=', order.id),
             ], order='id', limit=1) if order.ab_callcenter_uuid else False
             order.ab_callcenter_chat_ready = bool(
-                initial and initial.envelope['kind'] == 'order' and initial.acknowledged)
+                initial and initial.envelope['kind'] == 'order')
 
     def _ab_callcenter_require_chat(self):
         self.ensure_one()
@@ -136,7 +136,7 @@ class Order(models.Model):
         if (not endpoint.enabled or not endpoint.chat_enabled
                 or endpoint.website_id != self.website_id or endpoint.company_id != self.company_id
                 or not self.ab_callcenter_chat_ready):
-            raise AccessError(_('Order chat is waiting for Callcenter acknowledgement.'))
+            raise AccessError(_('Chat unavailable. Please retry.'))
 
     def message_post(self, **kwargs):
         if (self.ab_callcenter_uuid and kwargs.get('message_type', 'notification') == 'comment'
@@ -148,7 +148,6 @@ class Order(models.Model):
             allowed = Chat()._order(self.ab_callcenter_uuid)
             if allowed != self:
                 raise AccessError(_('Invalid website order.'))
-            self._ab_callcenter_require_chat()
             self._ab_callcenter_require_open()
         return super().message_post(**kwargs)
 
@@ -160,8 +159,9 @@ class Order(models.Model):
                 and not message.subtype_id.internal
                 and message.author_id
                 and not message.author_id.sudo().user_ids.filtered(lambda u: not u.share)):
-            self._ab_callcenter_require_chat()
-            self._ab_callcenter_capture_message(message)
+            endpoint = self.ab_callcenter_endpoint_id.sudo()
+            if endpoint.enabled and endpoint.chat_enabled:
+                self._ab_callcenter_capture_message(message)
         return result
 
     def _ab_callcenter_capture_message(self, message, event_uuid=None):

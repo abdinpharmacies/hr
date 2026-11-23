@@ -69,12 +69,12 @@ class TestCapture(TestStorefrontReservations):
         cart._cart_add(self.product.id, 1)
         cart.action_confirm()
         api = self.env['ab_storefront_callcenter_api'].with_user(self.worker)
-        with self.assertRaises(AccessError):
-            cart._ab_callcenter_customer_post('Pending', str(uuid4()))
-        initial = api.fetch_v1(self.endpoint.source)[0]
-        api.acknowledge_v1(self.endpoint.source, initial['event_uuid'], initial['fingerprint'])
         key = str(uuid4())
         cart._ab_callcenter_customer_post('Customer question', key)
+        self.assertTrue(cart.ab_callcenter_chat_ready)
+        self.assertFalse(api.fetch_v2(self.endpoint.source))
+        initial = api.fetch_v1(self.endpoint.source)[0]
+        api.acknowledge_v1(self.endpoint.source, initial['event_uuid'], initial['fingerprint'])
         cart._ab_callcenter_customer_post('Customer question', key)
         events = api.fetch_v2(self.endpoint.source)
         self.assertEqual(len(events), 1)
@@ -136,6 +136,32 @@ class TestCapture(TestStorefrontReservations):
         self.assertTrue(first.ab_callcenter_chat_closed)
         self.assertEqual(len([event for event in api.fetch_v3(self.endpoint.source) if event['kind'] == 'order_dispatched']), 1)
         second._ab_callcenter_customer_post('Other order remains open', str(uuid4()))
+
+    def test_pending_order_media_is_saved_before_remote_acknowledgement(self):
+        self._chat_configuration()
+        self.endpoint.write({'media_enabled': True, 'lifecycle_enabled': True})
+        cart = self.cart()
+        cart._cart_add(self.product.id, 1)
+        cart.action_confirm()
+        before = (cart.state, cart.amount_total, self.product.qty_available)
+        attachment = self.env['ir.attachment'].create({'name': 'queued.pdf',
+            'raw': b'%PDF-1.4 queued message', 'mimetype': 'application/pdf',
+            'res_model': 'sale.order', 'res_id': cart.id})
+        token = str(uuid4())
+        cart._ab_callcenter_customer_post('', token, attachment.ids)
+        cart._ab_callcenter_customer_post('', token, attachment.ids)
+        pending = self.env['ab_storefront_callcenter_chat_event'].search([('event_uuid', '=', token)])
+        self.assertEqual(len(pending), 1)
+        self.assertEqual(pending.message_id.attachment_ids, attachment)
+        self.assertFalse(pending.acknowledged)
+        api = self.env['ab_storefront_callcenter_api'].with_user(self.worker)
+        self.assertFalse(api.fetch_v4(self.endpoint.source))
+        self.assertFalse(api.fetch_v3(self.endpoint.source))
+        initial = api.fetch_v1(self.endpoint.source)[0]
+        api.acknowledge_v1(self.endpoint.source, initial['event_uuid'], initial['fingerprint'])
+        self.assertEqual(api.fetch_v4(self.endpoint.source)[0]['event_uuid'], token)
+        self.assertTrue(api.fetch_v3(self.endpoint.source))
+        self.assertEqual((cart.state, cart.amount_total, self.product.qty_available), before)
 
     def test_warehouse_dispatch_closes_chat_with_native_stock_result(self):
         self._chat_configuration()
@@ -361,10 +387,10 @@ class TestCapture(TestStorefrontReservations):
             _CAPTURE.reset(guard)
         portal_env = self.env(user=portal.id, su=False)
         with MockRequest(portal_env, website=self.website):
-            with self.assertRaises(AccessError):
-                cart.with_user(portal).sudo().message_post(body='Pending', message_type='comment', subtype_xmlid='mail.mt_comment')
+            cart.with_user(portal).sudo().message_post(body='Pending', message_type='comment', subtype_xmlid='mail.mt_comment')
         api = self.env['ab_storefront_callcenter_api'].with_user(self.worker)
         initial = api.fetch_v1(self.endpoint.source)[0]
+        self.assertFalse(api.fetch_v2(self.endpoint.source))
         api.acknowledge_v1(self.endpoint.source, initial['event_uuid'], initial['fingerprint'])
         with MockRequest(portal_env, website=self.website) as request, patch.object(
                 type(self.env['website']), 'get_current_website', return_value=self.website):
@@ -378,8 +404,8 @@ class TestCapture(TestStorefrontReservations):
         cart.message_post(body='Internal note', message_type='comment', subtype_xmlid='mail.mt_note')
         cart.message_post(body='Employee comment', message_type='comment', subtype_xmlid='mail.mt_comment')
         events = api.fetch_v2(self.endpoint.source)
-        self.assertEqual(len(events), 1)
-        self.assertEqual(events[0]['body'], 'Native customer comment')
+        self.assertEqual(len(events), 2)
+        self.assertEqual({event['body'] for event in events}, {'Pending', 'Native customer comment'})
 
     def test_adapter_endpoint_selector_before_company_is_derived(self):
         endpoints = self.env['ab_storefront_callcenter_endpoint'].with_context(
@@ -1323,6 +1349,13 @@ class TestRecoveryHTTP(TestCapture, HttpCase):
 
     @no_retry
     def test_v4_portal_refresh_preserves_draft_and_receives_reply(self):
+        self._portal_refresh_without_callcenter(True)
+
+    @no_retry
+    def test_notification_only_portal_chatter_works_with_bridge_disabled(self):
+        self._portal_refresh_without_callcenter(False)
+
+    def _portal_refresh_without_callcenter(self, bridge_enabled):
         import json
         self._chat_configuration()
         portal = self.env['res.users'].create({'name': 'Portal refresh owner', 'login': 'portal-refresh', 'password': 'portal-refresh',
@@ -1332,7 +1365,8 @@ class TestRecoveryHTTP(TestCapture, HttpCase):
         cart.action_confirm()
         api = self.env['ab_storefront_callcenter_api'].with_user(self.worker)
         initial = api.fetch_v1(self.endpoint.source)[0]
-        api.acknowledge_v1(self.endpoint.source, initial['event_uuid'], initial['fingerprint'])
+        if not bridge_enabled:
+            self.endpoint.write({'chat_enabled': False, 'enabled': False})
         import hashlib
         from ..models.adapter import _CAPTURE
         guard = _CAPTURE.set(True)
@@ -1353,6 +1387,7 @@ class TestRecoveryHTTP(TestCapture, HttpCase):
                 if (!refresh) throw new Error('Scoped refresh button missing');
                 const input = shadow.querySelector('textarea.o-mail-Composer-input');
                 if (!input) throw new Error('Order composer missing');
+                if (document.body.innerText.includes('Order chat is waiting for Callcenter acknowledgement.')) throw new Error('Internal acknowledgement notice exposed');
                 input.value = 'Unsent portal draft';
                 input.dispatchEvent(new InputEvent('input', {bubbles: true, inputType: 'insertText', data: input.value}));
                 const {rpc} = odoo.loader.modules.get('@web/core/network/rpc');
@@ -1370,6 +1405,21 @@ class TestRecoveryHTTP(TestCapture, HttpCase):
                 console.log('test successful');
             })().catch(error => console.error(error));
         """.replace('ORDER', str(cart.id)), ready="!!odoo.portalChatterReady", login=portal.login, timeout=90)
+        cart.invalidate_recordset()
+        self.assertEqual(cart.state, 'sale')
+        initial_record = self.env['ab_storefront_callcenter_event'].search([
+            ('event_uuid', '=', initial['event_uuid'])])
+        self.assertFalse(initial_record.acknowledged)
+        self.assertTrue(cart.ab_callcenter_chat_ready)
+        events = self.env['ab_storefront_callcenter_chat_event'].search([
+            ('message_id.model', '=', 'sale.order'), ('message_id.res_id', '=', cart.id)])
+        if bridge_enabled:
+            self.assertEqual(len(events), 1)
+            self.assertFalse(api.fetch_v2(self.endpoint.source))
+            api.acknowledge_v1(self.endpoint.source, initial['event_uuid'], initial['fingerprint'])
+            self.assertEqual(api.fetch_v2(self.endpoint.source)[0]['body'], 'Automatic portal response')
+        else:
+            self.assertFalse(events)
 
     def test_recovery_native_http_retry_resume_and_history(self):
         import json

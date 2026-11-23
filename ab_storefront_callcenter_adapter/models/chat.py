@@ -361,12 +361,26 @@ class Session(models.Model):
 class Exchange(models.AbstractModel):
     _inherit = 'ab_storefront_callcenter_api'
 
+    def _pending_order_ids(self, endpoint):
+        return self.env['ab_storefront_callcenter_event'].sudo().search([
+            ('endpoint_id', '=', endpoint.id), ('acknowledged', '=', False),
+        ]).order_id.ids
+
+    def _fetch_chat_events(self, endpoint, version):
+        domain = (fields.Domain('endpoint_id', '=', endpoint.id)
+                  & fields.Domain('acknowledged', '=', False)
+                  & fields.Domain('exchange_version', '=', version))
+        pending = self._pending_order_ids(endpoint)
+        if pending:
+            domain &= ~(fields.Domain('message_id.model', '=', 'sale.order')
+                        & fields.Domain('message_id.res_id', 'in', pending))
+        return self.env['ab_storefront_callcenter_chat_event'].sudo().search(
+            domain, order='id', limit=50).mapped('envelope')
+
     @api.model
     def fetch_v2(self, source):
         endpoint = self._endpoint(source)
-        return self.env['ab_storefront_callcenter_chat_event'].sudo().search([
-            ('endpoint_id', '=', endpoint.id), ('acknowledged', '=', False), ('exchange_version', '=', 2),
-        ], order='id', limit=50).mapped('envelope')
+        return self._fetch_chat_events(endpoint, 2)
 
     @api.model
     def acknowledge_v2(self, source, event_uuid, fingerprint):
@@ -473,16 +487,17 @@ class LifecycleExchange(models.AbstractModel):
         events = self.env['ab_storefront_callcenter_lifecycle'].sudo().search([
             ('endpoint_id', '=', endpoint.id), ('acknowledged', '=', False),
         ], order='id').mapped('envelope')
+        initial = self.env['sale.order'].sudo().browse(self._pending_order_ids(endpoint))
+        waiting = set(initial.mapped('ab_callcenter_uuid'))
+        events = [event for event in events if event['destination']['kind'] != 'order'
+                  or event['destination']['uuid'] not in waiting]
         if not any(event['kind'] in ('order_dispatched', 'session_ended') for event in events):
             return events[:50]
         pending = self.env['ab_storefront_callcenter_chat_event'].sudo().search([
             ('endpoint_id', '=', endpoint.id), ('acknowledged', '=', False),
         ]).mapped('envelope')
         blocked = {(event['destination']['kind'], event['destination']['uuid']) for event in pending}
-        initial = self.env['ab_storefront_callcenter_event'].sudo().search([
-            ('endpoint_id', '=', endpoint.id), ('acknowledged', '=', False),
-        ])
-        blocked.update(('order', value) for value in initial.order_id.mapped('ab_callcenter_uuid'))
+        blocked.update(('order', value) for value in waiting)
         return [event for event in events if event['kind'] not in ('order_dispatched', 'session_ended')
                 or (event['destination']['kind'], event['destination']['uuid']) not in blocked][:50]
 

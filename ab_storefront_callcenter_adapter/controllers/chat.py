@@ -89,8 +89,9 @@ class Chat(http.Controller):
         )
         if (
             not order
-            or not order.ab_callcenter_endpoint_id.enabled
-            or order.ab_callcenter_endpoint_id.website_id != website
+            or order.ab_callcenter_endpoint_id.company_id != website.company_id
+            or (order.ab_callcenter_endpoint_id.website_id
+                and order.ab_callcenter_endpoint_id.website_id != website)
         ):
             raise Forbidden()
         if not request.env.user._is_public():
@@ -262,7 +263,7 @@ class Chat(http.Controller):
             raise Forbidden()
         order = self._order(candidate.ab_callcenter_uuid)
         return {'closed': bool(order.ab_callcenter_chat_closed),
-                'ready': bool(order.ab_callcenter_chat_ready and order.ab_callcenter_endpoint_id.chat_enabled)}
+                'ready': bool(order.ab_callcenter_chat_ready)}
 
     @http.route('/storefront-callcenter/chat/<string:order_uuid>/media/<int:message_id>/<int:attachment_id>',
                 type='http', auth='public', website=True, methods=['GET'], sitemap=False)

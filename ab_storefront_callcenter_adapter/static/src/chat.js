@@ -123,7 +123,7 @@ export function startChat(root) {
             if (upload) upload.disabled = closed;
             form.querySelector('button[type="submit"]').disabled = !result.ready;
             status.textContent = closed ? _t("This chat has ended. Your order has been sent for delivery.") : attempts >= 8 ? _t("Message needs review. Submit again to retry.") :
-                result.ready ? "" : _t("Order chat is waiting for Callcenter acknowledgement.");
+                result.ready ? "" : _t("Chat unavailable. Please retry.");
             if (submission && result.acknowledged === submission.id) {
                 acknowledgeSubmission(sessionStorage, pendingKey, submission.id);
                 if (input.value.trim() === submission.body) { input.value = ""; sessionStorage.removeItem(draftKey); }
