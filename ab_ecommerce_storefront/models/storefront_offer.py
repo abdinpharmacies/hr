@@ -432,7 +432,7 @@ class StorefrontOffer(models.Model):
             offer.max_offer_units and offer._sold_primary_quantity() >= offer.max_offer_units
         ))
         customer_limited = offers.filtered("once_per_customer")
-        if not partner or partner == website.user_id.partner_id:
+        if not partner or partner == website.sudo().user_id.partner_id:
             return sold_out | customer_limited
         uses = self.env["ab_storefront_offer_use"].sudo().search([
             ("offer_id", "in", customer_limited.ids),
@@ -713,7 +713,7 @@ class SaleOrder(models.Model):
             if offers:
                 if (
                     not order.website_id or not order.partner_id
-                    or order.partner_id == order.website_id.user_id.partner_id
+                    or order.partner_id == order.website_id.sudo().user_id.partner_id
                     or any(offer.website_id != order.website_id or offer.company_id != order.company_id for offer in offers)
                 ):
                     raise ValidationError(_("Sign in with an eligible customer account to use this offer."))
