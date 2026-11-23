@@ -2,8 +2,28 @@
 
 ## Current changes before commit:
 
-- Resolve committed Git conflict markers in the manifest and endpoint validation while retaining the new chat rules and website selection behavior.
-- Keep both sets of Arabic translations and validate both catalogs.
+- Restore Odoo's module metadata comments before two entries in each Arabic catalog after the conflict merge.
+
+Files changed:
+
+- `ab_storefront_callcenter_adapter/i18n/ar.po`
+- `ab_storefront_callcenter_adapter/i18n/ar_001.po`
+- `ab_storefront_callcenter_adapter/changelog.d/2026-11-23-merge-markers.md`
+
+Validation:
+
+- Odoo `PoFileReader` parsed both Arabic catalogs successfully (151 translation rows each); `msgfmt --check-format` passed.
+
+## Recent commits
+
+Commit: `d43689d3`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_storefront_callcenter_adapter/FIX: resolve committed merge markers`
+
+User-facing changes:
+
+- Resolve merge markers while keeping the updated chat behavior, endpoint validation, and Arabic translations.
 
 Files changed:
 
@@ -12,12 +32,6 @@ Files changed:
 - `ab_storefront_callcenter_adapter/i18n/ar.po`
 - `ab_storefront_callcenter_adapter/i18n/ar_001.po`
 - `ab_storefront_callcenter_adapter/changelog.d/2026-11-23-merge-markers.md`
-
-Validation:
-
-- Python compilation and `msgfmt --check-format` passed for both Arabic catalogs.
-
-## Recent commits
 
 Commit: `eba33c7e`
 Author: Alhassan Hossny

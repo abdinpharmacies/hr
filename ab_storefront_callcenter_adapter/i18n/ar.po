@@ -375,6 +375,8 @@ msgstr "مركز اتصال الموقع"
 #: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
 msgid "An enabled endpoint requires a website."
 msgstr "يجب ربط نقطة الاتصال المفعلة بموقع إلكتروني."
+
+#. module: ab_storefront_callcenter_adapter
 #: model:ir.model.fields,field_description:ab_storefront_callcenter_adapter.field_sale_order__ab_callcenter_chat_ready
 msgid "Ab Callcenter Chat Ready"
 msgstr "جاهزية محادثة مركز الاتصال"
@@ -501,6 +503,9 @@ msgstr "زائر"
 #: code:addons/ab_storefront_callcenter_adapter/models/adapter.py:0
 msgid "Select a website for a new endpoint."
 msgstr "اختر موقعًا إلكترونيًا لنقطة الاتصال الجديدة."
+
+#. module: ab_storefront_callcenter_adapter
+#. odoo-python
 #: code:addons/ab_storefront_callcenter_adapter/models/chat.py:0
 msgid "Website replies are disabled."
 msgstr "الردود على الموقع معطّلة."
