@@ -1,4 +1,5 @@
 """Generic relational IDs tested only in generated disposable databases."""
+import configparser
 import os
 from pathlib import Path
 import sqlite3
@@ -47,6 +48,44 @@ class XMLIDPostgresTests(unittest.TestCase):
         self.assertEqual(self.scalar('SELECT id FROM ab_other'), 8)
         self.assertEqual(self.scalar('SELECT id FROM res_users'), 7)
         self.assertEqual(runner.state['operations']['ab_record']['mapping']['stats']['resolved_references'], 1)
+
+    def test_users_home_action_maps_via_implicitly_discovered_core_model(self):
+        for side, connection, action, user in [('source', self.source, 44, 13), ('target', self.con, 88, 7)]:
+            server = self.stage / side / 'server'
+            addons = server / 'addons'
+            addons.mkdir(parents=True)
+            base = server / 'odoo' / 'addons' / 'base'
+            base.mkdir(parents=True)
+            (base / '__manifest__.py').write_text('{}')
+            (base / 'ir_actions.py').write_text(
+                "class Actions:\n    _name = 'ir.actions.actions'\n    _table = 'ir_actions'\n")
+            config = configparser.ConfigParser(interpolation=None)
+            config.read(self.config)
+            config['options']['addons_path'] = str(addons)
+            path = self.stage / (side + '.conf')
+            with path.open('w') as file:
+                config.write(file)
+            setattr(self.args, side + '_config', str(path))
+            self.execute(connection, "INSERT INTO ir_module_module(name,state) VALUES('base','installed')")
+            self.execute(connection, 'CREATE TABLE ir_actions(id integer PRIMARY KEY, name text)')
+            self.execute(connection, 'INSERT INTO ir_actions VALUES(%s,%s)', [action, side + ' home'])
+            self.execute(connection, 'ALTER TABLE res_users ADD COLUMN action_id integer REFERENCES ir_actions(id)')
+            self.execute(connection, 'UPDATE res_users SET action_id=%s WHERE id=%s', [action, user])
+            self.execute(connection, "INSERT INTO ir_model(model,transient) VALUES('ir.actions.actions',false)")
+            self.execute(connection, "INSERT INTO ir_model_fields(model,name,ttype,relation) "
+                         "VALUES('res.users','action_id','many2one','ir.actions.actions')")
+            self.execute(connection, "INSERT INTO ir_model_data(module,name,model,res_id) "
+                         "VALUES('base','home_action','ir.actions.actions',%s)", [action])
+        # Keep all incoming user references within the selected fixture tables.
+        self.execute(self.con, 'DELETE FROM ignored')
+        runner = self.runner({'res_users', 'ab_record'})
+        for side in ('source', 'target'):
+            self.assertEqual(runner.plan[side]['models']['ir.actions.actions'], 'ir_actions')
+        self.assertEqual(runner.operations['res_users']['references']['action_id']['table'], 'ir_actions')
+        result = runner.run(runner.plan['target']['fks'])
+        self.assertEqual(result['failed_tables'], [])
+        self.assertEqual(self.scalar('SELECT action_id FROM res_users WHERE id=13'), 88)
+        self.assertEqual(self.scalar('SELECT name FROM ir_actions WHERE id=88'), 'target home')
 
     def test_missing_m2o_does_not_fall_back_to_valid_numeric_id(self):
         self.execute(self.con, "DELETE FROM ir_model_data WHERE name='user'")

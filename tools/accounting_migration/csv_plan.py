@@ -23,13 +23,22 @@ def database_identity(connection, config):
         return dict(endpoint=endpoint(config), database=connection.info.dbname, oid=cr.fetchone()[0])
 
 
+def addon_roots(config):
+    """Include Odoo's implicit core addons without importing an Odoo package."""
+    configured = [Path(value.strip()).expanduser().resolve()
+                  for value in settings(config).get('addons_path', '').split(',') if value.strip()]
+    # Odoo adds server/odoo/addons itself; it need not appear in addons_path.
+    # Require a real base manifest before treating a sibling as a core root.
+    core = [root.parent / 'odoo' / 'addons' for root in configured]
+    core = [root for root in core if (root / 'base' / '__manifest__.py').is_file()]
+    return list(dict.fromkeys([*configured, *(root.resolve() for root in core)]))
+
+
 def table_overrides(config, installed):
     """Resolve literal _table declarations without starting either Odoo registry."""
     overrides, seen = {}, set()
-    for root in settings(config).get('addons_path', '').split(','):
-        if not root.strip():
-            continue
-        for addon in Path(root.strip()).glob('*'):
+    for root in addon_roots(config):
+        for addon in root.glob('*'):
             if addon.name not in installed or addon.name in seen or not addon.is_dir():
                 continue
             seen.add(addon.name)

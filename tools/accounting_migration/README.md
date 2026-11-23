@@ -248,8 +248,10 @@ Export reads both catalogs without database writes or downtime and creates
 `table_plan.csv.metadata.json` alongside the UTF-8 CSV, both mode 0600. Keep this
 sidecar with the CSV. Rows represent distinct persistent registered model tables
 in either database, not transient models, views, or unregistered tables. Literal
-model `_table` overrides are discovered from configured installed addon paths
-without executing addon code or starting a registry.
+model `_table` overrides are discovered from installed addons in configured paths
+and verified built-in `odoo/addons` siblings of those paths. Configured paths
+retain their order and precedence; duplicate roots are scanned once. No addon
+code is executed and no registry is started.
 
 The exact CSV header is:
 
@@ -524,6 +526,31 @@ without recopying successful tables. It is a directory merge at action time,
 not a transactional filestore snapshot. Disabled file actions require neither
 `data_dir` nor filesystem access. Extra actions are named internal functions,
 not arbitrary SQL/Python evaluation.
+
+### Re-export after fixing missing built-in model discovery
+
+If import stopped with `M2O endpoint model/table unavailable: res_users.action_id`,
+older discovery may have omitted `ir.actions.actions` even though its physical
+`ir_actions` table exists. The scanner now includes verified built-in addon roots
+such as `server/odoo/addons`, which Odoo adds implicitly and configs may omit.
+Genuinely unavailable endpoint models still block planning; relationship IDs are
+not guessed or copied through this error.
+
+After pulling the fix, use the same `--local-peer` menu to export a **new** CSV
+and matching sidecar, for example:
+
+```text
+/opt/odoo19/migration-runs/local-peer/table-plan-v2.csv
+```
+
+The metadata's `source.models` and `target.models` should both contain
+`"ir.actions.actions": "ir_actions"`. Transfer reviewed `replicate`,
+`replicate_override`, and `column_default_value_json` settings from the old CSV
+by `table_name`, then review any newly discovered tables. Keep each CSV with its
+own sidecar; do not modify the old sidecar or use `--reset`. Retry import with the
+new reviewed pair and make a fresh explicit backup decision. Export remains
+read-only. A missing-endpoint error raised during operation planning occurs before
+that attempt's table extraction, backup execution, and target-table replacement.
 
 ## Existing prepared-custom workflow
 

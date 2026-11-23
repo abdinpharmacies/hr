@@ -1,5 +1,29 @@
 # Prepared-target migration validation
 
+## Built-in addon model/table discovery (2026-11-23)
+
+- Include verified built-in `odoo/addons` sibling roots after configured roots;
+  normalize and deduplicate paths while preserving existing configured precedence.
+  Only installed addon declarations are parsed; addon code is never executed.
+- Five filesystem tests cover both server layouts, explicit core paths, symlink
+  duplicates, precedence, missing base manifests, and uninstalled addons.
+- Add a disposable database reproduction with `res_users.action_id` referencing
+  `ir.actions.actions`, whose physical table is declared as `ir_actions` in the
+  implicit core base addon. Verify both catalogs discover it and a source action
+  ID of 44 maps through a shared XML ID to target ID 88, preserving target actions.
+- Full discovery: 441 tests, OK; 217 opt-in tests skipped (224 executed).
+- Disposable UTF-8 PostgreSQL 16 cluster: 58 tests passed across `test_csv_xmlids`,
+  `test_csv_postgres`, and `test_csv_discovery` (53 database tests plus five static
+  discovery tests). Includes unknown-endpoint rejection, XML-ID mapping failures,
+  transactional table copying, and existing CSV export/import recovery coverage.
+- Actual local Odoo 19 base sources resolve `ir.actions.actions` to `ir_actions`
+  with only `/opt/odoo19/server/addons` configured. Prior read-only server inspection
+  confirmed both core base roots exist and the old sidecar omitted that model on
+  both sides despite the presence of physical `ir_actions` tables.
+- No production data or server configuration was modified. All database-writing
+  tests used generated disposable databases in a temporary cluster that was
+  stopped and removed. New exports are required; old sidecars are not rewritten.
+
 ## Restricted runtime ancestor access (2026-11-23)
 
 - The server's `/opt/odoo19` is 0750, owned by `odoo19:odoo19`. This blocks the

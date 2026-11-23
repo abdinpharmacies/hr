@@ -2,6 +2,23 @@
 
 ## Current changes before commit:
 
+- Discover installed built-in Odoo addon table overrides from verified `odoo/addons` siblings of configured addon roots, preserving configured precedence and deduplicating normalized paths without loading either registry or executing addon code.
+- Resolve the home-action endpoint `ir.actions.actions` to its declared `ir_actions` table so selected users can use the existing strict XML-ID relationship mapping; preserve failure for genuinely unavailable endpoints.
+- Document exporting a new CSV/sidecar, transferring reviewed operational cells by table name, reviewing newly discovered tables, and retrying without editing old metadata or resetting runs.
+- Verify both Odoo directory layouts and path precedence/deduplication, actual local Odoo 19 declarations, 224 executed local tests, and 53 disposable PostgreSQL relationship/export/import regressions.
+
+Files changed:
+- `README.md`
+- `VALIDATION.md`
+- `changelog.d`
+- `csv_plan.py`
+- `tests/test_csv_discovery.py`
+- `tests/test_csv_xmlids.py`
+
+## 2582a52ac — emadco88 — 2026-11-23
+
+Original commit subject: `tools/ FIX`
+
 - Fix local-peer startup when an installation ancestor such as `/opt/odoo19` is 0750: grant only the launched process the runtime-required supplementary groups before dropping to postgres, without changing permanent memberships or directory permissions.
 - Check runtime traversal and show filesystem permission paths instead of a bare PermissionError; reject private ancestors that cannot be reached with applicable group access.
 - Document the process-only access and the supplementary runtime group required for separate progress observation.
