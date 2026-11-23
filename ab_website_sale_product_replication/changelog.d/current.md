@@ -2,20 +2,33 @@
 
 ## Current changes before commit:
 
-- Store the scheduled website job's background flag explicitly so the cron worker can find and finish it.
-- Confirm in a focused regression test that the cron worker can find the scheduled website job.
+- Cover the branch stock read and optional metadata fallback using the native, parameterized Eplus connector.
 
 Files changed:
 
-- `ab_website_sale_product_replication/models/stock_sync.py`
 - `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 - `ab_website_sale_product_replication/changelog.d/current.md`
 
 Validation:
 
-- Focused worker pickup test passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_six_hour_worker_validation.log`.
+- Focused native connector test passed on `codex_eplus_sync_20261104` with alternate ports `5069/5072`; `/tmp/ecommerce_native_branch_focused_validation.log`.
 
 ## Recent commits
+
+Commit: `152b71f6`
+Author: Mohamed Fawzy
+Date: 2026-11-23
+Original subject: `ab_website_sale_product_replication/FIX: let cron pick up scheduled product sync`
+
+User-facing changes:
+
+- Store the background flag explicitly so the scheduled website product worker can finish its job.
+
+Files changed:
+
+- `ab_website_sale_product_replication/changelog.d/current.md`
+- `ab_website_sale_product_replication/models/stock_sync.py`
+- `ab_website_sale_product_replication/tests/test_replica_catalog_import.py`
 
 Commit: `542d8518`
 Author: Mohamed Fawzy

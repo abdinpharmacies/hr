@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from odoo import fields
 from odoo.addons.integration_queue_job.exception import RetryableJobError
@@ -231,3 +231,39 @@ class TestReplicaCatalogImport(TransactionCase):
         with patch.object(type(snapshot), "action_refresh_from_eplus", side_effect=UserError("offline")):
             with self.assertRaises(RetryableJobError):
                 snapshot._refresh_after_replication()
+
+    def test_branch_stock_read_uses_native_parameterized_store_query(self):
+        cursor = MagicMock()
+        cursor.description = [(name,) for name in ("itm_id", "itm_code", "sto_id", "itm_qty")]
+        cursor.fetchall.return_value = [(7001,)]
+        cursor.fetchmany.side_effect = [[(self.snapshot.itm_id, self.product.code, 7001, 9)], []]
+        connection = MagicMock()
+        connection.__enter__.return_value.cursor.return_value.__enter__.return_value = cursor
+        with patch.object(type(self.snapshot), "_connect_eplus_read", return_value=connection) as connect:
+            rows = list(self.snapshot._fetch_eplus_stock_store_rows())
+        connect.assert_called_once_with(charset="CP1256", propagate_error=True)
+        self.assertEqual(rows[0][0]["sto_id"], 7001)
+        self.assertEqual(rows[0][0]["itm_qty"], 9.0)
+        self.assertIn("WHERE ics.sto_id = %s", cursor.execute.call_args_list[1].args[0])
+        self.assertEqual(cursor.execute.call_args_list[1].args[1], (7001,))
+
+    def test_branch_stock_read_falls_back_when_store_name_columns_are_missing(self):
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [(7001,)]
+        connection = MagicMock()
+        connection.__enter__.return_value.cursor.return_value.__enter__.return_value = cursor
+        row = self.snapshot._normalize_eplus_store_row({
+            "itm_id": self.snapshot.itm_id, "itm_code": self.product.code,
+            "sto_id": 7001, "itm_qty": 9,
+        })
+        with (
+            patch.object(type(self.snapshot), "_connect_eplus_read", return_value=connection),
+            patch.object(
+                type(self.snapshot), "_execute_eplus_stock_store_query",
+                side_effect=[RuntimeError("Invalid column name"), iter([[row]])],
+            ) as query,
+        ):
+            rows = list(self.snapshot._fetch_eplus_stock_store_rows())
+        self.assertEqual(rows[0][0]["itm_qty"], 9.0)
+        self.assertNotIn("LEFT JOIN Store", query.call_args_list[1].args[1])
+        self.assertEqual(query.call_args_list[1].args[2], (7001,))
