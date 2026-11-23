@@ -857,7 +857,7 @@
 
     <template id="payment_status_abdin_skin" name="Abdin Payment Status Experience" inherit_id="payment.payment_status" priority="120">
         <xpath expr="//div[hasclass('wrap')]" position="replace">
-            <div class="wrap ab-payment-status-page" t-translation-context="ab_ecommerce_storefront">
+            <div class="wrap ab-payment-status-page">
                 <div class="container">
                     <t t-if="payment_not_found">
                         <section class="ab-payment-status-shell is-pending">
