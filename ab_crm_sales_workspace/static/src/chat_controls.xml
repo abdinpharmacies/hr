@@ -9,6 +9,10 @@
             </span>
         </div>
     </xpath>
+    <xpath expr="//span[hasclass('ab_channels')]/i" position="before">
+        <img t-if="item.website_target?.kind === 'order'" class="ab_website_inbox_order_icon" src="/ab_crm_website/static/src/img/callcenter_support.png" alt=""/>
+    </xpath>
+    <xpath expr="//span[hasclass('ab_channels')]/i" position="attributes"><attribute name="t-if">item.website_target?.kind !== 'order'</attribute></xpath>
     <xpath expr="//article[@t-att-data-message-id]/p" position="before"><small t-if="message.website_order_reference" class="ab_order_message_reference" dir="auto" t-esc="message.website_order_reference"/></xpath>
     <xpath expr="//article[@t-att-data-message-id]" position="before"><div t-if="message.item_type === 'information'" class="ab_day_separator ab_timeline_information" role="note" t-esc="message.body"/></xpath>
     <xpath expr="//article[@t-att-data-message-id]" position="attributes"><attribute name="t-if">message.item_type !== 'information'</attribute></xpath>

@@ -10,5 +10,6 @@
         .ab_website_chat_indicator { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 0; box-shadow: none; }
         .ab_website_header_icon { width: 28px; height: 28px; object-fit: contain; }
     }
+    .ab_channels .ab_website_inbox_order_icon { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
     .ab_order_message_reference { display: block; font-weight: 600; margin-block-end: 4px; }
 }
