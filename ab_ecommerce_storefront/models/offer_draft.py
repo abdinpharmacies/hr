@@ -1,7 +1,10 @@
 from math import isfinite
 
+from psycopg2.extras import Json
+
 from odoo import Command, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tools import SQL
 
 from ..wizard.offer_workbook import _benefit, _draft_date, _november_offers, _offer_text, draft_source_evidence
 
@@ -97,6 +100,18 @@ class OfferDraft(models.Model):
         examples = self.browse([draft_id for _reason, draft_id in groups])
         matches = examples.filtered_domain(fields.Domain("display_reason", operator, value))
         return fields.Domain("reason", "in", matches.mapped("reason"))
+
+    def _field_to_sql(self, alias, field_expr, query=None):
+        if field_expr != "display_reason":
+            return super()._field_to_sql(alias, field_expr, query)
+        self._check_field_access(self._fields[field_expr], "read")
+        reason = super()._field_to_sql(alias, "reason", query)
+        labels, formats = self._reason_translations()
+        translations = {
+            raw: localized for raw, in self._read_group([], ["reason"], [])
+            if raw and (localized := self._localize_reason(raw, labels, formats)) != raw
+        }
+        return SQL("COALESCE(%s::jsonb ->> %s, %s)", Json(translations), reason, reason)
 
     @api.depends("review_evidence", "sheet_key", "original_terms", "reason", "details", "source", "name")
     @api.depends_context("lang")

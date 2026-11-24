@@ -71,6 +71,56 @@ class LoyaltyProgram(models.Model):
     ab_sheet_priority = fields.Integer(string='Offer Priority')
     ab_sheet_fixed_price = fields.Float(string='Final Unit Price in EGP', digits='Product Price')
 
+    ab_program_slide_id = fields.Many2one(
+        "ab_website_carousel_slide", string="Carousel Banner", ondelete="set null", copy=False,
+        groups="sales_team.group_sale_manager,base.group_system",
+    )
+    ab_carousel_slide_id = fields.Many2one(
+        "ab_website_carousel_slide", string="Carousel Slide", compute="_compute_carousel_slide",
+        inverse="_inverse_carousel_slide", groups="sales_team.group_sale_manager,base.group_system",
+    )
+    ab_carousel_image_1920 = fields.Image(
+        related="ab_carousel_slide_id.image_1920", string="Carousel Image", compute_sudo=False,
+        depends=["ab_carousel_slide_id", "ab_program_slide_id.image_1920",
+                 "ab_storefront_offer_id.carousel_slide_id.image_1920"],
+        groups="sales_team.group_sale_manager,base.group_system",
+    )
+
+    @api.depends("ab_program_slide_id", "ab_storefront_offer_id.carousel_slide_id")
+    def _compute_carousel_slide(self):
+        for program in self:
+            owner = program.ab_storefront_offer_id
+            program.ab_carousel_slide_id = owner.carousel_slide_id if owner else program.ab_program_slide_id
+
+    def _inverse_carousel_slide(self):
+        for program in self:
+            if program.ab_storefront_offer_id:
+                program.ab_storefront_offer_id.carousel_slide_id = program.ab_carousel_slide_id
+            else:
+                program.ab_program_slide_id = program.ab_carousel_slide_id
+
+    @api.constrains("ab_program_slide_id", "active", "website_id", "company_id", "date_from", "date_to",
+                    "ecommerce_ok", "ab_storefront_offer_id")
+    def _check_carousel_slide(self):
+        for program in self:
+            slide = program.sudo().ab_program_slide_id.with_env(self.env)
+            if not slide:
+                continue
+            slide.check_access("read")
+            if program.ab_storefront_offer_id:
+                raise ValidationError(_("Select the carousel slide on the linked storefront offer."))
+            website = program.website_id or slide.website_id
+            company = program.company_id or website.company_id
+            if company and company not in self.env.companies and not self.env.su:
+                raise AccessError(_("You cannot manage this imported offer."))
+            if ((slide.website_id and slide.website_id != website)
+                    or (website and program.company_id and website.company_id != program.company_id)
+                    or (not website and not program.company_id)):
+                raise ValidationError(_("Select a carousel slide for this website or a shared slide."))
+            if program.active and program.ecommerce_ok:
+                slide._check_offer_period(website, company,
+                                         program.date_from, program.date_to, program=program)
+
     _sheet_key_unique = models.Constraint(
         'UNIQUE(website_id, company_id, ab_sheet_key)',
         'This offer has already been imported for this website.',

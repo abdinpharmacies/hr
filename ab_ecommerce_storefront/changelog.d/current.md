@@ -2,6 +2,33 @@
 
 ## Current changes before commit:
 
+- Sort the Offer Drafts list by its displayed review reason in either direction across pages. Filter or group by the same reason in the employee's language.
+- Select a homepage carousel slide and preview its image in Discount & Loyalty. Programs generated from a storefront offer edit the same banner as the original offer.
+- Link eligible website programs to their published offer products or offer listing during the scheduled period. Check website, company and overlapping slide assignments.
+- All 98 targeted Odoo tests passed, including a Chrome test clicking the Arabic review reason header in both directions.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/models/sheet_promotion.py`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/models/website_carousel_slide.py`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/tests/test_sheet_promotion.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+
+Commit: `cd05a6b4`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/ADD: publish a reviewed draft as a storefront offer`
+
+User-facing changes:
+
 - Open a regular Storefront Offer from a pending spreadsheet draft, choose its type, and publish it after confirming products, dates and terms. Sales managers can find the published offer from the original draft.
 - Check the purchased and benefit products against available website stock. Keep the entire offer pending if stock is missing, preserve branch allocation reviews, and prevent a second publication of the same draft.
 - Show one entry for the published offer in the Abdin Offers overview. The action and its confirmation are available in English and Arabic.

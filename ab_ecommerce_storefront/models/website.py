@@ -712,6 +712,41 @@ class Website(models.Model):
                 offer.carousel_slide_id.id,
                 product._get_product_url(),
             )
+        program_domain = Domain([
+            ("active", "=", True), ("ecommerce_ok", "=", True),
+            ("website_id", "in", [False, self.id]), ("company_id", "in", [False, self.company_id.id]),
+            ("ab_program_slide_id", "in", eligible_slides.ids),
+            "|", ("date_from", "=", False), ("date_from", "<=", today),
+            "|", ("date_to", "=", False), ("date_to", ">=", today),
+        ])
+        pricelist = getattr(request, "pricelist", False) if request else False
+        if pricelist:
+            program_domain &= Domain("pricelist_ids", "=", False) | Domain("pricelist_ids", "in", pricelist.ids)
+        if (pricelist.currency_id if pricelist else self.currency_id) != self.env.ref("base.EGP"):
+            program_domain &= Domain("ab_sheet_fixed_price", "=", 0)
+        programs = self.env["loyalty.program"].sudo().search(program_domain, order="sequence, id")
+        for program in programs:
+            if program.limit_usage and program.total_order_count >= program.max_usage:
+                continue
+            candidates = program.rule_ids.filtered("active").product_ids
+            if program.ab_sheet_key:
+                candidates &= program.reward_ids.filtered("active").discount_product_ids
+            if candidates or program.ab_sheet_key:
+                product = candidates.product_tmpl_id.with_context(website_id=self.id).filtered(
+                    lambda p: p.active and p.sale_ok and p.website_published
+                    and (not p.website_id or p.website_id == self)
+                    and (not p.company_id or p.company_id == self.company_id)
+                )[:1]
+                if not product:
+                    continue
+                url = product._get_product_url()
+            elif program.program_type in ("coupons", "promo_code", "next_order_coupons"):
+                url = "/shop/category?deal=coupon"
+            elif program.program_type in ("promotion", "buy_x_get_y"):
+                url = "/shop/offers"
+            else:
+                url = "/shop"
+            urls.setdefault(program.ab_program_slide_id.id, url)
         return urls
 
     def _ab_storefront_customer_testimonials(self):

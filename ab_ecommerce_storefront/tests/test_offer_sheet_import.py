@@ -7,7 +7,7 @@ from openpyxl import Workbook
 
 from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tests import Form, tagged
+from odoo.tests import Form, HttpCase, tagged
 from odoo.tests.common import TransactionCase, new_test_user
 
 from ..wizard import offer_sheet
@@ -443,6 +443,30 @@ class TestOfferSheetImport(TransactionCase):
             scope + [("display_reason", "ilike", "missing or invalid")]
         ).ids, drafts[2:3].ids)
 
+    def test_sort_and_group_review_reason_in_list_language(self):
+        self.env["res.lang"]._activate_lang("ar_001")
+        model = self.env["ab_storefront_offer_draft"].with_user(self.manager)
+        arabic = model.with_context(lang="ar_001")
+        translated = arabic._reason_messages()["matches"]
+        reasons = ["Review matches", "No available stock for: A", translated, None]
+        drafts = model._from_sheet([
+            {"name": f"Draft {i}", "sheet_key": f"reason-sort-{i}", "website_id": self.website.id, "reason": reason}
+            for i, reason in enumerate(reasons)
+        ])
+        domain = [("id", "in", drafts.ids)]
+        for lang in ("en_US", "ar_001"):
+            records = model.with_context(lang=lang)
+            self.assertTrue(records.fields_get(["display_reason"])["display_reason"]["sortable"])
+            for direction in ("asc", "desc"):
+                order = f"display_reason {direction} nulls last, id"
+                expected = sorted(drafts[:3].with_context(lang=lang), key=lambda d: d.display_reason,
+                                  reverse=direction == "desc")
+                paged = [records.web_search_read(domain, {"display_reason": {}}, order=order, offset=offset,
+                                                 limit=2)["records"] for offset in (0, 2)]
+                self.assertEqual([r["id"] for page in paged for r in page], [d.id for d in expected] + drafts[-1:].ids)
+            groups = dict(records._read_group(domain, ["display_reason"], ["__count"]))
+            self.assertEqual(groups[records._reason_messages()["matches"]], 2)
+
     def test_glovive_saved_draft_uses_reference_and_saved_match_notes(self):
         ref = _november_offers()
         row = next(r for r in ref["offers"] if r["name"] == "Glovive" and r["source"] == "white friday #25")
@@ -537,3 +561,37 @@ class TestOfferSheetImport(TransactionCase):
             wizard.with_user(self.staff).action_apply()
         with self.assertRaises(AccessError):
             self.wizards.with_user(self.staff).create({"website_id": self.website.id, "workbook": self.file_data, "filename": "offers.xlsx"})
+
+
+@tagged("post_install", "-at_install")
+class TestOfferDraftList(HttpCase):
+    def test_click_review_reason_header(self):
+        self.env["res.lang"]._activate_lang("ar_001")
+        user = new_test_user(self.env, login="draft_sort_manager", lang="ar_001",
+                             groups="sales_team.group_sale_manager,ab_store.ab_login_from_anywhere")
+        website = self.env.ref("website.default_website")
+        self.env["ab_storefront_offer_draft"]._from_sheet([
+            {"name": name, "sheet_key": name, "website_id": website.id, "reason": reason}
+            for name, reason in [("Header A", "Review matches"), ("Header B", "No available stock for: B")]
+        ])
+        action = self.env.ref("ab_ecommerce_storefront.action_offer_drafts")
+        self.browser_js(f"/odoo/action-{action.id}", """
+            (async () => {
+                const header = () => document.querySelector('th[data-name="display_reason"]');
+                const text = () => Array.from(document.querySelectorAll('td[name="display_reason"]'), cell => cell.textContent.trim());
+                const wait = async (check) => {
+                    for (let attempt = 0; attempt < 100; attempt++) {
+                        if (check()) return;
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    throw new Error("Review reason header did not sort the rows");
+                };
+                await wait(() => header() && text().length >= 2);
+                header().click();
+                await wait(() => header().querySelector(".fa-sort-asc"));
+                const ascending = text();
+                header().click();
+                await wait(() => header().querySelector(".fa-sort-desc") && text()[0] !== ascending[0]);
+                console.log("test successful");
+            })();
+        """, login=user.login)

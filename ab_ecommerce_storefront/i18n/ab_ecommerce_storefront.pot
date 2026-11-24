@@ -18534,16 +18534,20 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_program_slide_id
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.loyalty_program_sheet_settings
 msgid "Carousel Banner"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__carousel_image_1920
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_carousel_image_1920
 msgid "Carousel Image"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__carousel_slide_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_carousel_slide_id
 msgid "Carousel Slide"
 msgstr ""
 
@@ -18556,6 +18560,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.loyalty_program_sheet_settings
 msgid "Choose the homepage carousel image associated with this offer."
 msgstr ""
 
@@ -18572,12 +18577,14 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
 msgid "Select a carousel slide for this website or a shared slide."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+#: code:addons/ab_ecommerce_storefront/models/website_carousel_slide.py:0
 msgid ""
 "This carousel slide already has an overlapping storefront offer on this "
 "website."
@@ -19207,6 +19214,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__display_reason
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_search
 msgid "Reason for Review"
 msgstr ""
 
@@ -19575,4 +19583,10 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
 msgid "Publish one storefront offer per draft."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid "Select the carousel slide on the linked storefront offer."
 msgstr ""

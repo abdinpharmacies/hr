@@ -42,6 +42,49 @@ class TestSheetPromotion(TransactionCase):
             })], **values,
         })
 
+    def test_carousel_on_discount_and_loyalty_form(self):
+        image = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z4p8AAAAASUVORK5CYII="
+        slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Offer banner", "website_id": self.website.id, "image_1920": image,
+        })
+        manager = new_test_user(self.env, login="banner_manager", groups="sales_team.group_sale_manager")
+        program = self.promotion("Sheet banner", self.products).with_user(manager)
+        program.ab_carousel_slide_id = slide
+        self.assertEqual(program.ab_program_slide_id, slide)
+        self.assertEqual(program.ab_carousel_image_1920, slide.image_1920)
+        home = self.website._ab_storefront_carousel_offer_urls
+        self.assertFalse(home(slide))
+        product = self.products[1].product_tmpl_id
+        product.write({"website_id": self.website.id, "is_published": True})
+        self.assertEqual(home(slide), {slide.id: product._get_product_url()})
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.env["ab_storefront_offer"].create({
+                "name": "Same banner", "product_id": self.products[0].id, "website_id": self.website.id,
+                "offer_type": "gift", "carousel_slide_id": slide.id,
+            })
+        other_site = self.website.copy({"name": "Other banner website"})
+        other_slide = slide.copy({"website_id": other_site.id})
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            program.ab_carousel_slide_id = other_slide
+        restricted = new_test_user(self.env, login="banner_sales", groups="sales_team.group_sale_salesman")
+        with self.assertRaises(AccessError), self.env.cr.savepoint():
+            program.with_user(restricted).write({"ab_carousel_slide_id": False})
+        program.ab_carousel_slide_id = False
+        self.assertFalse(home(slide))
+        offer = self.env["ab_storefront_offer"].create({
+            "name": "Gift banner", "product_id": self.products[1].id, "website_id": self.website.id,
+            "offer_type": "gift",
+        })
+        offer.generated_program_ids.with_user(manager).ab_carousel_slide_id = slide
+        self.assertEqual(offer.carousel_slide_id, slide)
+        self.assertEqual(home(slide), {slide.id: product._get_product_url()})
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            program.ab_carousel_slide_id = slide
+        offer.active = False
+        program.ab_carousel_slide_id = slide
+        program.with_env(self.env).active = False
+        self.assertFalse(home(slide))
+
     def cart(self, quantities):
         return self.env['sale.order'].create({
             'partner_id': self.partner.id, 'website_id': self.website.id,

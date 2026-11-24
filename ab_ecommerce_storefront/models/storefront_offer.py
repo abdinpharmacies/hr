@@ -398,19 +398,10 @@ class StorefrontOffer(models.Model):
                     if offer.currency_id != self.env.ref("base.EGP"):
                         raise ValidationError(_("Select an EGP pricelist and a discount amount below the current product price."))
             if offer.active:
-                overlapping_carousel = other_offers.filtered(lambda other: (
-                    other != offer and offer.carousel_slide_id
-                    and other.website_id == offer.website_id
-                    and other.carousel_slide_id == offer.carousel_slide_id
-                    and (
-                        (not offer.date_to or not other.date_from or other.date_from <= offer.date_to)
-                        and (not offer.date_from or not other.date_to or other.date_to >= offer.date_from)
+                if offer.carousel_slide_id:
+                    offer.carousel_slide_id._check_offer_period(
+                        offer.website_id, offer.company_id, offer.date_from, offer.date_to, offer=offer,
                     )
-                ))
-                if overlapping_carousel:
-                    raise ValidationError(_(
-                        "This carousel slide already has an overlapping storefront offer on this website."
-                    ))
                 overlapping = other_offers.filtered(lambda other: (
                     other != offer and not (offer.offer_type == other.offer_type == "sheet")
                     and other.website_id == offer.website_id
