@@ -271,6 +271,8 @@ msgid "Confirmed Phone"
 msgstr "الهاتف المؤكد"
 
 #. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__conversation_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_read__conversation_id
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__conversation_id
@@ -1088,6 +1090,7 @@ msgstr "محادثات المبيعات"
 
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
 msgid "Search contacts"
 msgstr "البحث عن جهات الاتصال"
@@ -1185,6 +1188,7 @@ msgstr "يجب أن تكون رموز جلسات المحادثات فريدة."
 
 #. module: ab_crm_sales_workspace
 #. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
 #: code:addons/ab_crm_sales_workspace/static/src/login.xml:0
 #: code:addons/ab_crm_sales_workspace/static/src/order_dialog.xml:0
 #: code:addons/ab_crm_sales_workspace/static/src/templates.xml:0
@@ -3806,6 +3810,7 @@ msgstr "اختر عميلاً لديه محادثات مرتبطة."
 
 #. modules: ab_crm_core, ab_crm_sales_workspace
 #. odoo-javascript
+#: model:ir.actions.client,name:ab_crm_sales_workspace.action_archived_chats
 #: code:addons/ab_crm_sales_workspace/static/src/workspace.xml:0
 #: model:ir.actions.client,name:ab_crm_sales_workspace.action_orders
 #: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_conversations
@@ -3969,6 +3974,8 @@ msgid "CRM POS Handoff"
 msgstr "تحويل من إدارة علاقات العملاء إلى نقاط البيع"
 
 #. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_pos_handoff__contact_id
 msgid "Contact"
 msgstr "جهة الاتصال"
@@ -4065,10 +4072,79 @@ msgid "Identity contact"
 msgstr "جهة اتصال الهوية"
 
 #. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Archive selected"
+msgstr "أرشفة المحادثات المحددة"
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_website_target_preference__archived
+msgid "Archived"
+msgstr "المؤرشفة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Choose employee"
+msgstr "اختر الموظف"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Conversation reference"
+msgstr "مرجع المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.js:0
+msgid "Conversation reserved"
+msgstr "المحادثة محجوزة"
+
+#. module: ab_crm_sales_workspace
 #. odoo-python
-#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
-msgid "Chat linking is disabled."
-msgstr "ربط المحادثات معطّل."
+#: code:addons/ab_crm_sales_workspace/models/reservation.py:0
+msgid "Invalid conversation reservation."
+msgstr "حجز المحادثة غير صالح."
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/reservation.py:0
+msgid "Only CRM managers can transfer a reservation."
+msgstr "يمكن لمديري علاقات العملاء فقط نقل حجز المحادثة."
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__reservation_employee_id
+msgid "Reservation Employee"
+msgstr "الموظف الحاجز"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__reservation_tabs
+msgid "Reservation Tabs"
+msgstr "علامات تبويب الحجز"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__reservation_user_id
+msgid "Reservation User"
+msgstr "المستخدم الحاجز"
+
+#. module: ab_crm_sales_workspace
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_conversation__reservation_version
+msgid "Reservation Version"
+msgstr "إصدار الحجز"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Restore"
+msgstr "استعادة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Select chats"
+msgstr "تحديد المحادثات"
 
 #. modules: ab_crm_sales_workspace, ab_crm_website
 #. odoo-javascript
@@ -4078,3 +4154,49 @@ msgstr "ربط المحادثات معطّل."
 #: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_target_preference__kind__livechat
 msgid "Support"
 msgstr "الدعم"
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/reservation.py:0
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.js:0
+#: code:addons/ab_crm_website/models/targets.py:0
+msgid "This conversation is reserved by %s."
+msgstr "هذه المحادثة محجوزة بواسطة %s."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Transfer reservation"
+msgstr "نقل حجز المحادثة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/reservation.py:0
+msgid "Use the conversation reservation controls."
+msgstr "استخدم أدوات التحكم في حجز المحادثة."
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.js:0
+#: model:ir.ui.menu,name:ab_crm_sales_workspace.menu_archived_chats
+msgid "Archived chats"
+msgstr "المحادثات المؤرشفة"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "Actions"
+msgstr "الإجراءات"
+
+#. module: ab_crm_sales_workspace
+#. odoo-javascript
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+msgid "View"
+msgstr "عرض"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Chat linking is disabled."
+msgstr "ربط المحادثات معطّل."

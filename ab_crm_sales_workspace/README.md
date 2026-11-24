@@ -79,6 +79,18 @@ Branch Locations offers Import Branch Locations beside New for CRM managers and 
 
 This release supersedes the historical joining workflow in [Contact grouping across channels](../docs/contact-channel-grouping.md).
 
+## Website conversation controls
+
+Each website order and Support session has an independent inbox entry, timeline and draft. The conversation header shows a single chat-type indicator. Order cards and references appear in the messages. Read positions remain target-specific. All chats remain visible; there are no chat archive, selection or restore controls.
+
+All authorized callcenter agents can read and reply to the same open chats.
+Replies and attachments do not require claiming a conversation, ownership transfer,
+or a tab heartbeat. Each accepted reply keeps its verified employee audit and
+separate target destination. Branch/company permissions and personal read
+preferences still apply. The inbox sorts by the most recently received message,
+newest first, with stable cursors before pagination. Outgoing replies and lifecycle
+notices do not move a conversation above a newer received chat.
+
 ## Independent chats (19.0.1.42.0)
 
 Every website order and Support session has its own inbox entry, history, draft,
