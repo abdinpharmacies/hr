@@ -1046,3 +1046,9 @@ msgstr "طلب"
 #. module: ab_crm_website
 msgid "User"
 msgstr "المستخدم"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/adapter.py:0
+msgid "Chat linking is disabled."
+msgstr "ربط المحادثات معطّل."

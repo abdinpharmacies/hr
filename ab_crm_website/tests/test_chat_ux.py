@@ -379,7 +379,10 @@ class TestChatUX(TestWebsiteContactGroups):
         self.assertNotEqual(fresh['destination'], support['destination'])
         combined = conversation.workspace_detail(target=fresh['destination'], combine=True)
         uuids = {item['website_target']['uuid'] for item in combined['messages']}
-        self.assertIn(support['destination']['uuid'], uuids)
+        self.assertNotIn(support['destination']['uuid'], uuids)
+        ended = conversation.workspace_detail(target=support['destination'])
+        self.assertTrue(ended['website_target_closed'])
+        self.assertEqual(len([item for item in ended['messages'] if item['item_type'] == 'information']), 1)
         self.assertIn(fresh['destination']['uuid'], uuids)
 
     def test_legacy_shared_phone_history_cannot_bind_other_orders(self):

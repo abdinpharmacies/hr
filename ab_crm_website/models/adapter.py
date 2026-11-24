@@ -134,113 +134,14 @@ class WebsiteOrder(models.Model):
 
     @api.model
     def website_reconciliation_preview(self, account_id, limit=500):
-        if not self.env.su and not self.env.user.has_group('base.group_system'):
-            raise AccessError(_('Only administrators can reconcile website chats.'))
-        if type(account_id) is not int or type(limit) is not int or not 1 <= limit <= 500:
-            raise ValidationError(_('Invalid website order.'))
-        account = self.env['ab_crm_messaging_account'].browse(account_id).exists()
-        account._authorize('read')
-        if not account or account.provider != 'website':
-            raise AccessError(_('Invalid website order.'))
-        orders = self.search([('account_id', '=', account.id)], order='id', limit=limit + 1)
-        orders._authorize('read')
-        if len(orders) > limit:
-            raise UserError(_('The reconciliation exceeds the configured order limit.'))
-        groups = {}
-        states = []
-        for order in orders:
-            phone = normalized_phone(order.phone or order.snapshot['customer']['phone'], account.company_id.country_id.code)
-            key = phone or 'order:' + order.order_uuid
-            groups.setdefault(key, self.browse())
-            groups[key] |= order
-            states.append((order.id, str(order.write_date), order.conversation_id.id,
-                           order.website_customer_id.id, order.revision))
-        conversations = orders.conversation_id.with_context(active_test=False)
-        conversations._authorize('read')
-        if any(c.channel_id != account.channel_id or c.branch_id != account.branch_id
-               or c.company_id != account.company_id for c in conversations):
-            raise AccessError(_('Invalid website order.'))
-        identities = self.env['ab_crm_identity'].with_context(active_test=False).search([
-            ('channel_id', '=', account.channel_id.id),
-            ('external_key', 'in', conversations.mapped('external_key')),
-        ])
-        snapshot = [states,
-            [(c.id, c.customer_id.id, c.active, str(c.write_date)) for c in conversations.sorted('id')],
-            [(i.id, i.customer_id.id, i.active, str(i.write_date)) for i in identities.sorted('id')]]
-        result = []
-        for key, group in groups.items():
-            streams = group.conversation_id.sorted('id')
-            saved = identities.filtered(lambda i: i.external_key in streams.mapped('external_key'))
-            conflict = len(set(streams.mapped('customer_id').ids + [c.customer_id.id for c in streams])) > 1
-            conflict = conflict or bool(saved.filtered(lambda i: i.active and i.customer_id != streams[:1].customer_id))
-            conflict = conflict or (bool(saved.filtered('active')) and bool(saved.filtered(lambda i: not i.active)))
-            canonical = streams[:1]
-            result.append({'identity_key': key, 'order_ids': group.ids,
-                           'canonical_id': canonical.id, 'alias_ids': (streams - canonical).ids,
-                           'requires_review': bool(conflict)})
-        return {'account_id': account.id, 'limit': limit, 'groups': result,
-                'fingerprint': hashlib.sha256(json.dumps(snapshot, sort_keys=True).encode()).hexdigest()}
+        raise AccessError(_('Chat linking is disabled.'))
 
     @api.model
     def website_reconciliation_apply(self, account_id, fingerprint, limit=500):
-        with self.env.cr.savepoint():
-            return self._website_reconciliation_apply(account_id, fingerprint, limit)
+        raise AccessError(_('Chat linking is disabled.'))
 
     def _website_reconciliation_apply(self, account_id, fingerprint, limit):
-        preview = self.website_reconciliation_preview(account_id, limit)
-        account = self.env['ab_crm_messaging_account'].browse(account_id)
-        account.branch_id.lock_for_update()
-        account.branch_id.sudo().write({})
-        self.env.invalidate_all()
-        preview = self.website_reconciliation_preview(account_id, limit)
-        if preview['fingerprint'] != fingerprint:
-            raise UserError(_('The reconciliation changed. Preview it again.'))
-        mutation, internal = _MUTATION.set(True), _INTERNAL.set(True)
-        try:
-            for group in preview['groups']:
-                if group['requires_review']:
-                    continue
-                orders = self.browse(group['order_ids'])
-                canonical = self.env['ab_crm_conversation'].browse(group['canonical_id'])
-                aliases = self.env['ab_crm_conversation'].browse(group['alias_ids'])
-                identity = self.env['ab_crm_website_customer'].sudo().search([
-                    ('account_id', '=', account.id), ('identity_key', '=', group['identity_key']),
-                    ('branch_id', '=', account.branch_id.id), ('company_id', '=', account.company_id.id),
-                ], limit=1)
-                if not identity:
-                    identity = self.env['ab_crm_website_customer'].sudo().create({
-                        'account_id': account.id, 'identity_key': group['identity_key'],
-                        'conversation_id': canonical.id, 'branch_id': account.branch_id.id,
-                        'company_id': account.company_id.id,
-                    })
-                for order in orders:
-                    messages = self.env['ab_crm_message'].sudo().search([
-                        ('conversation_id', 'in', (canonical | aliases).ids),
-                        ('website_order_id', '=', False),
-                    ])
-                    event_refs = self.env['ab_crm_website_event'].search([
-                        ('account_id', '=', account.id), ('order_uuid', '=', order.order_uuid),
-                    ]).mapped('event_uuid')
-                    incoming = messages.filtered(lambda m: m.direction == 'in' and m.provider_reference in event_refs)
-                    outgoing = messages.filtered(lambda m: m.direction == 'out' and (
-                        m.messaging_operation_ids.filtered(lambda op: op.destination == order.order_uuid)
-                        or (not m.messaging_operation_ids and m.conversation_id.external_key == order.order_uuid)))
-                    (incoming | outgoing).write({'website_order_id': order.id})
-                historical_identities = orders.website_customer_id - identity
-                historical_identities.sudo().write({'latest_order_id': False, 'conversation_id': canonical.id})
-                orders.sudo().write({'conversation_id': canonical.id, 'website_customer_id': identity.id})
-                aliases.sudo().write({'website_canonical_id': canonical.id})
-                phone = group['identity_key'] if not group['identity_key'].startswith('order:') else False
-                canonical.sudo().write({'website_phone': phone})
-                latest = self.env['ab_crm_message'].sudo().search([
-                    ('website_order_id', 'in', orders.ids), ('direction', '=', 'in'),
-                ], order='id desc', limit=1)
-                identity.write({'conversation_id': canonical.id,
-                                'latest_order_id': (latest.website_order_id or orders[-1:]).id})
-        finally:
-            _INTERNAL.reset(internal)
-            _MUTATION.reset(mutation)
-        return preview
+        raise AccessError(_('Chat linking is disabled.'))
 
     def _display_delivery_address(self, address):
         lines = [' '.join(line.split()) for line in address.splitlines() if line.strip()]
@@ -953,20 +854,7 @@ class Conversation(models.Model):
         return super().write(values)
 
     def action_customer_link_candidates(self):
-        if self.channel_id.provider != 'website':
-            return super().action_customer_link_candidates()
-        self.ensure_one()
-        self._staff_action()
-        self._authorize()
-        self._workspace_scope()
-        return {
-            'phone': self.website_phone,
-            'display_phone': self.website_phone,
-            'contacts': [
-                contact._directory_data()
-                for contact in self._matching_saved_contacts(self.website_phone)
-            ],
-        }
+        raise AccessError(_('Chat linking is disabled.'))
 
     def _customer_link_preview(self, customer, account):
         identity, preview = super()._customer_link_preview(customer, account)
@@ -1004,9 +892,10 @@ class Conversation(models.Model):
         return candidates
 
     def _workspace_streams(self):
-        if self.channel_id.provider == 'website' and not self.customer_id:
+        if self.channel_id.provider == 'website':
+            self._workspace_scope()
             return self.website_canonical_id or self
-        return super()._workspace_streams().filtered(lambda r: not r.website_canonical_id)
+        return super()._workspace_streams()
 
     def _workspace_inbox_rows(self, session):
         rows = super()._workspace_inbox_rows(session)
@@ -1382,7 +1271,7 @@ class Conversation(models.Model):
                   if detail['first_unread_message_id']]
         result['first_unread_message_id'] = min(unread, default=False)
         result['unread_count'] = sum(detail['unread_count'] for detail in details.values())
-        result['website_grouped'] = True
+        result['website_grouped'] = False
         return self._website_navigation(result)
 
 

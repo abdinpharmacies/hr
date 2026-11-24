@@ -102,7 +102,7 @@ class Conversation(models.Model):
         target = self.env.context.get('ab_website_target')
         channel = self.env.context.get('ab_website_channel_targets')
         if channel is not None and self.channel_id.provider == 'website':
-            if not isinstance(channel, list):
+            if not isinstance(channel, list) or len(channel) != 1:
                 raise AccessError(_('Invalid website target.'))
             domain &= fields.Domain.OR([self._website_target_domain(*self._website_target(item)) for item in channel])
         elif target and self.channel_id.provider == 'website':
@@ -175,11 +175,14 @@ class Conversation(models.Model):
         return {'available': True, 'focus_message_id': message.id,
                 'messages': detail['messages'], 'has_older': detail['has_older']}
 
-    def workspace_focus(self, message_id):
+    def workspace_focus(self, message_id, target=None):
         if self.channel_id.provider != 'website':
             return super().workspace_focus(message_id)
         self._workspace_scope()
         orders, sessions = self._website_targets()
+        if target is not None:
+            kind, record = self._website_target(target)
+            orders, sessions = (record, sessions.browse()) if kind == 'order' else (orders.browse(), record)
         for kind, records in [('order', orders), ('livechat', sessions)]:
             for record in records:
                 message = self._website_target_messages(kind, record).filtered(lambda item: item.id == message_id)
@@ -201,16 +204,6 @@ class Conversation(models.Model):
             raise AccessError(_('Invalid read position.'))
         if type(combine) is not bool:
             raise ValidationError(_('Invalid conversation search.'))
-        if combine:
-            orders, sessions = self._website_targets()
-            for item in orders if kind == 'order' else sessions:
-                incoming = self._website_target_messages(kind, item).filtered(lambda value:
-                    not value.website_closure_notice and value.direction == 'in'
-                    and (value.timeline_at, value.id) <= (message.timeline_at, message.id))
-                if incoming:
-                    self.workspace_acknowledge(max(incoming.ids), target={'kind': kind,
-                        'uuid': item.order_uuid if kind == 'order' else item.session_uuid})
-            return True
         self._website_lock_account()
         preference = self._website_preference(kind, record, create=True)
         if message.id > preference.last_message_id:
@@ -256,6 +249,29 @@ class Conversation(models.Model):
                 conversation._website_target_data('livechat', item) for item in sessions]
             row['unread'] = sum(item['unread'] for item in row['website_targets'])
         return rows
+
+    def _workspace_chat_rows(self, row):
+        if self.channel_id.provider != 'website':
+            return super()._workspace_chat_rows(row)
+        orders, sessions = self._website_targets()
+        items = []
+        for kind, records in [('order', orders), ('livechat', sessions)]:
+            for record in records:
+                data = self._website_target_data(kind, record)
+                target = {'kind': kind, 'uuid': data['uuid']}
+                messages = self._website_target_messages(kind, record).filtered(
+                    lambda message: not message.website_closure_notice)
+                incoming = messages.filtered(lambda message: message.direction == 'in' and not message.historical)
+                activity = max(((fields.Datetime.to_string(message.create_date), message.id)
+                                for message in incoming), default=('1970-01-01 00:00:00', 0))
+                key = f"website:{self.messaging_account_id.id}:{kind}:{data['uuid']}"
+                item = dict(row, website_target=target, website_target_label=data['label'],
+                            website_target_closed=data['closed'], unread=data['unread'],
+                            preview=messages.sorted(lambda message: (message.timeline_at, message.id))[-1:].body or '',
+                            group_key=key, activity_cursor=[*activity, key])
+                item['streams'] = [dict(item, account_id=self.messaging_account_id.id, label=data['label'])]
+                items.append(item)
+        return items
 
     def _workspace_activity(self):
         if self.channel_id.provider != 'website':
@@ -303,26 +319,13 @@ class Conversation(models.Model):
         targets = [(item_kind, item, self._website_target_data(item_kind, item))
             for item_kind, records in [('livechat', sessions), ('order', orders)] for item in records]
         channel = [(kind, record)]
-        if combine:
-            visible = [(item_kind, item) for item_kind, item, data in targets]
-            channel = [(item_kind, item) for item_kind, item in visible if item_kind == kind]
-            if not channel and visible:
-                kind = visible[0][0]
-                channel = [(item_kind, item) for item_kind, item in visible if item_kind == kind]
-            if channel:
-                opened = [(item_kind, item) for item_kind, item in channel
-                    if not (item.chat_closed if item_kind == 'order' else item.ended)]
-                if (kind, record) not in (opened or channel):
-                    kind, record = (opened or channel)[0]
         selected = {'kind': kind, 'uuid': record.order_uuid if kind == 'order' else record.session_uuid}
-        channel_targets = [{'kind': item_kind, 'uuid': item.order_uuid if item_kind == 'order' else item.session_uuid}
-            for item_kind, item in channel]
         scoped = self.with_context(ab_website_target=selected,
-            ab_website_channel_targets=channel_targets if combine else None)
+            ab_website_channel_targets=None)
         result = super(Conversation, scoped).workspace_detail(*args, **kwargs)
         result['website_targets'] = [data for item_kind, item, data in targets]
         result['website_target'] = selected
-        result['website_combined'] = combine
+        result['website_combined'] = False
         result['website_header_origin_kind'] = kind
         result['website_header_origin'] = _('Support') if kind == 'livechat' else _('Orders')
         result['website_reply_order_id'] = record.id if kind == 'order' else False
@@ -388,3 +391,37 @@ class Conversation(models.Model):
                     or item['timestamp'] < fields.Datetime.to_string(anchor.timeline_at)]
         result['messages'].sort(key=lambda item: (item['timestamp'] or '', item['item_type'] == 'information', item['id']))
         return result
+
+
+class ChatterAPI(models.AbstractModel):
+    _inherit = 'ab_crm_chatter_api'
+
+    def _notification_conversation(self, conversation):
+        if conversation.channel_id.provider == 'website':
+            return conversation.website_canonical_id or conversation
+        return super()._notification_conversation(conversation)
+
+    def _alert_conversations(self, conversation, target):
+        if conversation.channel_id.provider == 'website':
+            conversation._website_target(target)
+            return conversation._website_timeline_streams()
+        return super()._alert_conversations(conversation, target)
+
+    def _notification_chat(self, message):
+        conversation = message.conversation_id
+        if conversation.channel_id.provider != 'website':
+            return super()._notification_chat(message)
+        conversation._workspace_scope()
+        if message.website_order_id:
+            target = {'kind': 'order', 'uuid': message.website_order_id.order_uuid}
+        elif message.website_session_id:
+            target = {'kind': 'livechat', 'uuid': message.website_session_id.session_uuid}
+        else:
+            event = self.env['ab_crm_website_event'].search([
+                ('account_id', '=', conversation.messaging_account_id.id),
+                ('event_uuid', '=', message.provider_reference)], limit=1)
+            if not event:
+                return super()._notification_chat(message)
+            target = {'kind': 'order', 'uuid': event.order_uuid}
+        conversation._website_target(target)
+        return f"website:{conversation.messaging_account_id.id}:{target['kind']}:{target['uuid']}", target

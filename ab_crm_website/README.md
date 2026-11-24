@@ -52,3 +52,11 @@ staff CRUD access. Chat archival and restoration are removed; all histories rema
 visible, including ended guest sessions and closed orders. Inbox ordering uses
 received messages only, newest first, across canonical aliases.
 Install receiver support before enabling optional source checkout metadata.
+
+## Independent chats (19.0.1.16.0)
+
+Every website order and Support session has its own inbox entry, history, draft,
+attachments and read position. Notifications open the exact notified target and
+message. Customer associations remain evidence; they do not combine chats.
+Manual chat linking and website reconciliation are disabled. The general Inbox
+Refresh remains available. See `RELEASE.md` for activation and rollback.

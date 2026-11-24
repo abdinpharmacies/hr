@@ -6,3 +6,5 @@ from . import test_http
 from . import test_contact_groups
 
 from . import test_chat_ux
+
+from . import test_independent_chats
