@@ -17,8 +17,10 @@ class OfferDraft(models.Model):
     sheet_key = fields.Char(required=True, readonly=True)
     source = fields.Char(readonly=True)
     original_terms = fields.Text(readonly=True)
-    reason = fields.Text(string="Reason for Review", readonly=True)
-    display_reason = fields.Text(string="Reason for Review", compute="_compute_display_reason")
+    reason = fields.Text(string="Original Review Reason", readonly=True)
+    display_reason = fields.Text(
+        string="Reason for Review", compute="_compute_display_reason", search="_search_display_reason",
+    )
     details = fields.Text(string="Product Codes and Brands", readonly=True)
     review_evidence = fields.Json(readonly=True)
     review_explanation = fields.Text(string="What Needs Review", compute="_compute_review_explanation")
@@ -85,6 +87,13 @@ class OfferDraft(models.Model):
         labels, formats = self._reason_translations()
         for draft in self:
             draft.display_reason = self._localize_reason(draft.reason, labels, formats)
+
+    @api.model
+    def _search_display_reason(self, operator, value):
+        groups = self._read_group([], ["reason"], ["id:min"])
+        examples = self.browse([draft_id for _reason, draft_id in groups])
+        matches = examples.filtered_domain(fields.Domain("display_reason", operator, value))
+        return fields.Domain("reason", "in", matches.mapped("reason"))
 
     @api.depends("review_evidence", "sheet_key", "original_terms", "reason", "details", "source", "name")
     @api.depends_context("lang")

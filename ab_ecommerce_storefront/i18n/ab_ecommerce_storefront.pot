@@ -19165,6 +19165,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_offer_drafts
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_offer_drafts
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.discount_program_sheet_list
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_overview_list
 msgid "Offer Drafts"
 msgstr ""
@@ -19204,7 +19205,6 @@ msgid ""
 msgstr ""
 
 #. module: ab_ecommerce_storefront
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__reason
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__display_reason
 msgid "Reason for Review"
 msgstr ""
@@ -19527,4 +19527,9 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
 msgid "Pause existing offer for review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__reason
+msgid "Original Review Reason"
 msgstr ""

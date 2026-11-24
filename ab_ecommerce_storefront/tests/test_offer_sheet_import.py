@@ -337,6 +337,32 @@ class TestOfferSheetImport(TransactionCase):
         draft.reason = arabic.display_reason
         self.assertEqual(english.display_reason, "Review matches / No available stock for: [123] Serum")
 
+    def test_filter_by_localized_review_reason(self):
+        self.env["res.lang"]._activate_lang("ar_001")
+        model = self.env["ab_storefront_offer_draft"].with_user(self.manager)
+        drafts = model._from_sheet([
+            {"name": reason, "reason": reason, "sheet_key": f"reason-filter-{index}",
+             "website_id": self.website.id}
+            for index, reason in enumerate((
+                "Review matches", "Review matches", "Review matches / Missing or invalid dates",
+                "No available stock for: [123] Serum",
+            ))
+        ])
+        arabic = model.with_context(lang="ar_001")
+        label = drafts[0].with_context(lang="ar_001").display_reason
+        self.assertNotEqual(label, "Review matches")
+        scope = [("id", "in", drafts.ids)]
+        for operator, query, expected in (
+            ("ilike", label.split()[0], drafts[:3]),
+            ("=", label, drafts[:2]),
+            ("not ilike", label, drafts[3:]),
+            ("ilike", "[123] serum", drafts[3:]),
+        ):
+            self.assertEqual(arabic.search(scope + [("display_reason", operator, query)]).ids, expected.ids)
+        self.assertEqual(model.with_context(lang="en_US").search(
+            scope + [("display_reason", "ilike", "missing or invalid")]
+        ).ids, drafts[2:3].ids)
+
     def test_glovive_saved_draft_uses_reference_and_saved_match_notes(self):
         ref = _november_offers()
         row = next(r for r in ref["offers"] if r["name"] == "Glovive" and r["source"] == "white friday #25")

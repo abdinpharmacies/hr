@@ -105,7 +105,7 @@
         <field name="name">ab_storefront_offer_draft.search</field>
         <field name="model">ab_storefront_offer_draft</field>
         <field name="arch" type="xml">
-            <search><field name="name"/><field name="source"/>
+            <search><field name="name"/><field name="source"/><field name="display_reason" operator="ilike"/>
                 <filter name="pending" string="Awaiting Review" domain="[('state', '=', 'draft')]"/>
             </search>
         </field>

@@ -2,6 +2,27 @@
 
 ## Current changes before commit:
 
+- Filter Offer Drafts by the reason displayed in the reader's language, including partial matches and product names in stock warnings.
+- Show the Arabic Offer Drafts button label on the Discount & Loyalty list as well as the Storefront Offers list.
+- All 19 offer sheet and draft tests passed on the isolated Odoo 19 validation database.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+
+Commit: `88bfc3af`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/FIX: localize draft reasons and show drafts in offers`
+
+User-facing changes:
+
 - Open Offer Drafts beside the spreadsheet import button in the Storefront Offers list as a sales manager or draft reviewer.
 - Show saved review reasons and stock warnings in the reader's language, including existing drafts. Preserve product names and quantities and the original import evidence.
 - All 18 offer sheet import and draft tests passed on the local Odoo 19 validation database.
