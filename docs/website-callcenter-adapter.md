@@ -4,7 +4,7 @@ The adapter captures confirmed ordinary website orders and transports immutable 
 
 ## Addons and transport
 
-- `ab_storefront_callcenter_adapter` is the ecommerce companion, with its release source under `companions/ecommerce/`. Its only ecommerce dependency is `ab_ecommerce_storefront`; the customer API is optional and unchanged.
+- `ab_storefront_callcenter_adapter` is the ecommerce companion maintained in the `e_commerce` branch. Its ecommerce dependencies include `ab_ecommerce_storefront`, `website_livechat` and `im_livechat`; the customer API is optional and unchanged.
 - `ab_crm_website` extends Sales Chatter invoice display. It preserves the native POS action and pricing checks.
 - `crm_messaging_gateway.app.website` runs durable Website delivery using the existing PostgreSQL or SQLite queues. HTTP workers remain separate.
 
@@ -77,3 +77,7 @@ Use isolated Odoo databases, `--workers=0 --max-cron-threads=0`, alternate HTTP/
 See [production connection and configuration](website-callcenter-production-setup.md) for the current pilot origins, credentials/scopes, gateway configuration, HTTPS and rollout procedure.
 
 Branch Locations provides Import Branch Locations beside New for managers and system administrators without a row selection. The existing popup validates duplicates, ambiguous stores and preview consistency, and imports inactive profiles for review. Native import/export remains available. Its separate menu and Legacy Order Archive navigation are inactive; historical orders, lines, audits, security, actions and XML IDs remain intact. Retained archive views support direct XML developer-mode loading.
+
+The earlier v2 native-chat release is recorded in [Website chat rollout](website-chat-rollout.md). That rollout and the older validation notes are historical; they do not describe current header controls or establish a current production deployment.
+
+The current staff order-status button, ecommerce destination and backend login return are documented in [Website order status button](website-order-status-links.md). The local `tools/website_connection` scripts are optional, environment-specific reconnection helpers; they are not addon or delivery dependencies. Their preview modes make no changes; explicit apply mode can create disabled connection records or replace a private gateway configuration after backup.
