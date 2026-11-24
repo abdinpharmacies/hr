@@ -84,6 +84,9 @@ class TestSheetPromotion(TransactionCase):
         staff = new_test_user(self.env, login='group_offer_staff',
                               groups='ab_ecommerce_storefront.group_call_center')
         overview = self.env['ab_storefront_offer_overview'].with_user(staff)
+        list_view = self.env.ref('ab_ecommerce_storefront.offer_overview_list')
+        new_offer = self.env.ref('ab_ecommerce_storefront.action_new_storefront_offer')
+        self.assertIn(f'name="{new_offer.id}"', overview.get_view(list_view.id, 'list')['arch'])
         rows = overview.search([('name', 'in', [offer.name, imported.name])])
         self.assertEqual(len(rows), 2)
         self.assertEqual(set(rows.mapped('source')), {'manual', 'sheet'})

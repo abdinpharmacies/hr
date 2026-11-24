@@ -2,6 +2,23 @@
 
 ## Current changes before commit:
 
+- Show the New Storefront Offer action to the call center employee role. Verified the rendered Odoo list architecture as a call center employee.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/tests/test_sheet_promotion.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+
+## Recent commits
+
+Commit: `ede87d32`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/IMP: manage and publish stock-checked offers`
+
+User-facing changes:
+
 - Open manual promotions, imported promotions and pending drafts from the existing Storefront Offers menu. A stock review appears once and links back to its promotion.
 - Configure group size, discounted units, percentage discounts, fixed EGP unit prices and offer priority on manual product group promotions.
 - Check every eligible product and the full group quantity during import and approval. Publish eligible products on the selected website. Suspend the whole current or scheduled imported promotion for review if its stock is insufficient.
@@ -27,8 +44,6 @@ Files changed:
 - `ab_ecommerce_storefront/views/offer_sheet_views.xml`
 - `ab_ecommerce_storefront/views/storefront_offer_views.xml`
 - `ab_ecommerce_storefront/wizard/offer_sheet.py`
-
-## Recent commits
 
 Commit: `ceb2ca9f`
 Author: Mohamed Fawzy
