@@ -136,8 +136,24 @@
                     <t t-if="ab_product_offer.get('free_qty')">
                         <t t-out="ab_product_offer['buy_qty']"/> + <t t-out="ab_product_offer['free_qty']"/> <span>free</span>
                     </t>
+                    <t t-elif="ab_product_offer.get('collection_offer')">
+                        <t t-out="ab_product_offer['buy_qty']"/> + <t t-out="ab_product_offer['discount_qty']"/> @ <t t-out="int(ab_product_offer['discount_rate'])"/>%
+                    </t>
                     <t t-else="">1 + <t t-out="int(ab_product_offer['discount_rate'])"/>%</t>
                 </strong>
+                <div t-if="ab_product_offer.get('collection_products')"
+                     class="ab-storefront-collection-products"
+                     role="list" aria-label="Other eligible products">
+                    <a t-foreach="ab_product_offer['collection_products']" t-as="ab_collection_product"
+                       t-att-href="ab_collection_product['url']"
+                       class="ab-storefront-collection-product"
+                       role="listitem" t-att-title="ab_collection_product['name']">
+                        <img t-att-src="ab_collection_product['image']"
+                             t-att-alt="ab_collection_product['name']"
+                             width="72" height="72" loading="lazy"/>
+                        <span t-out="ab_collection_product['name']"/>
+                    </a>
+                </div>
                 <div t-if="ab_product_offer.get('benefit_products')" class="ab-storefront-benefit-options"
                      role="group" aria-label="Choose your benefit product">
                     <button t-foreach="ab_product_offer['benefit_products']" t-as="ab_benefit"
@@ -162,11 +178,35 @@
                 <button type="button" class="ab-storefront-second-offer-trigger btn btn-primary"
                         t-att-data-offer-id="ab_product_offer['offer_id']"
                         t-att-data-offer-mode="ab_product_offer['second_item_mode']"
-                        t-att-data-offer-type="'gift' if ab_product_offer.get('free_qty') else 'second_half'"
+                        t-att-data-offer-type="'mix_discount' if ab_product_offer.get('collection_offer') else ('gift' if ab_product_offer.get('free_qty') else 'second_half')"
+                        t-att-data-primary-product-id="ab_product_offer['primary_product_id']"
+                        t-att-data-buy-qty="ab_product_offer.get('buy_qty', 1)"
                         t-att-data-offer-description="ab_product_offer['description']">
                     Get this offer
                 </button>
             </div>
+            <section t-elif="ab_product_offer.get('collection_offer')"
+                     class="ab-storefront-product-bundle-offer ab-storefront-product-collection-offer my-3"
+                     aria-labelledby="ab-collection-offer-title">
+                <i class="fa fa-tags ab-storefront-product-offer-icon" aria-hidden="true"/>
+                <div class="ab-storefront-collection-copy">
+                    <strong id="ab-collection-offer-title">Choose from this offer collection</strong>
+                    <span t-out="ab_product_offer['description']"/>
+                </div>
+                <div t-if="ab_product_offer.get('collection_products')"
+                     class="ab-storefront-collection-products"
+                     role="list" aria-label="Other eligible products">
+                    <a t-foreach="ab_product_offer['collection_products']" t-as="ab_collection_product"
+                       t-att-href="ab_collection_product['url']"
+                       class="ab-storefront-collection-product"
+                       role="listitem" t-att-title="ab_collection_product['name']">
+                        <img t-att-src="ab_collection_product['image']"
+                             t-att-alt="ab_collection_product['name']"
+                             width="72" height="72" loading="lazy"/>
+                        <span t-out="ab_collection_product['name']"/>
+                    </a>
+                </div>
+            </section>
             <div t-elif="ab_product_offer.get('free_qty')" class="ab-storefront-product-bundle-offer my-3">
                 <i class="fa fa-gift ab-storefront-product-offer-icon" aria-hidden="true"/>
                 <strong class="ab-storefront-product-offer-equation" dir="ltr">

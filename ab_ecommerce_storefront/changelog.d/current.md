@@ -2,17 +2,54 @@
 
 ## Current changes before commit:
 
-- Update branch stock connector tests to expect the native, parameterized Eplus read path.
+- Add a Mix & Match Quantity Discount offer type to the Storefront Offers list and form.
+- Treat the main product and additional collection products as one qualifying collection.
+- Let customers combine different products or repeat the same product, then discount the cheapest configured quantity for every complete offer cycle.
+- Add an independent lifetime unit allocation for the main product and every additional collection product, with zero represented as No limit.
+- Add the configured purchase quantity from the selected product and automatically add the cheapest other eligible collection product as the discounted quantity.
+- Skip exhausted collection products and continue with the next cheapest eligible product while enforcing allocations again during order confirmation.
+- Show the collection offer on every eligible product card and product page.
+- Show the other eligible collection products as responsive image links on each product page.
+- Let offer managers associate any storefront offer with a same-website or shared homepage carousel slide and preview its image.
+- Make the selected carousel action type (entire banner, text button, or image button) open the primary product page of the currently active offer automatically.
+- Keep unpublished or archived primary products from creating broken carousel product links.
+- Keep each carousel slide unambiguous by rejecting overlapping active offer links while preserving its manual CTA URL as the fallback.
+- Restrict carousel choices for sales managers to slides from their allowed companies while preserving administrator access.
+- Prevent overlapping active offers across every product in the collection.
+- Translate the new configuration and customer-facing text in both Arabic catalogs.
+- Cover repeated products, mixed products, multiple offer cycles, invalid empty collections, automatic carousel targets, overlap rejection, and carousel access isolation with focused tests.
+- Protect collection-product configuration with company-scoped access rules and prevent customers from forging the internal discounted-line marker.
 
 Files changed:
 
-- `ab_ecommerce_storefront/tests/test_stock_availability.py`
 - `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/controllers/second_item_offer.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/security/ir.model.access.csv`
+- `ab_ecommerce_storefront/security/record_rules.xml`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/static/src/js/second_item_offer.js`
+- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/product.xml`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
 
 Validation:
 
-- The storefront test class could not start on the replica development database because its existing setup creates an `ab_product` blocked by replica policy; `/tmp/ecommerce_native_branch_validation.log`.
-- Equivalent focused native connector and fallback tests passed in `ab_website_sale_product_replication`; `/tmp/ecommerce_native_branch_validation_final.log`.
+- Python compilation, XML parsing, and `git diff --check` passed.
+- The Storefront Offers test class passed 57 tests with zero failures and zero errors, including selected-action carousel routing, unpublished/archived product fallback, and overlapping-link rejection, on `scratch_ab_ecommerce_storefront_carousel_link_20261123`.
+- The focused Storefront Offers test run passed 62 tests with zero failures and zero test errors on `scratch_ab_ecommerce_storefront_deploy_20261123_1`, including automatic cheapest-other selection, exhausted-product fallback, per-product confirmation limits, collection-line access control, carousel routing, and company-scoped carousel access.
+- The targeted local `ecom19` upgrade completed without errors, the Arabic homepage returned HTTP 200, and runtime HTML preserved text-button, full-banner, and image-button click targets.
+- The targeted module upgrade passed, and the frontend CSS bundle compiled and returned successfully with the new collection-offer selectors.
+- Both Arabic catalogs passed `msgfmt --check-format`.
+- The updated POT and both Arabic catalogs passed `msgfmt --check-format` after adding the per-product allocation and automatic-selection strings.
+- Runtime verification returned `Carousel Slide` in English, `شريحة الكاروسيل` in `ar_001`, and the translated carousel banner label in the form view.
+- Fresh installation initially hit an existing `ab_website` setup dependency on the unloaded `ar_001` language; loading that language in the scratch database allowed the targeted installation and tests to complete.
+- The first test command used the system interpreter and stopped before module loading because the existing `ijson` dependency was unavailable there; rerunning with the project virtual environment completed successfully.
 
 ## Recent commits
 

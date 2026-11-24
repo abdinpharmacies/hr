@@ -10,6 +10,7 @@
                 <field name="product_id"/>
                 <field name="offer_type" widget="badge"/>
                 <field name="website_id"/>
+                <field name="carousel_slide_id" optional="hide"/>
                 <field name="use_odoo_promotion"/>
                 <field name="once_per_customer" optional="show"/>
                 <field name="date_from" optional="show"/>
@@ -36,18 +37,30 @@
                         <group>
                             <field name="website_id" options="{'no_create': True}"/>
                             <field name="product_id" options="{'no_create': True}"/>
+                            <field name="main_product_max_offer_units" widget="ab_offer_limit" invisible="offer_type != 'mix_discount'"/>
                             <field name="offer_type" widget="radio"/>
                             <field name="sequence"/>
                         </group>
                         <group>
                             <field name="use_odoo_promotion" invisible="offer_type not in ('gift', 'price')"/>
                             <field name="once_per_customer"/>
-                            <field name="max_applications" widget="ab_offer_limit" invisible="offer_type not in ('gift', 'second_half') or use_odoo_promotion"/>
-                            <div class="text-muted" colspan="2" invisible="offer_type not in ('gift', 'second_half') or use_odoo_promotion">Each qualifying benefit counts within the current order. A new order starts a new limit unless Once per Customer is enabled.</div>
-                            <field name="max_offer_units" widget="ab_offer_limit"/>
+                            <field name="max_applications" widget="ab_offer_limit" invisible="offer_type not in ('gift', 'second_half', 'mix_discount') or use_odoo_promotion"/>
+                            <div class="text-muted" colspan="2" invisible="offer_type not in ('gift', 'second_half', 'mix_discount') or use_odoo_promotion">Each qualifying benefit counts within the current order. A new order starts a new limit unless Once per Customer is enabled.</div>
+                            <field name="max_offer_units" widget="ab_offer_limit" invisible="offer_type == 'mix_discount'"/>
                             <field name="program_id" invisible="not use_odoo_promotion" required="use_odoo_promotion" options="{'no_create': True}"/>
                             <field name="date_from" invisible="use_odoo_promotion"/>
                             <field name="date_to" invisible="use_odoo_promotion"/>
+                        </group>
+                    </group>
+                    <group string="Carousel Banner">
+                        <group>
+                            <field name="carousel_slide_id" options="{'no_create': True}"/>
+                            <div class="text-muted" colspan="2">Choose the homepage carousel image associated with this offer.</div>
+                        </group>
+                        <group>
+                            <field name="carousel_image_1920" widget="image" nolabel="1"
+                                   invisible="not carousel_slide_id"
+                                   options="{'preview_image': 'carousel_image_1920'}"/>
                         </group>
                     </group>
                     <group string="Free Gifts" invisible="offer_type != 'gift' or use_odoo_promotion">
@@ -63,6 +76,19 @@
                                options="{'no_create': True}"/>
                         <field name="second_discount_rate" invisible="offer_type != 'second_half'" required="offer_type == 'second_half'"/>
                         <div class="text-muted" colspan="2" invisible="offer_type != 'second_half'">The discount applies to the cheapest eligible units, once for each qualifying pair.</div>
+                    </group>
+                    <group string="Offer Collection" invisible="offer_type != 'mix_discount'">
+                        <field name="collection_product_line_ids" nolabel="1" colspan="2">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="product_id" options="{'no_create': True}"/>
+                                <field name="max_offer_units" widget="ab_offer_limit"/>
+                            </list>
+                        </field>
+                        <field name="buy_qty"/>
+                        <field name="gift_qty" string="Discounted Quantity"/>
+                        <field name="second_discount_rate" string="Collection Discount Rate" required="offer_type == 'mix_discount'"/>
+                        <div class="text-muted" colspan="2">Set an independent lifetime unit allocation for each product; No limit keeps that product available. The cheapest other eligible product is added automatically and receives the discount.</div>
                     </group>
                     <group string="Product Discount" invisible="offer_type not in ('percent', 'amount')">
                         <field name="pricelist_id" required="offer_type in ('percent', 'amount')" options="{'no_create': True}"/>
@@ -107,6 +133,7 @@
                 <filter name="percentage" string="Percentage Discount" domain="[('offer_type', '=', 'percent')]"/>
                 <filter name="amount" string="Fixed Amount Discount" domain="[('offer_type', '=', 'amount')]"/>
                 <filter name="second_item" string="Second Item Discount" domain="[('offer_type', '=', 'second_half')]"/>
+                <filter name="mix_discount" string="Mix &amp; Match Quantity Discount" domain="[('offer_type', '=', 'mix_discount')]"/>
                 <separator/>
                 <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
                 <group>

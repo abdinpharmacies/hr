@@ -356,7 +356,9 @@ class Website(models.Model):
             order="sequence, id",
         )
         priority_ids = list(dict.fromkeys(
-            offer.product_id.product_tmpl_id.id for offer in configured_offers
+            product.product_tmpl_id.id
+            for offer in configured_offers
+            for product in offer._qualifying_products()
         ))
         priority_order = {product_id: index for index, product_id in enumerate(priority_ids)}
         priority_products = products.search(domain & Domain("id", "in", priority_ids)).sorted(
@@ -392,10 +394,13 @@ class Website(models.Model):
         domains = [Domain("compare_list_price", ">", 0)]
         programs = self.env["loyalty.program"].sudo().search(self._ab_storefront_offer_program_domain())
         bundle_offers = programs.ab_storefront_offer_id.filtered(
-            lambda offer: offer.active and offer.offer_type in ("gift", "second_half")
+            lambda offer: offer.active and offer.offer_type in ("gift", "second_half", "mix_discount")
         )
         if bundle_offers:
-            domains.append(Domain("product_variant_ids", "in", bundle_offers.product_id.ids))
+            qualifying_products = self.env["product.product"]
+            for offer in bundle_offers:
+                qualifying_products |= offer._qualifying_products()
+            domains.append(Domain("product_variant_ids", "in", qualifying_products.ids))
         for program in programs:
             if program.limit_usage and program.total_order_count >= program.max_usage:
                 continue
@@ -493,8 +498,42 @@ class Website(models.Model):
                             if discount:
                                 details[product.id]["discount_percent"] = discount
         for offer in programs.ab_storefront_offer_id.filtered(
-            lambda current: current.active and current.offer_type in ("gift", "second_half")
+            lambda current: current.active and current.offer_type in ("gift", "second_half", "mix_discount")
         ):
+            if offer.offer_type == "mix_discount":
+                available = offer._qualifying_products().exists().filtered(lambda item: (
+                    item._is_add_to_cart_allowed() and not item._is_sold_out()
+                    and offer._remaining_product_offer_units(item) > 0
+                )).sorted(lambda item: (item.name, item.id))
+                for product in offer._qualifying_products().product_tmpl_id & candidates:
+                    primary = product.product_variant_id
+                    if primary not in available or not (available - primary):
+                        continue
+                    collection_products = [
+                        {
+                            "id": item.id,
+                            "name": item.name,
+                            "image": self.image_url(item.product_tmpl_id, "image_128"),
+                            "url": item.product_tmpl_id._get_product_url(),
+                        }
+                        for item in available
+                        if item.product_tmpl_id != product
+                    ]
+                    details[product.id] = {
+                        "collection_offer": True,
+                        "bundle_offer": True,
+                        "collection_products": collection_products,
+                        "second_item_mode": "auto_cheapest",
+                        "discount_rate": float(offer.second_discount_rate),
+                        "buy_qty": offer.buy_qty,
+                        "discount_qty": offer.gift_qty,
+                        "free_qty": 0,
+                        "max_applications": offer.max_applications,
+                        "description": offer._storefront_description(),
+                        "offer_id": offer.id,
+                        "primary_product_id": primary.id,
+                    }
+                continue
             product = offer.product_id.product_tmpl_id
             if product in candidates:
                 benefit_products = []
@@ -635,6 +674,33 @@ class Website(models.Model):
             domain,
             order="sequence, id",
         )
+
+    def _ab_storefront_carousel_offer_urls(self, slides):
+        self.ensure_one()
+        eligible_slides = slides.exists().filtered(
+            lambda slide: not slide.website_id or slide.website_id == self
+        )
+        if not eligible_slides:
+            return {}
+        today = fields.Date.context_today(self)
+        offers_sudo = self.env["ab_storefront_offer"].sudo().search([
+            ("active", "=", True),
+            ("website_id", "=", self.id),
+            ("company_id", "=", self.company_id.id),
+            ("carousel_slide_id", "in", eligible_slides.ids),
+            "|", ("date_from", "=", False), ("date_from", "<=", today),
+            "|", ("date_to", "=", False), ("date_to", ">=", today),
+        ], order="sequence, id")
+        urls = {}
+        for offer in offers_sudo:
+            product = offer.product_id.product_tmpl_id.with_context(website_id=self.id)
+            if not product.active or not product.sale_ok or not product.website_published:
+                continue
+            urls.setdefault(
+                offer.carousel_slide_id.id,
+                product._get_product_url(),
+            )
+        return urls
 
     def _ab_storefront_customer_testimonials(self):
         self.ensure_one()

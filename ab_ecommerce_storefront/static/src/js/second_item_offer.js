@@ -42,14 +42,17 @@ export class StorefrontSecondItemOffer extends Interaction {
         const container = this.el.closest(".ab-storefront-product-card, #product_detail");
         const purchaseInput = container?.querySelector('input[name="add_qty"]');
         const desiredQuantity = Number(purchaseInput?.value);
-        const minimumQuantity = Math.max(Number(purchaseInput?.min) || 1, 1);
+        const minimumQuantity = Math.max(
+            Number(this.el.dataset.buyQty) || Number(purchaseInput?.min) || 1,
+            1,
+        );
         this.purchaseQuantity = purchaseInput
             ? Math.max(Number.isInteger(desiredQuantity) ? desiredQuantity : minimumQuantity, minimumQuantity)
             : null;
         if (purchaseInput) {
             purchaseInput.value = String(this.purchaseQuantity);
         }
-        if (this.el.dataset.offerMode === "same") {
+        if (["same", "auto_cheapest"].includes(this.el.dataset.offerMode)) {
             await this.addOffer();
             return;
         }
@@ -272,6 +275,7 @@ export class StorefrontSecondItemOffer extends Interaction {
                 offer_id: Number(button.dataset.offerId),
                 second_product_id: secondProductId,
                 purchase_quantity: this.purchaseQuantity,
+                primary_product_id: Number(button.dataset.primaryProductId) || null,
             };
             if (this.isGift) {
                 payload.gift_allocations = [...this.giftAllocations].map(([product_id, quantity]) => ({
@@ -365,7 +369,10 @@ export class StorefrontProductOfferCart extends Interaction {
         if (!offer || offer.dataset.primaryProductId !== productId) {
             return;
         }
-        const trigger = offer.querySelector(".ab-storefront-second-offer-trigger[data-offer-mode='choice']");
+        const trigger = offer.querySelector(
+            ".ab-storefront-second-offer-trigger[data-offer-mode='choice'], " +
+            ".ab-storefront-second-offer-trigger[data-offer-mode='auto_cheapest']",
+        );
         if (trigger) {
             event.preventDefault();
             event.stopImmediatePropagation();

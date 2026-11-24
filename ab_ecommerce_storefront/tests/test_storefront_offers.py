@@ -82,6 +82,97 @@ class TestStorefrontOffers(TransactionCase):
         with self.assertRaises(AccessError):
             offer.with_user(self.designer).unlink()
 
+    def test_offer_links_carousel_slide_for_same_website_or_shared(self):
+        image = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z4p8AAAAASUVORK5CYII="
+        slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Offer carousel slide",
+            "website_id": self.website.id,
+            "image_1920": image,
+        })
+        offer = self.offer(carousel_slide_id=slide.id)
+        self.assertEqual(offer.carousel_slide_id, slide)
+        self.assertEqual(offer.carousel_image_1920, slide.image_1920)
+
+        shared_slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Shared offer carousel slide",
+            "image_1920": image,
+        })
+        offer.carousel_slide_id = shared_slide
+        self.assertEqual(offer.carousel_slide_id, shared_slide)
+
+        other_website = self.env["website"].create({
+            "name": "Other carousel website",
+            "company_id": self.company.id,
+        })
+        other_slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Other website carousel slide",
+            "website_id": other_website.id,
+            "image_1920": image,
+        })
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.carousel_slide_id = other_slide
+
+    def test_linked_carousel_targets_main_product_and_rejects_overlap(self):
+        image = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z4p8AAAAASUVORK5CYII="
+        slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Linked offer carousel slide",
+            "website_id": self.website.id,
+            "image_1920": image,
+            "cta_url": "/shop?category=offers",
+        })
+        offer = self.offer(carousel_slide_id=slide.id)
+        self.assertFalse(self.website._ab_storefront_carousel_offer_urls(slide))
+        self.product.product_tmpl_id.with_context(website_id=self.website.id).website_published = True
+        self.assertEqual(
+            self.website._ab_storefront_carousel_offer_urls(slide),
+            {slide.id: self.product.product_tmpl_id._get_product_url()},
+        )
+        self.product.product_tmpl_id.active = False
+        self.assertFalse(self.website._ab_storefront_carousel_offer_urls(slide))
+        self.product.product_tmpl_id.active = True
+
+        other_product = self.env["product.product"].create({
+            "name": "Other carousel offer product",
+            "type": "consu",
+            "list_price": 90,
+            "taxes_id": [Command.clear()],
+            "company_id": self.company.id,
+        })
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.offer(
+                product_id=other_product.id,
+                carousel_slide_id=slide.id,
+                once_per_customer=False,
+            )
+
+        offer.active = False
+        self.assertFalse(self.website._ab_storefront_carousel_offer_urls(slide))
+
+    def test_offer_manager_carousel_access_is_company_scoped(self):
+        image = b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z4p8AAAAASUVORK5CYII="
+        slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Allowed carousel slide",
+            "website_id": self.website.id,
+            "image_1920": image,
+        })
+        other_company = self.env["res.company"].create({"name": "Other carousel company"})
+        other_website = self.env["website"].create({
+            "name": "Other company carousel website",
+            "company_id": other_company.id,
+        })
+        other_slide = self.env["ab_website_carousel_slide"].create({
+            "name": "Blocked carousel slide",
+            "website_id": other_website.id,
+            "image_1920": image,
+        })
+
+        self.assertEqual(slide.with_user(self.manager).read(["name"])[0]["name"], slide.name)
+        with self.assertRaises(AccessError):
+            other_slide.with_user(self.manager).read(["name"])
+        self.assertEqual(other_slide.with_user(self.admin).read(["name"])[0]["name"], other_slide.name)
+        with self.assertRaises(AccessError):
+            slide.with_user(self.restricted).read(["name"])
+
     def test_price_once_and_stale_cart(self):
         offer = self.offer()
         first, stale = self.cart(), self.cart()
@@ -292,6 +383,264 @@ class TestStorefrontOffers(TransactionCase):
         order._update_programs_and_rewards()
         order._auto_apply_rewards()
         self.assertEqual(order.amount_total, 140)
+
+    def test_mix_discount_accepts_repeated_and_mixed_collection_products(self):
+        collection_products = self.env["product.product"].create([
+            {
+                "name": "Collection product B", "type": "consu", "list_price": 80,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+            {
+                "name": "Collection product C", "type": "consu", "list_price": 60,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+        ])
+        offer = self.offer(
+            offer_type="mix_discount", buy_qty=2, gift_qty=1,
+            second_discount_rate="50", second_product_ids=[Command.set(collection_products.ids)],
+            once_per_customer=False,
+        )
+        program = offer.generated_program_ids
+        self.assertEqual(program.rule_ids.minimum_qty, 3)
+        self.assertEqual(program.rule_ids.product_ids, self.product | collection_products)
+        self.assertEqual(program.reward_ids.required_points, 3)
+        self.assertEqual(program.reward_ids.discount_product_ids, self.product | collection_products)
+        product_templates = (self.product | collection_products).product_tmpl_id
+        details = self.website._ab_storefront_offer_details(product_templates)
+        self.assertEqual(set(details), set(product_templates.ids))
+        self.assertTrue(all(values["collection_offer"] for values in details.values()))
+        for product_template in product_templates:
+            displayed_ids = {
+                item["id"] for item in details[product_template.id]["collection_products"]
+            }
+            self.assertEqual(
+                displayed_ids,
+                set((self.product | collection_products).filtered(
+                    lambda item: item.product_tmpl_id != product_template
+                ).ids),
+            )
+
+        repeated = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+            "order_line": [Command.create({"product_id": self.product.id, "product_uom_qty": 3})],
+        })
+        repeated._update_programs_and_rewards()
+        repeated._auto_apply_rewards()
+        self.assertEqual(repeated.amount_total, 250)
+
+        mixed = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+            "order_line": [
+                Command.create({"product_id": product.id, "product_uom_qty": 1})
+                for product in self.product | collection_products
+            ],
+        })
+        mixed._update_programs_and_rewards()
+        mixed._auto_apply_rewards()
+        self.assertEqual(mixed.amount_total, 210)
+
+    def test_mix_discount_repeats_by_complete_collection_cycles(self):
+        collection_products = self.env["product.product"].create([
+            {
+                "name": "Repeated collection product B", "type": "consu", "list_price": 80,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+            {
+                "name": "Repeated collection product C", "type": "consu", "list_price": 60,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+        ])
+        self.offer(
+            offer_type="mix_discount", buy_qty=2, gift_qty=1,
+            second_discount_rate="50", second_product_ids=[Command.set(collection_products.ids)],
+            once_per_customer=False,
+        )
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+            "order_line": [
+                Command.create({"product_id": product.id, "product_uom_qty": 2})
+                for product in self.product | collection_products
+            ],
+        })
+        order._update_programs_and_rewards()
+        order._auto_apply_rewards()
+        self.assertEqual(order.amount_total, 420)
+
+    def test_mix_discount_requires_additional_collection_products(self):
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.offer(
+                offer_type="mix_discount", buy_qty=2, gift_qty=1,
+                second_discount_rate="50", once_per_customer=False,
+            )
+
+    def test_mix_collection_products_have_independent_lifetime_limits(self):
+        second, third = self.env["product.product"].create([
+            {
+                "name": "Limited collection product", "type": "consu", "list_price": 80,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+            {
+                "name": "Unlimited collection product", "type": "consu", "list_price": 60,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+        ])
+        offer = self.offer(
+            offer_type="mix_discount", buy_qty=1, gift_qty=1,
+            second_discount_rate="50", once_per_customer=False,
+            main_product_max_offer_units=4,
+            collection_product_line_ids=[
+                Command.create({"product_id": second.id, "max_offer_units": 2}),
+                Command.create({"product_id": third.id, "max_offer_units": 0}),
+            ],
+        )
+        self.assertEqual(offer._collection_products(), second | third)
+        self.assertEqual(offer._product_offer_limit(self.product), 4)
+        self.assertEqual(offer._product_offer_limit(second), 2)
+        self.assertEqual(offer._product_offer_limit(third), 0)
+        self.assertEqual(offer.generated_program_ids.rule_ids.product_ids, self.product | second | third)
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            offer.collection_product_line_ids.filtered(
+                lambda line: line.product_id == second
+            ).max_offer_units = -1
+
+    def test_mix_controller_adds_cheapest_other_product(self):
+        cheapest, next_cheapest = self.env["product.product"].create([
+            {
+                "name": "Cheapest primary", "type": "consu", "list_price": 60,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+            {
+                "name": "Next cheapest benefit", "type": "consu", "list_price": 80,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+        ])
+        offer = self.offer(
+            offer_type="mix_discount", product_id=cheapest.id,
+            buy_qty=1, gift_qty=1, second_discount_rate="50", once_per_customer=False,
+            collection_product_line_ids=[
+                Command.create({"product_id": next_cheapest.id}),
+                Command.create({"product_id": self.product.id}),
+            ],
+        )
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+        })
+        fake_request = SimpleNamespace(env=self.env, website=self.website, cart=order)
+        product_class = type(self.product)
+        template_class = type(self.product.product_tmpl_id)
+        with patch.object(second_item_offer, "request", fake_request), patch.object(
+            product_class, "_is_add_to_cart_allowed", return_value=True,
+        ), patch.object(product_class, "_is_sold_out", return_value=False), patch.object(
+            template_class, "_get_sales_prices", lambda templates, website: {
+                template.id: {"price_reduce": template.list_price} for template in templates
+            },
+        ):
+            result = second_item_offer.StorefrontSecondItemOffer().add_second_item(
+                offer.id, primary_product_id=cheapest.id, purchase_quantity=1,
+            )
+        self.assertEqual(result["url"], "/shop/cart")
+        benefit_line = order.order_line.filtered(
+            lambda line: line.ab_storefront_mix_benefit_offer_id == offer
+        )
+        self.assertEqual(benefit_line.product_id, next_cheapest)
+        self.assertEqual(benefit_line.product_uom_qty, 1)
+        self.assertEqual(order.amount_total, 100)
+
+    def test_mix_controller_skips_exhausted_cheapest_product(self):
+        cheapest, next_cheapest = self.env["product.product"].create([
+            {
+                "name": "Limited cheapest benefit", "type": "consu", "list_price": 60,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+            {
+                "name": "Available next benefit", "type": "consu", "list_price": 80,
+                "taxes_id": [Command.clear()], "company_id": self.company.id,
+            },
+        ])
+        offer = self.offer(
+            offer_type="mix_discount", buy_qty=1, gift_qty=1,
+            second_discount_rate="50", once_per_customer=False,
+            collection_product_line_ids=[
+                Command.create({"product_id": cheapest.id, "max_offer_units": 1}),
+                Command.create({"product_id": next_cheapest.id}),
+            ],
+        )
+        used = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+            "order_line": [
+                Command.create({"product_id": self.product.id, "product_uom_qty": 1}),
+                Command.create({"product_id": cheapest.id, "product_uom_qty": 1}),
+            ],
+        })
+        self._refresh_offer_cart(used)
+        used.action_confirm()
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+        })
+        fake_request = SimpleNamespace(env=self.env, website=self.website, cart=order)
+        product_class = type(self.product)
+        template_class = type(self.product.product_tmpl_id)
+        with patch.object(second_item_offer, "request", fake_request), patch.object(
+            product_class, "_is_add_to_cart_allowed", return_value=True,
+        ), patch.object(product_class, "_is_sold_out", return_value=False), patch.object(
+            template_class, "_get_sales_prices", lambda templates, website: {
+                template.id: {"price_reduce": template.list_price} for template in templates
+            },
+        ):
+            second_item_offer.StorefrontSecondItemOffer().add_second_item(
+                offer.id, primary_product_id=self.product.id, purchase_quantity=1,
+            )
+        benefit_line = order.order_line.filtered(
+            lambda line: line.ab_storefront_mix_benefit_offer_id == offer
+        )
+        self.assertEqual(benefit_line.product_id, next_cheapest)
+        self.assertEqual(order.amount_total, 140)
+
+    def test_mix_product_limit_blocks_stale_order_confirmation(self):
+        second = self.env["product.product"].create({
+            "name": "Stale limited collection product", "type": "consu", "list_price": 80,
+            "taxes_id": [Command.clear()], "company_id": self.company.id,
+        })
+        self.offer(
+            offer_type="mix_discount", buy_qty=1, gift_qty=1,
+            second_discount_rate="50", once_per_customer=False,
+            main_product_max_offer_units=1,
+            collection_product_line_ids=[Command.create({"product_id": second.id})],
+        )
+        orders = self.env["sale.order"]
+        for unused in range(2):
+            order = self.env["sale.order"].create({
+                "partner_id": self.partner.id, "website_id": self.website.id,
+                "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+                "order_line": [
+                    Command.create({"product_id": self.product.id, "product_uom_qty": 1}),
+                    Command.create({"product_id": second.id, "product_uom_qty": 1}),
+                ],
+            })
+            self._refresh_offer_cart(order)
+            orders |= order
+        orders[0].action_confirm()
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            orders[1].action_confirm()
+
+    def test_mix_discount_blocks_overlapping_offer_on_collection_product(self):
+        collection_product = self.env["product.product"].create({
+            "name": "Overlapping collection product", "type": "consu", "list_price": 100,
+            "taxes_id": [Command.clear()], "company_id": self.company.id,
+        })
+        self.offer(
+            offer_type="mix_discount", buy_qty=2, gift_qty=1,
+            second_discount_rate="50", second_product_ids=[Command.set(collection_product.ids)],
+            once_per_customer=False,
+        )
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            self.offer(product_id=collection_product.id, once_per_customer=False)
 
     def test_used_offer_cannot_be_deleted_or_usage_erased(self):
         offer = self.offer()
@@ -559,6 +908,22 @@ class TestStorefrontOffers(TransactionCase):
         offer.with_user(self.designer).write({"max_offer_units": 2})
         self.assertEqual(offer.percentage_rate, "25")
         self.assertEqual(offer.max_offer_units, 2)
+
+    def test_mix_collection_limit_access_follows_offer_permissions(self):
+        second = self.env["product.product"].create({
+            "name": "Secured collection product", "type": "consu", "list_price": 80,
+            "taxes_id": [Command.clear()], "company_id": self.company.id,
+        })
+        offer = self.offer(
+            offer_type="mix_discount", buy_qty=1, gift_qty=1,
+            collection_product_line_ids=[Command.create({"product_id": second.id})],
+            once_per_customer=False,
+        )
+        line = offer.collection_product_line_ids
+        with self.assertRaises(AccessError):
+            line.with_user(self.portal).write({"max_offer_units": 3})
+        line.with_user(self.manager).write({"max_offer_units": 3})
+        self.assertEqual(line.max_offer_units, 3)
 
     def test_gift_controller_adds_selected_gift_atomically(self):
         second = self.env["product.product"].create({"type": "consu", "taxes_id": [Command.clear()], "company_id": self.company.id, **{"name": "Selected gift", "list_price": 80}})

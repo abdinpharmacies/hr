@@ -21,7 +21,7 @@ class StorefrontSecondItemOffer(http.Controller):
             ("id", "=", int(offer_id)),
             ("website_id", "=", website.id),
             ("company_id", "=", website.company_id.id),
-            ("offer_type", "in", ["second_half", "gift"]),
+            ("offer_type", "in", ["second_half", "gift", "mix_discount"]),
             ("use_odoo_promotion", "=", False),
             ("active", "=", True),
             "|", ("date_from", "=", False), ("date_from", "<=", today),
@@ -102,8 +102,13 @@ class StorefrontSecondItemOffer(http.Controller):
         }
 
     @http.route("/shop/offer/add-second-item", type="jsonrpc", auth="public", methods=["POST"], website=True)
-    def add_second_item(self, offer_id, second_product_id=None, gift_allocations=None, purchase_quantity=None):
+    def add_second_item(
+        self, offer_id, second_product_id=None, gift_allocations=None,
+        purchase_quantity=None, primary_product_id=None,
+    ):
         offer = self._get_offer(offer_id)
+        if offer.offer_type == "mix_discount":
+            return self._add_mix_offer(offer, primary_product_id, purchase_quantity)
         if offer.offer_type == "gift":
             purchase_quantity = self._gift_purchase_quantity(offer, purchase_quantity)
         first = request.env["product.product"].sudo().browse(offer.product_id.id).exists()
@@ -167,6 +172,86 @@ class StorefrontSecondItemOffer(http.Controller):
                     result = order.with_context(skip_cart_verification=True)._cart_add(product.id, quantity=1)
                     if result["added_qty"] != 1:
                         raise UserError(request.env._("An item in this offer is no longer available."))
+            order._verify_cart_after_update()
+            if not order.order_line.filtered(
+                lambda line: line.is_reward_line and line.reward_id.program_id in offer.generated_program_ids
+            ):
+                raise UserError(request.env._("The offer could not be applied. Please try again."))
+        return {"url": "/shop/cart"}
+
+    def _add_mix_offer(self, offer, primary_product_id, purchase_quantity):
+        if type(primary_product_id) is not int or primary_product_id not in offer._qualifying_products().ids:
+            raise UserError(request.env._("Choose an eligible offer product."))
+        if purchase_quantity is None:
+            purchase_quantity = offer.buy_qty
+        if type(purchase_quantity) is not int or not 1 <= purchase_quantity <= 1000:
+            raise UserError(request.env._("Choose a valid purchase quantity."))
+        purchase_quantity = max(offer.buy_qty, purchase_quantity)
+        applications = floor(purchase_quantity / offer.buy_qty)
+        if offer.max_applications:
+            applications = min(applications, offer.max_applications)
+        discounted_quantity = applications * offer.gift_qty
+        if not discounted_quantity:
+            raise UserError(request.env._("Increase the purchase quantity to qualify for this offer."))
+        primary = request.env["product.product"].sudo().browse(primary_product_id).exists()
+        if not primary or not primary._is_add_to_cart_allowed() or primary._is_sold_out():
+            raise UserError(request.env._("An item in this offer is no longer available."))
+        order = request.cart or request.website._create_cart()
+        if order.website_id != request.website or order.company_id != request.website.company_id:
+            raise UserError(request.env._("This cart is not available for this website."))
+
+        def cart_quantity(product):
+            return sum(
+                line.product_uom_id._compute_quantity(
+                    line.product_uom_qty, product.uom_id, round=False,
+                )
+                for line in order.order_line.filtered(lambda current: (
+                    not current.is_reward_line and current.product_id == product
+                ))
+            )
+
+        primary_capacity = offer._remaining_product_offer_units(primary)
+        if primary_capacity != float("inf") and cart_quantity(primary) + purchase_quantity > primary_capacity:
+            raise UserError(request.env._("This product has reached its allocation for the offer."))
+        candidates = (offer._qualifying_products() - primary).exists().filtered(lambda product: (
+            product._is_add_to_cart_allowed() and not product._is_sold_out()
+        ))
+        prices = candidates.product_tmpl_id._get_sales_prices(request.website)
+        candidates = candidates.sorted(lambda product: (
+            prices[product.product_tmpl_id.id]["price_reduce"], product.id,
+        ))
+        allocations = []
+        remaining = discounted_quantity
+        for product in candidates:
+            capacity = offer._remaining_product_offer_units(product)
+            if capacity != float("inf"):
+                capacity = max(0, floor(capacity - cart_quantity(product)))
+            quantity = remaining if capacity == float("inf") else min(remaining, capacity)
+            if quantity:
+                allocations.append((product, quantity))
+                remaining -= quantity
+            if not remaining:
+                break
+        if remaining:
+            raise UserError(request.env._("No other collection product has enough offer allocation."))
+        with request.env.cr.savepoint():
+            result = order.with_context(skip_cart_verification=True)._cart_add(
+                primary.id, quantity=purchase_quantity,
+            )
+            if result["added_qty"] != purchase_quantity:
+                raise UserError(request.env._("The required purchase quantity is no longer available."))
+            for product, quantity in allocations:
+                result = order.with_context(skip_cart_verification=True)._cart_add(
+                    product.id, quantity=quantity,
+                )
+                if result["added_qty"] != quantity:
+                    raise UserError(request.env._("An item in this offer is no longer available."))
+                line = order.order_line.filtered(lambda current: current.id == result["line_id"])
+                if not line:
+                    raise UserError(request.env._("The offer could not be applied. Please try again."))
+                line.sudo().with_context(ab_storefront_manage_offer_lines=True).write({
+                    "ab_storefront_mix_benefit_offer_id": offer.id,
+                })
             order._verify_cart_after_update()
             if not order.order_line.filtered(
                 lambda line: line.is_reward_line and line.reward_id.program_id in offer.generated_program_ids

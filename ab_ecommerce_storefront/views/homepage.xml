@@ -96,6 +96,9 @@
                 <span t-elif="ab_card_offer.get('free_qty')" class="ab-storefront-offer-badge">
                     <bdi dir="ltr"><t t-out="ab_card_offer['buy_qty']"/> + <t t-out="ab_card_offer['free_qty']"/> <span>free</span></bdi>
                 </span>
+                <span t-elif="ab_card_offer.get('collection_offer')" class="ab-storefront-offer-badge">
+                    <bdi dir="ltr"><t t-out="ab_card_offer['buy_qty']"/> + <t t-out="ab_card_offer['discount_qty']"/> @ <t t-out="int(ab_card_offer['discount_rate'])"/>%</bdi>
+                </span>
                 <span t-elif="ab_card_offer.get('second_half')" class="ab-storefront-offer-badge">
                     <bdi dir="ltr">1 + <t t-out="int(ab_card_offer['discount_rate'])"/>%</bdi>
                 </span>
@@ -185,11 +188,11 @@
                                  t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                         </div>
                     </div>
-                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add and (not ab_card_offer.get('bundle_offer') or ab_card_offer.get('free_qty'))" class="ab-storefront-card-quantity" aria-label="Quantity">
+                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add and (not ab_card_offer.get('bundle_offer') or ab_card_offer.get('free_qty') or ab_card_offer.get('collection_offer'))" class="ab-storefront-card-quantity" aria-label="Quantity">
                         <button type="button" data-ab-card-quantity="decrease" aria-label="Decrease quantity">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
                         </button>
-                        <input type="text" name="add_qty" t-att-value="ab_card_offer.get('buy_qty', 1) if ab_card_offer.get('bundle_offer') and ab_card_offer.get('free_qty') else 1" t-att-min="ab_card_offer.get('buy_qty', 1) if ab_card_offer.get('bundle_offer') and ab_card_offer.get('free_qty') else 1" step="1" inputmode="numeric" pattern="[0-9]*" dir="ltr" aria-label="Quantity"/>
+                        <input type="text" name="add_qty" t-att-value="ab_card_offer.get('buy_qty', 1) if ab_card_offer.get('bundle_offer') and (ab_card_offer.get('free_qty') or ab_card_offer.get('collection_offer')) else 1" t-att-min="ab_card_offer.get('buy_qty', 1) if ab_card_offer.get('bundle_offer') and (ab_card_offer.get('free_qty') or ab_card_offer.get('collection_offer')) else 1" step="1" inputmode="numeric" pattern="[0-9]*" dir="ltr" aria-label="Quantity"/>
                         <button type="button" data-ab-card-quantity="increase" aria-label="Increase quantity">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                         </button>
@@ -201,7 +204,9 @@
                            class="ab-storefront-card-buy-now ab-storefront-second-offer-trigger btn btn-primary"
                            t-att-data-offer-id="ab_card_offer['offer_id']"
                            t-att-data-offer-mode="ab_card_offer['second_item_mode']"
-                           t-att-data-offer-type="'gift' if ab_card_offer.get('free_qty') else 'second_half'"
+                           t-att-data-offer-type="'mix_discount' if ab_card_offer.get('collection_offer') else ('gift' if ab_card_offer.get('free_qty') else 'second_half')"
+                           t-att-data-primary-product-id="ab_card_offer.get('primary_product_id')"
+                           t-att-data-buy-qty="ab_card_offer.get('buy_qty', 1)"
                            t-att-data-offer-description="ab_card_offer['description']">
                             Get this offer
                         </button>
@@ -214,7 +219,9 @@
                                 class="ab-storefront-card-add ab-storefront-second-offer-trigger btn"
                                 t-att-data-offer-id="ab_card_offer['offer_id']"
                                 t-att-data-offer-mode="ab_card_offer['second_item_mode']"
-                                t-att-data-offer-type="'gift' if ab_card_offer.get('free_qty') else 'second_half'"
+                                t-att-data-offer-type="'mix_discount' if ab_card_offer.get('collection_offer') else ('gift' if ab_card_offer.get('free_qty') else 'second_half')"
+                                t-att-data-primary-product-id="ab_card_offer.get('primary_product_id')"
+                                t-att-data-buy-qty="ab_card_offer.get('buy_qty', 1)"
                            t-att-data-offer-description="ab_card_offer['description']"
                                 aria-label="Add offer to cart"
                                 title="Add offer to cart">
@@ -277,6 +284,7 @@
             <t t-set="ab_slide_label">Slide</t>
             <t t-set="ab_catalog" t-value="website._ab_storefront_home_catalog(product_limit=4, category_limit=8)"/>
             <t t-set="ab_carousel_slides" t-value="website._ab_storefront_carousel_slides()"/>
+            <t t-set="ab_carousel_offer_urls" t-value="website._ab_storefront_carousel_offer_urls(ab_carousel_slides)"/>
             <div id="wrap" class="oe_structure ab-storefront-home">
                 <section t-if="ab_carousel_slides" class="s_carousel_wrapper p-0 ab-storefront-hero-slider"
                          data-vxml="001"
@@ -303,9 +311,11 @@
                             <div t-foreach="ab_carousel_slides" t-as="ab_slide"
                                  t-attf-class="carousel-item #{ab_slide_index == 0 and 'active' or ''} ab-storefront-banner"
                                  t-att-data-name="ab_slide.name">
-                                <a t-if="ab_slide.show_cta and ab_slide.cta_style == 'link' and ab_slide.cta_url"
+                                <t t-set="ab_slide_offer_url" t-value="ab_carousel_offer_urls.get(ab_slide.id)"/>
+                                <t t-set="ab_slide_url" t-value="ab_slide_offer_url or ab_slide.cta_url"/>
+                                <a t-if="ab_slide.show_cta and ab_slide.cta_style == 'link' and ab_slide_url"
                                    class="ab-storefront-banner-link"
-                                   t-att-href="ab_slide.cta_url"
+                                   t-att-href="ab_slide_url"
                                    draggable="false"
                                    t-att-aria-label="ab_slide.cta_text or ab_slide.title or ab_slide.name">
                                     <img class="ab-storefront-banner-art"
@@ -329,7 +339,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div t-if="ab_slide.show_cta and ab_slide.cta_url and ((ab_slide.cta_style == 'text' and ab_slide.cta_text) or (ab_slide.cta_style == 'image' and ab_slide.cta_image_512))"
+                                <div t-if="ab_slide.show_cta and ab_slide_url and ((ab_slide.cta_style == 'text' and ab_slide.cta_text) or (ab_slide.cta_style == 'image' and ab_slide.cta_image_512))"
                                      class="ab-storefront-banner-cta-layer o_not_editable"
                                      dir="ltr"
                                      t-att-data-ab-position-x="ab_slide.cta_position_x"
@@ -339,11 +349,11 @@
                                     <a t-if="ab_slide.cta_style == 'text'"
                                        class="btn btn-light ab-storefront-banner-text-cta"
                                        dir="auto"
-                                       t-att-href="ab_slide.cta_url"
+                                       t-att-href="ab_slide_url"
                                        t-out="ab_slide.cta_text"/>
                                     <a t-if="ab_slide.cta_style == 'image'"
                                        class="ab-storefront-banner-image-cta"
-                                       t-att-href="ab_slide.cta_url"
+                                       t-att-href="ab_slide_url"
                                        t-att-aria-label="ab_slide.cta_text or ab_slide.title or ab_slide.name">
                                         <img t-att-src="'/web/image/ab_website_carousel_slide/%s/cta_image_512' % ab_slide.id"
                                              t-att-alt="ab_slide.cta_text or ab_slide.title or ab_slide.name"

@@ -18417,3 +18417,207 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
 msgid "© Abdin Pharmacies – All rights reserved to their lawful owners."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Additional Collection Products"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Benefit application limits are available only for quantity-based offers "
+"managed here."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Buy and discounted quantities must be positive whole numbers."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Buy any %(buy)s items from this collection and get %(discounted)s more at "
+"%(rate)s%% off."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Choose at least one additional collection product."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Collection Discount Rate"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Collection products must be single-variant sale products on this website."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Discounted Quantity"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__mix_discount
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Mix & Match Quantity Discount"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Offer Collection"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The main product and the additional products form one collection. Customers "
+"may mix products or repeat the same product. The discount applies to the "
+"cheapest eligible units."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Carousel Banner"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__carousel_image_1920
+msgid "Carousel Image"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__carousel_slide_id
+msgid "Carousel Slide"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid ""
+"<strong id=\"ab-collection-offer-title\">Choose from this offer "
+"collection</strong>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Choose the homepage carousel image associated with this offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "Other eligible products"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__carousel_slide_id
+msgid "Optionally link this offer to an existing homepage carousel image."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select a carousel slide for this website or a shared slide."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"This carousel slide already has an overlapping storefront offer on this "
+"website."
+msgstr ""
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "%(product)s has reached its allocation for this offer. Reduce its quantity or update the cart."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order_line__ab_storefront_mix_benefit_offer_id
+msgid "Applied Mix Offer Benefit"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Choose an eligible offer product."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_offer_collection_product_offer_product_unique
+msgid "Each collection product can be added only once per offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "Increase the purchase quantity to qualify for this offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__main_product_max_offer_units
+msgid "Main Product Units Allocated to This Offer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "No other collection product has enough offer allocation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Set an independent lifetime unit allocation for each product; No limit keeps that product available. The cheapest other eligible product is added automatically and receives the discount."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_offer_collection_product
+msgid "Storefront Offer Collection Product"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The cheapest other eligible product is added automatically and receives the discount."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The main product allocation must be a positive whole number or no limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The main product cannot be repeated in the additional collection products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__main_product_max_offer_units
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer_collection_product__max_offer_units
+msgid "The maximum number of this product's units that may participate across confirmed orders during the offer. No limit keeps it available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The product allocation must be a positive whole number or no limit."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
+msgid "This product has reached its allocation for the offer."
+msgstr ""
