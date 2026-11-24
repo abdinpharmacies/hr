@@ -44,9 +44,15 @@ class StorefrontOffer(models.Model):
         [("gift", "Buy X + Free Gifts"), ("price", "Before / After Price"),
          ("second_half", "Second Item Discount"),
          ("mix_discount", "Mix & Match Quantity Discount"),
+         ("sheet", "Product Group Promotion"),
          ("percent", "Percentage Discount"), ("amount", "Fixed Amount Discount")],
         required=True, default="gift", tracking=True,
     )
+    sheet_group_qty = fields.Integer(string="Qualifying Group Size", default=1, tracking=True)
+    sheet_discount_qty = fields.Integer(string="Discounted Units per Group", default=1, tracking=True)
+    sheet_rate = fields.Float(string="Discount Percentage", default=10, tracking=True)
+    sheet_fixed_price = fields.Float(string="Final Unit Price in EGP", tracking=True)
+    sheet_priority = fields.Integer(string="Offer Priority", tracking=True)
     second_item_mode = fields.Selection(
         [("same", "Same Product"), ("choice", "Customer Chooses")],
         string="Second Item", default="same", tracking=True,
@@ -150,6 +156,8 @@ class StorefrontOffer(models.Model):
 
     def _qualifying_products(self):
         self.ensure_one()
+        if self.offer_type == "sheet":
+            return self.product_id | self.second_product_ids
         if self.offer_type == "mix_discount":
             return self.product_id | self._collection_products()
         return self.product_id
@@ -296,7 +304,8 @@ class StorefrontOffer(models.Model):
         "second_item_mode", "second_product_ids", "percentage_rate", "amount_discount",
         "second_discount_rate", "max_offer_units", "max_applications", "custom_amount_discount",
         "main_product_max_offer_units", "collection_product_line_ids",
-        "carousel_slide_id",
+        "carousel_slide_id", "sheet_group_qty", "sheet_discount_qty", "sheet_rate",
+        "sheet_fixed_price", "sheet_priority",
     )
     def _check_offer(self):
         other_offers = self.search([
@@ -310,7 +319,7 @@ class StorefrontOffer(models.Model):
                 raise ValidationError(_("Select a carousel slide for this website or a shared slide."))
             product = offer.product_id
             if (
-                not product.sale_ok or product.product_tmpl_id.product_variant_count != 1
+                not product.sale_ok or (offer.offer_type != "sheet" and product.product_tmpl_id.product_variant_count != 1)
                 or (product.website_id and product.website_id != offer.website_id)
             ):
                 raise ValidationError(_("Select a single-variant sale product available on this website."))
@@ -329,6 +338,16 @@ class StorefrontOffer(models.Model):
                 if offer.offer_type not in ("gift", "price"):
                     raise ValidationError(_("This offer type is managed here, without a linked promotion."))
                 offer._check_linked_program()
+            elif offer.offer_type == "sheet":
+                if (not 1 <= offer.sheet_discount_qty <= offer.sheet_group_qty
+                        or not isfinite(offer.sheet_rate) or not 0 < offer.sheet_rate <= 100
+                        or not isfinite(offer.sheet_fixed_price) or offer.sheet_fixed_price < 0
+                        or offer.sheet_priority < 0):
+                    raise ValidationError(_("Check the website, promotion settings, quantities and price of the imported offer."))
+                products = offer._qualifying_products()
+                if any(not p.active or not p.sale_ok or p.type in ("combo", "service")
+                       or (p.website_id and p.website_id != offer.website_id) for p in products):
+                    raise ValidationError(_("Select active saleable products for this website and company."))
             elif offer.offer_type in ("gift", "second_half", "mix_discount"):
                 if offer.offer_type == "gift" and (offer.buy_qty < 1 or offer.gift_qty < 1):
                     raise ValidationError(_("Buy and free quantities must be positive whole numbers."))
@@ -393,7 +412,8 @@ class StorefrontOffer(models.Model):
                         "This carousel slide already has an overlapping storefront offer on this website."
                     ))
                 overlapping = other_offers.filtered(lambda other: (
-                    other != offer and other.website_id == offer.website_id
+                    other != offer and not (offer.offer_type == other.offer_type == "sheet")
+                    and other.website_id == offer.website_id
                     and bool(other._qualifying_products() & offer._qualifying_products())
                     and (
                         offer.use_odoo_promotion or other.use_odoo_promotion
@@ -464,13 +484,18 @@ class StorefrontOffer(models.Model):
             raise ValidationError(_("Offer rules are managed automatically."))
         if "price_after" in vals and "discount_percentage" in vals:
             vals = {key: value for key, value in vals.items() if key != "discount_percentage"}
+        if any(offer.offer_type == "sheet" and (
+            vals.get("offer_type", "sheet") != "sheet" or vals.get("website_id", offer.website_id.id) != offer.website_id.id
+        ) or offer.offer_type != "sheet" and vals.get("offer_type") == "sheet" for offer in self):
+            raise ValidationError(_("Create a new product group promotion to change its type or website."))
         result = super().write(vals)
         if set(vals) & {
             "name", "active", "website_id", "product_id", "offer_type", "buy_qty", "gift_qty",
             "pricelist_id", "price_before", "price_after", "date_from", "date_to",
             "use_odoo_promotion", "program_id", "second_item_mode", "second_product_ids",
             "percentage_rate", "amount_discount", "custom_amount_discount", "second_discount_rate",
-            "main_product_max_offer_units", "collection_product_line_ids",
+            "main_product_max_offer_units", "collection_product_line_ids", "sheet_group_qty",
+            "sheet_discount_qty", "sheet_rate", "sheet_fixed_price", "sheet_priority",
         }:
             self._sync_offer_rules()
         if vals.get("once_per_customer"):
@@ -546,9 +571,35 @@ class StorefrontOffer(models.Model):
         self.check_access("write")
         if not self.env.su and self.company_id - self.env.companies:
             raise AccessError(_("You cannot manage offers outside your allowed companies."))
+        for offer in self.filtered(lambda o: o.active and o.offer_type == "sheet"):
+            products = offer._qualifying_products()
+            quantities = offer.website_id._ab_offer_available_quantities(products)
+            issue = offer.website_id._ab_offer_stock_issue(products, quantities, offer.sheet_group_qty)
+            if issue:
+                raise ValidationError(issue)
+            if not offer.date_to or offer.date_to >= fields.Date.context_today(offer):
+                offer.website_id._ab_publish_offer_products(products)
         self = self.sudo()
         for offer in self:
             programs = offer.with_context(active_test=False).generated_program_ids
+            if offer.offer_type == "sheet":
+                product_ids = offer._qualifying_products().ids
+                values = self.env["loyalty.program"]._ab_sheet_values(
+                    offer.name, offer.website_id, product_ids, f"storefront-{offer.id}",
+                    offer.sheet_group_qty, offer.sheet_discount_qty,
+                    100 if offer.sheet_fixed_price else offer.sheet_rate, offer.sheet_fixed_price,
+                    offer.sheet_priority, offer.date_from, offer.date_to,
+                )
+                values.update(active=offer.active, ab_storefront_offer_id=offer.id)
+                if programs:
+                    rule_values = values.pop("rule_ids")[0][2]
+                    reward_values = values.pop("reward_ids")[0][2]
+                    programs.write(values)
+                    programs.rule_ids.write(rule_values)
+                    programs.reward_ids.write(reward_values)
+                else:
+                    self.env["loyalty.program"].create(values)
+                continue
             programs.write({"active": False})
             if offer.use_odoo_promotion or offer.offer_type not in ("gift", "second_half", "mix_discount"):
                 continue

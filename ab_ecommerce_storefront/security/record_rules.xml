@@ -135,4 +135,9 @@
         <field name="model_id" ref="model_ab_storefront_offer_draft"/>
         <field name="domain_force">[('company_id', '=', company_id)]</field>
     </record>
+    <record id="rule_offer_overview_company" model="ir.rule">
+        <field name="name">Storefront offer overview in the current company</field>
+        <field name="model_id" ref="model_ab_storefront_offer_overview"/>
+        <field name="domain_force">[('company_id', '=', company_id)]</field>
+    </record>
 </odoo>

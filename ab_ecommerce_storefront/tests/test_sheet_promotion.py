@@ -55,6 +55,46 @@ class TestSheetPromotion(TransactionCase):
         order._update_programs_and_rewards()
         order._auto_apply_rewards()
 
+    def test_manual_sheet_offer_shares_cart_rules_and_employee_list(self):
+        warehouse = self.env['stock.warehouse'].search([('company_id', '=', self.company.id)], limit=1)
+        self.website.warehouse_id = warehouse
+        products = self.products[:2]
+        products.write({'is_storable': True})
+        for product in products:
+            self.env['stock.quant'].with_context(inventory_mode=True).create({
+                'product_id': product.id, 'location_id': warehouse.lot_stock_id.id,
+                'inventory_quantity': 5,
+            }).action_apply_inventory()
+        offer = self.env['ab_storefront_offer'].create({
+            'name': 'Two eligible items', 'offer_type': 'sheet', 'website_id': self.website.id,
+            'product_id': products[0].id, 'second_product_ids': [Command.set(products[1:].ids)],
+            'sheet_group_qty': 2, 'sheet_discount_qty': 2, 'sheet_rate': 30,
+        })
+        program = offer.generated_program_ids
+        cart = self.cart([1, 1, 0])
+        self.apply_promotions(cart)
+        self.assertEqual(cart.amount_total, 350)
+        offer.sheet_fixed_price = 125
+        second_cart = self.cart([1, 1, 0])
+        self.apply_promotions(second_cart)
+        self.assertEqual(second_cart.amount_total, 250)
+        self.assertEqual(offer.generated_program_ids, program)
+        imported = self.promotion('Imported group', self.products[2:])
+        self.env.flush_all()
+        staff = new_test_user(self.env, login='group_offer_staff',
+                              groups='ab_ecommerce_storefront.group_call_center')
+        overview = self.env['ab_storefront_offer_overview'].with_user(staff)
+        rows = overview.search([('name', 'in', [offer.name, imported.name])])
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(set(rows.mapped('source')), {'manual', 'sheet'})
+        self.assertEqual(rows.filtered(lambda r: r.source == 'manual').action_open_offer()['res_id'], offer.id)
+        with self.assertRaises(AccessError):
+            rows.write({'state': 'archived'})
+        with self.assertRaises(AccessError):
+            overview.with_user(self.env.ref('base.public_user')).search([])
+        offer.active = False
+        self.assertFalse(program.active)
+
     def test_cheapest_eligible_repeats_and_recalculates(self):
         self.promotion('Second half', self.products[:2], group=2, rate=50)
         order = self.cart([2, 2, 1])

@@ -21,6 +21,7 @@ class OfferDraft(models.Model):
     details = fields.Text(string="Product Codes and Brands", readonly=True)
     review_evidence = fields.Json(readonly=True)
     review_explanation = fields.Text(string="What Needs Review", compute="_compute_review_explanation")
+    stock_review = fields.Boolean(string="Stock Review", readonly=True)
     manual_only = fields.Boolean(string="Requires Separate Setup", readonly=True)
     date_from = fields.Date()
     date_to = fields.Date()
@@ -139,6 +140,8 @@ class OfferDraft(models.Model):
                                   values=" / ".join(values), offer=offer))
             if findings:
                 lines.append(f"{code} · {product['name']} — " + " ".join(findings))
+        if data.get("stock_issue"):
+            lines.append(data["stock_issue"])
         lines.extend(data.get("saved_lines", []))
         if "identity" in issues and not any("identities" in p or "identifiers" in p for p in products.values()):
             lines.append(_("The sheet flagged a product identity conflict. Compare the original names and groups for the listed codes."))
@@ -155,12 +158,21 @@ class OfferDraft(models.Model):
         model = self.with_context({}, lang=self.env.lang, allowed_company_ids=[self.env.company.id])
         return super(OfferDraft, model).create(values)
 
+    def _reopen_stock_review(self, values):
+        self.ensure_one()
+        self._check_decision()
+        if not self.stock_review:
+            raise UserError(_("This row requires separate offer setup."))
+        return super().write(values)
+
     def write(self, values):
         self.check_access("write")
         self.lock_for_update(allow_referencing=True)
         allowed = {"name", "date_from", "date_to", "product_ids", "group_qty", "discount_qty",
                    "rate", "fixed_price", "priority", "note"}
         if values.keys() - allowed or any(d.state != "draft" for d in self):
+            raise AccessError(_("Only pending draft terms can be edited."))
+        if values.keys() - {"note"} and self.filtered("stock_review"):
             raise AccessError(_("Only pending draft terms can be edited."))
         product_ids = set()
         for command in values.get("product_ids", []):
@@ -207,6 +219,33 @@ class OfferDraft(models.Model):
             return
         if self.state != "draft" or self.manual_only:
             raise UserError(_("This row requires separate offer setup."))
+        if self.stock_review:
+            program = self.program_id.with_context(active_test=False)
+            if (not program or program.company_id != self.company_id or program.website_id != self.website_id
+                    or self.sheet_key != f"stock-review:{program.ab_sheet_key}" or program.ab_storefront_offer_id
+                    or len(program.rule_ids) != 1 or len(program.reward_ids) != 1):
+                raise UserError(_("This row requires separate offer setup."))
+            program.check_access("write")
+            program.lock_for_update(allow_referencing=True)
+            if program.date_to and program.date_to < fields.Date.context_today(self):
+                raise UserError(_("This offer has expired."))
+            persisted = program.sudo()
+            eligible = persisted.rule_ids.product_ids & persisted.reward_ids.discount_product_ids
+            products = self.env["product.product"].with_context(active_test=True).search([
+                ("id", "in", eligible.ids), ("sale_ok", "=", True),
+                ("website_id", "in", [False, self.website_id.id]), ("company_id", "in", [False, self.company_id.id]),
+            ])
+            if set(products.ids) != set(eligible.ids):
+                raise UserError(_("The existing program needs manual review"))
+            quantities = self.website_id._ab_offer_available_quantities(products)
+            issue = self.website_id._ab_offer_stock_issue(products, quantities, program.ab_sheet_group_qty)
+            if issue:
+                raise UserError(issue)
+            self.website_id._ab_publish_offer_products(products)
+            wizard = self.env["ab_storefront_offer_sheet"].new({"website_id": self.website_id.id})
+            wizard._set_stock_review_program_active(program, True)
+            super().write({"state": "applied"})
+            return
         if not self.date_from or not self.date_to or self.date_from > self.date_to or not self.product_ids:
             raise UserError(_("Set a valid period and select the eligible products."))
         if (not 1 <= self.discount_qty <= self.group_qty or self.priority < 0
@@ -220,6 +259,12 @@ class OfferDraft(models.Model):
             ("ab_sheet_key", "=", self.sheet_key),
         ]):
             raise UserError(_("An offer already exists for this row. Review the existing offer."))
+        quantities = self.website_id._ab_offer_available_quantities(self.product_ids)
+        issue = self.website_id._ab_offer_stock_issue(self.product_ids, quantities, self.group_qty)
+        if issue:
+            raise UserError(issue)
+        if self.date_to >= fields.Date.context_today(self):
+            self.website_id._ab_publish_offer_products(self.product_ids)
         benefit = f"{self.fixed_price:g} EGP" if self.fixed_price else f"{self.rate:g}%"
         if self.group_qty > 1:
             benefit = _("%(benefit)s on %(units)s of every %(quantity)s units",

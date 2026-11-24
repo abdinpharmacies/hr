@@ -37,3 +37,4 @@ from . import auth_signup_otp
 from . import legacy_customer
 from . import sheet_promotion
 from . import offer_draft
+from . import offer_overview

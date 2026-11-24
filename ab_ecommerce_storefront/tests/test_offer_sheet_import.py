@@ -21,6 +21,8 @@ class TestOfferSheetImport(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.website = cls.env.ref("website.default_website")
+        cls.warehouse = cls.env["stock.warehouse"].search([("company_id", "=", cls.website.company_id.id)], limit=1)
+        cls.website.warehouse_id = cls.warehouse
         cls.manager = new_test_user(cls.env, login="sheet_manager", groups="sales_team.group_sale_manager")
         cls.staff = new_test_user(cls.env, login="sheet_staff", groups="sales_team.group_sale_salesman")
         cls.wizards = cls.env["ab_storefront_offer_sheet"].with_user(cls.manager)
@@ -54,11 +56,130 @@ class TestOfferSheetImport(TransactionCase):
         with self.assertRaises(UserError):
             wizard.action_preview()
 
-    def product(self, code):
-        return self.env["product.product"].create({
+    def product(self, code, quantity=5):
+        product = self.env["product.product"].create({
             "default_code": code, "name": self.sheet["products"][code][0], "list_price": 100,
-            "website_id": self.website.id,
+            "website_id": self.website.id, "is_storable": True, "is_published": False,
         })
+        if quantity:
+            self.env["stock.quant"].with_context(inventory_mode=True).create({
+                "product_id": product.id, "location_id": self.warehouse.lot_stock_id.id,
+                "inventory_quantity": quantity,
+            }).action_apply_inventory()
+        return product
+
+    def test_stock_and_publication_on_import_and_retry(self):
+        first, second = self.product(self.code), self.product(self.row["codes"][1], quantity=0)
+        first.product_tmpl_id.website_id = False
+        row = dict(self.row, start="2020-01-01", end="2099-01-01", review=False)
+        with patch.object(offer_sheet, "parse_offer_workbook", return_value=dict(self.sheet, offers=[row])):
+            wizard, line = self.preview()
+            self.assertFalse(line.available)
+            self.assertIn(second.default_code, line.details)
+            result = wizard.action_apply()
+            draft = self.env[result["res_model"]].with_user(self.manager).search(result["domain"])
+            with self.assertRaises(UserError):
+                draft.action_apply()
+            self.assertFalse(first.is_published)
+            self.assertFalse(second.is_published)
+            draft.product_ids = first
+            draft.action_apply()
+            self.assertTrue(first.is_published)
+            self.assertEqual(first.website_id, self.website)
+            self.assertFalse(second.is_published)
+            first.product_tmpl_id.is_published = False
+            row["codes"] = [self.code]
+            self.preview()[0].action_apply()
+            self.assertTrue(first.is_published)
+            self.assertFalse(second.is_published)
+            self.assertEqual(draft.program_id.rule_ids.product_ids, first)
+
+    def test_reimport_suspends_whole_program_and_restores_same_rules(self):
+        first, second = [self.product(code) for code in self.row["codes"]]
+        row = dict(self.row, start="2020-01-01", end="2099-01-01", review=False)
+        with patch.object(offer_sheet, "parse_offer_workbook", return_value=dict(self.sheet, offers=[row])):
+            self.preview()[0].action_apply()
+            program = self.env["loyalty.program"].with_context(active_test=False).search([("ab_sheet_key", "=", row["key"])])
+            rules, rewards = program.rule_ids, program.reward_ids
+            first.product_tmpl_id.is_published = False
+            stale, _line = self.preview()
+            quant = self.env["stock.quant"].with_context(inventory_mode=True).search([
+                ("product_id", "=", second.id), ("location_id", "=", self.warehouse.lot_stock_id.id),
+            ])
+            quant.inventory_quantity = 0
+            quant.action_apply_inventory()
+            with self.assertRaises(UserError):
+                stale.action_apply()
+            self.assertTrue(program.active)
+            unrelated = self.env["product.product"].create({"name": "Unrelated service", "type": "service"})
+            service = rewards.discount_line_product_id
+            rewards.discount_line_product_id = unrelated
+            with self.assertRaises(UserError):
+                self.preview()[0].action_apply()
+            self.assertTrue(unrelated.active)
+            self.assertTrue(program.active)
+            rewards.discount_line_product_id = service
+            result = self.preview()[0].action_apply()
+            self.assertFalse(program.active)
+            self.assertFalse(first.is_published)
+            drafts = self.env[result["res_model"]].with_user(self.manager)
+            draft = drafts.search(result["domain"])
+            self.assertTrue(draft.stock_review)
+            self.assertEqual(draft.program_id, program)
+            self.assertEqual(draft.product_ids, first | second)
+            self.preview()[0].action_apply()
+            self.assertEqual(drafts.search_count([("program_id", "=", program.id), ("stock_review", "=", True)]), 1)
+            with self.assertRaises(UserError):
+                draft.action_apply()
+            with self.assertRaises(AccessError):
+                draft.write({"product_ids": [Command.set(first.ids)]})
+            self.assertFalse(program.active)
+            self.env["stock.quant"].with_context(inventory_mode=True).create({
+                "product_id": second.id, "location_id": self.warehouse.lot_stock_id.id,
+                "inventory_quantity": 5,
+            }).action_apply_inventory()
+            self.preview()[0].action_apply()
+            self.assertFalse(program.active)
+            draft.action_apply()
+            self.assertTrue(program.active)
+            self.assertTrue(first.is_published)
+            self.assertEqual(draft.state, "applied")
+            self.assertEqual(program.rule_ids, rules)
+            self.assertEqual(program.reward_ids, rewards)
+            rules.product_ids = first
+            rewards.discount_product_ids = first
+            second.product_tmpl_id.is_published = False
+            self.preview()[0].action_apply()
+            self.assertFalse(second.is_published)
+            self.assertEqual(program.rule_ids.product_ids, first)
+            program.active = False
+            self.preview()[0].action_apply()
+            self.assertFalse(program.active)
+
+    def test_stock_loss_after_preview_preserves_publication(self):
+        product = self.product(self.code)
+        row = dict(self.row, codes=[self.code], review=False)
+        with patch.object(offer_sheet, "parse_offer_workbook", return_value=dict(self.sheet, offers=[row])):
+            wizard, line = self.preview()
+            self.assertTrue(line.available)
+            quant = self.env["stock.quant"].with_context(inventory_mode=True).search([
+                ("product_id", "=", product.id), ("location_id", "=", self.warehouse.lot_stock_id.id),
+            ])
+            quant.inventory_quantity = 0
+            quant.action_apply_inventory()
+            with self.assertRaises(UserError):
+                wizard.action_apply()
+            self.assertFalse(product.is_published)
+            self.assertFalse(self.env["loyalty.program"].search([("ab_sheet_key", "=", row["key"])]))
+
+    def test_single_product_bundle_needs_enough_stock(self):
+        self.product(self.code, quantity=1)
+        row = dict(self.row, codes=[self.code], review=False)
+        with patch.object(offer_sheet, "parse_offer_workbook", return_value=dict(self.sheet, offers=[row])):
+            wizard, line = self.preview()
+            self.assertFalse(line.available)
+            self.assertIn("group size", line.result)
+            self.assertEqual(wizard.action_apply()["res_model"], "ab_storefront_offer_draft")
 
     def preview(self):
         wizard = self.wizards.create({"workbook": self.file_data, "filename": "offers.xlsx"})

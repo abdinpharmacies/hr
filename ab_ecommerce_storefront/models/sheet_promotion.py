@@ -77,6 +77,34 @@ class LoyaltyProgram(models.Model):
     )
 
     @api.model
+    def _ab_sheet_values(self, name, website, product_ids, key, group_qty, discount_qty,
+                         rate, fixed_price, priority, date_from, date_to):
+        rule = {
+            "mode": "auto", "minimum_qty": group_qty, "minimum_amount": 0,
+            "reward_point_mode": "order", "reward_point_amount": 1,
+            "product_ids": [fields.Command.set(product_ids)],
+        }
+        reward = {
+            "reward_type": "discount", "discount_mode": "percent", "description": name,
+            "discount_applicability": "cheapest", "discount": rate, "required_points": 1,
+            "discount_product_ids": [fields.Command.set(product_ids)],
+        }
+        values = {
+            "name": name, "program_type": "promotion", "company_id": website.company_id.id,
+            "website_id": website.id, "sale_ok": False, "ecommerce_ok": True,
+            "portal_visible": False, "trigger": "auto", "applies_on": "current",
+            "date_from": date_from, "date_to": date_to, "ab_sheet_key": key,
+            "ab_sheet_group_qty": group_qty, "ab_sheet_discount_qty": discount_qty,
+            "ab_sheet_priority": priority, "ab_sheet_fixed_price": fixed_price,
+            "ab_sheet_imported_product_ids": [fields.Command.set(product_ids)],
+            "rule_ids": [fields.Command.create(rule)], "reward_ids": [fields.Command.create(reward)],
+            "communication_plan_ids": [],
+        }
+        if "pos_ok" in self._fields:
+            values["pos_ok"] = False
+        return values
+
+    @api.model
     def _search(self, domain, *args, **kwargs):
         if 'pos_ok' in self._fields:
             domain = fields.Domain(domain).map_conditions(

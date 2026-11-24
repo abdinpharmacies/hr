@@ -90,6 +90,14 @@
                         <field name="second_discount_rate" string="Collection Discount Rate" required="offer_type == 'mix_discount'"/>
                         <div class="text-muted" colspan="2">Set an independent lifetime unit allocation for each product; No limit keeps that product available. The cheapest other eligible product is added automatically and receives the discount.</div>
                     </group>
+                    <group string="Product Group Promotion" invisible="offer_type != 'sheet'">
+                        <field name="second_product_ids" string="Additional Eligible Products" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="sheet_group_qty"/>
+                        <field name="sheet_discount_qty"/>
+                        <field name="sheet_fixed_price"/>
+                        <field name="sheet_rate" invisible="sheet_fixed_price"/>
+                        <field name="sheet_priority"/>
+                    </group>
                     <group string="Product Discount" invisible="offer_type not in ('percent', 'amount')">
                         <field name="pricelist_id" required="offer_type in ('percent', 'amount')" options="{'no_create': True}"/>
                         <field name="currency_id"/>

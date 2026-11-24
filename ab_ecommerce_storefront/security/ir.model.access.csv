@@ -41,3 +41,8 @@ access_offer_sheet_manager,Offer sheet managers,model_ab_storefront_offer_sheet,
 access_offer_sheet_line_manager,Offer sheet preview managers,model_ab_storefront_offer_sheet_line,sales_team.group_sale_manager,1,1,1,1
 access_offer_draft_manager,Offer draft managers,model_ab_storefront_offer_draft,sales_team.group_sale_manager,1,1,1,0
 access_offer_draft_reviewer,Offer draft reviewers,model_ab_storefront_offer_draft,group_offer_draft_reviewer,1,1,0,0
+access_offer_overview_manager,Storefront offer overview manager,model_ab_storefront_offer_overview,sales_team.group_sale_manager,1,0,0,0
+access_offer_overview_admin,Storefront offer overview administrator,model_ab_storefront_offer_overview,base.group_system,1,0,0,0
+access_offer_overview_designer,Storefront offer overview designer,model_ab_storefront_offer_overview,website.group_website_designer,1,0,0,0
+access_offer_overview_call_center,Storefront offer overview call center,model_ab_storefront_offer_overview,group_call_center,1,0,0,0
+access_offer_overview_reviewer,Storefront offer overview reviewer,model_ab_storefront_offer_overview,group_offer_draft_reviewer,1,0,0,0

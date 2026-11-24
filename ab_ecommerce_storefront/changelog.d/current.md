@@ -1,5 +1,33 @@
 # Storefront change log
 
+## Current changes before commit:
+
+- Open manual promotions, imported promotions and pending drafts from the existing Storefront Offers menu. A stock review appears once and links back to its promotion.
+- Configure group size, discounted units, percentage discounts, fixed EGP unit prices and offer priority on manual product group promotions.
+- Check every eligible product and the full group quantity during import and approval. Publish eligible products on the selected website. Suspend the whole current or scheduled imported promotion for review if its stock is insufficient.
+- Restore the original promotion after a manager rechecks its stock. Preserve branch allocation drafts and manual product removals when reimporting.
+- The targeted Odoo 19 run after integrating `be6c6b4a` passed all 90 tests on `codex_offer_worksheet_20261124_1400`.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/models/offer_overview.py`
+- `ab_ecommerce_storefront/models/sheet_promotion.py`
+- `ab_ecommerce_storefront/models/stock_availability.py`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/security/ir.model.access.csv`
+- `ab_ecommerce_storefront/security/record_rules.xml`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/tests/test_sheet_promotion.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
+- `ab_ecommerce_storefront/wizard/offer_sheet.py`
+
 ## Recent commits
 
 Commit: `ceb2ca9f`

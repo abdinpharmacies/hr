@@ -95,6 +95,17 @@ class OfferSheet(models.TransientModel):
             ("website_id", "=", self.website_id.id), ("company_id", "=", self.env.company.id),
             ("ab_sheet_key", "!=", False)])
         existing = {program.ab_sheet_key: program for program in installed}
+        today = fields.Date.context_today(self)
+        keys = {row["key"] for row in sheet["offers"]}
+        current = installed.filtered(lambda p: p.active and (not p.date_to or p.date_to >= today)
+                                      and p.ab_sheet_key in keys)
+        eligible_by_key = {
+            p.ab_sheet_key: p.rule_ids.filtered("active").product_ids & p.reward_ids.filtered("active").discount_product_ids
+            for p in current.sudo()
+        }
+        existing_products = products.browse({pid for members in eligible_by_key.values() for pid in members.ids})
+        scoped_products = products.search(scope & fields.Domain("id", "in", existing_products.ids))
+        quantities = self.website_id._ab_offer_available_quantities(variants | scoped_products)
         issues = self._source_issue_labels()
         template_brands = defaultdict(set)
         for code, (_source_name, name) in sheet["products"].items():
@@ -175,13 +186,31 @@ class OfferSheet(models.TransientModel):
                     reasons.append(_("Already imported"))
                 elif not program.active or len(program.rule_ids) != 1 or len(program.reward_ids) != 1:
                     reasons.append(_("The existing program needs manual review"))
+            eligible = scoped_products & eligible_by_key.get(key, products.browse())
+            existing_issue = ""
+            if key in eligible_by_key:
+                if set(eligible.ids) != set(eligible_by_key[key].ids):
+                    existing_issue = _("The existing program needs manual review")
+                else:
+                    existing_issue = self.website_id._ab_offer_stock_issue(eligible, quantities, program.ab_sheet_group_qty)
+            proposed = (eligible | products.browse(pending)) if program else products.browse(picked)
+            stock_issue = existing_issue
+            if not stock_issue and proposed:
+                stock_issue = self.website_id._ab_offer_stock_issue(proposed, quantities, program.ab_sheet_group_qty if program else row["bundle"])
+            if stock_issue:
+                details.append(stock_issue)
+                reasons.append(stock_issue)
             evidence = draft_source_evidence(row, sheet, product_problems) if reasons or review else {}
+            if stock_issue:
+                evidence["stock_issue"] = stock_issue
             if program and not already_imported and reasons:
                 evidence["existing_program"] = program.name
-            state = (self.website_id.id, picked, details, reasons, review, sorted(pending), program.ab_sheet_priority if program else 0)
+            state = (self.website_id.id, picked, details, reasons, review, sorted(pending), sorted(eligible.ids),
+                     (program.ab_sheet_priority, program.ab_sheet_group_qty) if program else False)
             fingerprint = hashlib.sha256(repr(state).encode()).hexdigest()
             entries[key] = dict(row=row, evidence=evidence, products=picked, details="\n".join(details), review=review,
-                                reason=" / ".join(reasons), signature=fingerprint, existing=program, pending=pending, already_imported=already_imported)
+                                reason=" / ".join(reasons), signature=fingerprint, existing=program, pending=pending, already_imported=already_imported,
+                                eligible=eligible, existing_stock_issue=existing_issue)
         brand_text = "\n".join(f"{name} ({len(items)}) — {', '.join(sorted(items))}"
                                for name, items in sorted(brand_summary.items()))
         brand_signature = hashlib.sha256(repr(sorted(
@@ -229,7 +258,9 @@ class OfferSheet(models.TransientModel):
                     ) and not entry["products"].keys().isdisjoint(program.rule_ids.product_ids.ids):
                         overlaps.append(program.name)
             status = entry["reason"]
-            if key in saved_by_key:
+            if entry["existing_stock_issue"]:
+                status = _("Pause existing offer for review")
+            elif key in saved_by_key:
                 status = state_labels[saved_by_key[key].state]
             if entry["existing"] and not status and not entry["review"]:
                 status = _("Additional matched products")
@@ -262,17 +293,49 @@ class OfferSheet(models.TransientModel):
         draft_model = self.env["ab_storefront_offer_draft"]
         drafts = draft_model.search([("website_id", "=", self.website_id.id), ("sheet_key", "in", list(entries))])
         known = set(drafts.mapped("sheet_key"))
+        stock_drafts = draft_model.search([
+            ("website_id", "=", self.website_id.id), ("stock_review", "=", True),
+            ("program_id", "in", [entry["existing"].id for entry in entries.values() if entry["existing"]]),
+        ])
+        stock_drafts_by_program = {draft.program_id.id: draft for draft in stock_drafts}
+        drafts |= stock_drafts
         if self.include_brands and self.brand_signature != signature and brand_products:
             raise UserError(_("The selection needs a new preview."))
         lines = {line.sheet_key: line for line in self.line_ids}
         if lines.keys() != entries.keys() or len(lines) != len(self.line_ids):
             raise UserError(_("The selection needs a new preview."))
         programs = self.env["loyalty.program"]
+        publication_ids = set()
         assignments = defaultdict(set)
         draft_values = []
         for key, entry in entries.items():
             line = lines[key]
             existing = entry["existing"]
+            if existing and not existing.active and existing.id in stock_drafts_by_program:
+                continue
+            if entry["existing_stock_issue"]:
+                if line.signature != entry["signature"]:
+                    raise UserError(_("The selection needs a new preview."))
+                values = {
+                    "state": "draft", "reason": entry["existing_stock_issue"],
+                    "details": entry["details"], "review_evidence": entry["evidence"],
+                    "name": existing.name, "group_qty": existing.ab_sheet_group_qty,
+                    "discount_qty": existing.ab_sheet_discount_qty, "fixed_price": existing.ab_sheet_fixed_price,
+                    "rate": existing.reward_ids.filtered("active")[:1].discount,
+                    "priority": existing.ab_sheet_priority, "date_from": existing.date_from,
+                    "date_to": existing.date_to, "product_ids": [Command.set(entry["eligible"].ids)],
+                }
+                self._set_stock_review_program_active(existing, False)
+                stock_draft = stock_drafts_by_program.get(existing.id)
+                if stock_draft:
+                    stock_draft._reopen_stock_review(values)
+                else:
+                    draft_values.append(dict(values, website_id=self.website_id.id, program_id=existing.id,
+                                             sheet_key=f"stock-review:{key}", stock_review=True,
+                                             source=f"{self.filename or ''} · {entry['row']['source']}"))
+                continue
+            if entry["already_imported"]:
+                publication_ids.update(entry["eligible"].ids)
             if key in known or entry["already_imported"]:
                 continue
             if line.signature != entry["signature"] or line.priority < 0:
@@ -305,9 +368,13 @@ class OfferSheet(models.TransientModel):
                 programs |= existing
             else:
                 programs |= self._create_program(row, ids, line.priority)
+            if _draft_date(row["end"]) >= fields.Date.context_today(self):
+                publication_ids.update(ids)
+                publication_ids.update(entry["eligible"].ids)
             for product_id, brand_name in entry["products"].items():
                 if self.include_brands and product_id in entry["pending"] and brand_name:
                     assignments[brand_name].add(product_id)
+        self.website_id._ab_publish_offer_products(self.env["product.product"].browse(sorted(publication_ids)))
         if draft_values:
             drafts |= draft_model._from_sheet(draft_values)
         if self.include_brands:
@@ -334,32 +401,34 @@ class OfferSheet(models.TransientModel):
         return {"type": "ir.actions.act_window", "res_model": "loyalty.program", "view_mode": "list,form",
                 "name": _("Imported Offers"), "domain": [("id", "in", programs.ids)]}
 
+    def _set_stock_review_program_active(self, program, active):
+        program.ensure_one()
+        if (not self.env.user.has_group("sales_team.group_sale_manager") or program.company_id != self.env.company
+                or program.website_id != self.website_id or not program.ab_sheet_key or program.ab_storefront_offer_id):
+            raise AccessError(_("Choose a website in your current company."))
+        program.check_access("write")
+        program.lock_for_update(allow_referencing=True)
+        program = program.with_context({}, active_test=False, allowed_company_ids=self.env.company.ids)
+        reward = program.with_context(lang="en_US").reward_ids
+        service = reward.discount_line_product_id
+        if (len(reward) != 1 or len(program.rule_ids) != 1 or program.communication_plan_ids or len(service) != 1
+                or service.type != "service" or service.sale_ok or service.purchase_ok or service.lst_price
+                or service.is_published or service.ab_product_id
+                or service.name != reward.description or service.create_date != reward.create_date
+                or service.create_uid != reward.create_uid
+                or reward.sudo().search_count([("discount_line_product_id", "=", service.id)], limit=2) != 1
+                or (service.company_id and service.company_id != program.company_id)
+                or (service.website_id and service.website_id != program.website_id)):
+            raise UserError(_("The existing program needs manual review"))
+        program.sudo().write({"active": active})
+
     def _create_program(self, row, product_ids, priority):
         name = f"{row['name']} · {self._offer_label(row)}"
         program_model = self.env["loyalty.program"]
-        rule = {
-            "mode": "auto", "minimum_qty": row["bundle"], "minimum_amount": 0,
-            "reward_point_mode": "order", "reward_point_amount": 1,
-            "product_ids": [Command.set(product_ids)],
-        }
-        reward = {
-            "reward_type": "discount", "discount_mode": "percent", "description": name,
-            "discount_applicability": "cheapest", "discount": row["rate"], "required_points": 1,
-            "discount_product_ids": [Command.set(product_ids)],
-        }
-        values = {
-            "name": name, "program_type": "promotion", "company_id": self.env.company.id,
-            "website_id": self.website_id.id, "sale_ok": False, "ecommerce_ok": True,
-            "portal_visible": False, "trigger": "auto", "applies_on": "current",
-            "date_from": row["start"], "date_to": row["end"], "ab_sheet_key": row["key"],
-            "ab_sheet_group_qty": row["bundle"], "ab_sheet_discount_qty": row["units"],
-            "ab_sheet_priority": priority, "ab_sheet_fixed_price": row["fixed"],
-            "ab_sheet_imported_product_ids": [Command.set(product_ids)],
-            "rule_ids": [Command.create(rule)], "reward_ids": [Command.create(reward)],
-            "communication_plan_ids": [],
-        }
-        if "pos_ok" in program_model._fields:
-            values["pos_ok"] = False
+        values = program_model._ab_sheet_values(
+            name, self.website_id, product_ids, row["key"], row["bundle"], row["units"],
+            row["rate"], row["fixed"], priority, row["start"], row["end"],
+        )
         program_model.check_access("create")
         factory = program_model.with_context(
             {}, lang=self.env.lang, allowed_company_ids=[self.env.company.id],
