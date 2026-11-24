@@ -1,5 +1,7 @@
 # Notification-only and endpoint access validation
 
+> Historical record: versions, deployment state and validation results below describe the dated work only. Temporary QA scripts/evidence may have been removed. For the current order-status button and login-return behavior, use [the current guide](website-order-status-links.md). This record does not establish a current production rollout.
+
 Source adapter: 19.0.1.5.2. Production remains on 19.0.1.5.1 until the operator deploys and upgrades it. The isolated implementation validation did not change production. A later separately authorized guest smoke test submitted a demo chat and attempted a COD checkout; that checkout failed the existing stock-reservation guard.
 
 The isolated source database is two_server_qa_20261123_store_validation. The storefront and adapter were upgraded together after an initial stale-schema diagnostic. The successful focused run recorded 44 cases, zero failures and zero errors, including one skipped optional Customer API case. Its log is /tmp/website-notifications-focused.log. The separate recovery run recorded ten cases, zero failures and zero errors, in /tmp/website-notifications-recovery.log. Two browser methods occur in both runs; execution counts must not be summed as distinct methods.
