@@ -5,6 +5,13 @@ class StorefrontOfferOverview(models.Model):
     _name = "ab_storefront_offer_overview"
     _description = "Storefront Offer Overview"
     _auto = False
+    _depends = {
+        "ab_storefront_offer": ["name", "website_id", "company_id", "date_from", "date_to", "active"],
+        "loyalty.program": ["name", "website_id", "company_id", "date_from", "date_to", "active",
+                            "ab_sheet_key", "ab_storefront_offer_id"],
+        "ab_storefront_offer_draft": ["name", "website_id", "company_id", "date_from", "date_to", "state",
+                                      "program_id", "storefront_offer_id", "stock_review"],
+    }
     _order = "date_from desc nulls last, id"
 
     name = fields.Char(translate=True, readonly=True)
@@ -40,7 +47,7 @@ class StorefrontOfferOverview(models.Model):
             SELECT id::bigint * 3 + 2, jsonb_build_object('en_US', name), website_id,
                    company_id, date_from, date_to, 'review', state
               FROM ab_storefront_offer_draft
-             WHERE state != 'applied' OR program_id IS NULL
+             WHERE state != 'applied' OR (program_id IS NULL AND storefront_offer_id IS NULL)
         """
 
     def action_open_offer(self):

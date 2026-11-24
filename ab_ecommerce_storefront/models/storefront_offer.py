@@ -465,6 +465,11 @@ class StorefrontOffer(models.Model):
         if any({"generated_program_ids", "price_rule_ids"} & set(vals) for vals in vals_list):
             raise ValidationError(_("Offer rules are managed automatically."))
         self.check_access("create")
+        draft = self.env["ab_storefront_offer_draft"].browse(self.env.context.get("ab_publish_draft_id"))
+        if draft:
+            if len(vals_list) != 1:
+                raise ValidationError(_("Publish one storefront offer per draft."))
+            issues = draft._check_storefront_publication()
         prepared_values = []
         for values in vals_list:
             values = dict(values)
@@ -476,6 +481,8 @@ class StorefrontOffer(models.Model):
                 values.pop("discount_percentage")
             prepared_values.append(values)
         offers = super().create(prepared_values)
+        if draft:
+            draft._publish_storefront_offer(offers, issues)
         offers._sync_offer_rules()
         return offers
 

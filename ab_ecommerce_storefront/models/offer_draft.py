@@ -41,6 +41,9 @@ class OfferDraft(models.Model):
     program_id = fields.Many2one("loyalty.program", readonly=True, ondelete="restrict",
                                  groups="sales_team.group_sale_manager")
 
+    storefront_offer_id = fields.Many2one("ab_storefront_offer", string="Published Storefront Offer",
+                                          readonly=True, ondelete="restrict", copy=False)
+
     _unique_source = models.Constraint("UNIQUE(website_id, sheet_key)", "This sheet row already has a draft.")
 
     def _reason_messages(self):
@@ -270,6 +273,72 @@ class OfferDraft(models.Model):
         self._check_decision()
         if self.state == "draft":
             super().write({"state": "skipped"})
+
+    def _check_storefront_publication(self):
+        self._check_decision()
+        if self.state != "draft" or self.storefront_offer_id:
+            raise UserError(_("Only a pending draft can be published."))
+        if self.stock_review or self.program_id or self.env["loyalty.program"].with_context(active_test=False).search_count([
+            ("ab_sheet_key", "=", self.sheet_key), ("website_id", "=", self.website_id.id),
+            ("company_id", "=", self.company_id.id),
+        ]):
+            raise UserError(_("An offer already exists for this row. Review the existing offer."))
+        evidence = self.review_evidence or self._saved_review_evidence()
+        if "allocation" in evidence["issues"]:
+            raise UserError(_("The allocation for each participating branch must be confirmed for %s.", self.name))
+        return evidence["issues"]
+
+    def action_prepare_storefront_offer(self):
+        issues = self._check_storefront_publication()
+        products = self.with_context(active_test=False).product_ids
+        gift = "gift" in issues
+        context = {
+            "ab_publish_draft_id": self.id, "default_name": self.name, "default_website_id": self.website_id.id,
+            "default_date_from": self.date_from, "default_date_to": self.date_to,
+            "default_offer_type": "gift" if gift else "sheet", "default_second_item_mode": "choice" if gift else "same",
+            "default_sheet_group_qty": self.group_qty, "default_sheet_discount_qty": self.discount_qty,
+            "default_sheet_rate": self.rate, "default_sheet_fixed_price": self.fixed_price,
+            "default_sheet_priority": self.priority,
+        }
+        if products and not gift:
+            context.update(default_product_id=products[0].id, default_second_product_ids=[Command.set(products[1:].ids)])
+        return {"type": "ir.actions.act_window", "name": _("Publish Draft as Storefront Offer"),
+                "res_model": "ab_storefront_offer", "views": [(self.env.ref(
+                    "ab_ecommerce_storefront.storefront_offer_publish_form").id, "form")],
+                "target": "new", "context": context}
+
+    def _publish_storefront_offer(self, offer, issues):
+        offer.ensure_one()
+        if not offer.active or offer.website_id != self.website_id or offer.use_odoo_promotion:
+            raise UserError(_("Publish an active offer on the draft website using its own offer terms."))
+        if not offer.date_from or not offer.date_to:
+            raise UserError(_("Set a valid period and select the eligible products."))
+        if offer.date_to < fields.Date.context_today(self):
+            raise UserError(_("This offer has expired."))
+        if "gift" in issues and (offer.offer_type != "gift" or offer.second_item_mode != "choice"):
+            raise UserError(_("Identify the purchased product and the separate gift product for %s.", self.name))
+        products = offer.with_context(active_test=False)._qualifying_products()
+        requirements = [(products, 1)]
+        if offer.offer_type in ("gift", "second_half"):
+            buy, benefit = (offer.buy_qty, offer.gift_qty) if offer.offer_type == "gift" else (1, 1)
+            if offer.second_item_mode == "same":
+                requirements = [(products, buy + benefit)]
+            else:
+                benefits = offer.with_context(active_test=False)._benefit_products()
+                requirements = [(products, buy), (benefits, benefit)]
+                products |= benefits
+        elif offer.offer_type == "mix_discount":
+            requirements = [(products, offer.buy_qty + offer.gift_qty)]
+        if self.with_context(active_test=False).product_ids - products:
+            raise UserError(_("Include all confirmed draft products in the offer."))
+        if offer.offer_type != "sheet":
+            quantities = self.website_id._ab_offer_available_quantities(products)
+            for eligible, required in requirements:
+                issue = self.website_id._ab_offer_stock_issue(eligible, quantities, required)
+                if issue:
+                    raise UserError(issue)
+            self.website_id._ab_publish_offer_products(products)
+        super().write({"state": "applied", "storefront_offer_id": offer.id})
 
     def action_apply(self):
         self._check_decision()

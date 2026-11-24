@@ -2,6 +2,30 @@
 
 ## Current changes before commit:
 
+- Open a regular Storefront Offer from a pending spreadsheet draft, choose its type, and publish it after confirming products, dates and terms. Sales managers can find the published offer from the original draft.
+- Check the purchased and benefit products against available website stock. Keep the entire offer pending if stock is missing, preserve branch allocation reviews, and prevent a second publication of the same draft.
+- Show one entry for the published offer in the Abdin Offers overview. The action and its confirmation are available in English and Arabic.
+- All 95 targeted offer, sheet promotion and import tests passed on the isolated Odoo 19 validation database.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/models/offer_overview.py`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+
+Commit: `e117c942`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/FIX: filter translated draft reasons and label loyalty action`
+
+User-facing changes:
+
 - Filter Offer Drafts by the reason displayed in the reader's language, including partial matches and product names in stock warnings.
 - Show the Arabic Offer Drafts button label on the Discount & Loyalty list as well as the Storefront Offers list.
 - All 19 offer sheet and draft tests passed on the isolated Odoo 19 validation database.

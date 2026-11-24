@@ -73,9 +73,8 @@
         <field name="arch" type="xml">
             <form create="0" delete="0" duplicate="0">
                 <header>
-                    <button name="action_apply" type="object" string="Approve and Apply Offer" class="btn-primary"
-                            groups="sales_team.group_sale_manager" invisible="state != 'draft' or manual_only or stock_review"
-                            confirm="Apply this offer to the selected products on this website?"/>
+                    <button name="action_prepare_storefront_offer" type="object" string="Publish Draft as Storefront Offer" class="btn-primary"
+                            groups="sales_team.group_sale_manager" invisible="state != 'draft' or stock_review"/>
                     <button name="action_apply" type="object" string="Recheck Stock and Restore Offer" class="btn-primary"
                             groups="sales_team.group_sale_manager" invisible="state != 'draft' or not stock_review"/>
                     <button name="action_set_aside" type="object" string="Set Aside"
@@ -87,9 +86,9 @@
                         <field name="company_id" invisible="1"/><field name="source"/>
                         <field name="display_reason"/><field name="review_explanation"/><field name="original_terms"/><field name="details"/>
                         <field name="manual_only" invisible="1"/><field name="stock_review" invisible="1"/>
+                        <field name="storefront_offer_id" invisible="not storefront_offer_id" readonly="1"/>
                         <field name="program_id" groups="sales_team.group_sale_manager" invisible="not program_id"/>
                     </group>
-                    <p invisible="not manual_only">Use separate setup for branch allocations, specific gifts or changes to an existing program. Record the decision before setting this draft aside.</p>
                     <group>
                         <group><field readonly="state != 'draft' or stock_review" name="date_from"/><field readonly="state != 'draft' or stock_review" name="date_to"/><field readonly="state != 'draft' or stock_review" name="priority"/></group>
                         <group><field readonly="state != 'draft' or stock_review" name="group_qty"/><field readonly="state != 'draft' or stock_review" name="discount_qty"/><field readonly="state != 'draft' or stock_review" name="rate"/><field readonly="state != 'draft' or stock_review" name="fixed_price"/></group>
@@ -99,6 +98,23 @@
                     </group>
                 </sheet>
             </form>
+        </field>
+    </record>
+    <record id="storefront_offer_publish_form" model="ir.ui.view">
+        <field name="name">ab_storefront_offer.publish.form</field>
+        <field name="model">ab_storefront_offer</field>
+        <field name="inherit_id" ref="storefront_offer_form"/>
+        <field name="mode">primary</field>
+        <field name="priority">80</field>
+        <field name="arch" type="xml">
+            <field name="website_id" position="attributes"><attribute name="readonly">1</attribute></field>
+            <field name="use_odoo_promotion" position="attributes"><attribute name="invisible">1</attribute></field>
+            <xpath expr="//form/sheet" position="after">
+                <footer>
+                    <button special="save" string="Publish Offer" class="btn-primary"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </xpath>
         </field>
     </record>
     <record id="offer_draft_search" model="ir.ui.view">

@@ -1305,6 +1305,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_user_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_publish_form
 msgid "Cancel"
 msgstr ""
 
@@ -19532,4 +19533,46 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__reason
 msgid "Original Review Reason"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_form
+msgid "Publish Draft as Storefront Offer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_publish_form
+msgid "Publish Offer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__storefront_offer_id
+msgid "Published Storefront Offer"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Only a pending draft can be published."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"Publish an active offer on the draft website using its own offer terms."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Include all confirmed draft products in the offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Publish one storefront offer per draft."
 msgstr ""

@@ -7,7 +7,7 @@ from openpyxl import Workbook
 
 from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tests import tagged
+from odoo.tests import Form, tagged
 from odoo.tests.common import TransactionCase, new_test_user
 
 from ..wizard import offer_sheet
@@ -299,6 +299,86 @@ class TestOfferSheetImport(TransactionCase):
             wizard.action_apply()
             self.assertEqual(draft.state, "skipped")
             self.assertFalse(self.env["loyalty.program"].search([("ab_sheet_key", "=", self.row["key"])]))
+
+    def test_publish_gift_draft_as_storefront_offer(self):
+        paid = self.product(self.code)
+        gift = self.product(self.row["codes"][1], quantity=0)
+        model = self.env["ab_storefront_offer_draft"]
+        draft = model._from_sheet({
+            "name": "Separate gift", "sheet_key": "gift-test", "website_id": self.website.id,
+            "manual_only": True, "review_evidence": {"issues": ["gift"]},
+            "product_ids": [Command.set((paid | gift).ids)],
+            "date_from": date(2020, 1, 1), "date_to": date(2099, 1, 1),
+        }).with_user(self.manager)
+        action = draft.action_prepare_storefront_offer()
+        offers = self.env[action["res_model"]].with_user(self.manager).with_context(**action["context"])
+        vals = {"product_id": paid.id, "second_product_ids": [Command.set(gift.ids)]}
+        with self.assertRaises(AccessError), self.env.cr.savepoint():
+            offers.with_user(self.staff).create(vals)
+        with self.assertRaisesRegex(UserError, "No available stock"), self.env.cr.savepoint():
+            offers.create(vals)
+        self.assertFalse(paid.is_published)
+        self.assertFalse(gift.is_published)
+        self.assertEqual(draft.state, "draft")
+        self.env["stock.quant"].with_context(inventory_mode=True).create({
+            "product_id": gift.id, "location_id": self.warehouse.lot_stock_id.id, "inventory_quantity": 1,
+        }).action_apply_inventory()
+        published = offers.create(vals)
+        self.assertEqual(draft.storefront_offer_id, published)
+        self.assertEqual(draft.state, "applied")
+        self.assertTrue(paid.is_published and gift.is_published)
+        self.assertTrue(published.generated_program_ids.active)
+        overview = self.env["ab_storefront_offer_overview"].search([("name", "=", "Separate gift")])
+        self.assertEqual(overview.source, "manual")
+        with self.assertRaisesRegex(UserError, "pending draft"), self.env.cr.savepoint():
+            offers.create(vals)
+
+    def test_publish_draft_budget_and_group(self):
+        paid, extra = [self.product(code) for code in self.row["codes"]]
+        vals = {"name": "Group", "sheet_key": "group-test", "website_id": self.website.id,
+                "product_ids": [Command.set((paid | extra).ids)], "rate": 37,
+                "date_from": date(2020, 1, 1), "date_to": date(2099, 1, 1)}
+        model = self.env["ab_storefront_offer_draft"]
+        budget = model._from_sheet(dict(vals, sheet_key="budget-test", review_evidence={"issues": ["allocation"]}))
+        with self.assertRaisesRegex(UserError, "allocation"):
+            budget.with_user(self.manager).action_prepare_storefront_offer()
+        draft = model._from_sheet(vals).with_user(self.manager)
+        action = draft.action_prepare_storefront_offer()
+        offers = self.env[action["res_model"]].with_user(self.manager).with_context(**action["context"])
+        with self.assertRaisesRegex(UserError, "all confirmed"), self.env.cr.savepoint():
+            offers.create({"second_product_ids": [Command.clear()]})
+        offer = Form(offers, view=action["views"][0][0]).save()
+        self.assertEqual(offer._qualifying_products(), paid | extra)
+        self.assertEqual(offer.generated_program_ids.reward_ids.discount, 37)
+        self.assertTrue(paid.is_published and extra.is_published)
+        self.assertEqual(draft.storefront_offer_id, offer)
+
+    def test_publish_other_storefront_types_from_draft(self):
+        main, other = [self.product(code) for code in self.row["codes"]]
+        pricelist = self.env["product.pricelist"].create({
+            "name": "Draft prices", "website_id": self.website.id, "company_id": self.website.company_id.id,
+            "currency_id": self.env.ref("base.EGP").id,
+        })
+        for kind, terms in [
+            ("second_half", {"second_item_mode": "same"}),
+            ("mix_discount", {"collection_product_line_ids": [Command.create({"product_id": other.id})]}),
+            ("percent", {"pricelist_id": pricelist.id, "percentage_rate": "30"}),
+            ("amount", {"pricelist_id": pricelist.id, "amount_discount": "custom", "custom_amount_discount": 5}),
+            ("price", {"pricelist_id": pricelist.id, "price_before": 100, "price_after": 90}),
+        ]:
+            with self.subTest(kind=kind):
+                draft = self.env["ab_storefront_offer_draft"]._from_sheet({
+                    "name": kind, "sheet_key": kind, "website_id": self.website.id,
+                    "product_ids": [Command.set(main.ids)], "date_from": date(2020, 1, 1), "date_to": date(2099, 1, 1),
+                }).with_user(self.manager)
+                action = draft.action_prepare_storefront_offer()
+                offer = self.env[action["res_model"]].with_user(self.manager).with_context(**action["context"]).create(
+                    dict(terms, offer_type=kind)
+                )
+                self.assertEqual(draft.storefront_offer_id, offer)
+                self.assertTrue(offer.generated_program_ids or offer.price_rule_ids)
+                self.assertTrue(main.is_published)
+                offer.active = False
 
     def test_details_name_only_the_affected_codes_and_dates(self):
         self.product(self.code)
