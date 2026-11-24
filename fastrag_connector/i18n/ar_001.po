@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: ar_001\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#. module: fastrag_connector
+#. odoo-python
+#: code:addons/fastrag_connector/models/client.py:0
+msgid "Set only one FastRAG TLS option: a CA bundle or skipping verification."
+msgstr "اضبط خيار TLS واحدًا فقط لـ FastRAG: حزمة شهادات جهة التصديق أو تخطي التحقق."
+
+#. module: fastrag_connector
+#. odoo-python
+#: code:addons/fastrag_connector/models/client.py:0
+msgid "The FastRAG CA bundle must be a readable PEM file at an absolute path."
+msgstr "يجب أن تكون حزمة شهادات جهة التصديق لـ FastRAG ملف PEM قابلاً للقراءة بمسار مطلق."

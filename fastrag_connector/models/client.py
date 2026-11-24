@@ -1,6 +1,8 @@
 import ipaddress
 import json
+import os
 import shlex
+import ssl
 import threading
 from urllib.parse import urlencode, urlsplit
 from uuid import UUID
@@ -29,6 +31,22 @@ def normalize_url(value):
     except ValueError:
         pass
     raise UserError(_("Enter an HTTPS FastRAG URL, or an HTTP URL on a literal loopback IP."))
+
+
+def tls_verification():
+    ca_bundle = os.environ.get("FASTRAG_TLS_CA_BUNDLE")
+    skip = os.environ.get("FASTRAG_SKIP_TLS_VERIFY") == "1"
+    if ca_bundle is not None:
+        if skip:
+            raise UserError(_("Set only one FastRAG TLS option: a CA bundle or skipping verification."))
+        try:
+            if not os.path.isabs(ca_bundle) or not os.path.isfile(ca_bundle):
+                raise ValueError
+            ssl.create_default_context(cafile=ca_bundle)
+        except (OSError, ValueError):
+            raise UserError(_("The FastRAG CA bundle must be a readable PEM file at an absolute path.")) from None
+        return ca_bundle
+    return not skip
 
 
 def resource(record_id, child=""):
@@ -71,6 +89,7 @@ class FastragClient(models.AbstractModel):
         base, secret = self._config()
         if not secret:
             raise UserError(_("Configure a FastRAG API key first."))
+        verify = tls_verification()
         if not getattr(_sessions, "http", None):
             _sessions.http = requests.Session()
             _sessions.http.trust_env = False
@@ -81,7 +100,7 @@ class FastragClient(models.AbstractModel):
             raise UserError(_("The attachment exceeds 20 MiB."))
         try:
             with _sessions.http.request(
-                method, base + path, json=body, params=params, headers=headers, allow_redirects=False,
+                method, base + path, json=body, params=params, headers=headers, allow_redirects=False, verify=verify,
                 files={"file": (upload[0], upload[1])} if upload else None,
                 data={"caption": upload[2]} if upload else None, timeout=(5, 120), stream=True,
             ) as response:
