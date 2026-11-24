@@ -1,5 +1,21 @@
 # Storefront change log
 
+## Current changes before commit:
+
+- Open Offer Drafts beside the spreadsheet import button in the Storefront Offers list as a sales manager or draft reviewer.
+- Show saved review reasons and stock warnings in the reader's language, including existing drafts. Preserve product names and quantities and the original import evidence.
+- All 18 offer sheet import and draft tests passed on the local Odoo 19 validation database.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+
 ## November demo verification — 2026-11-24
 
 - Deployed `002a2b0d` on `e_commerce`, upgraded only `ab_ecommerce_storefront` on `ecom19` and verified the active service. PostgreSQL custom-format backups before the feature and employee button upgrades passed `pg_restore -l` (`ecom19_before_offer_ede87d32_z92b45.dump` and `ecom19_before_offer_employee_button_M8uXpN.dump`).

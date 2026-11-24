@@ -18,6 +18,7 @@ class OfferDraft(models.Model):
     source = fields.Char(readonly=True)
     original_terms = fields.Text(readonly=True)
     reason = fields.Text(string="Reason for Review", readonly=True)
+    display_reason = fields.Text(string="Reason for Review", compute="_compute_display_reason")
     details = fields.Text(string="Product Codes and Brands", readonly=True)
     review_evidence = fields.Json(readonly=True)
     review_explanation = fields.Text(string="What Needs Review", compute="_compute_review_explanation")
@@ -40,11 +41,59 @@ class OfferDraft(models.Model):
 
     _unique_source = models.Constraint("UNIQUE(website_id, sheet_key)", "This sheet row already has a draft.")
 
+    def _reason_messages(self):
+        return {
+            **self.env["ab_storefront_offer_sheet"]._source_issue_labels(),
+            "matches": _("Review matches"),
+            "unmatched": _("No matching store products"),
+            "existing": _("The existing program needs manual review"),
+            "imported": _("Already imported"),
+            "stock": _("No available stock for: %s"),
+            "quantity": _("Available stock is below the qualifying group size of %s."),
+        }
+
+    def _reason_translations(self):
+        target = self._reason_messages()
+        labels = {}
+        formats = {}
+        for lang in {"en_US", *(code for code, _name in self.env["res.lang"].get_installed())}:
+            for key, message in self.with_context(lang=lang)._reason_messages().items():
+                if "%s" in message:
+                    prefix, suffix = message.split("%s", 1)
+                    formats[prefix, suffix] = target[key]
+                else:
+                    labels[message] = target[key]
+        return labels, formats
+
+    @staticmethod
+    def _localize_reason(text, labels, formats):
+        if not text:
+            return text
+        parts = []
+        for part in text.split(" / "):
+            translated = labels.get(part, part)
+            for (prefix, suffix), template in formats.items():
+                if part.startswith(prefix) and part.endswith(suffix):
+                    translated = template % part[len(prefix):len(part) - len(suffix)]
+                    break
+            parts.append(translated)
+        return " / ".join(parts)
+
+    @api.depends("reason")
+    @api.depends_context("lang")
+    def _compute_display_reason(self):
+        labels, formats = self._reason_translations()
+        for draft in self:
+            draft.display_reason = self._localize_reason(draft.reason, labels, formats)
+
     @api.depends("review_evidence", "sheet_key", "original_terms", "reason", "details", "source", "name")
     @api.depends_context("lang")
     def _compute_review_explanation(self):
+        labels, formats = self._reason_translations()
         for draft in self:
             evidence = draft.review_evidence or draft._saved_review_evidence()
+            if evidence.get("stock_issue"):
+                evidence = dict(evidence, stock_issue=self._localize_reason(evidence["stock_issue"], labels, formats))
             draft.review_explanation = "\n".join(draft._explain_evidence(evidence))
 
     def _saved_review_evidence(self):

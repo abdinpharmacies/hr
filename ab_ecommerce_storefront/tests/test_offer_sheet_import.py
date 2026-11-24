@@ -320,6 +320,23 @@ class TestOfferSheetImport(TransactionCase):
             lines = draft.with_context(lang="en_US")._explain_evidence(dict(draft.review_evidence, start=start, end=end))
             self.assertIn(expected, "\n".join(lines))
 
+    def test_saved_review_reason_uses_reader_language(self):
+        self.env["res.lang"]._activate_lang("ar_001")
+        draft = self.env["ab_storefront_offer_draft"].new({
+            "reason": "Review matches / No available stock for: [123] Serum",
+            "review_evidence": {"issues": [], "products": {}, "offer": "",
+                                "stock_issue": "No available stock for: [123] Serum"},
+        })
+        arabic = draft.with_context(lang="ar_001")
+        english = draft.with_context(lang="en_US")
+        self.assertNotIn("Review matches", arabic.display_reason)
+        self.assertNotIn("No available stock", arabic.display_reason)
+        self.assertIn("[123] Serum", arabic.display_reason)
+        self.assertIn(arabic.review_explanation, arabic.display_reason)
+        self.assertEqual(english.display_reason, draft.reason)
+        draft.reason = arabic.display_reason
+        self.assertEqual(english.display_reason, "Review matches / No available stock for: [123] Serum")
+
     def test_glovive_saved_draft_uses_reference_and_saved_match_notes(self):
         ref = _november_offers()
         row = next(r for r in ref["offers"] if r["name"] == "Glovive" and r["source"] == "white friday #25")
@@ -389,6 +406,10 @@ class TestOfferSheetImport(TransactionCase):
         discount_list = self.env.ref("loyalty.action_loyalty_program_tree_discount_loyalty")
         self.assertEqual(discount_list.view_id, sheet_view)
         arch = self.env["loyalty.program"].with_user(self.manager).get_view(sheet_view.id, "list")["arch"]
+        overview = self.env["ab_storefront_offer_overview"].with_user(self.manager)
+        view = self.env.ref("ab_ecommerce_storefront.offer_overview_list")
+        drafts = self.env.ref("ab_ecommerce_storefront.action_offer_drafts")
+        self.assertIn(f'name="{drafts.id}"', overview.get_view(view.id, "list")["arch"])
         self.assertIn('display="always"', arch)
         form = self.env.ref("ab_ecommerce_storefront.offer_sheet_form")
         upload_arch = self.wizards.get_view(form.id, "form")["arch"]
