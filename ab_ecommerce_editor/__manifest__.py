@@ -1,13 +1,13 @@
 {
     'name': 'Abdin eCommerce Editor',
     'summary': 'Visual content studio with safe previews and versioned publishing',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'license': 'LGPL-3',
     'category': 'Website/eCommerce',
     'author': 'Abdin Pharmacies',
     'developer': 'Mohamed Fawzy',
     'application': True,
-    'depends': ['ab_core_ui', 'ab_ecommerce_storefront'],
+    'depends': ['ab_core_ui', 'ab_ecommerce_storefront', 'html_builder', 'website'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
@@ -25,6 +25,11 @@
             'ab_ecommerce_editor/static/src/editor_workspace.js',
             'ab_ecommerce_editor/static/src/editor_workspace.xml',
             'ab_ecommerce_editor/static/src/editor_workspace.scss',
+        ],
+        'ab_ecommerce_editor.assets_section_builder': [
+            ('include', 'html_builder.assets'),
+            'ab_ecommerce_editor/static/src/section_builder.js',
+            'ab_ecommerce_editor/static/src/section_builder.xml',
         ],
         'web.assets_frontend': [
             'ab_ecommerce_editor/static/src/editor_public.scss',

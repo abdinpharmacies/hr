@@ -1,11 +1,43 @@
 <odoo>
+    <template id="section_snippets" name="Studio website sections" groups="ab_ecommerce_editor.group_editor_editor">
+        <t t-set="cta_btn_text" t-value="False"/>
+        <t t-set="cta_btn_href">/contactus</t>
+        <snippets id="snippet_groups">
+            <t snippet-group="content" t-snippet="website.s_snippet_group" string="Content" t-thumbnail="/website/static/src/img/snippets_thumbs/s_text_image.svg"/>
+        </snippets>
+        <snippets id="snippet_custom"/>
+        <snippets id="snippet_structure">
+            <t t-snippet="website.s_title" group="content"/>
+            <t t-snippet="website.s_text_block" group="content"/>
+            <t t-snippet="website.s_text_image" group="content"/>
+            <t t-snippet="website.s_image_text" group="content"/>
+            <t t-snippet="website.s_three_columns" group="content"/>
+            <t t-snippet="website.s_features" group="content"/>
+            <t t-snippet="website.s_picture" group="content"/>
+            <t t-snippet="website.s_cta_box" group="content"/>
+            <t t-snippet="website.s_banner" group="content"/>
+            <t t-snippet="website.s_media_list" group="content"/>
+            <t t-snippet="website.s_features_grid" group="content"/>
+            <t t-snippet="website.s_numbers" group="content"/>
+            <t t-snippet="website.s_comparisons" group="content"/>
+            <t t-snippet="website.s_call_to_action" group="content"/>
+            <t t-snippet="website.s_company_team" group="content"/>
+            <t t-snippet="website.s_cards_grid" group="content"/>
+        </snippets>
+        <snippets id="snippet_content">
+            <t t-snippet="website.s_button"/>
+            <t t-snippet="website.s_hr"/>
+            <t t-snippet="website.s_badge"/>
+        </snippets>
+    </template>
     <template id="site_page_block" name="Storefront editor block">
         <div t-att-class="'ab-editor-public__block ae-visibility-%s' % block.get('style', {}).get('visibility', 'all')" t-att-style="block_style(block.get('style', {}))">
             <t t-call="ab_ecommerce_editor.content_block"/>
         </div>
     </template>
     <template id="content_block" name="Editor content block">
-        <section t-if="block['type'] == 'hero'" class="ab-editor-public__hero">
+        <t t-if="block['type'] == 'website_section'" t-out="request.website._ab_editor_section_markup(block)"/>
+        <section t-elif="block['type'] == 'hero'" class="ab-editor-public__hero">
             <h2 t-esc="block.get('title', '')"/>
             <p t-esc="block.get('body', '')"/>
             <a t-if="block.get('url')" t-att-href="block['url']" class="ab-editor-public__button" t-esc="block.get('label') or block.get('title')"/>

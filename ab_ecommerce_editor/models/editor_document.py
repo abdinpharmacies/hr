@@ -7,11 +7,13 @@ import uuid
 from copy import deepcopy
 from urllib.parse import urlsplit
 
+from lxml import html
 from PIL import Image
 
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
+from .website_section import clean_section
 from .homepage_content import homepage_sections, validate_home_content
 
 
@@ -110,6 +112,11 @@ def validate_blocks(blocks, allow_template=False, allow_homepage=False, allow_na
             continue
         if 'active' in block and type(block['active']) is not bool:
             raise ValidationError(_('This homepage section is invalid.'))
+        if kind == 'website_section':
+            if set(block) - {'id', 'type', 'active', 'style', 'html'} or clean_section(block.get('html')) != block['html']:
+                raise ValidationError(_('Invalid website section.'))
+            validate_style(block.get('style', {}))
+            continue
         if not isinstance(kind, str) or kind not in BLOCK_TYPES or set(block) - ({'id', 'type', 'style', 'url', 'active'} | TEXT_KEYS):
             raise ValidationError(_('This block type is not supported.'))
         validate_style(block.get('style', {}))
@@ -262,10 +269,20 @@ class EditorDocument(models.Model):
         })
         return f'/web/image/{attachment.id}'
 
+    @api.model
+    def prepare_website_sections(self, sources):
+        self.check_access('write')
+        if not isinstance(sources, list) or len(sources) > 80:
+            raise ValidationError(_('A page can contain up to 80 blocks.'))
+        return [clean_section(source) for source in sources]
+
     def _publish_media(self, revision):
         urls = [revision.payload.get('image_url', '')]
         for blocks in revision.payload['blocks'].values():
             urls.extend(block.get('url', '') for block in blocks if block['type'] == 'image')
+            for block in blocks:
+                if block['type'] == 'website_section':
+                    urls.extend(html.fragment_fromstring(block['html'], create_parent=True).xpath('.//img/@src'))
         ids = [int(match.group(1)) for url in urls if (match := re.fullmatch(r'/web/image/(\d+)', url))]
         if not ids:
             return
@@ -288,6 +305,10 @@ class EditorDocument(models.Model):
                 raise ValidationError(_('Text contrast must be at least 4.5:1 before review.'))
             for blocks in snapshot['blocks'].values():
                 for block in blocks:
+                    if block['type'] == 'website_section':
+                        section = html.fragment_fromstring(block['html'], create_parent=True)
+                        if any(not img.get('src') or not (img.get('alt') or '').strip() for img in section.iter('img')):
+                            raise ValidationError(_('Add an image and a description to every image block before review.'))
                     if block['type'] == 'image' and (not block.get('url') or not block.get('alt', '').strip()):
                         raise ValidationError(_('Add an image and a description to every image block before review.'))
                     if block['type'] in ('hero', 'heading', 'text'):

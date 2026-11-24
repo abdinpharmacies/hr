@@ -16,6 +16,12 @@ Open **eCommerce Editor** from Odoo. Create a page or article, select a block on
 
 The editor manages its own content routes, the storefront homepage, and page-body overlays for existing website pages and the supported storefront landing routes. Native blog records and transactional cart/checkout flows remain outside this integration. Commerce data and operations remain owned by Odoo's existing commerce modules.
 
+### Designing a draft with Odoo building blocks
+
+Choose **Design page layout** in a document or reusable template to open the Odoo block and style tools inside Studio. Choose **Website section** from the block palette to work on one section. Insert a layout from **Blocks → Content**, select its text or columns to edit them, and use the phone control to check its mobile layout. Product listings and other linked storefront sections retain their data sources and can be arranged as units. Select a linked section to edit its supported text and links in the side panel.
+
+**Apply to draft** returns the layout to Studio. **Save current changes** persists it in the current content language. Submitting for review freezes the layout, and publishing releases that revision. Studio stores static website sections in a validated HTML subset; existing v1 API clients receive a plain-text representation. Images uploaded from a saved document remain private during drafting. Shared website theme settings, interactive Odoo forms and transactional configuration have separate storage and publication workflows.
+
 ## Publishing and access
 
 | Role | Access |
@@ -31,7 +37,7 @@ Submitting for review freezes the complete content, resolved reusable sections, 
 
 Revisions retain their author/date and release publisher/date. Their payload cannot be edited or deleted. Restoring a revision creates a draft; submit and publish it to roll back the public content. Draft save tokens prevent a stale session from overwriting a newer save, including saves within the same second.
 
-Images uploaded through the editor remain private until included in a release. JPEG, PNG, and WebP uploads are limited to 5 MB and 20 million pixels. Image blocks require descriptions before review. Text contrast must reach 4.5:1. The content schema accepts plain text, approved style properties, and safe links; it does not execute HTML, JavaScript, expressions, or arbitrary JSON code.
+Images uploaded through the editor remain private until included in a release. JPEG, PNG, and WebP uploads are limited to 5 MB and 20 million pixels. Image blocks require descriptions before review. Text contrast must reach 4.5:1. The content schema accepts plain text, validated static layout markup, approved styles, and safe links; it does not execute HTML, JavaScript, expressions, or arbitrary JSON code.
 
 ## Routes and JSON contract
 

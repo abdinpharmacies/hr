@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { Component, onMounted, onPatched, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { getBundle, loadBundle } from "@web/core/assets";
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
@@ -23,6 +24,7 @@ const EDITABLE_FIELDS = DOCUMENT_FIELDS.filter((field) => ![
     "state", "scheduled_at", "published_at", "published_revision_id", "version", "active", "write_date", "draft_token", "native_path",
 ].includes(field));
 const BLOCKS = [
+    { type: "website_section", label: _t("Website section"), icon: "fa fa-columns" },
     { type: "hero", label: _t("Hero"), icon: "fa fa-window-maximize" },
     { type: "heading", label: _t("Heading"), icon: "fa fa-header" },
     { type: "text", label: _t("Text"), icon: "fa fa-align-left" },
@@ -58,7 +60,9 @@ export class EditorWorkspace extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.previewStyles = "";
         onPatched(() => this.refreshNativePreviews());
+        this.dialog = useService("dialog");
         this.notification = useService("notification");
         this.root = useRef("root");
         this.motionAnimations = new Set();
@@ -92,7 +96,13 @@ export class EditorWorkspace extends Component {
             ]);
             this.state.canReview = review;
             this.state.canPublish = publish;
-            await Promise.all([this.loadLibrary(), this.loadLayout()]);
+            const [, , assets] = await Promise.all([this.loadLibrary(), this.loadLayout(), getBundle("web.assets_frontend")]);
+            this.previewStyles = assets.cssLibs.map((url) => {
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = url;
+                return link.outerHTML;
+            }).join("");
             this.state.ready = true;
         });
         onMounted(() => {
@@ -427,7 +437,11 @@ export class EditorWorkspace extends Component {
     get blockPalette() { return this.isHomepage ? [...HOME_BLOCKS, ...BLOCKS] : BLOCKS; }
     isNativeBlock(type) { return type === "storefront_page" || HOME_BLOCKS.some((block) => block.type === type); }
     paletteContains(type) { return this.isNativeBlock(type) && this.blocks.some((block) => block.type === type); }
-    get nativeFields() { if (this.selectedBlock?.type === "storefront_page") return this.state.nativeFields[this.state.language] || []; return this.state.homeFields.find((section) => section.type === this.selectedBlock?.type)?.fields || []; }
+    fieldsFor(block) {
+        if (block?.type === "storefront_page") return this.state.nativeFields[this.state.language] || [];
+        return this.state.homeFields.find((section) => section.type === block?.type)?.fields || [];
+    }
+    get nativeFields() { return this.fieldsFor(this.selectedBlock); }
     refreshNativePreview(event, block) {
         const frame = event.target;
         try {
@@ -746,7 +760,49 @@ export class EditorWorkspace extends Component {
         });
     }
 
+    sectionPreview(html) {
+        const direction = this.state.language === "ar_001" ? "rtl" : "ltr";
+        return `<!doctype html><html dir="${direction}"><head>${this.previewStyles}</head><body>${html}</body></html>`;
+    }
+
+    async designSection(id = null, index = null, wholePage = false) {
+        if (this.isLocked || this.state.busy) return;
+        this.state.busy = true;
+        try {
+            await loadBundle("ab_ecommerce_editor.assets_section_builder");
+            const block = this.blocks.find((item) => item.id === id);
+            const Builder = registry.category("lazy_components").get("ab_ecommerce_editor.SectionBuilder");
+            this.dialog.add(Builder, {
+                html: block?.html || "",
+                pageBlocks: wholePage ? clone(this.blocks) : undefined,
+                blockLabel: (type) => this.blockLabel(type),
+                fieldsFor: (item) => this.fieldsFor(item),
+                thumbnail: (item) => this.sectionThumbnail(item)?.html,
+                styleFor: (style) => this.styleFor(style),
+                websiteId: this.state.draft.website_id[0],
+                documentId: this.state.currentId || 0,
+                language: this.state.language,
+                apply: (value) => this.edit((draft) => {
+                    const blocks = this.editableBlocks(draft);
+                    if (wholePage) {
+                        blocks.splice(0, blocks.length, ...value);
+                        this.state.selectedId = null;
+                    } else if (id) {
+                        blocks.find((item) => item.id === id).html = value;
+                    } else {
+                        const section = { id: `b_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`, type: "website_section", html: value };
+                        blocks.splice(index ?? blocks.length, 0, section);
+                        this.state.selectedId = section.id;
+                    }
+                }),
+            });
+        } finally {
+            this.state.busy = false;
+        }
+    }
+
     addBlock(type, index = null) {
+        if (type === "website_section") return this.designSection(null, index);
         if (this.paletteContains(type)) return;
         this.edit((draft) => {
             const block = { id: `b_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`, type, ...DEFAULT_BLOCK[type], active: true, style: {} };
@@ -1042,6 +1098,7 @@ export class EditorWorkspace extends Component {
     }
 
     onKeydown = (event) => {
+        if (document.querySelector(".ab-editor-section-builder")) return;
         if (this.state.view === "editor" && event.key === "Escape") {
             this.cancelPreviewPress();
             this.state.armedDeleteId = null;

@@ -1,0 +1,34 @@
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_editor.SectionBuilder">
+        <DraftDialog discard.bind="discard" title="props.pageBlocks ? pageTitle : sectionTitle" contentClass="'ab-editor-builder-dialog'" size="'fullscreen'" bodyClass="'p-0'">
+            <div class="ab-editor-section-builder" t-ref="builder">
+                <div class="ab-editor-section-builder__canvas">
+                    <iframe t-ref="frame" sandbox="allow-same-origin" title="Draft layout" t-att-class="state.mobile ? 'is-mobile' : ''" t-on-load="loadFrame" src="about:blank"/>
+                    <LocalOverlayContainer localOverlay="overlayRef" identifier="env.localOverlayContainerKey"/>
+                </div>
+                <aside class="ab-editor-section-builder__tools">
+                    <div t-if="linkedBlock" class="ab-editor-section-builder__linked">
+                        <h5 t-esc="props.blockLabel(linkedBlock.type)"/>
+                        <label t-foreach="props.fieldsFor(linkedBlock)" t-as="field" t-key="linkedBlock.id + field.key">
+                            <span t-esc="field.label"/>
+                            <input t-att-type="field.kind === 'url' ? 'url' : 'text'" t-att-dir="field.kind === 'url' ? 'ltr' : 'auto'"
+                                   t-att-value="linkedValue(field.key)" t-att-placeholder="field.placeholder || field.label"
+                                   t-on-change="(event) => this.editLinkedValue(field, event)"/>
+                        </label>
+                    </div>
+                    <Builder t-if="state.frame" Plugins="plugins" snippetsName="'ab_ecommerce_editor.section_snippets'" config="config"
+                             overlayRef="overlayRef" editableSelector="'#wrapwrap'" iframeLoaded="iframeLoaded"
+                             isMobile="state.mobile" toggleMobile="() => this.state.mobile = !this.state.mobile"
+                             onEditorLoad.bind="rememberEditor"/>
+                    <span t-elif="!state.error" role="status">Loading editor...</span>
+                </aside>
+                <input type="file" t-ref="upload" class="d-none" accept="image/png,image/jpeg,image/webp" t-on-change="uploadImage" t-on-cancel="() => this.finishPick?.(null)"/>
+            </div>
+            <t t-set-slot="footer">
+                <span t-if="state.error" class="text-danger me-auto" role="alert" t-esc="state.error"/>
+                <button class="btn btn-primary" type="button" t-att-disabled="!state.ready || state.saving" t-on-click="apply">Apply to draft</button>
+                <button class="btn btn-secondary" type="button" t-att-disabled="state.saving" t-on-click="discard">Cancel</button>
+            </t>
+        </DraftDialog>
+    </t>
+</templates>

@@ -1,6 +1,10 @@
 from copy import deepcopy
 
+from markupsafe import Markup
+
 from odoo import _, api, fields, models
+
+from .website_section import clean_section
 from .homepage_content import default_home_blocks, homepage_sections
 
 
@@ -66,3 +70,6 @@ class EditorWebsite(models.Model):
     def _ab_editor_block_style(self, style):
         from ..controllers.editor_content import block_style
         return block_style(style)
+
+    def _ab_editor_section_markup(self, block):
+        return Markup(clean_section(block['html']))

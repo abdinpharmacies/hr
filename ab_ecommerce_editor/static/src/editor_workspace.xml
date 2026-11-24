@@ -23,6 +23,7 @@
                         <button class="ab_editor__icon-button" type="button" title="Redo" aria-label="Redo" t-att-disabled="!state.future.length" t-on-click="redo"><i class="fa fa-repeat"/></button>
                         <button class="ab_editor__button ab_editor__button--quiet" type="button" t-if="!state.templateId" t-att-disabled="state.dirty" title="Save the draft before opening the storefront preview" t-on-click="previewStorefront"><i class="fa fa-eye" aria-hidden="true"/>Storefront preview</button>
                         <button class="ab_editor__button ab_editor__button--quiet" type="button" t-if="!state.templateId" t-att-disabled="!liveUrl" t-on-click="openLive"><i class="fa fa-external-link" aria-hidden="true"/>Open live page</button>
+                        <button class="ab_editor__button ab_editor__button--quiet" type="button" t-att-disabled="isLocked" t-on-click="() => this.designSection(null, null, true)"><i class="fa fa-columns" aria-hidden="true"/>Design page layout</button>
                         <div class="ab_editor__draft-actions">
                             <button class="ab_editor__button ab_editor__button--primary" type="button" t-att-disabled="!state.dirty || isLocked" t-on-click="saveDraft"><i class="fa fa-floppy-o" aria-hidden="true"/>Save current changes</button>
                             <button class="ab_editor__button ab_editor__button--quiet ab_editor__top-back" type="button" t-on-click="backToLibrary"><i class="fa fa-arrow-left" aria-hidden="true"/>Back</button>
@@ -136,6 +137,7 @@
                                             <span class="ab_editor__native-status" t-esc="block.active === false ? inactiveLabel : activeLabel"/>
                                             <iframe t-att-data-native-id="block.id" t-on-load="(ev) => this.refreshNativePreview(ev, block)" t-att-src="nativePreviewUrl(block)" t-att-title="blockLabel(block.type)" loading="eager" tabindex="-1" sandbox="allow-same-origin"/>
                                         </span>
+                                        <iframe t-elif="block.type === 'website_section'" class="ab-editor-section-preview" sandbox="" tabindex="-1" title="Draft layout" t-att-srcdoc="sectionPreview(block.html)"/>
                                         <span t-elif="block.type === 'hero'" class="ab_editor__preview-hero"><strong t-esc="block.title"/><span t-esc="block.body"/><em t-if="block.label" t-esc="block.label"/></span>
                                         <strong t-elif="block.type === 'heading'" class="ab_editor__preview-h2" t-esc="block.title"/>
                                         <span t-elif="block.type === 'text'" class="ab_editor__preview-text" t-esc="block.body"/>
@@ -190,6 +192,7 @@
                                         <p>Live products and offers keep their storefront data. Empty sections appear when content is available.</p>
                                         <label t-foreach="nativeFields" t-as="field" t-key="field.key"><span t-esc="field.label"/><input t-if="field.kind === 'url'" type="url" dir="ltr" t-att-placeholder="field.placeholder" t-att-value="selectedBlock.content?.[field.key] ?? ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateNativeContent(field.key, ev)"/><textarea t-else="" rows="2" t-att-placeholder="field.label" t-att-value="selectedBlock.content?.[field.key] ?? ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateNativeContent(field.key, ev)"/></label>
                                     </t>
+                                    <button type="button" class="ab_editor__button ab_editor__button--primary" t-if="selectedBlock.type === 'website_section'" t-att-disabled="isLocked || state.busy" t-on-click="() => this.designSection(selectedBlock.id)">Edit website section</button>
                                     <label t-if="['hero', 'heading'].includes(selectedBlock.type)">Heading<input type="text" t-att-value="selectedBlock.title || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('title', ev)"/></label>
                                     <label t-if="['hero', 'text'].includes(selectedBlock.type)">Body text<textarea rows="5" t-att-value="selectedBlock.body || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('body', ev)"/></label>
                                     <label t-if="['hero', 'button'].includes(selectedBlock.type)">Button label<input type="text" t-att-value="selectedBlock.label || ''" t-att-disabled="isLocked" t-on-input="(ev) => this.updateBlock('label', ev)"/></label>

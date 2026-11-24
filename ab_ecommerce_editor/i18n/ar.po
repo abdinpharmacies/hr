@@ -2288,3 +2288,67 @@ msgstr "قسم المتجر غير صالح."
 #: code:addons/ab_ecommerce_editor/models/site_map.py:0
 msgid "Track order"
 msgstr "تتبع الطلب"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.js:0
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.js:0
+msgid "Website section"
+msgstr "قسم من الموقع"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.js:0
+msgid "Upload images from a saved document."
+msgstr "ارفع الصور من مستند محفوظ."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.xml:0
+msgid "Draft layout"
+msgstr "تصميم المسودة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+msgid "Edit website section"
+msgstr "تعديل قسم الموقع"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.xml:0
+msgid "Apply to draft"
+msgstr "تطبيق على المسودة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/website_section.py:0
+msgid "The website section is too large."
+msgstr "حجم قسم الموقع أكبر من الحد المسموح."
+
+#. module: ab_ecommerce_editor
+#. odoo-python
+#: code:addons/ab_ecommerce_editor/models/editor_document.py:0
+#: code:addons/ab_ecommerce_editor/models/website_section.py:0
+msgid "Invalid website section."
+msgstr "قسم الموقع غير صالح."
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/editor_workspace.xml:0
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.js:0
+msgid "Design page layout"
+msgstr "تصميم تخطيط الصفحة"
+
+#. module: ab_ecommerce_editor
+#. odoo-javascript
+#: code:addons/ab_ecommerce_editor/static/src/section_builder.js:0
+msgid "Keep a single copy of each linked section."
+msgstr "احتفظ بنسخة واحدة من كل قسم مرتبط."

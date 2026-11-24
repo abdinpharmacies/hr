@@ -462,3 +462,70 @@
     &__preview-block--native iframe { display: block; }
     &__preview-page--native .ab_editor__preview-item { margin: 0; }
 }
+
+.ab-editor-section-builder {
+    display: flex;
+    height: 100%;
+    min-height: 55vh;
+    background: #eef1fa;
+
+    &__canvas {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+    }
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #fff;
+    }
+
+    iframe.is-mobile { max-width: 390px; }
+
+    &__linked {
+        max-height: 40%;
+        overflow: auto;
+        padding: 1rem;
+        border-bottom: 1px solid #d8ddeb;
+        label, input { display: block; width: 100%; }
+        label + label { margin-top: .5rem; }
+    }
+
+    &__tools {
+        display: flex;
+        flex-direction: column;
+        > .o-snippets-menu { min-height: 0; flex: 1; }
+        width: 38%;
+        max-width: 340px;
+        text-align: start;
+        background: var(--o-view-background-color, white);
+        border-inline-start: 1px solid #d8ddeb;
+    }
+
+    @media (max-width: 767px) {
+        flex-direction: column;
+        &__canvas { min-height: 44vh; }
+        &__tools { width: 100%; max-width: none; height: 34vh; overflow: auto; }
+    }
+}
+
+.ab_editor .ab-editor-section-preview {
+    width: 100%;
+    height: 240px;
+    border: 0;
+    pointer-events: none;
+}
+
+.ab-editor-builder-dialog {
+    --ab-studio-accent: #5144b8;
+
+    .modal-header { border-block-end: 2px solid #d6cff6; }
+    .modal-footer .btn-primary {
+        --btn-bg: var(--ab-studio-accent);
+        --btn-border-color: var(--ab-studio-accent);
+    }
+    .o-hb-tab.active { color: var(--ab-studio-accent); }
+}

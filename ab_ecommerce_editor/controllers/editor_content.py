@@ -2,6 +2,8 @@ import hashlib
 from copy import deepcopy
 from urllib.parse import urlencode
 
+from lxml import html
+
 from odoo import fields, http
 from odoo.http import request
 
@@ -61,6 +63,12 @@ class EditorContent(http.Controller):
         payload = deepcopy(snapshot if snapshot is not None else revision.payload)
         language = language or ('ar_001' if (request.env.lang or '').startswith('ar') else 'en_US')
         blocks = [block for block in payload['blocks'][language] if block.get('active', True)]
+        if platform == 'flutter':
+            blocks = [
+                {**{k: v for k, v in block.items() if k != 'html'}, 'type': 'text',
+                 'body': html.fragment_fromstring(block['html'], create_parent=True).text_content()[:4000]}
+                if block['type'] == 'website_section' else block for block in blocks
+            ]
         unsupported = []
         if capabilities is not None:
             for block in blocks:

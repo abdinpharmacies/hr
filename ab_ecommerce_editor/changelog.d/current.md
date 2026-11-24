@@ -117,10 +117,12 @@ Files changed:
 - `views/editor_templates.xml`
 - `views/homepage.xml`
 
-## Current changes before commit:
+## Storefront page editing
 
+Commit: 86e75ac8
 Author: Mohamed Fawzy
-Date: 2026-11-15
+Date: 2026-11-16
+Subject: ab_ecommerce_editor/IMP: map and edit storefront pages
 
 - Add the bilingual Site map button, cropped native page previews, and arrows derived from rendered links, with keyboard controls and RTL support.
 - Open mapped pages inside the custom Studio. Preserve existing page layouts and forms in a protected native block; support static heading overrides and additional content around the original body.
@@ -146,4 +148,29 @@ Files changed:
 - `static/src/site_map.js`
 - `static/src/site_map.scss`
 - `static/src/site_map.xml`
+- `views/editor_templates.xml`
+
+## Current changes before commit:
+
+- Open Odoo's HTML builder from the Studio workspace for the full page body or a single section. Include the native layout picker, text and style tools, mobile preview, and editable labels and links for linked storefront sections.
+- Apply layouts to the selected language's draft and keep website releases behind Studio review and publisher permissions. Validate static markup on the server, stage uploaded images privately, and render website sections as text for v1 JSON clients.
+- Add both Arabic translations and document the supported editing scope.
+
+Files changed:
+
+- `README.md`
+- `__manifest__.py`
+- `changelog.d/current.md`
+- `controllers/editor_content.py`
+- `i18n/ar.po`
+- `i18n/ar_001.po`
+- `models/__init__.py`
+- `models/editor_document.py`
+- `models/homepage.py`
+- `models/website_section.py`
+- `static/src/editor_workspace.js`
+- `static/src/editor_workspace.scss`
+- `static/src/editor_workspace.xml`
+- `static/src/section_builder.js`
+- `static/src/section_builder.xml`
 - `views/editor_templates.xml`
