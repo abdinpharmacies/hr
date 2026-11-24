@@ -193,11 +193,14 @@ class Conversation(models.Model):
                            association='verified_phone_match' if automatic else 'manual_review', customer_confirmed=customer_confirmed is True, phone_verified=bool(preview['verified_phone'] and customer in self._matching_saved_contacts(preview['verified_phone']))),
         })
 
+    def _customer_unlink_streams(self):
+        return self._workspace_streams()
+
     def _customer_unlink_data(self, customer_id):
         customer, account, session = self._customer_link_scope(customer_id)
         if self.customer_id != customer:
             raise UserError(_('The customer link changed. Preview it again.'))
-        streams = self._workspace_streams().sorted('id')
+        streams = self._customer_unlink_streams().sorted('id')
         if len(streams) < 2:
             raise UserError(_('Select a customer with linked conversations.'))
         for stream in streams:
