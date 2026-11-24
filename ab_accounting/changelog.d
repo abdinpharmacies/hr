@@ -90,3 +90,12 @@ Files changed:
 - `models/`
 - `views/`
 - `security/`
+
+## Current changes before commit:
+
+- Use the Odoo 19 account guide IDs for firing deductions and the due salaries journal test.
+
+Files changed:
+- `models/ab_accounting_je_line.py`
+- `tests/test_create_je.py`
+- `changelog.d`
