@@ -32,6 +32,10 @@
         background-image: linear-gradient(105deg, #0b5f39, #16834f) !important;
     }
 
+    .o-mail-ChatWindow-header .o-mail-ChatWindow-threadAvatar {
+        background: transparent;
+    }
+
     .o-mail-ChatWindow-header .o-mail-ChatWindow-threadAvatar img {
         border: 2px solid rgba(255, 255, 255, .8);
         border-radius: 50% !important;
