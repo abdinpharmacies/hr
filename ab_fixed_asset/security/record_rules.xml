@@ -30,7 +30,7 @@
             <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
             <field name="groups" eval="[(4, ref('group_ab_fixed_asset_user'))]"/>
             <field name="domain_force">[('je_line_ids', '=', False)]</field>
-            <field name="perm_read" eval="1"/>
+            <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
@@ -40,7 +40,7 @@
             <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
             <field name="groups" eval="[(4, ref('group_ab_fixed_asset_user'))]"/>
             <field name="domain_force">[('je_line_ids', '!=', False)]</field>
-            <field name="perm_read" eval="1"/>
+            <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
@@ -52,6 +52,7 @@
                 ([] if user.has_group('base.group_system') or user.has_group('ab_fixed_asset.group_ab_fixed_asset_manager')
                 else [('current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])])
             </field>
+            <field name="perm_read" eval="0"/>
         </record>
 
         <record id="rule_ab_fixed_asset_inventory_line_branch" model="ir.rule">
@@ -61,6 +62,7 @@
                 ([] if user.has_group('base.group_system') or user.has_group('ab_fixed_asset.group_ab_fixed_asset_manager')
                 else [('fixed_asset_header_id.current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])])
             </field>
+            <field name="perm_read" eval="0"/>
         </record>
 
         <record id="rule_ab_fixed_asset_inventory_standards_branch" model="ir.rule">
@@ -70,6 +72,65 @@
                 ([] if user.has_group('base.group_system') or user.has_group('ab_fixed_asset.group_ab_fixed_asset_manager')
                 else [('asset_id.current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])])
             </field>
+            <field name="perm_read" eval="0"/>
+        </record>
+
+        <!-- Group read rules combine with OR. Every ordinary reader stays store-scoped;
+             only the explicitly listed wider roles receive an unrestricted alternative. -->
+        <record id="rule_ab_fixed_asset_assets_inventory_branch_read" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_assets_inventory_branch_read</field>
+            <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
+            <field name="groups" eval="[(4, ref('base.group_user')), (4, ref('group_ab_fixed_asset_user'))]"/>
+            <field name="domain_force">[('current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])]</field>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_fixed_asset_inventory_line_branch_read" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_inventory_line_branch_read</field>
+            <field name="model_id" ref="model_ab_fixed_asset_inventory_line"/>
+            <field name="groups" eval="[(4, ref('base.group_user')), (4, ref('group_ab_fixed_asset_user'))]"/>
+            <field name="domain_force">[('fixed_asset_header_id.current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])]</field>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_fixed_asset_inventory_standards_branch_read" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_inventory_standards_branch_read</field>
+            <field name="model_id" ref="model_ab_fixed_asset_inventory_standards"/>
+            <field name="groups" eval="[(4, ref('base.group_user')), (4, ref('group_ab_fixed_asset_user'))]"/>
+            <field name="domain_force">[('asset_id.current_store_id.asset_department_ids', 'any', [('user_id', '=', user.id), ('active', '=', True)])]</field>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_fixed_asset_assets_inventory_all_branch_read" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_assets_inventory_all_branch_read</field>
+            <field name="model_id" ref="model_ab_fixed_asset_assets_inventory"/>
+            <field name="groups" eval="[(4, ref('group_ab_fixed_asset_accountant')), (4, ref('group_ab_fixed_asset_manager')), (4, ref('base.group_system'))]"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_fixed_asset_inventory_line_all_branch_read" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_inventory_line_all_branch_read</field>
+            <field name="model_id" ref="model_ab_fixed_asset_inventory_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_fixed_asset_accountant')), (4, ref('group_ab_fixed_asset_manager')), (4, ref('base.group_system'))]"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_fixed_asset_inventory_standards_all_branch_read" model="ir.rule">
+            <field name="name">rule_ab_fixed_asset_inventory_standards_all_branch_read</field>
+            <field name="model_id" ref="model_ab_fixed_asset_inventory_standards"/>
+            <field name="groups" eval="[(4, ref('group_ab_fixed_asset_accountant')), (4, ref('group_ab_fixed_asset_manager')), (4, ref('base.group_system'))]"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
         </record>
 
     </data>
