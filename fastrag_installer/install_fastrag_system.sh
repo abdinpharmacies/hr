@@ -21,8 +21,13 @@ sql() {
         psql -XwqAt --set=ON_ERROR_STOP=1 --host="$PG_SOCKET" --port="$PG_PORT" "$@"
 }
 app() {
-    (cd "$ROOT" && runuser -u "$ACCOUNT" -- env -i PATH="$PATH" HOME="$ROOT" \
-        PYTHONDONTWRITEBYTECODE=1 PGPASSFILE=/dev/null "$VENV/bin/python" -m app "$@")
+    release_app "$ROOT" "$@"
+}
+release_app() {
+    local release=$1
+    shift
+    (cd "$release" && runuser -u "$ACCOUNT" -- env -i PATH="$PATH" HOME="$ROOT" \
+        PYTHONDONTWRITEBYTECODE=1 PGPASSFILE=/dev/null "$release/venv-fast/bin/python" -m app "$@")
 }
 root_dir() {
     [[ -d $1 && ! -L $1 && $(stat -c '%u' -- "$1") == 0 ]] || return 1
@@ -45,7 +50,8 @@ choose() {
 }
 
 unit_text() {
-    cat <<'UNIT_FILE'
+    local release=${1:-$ROOT}
+    cat <<UNIT_FILE
 [Unit]
 Description=FastRAG API and pgvector indexing worker
 After=postgresql.service network-online.target
@@ -55,12 +61,12 @@ Wants=network-online.target postgresql.service
 Type=simple
 User=fastrag
 Group=fastrag
-WorkingDirectory=/opt/fastrag
+WorkingDirectory=$release
 Environment=HOME=/opt/fastrag
 Environment=PYTHONUNBUFFERED=1
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PGPASSFILE=/dev/null
-ExecStart=/opt/fastrag/venv-fast/bin/python -m app serve --config /opt/fastrag/config/config.pgvector.yaml
+ExecStart=$release/venv-fast/bin/python -m app serve --config $CONFIG
 Restart=on-failure
 RestartSec=5
 UMask=0077
@@ -75,12 +81,211 @@ WantedBy=multi-user.target
 UNIT_FILE
 }
 
+build_venv() (
+    umask 022
+    python3 -I -m venv "$1"
+    "$1/bin/python" -I -m pip --isolated install -r "$2"
+    "$1/bin/python" -I -m pip --isolated check
+)
+
+verify_config() {
+    runuser -u "$ACCOUNT" -- env -i PATH="$PATH" HOME="$ROOT" \
+        "$1/bin/python" -I - "$CONFIG" "$DSN" "$PORT" <<'PY'
+import sys
+import yaml
+from psycopg.conninfo import conninfo_to_dict
+
+try:
+    with open(sys.argv[1], encoding="utf-8") as stream:
+        cfg = yaml.safe_load(stream)
+    assert cfg["storage"] == "pgvector"
+    assert conninfo_to_dict(cfg["database"]["dsn"]) == conninfo_to_dict(sys.argv[2])
+    assert cfg["server"]["host"] == "127.0.0.1" and cfg["server"]["port"] == int(sys.argv[3])
+except Exception:
+    sys.exit("Config must be readable by fastrag, use the local fastrag peer DSN, and bind 127.0.0.1:8111.")
+PY
+}
+
+verify_config_file() {
+    local config_mode
+    root_dir "$ROOT/config" || die 'The config directory must be real and root-owned (not group/world writable).'
+    [[ -f $CONFIG && ! -L $CONFIG ]] || die 'Refusing to use a missing, non-regular or symlinked config.'
+    [[ $(stat -c '%u:%G' -- "$CONFIG") == "0:$ACCOUNT" ]] || die 'Config must be owned by root:fastrag.'
+    config_mode=$(stat -c '%a' -- "$CONFIG")
+    (( (8#$config_mode & 0037) == 0 )) || die 'Config must not be group-writable or accessible to other users.'
+}
+
+verify_peer() {
+    local identity
+    identity=$(runuser -u "$ACCOUNT" -- env -i PATH="$PATH" PGPASSFILE=/dev/null \
+        psql -XwqAt --host="$PG_SOCKET" --port="$PG_PORT" -U "$ACCOUNT" -d "$DATABASE" -c 'SELECT SYSTEM_USER') \
+        || die 'Passwordless socket login failed. Verify pg_hba.conf permits local peer auth for fastrag; no rules were changed.'
+    [[ $identity == "peer:$ACCOUNT" ]] || die 'The local Pg connection did not use peer authentication.'
+}
+
+verify_key_file() {
+    [[ -d $KEYS && ! -L $KEYS && $(stat -c '%U:%a' -- "$KEYS") == "$ACCOUNT:700" ]] \
+        || die "$KEYS must be a real directory owned by $ACCOUNT with mode 0700."
+    [[ -f $ODOO_KEY && ! -L $ODOO_KEY && -s $ODOO_KEY ]] \
+        || die "$ODOO_KEY must be a non-empty regular file, not a symlink."
+    local key_mode
+    key_mode=$(stat -c '%a' -- "$ODOO_KEY")
+    (( (8#$key_mode & 0077) == 0 )) || die "$ODOO_KEY must not be accessible by group or other users."
+}
+
+ready() {
+    local key status
+    systemctl is-active --quiet "$UNIT_NAME" || return 1
+    # Keep the bearer token out of arguments, the environment, and output.
+    key=$(runuser -u "$ACCOUNT" -- cat -- "$ODOO_KEY") || return 1
+    [[ $key =~ ^[A-Za-z0-9_-]+$ ]] || return 1
+    status=$(printf 'Authorization: Bearer %s\n' "$key" | curl -q --silent --noproxy '*' \
+        --max-time 2 --header @- --output /dev/null --write-out '%{http_code}' \
+        "http://127.0.0.1:$PORT/readyz") && [[ $status == 200 ]]
+}
+
+wait_ready() {
+    local attempt
+    for (( attempt=0; attempt<20; attempt++ )); do
+        if ready; then return 0; fi
+        sleep 1
+    done
+    return 1
+}
+
+upgrade() (
+    releases=$ROOT/releases
+    current=$ROOT/current
+    previous=
+    previous_link=
+    scratch=
+    rollback=0
+    unit_changed=0
+    pointer_changed=0
+
+    root_dir /opt && root_dir "$ROOT" || die 'Unsafe installation directory.'
+    [[ $SOURCE != "$ROOT" && $SOURCE != "$ROOT/"* ]] || die 'Run --upgrade from a new source tree or bundle outside /opt/fastrag.'
+    [[ $(systemctl show -p FragmentPath --value "$UNIT_NAME") == "$UNIT" && -f $UNIT && ! -L $UNIT ]] \
+        || die 'Upgrade requires the local installer-managed systemd unit.'
+    [[ -z $(systemctl show -p DropInPaths --value "$UNIT_NAME") &&
+       $(systemctl show -p NeedDaemonReload --value "$UNIT_NAME") == no ]] \
+        || die 'Review systemd drop-ins or pending unit changes before upgrading.'
+    if present "$current"; then
+        root_dir "$releases" && [[ -L $current ]] || die 'Unsafe release layout.'
+        previous_link=$(readlink -- "$current")
+        [[ $previous_link =~ ^releases/release\.[A-Za-z0-9]+$ ]] || die 'Unexpected current release link.'
+        previous=$ROOT/$previous_link
+        cmp -s "$UNIT" <(unit_text "$current") || die 'The installed systemd unit has been customized.'
+    else
+        previous=$ROOT
+        cmp -s "$UNIT" <(unit_text) || die 'Expected the original pgvector installer unit.'
+    fi
+    root_dir "$previous" && root_dir "$previous/app" && root_dir "$previous/venv-fast" \
+        || die 'The current release is not secured.'
+    verify_config_file
+    verify_key_file
+    ready || die 'The existing service is not ready with its saved Odoo key. Fix it before upgrading.'
+    if present "$SOURCE/SHA256SUMS"; then
+        [[ -f $SOURCE/SHA256SUMS && ! -L $SOURCE/SHA256SUMS ]] || die 'Unsafe bundle checksum manifest.'
+        (cd "$SOURCE" && sha256sum --check --strict --quiet SHA256SUMS) || die 'Bundle checksum verification failed.'
+    fi
+    cmp -s "$SOURCE/app/pg_schema.sql" "$previous/app/pg_schema.sql" \
+        || die 'This release changes the database schema. Plan the migration separately; no service changes were made.'
+
+    if ! present "$releases"; then install -d -m 0755 "$releases"; fi
+    root_dir "$releases" || die 'Unsafe releases directory.'
+    candidate=$(mktemp -d "$releases/release.XXXXXXXX")
+    chmod 0755 "$candidate"
+    printf 'Preparing release %s while FastRAG is running.\n' "$candidate"
+    install -d -m 0755 "$candidate/app"
+    for file in "$SOURCE"/app/*.py "$SOURCE"/app/{requirements.txt,requirements-pgvector.txt,pg_schema.sql}; do
+        [[ -f $file && ! -L $file ]] || die "Missing or unsafe release file: $file"
+        install -m 0644 "$file" "$candidate/app/"
+    done
+    [[ -f $candidate/app/__main__.py && -f $candidate/app/pg_api.py ]] || die 'Incomplete application release.'
+    build_venv "$candidate/venv-fast" "$candidate/app/requirements-pgvector.txt"
+    verify_config "$candidate/venv-fast"
+    verify_peer
+    release_app "$candidate" check --config "$CONFIG"
+
+    finish_upgrade() {
+        local status=$?
+        trap - EXIT
+        trap '' HUP INT TERM
+        if (( rollback )); then
+            printf 'Upgrade failed; restoring the previous FastRAG release.\n' >&2
+            if systemctl stop "$UNIT_NAME" &&
+                restore_release &&
+                systemctl daemon-reload &&
+                systemctl start "$UNIT_NAME" &&
+                wait_ready; then
+                printf 'Previous FastRAG release is ready again.\n' >&2
+            else
+                printf 'Automatic recovery failed. Inspect journalctl -u %s and recovery files in %s.\n' \
+                    "$UNIT_NAME" "$scratch" >&2
+                exit 1
+            fi
+        fi
+        if [[ -n $scratch ]]; then
+            rm -f -- "$scratch/$UNIT_NAME" "$scratch/previous.unit"
+            rmdir -- "$scratch"
+        fi
+        if [[ -n ${link_dir:-} ]]; then
+            rm -f -- "$link_dir/current" "$link_dir/previous"
+            rmdir -- "$link_dir"
+        fi
+        exit "$status"
+    }
+    restore_release() {
+        if (( pointer_changed )); then
+            if [[ -n $previous_link ]]; then
+                mv -Tf -- "$link_dir/previous" "$current" || return 1
+            else
+                rm -f -- "$current" || return 1
+            fi
+        fi
+        if (( unit_changed )); then
+            mv -Tf -- "$scratch/previous.unit" "$UNIT" || return 1
+        fi
+    }
+    trap finish_upgrade EXIT
+    trap 'exit 1' HUP INT TERM
+    scratch=$(mktemp -d "$(dirname -- "$UNIT")/.fastrag-upgrade.XXXXXXXX")
+    link_dir=$(mktemp -d "$ROOT/.fastrag-upgrade.XXXXXXXX")
+    ln -s -- "releases/${candidate##*/}" "$link_dir/current"
+    if [[ -n $previous_link ]]; then ln -s -- "$previous_link" "$link_dir/previous"; fi
+    if [[ -z $previous_link ]]; then
+        install -m 0644 "$UNIT" "$scratch/previous.unit"
+    fi
+    unit_text "$candidate" >"$scratch/$UNIT_NAME"
+    systemd-analyze verify "$scratch/$UNIT_NAME"
+    unit_text "$current" >"$scratch/$UNIT_NAME"
+    chmod 0644 "$scratch/$UNIT_NAME"
+    ready || die 'The existing service stopped being ready during preparation; upgrade not activated.'
+
+    rollback=1
+    systemctl stop "$UNIT_NAME"
+    pointer_changed=1
+    mv -Tf -- "$link_dir/current" "$current"
+    if [[ -z $previous_link ]]; then
+        unit_changed=1
+        mv -Tf -- "$scratch/$UNIT_NAME" "$UNIT"
+        systemctl daemon-reload
+    fi
+    systemctl start "$UNIT_NAME"
+    wait_ready || die 'The new FastRAG release did not pass authenticated readiness.'
+    rollback=0
+    printf 'FastRAG upgrade complete: %s (previous release retained at %s)\n' "$candidate" "$previous"
+    exit 0
+)
+
 case ${1:-} in
     --help|-h)
-        printf 'Usage: sudo bash install_fastrag_system.sh [--check]\n'
+        printf 'Usage: sudo bash install_fastrag_system.sh [--check|--upgrade]\n'
         printf 'Install FastRAG in /opt/fastrag. --check inventories the host without making changes.\n'
+        printf '%s\n' '--upgrade stages a new app release and rolls back if it does not become ready.'
         exit 0 ;;
-    ''|--check) (( $# <= 1 )) || die 'Use --help for usage.' ;;
+    ''|--check|--upgrade) (( $# <= 1 )) || die 'Use --help for usage.' ;;
     *) die 'Unknown argument. Use --help.' ;;
 esac
 (( EUID == 0 )) || die 'Run this installer with sudo.'
@@ -102,10 +307,14 @@ sql -d postgres -c 'SELECT 1' >/dev/null || die 'Cannot reach local PostgreSQL a
     || die 'Install the pgvector package for the running PostgreSQL server.'
 
 if [[ ${1:-} != --check ]]; then
-    [[ -t 0 ]] || die 'Run this installer interactively.'
+    [[ ${1:-} == --upgrade || -t 0 ]] || die 'Run this installer interactively.'
     # Prevent concurrent provisioning attempts on this host.
     exec 9>/run/lock/fastrag-system-install.lock
     flock -n 9 || die 'Another FastRAG install is running.'
+fi
+if [[ ${1:-} == --upgrade ]]; then upgrade; exit; fi
+if [[ ${1:-} != --check ]] && present "$ROOT/current"; then
+    die 'This installation uses versioned releases. Run the new bundle with --upgrade.'
 fi
 
 os_user=0 group=0 home=0 pg_role=0 pg_db=0 pg_vector=0 project=0 venv=0 unit=0
@@ -157,13 +366,7 @@ if (( home )); then
     if [[ $do_home == skip ]]; then root_dir "$ROOT" || die 'Skipped home is not secured; choose overwrite to fix it.'; fi
 fi
 if present "$ROOT/config"; then root_dir "$ROOT/config" || die 'The existing config directory must be real and root-owned (not group/world writable).'; fi
-if present "$CONFIG"; then
-    [[ -f $CONFIG && ! -L $CONFIG ]] || die 'Refusing to use a non-regular or symlinked config.'
-    [[ $(stat -c '%u' "$CONFIG") == 0 ]] || die 'Existing config must be root-owned.'
-    config_mode=$(stat -c '%a' "$CONFIG")
-    (( (8#$config_mode & 0037) == 0 )) || die 'Existing config must not be group-writable or accessible to other users.'
-    [[ $(stat -c '%G' "$CONFIG") == "$ACCOUNT" ]] || die 'Existing config must belong to the fastrag group.'
-fi
+if present "$CONFIG"; then verify_config_file; fi
 if [[ $SOURCE == "$ROOT" && $do_project != skip ]]; then die 'Re-copy from the original project or a portable bundle, not /opt/fastrag.'; fi
 if [[ $do_project == skip ]]; then
     root_dir "$ROOT/app" && [[ -r $ROOT/app/pg_schema.sql && -r $ROOT/app/requirements-pgvector.txt ]] \
@@ -300,9 +503,7 @@ fi
 if [[ $do_venv != skip ]]; then
     backup_item "$VENV" venv-fast
     # Build at the final path so pip's executable shebangs remain valid.
-    (umask 022; python3 -I -m venv "$VENV"
-     "$VENV/bin/python" -I -m pip --isolated install -r "$ROOT/app/requirements-pgvector.txt"
-     "$VENV/bin/python" -I -m pip --isolated check)
+    build_venv "$VENV" "$ROOT/app/requirements-pgvector.txt"
 fi
 if ! present "$CONFIG"; then
     temp_config=$(mktemp "$ROOT/config/.pgvector.XXXXXX")
@@ -322,21 +523,7 @@ fi
 unset gemini_key
 
 # Verify the existing or generated config targets only the dedicated peer DB.
-runuser -u "$ACCOUNT" -- env -i PATH="$PATH" HOME="$ROOT" \
-    "$VENV/bin/python" -I - "$CONFIG" "$DSN" "$PORT" <<'PY'
-import sys
-import yaml
-from psycopg.conninfo import conninfo_to_dict
-
-try:
-    with open(sys.argv[1], encoding="utf-8") as stream:
-        cfg = yaml.safe_load(stream)
-    assert cfg["storage"] == "pgvector"
-    assert conninfo_to_dict(cfg["database"]["dsn"]) == conninfo_to_dict(sys.argv[2])
-    assert cfg["server"]["host"] == "127.0.0.1" and cfg["server"]["port"] == int(sys.argv[3])
-except Exception:
-    sys.exit("Config must be readable by fastrag, use the local fastrag peer DSN, and bind 127.0.0.1:8111.")
-PY
+verify_config "$VENV"
 app check-config --config "$CONFIG"
 
 if [[ $do_pg_role == create ]]; then
@@ -354,10 +541,7 @@ if [[ $do_pg_vector == create ]]; then
 elif [[ $do_pg_vector == overwrite ]]; then
     sql -d "$DATABASE" -c 'ALTER EXTENSION vector UPDATE'
 fi
-identity=$(runuser -u "$ACCOUNT" -- env -i PATH="$PATH" PGPASSFILE=/dev/null \
-    psql -XwqAt --host="$PG_SOCKET" --port="$PG_PORT" -U "$ACCOUNT" -d "$DATABASE" -c 'SELECT SYSTEM_USER') \
-    || die 'Passwordless socket login failed. Verify pg_hba.conf permits local peer auth for fastrag; no rules were changed.'
-[[ $identity == "peer:$ACCOUNT" ]] || die 'The local Pg connection did not use peer authentication. Review pg_hba.conf; no rules were changed.'
+verify_peer
 # Idempotent, non-destructive schema setup, also used when reusing a database.
 app init-db --config "$CONFIG"
 app check --config "$CONFIG"
@@ -368,10 +552,7 @@ fi
 [[ -d $KEYS && ! -L $KEYS && $(stat -c '%U:%a' -- "$KEYS") == "$ACCOUNT:700" ]] \
     || die "$KEYS must be a real directory owned by $ACCOUNT with mode 0700."
 if present "$ODOO_KEY"; then
-    [[ -f $ODOO_KEY && ! -L $ODOO_KEY && -s $ODOO_KEY ]] \
-        || die "$ODOO_KEY must be a non-empty regular file, not a symlink."
-    key_mode=$(stat -c '%a' -- "$ODOO_KEY")
-    (( (8#$key_mode & 0077) == 0 )) || die "$ODOO_KEY must not be accessible by group or other users."
+    verify_key_file
     printf 'Keeping existing Odoo API key at %s\n' "$ODOO_KEY"
 else
     app create-key --config "$CONFIG" --collection odoo --key-file "$ODOO_KEY"

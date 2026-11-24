@@ -55,6 +55,26 @@ sudo systemctl status fastrag.service
 curl -fsS http://127.0.0.1:8111/healthz
 ```
 
+### Upgrade without reprovisioning
+
+Use `sudo bash install_fastrag_system.sh --upgrade` from a new trusted source
+tree or bundle outside `/opt/fastrag`. For a generated bundle, run
+`sha256sum --check SHA256SUMS` in the bundle directory before running it as
+root. Checksums detect a damaged copy, not an untrusted publisher.
+
+The current FastRAG service must already be ready using the saved
+`/opt/fastrag/keys/odoo.key`, with the original or versioned installer unit and
+no local unit customizations. The installer builds and checks a separate app
+and virtual environment while the existing service runs, then switches
+`/opt/fastrag/current` and starts the new release. Failed authenticated
+`/readyz` checks trigger restoration and restart of the previous release.
+Existing config, keys, and the database are not reprovisioned. The original
+layout and staged releases are retained; review them before reclaiming space.
+
+The upgrade refuses changes to `app/pg_schema.sql` and does not execute schema
+setup or upgrade the vector extension. Plan database changes separately with a
+verified backup and a compatibility check before attempting an app rollback.
+
 ## 1. Manual foreground install: prepare a database and configuration
 
 On Ubuntu with PostgreSQL 16, install the matching pgvector package if it is
@@ -104,6 +124,11 @@ take effect within five seconds for new requests on a running process. For
 public-only clients, create a separate key with `--permissions query --public-only`.
 Use HTTPS via a reverse proxy if Odoo runs on another machine. Keep the HTTP
 listener on loopback and configure request size and rate limits at the proxy.
+For a private CA, set `FASTRAG_TLS_CA_BUNDLE` to the absolute path of its PEM
+bundle on the Odoo host. The connector verifies TLS by default.
+`FASTRAG_SKIP_TLS_VERIFY=1` is for an isolated Odoo dev process only; it must
+not be combined with a custom CA bundle. Both are Odoo process environment
+variables and apply to all databases it serves.
 
 ## 3. Test with cURL
 
