@@ -10,3 +10,5 @@ from . import test_storefront_offers
 from . import test_storefront_tax_free
 from . import test_image_sync_upload
 from . import test_image_filter
+from . import test_sheet_promotion
+from . import test_offer_sheet_import

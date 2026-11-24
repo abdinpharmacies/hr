@@ -410,6 +410,8 @@ class Website(models.Model):
             reward = rewards
             if reward.reward_type == "product":
                 reward_domain = Domain("product_variant_ids", "in", reward.reward_product_ids.ids)
+            elif program.ab_sheet_key:
+                reward_domain = Domain("product_variant_ids", "in", reward.discount_product_ids.ids)
             elif reward.discount_applicability == "specific":
                 reward_domain = Domain("product_variant_ids", "any", reward._get_discount_product_domain())
             else:
@@ -446,6 +448,7 @@ class Website(models.Model):
         )
         candidate_variants = candidates.product_variant_ids
         details = {}
+        sheet_offers = {}
         linked_discounts = {}
         linked_offers = self.env["ab_storefront_offer"].sudo().search([
             ("website_id", "=", self.id), ("company_id", "=", self.company_id.id),
@@ -471,6 +474,10 @@ class Website(models.Model):
                 if not eligible or len(rewards) != 1:
                     continue
                 reward = rewards
+                if program.ab_sheet_key:
+                    for product in (eligible & reward.discount_product_ids).filtered_domain(reward._get_discount_product_domain()).product_tmpl_id:
+                        sheet_offers.setdefault(product.id, []).append(program.name)
+                    continue
                 if reward.reward_type == "product":
                     if (
                         len(rules) != 1 or rule.minimum_amount
@@ -567,6 +574,8 @@ class Website(models.Model):
                     "benefit_products": benefit_products,
                     "benefit_product_count": benefit_product_count,
                 }
+        for product_id, labels in sheet_offers.items():
+            details.setdefault(product_id, {})["sheet_offers"] = labels
         return details
 
     def _ab_storefront_offer_program_domain(self):
@@ -604,9 +613,12 @@ class Website(models.Model):
                         ("pricelist_ids", "in", [pricelist.id]),
                 ],
             ])
+        domain = Domain(domain)
+        if (pricelist.currency_id if pricelist else self.currency_id) != self.env.ref("base.EGP"):
+            domain &= Domain("ab_sheet_key", "=", False) | Domain("ab_sheet_fixed_price", "=", 0)
         excluded = self.env["ab_storefront_offer"]._unavailable_for_customer(self, self.env.user.partner_id)
         programs = excluded.with_context(active_test=False).generated_program_ids | excluded.filtered("use_odoo_promotion").program_id
-        return Domain(domain) & Domain("id", "not in", programs.ids)
+        return domain & Domain("id", "not in", programs.ids)
 
     def _ab_storefront_coupon_candidate_domain(self):
         self.ensure_one()

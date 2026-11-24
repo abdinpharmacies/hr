@@ -93,6 +93,7 @@
                     </svg>
                 </button>
                 <span t-if="ab_card_is_sold_out" class="ab-storefront-stock-badge">Out of stock</span>
+                <span t-elif="ab_card_offer.get('sheet_offers')" class="ab-storefront-offer-badge" t-out="ab_card_offer['sheet_offers'][0]"/>
                 <span t-elif="ab_card_offer.get('free_qty')" class="ab-storefront-offer-badge">
                     <bdi dir="ltr"><t t-out="ab_card_offer['buy_qty']"/> + <t t-out="ab_card_offer['free_qty']"/> <span>free</span></bdi>
                 </span>

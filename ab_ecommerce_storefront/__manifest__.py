@@ -56,6 +56,7 @@
         "views/staff_user_views.xml",
         "views/category_image_views.xml",
         "views/storefront_offer_views.xml",
+        "views/offer_sheet_views.xml",
         "views/customer_testimonial_views.xml",
         "views/contact_templates.xml",
         "views/about_templates.xml",
@@ -148,6 +149,6 @@
         ],
     },
     "installable": True,
-    "external_dependencies": {"python": ["phonenumbers", "cryptography"]},
+    "external_dependencies": {"python": ["phonenumbers", "cryptography", "openpyxl"]},
     "application": False,
 }

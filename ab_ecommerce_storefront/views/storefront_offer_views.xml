@@ -151,7 +151,7 @@
     </record>
     <menuitem id="menu_abdin_management_offers" name="Offers"
               parent="menu_abdin_management_root" sequence="35"
-              groups="sales_team.group_sale_manager,website.group_website_designer,base.group_system,ab_ecommerce_storefront.group_call_center"/>
+              groups="sales_team.group_sale_manager,website.group_website_designer,base.group_system,ab_ecommerce_storefront.group_call_center,ab_ecommerce_storefront.group_offer_draft_reviewer"/>
     <menuitem id="menu_storefront_offers" name="Storefront Offers"
               parent="menu_abdin_management_offers" action="storefront_offer_action" sequence="10"
               groups="sales_team.group_sale_manager,website.group_website_designer,base.group_system,ab_ecommerce_storefront.group_call_center"/>

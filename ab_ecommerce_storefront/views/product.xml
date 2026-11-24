@@ -129,6 +129,9 @@
         </xpath>
         <xpath expr="//div[@name='product_price_container']" position="after">
             <t t-set="ab_product_offer" t-value="website._ab_storefront_offer_details(product).get(product.id, {})"/>
+            <div t-foreach="ab_product_offer.get('sheet_offers', [])" t-as="sheet_offer" class="ab-storefront-product-bundle-offer my-3">
+                <i class="fa fa-tags" aria-hidden="true"/> <span t-out="sheet_offer"/>
+            </div>
             <div t-if="ab_product_offer.get('bundle_offer')" class="ab-storefront-product-bundle-offer ab-storefront-product-second-offer my-3"
                  t-att-data-primary-product-id="ab_product_offer['primary_product_id']">
                 <i class="fa fa-tags ab-storefront-product-offer-icon" aria-hidden="true"/>

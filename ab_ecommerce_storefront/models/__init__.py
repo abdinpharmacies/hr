@@ -35,3 +35,5 @@ from . import legacy_seo_import
 from . import image_sync_wizard
 from . import auth_signup_otp
 from . import legacy_customer
+from . import sheet_promotion
+from . import offer_draft

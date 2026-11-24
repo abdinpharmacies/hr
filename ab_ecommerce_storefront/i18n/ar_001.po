@@ -674,6 +674,7 @@ msgstr "غير متوفر"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__offer_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__offer
 msgid "Offer"
 msgstr "عرض"
 
@@ -727,6 +728,8 @@ msgstr "وفّر على منتجاتك المفضلة"
 #. odoo-python
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__line_ids
 msgid "Offers"
 msgstr "العروض"
 
@@ -2449,6 +2452,8 @@ msgstr "نستخدم هذه البيانات لتأكيد طلب الروشتة 
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__website_id
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_search
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__website_id
 msgid "Website"
 msgstr "الموقع الإلكتروني"
 
@@ -2934,6 +2939,7 @@ msgstr "المنتج"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__description
 msgid "Description"
 msgstr "الوصف"
 
@@ -3316,6 +3322,7 @@ msgstr "المدينة / المحافظة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -3368,6 +3375,9 @@ msgstr "تم التواصل"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -3421,6 +3431,9 @@ msgstr "خدمة العملاء"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_carousel_slide__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_payment_transaction__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -3576,6 +3589,9 @@ msgstr "كيف يمكننا مساعدتك؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_website_carousel_slide__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_payment_transaction__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -3654,6 +3670,9 @@ msgstr "المسمى الوظيفي"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -3673,6 +3692,9 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -3915,6 +3937,7 @@ msgstr "لنتعرف على فرص التعاون"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__state
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__state
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__state
 msgid "State"
 msgstr "الحالة"
 
@@ -4252,6 +4275,7 @@ msgstr "الدفع عند الاستلام"
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
 msgid "Close"
 msgstr "إغلاق"
 
@@ -4369,6 +4393,7 @@ msgstr "عرض سريع للتوصيل"
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer_draft__state__draft
 msgid "Draft"
 msgstr "مسودة"
 
@@ -4397,6 +4422,8 @@ msgstr "حالة التوصيل للميل الأخير غير مهيأة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__name
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -4672,6 +4699,7 @@ msgstr "تتحرك المنتجات من خلال عملية المخزن الأ
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
 msgid "Ready"
 msgstr "جاهز"
 
@@ -4731,6 +4759,8 @@ msgstr "الموعد المجدول"
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__source
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__source
 msgid "Source"
 msgstr "المصدر"
 
@@ -5738,6 +5768,9 @@ msgstr "إنشاء حساب"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_use__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -20267,3 +20300,796 @@ msgstr "يجب أن تكون الكمية المخصصة للصنف عددًا �
 #: code:addons/ab_ecommerce_storefront/controllers/second_item_offer.py:0
 msgid "This product has reached its allocation for the offer."
 msgstr "وصل هذا الصنف إلى الكمية المخصصة له في العرض."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_product_company__ab_sheet_brand_key
+msgid "Ab Sheet Brand Key"
+msgstr "معرّف العلامة التجارية في الشيت"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Additional matched products"
+msgstr "أصناف إضافية متطابقة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Already imported"
+msgstr "سبق استيراده"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid ""
+"An imported offer requires one automatic rule with eligible products and one"
+" grant per order."
+msgstr ""
+"يتطلب العرض المستورد قاعدة تلقائية واحدة تحدد الأصناف المؤهلة وتمنح "
+"الاستحقاق مرة واحدة لكل طلب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid ""
+"An imported offer requires one percentage reward on eligible products, "
+"without a discount cap."
+msgstr ""
+"يتطلب العرض المستورد خصمًا واحدًا بنسبة مئوية على الأصناف المؤهلة دون حد "
+"أقصى للخصم."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__available
+msgid "Available"
+msgstr "متاح"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Branch allocation required"
+msgstr "يتطلب تحديد حصة كل فرع"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__brand_summary
+msgid "Brand Links"
+msgstr "روابط العلامات التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__brand_signature
+msgid "Brand Signature"
+msgstr "بصمة العلامات التجارية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid ""
+"Check the website, promotion settings, quantities and price of the imported "
+"offer."
+msgstr "تحقق من الموقع وإعدادات العرض المستورد وكمياته وسعره."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Choose a website in your current company."
+msgstr "اختر موقعًا تابعًا لشركتك الحالية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Code matches multiple products"
+msgstr "الكود مرتبط بأكثر من صنف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Code missing from store"
+msgstr "الكود غير موجود في المتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Conflicting product identity"
+msgstr "تعارض في تحديد الصنف"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_sheet_discount_qty
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__discount_qty
+msgid "Discounted Units per Group"
+msgstr "عدد القطع المخفضة في كل مجموعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Eligible items need clarification"
+msgstr "يلزم تحديد الأصناف المشمولة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Existing brand needs review: %s"
+msgstr "العلامة التجارية الموجودة تحتاج إلى مراجعة: %s"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_sheet_fixed_price
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__fixed_price
+msgid "Final Unit Price in EGP"
+msgstr "سعر القطعة النهائي بالجنيه المصري"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid "Import Selected Offers"
+msgstr "استيراد العروض المحددة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Imported Offers"
+msgstr "العروض المستوردة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_product__ab_sheet_brand_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__ab_sheet_brand_id
+msgid "Imported Storefront Brand"
+msgstr "العلامة التجارية المستوردة للمتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid "Imported offers apply only to their website."
+msgstr "تُطبّق العروض المستوردة على موقعها الإلكتروني فقط."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid ""
+"Link the brands listed below even when their offers are awaiting review. "
+"Each code has a verified product name and an empty storefront brand."
+msgstr ""
+"اربط العلامات التجارية التالية حتى لو كانت عروضها قيد المراجعة. لكل كود اسم "
+"صنف مطابق وخانة علامة تجارية فارغة في المتجر."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__include_brands
+msgid "Link verified brands from the entire sheet"
+msgstr "ربط العلامات التجارية المؤكدة من الشيت بالكامل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__matched
+msgid "Matched"
+msgstr "عدد الأصناف المطابقة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Missing or invalid dates"
+msgstr "التواريخ ناقصة أو غير صحيحة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "No confirmed product codes"
+msgstr "لا توجد أكواد أصناف مؤكدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "No matching store products"
+msgstr "لا توجد أصناف مطابقة في المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_sheet_priority
+msgid "Offer Priority"
+msgstr "أولوية العرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_offer_sheet_line
+msgid "Offer Sheet Preview Line"
+msgstr "بند معاينة شيت العروض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_sheet_key
+msgid "Offer Sheet Reference"
+msgstr "مرجع العرض في الشيت"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Offer and description disagree"
+msgstr "يوجد تعارض في شروط العرض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid ""
+"Open a row to review its codes, brands and overlapping offers. Select "
+"reviewed rows to import their matched products. A higher priority wins. At "
+"equal priority the cart uses the best saving."
+msgstr ""
+"افتح السطر لمراجعة الأكواد والعلامات التجارية والعروض المتداخلة. حدّد السطور"
+" التي راجعتها لاستيراد أصنافها المطابقة. يُطبّق العرض ذو الأولوية الأعلى، "
+"وعند تساوي الأولوية يُطبّق التوفير الأكبر في السلة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__overlap
+msgid "Overlapping Sheet Rows"
+msgstr "سطور العروض المتداخلة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__period
+msgid "Period"
+msgstr "الفترة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_sheet_imported_product_ids
+msgid "Previously Imported Products"
+msgstr "الأصناف المستوردة سابقًا"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__priority
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__priority
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__details
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__details
+msgid "Product Codes and Brands"
+msgstr "أكواد المنتجات والعلامات التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_sheet_group_qty
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__group_qty
+msgid "Qualifying Group Size"
+msgstr "عدد القطع المطلوبة في المجموعة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__result
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Review matches"
+msgstr "راجع الأصناف المطابقة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Select an offer or verified brand links to import."
+msgstr "حدّد عرضًا أو روابط علامات تجارية مؤكدة للاستيراد."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__selected
+msgid "Selected"
+msgstr "محدد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__sheet_key
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__sheet_key
+msgid "Sheet Key"
+msgstr "معرّف السطر في الشيت"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__signature
+msgid "Signature"
+msgstr "بصمة المعاينة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Specific gift product required"
+msgstr "يتطلب تحديد صنف الهدية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid "Store Brands"
+msgstr "العلامات التجارية للمتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Store name: %s"
+msgstr "اسم الصنف في المتجر: %s"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_offer_sheet
+msgid "Storefront Offer Sheet"
+msgstr "شيت عروض المتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid "The cart does not qualify for this offer."
+msgstr "محتويات السلة لا تستوفي شروط العرض."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "The existing program needs manual review"
+msgstr "يتطلب العرض الموجود مراجعة يدوية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "The selection needs a new preview."
+msgstr "أعد المعاينة قبل استيراد العروض المحددة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "The variants have different sheet brands"
+msgstr "متغيرات المنتج مرتبطة بعلامات تجارية مختلفة في الشيت"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid "The website, company and reference of an imported offer are fixed."
+msgstr "لا يمكن تغيير موقع العرض المستورد أو شركته أو مرجعه."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_loyalty_program_sheet_key_unique
+msgid "This offer has already been imported for this website."
+msgstr "سبق استيراد هذا العرض للموقع."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_product_company_sheet_brand_unique
+msgid "This storefront brand has already been imported."
+msgstr "سبق استيراد هذه العلامة التجارية للمتجر."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__wizard_id
+msgid "Wizard"
+msgstr "معالج الاستيراد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
+msgid "You cannot manage this imported offer."
+msgstr "ليس لديك صلاحية إدارة هذا العرض المستورد."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__priority
+msgid ""
+"Zero chooses the best saving. A higher priority takes precedence for "
+"overlapping items."
+msgstr ""
+"اختر صفرًا لتطبيق أكبر توفير. عند تداخل العروض تكون الأولوية للرقم الأعلى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "id"
+msgstr "المعرّف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_offer_sheet
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.discount_program_sheet_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid "Add Offers from a Spreadsheet"
+msgstr "اضافة العروض من شيت"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_workbook.py:0
+msgid ""
+"Check the product code, name, offer and company on row %s of the codes tab."
+msgstr "راجع كود الصنف واسمه والعرض والشركة في السطر %s من تبويب الأكواد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+#: code:addons/ab_ecommerce_storefront/wizard/offer_workbook.py:0
+msgid "Choose a readable Excel workbook (.xlsx)."
+msgstr "اختر ملف Excel صالحًا بصيغة ‎.xlsx."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__workbook
+msgid "Excel Workbook"
+msgstr "ملف Excel"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__filename
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_workbook.py:0
+msgid ""
+"Include an Offer Codes tab and an offer schedule with Company, Offer, From "
+"and To columns."
+msgstr ""
+"أضف تبويب «أكواد العروض» وجدول عروض يحتوي على أعمدة Company وOffer وFrom "
+"وTo."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet__preview_digest
+msgid "Preview Digest"
+msgstr "بصمة الملف عند المعاينة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid "Preview Offers"
+msgstr "معاينة العروض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+#: code:addons/ab_ecommerce_storefront/wizard/offer_workbook.py:0
+msgid "The workbook is too large."
+msgstr "حجم ملف Excel أكبر من الحد المسموح به."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "An offer already exists for this row. Review the existing offer."
+msgstr "يوجد عرض بالفعل لهذا السطر. راجع العرض الحالي."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer_draft__state__applied
+msgid "Applied"
+msgstr "تم التطبيق"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/wizard/offer_sheet.py:0
+msgid "Applied: %(applied)s · Awaiting review: %(pending)s"
+msgstr "تم تطبيق %(applied)s · في انتظار المراجعة %(pending)s"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_form
+msgid "Apply this offer to the selected products on this website?"
+msgstr "هل تريد تطبيق العرض على الأصناف المحددة في هذا الموقع؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_form
+msgid "Approve and Apply Offer"
+msgstr "اعتماد العرض وتطبيقه"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_search
+msgid "Awaiting Review"
+msgstr "في انتظار المراجعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"Check the quantities and percentage. A fixed unit price requires a 100% "
+"reward."
+msgstr ""
+"راجع الكميات ونسبة الخصم. عند تحديد سعر نهائي للقطعة، اضبط نسبة المكافأة على"
+" 100٪."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__date_from
+msgid "Date From"
+msgstr "تاريخ البداية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__date_to
+msgid "Date To"
+msgstr "تاريخ النهاية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__rate
+msgid "Discount Percentage"
+msgstr "نسبة الخصم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Drafts are created by the spreadsheet import."
+msgstr "تُنشأ المسودات عند استيراد شيت العروض."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__product_ids
+msgid "Eligible Products"
+msgstr "الأصناف المشمولة بالعرض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid "Import and Apply Ready Offers and Leave the Rest for Review"
+msgstr "استيراد العروض الجاهزه وتطبيقها وترك الباقي للمراجعه"
+
+#. module: ab_ecommerce_storefront
+#: model:res.groups,name:ab_ecommerce_storefront.group_offer_draft_reviewer
+msgid "Offer Draft Reviewer"
+msgstr "مراجع مسودات العروض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_offer_drafts
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_offer_drafts
+msgid "Offer Drafts"
+msgstr "مسودات العروض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_offer_draft
+msgid "Offer Review Draft"
+msgstr "مسودة عرض للمراجعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Only a sales manager in the current company can decide this draft."
+msgstr ""
+"يستطيع مدير المبيعات في الشركة الحالية فقط اعتماد هذه المسودة أو استبعادها."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Only pending draft terms can be edited."
+msgstr "يمكن تعديل بنود المسودة أثناء انتظار المراجعة فقط."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__original_terms
+msgid "Original Terms"
+msgstr "الشروط الأصلية في الشيت"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__program_id
+msgid "Program"
+msgstr "برنامج العرض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_sheet_form
+msgid ""
+"Ready offers will be applied. Other offers are saved as drafts for "
+"individual review."
+msgstr ""
+"ستُطبّق العروض الجاهزة وتُحفظ بقية العروض كمسودات لمراجعتها واحدًا واحدًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__reason
+msgid "Reason for Review"
+msgstr "سبب المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__manual_only
+msgid "Requires Separate Setup"
+msgstr "يتطلب إعدادًا منفصلًا"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__note
+msgid "Review Notes"
+msgstr "ملاحظات المراجعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Select active saleable products for this website and company."
+msgstr "اختر أصنافًا نشطة متاحة للبيع في هذا الموقع وهذه الشركة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Select existing products for this offer."
+msgstr "اختر أصنافًا موجودة لهذا العرض."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer_draft__state__skipped
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_form
+msgid "Set Aside"
+msgstr "استبعاد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Set a valid period and select the eligible products."
+msgstr "حدّد فترة صحيحة واختر الأصناف المشمولة بالعرض."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "This row requires separate offer setup."
+msgstr "يتطلب هذا السطر إعداد العرض بشكل منفصل."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_offer_draft_unique_source
+msgid "This sheet row already has a draft."
+msgstr "يوجد بالفعل مسودة لهذا السطر من الشيت."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offer_draft_form
+msgid ""
+"Use separate setup for branch allocations, specific gifts or changes to an "
+"existing program. Record the decision before setting this draft aside."
+msgstr ""
+"عروض الفروع والهدايا المحددة وتعديلات البرامج القائمة تتطلب إعدادًا منفصلًا."
+" سجّل قرار المراجعة قبل استبعاد المسودة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "%(benefit)s on %(units)s of every %(quantity)s units"
+msgstr "%(benefit)s على %(units)s من كل %(quantity)s قطع"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__review_explanation
+msgid "What Needs Review"
+msgstr "تفاصيل سبب المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_draft__review_evidence
+msgid "Review Evidence"
+msgstr "بيانات المراجعة عند الاستيراد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Confirm the listed codes and offer terms against the source row: %s"
+msgstr "راجع أكواد الأصناف وشروط العرض مقابل سطر المصدر: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Confirm which products are included or excluded by the terms for %s."
+msgstr ""
+"شروط عرض %s لا تحدد الأصناف المشمولة والمستثناة بشكل قاطع. راجع الأصناف قبل "
+"الاعتماد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Identify the purchased product and the separate gift product for %s."
+msgstr "عرض %s يتطلب تحديد صنف الشراء وصنف الهدية كلًّا على حدة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "More than one store brand matches %s."
+msgstr "توجد أكثر من علامة تجارية في المتجر تطابق الاسم %s."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"No active saleable product matched this code for this website and company."
+msgstr "لم يطابق هذا الكود أي صنف نشط متاح للبيع في هذا الموقع وهذه الشركة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"No codes were confirmed for %(name)s with offer %(offer)s in the Offer Codes"
+" tab."
+msgstr ""
+"لم يتأكد ارتباط أي كود بعرض %(name)s بقيمة %(offer)s في تبويب «أكواد "
+"العروض». راجع اسم المجموعة وقيمة العرض في ذلك التبويب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "No description supplied"
+msgstr "خانة الوصف فارغة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Review the existing offer before changing its products or rules: %s"
+msgstr "راجع برنامج العرض الموجود قبل تغيير أصنافه أو شروطه: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Sheet brand: %(sheet)s. Store brand: %(store)s."
+msgstr ""
+"العلامة التجارية في الشيت: %(sheet)s. العلامة المسجّلة في المتجر: %(store)s."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"Store product %(name)s has internal code %(internal)s and linked code "
+"%(linked)s."
+msgstr ""
+"صنف المتجر %(name)s له مرجع داخلي %(internal)s، بينما كود الصنف المرتبط به "
+"هو %(linked)s."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The From cell is empty. Enter the offer start date."
+msgstr "تاريخ البداية ناقص. أدخل تاريخ بدء العرض في خانة «من» (From)."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"The November reference lists the following code details for this offer."
+msgstr "مرجع عروض نوفمبر يسجّل بيانات الأكواد التالية لهذا العرض."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The To cell is empty. Enter the offer end date."
+msgstr "تاريخ النهاية ناقص. أدخل تاريخ انتهاء العرض في خانة «إلى» (To)."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The allocation for each participating branch must be confirmed for %s."
+msgstr "عرض %s يتطلب تأكيد التوزيع المخصص لكل فرع مشارك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"The codes tab lists %(values)s for this code. The offer row specifies "
+"%(offer)s."
+msgstr ""
+"القيم المسجّلة لهذا الكود في تبويب «أكواد العروض»: %(values)s. القيمة في سطر"
+" العرض: %(offer)s."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The end date %(end)s is before the start date %(start)s."
+msgstr "تاريخ النهاية %(end)s يسبق تاريخ البداية %(start)s. راجع فترة العرض."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The end date in To could not be read: %s"
+msgstr ""
+"تعذرت قراءة تاريخ النهاية في خانة «إلى» (To). القيمة الموجودة في الشيت: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The matching brand is archived: %s"
+msgstr "العلامة التجارية المطابقة مؤرشفة: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"The offer value is %(offer)s. Compare it with the description: "
+"%(description)s"
+msgstr ""
+"قيمة العرض في السطر: %(offer)s. راجعها مقابل الوصف المكتوب: %(description)s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"The same code appears in the codes tab with these product and group names: "
+"%s"
+msgstr ""
+"تكرّر الكود في تبويب «أكواد العروض» ببيانات الصنف والمجموعة التالية: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid ""
+"The sheet flagged a product identity conflict. Compare the original names "
+"and groups for the listed codes."
+msgstr ""
+"يوجد تعارض في تحديد الصنف. راجع الأسماء والمجموعات الأصلية للأكواد المذكورة "
+"في الشيت."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The sheet name differs from the store name: %s"
+msgstr "اسم الصنف في الشيت مختلف عن الاسم المسجّل في المتجر: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The start date in From could not be read: %s"
+msgstr ""
+"تعذرت قراءة تاريخ البداية في خانة «من» (From). القيمة الموجودة في الشيت: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "The variants have different sheet brands: %s"
+msgstr "للأصناف التابعة لنفس المنتج علامات تجارية مختلفة في الشيت: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "This code matched multiple store products: %s"
+msgstr "الكود مرتبط بأكثر من صنف في المتجر: %s"

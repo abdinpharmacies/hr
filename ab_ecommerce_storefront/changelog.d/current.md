@@ -2,6 +2,65 @@
 
 ## Current changes before commit:
 
+- Add the “Add Offers from a Spreadsheet” button (“اضافة العروض من شيت”) to the Discount & Loyalty list. Sales managers can choose an Excel workbook from their computer, preview its offers and apply every ready row in one action. Preserve reviewed November mappings for matching source data.
+- Save uncertain rows as persistent offer drafts at import. Reviewers can correct dates, quantities, discounts and eligible products per row. Sales managers approve a website promotion or set it aside.
+- Show the source of each review issue on the draft form. Reviewers see the affected product codes and names, conflicting groups or discounts, and the specific missing, unreadable or reversed dates. Earlier drafts use their saved details and identify matching November reference evidence.
+- Preserve draft corrections across repeat imports. Conflicting percentages and ambiguous product selections require explicit input. Branch allocations, specific gifts and changes to existing programs remain available for separate setup.
+- Remove the website selector from the spreadsheet upload dialog. The wizard assigns the current company’s default storefront automatically.
+- Keep Preview Offers disabled until an Excel file is attached and disable it again if the file is cleared.
+- Match codes against saleable website variants in the selected company. Show missing codes, alternate product names, ambiguous brands, overlapping dates and conflicting workbook terms before import.
+- Link storefront brands to verified catalog products independently of campaign activation. Reuse brands and keep an existing catalog brand when it differs from the sheet.
+- Create website promotions for approved rows, apply quantity benefits to the cheapest qualifying units and allow staff to prioritize overlapping sheet promotions. Keep fixed EGP unit prices and the customer’s loyalty balance separate.
+- Reconcile newly matched codes on subsequent imports while retaining manual priority and product removals.
+- Translate the preview and promotion settings into both Arabic catalogs and cover the wizard, sales permissions, pricing, company scope and repeat imports with focused tests.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/data/november_2026_offers.json`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/models/product_template.py`
+- `ab_ecommerce_storefront/models/sheet_promotion.py`
+- `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/security/ir.model.access.csv`
+- `ab_ecommerce_storefront/security/record_rules.xml`
+- `ab_ecommerce_storefront/security/security_groups.xml`
+- `ab_ecommerce_storefront/tests/__init__.py`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/tests/test_sheet_promotion.py`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+- `ab_ecommerce_storefront/views/product.xml`
+- `ab_ecommerce_storefront/views/storefront_offer_views.xml`
+- `ab_ecommerce_storefront/wizard/__init__.py`
+- `ab_ecommerce_storefront/wizard/offer_sheet.py`
+- `ab_ecommerce_storefront/wizard/offer_workbook.py`
+
+Validation:
+
+- All 82 targeted offer tests passed after the review-detail change. Verified all 264 November rows on a scratch catalog, including the Arabic and English draft form, the three conflicting Glovive roll-on codes on new and previously saved drafts, and reversed dates.
+- All 79 targeted offer tests passed after a module upgrade on a fresh Odoo 19 database, including reviewer permissions, company isolation, individual approval and repeat imports.
+- Exercised all 264 November campaigns on an isolated catalog seeded with one eligible product. One promotion was applied and 263 drafts were saved. Repeating the import preserved the counts. Verified the new import button and draft action in English and Arabic.
+
+- Fresh installation with Arabic loaded and targeted module upgrade passed in an isolated database. The offer suites ran 75 tests, with zero failures and zero errors.
+- Verified the list button and wizard footer in English and Arabic at runtime, and checked both Arabic catalogs with gettext.
+- Following the Excel upload change, all 76 targeted tests passed. A browser test opened the Arabic list button, chose the original workbook using the native file picker and reached the import preview. The source file reproduced all 264 campaign entries and 2,305 codes.
+- Read-only catalog reconciliation found 1,740 unique store matches for 2,305 workbook codes. Of 264 consolidated campaign entries, 104 need review of the source conditions and 153 have both clear conditions and at least one matching store product.
+
+## Recent commits
+
+Commit: `f2623708`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/IMP: add collection discounts and linked carousel routing`
+
+User-facing changes:
+
 - Add a Mix & Match Quantity Discount offer type to the Storefront Offers list and form.
 - Treat the main product and additional collection products as one qualifying collection.
 - Let customers combine different products or repeat the same product, then discount the cheapest configured quantity for every complete offer cycle.
@@ -50,8 +109,6 @@ Validation:
 - Runtime verification returned `Carousel Slide` in English, `شريحة الكاروسيل` in `ar_001`, and the translated carousel banner label in the form view.
 - Fresh installation initially hit an existing `ab_website` setup dependency on the unloaded `ar_001` language; loading that language in the scratch database allowed the targeted installation and tests to complete.
 - The first test command used the system interpreter and stopped before module loading because the existing `ijson` dependency was unavailable there; rerunning with the project virtual environment completed successfully.
-
-## Recent commits
 
 Commit: `90048532`
 Author: Mohamed Fawzy

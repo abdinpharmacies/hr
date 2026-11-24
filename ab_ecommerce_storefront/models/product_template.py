@@ -76,14 +76,22 @@ class ProductTemplate(models.Model):
         index=True,
     )
 
+    ab_sheet_brand_id = fields.Many2one(
+        "ab_product_company", string="Imported Storefront Brand", copy=False, groups="sales_team.group_sale_manager",
+    )
     ab_storefront_brand_id = fields.Many2one(
         "ab_product_company",
         string="Brand",
-        related="ab_product_id.company_id",
+        compute="_compute_storefront_brand",
         store=True,
         readonly=True,
         index=True,
     )
+
+    @api.depends("ab_product_id.company_id", "ab_sheet_brand_id")
+    def _compute_storefront_brand(self):
+        for template in self:
+            template.ab_storefront_brand_id = template.ab_product_id.company_id or template.ab_sheet_brand_id
 
     def _search_get_detail(self, website, order, options):
         result = super()._search_get_detail(website, order, options)
@@ -202,3 +210,12 @@ class ProductProduct(models.Model):
     def _ab_storefront_has_real_image(self):
         self.ensure_one()
         return self.ab_storefront_has_real_image
+
+
+class AbProductCompany(models.Model):
+    _inherit = "ab_product_company"
+
+    ab_sheet_brand_key = fields.Char(copy=False, groups="sales_team.group_sale_manager")
+    _sheet_brand_unique = models.Constraint(
+        "UNIQUE(ab_sheet_brand_key)", "This storefront brand has already been imported.",
+    )
