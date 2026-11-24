@@ -3,7 +3,7 @@ from contextvars import ContextVar
 import phonenumbers
 
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, ConcurrencyError, UserError, ValidationError
+from odoo.exceptions import AccessError, ConcurrencyError, LockError, UserError, ValidationError
 from odoo.addons.ab_crm_core.models.core import _INTERNAL
 from .media import validate_workspace_attachment
 
@@ -440,8 +440,13 @@ class Conversation(models.Model):
         self.ensure_one()
         self._authorize()
         session, stores = self._workspace_scope()
-        self.messaging_account_id.lock_for_update()
-        self.lock_for_update()
+        try:
+            self.messaging_account_id.lock_for_update()
+            self.lock_for_update()
+        except LockError:
+            if self.channel_id.provider == 'website':
+                raise ConcurrencyError('Concurrent website reply') from None
+            raise
         return session, stores
 
     def action_claim(self):
