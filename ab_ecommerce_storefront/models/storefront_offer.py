@@ -460,7 +460,7 @@ class StorefrontOffer(models.Model):
         if draft:
             if len(vals_list) != 1:
                 raise ValidationError(_("Publish one storefront offer per draft."))
-            issues = draft._check_storefront_publication()
+            issues = draft._check_storefront_publication()["issues"]
         prepared_values = []
         for values in vals_list:
             values = dict(values)

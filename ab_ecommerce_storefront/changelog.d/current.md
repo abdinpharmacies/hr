@@ -2,6 +2,33 @@
 
 ## Current changes before commit:
 
+- Choose a value directly under Offer Type in the draft publication dialog. Each button shows its source and applies its percentage, quantity or fixed-price terms to the full eligible group.
+- Show matching row and description terms as one option. Preserve distinct code values and keep complex written purchase conditions visible for review.
+- Save the published group terms on the applied draft. Cancelling the dialog leaves the draft available for review.
+- All 100 targeted tests passed, including publishing a two-product offer in Chrome after selecting 60% and switching to 50%.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/offer_draft.py`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/static/src/js/offer_term_choices.js`
+- `ab_ecommerce_storefront/static/src/xml/offer_term_choices.xml`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/views/offer_sheet_views.xml`
+- `ab_ecommerce_storefront/wizard/offer_workbook.py`
+
+Commit: `4d27b9ed`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/FIX: sort draft reasons and link loyalty offer banners`
+
+User-facing changes:
+
 - Sort the Offer Drafts list by its displayed review reason in either direction across pages. Filter or group by the same reason in the employee's language.
 - Select a homepage carousel slide and preview its image in Discount & Loyalty. Programs generated from a storefront offer edit the same banner as the original offer.
 - Link eligible website programs to their published offer products or offer listing during the scheduled period. Check website, company and overlapping slide assignments.

@@ -5532,6 +5532,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__description
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
 msgid "Description"
 msgstr ""
 
@@ -19589,4 +19590,33 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
 msgid "Select the carousel slide on the linked storefront offer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Offer row"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Offer Codes"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Choose one offer value for all eligible products when publishing: %s"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Check the purchase conditions in the sheet description: %s"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_publish_form
+msgid "Value for all offer products"
 msgstr ""

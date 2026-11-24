@@ -264,6 +264,20 @@ class TestOfferSheetImport(TransactionCase):
         self.preview()[0].action_apply()
         self.assertEqual(self.env["loyalty.program"].search_count([("ab_sheet_key", "=", self.row["key"])]), 1)
 
+    def test_choices_keep_source_and_purchase_quantity(self):
+        draft = self.env["ab_storefront_offer_draft"].with_context(lang="en_US")
+        evidence = {"issues": ["terms"], "name": "Melatime", "offer": "0.6", "products": {},
+                    "code_values": ["0.5", "50%", "2+1"], "description": "اشترى قطعة من Melatime واحصل على خصم 60%"}
+        choices = draft._publication_term_choices(evidence)
+        self.assertEqual([c["label"] for c in choices], ["60%", "50%", "2+1"])
+        self.assertEqual(choices[0]["source"], "Offer row + Description")
+        self.assertEqual(choices[2]["values"], {"sheet_group_qty": 3, "sheet_discount_qty": 1,
+                                                "sheet_rate": 100, "sheet_fixed_price": 0})
+        self.assertNotIn("Compare it with the description", " ".join(draft._explain_evidence(evidence)))
+        evidence["description"] = "اشترى قطعة من Melatime وقطعة إضافية واحصل على خصم 40%"
+        self.assertNotIn("40%", [c["label"] for c in draft._publication_term_choices(evidence)])
+        self.assertIn(evidence["description"], " ".join(draft._explain_evidence(evidence)))
+
     def test_ambiguous_terms_and_identity_require_correction(self):
         product = self.product(self.code)
         sheet = dict(self.sheet, offers=[dict(self.row, issues=["terms", "identity"])])
@@ -595,3 +609,58 @@ class TestOfferDraftList(HttpCase):
                 console.log("test successful");
             })();
         """, login=user.login)
+
+    def test_choose_sheet_discount_in_publication_dialog(self):
+        self.env["res.lang"]._activate_lang("ar_001")
+        user = new_test_user(self.env, login="offer_choice_manager", lang="ar_001",
+                             groups="sales_team.group_sale_manager,ab_store.ab_login_from_anywhere")
+        website = self.env.ref("website.default_website")
+        warehouse = self.env["stock.warehouse"].search([("company_id", "=", website.company_id.id)], limit=1)
+        website.warehouse_id = warehouse
+        products = self.env["product.product"].create([
+            {"name": name, "is_storable": True, "website_id": website.id, "list_price": 100}
+            for name in ("Choice A", "Choice B")
+        ])
+        self.env["stock.quant"].with_context(inventory_mode=True).create([
+            {"product_id": p.id, "location_id": warehouse.lot_stock_id.id, "inventory_quantity": 4}
+            for p in products
+        ]).action_apply_inventory()
+        draft = self.env["ab_storefront_offer_draft"]._from_sheet({
+            "name": "Choice test", "sheet_key": "test-choice", "website_id": website.id,
+            "date_from": date(2020, 1, 1), "date_to": date(2099, 1, 1),
+            "product_ids": [Command.set(products.ids)], "review_evidence": {
+                "issues": ["terms"], "offer": "0.6", "name": "Melatime", "description": "اشترى قطعة من Melatime واحصل على خصم 60%",
+                "products": {"114571": {"name": "Melatime", "offers": ["0.5"]}},
+            },
+        })
+        action = self.env.ref("ab_ecommerce_storefront.action_offer_drafts")
+        self.browser_js(f"/odoo/action-{action.id}/{draft.id}", """
+            (async () => {
+                const wait = async (getter) => {
+                    for (let attempt = 0; attempt < 150; attempt++) {
+                        const value = getter();
+                        if (value) return value;
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    throw new Error("Offer publication dialog did not reach the expected state");
+                };
+                (await wait(() => document.querySelector('button[name="action_prepare_storefront_offer"]'))).click();
+                const buttons = () => [...document.querySelectorAll('.modal .o_field_ab_offer_term_choices button')];
+                await wait(() => buttons().length === 2);
+                const pick = async (label) => {
+                    const button = buttons().find(b => b.querySelector("bdi").textContent === label);
+                    button.click();
+                    await wait(() => button.getAttribute("aria-pressed") === "true");
+                };
+                await pick("60%");
+                await pick("50%");
+                document.querySelector('.modal footer .btn-primary').click();
+                await wait(() => !document.querySelector('.modal .o_field_ab_offer_term_choices'));
+                console.log("test successful");
+            })();
+        """, login=user.login)
+        self.env.invalidate_all()
+        self.assertEqual(draft.state, "applied")
+        self.assertEqual(draft.rate, 50)
+        self.assertEqual(draft.storefront_offer_id._qualifying_products(), products)
+        self.assertEqual(draft.storefront_offer_id.generated_program_ids.reward_ids.discount, 50)

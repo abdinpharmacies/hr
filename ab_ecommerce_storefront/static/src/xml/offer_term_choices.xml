@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_storefront.OfferTermChoices">
+        <div class="d-flex flex-wrap gap-2">
+            <button t-foreach="choices" t-as="choice" t-key="choice.label" type="button"
+                    class="btn" t-att-class="selected(choice) ? 'btn-primary' : 'btn-outline-secondary'"
+                    t-att-aria-pressed="selected(choice) ? 'true' : 'false'" t-att-disabled="props.readonly"
+                    t-on-click="() => this.select(choice)">
+                <bdi dir="ltr" t-esc="choice.label"/>
+                <small class="d-block" t-esc="choice.source"/>
+            </button>
+        </div>
+    </t>
+</templates>

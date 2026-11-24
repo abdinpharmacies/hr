@@ -107,6 +107,10 @@
         <field name="mode">primary</field>
         <field name="priority">80</field>
         <field name="arch" type="xml">
+            <field name="offer_type" position="after">
+                <field name="sheet_rate" widget="ab_offer_term_choices" string="Value for all offer products"
+                       invisible="offer_type != 'sheet' or not context.get('ab_draft_term_choices')"/>
+            </field>
             <field name="website_id" position="attributes"><attribute name="readonly">1</attribute></field>
             <field name="use_odoo_promotion" position="attributes"><attribute name="invisible">1</attribute></field>
             <xpath expr="//form/sheet" position="after">

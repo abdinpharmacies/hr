@@ -53,6 +53,8 @@ def draft_source_evidence(row, sheet, product_problems):
             products[code] = dict(problem, name=sheet["products"][code][0])
     return {key: row.get(key) for key in ("name", "offer", "description", "start", "end", "issues", "review")} | {
         "products": products,
+        "code_values": sorted({value for code in row["codes"] for value in sheet["code_offers"].get(code, [])})
+                       if "terms" in issues else [],
     }
 
 
@@ -90,6 +92,32 @@ def _benefit(value):
     if price and float(price.group(1)) > 0:
         return token, 1, 1, 100, float(price.group(1))
     return value, 1, 1, 0, 0
+
+
+def description_benefit(description, name):
+    text = " ".join((description or "").split()).rstrip(".").replace("٪", "%")
+    percent = r"(\d+(?:\.\d+)?)\s*%"
+    direct = re.fullmatch(r"(?:خصم\s+|discount\s+)?" + percent, text, re.I)
+    if direct:
+        return direct[1] + "%"
+    if not name:
+        return ""
+    item = re.escape(" ".join(name.split()))
+    purchase = re.fullmatch(
+        rf"(?:اشتري|اشترى|اشترِ)\s+(قطعة|قطعتين|قطعتيم)\s+(?:من\s+)?(?:منتجات\s+)?{item}\s+واحصل\s+عل[يى]\s+(.+)",
+        text, re.I,
+    )
+    if not purchase:
+        return ""
+    one = purchase[1] == "قطعة"
+    discount = re.fullmatch(r"خصم\s+" + percent, purchase[2])
+    if one and discount:
+        return discount[1] + "%"
+    if re.fullmatch(r"(?:الثانية|الثانيه)\s+مجان[ًا]+", purchase[2]) and one:
+        return "1+1"
+    if re.fullmatch(r"(?:الثالثة|الثالثه)\s+مجان[ًا]+", purchase[2]) and not one:
+        return "2+1"
+    return ""
 
 
 def _read_tables(payload):

@@ -6,7 +6,9 @@ from odoo import Command, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import SQL
 
-from ..wizard.offer_workbook import _benefit, _draft_date, _november_offers, _offer_text, draft_source_evidence
+from ..wizard.offer_workbook import (
+    _benefit, _draft_date, _november_offers, _offer_text, description_benefit, draft_source_evidence,
+)
 
 
 class OfferDraft(models.Model):
@@ -173,8 +175,12 @@ class OfferDraft(models.Model):
             lines.append(_("No codes were confirmed for %(name)s with offer %(offer)s in the Offer Codes tab.",
                            name=data["name"], offer=offer))
         if "terms" in issues:
-            lines.append(_("The offer value is %(offer)s. Compare it with the description: %(description)s",
-                           offer=offer, description=data["description"] or _("No description supplied")))
+            choices = self._publication_term_choices(data)
+            if choices:
+                lines.append(_("Choose one offer value for all eligible products when publishing: %s",
+                               " / ".join(f"{choice['label']} ({choice['source']})" for choice in choices)))
+            if data.get("description") and not description_benefit(data["description"], data.get("name")):
+                lines.append(_("Check the purchase conditions in the sheet description: %s", data["description"]))
         if "scope" in issues:
             lines.append(_("Confirm which products are included or excluded by the terms for %s.", data["name"]))
         if "allocation" in issues:
@@ -301,13 +307,42 @@ class OfferDraft(models.Model):
         evidence = self.review_evidence or self._saved_review_evidence()
         if "allocation" in evidence["issues"]:
             raise UserError(_("The allocation for each participating branch must be confirmed for %s.", self.name))
-        return evidence["issues"]
+        return evidence
+
+    def _publication_term_choices(self, evidence):
+        if "terms" not in evidence["issues"]:
+            return []
+        sources = [
+            (_("Offer row"), [evidence.get("offer") or ""]),
+            (_("Description"), [description_benefit(evidence.get("description"), evidence.get("name"))]),
+            (_("Offer Codes"), evidence.get("code_values") or sorted({
+                token for product in evidence.get("products", {}).values() for token in product.get("offers", [])
+            })),
+        ]
+        choices = {}
+        for source, tokens in sources:
+            for token in tokens:
+                label, group, units, rate, fixed = _benefit(token)
+                if not rate:
+                    continue
+                key = (group, units, rate, fixed)
+                if key not in choices:
+                    choices[key] = {"label": _offer_text(label), "sources": [], "values": {
+                        "sheet_group_qty": group, "sheet_discount_qty": units,
+                        "sheet_rate": rate, "sheet_fixed_price": fixed,
+                    }}
+                if source not in choices[key]["sources"]:
+                    choices[key]["sources"].append(source)
+        for choice in choices.values():
+            choice["source"] = " + ".join(choice.pop("sources"))
+        return list(choices.values())
 
     def action_prepare_storefront_offer(self):
-        issues = self._check_storefront_publication()
+        evidence = self._check_storefront_publication()
         products = self.with_context(active_test=False).product_ids
-        gift = "gift" in issues
+        gift = "gift" in evidence["issues"]
         context = {
+            "ab_draft_term_choices": self._publication_term_choices(evidence),
             "ab_publish_draft_id": self.id, "default_name": self.name, "default_website_id": self.website_id.id,
             "default_date_from": self.date_from, "default_date_to": self.date_to,
             "default_offer_type": "gift" if gift else "sheet", "default_second_item_mode": "choice" if gift else "same",
@@ -353,7 +388,11 @@ class OfferDraft(models.Model):
                 if issue:
                     raise UserError(issue)
             self.website_id._ab_publish_offer_products(products)
-        super().write({"state": "applied", "storefront_offer_id": offer.id})
+        values = {"state": "applied", "storefront_offer_id": offer.id}
+        if offer.offer_type == "sheet" and "terms" in issues:
+            values.update(group_qty=offer.sheet_group_qty, discount_qty=offer.sheet_discount_qty,
+                          rate=offer.sheet_rate, fixed_price=offer.sheet_fixed_price)
+        super().write(values)
 
     def action_apply(self):
         self._check_decision()

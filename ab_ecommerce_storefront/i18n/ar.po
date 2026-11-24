@@ -3366,6 +3366,7 @@ msgstr "المنتج"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__description
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
 msgid "Description"
 msgstr "الوصف"
 
@@ -21272,3 +21273,32 @@ msgstr "يمكن نشر عرض متجر واحد لكل مسودة."
 #: code:addons/ab_ecommerce_storefront/models/sheet_promotion.py:0
 msgid "Select the carousel slide on the linked storefront offer."
 msgstr "اختر شريحة الكاروسيل من عرض المتجر المرتبط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Offer row"
+msgstr "سطر العرض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Offer Codes"
+msgstr "أكواد العروض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Choose one offer value for all eligible products when publishing: %s"
+msgstr "عند نشر العرض، اختر القيمة التي تريد تطبيقها على كل أصنافه: %s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0
+msgid "Check the purchase conditions in the sheet description: %s"
+msgstr "راجع شرط الشراء المذكور في الوصف: %s"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_publish_form
+msgid "Value for all offer products"
+msgstr "اختر القيمة لكل أصناف العرض"
