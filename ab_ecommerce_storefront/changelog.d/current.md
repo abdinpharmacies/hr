@@ -1,8 +1,14 @@
 # Storefront change log
 
-## Current changes before commit:
+## Recent commits
 
-- Document the November import reset and the workbook-to-catalog code check on the local `ecom19` database.
+Commit: `ceb2ca9f`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/IMP: support sheet imports and group offer rates`
+
+User-facing changes:
+
 - Leave brand linking off by default and make the unchecked option skip brand creation and updates during offer import.
 - Allow 70% and 100% second-item discounts in Storefront Offers, including a free item chosen from a mixed collection.
 - Cover the brand opt-out and both discount rates with focused Odoo tests. Three new tests and all 13 offer-sheet tests passed on an isolated Odoo 19 database.
@@ -15,6 +21,12 @@ Files changed:
 - `ab_ecommerce_storefront/tests/test_storefront_offers.py`
 - `ab_ecommerce_storefront/wizard/offer_sheet.py`
 
+Operational verification:
+
+- The ecommerce server backup `/opt/odoo19/backups/ecom19_before_november_offers_20261124_103522.dump` passed `pg_restore -l` before the import.
+- The November workbook import applied 56 website promotions and saved 208 review drafts. Thirty imported promotions were within their date range on 2026-11-24. The 28 existing Alejon offers remained active while the Alejon workbook rows stayed in review for missing catalog codes and name differences.
+- The English and Arabic shop and an imported-offer product page returned HTTP 200 with the offer label visible.
+
 ### November offer import handoff — 2026-11-24
 
 - The local storefront module was upgraded and the Arabic draft field «تفاصيل سبب المراجعة» was verified. After resetting the previous upload of `عروض شهر نوفمبر 2026 - Copy.xlsx`, previewing the workbook returned **36 ready offers and 228 for review**. That verification stopped at preview.
@@ -22,8 +34,6 @@ Files changed:
 - Across 2,305 workbook codes, each code that matched an active saleable product in the website and company scope matched only one. Where both the internal reference and linked product-card code were present, they agreed.
 - In Glovive’s `white friday #25` offer, roll-on codes `115474`, `115475` and `115476` each appeared under both G-Doux and GLOVIVE. For `115475`, Offer Codes row 683 lists `60 M` at 30% under G-Doux, and row 823 lists `60 ML` at 25% under GLOVIVE. Each code matched one store product.
 - One workbook name appeared under two codes after normalizing spacing and case. For `LOREAL EXCELLENCE CREME NO 6`, row 2203 lists `11048`, which matched the store, and row 2196 lists `66923`, which had no eligible match. Whether the codes identify the same physical pack remains unconfirmed.
-
-## Recent commits
 
 Commit: `4dfc3871`
 Author: Mohamed Fawzy
