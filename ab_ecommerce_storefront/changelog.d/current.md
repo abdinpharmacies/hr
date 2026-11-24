@@ -1,6 +1,21 @@
 # Storefront change log
 
-## Current changes before commit:
+## November demo verification — 2026-11-24
+
+- Deployed `002a2b0d` on `e_commerce`, upgraded only `ab_ecommerce_storefront` on `ecom19` and verified the active service. PostgreSQL custom-format backups before the feature and employee button upgrades passed `pg_restore -l` (`ecom19_before_offer_ede87d32_z92b45.dump` and `ecom19_before_offer_employee_button_M8uXpN.dump`).
+- Reapplied the original November workbook with brand linking disabled. The 56 imported programs were preserved. Eight moved to stock review and 17 products were published. All seven branch-allocation drafts stayed pending. The employee overview returned 294 entries including archived records, with 216 review drafts. The 28 active manual Alejon offers remained active.
+- All 23 currently valid imported promotions were represented on the public discount listing (117 products across six pages). English and Arabic shop, offer listing and product detail routes returned HTTP 200 with visible product content.
+- The post-merge test suite passed all 90 tests. The follow-up employee access test passed after correcting the group XML ID. Separate HTTP 500 responses were logged for the bath and shower category URL.
+- Database backups are separate from the filestore.
+
+## Recent commits
+
+Commit: `002a2b0d`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/FIX: show offer creation to call center staff`
+
+User-facing changes:
 
 - Show the New Storefront Offer action to the call center employee role. Verified the rendered Odoo list architecture as a call center employee.
 
@@ -9,8 +24,6 @@ Files changed:
 - `ab_ecommerce_storefront/changelog.d/current.md`
 - `ab_ecommerce_storefront/tests/test_sheet_promotion.py`
 - `ab_ecommerce_storefront/views/offer_sheet_views.xml`
-
-## Recent commits
 
 Commit: `ede87d32`
 Author: Mohamed Fawzy
