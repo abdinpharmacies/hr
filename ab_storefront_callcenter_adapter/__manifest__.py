@@ -1,6 +1,6 @@
 {
     'name': 'Storefront Callcenter Adapter',
-    'version': '19.0.1.5.3',
+    'version': '19.0.1.5.4',
     'license': 'LGPL-3',
     'category': 'Sales',
     'author': 'Abdin Pharmacies',
