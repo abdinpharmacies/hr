@@ -5530,6 +5530,7 @@ msgid "of"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer_sheet_line__description
 #: code:addons/ab_ecommerce_storefront/models/offer_draft.py:0

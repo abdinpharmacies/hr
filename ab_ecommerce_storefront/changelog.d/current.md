@@ -2,6 +2,22 @@
 
 ## Current changes before commit:
 
+- Show “سطر العرض + الوصف” when the offer row and description specify the same value in the Arabic publication dialog.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+
+Commit: `da65bb05`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/ADD: choose conflicting offer terms in the publish dialog`
+
+User-facing changes:
+
 - Choose a value directly under Offer Type in the draft publication dialog. Each button shows its source and applies its percentage, quantity or fixed-price terms to the full eligible group.
 - Show matching row and description terms as one option. Preserve distinct code values and keep complex written purchase conditions visible for review.
 - Save the published group terms on the applied draft. Cancelling the dialog leaves the draft available for review.
