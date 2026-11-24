@@ -1052,3 +1052,34 @@ msgstr "المستخدم"
 #: code:addons/ab_crm_website/models/adapter.py:0
 msgid "Chat linking is disabled."
 msgstr "ربط المحادثات معطّل."
+
+#. module: ab_crm_website
+#: model:ir.model.fields,field_description:ab_crm_website.field_ab_crm_messaging_account__website_backend_url
+msgid "Website Odoo base URL"
+msgstr "رابط أودو الخاص بالموقع"
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/order_link.py:0
+msgid "Only CRM managers can configure website order links."
+msgstr "يمكن لمديري إدارة علاقات العملاء فقط إعداد روابط طلبات الموقع."
+
+#. module: ab_crm_website
+#. odoo-python
+#: code:addons/ab_crm_website/models/order_link.py:0
+msgid ""
+"Enter a valid HTTPS website origin; HTTP is allowed only for local "
+"development."
+msgstr "أدخل عنوان موقع HTTPS صالحًا؛ يُسمح باستخدام HTTP للتطوير المحلي فقط."
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "View order status in Website Odoo"
+msgstr "عرض حالة الطلب في أودو الموقع"
+
+#. module: ab_crm_website
+#. odoo-javascript
+#: code:addons/ab_crm_website/static/src/order.xml:0
+msgid "View Order Status"
+msgstr "عرض حالة الطلب"

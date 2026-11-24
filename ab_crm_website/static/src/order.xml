@@ -19,6 +19,7 @@
             <p class="ab_website_invoice_total"><span>Total: </span><t t-esc="message.website_order.total"/> <t t-esc="message.website_order.currency"/></p>
             <p class="ab_website_payment_method"><strong>Payment method: </strong><t t-esc="message.website_order.payment_method_label"/></p>
         </details>
+        <a class="btn btn-primary fw-bold" t-if="message.website_order.backend_order_url" t-att-href="message.website_order.backend_order_url" target="_blank" rel="noopener noreferrer"><strong>View Order Status</strong></a>
     </div>
 </t>
 <t t-inherit="ab_crm_sales_workspace.Workspace" t-inherit-mode="extension">

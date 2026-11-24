@@ -1,4 +1,14 @@
 <odoo>
+  <record id="account_backend_order_link" model="ir.ui.view">
+    <field name="name">website.account.backend.order.link</field>
+    <field name="model">ab_crm_messaging_account</field>
+    <field name="inherit_id" ref="ab_crm_messaging.view_account_form"/>
+    <field name="arch" type="xml">
+      <field name="provider_account" position="after">
+        <field name="website_backend_url" invisible="provider != 'website'" groups="ab_crm_core.group_manager,base.group_system"/>
+      </field>
+    </field>
+  </record>
   <record id="orders_list" model="ir.ui.view">
     <field name="name">ab_crm_website_order.list</field>
     <field name="model">ab_crm_website_order</field>

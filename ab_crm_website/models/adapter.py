@@ -1211,7 +1211,7 @@ class Conversation(models.Model):
                 data['actions']['reply'] = {'enabled': False, 'reason': str(error)}
             if event and event.envelope['kind'] == 'order':
                 data['website_order'] = dict(order._display_snapshot(event.envelope['payload']),
-                    revision=event.revision)
+                    revision=event.revision, backend_order_url=order._backend_order_url())
                 data['body'] = _('Website Order: %s') % data['website_order']['reference']
         header_order = orders.filtered(lambda order: order.id == result.get('website_reply_order_id'))[:1]
         if header_order:
