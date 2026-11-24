@@ -173,11 +173,11 @@ class PurchaseAccountingConfig(models.Model):
         def under(account, xmlid):
             parent = self.env.ref(xmlid, raise_if_not_found=False)
             return bool(parent and account and parent.id in [int(i) for i in (account.parent_path or '').split('/') if i])
-        if not supplier or supplier.internal_group != 'liability' or not (supplier.internal_type == 'payable' or under(supplier, 'ab_accounting.ab_accounting_account_guide_suppliers')):
+        if not supplier or supplier.internal_group != 'liability' or not (supplier.internal_type == 'payable' or under(supplier, 'ab_accounting_base.ab_accounting_account_guide_suppliers')):
             raise ValidationError(_('Configure a supplier payable account under the supplier account guide.'))
-        if not inventory or inventory.internal_group != 'asset' or not under(inventory, 'ab_accounting.ab_accounting_account_guide_inventory'):
+        if not inventory or inventory.internal_group != 'asset' or not under(inventory, 'ab_accounting_base.ab_accounting_account_guide_inventory'):
             raise ValidationError(_('Configure an inventory posting account under the inventory account guide.'))
-        if tax and not under(tax, 'ab_accounting.ab_accounting_account_guide_taxes'):
+        if tax and not under(tax, 'ab_accounting_base.ab_accounting_account_guide_taxes'):
             raise ValidationError(_('Configure a tax posting account under the tax account guide.'))
         accounts = [supplier.id, inventory.id] + ([tax.id] if tax else [])
         if len(accounts) != len(set(accounts)):
