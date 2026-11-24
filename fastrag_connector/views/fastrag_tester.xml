@@ -1,0 +1,46 @@
+<odoo>
+    <record id="fastrag_api_tester_form" model="ir.ui.view">
+        <field name="name">fastrag.api.tester.form</field>
+        <field name="model">fastrag.api.tester</field>
+        <field name="arch" type="xml">
+            <form string="FastRAG API Tester">
+                <sheet>
+                    <group string="Connection">
+                        <field name="base_url"/>
+                        <field name="replacement_key" password="True" placeholder="Leave blank to keep the saved key"/>
+                        <button name="action_save_connection" type="object" string="Save Connection"/>
+                    </group>
+                    <group string="API Method">
+                        <field name="operation"/>
+                        <field name="record_id" invisible="operation in ('test_connection', 'list_records', 'create_record', 'get_job_status', 'search_records', 'ask_question')"/>
+                        <field name="file_id" invisible="operation not in ('download_attachment', 'remove_attachment')"/>
+                        <field name="job_id" invisible="operation != 'get_job_status'"/>
+                        <field name="title" invisible="operation != 'create_record'"/>
+                        <field name="record_text" invisible="operation != 'create_record'"/>
+                        <field name="json_input" invisible="operation not in ('update_record', 'list_records')"/>
+                        <field name="question" invisible="operation not in ('search_records', 'ask_question')"/>
+                        <field name="upload_name" invisible="1"/>
+                        <field name="upload" filename="upload_name" invisible="operation != 'add_attachment'"/>
+                        <field name="caption" invisible="operation != 'add_attachment'"/>
+                        <field name="confirm_change" invisible="operation not in ('update_record', 'archive_record', 'add_attachment', 'remove_attachment', 'index_record')"/>
+                        <button name="action_run" type="object" string="Run API Method" class="btn-primary"/>
+                    </group>
+                    <group string="Result">
+                        <field name="result" nolabel="1"/>
+                        <field name="curl_example" widget="CopyClipboardChar" invisible="not curl_example"/>
+                        <field name="download_name" invisible="1"/>
+                        <field name="download" filename="download_name" invisible="not download"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="fastrag_api_tester_action" model="ir.actions.act_window">
+        <field name="name">FastRAG API Tester</field>
+        <field name="res_model">fastrag.api.tester</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="fastrag_api_tester_form"/>
+    </record>
+    <menuitem id="fastrag_api_tester_menu" parent="base.menu_administration" name="FastRAG API Tester"
+              action="fastrag_api_tester_action" groups="base.group_system" sequence="100"/>
+</odoo>
