@@ -2,6 +2,36 @@
 
 ## Current changes before commit:
 
+- Document the November import reset and the workbook-to-catalog code check on the local `ecom19` database.
+- Leave brand linking off by default and make the unchecked option skip brand creation and updates during offer import.
+- Allow 70% and 100% second-item discounts in Storefront Offers, including a free item chosen from a mixed collection.
+- Cover the brand opt-out and both discount rates with focused Odoo tests. Three new tests and all 13 offer-sheet tests passed on an isolated Odoo 19 database.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/models/storefront_offer.py`
+- `ab_ecommerce_storefront/tests/test_offer_sheet_import.py`
+- `ab_ecommerce_storefront/tests/test_storefront_offers.py`
+- `ab_ecommerce_storefront/wizard/offer_sheet.py`
+
+### November offer import handoff — 2026-11-24
+
+- The local storefront module was upgraded and the Arabic draft field «تفاصيل سبب المراجعة» was verified. After resetting the previous upload of `عروض شهر نوفمبر 2026 - Copy.xlsx`, previewing the workbook returned **36 ready offers and 228 for review**. That verification stopped at preview.
+- The reset removed 228 drafts and 37 promotions (36 applied on import and one approved later), cleared 1,519 imported brand links and removed 79 unused brands created by the upload. Odoo archived the 37 discount service products. The pre-reset database backup was saved locally at `/tmp/ecom19_before_offer_retry_39yj4n4f/ecom19.dump`.
+- Across 2,305 workbook codes, each code that matched an active saleable product in the website and company scope matched only one. Where both the internal reference and linked product-card code were present, they agreed.
+- In Glovive’s `white friday #25` offer, roll-on codes `115474`, `115475` and `115476` each appeared under both G-Doux and GLOVIVE. For `115475`, Offer Codes row 683 lists `60 M` at 30% under G-Doux, and row 823 lists `60 ML` at 25% under GLOVIVE. Each code matched one store product.
+- One workbook name appeared under two codes after normalizing spacing and case. For `LOREAL EXCELLENCE CREME NO 6`, row 2203 lists `11048`, which matched the store, and row 2196 lists `66923`, which had no eligible match. Whether the codes identify the same physical pack remains unconfirmed.
+
+## Recent commits
+
+Commit: `4dfc3871`
+Author: Mohamed Fawzy
+Date: 2026-11-24
+Original subject: `ab_ecommerce_storefront/IMP: import spreadsheet offers with draft review`
+
+User-facing changes:
+
 - Add the “Add Offers from a Spreadsheet” button (“اضافة العروض من شيت”) to the Discount & Loyalty list. Sales managers can choose an Excel workbook from their computer, preview its offers and apply every ready row in one action. Preserve reviewed November mappings for matching source data.
 - Save uncertain rows as persistent offer drafts at import. Reviewers can correct dates, quantities, discounts and eligible products per row. Sales managers approve a website promotion or set it aside.
 - Show the source of each review issue on the draft form. Reviewers see the affected product codes and names, conflicting groups or discounts, and the specific missing, unreadable or reversed dates. Earlier drafts use their saved details and identify matching November reference evidence.
@@ -51,8 +81,6 @@ Validation:
 - Verified the list button and wizard footer in English and Arabic at runtime, and checked both Arabic catalogs with gettext.
 - Following the Excel upload change, all 76 targeted tests passed. A browser test opened the Arabic list button, chose the original workbook using the native file picker and reached the import preview. The source file reproduced all 264 campaign entries and 2,305 codes.
 - Read-only catalog reconciliation found 1,740 unique store matches for 2,305 workbook codes. Of 264 consolidated campaign entries, 104 need review of the source conditions and 153 have both clear conditions and at least one matching store product.
-
-## Recent commits
 
 Commit: `f2623708`
 Author: Mohamed Fawzy

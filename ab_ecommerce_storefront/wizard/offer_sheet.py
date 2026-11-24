@@ -39,7 +39,7 @@ class OfferSheet(models.TransientModel):
     workbook = fields.Binary(string="Excel Workbook", attachment=False, required=True)
     filename = fields.Char(string="File Name")
     preview_digest = fields.Char(readonly=True)
-    include_brands = fields.Boolean(string="Link verified brands from the entire sheet", default=True)
+    include_brands = fields.Boolean(string="Link verified brands from the entire sheet")
     brand_summary = fields.Text(string="Brand Links", readonly=True)
     brand_signature = fields.Char(readonly=True)
     line_ids = fields.One2many("ab_storefront_offer_sheet_line", "wizard_id", string="Offers")
@@ -306,7 +306,7 @@ class OfferSheet(models.TransientModel):
             else:
                 programs |= self._create_program(row, ids, line.priority)
             for product_id, brand_name in entry["products"].items():
-                if product_id in entry["pending"] and brand_name:
+                if self.include_brands and product_id in entry["pending"] and brand_name:
                     assignments[brand_name].add(product_id)
         if draft_values:
             drafts |= draft_model._from_sheet(draft_values)

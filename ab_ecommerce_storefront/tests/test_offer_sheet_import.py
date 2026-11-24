@@ -72,6 +72,7 @@ class TestOfferSheetImport(TransactionCase):
         sheet = dict(self.sheet, offers=[reviewed, uncertain])
         with patch.object(offer_sheet, "parse_offer_workbook", return_value=sheet):
             wizard, line = self.preview()
+            wizard.include_brands = True
             line.priority = 5
             self.assertTrue(line.available)
             self.assertFalse(self.env["ab_storefront_offer_draft"].search([]))
@@ -247,9 +248,20 @@ class TestOfferSheetImport(TransactionCase):
         product = self.product(self.code)
         wizard, _line = self.preview()
         self.assertIn(self.code, wizard.brand_summary)
+        wizard.include_brands = True
         wizard.action_apply()
         self.assertEqual(product.ab_storefront_brand_id.name.lower(), "alejon")
         self.assertFalse(self.env["loyalty.program"].search([("ab_sheet_key", "=", self.row["key"])]))
+
+    def test_offer_import_does_not_link_brands_when_disabled(self):
+        product = self.product(self.code)
+        row = dict(self.row, review=False, codes=[self.code])
+        with patch.object(offer_sheet, "parse_offer_workbook", return_value=dict(self.sheet, offers=[row])):
+            wizard, _line = self.preview()
+            self.assertFalse(wizard.include_brands)
+            wizard.action_apply()
+        self.assertTrue(self.env["loyalty.program"].search([("ab_sheet_key", "=", row["key"])]))
+        self.assertFalse(product.ab_storefront_brand_id)
 
     def test_discount_list_entry_and_company_boundary(self):
         sheet_view = self.env.ref("ab_ecommerce_storefront.discount_program_sheet_list")

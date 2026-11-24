@@ -68,7 +68,7 @@ class StorefrontOffer(models.Model):
         string="Percentage Rate", default="10", tracking=True,
     )
     second_discount_rate = fields.Selection(
-        [(str(rate), f"{rate}%") for rate in (20, 25, 30, 35, 40, 45, 50, 60)],
+        [(str(rate), f"{rate}%") for rate in (20, 25, 30, 35, 40, 45, 50, 60, 70, 100)],
         string="Second Item Discount Rate", default="50", tracking=True,
     )
     amount_discount = fields.Selection(

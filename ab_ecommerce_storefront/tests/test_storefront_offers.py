@@ -359,6 +359,12 @@ class TestStorefrontOffers(TransactionCase):
         self.assertEqual(order.amount_total, 150)
         self.assertEqual(rewards.price_total, -50)
 
+    def test_second_item_supports_seventy_percent_discount(self):
+        offer = self.offer(offer_type="second_half", second_discount_rate="70", once_per_customer=False)
+        order = self.cart()
+        self.assertEqual(offer.generated_program_ids.reward_ids.discount, 70)
+        self.assertEqual(order.amount_total, 130)
+
     def test_second_half_customer_choice_requires_an_eligible_item(self):
         second = self.env["product.product"].create({
             "name": "Second offer product", "type": "consu", "list_price": 80,
@@ -440,6 +446,27 @@ class TestStorefrontOffers(TransactionCase):
         mixed._update_programs_and_rewards()
         mixed._auto_apply_rewards()
         self.assertEqual(mixed.amount_total, 210)
+
+    def test_mix_discount_supports_free_item_from_collection(self):
+        second = self.env["product.product"].create({
+            "name": "Free collection product", "type": "consu", "list_price": 80,
+            "taxes_id": [Command.clear()], "company_id": self.company.id,
+        })
+        offer = self.offer(
+            offer_type="mix_discount", buy_qty=1, gift_qty=1,
+            second_discount_rate="100", second_product_ids=[Command.set(second.ids)],
+            once_per_customer=False,
+        )
+        order = self.env["sale.order"].create({
+            "partner_id": self.partner.id, "website_id": self.website.id,
+            "company_id": self.company.id, "pricelist_id": self.pricelist.id,
+            "order_line": [Command.create({"product_id": product.id, "product_uom_qty": 1})
+                           for product in self.product | second],
+        })
+        order._update_programs_and_rewards()
+        order._auto_apply_rewards()
+        self.assertEqual(offer.generated_program_ids.reward_ids.discount, 100)
+        self.assertEqual(order.amount_total, 100)
 
     def test_mix_discount_repeats_by_complete_collection_cycles(self):
         collection_products = self.env["product.product"].create([
