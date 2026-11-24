@@ -62,6 +62,8 @@ class SalariesMoves(models.Model):
     def _onchange_account_header(self):
         had_lines = bool(self.line_ids)
         result = super()._onchange_account_header()
+        if not self.env.user.has_group('ab_accounting.group_ab_accounting_manager'):
+            return result
         # The general journal form inserts an empty account line. Salary
         # generation supplies its own balanced lines; discard only the new
         # onchange placeholder, never an existing or user-entered line.
