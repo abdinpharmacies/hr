@@ -77,4 +77,12 @@ The embedded message box places attachments at the start and emoji, audio record
 
 Branch Locations offers Import Branch Locations beside New for CRM managers and system administrators, without selecting records. The popup retains CSV preview, duplicate and ambiguous-store validation and inactive-profile review; native import/export remains available. The separate import menu and Legacy Order Archive menu are inactive. Historical orders, lines, audits, actions, views and security remain intact, with archive views readable in XML developer mode.
 
-Contact Inbox grouping and reviewed group linking are documented in [Contact grouping across channels](../docs/contact-channel-grouping.md).
+This release supersedes the historical joining workflow in [Contact grouping across channels](../docs/contact-channel-grouping.md).
+
+## Independent chats (19.0.1.42.0)
+
+Every website order and Support session has its own inbox entry, history, draft,
+attachments and read position. Notifications open the exact notified target and
+message. Customer associations remain evidence; they do not combine chats.
+Manual chat linking and website reconciliation are disabled. The general Inbox
+Refresh remains available. See `RELEASE.md` for activation and rollback.

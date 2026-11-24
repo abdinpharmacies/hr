@@ -1,0 +1,16 @@
+<templates xml:space="preserve">
+<t t-inherit="ab_crm_sales_workspace.Workspace" t-inherit-mode="extension">
+    <xpath expr="//div[@t-as='group']" position="attributes"><attribute name="t-if">group.provider !== 'website' || !state.detail.website_targets</attribute></xpath>
+    <xpath expr="//nav[hasclass('ab_channel_navigation')]" position="inside">
+        <div t-if="state.detail.website_targets" t-att-data-target-uuid="state.detail.website_target.uuid" class="ab_website_chat_controls">
+            <span class="ab_website_chat_indicator">
+                <img class="ab_website_header_icon" t-att-src="state.detail.website_target.kind === 'livechat' ? '/ab_crm_website/static/src/img/abdin_bot.jpg' : '/ab_crm_website/static/src/img/callcenter_support.png'" alt=""/>
+                <span t-if="state.detail.website_target.kind === 'livechat'">Support</span><span t-else="">Orders</span>
+            </span>
+        </div>
+    </xpath>
+    <xpath expr="//article[@t-att-data-message-id]/p" position="before"><small t-if="message.website_order_reference" class="ab_order_message_reference" dir="auto" t-esc="message.website_order_reference"/></xpath>
+    <xpath expr="//article[@t-att-data-message-id]" position="before"><div t-if="message.item_type === 'information'" class="ab_day_separator ab_timeline_information" role="note" t-esc="message.body"/></xpath>
+    <xpath expr="//article[@t-att-data-message-id]" position="attributes"><attribute name="t-if">message.item_type !== 'information'</attribute></xpath>
+</t>
+</templates>

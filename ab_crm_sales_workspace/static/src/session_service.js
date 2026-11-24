@@ -7,7 +7,7 @@ import {_t} from "@web/core/l10n/translation";
 export function groupNotificationItems(items) {
     const groups = new Map();
     for (const item of items) {
-        const key = item.customer_group_key || item.alert_key;
+        const key = item.alert_key;
         if (!groups.has(key)) groups.set(key, {key, name: item.name, conversations: [], count: 0});
         const group = groups.get(key);
         group.conversations.push(item);
@@ -25,6 +25,7 @@ registry.category("services").add("ab_chatter_session", {
         let generation = 0;
         let repoll = false;
         const alerts = new Map();
+        const dismissed = new Map();
         const channel = typeof BroadcastChannel === "undefined" ? null : new BroadcastChannel(`ab_chatter_alerts_${user.userId}`);
         try { session = JSON.parse(sessionStorage.getItem(key) || "null"); } catch { sessionStorage.removeItem(key); }
         const hide = alertKey => {
@@ -41,6 +42,7 @@ registry.category("services").add("ab_chatter_session", {
             focusHandler: null,
             set(value) {
                 generation++;
+                dismissed.clear();
                 for (const alertKey of alerts.keys()) hide(alertKey);
                 session = value; save(); env.bus.trigger("AB_CHATTER_SESSION", session);
                 service.poll();
@@ -54,15 +56,8 @@ registry.category("services").add("ab_chatter_session", {
             },
             async acknowledge(item, token) {
                 if (session?.token !== token) return;
-                await feedback.call(orm, "ab_crm_chatter_api", "acknowledge_alert", [], {token, conversation_id: item.conversation_id, message_ids: [...item.message_ids]});
+                await feedback.call(orm, "ab_crm_chatter_api", "acknowledge_alert", [], {token, conversation_id: item.conversation_id, message_ids: [...item.message_ids], target: item.website_target || null});
                 if (session?.token === token) service.unreadChanged();
-            },
-            async dismiss(items, token) {
-                try {
-                    for (const item of items) await service.acknowledge(item, token);
-                } catch (error) {
-                    feedback.report(error);
-                }
             },
             async open(item, token) {
                 if (session?.token !== token) return;
@@ -88,7 +83,14 @@ registry.category("services").add("ab_chatter_session", {
                     const pending = new Map();
                     while (more && session?.token === token && version === generation) {
                         const result = await feedback.call(orm, "ab_crm_chatter_api", "notifications", [], {token, after_id: cursor});
-                        for (const item of result.items) pending.set(item.alert_key, item);
+                        for (const item of result.items) {
+                            const previous = pending.get(item.alert_key);
+                            if (!previous) { pending.set(item.alert_key, item); continue; }
+                            const messageIds = [...new Set([...previous.message_ids, ...item.message_ids])];
+                            const latest = item.latest_message_id > previous.latest_message_id ? item : previous;
+                            pending.set(item.alert_key, {...latest, message_ids: messageIds, count: messageIds.length,
+                                unread_count: previous.unread_count + item.unread_count});
+                        }
                         cursor = result.cursor;
                         more = result.has_more;
                     }
@@ -99,7 +101,7 @@ registry.category("services").add("ab_chatter_session", {
                     for (const group of groups) {
                         const alertKey = group.key;
                         const signature = JSON.stringify(group);
-                        if (alerts.get(alertKey)?.signature === signature) continue;
+                        if (alerts.get(alertKey)?.signature === signature || dismissed.get(alertKey) === signature) continue;
                         hide(alertKey);
                         const alert = {silent: false, signature};
                         const conversations = group.conversations.map(item => ({
@@ -116,7 +118,7 @@ registry.category("services").add("ab_chatter_session", {
                             onClose: () => {
                                 if (alert.silent) return;
                                 if (alerts.get(alertKey) === alert) alerts.delete(alertKey);
-                                return service.dismiss(conversations, token);
+                                dismissed.set(alertKey, signature);
                             },
                         });
                         alerts.set(alertKey, alert);

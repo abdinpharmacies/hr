@@ -4063,3 +4063,18 @@ msgstr "جهة الاتصال الحالية"
 #: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
 msgid "Identity contact"
 msgstr "جهة اتصال الهوية"
+
+#. module: ab_crm_sales_workspace
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/models/customer_streams.py:0
+msgid "Chat linking is disabled."
+msgstr "ربط المحادثات معطّل."
+
+#. modules: ab_crm_sales_workspace, ab_crm_website
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_crm_sales_workspace/static/src/chat_controls.xml:0
+#: code:addons/ab_crm_website/models/targets.py:0
+#: model:ir.model.fields.selection,name:ab_crm_website.selection__ab_crm_website_target_preference__kind__livechat
+msgid "Support"
+msgstr "الدعم"

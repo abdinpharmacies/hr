@@ -1,0 +1,14 @@
+.ab_crm_sales_workspace {
+    .ab_chat_header:has(.ab_website_chat_controls) {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        .ab_contact_heading { grid-column: 1; grid-row: 1; }
+        .ab_channel_navigation { grid-column: 2; grid-row: 1; justify-self: center; overflow: visible; }
+        .ab_search_toggle { grid-column: 3; grid-row: 1; }
+    }
+    .ab_website_chat_controls {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        .ab_website_chat_indicator { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 0; box-shadow: none; }
+        .ab_website_header_icon { width: 28px; height: 28px; object-fit: contain; }
+    }
+    .ab_order_message_reference { display: block; font-weight: 600; margin-block-end: 4px; }
+}

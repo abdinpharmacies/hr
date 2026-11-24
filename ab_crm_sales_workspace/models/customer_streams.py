@@ -72,18 +72,7 @@ class Conversation(models.Model):
         return super().write(values)
 
     def action_identify(self, phone=False, customer_id=False, confirmed=False):
-        if self.channel_id.provider == 'whatsapp':
-            raise AccessError(_('Use reviewed customer linking for this identity.'))
-        saved = self._matching_saved_contacts(normalized_phone(phone, self.company_id.country_id.code) if phone else self._verified_sender_phone())
-        if saved and not self.customer_id and not customer_id and (not phone or normalized_phone(phone, self.company_id.country_id.code) == self._verified_sender_phone()):
-            self._auto_link_matching_customer()
-            if self.customer_id == saved:
-                self._owned()
-                return {'customer_id': saved.id, 'phone': self._verified_sender_phone(), 'candidates': []}
-        if saved and not self.customer_id:
-            self._owned()
-            raise UserError(_('Review the matching saved contact before linking this identity.'))
-        return super().action_identify(phone, customer_id, confirmed)
+        raise AccessError(_('Chat linking is disabled.'))
 
     def _customer_link_scope(self, customer_id):
         self.ensure_one()
@@ -171,35 +160,10 @@ class Conversation(models.Model):
             fingerprint=hashlib.sha256(json.dumps(snapshot, sort_keys=True).encode()).hexdigest())
 
     def action_preview_customer_link(self, customer_id):
-        return self._customer_group_link_preview(customer_id)[4]
+        raise AccessError(_('Chat linking is disabled.'))
 
     def action_confirm_customer_link(self, customer_id, fingerprint, reason='', resolve_conflict=False, customer_confirmed=False):
-        with self.env.cr.savepoint():
-            customer, account, session = self._customer_link_scope(customer_id)
-            _lock_customer_records(self.branch_id)
-            self.branch_id.sudo().write({})
-            customer, streams, identities, session, preview = self._customer_group_link_preview(customer_id)
-            _lock_customer_records(streams.messaging_account_id.sorted('id'))
-            _lock_customer_records(customer)
-            _lock_customer_records(streams)
-            _lock_customer_records(identities.sorted('id'))
-            streams.invalidate_recordset()
-            identities.invalidate_recordset()
-            customer.invalidate_recordset()
-            streams.messaging_account_id.invalidate_recordset()
-            customer, streams, identities, session, preview = self._customer_group_link_preview(customer_id)
-            if preview['fingerprint'] != fingerprint:
-                raise UserError(_('The customer link changed. Preview it again.'))
-            if preview['conflict'] and resolve_conflict is not True:
-                raise UserError(_('Explicitly resolve the conflicting customer link.'))
-            for stream in streams:
-                account = stream.messaging_account_id
-                identity, state = stream._customer_link_preview(customer, account)
-                if stream.customer_id == customer and identity and identity.active and identity.customer_id == customer:
-                    continue
-                stream._apply_customer_link(customer, identity, session, state, reason, customer_confirmed)
-            return {'customer_id': customer.id, 'conversation_id': self.id,
-                    'conversation_ids': streams.ids}
+        raise AccessError(_('Chat linking is disabled.'))
 
     def _apply_customer_link(self, customer, identity, session, preview, reason, customer_confirmed):
         automatic = preview['automatic_match'] and isinstance(reason, str) and not reason.strip()
@@ -259,11 +223,10 @@ class Conversation(models.Model):
         return customer, streams, identities, session, preview
 
     def action_preview_customer_unlink(self, customer_id):
-        return self._customer_unlink_data(customer_id)[4]
+        raise AccessError(_('Chat linking is disabled.'))
 
     def action_unlink_customer(self, customer_id, fingerprint):
-        with self.env.cr.savepoint():
-            return self._unlink_customer(customer_id, fingerprint)
+        raise AccessError(_('Chat linking is disabled.'))
 
     def _unlink_customer(self, customer_id, fingerprint):
         customer, streams, identities, session, preview = self._customer_unlink_data(customer_id)
@@ -302,31 +265,7 @@ class Conversation(models.Model):
         return {'customer_id': customer.id, 'conversation_ids': streams.ids}
 
     def _auto_link_matching_customer(self):
-        self.ensure_one()
-        self._staff_action()
-        self._authorize()
-        self._workspace_scope()
-        if (self.customer_id or not self.active or not self.channel_id.active
-                or not self.messaging_account_id.active
-                or self.channel_id.provider not in ('telegram', 'whatsapp')):
-            return False
-        phone = self._verified_sender_phone()
-        matches = self._matching_saved_contacts(phone)
-        if len(matches) != 1:
-            return False
-        customer, account, session = self._customer_link_scope(matches.id)
-        identities = self.env['ab_crm_identity'].with_context(active_test=False).search([
-            ('channel_id', '=', self.channel_id.id), ('external_key', '=', self.external_key),
-            ('branch_id', '=', self.branch_id.id), ('company_id', '=', self.company_id.id),
-        ])
-        identities._authorize('read')
-        if identities and (not identities.active or identities.customer_id != customer):
-            return False
-        try:
-            with self.env.cr.savepoint():
-                return self._auto_link_customer_match(matches)
-        except _CustomerLinkBusy:
-            return False
+        return False
 
     def _auto_link_customer_match(self, matches):
         _lock_customer_records(self.branch_id)
@@ -353,18 +292,7 @@ class Conversation(models.Model):
         return self.action_confirm_customer_link(customer.id, preview['fingerprint'])
 
     def _auto_link_workspace_conversations(self):
-        conversations = self.search(self._workspace_inbox_domain('') + [
-            ('customer_id', '=', False), ('channel_id.active', '=', True),
-            ('channel_id.provider', 'in', ('telegram', 'whatsapp')),
-        ], order='branch_id, id')
-        for conversation in conversations:
-            try:
-                conversation._workspace_scope()
-                conversation._authorize()
-            except (AccessError, UserError):
-                continue
-            if conversation.messaging_account_id:
-                conversation._auto_link_matching_customer()
+        return False
 
     def _verified_sender_phone(self):
         if self.channel_id.provider == 'whatsapp':
@@ -389,32 +317,28 @@ class Conversation(models.Model):
         return contacts.filtered(lambda customer: phone in customer._active_phone_numbers())
 
     def action_customer_link_candidates(self):
+        raise AccessError(_('Chat linking is disabled.'))
+
+    def _workspace_activity(self):
         self.ensure_one()
-        self._staff_action()
-        self._authorize('read')
-        self._workspace_scope()
-        self._auto_link_matching_customer()
-        phone = self._verified_sender_phone()
-        return {'phone': phone, 'display_phone': display_phone(phone, self.company_id.country_id.code), 'contacts': [customer._directory_data()
-                for customer in self._matching_saved_contacts(phone)]}
+        messages = self.message_ids.filtered(lambda message: not message.historical and message.direction == 'in')
+        return max(((fields.Datetime.to_string(message.create_date), message.id)
+                    for message in messages), default=('1970-01-01 00:00:00', 0))
 
     @api.model
-    def workspace_customer_inbox(self, query='', offset=0, limit=50):
+    def workspace_customer_inbox(self, query='', offset=0, limit=50, cursor=None):
         session = self._workspace_actor()
         if type(offset) is not int or offset < 0 or type(limit) is not int or not 1 <= limit <= 50:
             raise ValidationError(_('Invalid conversation search.'))
-        self._auto_link_workspace_conversations()
-        domain = self._workspace_inbox_domain(query) + [('channel_id.active', '=', True)]
+        if cursor is not None and (not isinstance(cursor, list) or len(cursor) != 3
+                or not isinstance(cursor[0], str) or type(cursor[1]) is not int or not isinstance(cursor[2], str)):
+            raise ValidationError(_('Invalid conversation search.'))
         accounts = self.env['ab_crm_messaging_account'].search([
             ('company_id', '=', session.company_id.id),
             ('branch_id', 'in', self.env['ab_crm_chatter_api']._directory_branches(session).ids),
         ])
-        domain.append(('channel_id', 'in', accounts.channel_id.ids))
-        groups = self._read_group(domain, ['customer_group_key'], ['id:max'],
-                                  order='id:max DESC', offset=offset, limit=limit + 1)
-        keys = [key for key, newest in groups[:limit]]
-        conversations = self.search(self._workspace_inbox_domain('') + [('customer_group_key', 'in', keys),
-                                    ('channel_id', 'in', accounts.channel_id.ids), ('channel_id.active', '=', True)])
+        conversations = self.search(self._workspace_inbox_domain(query) + [
+            ('channel_id.active', '=', True), ('channel_id', 'in', accounts.channel_id.ids)])
         authorized = self.browse()
         for conversation in conversations:
             try:
@@ -422,26 +346,31 @@ class Conversation(models.Model):
             except (AccessError, UserError):
                 continue
             authorized |= conversation
-        rows = {row['id']: row for row in authorized._workspace_inbox_rows(session)}
         items = []
-        for key in keys:
-            streams = authorized.filtered(lambda r: r.customer_group_key == key)
-            if not streams:
-                continue
-            latest = streams.sorted(lambda r: (max(r.message_ids.mapped('timeline_at'), default=r.create_date), r.id))[-1]
-            items.append(dict(rows[latest.id], group_key=key,
-                streams=[dict(rows[r.id], account_id=r.messaging_account_id.id,
-                              label=r.messaging_account_id.name) for r in streams],
-                channels=sorted(set(streams.channel_id.mapped('provider'))),
-                unread=sum(rows[r.id]['unread'] for r in streams)))
-        return {'items': items, 'has_more': len(groups) > limit, 'next_offset': offset + limit}
+        for row in authorized._workspace_inbox_rows(session):
+            conversation = self.browse(row['id'])
+            for item in conversation._workspace_chat_rows(row):
+                if cursor is None or tuple(item['activity_cursor']) < tuple(cursor):
+                    items.append(item)
+        items.sort(key=lambda item: tuple(item['activity_cursor']), reverse=True)
+        page = items[offset:offset + limit]
+        return {'items': page, 'has_more': len(items) > offset + limit,
+                'next_offset': offset + limit,
+                'next_cursor': page[-1]['activity_cursor'] if page else None}
+
+    def _workspace_chat_rows(self, row):
+        self.ensure_one()
+        key = f'conversation:{self.id}'
+        return [dict(row, group_key=key, activity_cursor=[*self._workspace_activity(), key],
+                     streams=[dict(row, account_id=self.messaging_account_id.id,
+                                   label=self.messaging_account_id.name)])]
 
     def workspace_detail(self, *args, **kwargs):
         self._auto_link_matching_customer()
         result = super().workspace_detail(*args, **kwargs)
         result['display_phone'] = display_phone(result['phone'] or self._verified_sender_phone(), self.company_id.country_id.code)
-        result['link_suggestions'] = [contact._directory_data() for contact in
-            self._matching_saved_contacts(self._verified_sender_phone())] if not self.customer_id else []
+        result['link_suggestions'] = []
+        result['link_review'] = False
         return result
 
     def _workspace_orders(self, streams, stores):

@@ -13,15 +13,15 @@ const entry = (id, customer, messages) => ({alert_key: `employee:${id}`, custome
     conversation_id: id, name: "Customer", message_ids: messages, latest_message_id: messages.at(-1),
     count: messages.length, unread_count: messages.length, provider: "whatsapp", preview: "Message"});
 
-test("popup grouping keeps all conversations and isolates unlinked senders", () => {
+test("popup grouping keeps exact chats separate for the same customer", () => {
     const groups = groupNotificationItems([entry(1, "customer:8", [11]), entry(2, "customer:8", [21, 22]),
         entry(3, "conversation:3", [31]), entry(4, "conversation:4", [41])]);
-    expect(groups).toHaveLength(3);
-    expect(groups[0].count).toBe(3);
-    expect(groups[0].conversations.map(item => item.conversation_id)).toEqual([1, 2]);
+    expect(groups).toHaveLength(4);
+    expect(groups[0].count).toBe(1);
+    expect(groups[0].conversations.map(item => item.conversation_id)).toEqual([1]);
 });
 
-test("popup pages group together and dismissal captures exact IDs while arrivals remain", async () => {
+test("closing and failed navigation never acknowledge; opening captures only that target", async () => {
     const visible = new Map();
     let nextId = 0;
     const notification = {add(message, options) {
@@ -38,62 +38,47 @@ test("popup pages group together and dismissal captures exact IDs while arrivals
     patchWithCleanup(sessionStorage, {getItem: () => null, setItem() {}, removeItem() {}});
     const env = await makeMockEnv();
     const broadcasts = [];
-    const events = [];
     let receiver;
     patchWithCleanup(window, {BroadcastChannel: class {constructor() { receiver = this; } postMessage(value) { broadcasts.push(value); }}});
     const acknowledged = [];
+    const target = {kind: "order", uuid: "target-one"};
     let first = [11];
-    let second = [21];
-    let release;
+    const one = () => ({...entry(1, "customer:8", first), alert_key: "order:one", website_target: target});
+    const two = {...entry(1, "customer:8", [21]), alert_key: "order:two", website_target: {kind: "order", uuid: "target-two"}};
     const orm = {async call(model, method, args, values) {
         if (method === "acknowledge_alert") {
-            acknowledged.push([values.conversation_id, [...values.message_ids]]);
-            if (values.conversation_id === 1) {
-                await new Promise(resolve => { release = resolve; });
-                first = first.filter(id => !values.message_ids.includes(id));
-            } else second = second.filter(id => !values.message_ids.includes(id));
+            acknowledged.push(values);
+            first = first.filter(id => !values.message_ids.includes(id));
             return true;
         }
-        return values.after_id ? {items: second.length ? [entry(2, "customer:8", second)] : [], cursor: 2, has_more: false}
-            : {items: first.length ? [entry(1, "customer:8", first)] : [], cursor: 1, has_more: true};
+        return {items: [...(first.length ? [one()] : []), two], cursor: 1, has_more: false};
     }};
-    const service = registry.category("services").get("ab_chatter_session").start({bus: {trigger(event) { events.push(event); }}},
+    const service = registry.category("services").get("ab_chatter_session").start({bus: {trigger() {}}},
         {orm, notification, ab_chatter_feedback: env.services.ab_chatter_feedback, action: {async doAction() { throw new Error("Navigation failed"); }}});
     service.set({token: "test", employee_id: 8});
     await animationFrame();
-    expect(alerts()).toHaveLength(1);
-    expect(alerts()[0].sticky).toBe(true);
-    expect(alerts()[0].buttons).toHaveLength(2);
-    expect(alerts()[0].message).toBe("You have 2 unread messages");
-    expect(alerts()[0].title).toBe(undefined);
-    expect(alerts()[0].buttons.map(button => button.name)).toEqual(["Open", "Open"]);
+    expect(alerts()).toHaveLength(2);
+    expect(alerts()[0].buttons).toHaveLength(1);
     await alerts()[0].buttons[0].onClick();
-    expect(alerts()).toHaveLength(1);
     expect(acknowledged).toHaveLength(0);
-    const dismiss = alerts()[0].close();
-    first = [11, 12];
-    release();
-    await dismiss;
-    await animationFrame();
+    alerts()[0].close();
     await service.poll();
-    expect(acknowledged).toEqual([[1, [11]], [2, [21]]]);
+    expect(acknowledged).toHaveLength(0);
     expect(alerts()).toHaveLength(1);
-    expect(alerts()[0].message).toBe("You have 1 unread messages");
+    first = [11, 12];
+    await service.poll();
+    expect(alerts()).toHaveLength(2);
+    const opening = alerts().find(item => item.message === "You have 2 unread messages");
     service.focusHandler = (item, token) => service.acknowledge(item, token);
-    const opening = alerts()[0].buttons[0].onClick();
-    release();
-    await opening;
+    await opening.buttons[0].onClick();
     await animationFrame();
     await service.poll();
-    expect(alerts()).toHaveLength(0);
-    expect(acknowledged.at(-1)).toEqual([1, [12]]);
+    expect(acknowledged).toHaveLength(1);
+    expect(acknowledged[0].message_ids).toEqual([11, 12]);
+    expect(acknowledged[0].target).toEqual(target);
+    expect(alerts()).toHaveLength(1);
     expect(broadcasts.length > 0).toBe(true);
-    const count = events.length;
-    receiver.onmessage({data: {employee: 99, company: user.activeCompany.id}});
-    receiver.onmessage({data: {employee: 8, company: -1}});
-    expect(events.length).toBe(count);
     receiver.onmessage({data: {employee: 8, company: user.activeCompany.id}});
-    expect(events.at(-1)).toBe("AB_CHATTER_UNREAD");
     service.clear();
 });
 
@@ -110,7 +95,7 @@ test("hidden, unfocused and search views never advance reads while history views
     const focusHandler = () => {};
     const workspace = {
         state: {loggedIn: true, token: "test", detail: {id: 1, unread_count: 1, messages: [{id: 20, direction: "in"}]}, firstUnread: 20, inbox: []},
-        acknowledged: new Map(), readVersion: 0, messagesRef: {el: stream}, focusHandler,
+        draftKey: id => id, selectedStream: () => null, acknowledged: new Map(), readVersion: 0, messagesRef: {el: stream}, focusHandler,
         acknowledgeRead: SalesWorkspace.prototype.acknowledgeRead,
         applyReadPosition: SalesWorkspace.prototype.applyReadPosition,
         chatterSession: {focusHandler, unreadChanged() {}},

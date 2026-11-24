@@ -46,6 +46,15 @@ class ChatterAPI(models.AbstractModel):
     def _notification_message_domain(self):
         return []
 
+    def _notification_conversation(self, conversation):
+        return conversation
+
+    def _alert_conversations(self, conversation, target):
+        return conversation
+
+    def _notification_chat(self, message):
+        return str(message.conversation_id.id), None
+
     @api.model
     def notifications(self, token, after_id=0):
         session = self._session(token)
@@ -63,6 +72,9 @@ class ChatterAPI(models.AbstractModel):
             limit=51,
         )
         page = conversations[:50]
+        alert_conversations = page.browse()
+        for conversation in page:
+            alert_conversations |= self._notification_conversation(conversation)
         positions = (
             self.env['ab_crm_workspace_alert']
             .sudo()
@@ -71,7 +83,7 @@ class ChatterAPI(models.AbstractModel):
                     ('user_id', '=', self.env.uid),
                     ('employee_id', '=', session.employee_id.id),
                     ('company_id', '=', session.company_id.id),
-                    ('conversation_id', 'in', page.ids),
+                    ('conversation_id', 'in', alert_conversations.ids),
                 ]
             )
         )
@@ -86,24 +98,26 @@ class ChatterAPI(models.AbstractModel):
                 continue
             conversation.with_context(ab_chatter_session_token=token)._auto_link_matching_customer()
             authorized |= conversation
-        messages = authorized._workspace_unread_messages(session).filtered_domain(self._notification_message_domain())
-        unread_counts = {conversation.id: len(messages.filtered(lambda message: message.conversation_id == conversation)) for conversation in authorized}
+        messages = authorized.with_context(ab_chatter_session_token=token)._workspace_unread_messages(session).filtered_domain(self._notification_message_domain())
         groups = {}
         for message in messages:
-            cid = message.conversation_id.id
+            cid = self._notification_conversation(message.conversation_id).id
             if message.id not in acknowledged.get(cid, set()):
-                groups.setdefault(cid, []).append(message)
+                key, target = self._notification_chat(message)
+                groups.setdefault((cid, key), (target, []))[1].append(message)
         return {
             'cursor': page[-1:].id or after_id,
             'has_more': len(conversations) > 50,
             'items': [
                 {
-                    'alert_key': f'{self.env.uid}:{session.employee_id.id}:{session.company_id.id}:{cid}',
+                    'alert_key': f'{self.env.uid}:{session.employee_id.id}:{session.company_id.id}:{key}',
                     'conversation_id': cid,
+                    'website_target': target,
                     'customer_group_key': pending[-1].conversation_id.customer_group_key,
                     'display_destination': pending[-1].conversation_id._display_destination(),
                     'conversation_label': pending[-1].conversation_id.messaging_account_id.name,
-                    'unread_count': unread_counts[cid],
+                    'unread_count': len([message for message in messages
+                        if self._notification_chat(message)[0] == key]),
                     'latest_message_id': pending[-1].id,
                     'message_ids': [message.id for message in pending],
                     'count': len(pending),
@@ -111,12 +125,12 @@ class ChatterAPI(models.AbstractModel):
                     'name': pending[-1].conversation_id._customer_display_name(),
                     'provider': pending[-1].conversation_id.channel_id.provider,
                 }
-                for cid, pending in groups.items()
+                for (cid, key), (target, pending) in groups.items()
             ],
         }
 
     @api.model
-    def acknowledge_alert(self, token, conversation_id, message_ids):
+    def acknowledge_alert(self, token, conversation_id, message_ids, target=None):
         session = self._session(token)
         if (
             not isinstance(message_ids, list)
@@ -131,12 +145,16 @@ class ChatterAPI(models.AbstractModel):
             .exists()
         )
         conversation._workspace_scope()
-        messages = self.env['ab_crm_message'].browse(message_ids).exists()
+        allowed = self._alert_conversations(conversation, target)
+        messages = self.env['ab_crm_message'].with_context(ab_chatter_session_token=token).browse(message_ids).exists()
         messages.check_access('read')
         if len(messages) != len(set(message_ids)) or any(
-            message.conversation_id != conversation or message.direction != 'in'
+            message.conversation_id not in allowed or message.direction != 'in'
             for message in messages
         ):
+            raise AccessError(_('Invalid notification position.'))
+        chats = {self._notification_chat(message)[0] for message in messages}
+        if len(chats) != 1 or any(self._notification_chat(message)[1] != target for message in messages):
             raise AccessError(_('Invalid notification position.'))
         conversation.lock_for_update()
         conversation.write({})

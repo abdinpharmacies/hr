@@ -811,33 +811,14 @@ class Conversation(models.Model):
     def _workspace_streams(self):
         self.ensure_one()
         self._workspace_scope()
-        candidates = self.search([
-            ('customer_id', '=', self.customer_id.id),
-            ('company_id', '=', self.company_id.id),
-            ('branch_id', '=', self.branch_id.id),
-            ('channel_id.active', '=', True),
-        ]) if self.customer_id else self
-        result = self.browse()
-        for conversation in candidates:
-            if not conversation.messaging_account_id:
-                continue
-            try:
-                conversation._workspace_scope()
-            except (AccessError, UserError):
-                continue
-            result |= conversation
-        return result
+        return self
 
     def workspace_channel(self, conversation_id):
         self.ensure_one()
         self._workspace_scope()
         if type(conversation_id) is not int:
             raise AccessError(_('Select an authorized customer conversation.'))
-        destination = self.search([
-            ('id', '=', conversation_id), ('company_id', '=', self.company_id.id),
-            ('branch_id', '=', self.branch_id.id), ('channel_id.active', '=', True),
-            ('customer_id', '=', self.customer_id.id),
-        ], limit=1) if self.customer_id else self.filtered(lambda r: r.id == conversation_id)
+        destination = self.filtered(lambda record: record.id == conversation_id)
         if not destination or not destination.messaging_account_id:
             raise AccessError(_('Select an authorized customer conversation.'))
         return destination.workspace_detail()

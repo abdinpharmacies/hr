@@ -35,7 +35,7 @@ export class SalesWorkspace extends Component {
                 if (this.previewClose) this.previewClose();
                 this.stopRecording(true);
                 this.rememberDraft();
-                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, contactId: this.state.contact?.id}});
+                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, websiteTarget: this.state.detail?.website_target, contactId: this.state.contact?.id}});
                 this.state.token = "";
                 this.state.loggedIn = false;
                 this.state.inbox = [];
@@ -138,7 +138,7 @@ export class SalesWorkspace extends Component {
                 }
             }, 5000);
         });
-        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, contactId: this.state.contact?.id}}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); });
+        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, websiteTarget: this.state.detail?.website_target, contactId: this.state.contact?.id}}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); });
     }
 
     get emojis() { return ["😀", "😂", "😍", "👍", "🙏", "🔥", "✅", "🎉", "❤️", "😢", "😮", "👏"]; }
@@ -242,7 +242,7 @@ export class SalesWorkspace extends Component {
                 this.state.historyContext = false;
                 this.clearSearch();
                 this.state.searchOpen = false;
-                const draft = this.drafts.get(selected);
+                const draft = this.drafts.get(this.draftKey(selected));
                 this.state.reply = draft?.reply || "";
                 this.state.attachments = draft?.attachments || [];
                 this.state.replyTo = draft?.replyTo || null;
@@ -269,7 +269,7 @@ export class SalesWorkspace extends Component {
                         }
                     }
                     if (!this.destroyed && navigationVersion === this.navigationVersion && this.state.detail?.id === id) {
-                        this.state.detail = {...detail, has_older: current.has_older, messages: [...messages.values()].sort((a, b) => (a.timestamp || "").localeCompare(b.timestamp || "") || a.id - b.id)};
+                        this.state.detail = {...detail, has_older: current.has_older, messages: [...messages.values()].sort((a, b) => (a.timestamp || "").localeCompare(b.timestamp || "") || Number(a.item_type === "information") - Number(b.item_type === "information") || a.id - b.id)};
                         if (readVersion === (this.readVersion || 0)) this.state.firstUnread = detail.first_unread_message_id;
                         if (!detail.owned) this.stopRecording(true);
                         if (detail.candidates?.length) this.state.candidates = detail.candidates;
@@ -279,9 +279,10 @@ export class SalesWorkspace extends Component {
             }
         } finally { this.refreshing = false; }
     }
+    draftKey(id) { return id; }
     rememberDraft() {
         if (this.state.detail) {
-            this.drafts.set(this.state.detail.id, {reply: this.state.reply, attachments: [...this.state.attachments], replyTo: this.state.replyTo});
+            this.drafts.set(this.draftKey(this.state.detail.id), {reply: this.state.reply, attachments: [...this.state.attachments], replyTo: this.state.replyTo});
             this.lastChannelStreams ||= new Map();
             this.lastChannelStreams.set(this.state.detail.provider, this.state.detail.id);
         }
@@ -319,14 +320,14 @@ export class SalesWorkspace extends Component {
             this.state.attachmentMenu = false;
             this.state.emoji = false;
             this.state.phone = this.state.detail.phone;
-            this.state.reason = this.drafts.get(id)?.reason || "";
+            this.state.reason = this.drafts.get(this.draftKey(id))?.reason || "";
             this.state.candidates = this.state.detail.candidates || [];
-            this.state.attachments = this.drafts.get(id)?.attachments || [];
-            this.state.replyTo = this.drafts.get(id)?.replyTo || null;
+            this.state.attachments = this.drafts.get(this.draftKey(id))?.attachments || [];
+            this.state.replyTo = this.drafts.get(this.draftKey(id))?.replyTo || null;
             this.state.customer = "";
             this.state.confirmed = false;
             this.state.products = [];
-            this.state.reply = this.drafts.get(id)?.reply || "";
+            this.state.reply = this.drafts.get(this.draftKey(id))?.reply || "";
         } catch (error) {
             if (version === this.navigationVersion && token === this.state.token) this.state.error = feedbackError(this, error);
         } finally {
@@ -490,14 +491,15 @@ export class SalesWorkspace extends Component {
         if (!this.destroyed) this.state.contacts = result.contacts;
     }
     contacts(mode, initial = null, offerLink = false) {
+        if (mode === "link") return;
         const conversationId = this.state.detail?.id;
         const channel = this.state.detail?.provider;
         initial ||= ["edit", "delete"].includes(mode) ? this.state.detail?.contact || this.state.contact : null;
-        this.dialog.add(ChatterContacts, {mode, initial, channel, conversationId, branchId: this.state.detail?.branch_id, onLink: contact => this.contacts("link", contact), call: this.call.bind(this), token: this.state.token, onSaved: async contact => {
+        this.dialog.add(ChatterContacts, {mode, initial, channel, conversationId, branchId: this.state.detail?.branch_id, call: this.call.bind(this), token: this.state.token, onSaved: async contact => {
             await this.refreshContacts();
             if (conversationId && this.state.detail?.id === conversationId) {
                 await this.refresh();
-                if (mode === "add" && contact && offerLink) this.contacts("link", contact);
+
             } else if (contact) await this.openContact(contact);
             else { this.state.contact = null; await this.refresh(); }
         }});
@@ -544,7 +546,8 @@ export class SalesWorkspace extends Component {
         const version = ++this.navigationVersion;
         this.focusingAlert = version;
         try {
-            const detail = await this.call("ab_crm_conversation", "workspace_focus", [[item.conversation_id], item.latest_message_id]);
+            this.rememberDraft();
+            const detail = await this.call("ab_crm_conversation", "workspace_focus", [[item.conversation_id], item.latest_message_id], item.website_target ? {target: item.website_target} : {});
             if (this.destroyed || token !== this.state.token || version !== this.navigationVersion) return;
             if (this.state.busy) throw new Error(_t("Couldn’t open the conversation. Try again."));
             await this.select(detail.id, false, detail);
@@ -824,7 +827,7 @@ export class SalesWorkspace extends Component {
             this.resetScroll = true;
             this.state.historyContext = false;
             this.state.detail = detail;
-            const latest = [...detail.messages].reverse().find(message => message.direction === "in" && !message.historical);
+            const latest = [...detail.messages].reverse().find(message => message.direction === "in" && !message.historical && message.item_type !== "information");
             if (latest && await this.acknowledgeRead(latest.id)) this.chatterSession.unreadChanged();
         });
     }
@@ -876,7 +879,7 @@ export class SalesWorkspace extends Component {
     async acknowledgeRead(messageId) {
         const id = this.state.detail?.id;
         const token = this.state.token;
-        const key = `${token}:${id}`;
+        const key = `${token}:${this.draftKey(id)}`;
         if (!id || !messageId || messageId <= (this.acknowledged.get(key) || 0)) return false;
         if (!this.state.firstUnread && !this.state.detail?.unread_count) return false;
         if (this.state.firstUnread && messageId < this.state.firstUnread) {
@@ -886,16 +889,16 @@ export class SalesWorkspace extends Component {
         await this.call("ab_crm_conversation", "workspace_acknowledge", [[id], messageId]);
         this.acknowledged.set(key, messageId);
         this.readVersion = (this.readVersion || 0) + 1;
-        if (this.state.detail?.id === id && this.state.token === token) this.applyReadPosition(messageId);
+        if (`${this.state.token}:${this.draftKey(this.state.detail?.id)}` === key) this.applyReadPosition(messageId);
         return true;
     }
     applyReadPosition(messageId) {
         const detail = this.state.detail;
         if (!detail) return;
-        const remaining = (detail.messages || []).filter(message => message.id > messageId && message.direction === "in" && !message.historical);
+        const remaining = (detail.messages || []).filter(message => message.id > messageId && message.direction === "in" && !message.historical && message.item_type !== "information");
         this.state.firstUnread = remaining[0]?.id || false;
         detail.unread_count = remaining.length;
-        const item = this.state.inbox?.find(row => row.streams?.some(stream => stream.id === detail.id));
+        const item = this.state.inbox?.find(row => this.selectedStream(row));
         const stream = item?.streams?.find(row => row.id === detail.id);
         if (stream) {
             stream.unread = remaining.length;
