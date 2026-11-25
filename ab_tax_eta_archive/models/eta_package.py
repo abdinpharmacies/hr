@@ -12,6 +12,7 @@ from odoo import fields, models, _
 from odoo.exceptions import ValidationError
 from .eta_export import _detail_values
 from .eta_sync import EtaSearchLimit, EtaSearchNoResult
+from .eta_policy import TICK, api_inclusive_end, split_interval
 
 _logger = logging.getLogger(__name__)
 
@@ -73,6 +74,8 @@ class EtaPackage(models.Model):
     imported = fields.Boolean(readonly=True)
     full_details = fields.Boolean(readonly=True)
     notified_at = fields.Datetime(readonly=True)
+    state = fields.Selection(selection_add=[('ready', 'Ready'), ('importing', 'Importing')],
+                             ondelete={'ready': 'set default', 'importing': 'set default'})
 
 
 class EtaPackageSync(models.Model):
@@ -102,9 +105,11 @@ class EtaPackageSync(models.Model):
             page = items[part.import_offset:part.import_offset + 200]
             values_by_uuid = {}
             for item in page:
-                values = model._eta_values(receipt_package_summary(item), self.direction, self.config_id)
-                received = fields.Datetime.to_datetime(values['received_at'])
-                if not part.start_at <= received <= part.end_at:
+                summary = receipt_package_summary(item)
+                values = model._eta_values(summary, self.direction, self.config_id)
+                received = datetime.fromisoformat(summary['dateTimeReceived'].replace('Z', '+00:00'))
+                received = received.astimezone(timezone.utc).replace(tzinfo=None)
+                if not part.start_at <= received < part.end_at + TICK:
                     raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
                 if part.full_details:
                     try:
@@ -129,33 +134,32 @@ class EtaPackageSync(models.Model):
                 model.create(creates)
             offset = part.import_offset + len(page)
             part.write({'import_offset': offset, 'imported': offset >= len(items),
-                        'state': 'done', 'item_count': len(items)})
+                        'state': 'done' if offset >= len(items) else 'importing',
+                        'item_count': len(items)})
             self.item_count = sum(parts.mapped('import_offset'))
             _logger.info('ETA historical package import: connection=%s day=%s direction=%s '
                          'package=%s saved=%s total=%s', self.config_id.id, self.report_date,
                          self.direction, part.package_id, offset, len(items))
             return None
         # Packages use taxpayer ERP credentials, including for receipts.
-        api_url, headers = self.env['ab_tax_eta_archive_export']._detail_headers(self.config_id, 'invoice')
+        api_url, headers = self.env['ab_tax_eta_archive_export']._detail_headers(
+            self.config_id, 'invoice', session=self.env.context.get('eta_request_session'))
         if not part.package_id:
             query = {
                 'represntedTaxpayerTypeId': 'Issuer' if self.direction == 'sent' else 'Receiver',
                 'dateFrom': part.start_at.replace(tzinfo=timezone.utc).isoformat(timespec='milliseconds'),
-                'dateTo': (part.end_at.replace(tzinfo=timezone.utc) + timedelta(seconds=1)
-                           - timedelta(milliseconds=1)).isoformat(timespec='milliseconds'),
+                'dateTo': api_inclusive_end(part.end_at.replace(tzinfo=timezone.utc)),
             }
             try:
                 payload = self._request('POST', f'{api_url}/api/v1.0/receiptpackages/requests',
                                         headers=headers,
                                         json={'type': 'Full', 'format': 'JSON', 'queryParameters': query},
-                                        allow_no_result=True, allow_search_limit=True)
+                                        allow_no_result=True, allow_search_limit=True,
+                                        refresh_auth=lambda: self.config_id._eta_auth_headers(
+                                            'invoice', session=self.env.context.get('eta_request_session'),
+                                            force_refresh=True)[1])
             except EtaSearchLimit:
-                if part.end_at <= part.start_at:
-                    raise ValidationError(_('ETA package exceeds the limit within one second.'))
-                midpoint = part.start_at + timedelta(
-                    seconds=int((part.end_at - part.start_at).total_seconds()) // 2)
-                first = (part.start_at, midpoint)
-                second = (midpoint + timedelta(seconds=1), part.end_at)
+                first, second = split_interval(part.start_at, part.end_at)
                 packages.create([{'sync_id': self.id, 'start_at': left, 'end_at': right,
                                   'full_details': True} for left, right in (first, second)])
                 part.state = 'split'
@@ -170,9 +174,14 @@ class EtaPackageSync(models.Model):
                 _logger.info('ETA historical package requested: connection=%s package=%s day=%s',
                              self.config_id.id, part.package_id, self.report_date)
             return None
-        with requests.get(f'{api_url}/api/v1.0/receiptpackages/{quote(part.package_id, safe="")}',
-                          headers=headers, timeout=40, stream=True) as response:
+        with self._request(
+                'GET', f'{api_url}/api/v1.0/receiptpackages/{quote(part.package_id, safe="")}',
+                headers=headers, timeout=(5, 15), stream=True, raw_response=True,
+                refresh_auth=lambda: self.config_id._eta_auth_headers(
+                    'invoice', session=self.env.context.get('eta_request_session'), force_refresh=True)[1]
+        ) as response:
             if response.status_code == 204:
+                self.next_attempt_at = fields.Datetime.now() + timedelta(minutes=5)
                 _logger.info('ETA historical package preparing: package=%s', part.package_id)
                 return None
             response.raise_for_status()
@@ -186,5 +195,5 @@ class EtaPackageSync(models.Model):
         except (ValueError, zipfile.BadZipFile, UnicodeError, RuntimeError) as exc:
             raise ValidationError(_('ETA receipt package download is invalid or incomplete.')) from exc
         part.write({'payload_json': json.dumps(items, ensure_ascii=False),
-                    'item_count': len(items), 'state': 'done'})
+                    'item_count': len(items), 'state': 'ready'})
         return None

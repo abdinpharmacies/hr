@@ -15,7 +15,7 @@ def eta_datetime(value):
         raise ValidationError(_('ETA returned an invalid document timestamp.')) from exc
     if parsed.tzinfo is None:
         raise ValidationError(_('ETA returned a timestamp without a time zone.'))
-    return fields.Datetime.to_string(parsed.astimezone(timezone.utc).replace(tzinfo=None))
+    return parsed.astimezone(timezone.utc).replace(tzinfo=None)
 
 
 def eta_report_date(value):
@@ -92,6 +92,7 @@ class EtaInvoice(models.Model):
                 record.detail_json, record.total, record.currency)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA invoice UUID must be unique per connection and direction.')
+    _submission_window = models.Index('(config_id, direction, received_at)')
     _pending_details = models.Index(
         "(config_id, report_date DESC, issued_at DESC NULLS LAST, id DESC) "
         "WHERE detail_json IS NULL OR detail_json = ''")
@@ -166,6 +167,7 @@ class EtaReceipt(models.Model):
                 record.detail_json, record.total, record.currency)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA receipt UUID must be unique per connection and direction.')
+    _submission_window = models.Index('(config_id, direction, received_at)')
     _pending_details = models.Index(
         "(config_id, report_date DESC, issued_at DESC NULLS LAST, id DESC) "
         "WHERE detail_json IS NULL OR detail_json = ''")

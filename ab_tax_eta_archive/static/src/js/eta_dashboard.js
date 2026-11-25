@@ -47,6 +47,7 @@ class EtaDashboard extends Component {
             noneYet: _t("None yet"),
             done: _t("Done"),
             pending: _t("Pending"),
+            partial: _t("Partial"),
             notStarted: _t("Not started"),
             errors: _t("Errors"),
             files: _t("Daily Excel files"),

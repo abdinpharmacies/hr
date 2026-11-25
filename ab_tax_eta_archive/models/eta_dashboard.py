@@ -17,7 +17,7 @@ class EtaDashboard(models.Model):
         today = datetime.now(pytz.timezone('Africa/Cairo')).date()
         try:
             start = fields.Date.to_date(date_from) if date_from else today - timedelta(days=29)
-            end = fields.Date.to_date(date_to) if date_to else today
+            end = fields.Date.to_date(date_to) if date_to else today - timedelta(days=1)
         except (TypeError, ValueError) as exc:
             raise ValidationError(_('Choose a valid dashboard period of up to 366 days.')) from exc
         if not start or not end or end < start or (end - start).days > 365:
@@ -83,12 +83,12 @@ class EtaDashboard(models.Model):
 
         retrieval_domain = config_domain + [('report_date', '>=', start),
                                             ('report_date', '<=', end)]
-        retrievals = {'pending': 0, 'done': 0, 'error': 0}
+        retrievals = {'pending': 0, 'partial': 0, 'done': 0, 'error': 0}
         for state, count in self._read_group(retrieval_domain, ['state'], ['__count']):
             retrievals[state] = count
 
         connections = self.env['ab_tax_eta_archive_config'].search([], order='name')
-        scheduled_until = min(end, today)
+        scheduled_until = min(end, today - timedelta(days=1))
         not_started = 0
         for config in connections.filtered(lambda item: item.active and (not config_id or item.id == selected_id)):
             scheduled_from = max(start, config.start_date)
@@ -106,11 +106,11 @@ class EtaDashboard(models.Model):
         export_model = self.env['ab_tax_eta_archive_export']
         export_domain = issue_domain
         files = {
-            'generated': export_model.search_count(export_domain),
+            'generated': export_model.search_count(export_domain + [('file_data', '!=', False)]),
             'sent': export_model.search_count(export_domain + [('telegram_sent_at', '!=', False)]),
             'corrections': export_model.search_count(export_domain + [('revision', '>', 1)]),
         }
-        error_domain = retrieval_domain + [('state', '=', 'error')]
+        error_domain = retrieval_domain + [('error_message', '!=', False)]
         if not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED:
             error_domain += ['|', ('kind', '!=', 'receipt'),
                              ('report_date', '>=', today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS))]

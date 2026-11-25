@@ -1,4 +1,43 @@
-﻿Current changes before commit:
+Current changes before commit:
+
+- Persist page/window checkpoints, distinguish Partial/Error from completed days, retain diagnostics and remove forced completion progress.
+- Enforce Cairo midnight and a configurable safety delay (default 12 hours), including fractional-second boundaries and complete-day export readiness.
+- Align receipt retrieval with submission dates while preserving issue-date exports. Enable historical packages with contiguous adaptive windows, bounded polling and resumable imports. Preserve old checkpoint evidence and archived data.
+- Remove receipt hourly probes and invoice page-20 restarts; add submission-window indexes, connection reuse and bounded HTTP retries/token refresh.
+- Add retrieval queue/operation and shared-credential search advisory locks, retain detail/file/delivery locks, and use adjustable five-minute scheduling defaults.
+- Persist independent waiting/details/empty/error/generated file outcomes, retry missing categories, and retain sent revisions. Add the icon, Arabic translations/references in both catalogs and version 19.0.1.1.0.
+
+Files changed:
+
+- ab_tax_eta_archive/__manifest__.py
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/__init__.py
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_dashboard.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_package.py
+- ab_tax_eta_archive/models/eta_policy.py
+- ab_tax_eta_archive/models/eta_retrieval.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/static/description/icon.png
+- ab_tax_eta_archive/static/src/js/eta_dashboard.js
+- ab_tax_eta_archive/static/src/xml/eta_dashboard.xml
+- ab_tax_eta_archive/views/eta_views.xml
+
+Validation (2026-11-25):
+
+- Clean installation and targeted upgrade passed in isolated Odoo 19 database eta_review_20261125 with scheduled workers disabled. Upgrade snapshots preserved documents, raw/detail content, checkpoints, errors, a sent file and a custom interval.
+- Passed 27 standalone integration tests outside the production addon, covering completion, overlaps, partial failures, long ranges, cutoff/DST boundaries, packages, late submissions, retries, file regeneration and runtime Arabic.
+- A real Odoo cron callback with mocked HTTP committed page one, retained it after page-two failure and resumed successfully. Sparse receipt-day requests decreased from 24 hourly probes in the prior source to one measured request.
+- No live ETA or Telegram requests were made. Preproduction must verify account limits, package date basis/precision acceptance, worker termination and production throughput. GNU msgfmt is unavailable; Babel and actual Odoo translation runtime checks passed.
+
+f0e12dacfc7ef828363c325527a6efe574c86c3a - yahyazakaria22 - 2026-11-16
+fix: decouple ETA file generation and improve retrieval performance
+
 
 - Separate local Excel generation from Telegram uploads with an independent, resumable generation job. Generate every ready archive date regardless of the Telegram delivery start date or four-day send wait.
 - Keep delivery date limits on sending only; validate that saved files still match their complete source rows before sending, retain explicit manual requests and preserve sent revisions when source data changes.

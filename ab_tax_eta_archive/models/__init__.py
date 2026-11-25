@@ -4,3 +4,4 @@ from . import eta_sync
 from . import eta_export
 from . import eta_package
 from . import eta_dashboard
+from . import eta_retrieval

@@ -132,6 +132,7 @@
                             <div class="ab_eta_health_row ab_eta_health_row--done"><span t-esc="labels.done"/><strong t-esc="formatCount(state.data.retrievals.done)"/></div>
                             <div class="ab_eta_health_row ab_eta_health_row--pending"><span t-esc="labels.pending"/><strong t-esc="formatCount(state.data.retrievals.pending)"/></div>
                             <div class="ab_eta_health_row ab_eta_health_row--not-started"><span t-esc="labels.notStarted"/><strong t-esc="formatCount(state.data.retrievals.not_started)"/></div>
+                            <div class="ab_eta_health_row ab_eta_health_row--pending"><span t-esc="labels.partial"/><strong t-esc="formatCount(state.data.retrievals.partial)"/></div>
                             <div class="ab_eta_health_row ab_eta_health_row--error"><span t-esc="labels.errors"/><strong t-esc="formatCount(state.data.retrievals.error)"/></div>
                             <div class="ab_eta_last_success"><span t-esc="labels.lastSuccess"/><strong t-esc="formatServerDateTime(state.data.last_success)"/></div>
                             <div class="ab_eta_panel__divider"/>

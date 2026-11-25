@@ -211,6 +211,25 @@ class EtaExport(models.Model):
     telegram_message_id = fields.Char(readonly=True)
     telegram_error = fields.Char(readonly=True)
     telegram_send_requested = fields.Boolean(string='Telegram Delivery Queued', readonly=True)
+    generation_state = fields.Selection([
+        ('waiting', 'Retrieval incomplete'), ('details', 'Details incomplete'),
+        ('empty', 'No records'), ('error', 'File generation failed'),
+        ('ready', 'File generated')], default='waiting', readonly=True)
+    generation_error = fields.Text(readonly=True)
+
+    def _generation_complete(self, config, day):
+        latest = self._latest_day_files(config, day)
+        for category, _label, kind, direction in CATEGORIES:
+            export = latest.get(category)
+            if not export or not self._day_complete(config, day, kind=kind, direction=direction):
+                return False
+            if export.generation_state == 'ready':
+                if not export._file_source_ready():
+                    return False
+            elif export.generation_state != 'empty' or self.env['ab_tax_eta_archive_' + kind].search_count(fields.Domain([
+                    ('config_id', '=', config.id), ('report_date', '=', day), ('direction', '=', direction)])):
+                return False
+        return True
 
     _unique_file = models.Constraint(
         'UNIQUE(config_id, report_date, category, revision)',
@@ -238,7 +257,7 @@ class EtaExport(models.Model):
     def _detail_queue_domain(self, config_ids, today):
         retry_before = fields.Datetime.now() - timedelta(minutes=5)
         return (fields.Domain('config_id', 'in', config_ids) &
-                fields.Domain('report_date', '<=', today) &
+                fields.Domain('report_date', '<', today) &
                 (fields.Domain('detail_json', '=', False) |
                  fields.Domain('detail_json', '=', '')) &
                 (fields.Domain('detail_attempt_at', '=', False) |
@@ -324,16 +343,8 @@ class EtaExport(models.Model):
                         if not processed:
                             break
                 finally:
-                    # Finish this callback's progress, not the remaining archive.
-                    # Every cron slice gets a new progress code; leaving a partial
-                    # slice ongoing makes the UI show stale duplicate operations.
-                    progress = getattr(self, 'web_progress_percent', None)
-                    if (progress and self.env.context.get('progress_code') and
-                            progress_offset < len(selected_batch)):
-                        try:
-                            progress(100, msg=progress_message, cancellable=False)
-                        except Exception:
-                            _logger.exception('ETA detail batch progress could not be closed')
+                    _logger.info('ETA detail slice ended kind=%s attempted=%s selected=%s',
+                                 kind, progress_offset, len(selected_batch))
         next_work = self._next_detail_work(self._detail_queue_domain(configs.ids, today))
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(
@@ -439,16 +450,27 @@ class EtaExport(models.Model):
 
     @api.model
     def _ensure_files(self, config, report_date, deadline=None):
+        with eta_task_lock(self.env, 200000000 + config.id) as acquired:
+            if not acquired:
+                return set()
+            return self._ensure_category_files(config, report_date, deadline=deadline)
+
+    def _ensure_category_files(self, config, report_date, deadline=None):
         checked_through = report_date
         latest = self._latest_day_files(config, report_date)
         targets = []
         prepared = set()
         for category, _label, kind, direction in CATEGORIES:
+            export = latest.get(category)
+            if not export:
+                export = self.create({'config_id': config.id, 'report_date': report_date,
+                                      'category': category,
+                                      'filename': f'{category}_{report_date}_r1.xlsx'})
             if not self._day_complete(config, report_date, kind=kind, direction=direction):
+                export.write({'generation_state': 'waiting'})
                 _logger.info('ETA file waiting for retrieval: connection=%s day=%s category=%s',
                              config.id, report_date, category)
                 continue
-            export = latest.get(category)
             model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
                              else 'ab_tax_eta_archive_receipt']
             [(count, updated_at)] = model._read_group([
@@ -456,10 +478,14 @@ class EtaExport(models.Model):
                 ('direction', '=', direction),
             ], [], ['__count', 'write_date:max'])
             if not count:
+                export.write({'generation_state': 'empty', 'generation_error': False})
+                prepared.add(category)
                 continue
             if (export and export.file_data and count == export.record_count and
                     export.source_updated_at == updated_at and
                     export.export_format_version == EXPORT_FORMAT_VERSION):
+                if export.generation_state != 'ready':
+                    export.write({'generation_state': 'ready', 'generation_error': False})
                 prepared.add(category)
                 continue
             targets.append((category, kind, direction, export))
@@ -471,6 +497,7 @@ class EtaExport(models.Model):
                     ('direction', '=', direction),
                     '|', ('detail_json', '=', False), ('detail_json', '=', '')])
             if pending_details:
+                export.write({'generation_state': 'details'})
                 _logger.info('ETA file waiting for UUID details: connection=%s day=%s '
                              'category=%s pending=%s', config.id, report_date,
                              category, pending_details)
@@ -481,12 +508,15 @@ class EtaExport(models.Model):
                 with self.env.cr.savepoint():
                     current = self._prepare(config, report_date, category, kind, direction,
                                             export=export)
-            except (ValueError, TypeError, KeyError):
+            except (ValueError, TypeError, KeyError, UserError, OSError) as exc:
+                export.write({'generation_state': 'error',
+                              'generation_error': type(exc).__name__})
                 _logger.exception('ETA file generation failed: connection=%s day=%s category=%s',
                                   config.id, report_date, category)
                 continue
             if not current:
                 continue
+            current.write({'generation_state': 'ready', 'generation_error': False})
             if current.checked_through != checked_through:
                 current.checked_through = checked_through
             prepared.add(category)
@@ -499,6 +529,9 @@ class EtaExport(models.Model):
     def _day_complete(self, config, report_date, kind=None, direction=None):
         today = datetime.now(pytz.timezone('Africa/Cairo')).date()
         if report_date < config.start_date or report_date >= today:
+            return False
+        from .eta_policy import day_bounds
+        if day_bounds(report_date)[1] > config._retrieval_cutoff():
             return False
         domain = [
             ('config_id', '=', config.id),
@@ -578,6 +611,10 @@ class EtaExport(models.Model):
             '|', '|', ('detail_attempt_at', '=', False),
             ('detail_error', '=', False),
             ('detail_attempt_at', '<', retry_before),
+        ]
+        missing_domain += [
+            ('report_date', '<', datetime.now(pytz.timezone('Africa/Cairo')).date()),
+            ('received_at', '<', config._retrieval_cutoff().replace(tzinfo=None)),
         ]
         if record_ids is not None:
             missing_domain.append(('id', 'in', record_ids))

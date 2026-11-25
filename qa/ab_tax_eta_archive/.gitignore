@@ -1,0 +1,6 @@
+*.log
+*.pot
+*.conf
+*_snapshot.json
+runtime/
+__pycache__/

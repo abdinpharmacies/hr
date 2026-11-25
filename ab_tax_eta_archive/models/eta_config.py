@@ -8,6 +8,7 @@ import requests
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from .eta_policy import retrieval_cutoff
 
 ETA_DETAIL_REQUEST_INTERVAL = 0.55  # Below ETA's 2 requests/second cap, with a safety margin.
 
@@ -18,6 +19,17 @@ class EtaConfig(models.Model):
 
     name = fields.Char(required=True, default='ETA Archive')
     active = fields.Boolean(default=True)
+    safety_delay_hours = fields.Float(default=12, required=True)
+
+    @api.constrains('safety_delay_hours')
+    def _check_safety_delay(self):
+        for config in self:
+            if not 0 <= config.safety_delay_hours <= 8760:
+                raise ValidationError(_('Safety delay must be between 0 and 8760 hours.'))
+
+    def _retrieval_cutoff(self):
+        self.ensure_one()
+        return retrieval_cutoff(self.safety_delay_hours)
     taxpayer_rin = fields.Char(string='Taxpayer RIN', groups='ab_tax_eta_archive.group_eta_manager')
     callback_key = fields.Char(string='Callback Pre-shared Key', copy=False,
                                default=lambda self: secrets.token_urlsafe(32),

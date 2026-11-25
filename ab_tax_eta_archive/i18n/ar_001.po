@@ -139,6 +139,9 @@ msgid "ETA Daily File"
 msgstr "ملف الضرائب اليومي"
 
 #. module: ab_tax_eta_archive
+#: code:addons/ab_tax_eta_archive/static/src/js/eta_dashboard.js:0
+#: model:ir.actions.act_window,name:ab_tax_eta_archive.action_eta_sync
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_sync_list
 msgid "ETA Retrievals"
 msgstr "عمليات استرجاع الضرائب"
 
@@ -1043,6 +1046,10 @@ msgid "UUID Detail"
 msgstr "تفاصيل UUID"
 
 #. module: ab_tax_eta_archive
+
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_invoice__detail_state__ready
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__state__ready
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_receipt__detail_state__ready
 msgid "Ready"
 msgstr "جاهز"
 
@@ -1158,3 +1165,249 @@ msgstr "إجمالي القيمة"
 #. module: ab_tax_eta_archive
 msgid "Details ready / documents"
 msgstr "التفاصيل الجاهزة / المستندات"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__checkpoint
+msgid "Checkpoint"
+msgstr "نقطة الاستئناف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__completed_at
+msgid "Completed At"
+msgstr "اكتمل في"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__create_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__create_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__create_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__create_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__create_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__create_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__create_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__create_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__create_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__create_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__create_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__create_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__detail_json
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__detail_json
+msgid "Detail Json"
+msgstr "تفاصيل JSON"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_export__generation_state__details
+msgid "Details incomplete"
+msgstr "التفاصيل غير مكتملة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__display_name
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__display_name
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__display_name
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__display_name
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__display_name
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__display_name
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model,name:ab_tax_eta_archive.model_ab_tax_eta_archive_config
+msgid "ETA Archive Configuration"
+msgstr "إعداد أرشيف الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model,name:ab_tax_eta_archive.model_ab_tax_eta_archive_sync
+msgid "ETA Daily Retrieval"
+msgstr "الاسترجاع اليومي للضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model,name:ab_tax_eta_archive.model_ab_tax_eta_archive_invoice
+msgid "ETA Invoice"
+msgstr "فاتورة الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model,name:ab_tax_eta_archive.model_ab_tax_eta_archive_receipt
+msgid "ETA Receipt"
+msgstr "إيصال الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__export_format_version
+msgid "Export Format Version"
+msgstr "إصدار تنسيق التصدير"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_export__generation_state__ready
+msgid "File generated"
+msgstr "تم إنشاء الملف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_export__generation_state__error
+msgid "File generation failed"
+msgstr "فشل إنشاء الملف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__generation_error
+msgid "Generation Error"
+msgstr "خطأ إنشاء الملف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__generation_state
+msgid "Generation State"
+msgstr "حالة إنشاء الملف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__state__importing
+msgid "Importing"
+msgstr "جارٍ الاستيراد"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__internal_id
+msgid "Internal"
+msgstr "داخلي"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__invoice_client_id
+msgid "Invoice Client"
+msgstr "عميل الفواتير"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__issuer_id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__issuer_id
+msgid "Issuer"
+msgstr "المصدر"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__write_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__write_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__write_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__write_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__write_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__write_uid
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__write_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__write_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__write_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__write_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__write_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__write_date
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__next_attempt_at
+msgid "Next Attempt At"
+msgstr "موعد المحاولة التالية"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_export__generation_state__empty
+msgid "No records"
+msgstr "لا توجد سجلات"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.constraint,message:ab_tax_eta_archive.constraint_ab_tax_eta_archive_sync_unique_stream_day
+msgid "Only one ETA retrieval is allowed for each day and stream."
+msgstr "يسمح بعملية استرجاع ضريبية واحدة فقط لكل يوم ونوع واتجاه."
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__package_id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__package_ids
+msgid "Package"
+msgstr "الحزمة"
+
+#. module: ab_tax_eta_archive
+#. odoo-javascript
+#: code:addons/ab_tax_eta_archive/static/src/js/eta_dashboard.js:0
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_sync__state__partial
+msgid "Partial"
+msgstr "مكتمل جزئيًا"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__raw_json
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__raw_json
+msgid "Raw Json"
+msgstr "بيانات JSON الأصلية"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__receipt_client_id
+msgid "Receipt Client"
+msgstr "عميل الإيصالات"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_sync__receipt_issue_dates_json
+msgid "Receipt Issue Dates Json"
+msgstr "تواريخ إصدار الإيصالات بصيغة JSON"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_invoice__receiver_id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_receipt__receiver_id
+msgid "Receiver"
+msgstr "المستلم"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_export__generation_state__waiting
+msgid "Retrieval incomplete"
+msgstr "الاسترجاع غير مكتمل"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__safety_delay_hours
+msgid "Safety Delay Hours"
+msgstr "مهلة الأمان بالساعات"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
+msgid "Safety delay must be between 0 and 8760 hours."
+msgstr "يجب أن تكون مهلة الأمان بين صفر و8760 ساعة."
+
+#. module: ab_tax_eta_archive
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_form
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_list
+msgid "Send to Telegram"
+msgstr "إرسال إلى تيليجرام"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__sync_id
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_segment__sync_id
+msgid "Sync"
+msgstr "الاسترجاع"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__telegram_chat_id
+msgid "Telegram Chat"
+msgstr "محادثة تيليجرام"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__telegram_message_id
+msgid "Telegram Message"
+msgstr "رسالة تيليجرام"

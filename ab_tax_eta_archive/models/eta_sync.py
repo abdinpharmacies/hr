@@ -1,29 +1,23 @@
 import logging
 import json
 import time
+import hashlib
 from email.utils import parsedate_to_datetime
 from contextlib import contextmanager
-from datetime import datetime, time as day_time, timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlsplit
-import pytz
 
 import requests
-from psycopg2.errors import UniqueViolation
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
-from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
 ETA_MAX_RECEIPTS_PER_SEARCH = 3000
-ETA_RECEIPT_PAGE_SIZE = 100
-ETA_MAX_RECEIPT_PAGE_NO = 300
-ETA_MAX_INVOICE_PAGES = 20
-ETA_INVOICE_SEARCH_DELAY = 0.6
+ETA_INVOICE_SEARCH_DELAY = 2.1
 ETA_RECEIPT_SEARCH_DELAY = 0.6
-ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT = 4
 ETA_RECEIPT_SEARCH_DAYS = 29
-ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED = False
+ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED = True
 
 
 @contextmanager
@@ -42,6 +36,10 @@ class EtaSearchNoResult(Exception):
 
 class EtaSearchLimit(Exception):
     """ETA requires a narrower receipt search interval."""
+
+
+class EtaPageSizeError(Exception):
+    """The server's configured maximum page size is below the requested size."""
 
 
 class EtaRequestDeferred(Exception):
@@ -136,112 +134,6 @@ class EtaSync(models.Model):
             return progress_iter(data, msg=message, total=total, cancellable=False)
         return data
 
-    @api.model
-    def _cron_sync(self, kind='invoice'):
-        if kind not in ('invoice', 'receipt'):
-            raise ValueError('Unsupported ETA stream')
-        cairo = pytz.timezone('Africa/Cairo')
-        today = datetime.now(cairo).date()
-        error_retry_before = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
-        delivery_day = today - timedelta(days=4)
-        made_progress = False
-        configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
-        streams = ((kind, 'received'), (kind, 'sent'))
-        yesterday = today - timedelta(days=1)
-        for config in configs:
-            if not config.start_date:
-                continue
-            if not self._ensure_run_days(config, today, kind=kind):
-                return
-            runs = self.search([
-                ('config_id', '=', config.id),
-                ('kind', '=', kind),
-                ('report_date', '>=', config.start_date),
-                ('report_date', '<=', today),
-            ])
-            yesterday_receipts = runs.filtered(
-                lambda run: run.kind == 'receipt' and run.report_date == yesterday and
-                run.state == 'pending' and run.next_receipt_window_at and run.last_run_at and
-                fields.Datetime.to_datetime(run.last_run_at).replace(
-                    tzinfo=timezone.utc).astimezone(cairo).date() < today)
-            yesterday_receipts.write({
-                'next_receipt_window_at': False,
-                'receipt_issue_dates_json': False,
-            })
-            by_day_stream = {(run.report_date, run.kind, run.direction): run for run in runs}
-            unfinished_days = {
-                run.report_date for run in runs
-                if ((ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED or
-                     run.kind != 'receipt' or
-                     run.report_date >= today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)) and
-                    (run.state == 'pending' or
-                     (run.state == 'error' and
-                      (not run.last_run_at or
-                       fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))))
-            }
-            overlap_days = {
-                run.report_date for run in runs
-                if run.state == 'done' and
-                max(config.start_date, today - timedelta(days=14)) <= run.report_date <= yesterday and
-                (not run.last_run_at or
-                 fields.Datetime.to_datetime(run.last_run_at).replace(
-                     tzinfo=timezone.utc).astimezone(cairo).date() < today)
-            }
-            priority_days = [day for day in (today, yesterday, delivery_day)
-                             if config.start_date <= day <= today]
-            ordered_days = list(dict.fromkeys(
-                priority_days + sorted(unfinished_days, reverse=True) + sorted(overlap_days, reverse=True)))
-            for day in ordered_days:
-                for kind, direction in streams:
-                    run = by_day_stream.get((day, kind, direction))
-                    if not run:
-                        continue
-                    if (run.kind == 'receipt' and
-                            run.report_date < today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS) and
-                            not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED):
-                        continue
-                    if (day == today and run.last_run_at and
-                            fields.Datetime.to_datetime(run.last_run_at) >
-                            fields.Datetime.now() - timedelta(minutes=1)):
-                        continue
-                    due = (run.state == 'pending' or
-                            (run.state == 'done' and run.kind == 'invoice' and
-                             day == today) or
-                            (run.state == 'error' and
-                             (not run.last_run_at or
-                              fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)) or
-                            (run.state == 'done' and day in overlap_days and
-                             (not run.last_run_at or
-                              fields.Datetime.to_datetime(run.last_run_at).replace(
-                                  tzinfo=timezone.utc).astimezone(cairo).date() < today)))
-                    if not due:
-                        continue
-                    keep_running, progressed = self._cron_attempt(run)
-                    made_progress |= progressed
-                    if not keep_running:
-                        return
-                if day in unfinished_days and day != today:
-                    break
-        if self.env.context.get('cron_id'):
-            remaining = (sum(self._eligible_remaining(config, today, error_retry_before, kind=kind)
-                             for config in configs if config.start_date)
-                         if made_progress else 0)
-            self.env['ir.cron']._commit_progress(remaining=remaining)
-
-    def _eligible_remaining(self, config, today, error_retry_before, kind=None):
-        runs = self.search([
-            ('config_id', '=', config.id),
-            ('kind', 'in', [kind] if kind else ['invoice', 'receipt']),
-            ('report_date', '>=', config.start_date),
-            ('report_date', '<=', today),
-            ('state', 'in', ['pending', 'error']),
-        ])
-        return len(runs.filtered(
-            lambda run: (ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED or
-                         run.kind != 'receipt' or
-                         run.report_date >= today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)) and
-            (run.state == 'pending' or not run.last_run_at or
-             fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)))
 
     def _ensure_run_days(self, config, today, kind=None):
         existing = self.search([
@@ -271,245 +163,6 @@ class EtaSync(models.Model):
                 return False
         return True
 
-    def _cron_attempt(self, run):
-        with requests.Session() as session:
-            runner = self.with_context(eta_request_session=session)
-            return runner._run_cron_attempt(run.with_context(eta_request_session=session))
-
-    def _run_cron_attempt(self, run):
-        in_cron = bool(self.env.context.get('cron_id'))
-        auth_cache = {}
-        attempts = ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT if in_cron else 1
-        progressed = False
-        windows = (self._progress_iter(
-            range(attempts), _('Retrieving ETA receipt windows'), total=attempts)
-            if run.kind == 'receipt' else range(attempts))
-        for window_number in windows:
-            previous_state = run.state
-            previous_count = run.item_count
-            previous_window = run.next_receipt_window_at
-            previous_packages = [(part.id, part.state, part.package_id, part.import_offset,
-                                  part.imported) for part in run.package_ids]
-            manual_progress = (run.kind == 'receipt' and not in_cron and
-                               getattr(run, 'web_progress_percent', None))
-            if manual_progress:
-                run.web_progress_percent(0, _('Retrieving ETA receipt window'),
-                                         cancellable=False)
-            if run._attempt(auth_cache=auth_cache) is False:
-                return False, progressed
-            if manual_progress:
-                run.web_progress_percent(100, _('ETA receipt retry finished'),
-                                         cancellable=False)
-            step_progressed = (run.state != previous_state or
-                               run.item_count != previous_count or
-                               run.next_receipt_window_at != previous_window or
-                               previous_packages != [(part.id, part.state, part.package_id,
-                                                      part.import_offset, part.imported)
-                                                     for part in run.package_ids])
-            progressed |= step_progressed
-            if (step_progressed and
-                    run.report_date == datetime.now(pytz.timezone('Africa/Cairo')).date()):
-                _logger.info('ETA current-day retrieval: kind=%s direction=%s '
-                             'count=%s state=%s next_receipt_window=%s',
-                             run.kind, run.direction, run.item_count, run.state,
-                             run.next_receipt_window_at if run.kind == 'receipt' else False)
-            if in_cron and not self.env['ir.cron']._commit_progress(
-                    int(step_progressed), remaining=1):
-                return False, progressed
-            if run.kind != 'receipt' or run.state != 'pending':
-                return True, progressed
-            if (run.next_receipt_window_at and
-                    run.next_receipt_window_at != previous_window):
-                if (run.report_date == datetime.now(pytz.timezone('Africa/Cairo')).date() and
-                        fields.Datetime.to_datetime(run.next_receipt_window_at).replace(
-                            minute=0, second=0, microsecond=0) >=
-                        fields.Datetime.now().replace(
-                            minute=0, second=0, microsecond=0)):
-                    return True, progressed
-                continue
-            return True, progressed
-        return True, progressed
-
-    def action_retry(self):
-        for run in self:
-            self._cron_attempt(run)
-
-    def _attempt(self, auth_cache=None):
-        self.ensure_one()
-        try:
-            with self.env.cr.savepoint():
-                if not self.try_lock_for_update():
-                    _logger.info('ETA retrieval is already running for %s %s %s',
-                                 self.report_date, self.kind, self.direction)
-                    return
-                result = self._retrieve(auth_cache=auth_cache)
-        except EtaRequestDeferred as exc:
-            # Persist search throttles only after the retrieval savepoint rolled back.
-            if exc.config is not None:
-                exc.config._defer_detail_requests(exc.endpoint, exc.delay)
-            return False
-        except (requests.RequestException, UserError, ValidationError, ValueError, KeyError) as exc:
-            _logger.warning('ETA retrieval failed for %s %s %s: %s',
-                            self.report_date, self.kind, self.direction, exc)
-            self.write({'state': 'error', 'last_run_at': fields.Datetime.now(),
-                        'error_message': str(exc)[:2000]})
-            try:
-                with self.env.cr.savepoint():
-                    self._record_receipt_segment_error(exc)
-            except Exception:
-                _logger.exception('ETA receipt segment error could not be recorded')
-            return
-        if result is None:
-            self.write({'state': 'pending', 'last_run_at': fields.Datetime.now(),
-                        'error_message': False})
-            self.env['ab_tax_eta_archive_export']._wake_detail_cron(self.kind)
-            return
-        count, issue_dates = result
-        self.write({'state': 'done', 'item_count': count,
-                    'last_run_at': fields.Datetime.now(), 'error_message': False})
-        self.env['ab_tax_eta_archive_export']._wake_detail_cron(self.kind)
-        # A separate cron fetches UUID details from saved invoice and receipt rows.
-
-    def _retrieve(self, auth_cache=None):
-        self.ensure_one()
-        config = self.config_id
-        cairo = pytz.timezone('Africa/Cairo')
-        if self.report_date > datetime.now(cairo).date():
-            return None
-        if (self.kind == 'receipt' and
-                self.report_date < datetime.now(cairo).date()
-                - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)):
-            if not ETA_HISTORICAL_RECEIPT_PACKAGES_ENABLED:
-                return None
-            return self._retrieve_historical_receipts()
-        api_url, auth = config._eta_auth_headers(self.kind)
-        start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
-        end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
-                                              day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
-        current_day = self.report_date == datetime.now(cairo).date()
-        if current_day:
-            end = min(end, datetime.now(timezone.utc) - timedelta(milliseconds=1))
-            if self.kind == 'invoice' and self.state == 'done' and self.last_run_at:
-                start = max(start, fields.Datetime.to_datetime(self.last_run_at).replace(
-                    tzinfo=timezone.utc) - timedelta(minutes=30))
-            if (self.kind == 'receipt' and self.next_receipt_window_at and
-                    fields.Datetime.to_datetime(self.next_receipt_window_at).replace(
-                        tzinfo=timezone.utc) > end):
-                return None
-        receipt_checkpoint = (json.loads(self.receipt_issue_dates_json or '[]')
-                              if self.kind == 'receipt' and self.state != 'done' else [])
-        if self.kind == 'invoice':
-            pages = self._invoice_pages(api_url, auth, start, end)
-            model = self.env['ab_tax_eta_archive_invoice']
-        else:
-            model = self.env['ab_tax_eta_archive_receipt']
-            window_start, window_end, pages = self._recent_receipt_pages(
-                api_url, auth, start, end, receipt_checkpoint)
-        seen_uuids = set()
-        last_receipt_uuid = False
-        last_receipt_at = False
-        saved_issue_dates = (receipt_checkpoint.get('issue_dates', [])
-                             if isinstance(receipt_checkpoint, dict) else receipt_checkpoint)
-        issue_dates = set(fields.Date.to_date(value) for value in saved_issue_dates)
-        for page in pages:
-            unique = {}
-            for item in page:
-                values = model._eta_values(item, self.direction, config)
-                date_field = 'dateTimeIssued' if self.kind == 'receipt' else 'dateTimeReceived'
-                if eta_report_date(item[date_field]) != self.report_date:
-                    raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
-                uuid = values['uuid']
-                if self.kind == 'receipt':
-                    last_receipt_uuid = uuid
-                    last_receipt_at = values['issued_at']
-                if uuid in seen_uuids:
-                    raise ValidationError(_('ETA returned duplicate document UUIDs for one retrieval.'))
-                seen_uuids.add(uuid)
-                unique[uuid] = values
-            if not unique:
-                continue
-            existing = model.search([('config_id', '=', config.id),
-                                     ('direction', '=', self.direction),
-                                     ('uuid', 'in', list(unique))])
-            by_uuid = {record.uuid: record for record in existing}
-            new_values = []
-            for uuid, values in unique.items():
-                issue_dates.add(values['report_date'])
-                if uuid in by_uuid:
-                    issue_dates.add(by_uuid[uuid].report_date)
-                    if (by_uuid[uuid].raw_json != values['raw_json'] or
-                            by_uuid[uuid].report_date != values['report_date']):
-                        by_uuid[uuid].write(values)
-                else:
-                    new_values.append(values)
-            if new_values:
-                try:
-                    with self.env.cr.savepoint():
-                        model.create(new_values)
-                except UniqueViolation:
-                    for values in new_values:
-                        try:
-                            with self.env.cr.savepoint():
-                                model.create(values)
-                        except UniqueViolation:
-                            existing = model.search([
-                                ('config_id', '=', config.id),
-                                ('direction', '=', self.direction),
-                                ('uuid', '=', values['uuid']),
-                            ], limit=1)
-                            if not existing:
-                                raise
-                            issue_dates.add(existing.report_date)
-                            existing.write(values)
-        if self.kind == 'receipt':
-            document_count = model.search_count([
-                ('config_id', '=', config.id), ('direction', '=', self.direction),
-                ('issued_at', '>=', start.replace(tzinfo=None)),
-                ('issued_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
-            ])
-            current_hour_end = (window_start.replace(minute=0, second=0,
-                                                     microsecond=0) + timedelta(hours=1)
-                                - timedelta(milliseconds=1))
-            if current_day and window_end == end and end < current_hour_end:
-                self.write({
-                    'next_receipt_window_at': window_start.replace(
-                        minute=0, second=0, microsecond=0, tzinfo=None),
-                    'receipt_issue_dates_json': json.dumps({
-                        'basis': 'issued',
-                        'issue_dates': sorted(fields.Date.to_string(value) for value in issue_dates),
-                    }),
-                    'item_count': document_count,
-                })
-                return None
-            self._record_receipt_segment_done(
-                window_start, window_end, len(seen_uuids),
-                last_receipt_uuid, last_receipt_at)
-            next_window = window_end + timedelta(milliseconds=1)
-            self.env['ab_tax_eta_archive_segment'].search([
-                ('sync_id', '=', self.id), ('state', '=', 'error'),
-                ('end_at', '<', next_window.replace(tzinfo=None)),
-            ]).write({'state': 'resolved'})
-            if next_window <= end or current_day:
-                self.write({
-                    'next_receipt_window_at': next_window.replace(tzinfo=None),
-                    'receipt_issue_dates_json': json.dumps({
-                        'basis': 'issued',
-                        'issue_dates': sorted(fields.Date.to_string(value) for value in issue_dates),
-                    }),
-                    'item_count': document_count,
-                })
-                return None
-            self.write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
-            return document_count, issue_dates
-        if current_day:
-            day_start = cairo.localize(datetime.combine(
-                self.report_date, day_time.min)).astimezone(timezone.utc)
-            return model.search_count([
-                ('config_id', '=', config.id), ('direction', '=', self.direction),
-                ('received_at', '>=', day_start.replace(tzinfo=None)),
-                ('received_at', '<=', end.replace(tzinfo=None)),
-            ]), issue_dates
-        return len(seen_uuids), issue_dates
 
     def _record_receipt_segment_done(self, start, end, count, last_uuid, last_at):
         values = {
@@ -533,147 +186,6 @@ class EtaSync(models.Model):
         else:
             segments.create(values)
 
-    def _record_receipt_segment_error(self, exc):
-        if self.kind != 'receipt':
-            return
-        cairo = pytz.timezone('Africa/Cairo')
-        today = datetime.now(cairo).date()
-        if self.report_date > today or self.report_date < today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS):
-            return
-        start = cairo.localize(datetime.combine(self.report_date, day_time.min))
-        start = start.astimezone(timezone.utc)
-        checkpoint = json.loads(self.receipt_issue_dates_json or '[]')
-        if (self.next_receipt_window_at and isinstance(checkpoint, dict) and
-                checkpoint.get('basis') == 'issued'):
-            start = fields.Datetime.to_datetime(
-                self.next_receipt_window_at).replace(tzinfo=timezone.utc)
-        end = min(
-            start.replace(minute=0, second=0, microsecond=0)
-            + timedelta(hours=1) - timedelta(milliseconds=1),
-            cairo.localize(datetime.combine(
-                self.report_date + timedelta(days=1), day_time.min)
-            ).astimezone(timezone.utc) - timedelta(milliseconds=1))
-        if self.report_date == today:
-            end = min(end, datetime.now(timezone.utc) - timedelta(milliseconds=1))
-        values = {
-            'sync_id': self.id,
-            'start_at': start.replace(tzinfo=None),
-            'end_at': end.replace(tzinfo=None),
-            'state': 'error',
-            'error_message': str(exc)[:2000],
-            'last_run_at': fields.Datetime.now(),
-        }
-        segments = self.env['ab_tax_eta_archive_segment']
-        existing = segments.search([
-            ('sync_id', '=', self.id),
-            ('start_at', '=', values['start_at']),
-            ('end_at', '=', values['end_at']),
-        ], limit=1)
-        if existing:
-            existing.write(values)
-        else:
-            segments.create(values)
-
-    def _recent_receipt_pages(self, api_url, auth, start, end, receipt_checkpoint):
-        window_start = start
-        if (self.state != 'done' and self.next_receipt_window_at and
-                isinstance(receipt_checkpoint, dict) and
-                receipt_checkpoint.get('basis') == 'issued'):
-            window_start = fields.Datetime.to_datetime(
-                self.next_receipt_window_at).replace(tzinfo=timezone.utc)
-        if window_start > end:
-            window_start = start
-        hour_end = min(
-            window_start.replace(minute=0, second=0, microsecond=0)
-            + timedelta(hours=1) - timedelta(milliseconds=1), end)
-        selected = self._select_receipt_window(api_url, auth, window_start, hour_end)
-        if selected is None:
-            return window_start, hour_end, ()
-        selected_start, window_end = selected
-        return window_start, window_end, self._receipt_pages(
-            api_url, auth, selected_start, window_end, expected_nonempty=True)
-
-    def _invoice_pages(self, api_url, headers, start, end):
-        params = {
-            'submissionDateFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'submissionDateTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'direction': 'Sent' if self.direction == 'sent' else 'Received',
-            'pageSize': 100,
-        }
-        pages, token, seen = [], None, set()
-        while True:
-            if len(seen) >= ETA_MAX_INVOICE_PAGES:
-                first, second = self._split_search_window(
-                    start, end, _('ETA invoice search exceeded the safe page limit.'))
-                yield from self._invoice_pages(api_url, headers, *first)
-                yield from self._invoice_pages(api_url, headers, *second)
-                return
-            current = dict(params)
-            if token:
-                current['continuationToken'] = token
-            payload = self._request('GET', f'{api_url}/api/v1.0/documents/search',
-                                    headers=headers, params=current)
-            page = payload.get('result')
-            metadata = payload.get('metadata')
-            if not isinstance(page, list) or not isinstance(metadata, dict):
-                raise ValidationError(_('ETA invoice search returned an invalid page.'))
-            pages.append(page)
-            next_token = metadata.get('continuationToken')
-            if next_token == 'EndofResultSet':
-                yield from pages
-                return
-            if not next_token or next_token in seen:
-                raise ValidationError(_('ETA invoice pagination stopped before the final page.'))
-            seen.add(next_token)
-            token = next_token
-
-    def _split_search_window(self, start, end, limit_message):
-        if end - start <= timedelta(milliseconds=1):
-            raise ValidationError(limit_message)
-        midpoint = start + (end - start) / 2
-        midpoint = midpoint.replace(microsecond=(midpoint.microsecond // 1000) * 1000)
-        return (start, midpoint), (midpoint + timedelta(milliseconds=1), end)
-
-    def _split_receipt_pages(self, api_url, headers, start, end):
-        first, second = self._split_search_window(
-            start, end, _('ETA receipt result limit reached for a one-millisecond window.'))
-        yield from self._receipt_pages(api_url, headers, *first)
-        yield from self._receipt_pages(api_url, headers, *second)
-
-    def _select_receipt_window(self, api_url, headers, start, end):
-        params = {
-            'Direction': 'Submitted' if self.direction == 'sent' else 'Received',
-            'DateTimeIssuedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'DateTimeIssuedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'SortBy': 'DateTimeIssued',
-            'SortDir': 'Asc',
-            'PageNo': 1,
-            'PageSize': 1,
-        }
-        try:
-            payload = self._request(
-                'GET', f'{api_url}/api/v1/receipts/search',
-                headers=headers, params=params, allow_no_result=True,
-                allow_search_limit=True)
-        except EtaSearchNoResult:
-            return None
-        except EtaSearchLimit:
-            total = ETA_MAX_RECEIPTS_PER_SEARCH
-        else:
-            page, metadata = self._receipt_page_and_metadata(payload)
-            total = metadata.get('totalCount')
-            if not isinstance(total, int) or total < 0:
-                raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
-            if not page:
-                if total == 0:
-                    return None
-                raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
-        if total < ETA_MAX_RECEIPTS_PER_SEARCH:
-            return start, end
-        first, second = self._split_search_window(
-            start, end, _('ETA receipt result limit reached for a one-millisecond window.'))
-        return (self._select_receipt_window(api_url, headers, *first) or
-                self._select_receipt_window(api_url, headers, *second))
 
     def _receipt_page_and_metadata(self, payload):
         result = payload.get('result')
@@ -689,59 +201,6 @@ class EtaSync(models.Model):
             raise ValidationError(_('ETA receipt search returned an invalid page.'))
         return page, metadata
 
-    def _receipt_pages(self, api_url, headers, start, end, expected_nonempty=False):
-        params = {
-            'Direction': 'Submitted' if self.direction == 'sent' else 'Received',
-            'DateTimeIssuedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'DateTimeIssuedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'SortBy': 'DateTimeIssued',
-            'SortDir': 'Asc',
-            'PageSize': ETA_RECEIPT_PAGE_SIZE,
-        }
-        pages = []
-        count = 0
-        total = None
-        page_size = ETA_RECEIPT_PAGE_SIZE
-        for page_no in range(1, ETA_MAX_RECEIPT_PAGE_NO + 1):
-            try:
-                payload, page_size = self._request_receipt_page(
-                    api_url, headers, params, page_no, page_size)
-            except EtaSearchNoResult:
-                if page_no == 1:
-                    if expected_nonempty:
-                        raise ValidationError(_('ETA receipt count changed while reading the result pages.'))
-                    return
-                break
-            except EtaSearchLimit:
-                yield from self._split_receipt_pages(api_url, headers, start, end)
-                return
-            page, metadata = self._receipt_page_and_metadata(payload)
-            page_total = metadata.get('totalCount')
-            if not isinstance(page_total, int) or page_total < 0:
-                raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
-            if total is not None and page_total != total:
-                raise ValidationError(_('ETA receipt count changed while reading the result pages.'))
-            total = page_total
-            if total >= ETA_MAX_RECEIPTS_PER_SEARCH:
-                yield from self._split_receipt_pages(api_url, headers, start, end)
-                return
-            if not page:
-                break
-            count += len(page)
-            pages.append(page)
-            if count >= total:
-                break
-        else:
-            raise ValidationError(_('ETA receipt search exceeded the safe page limit.'))
-
-        if total is None:
-            raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
-        if expected_nonempty and total == 0:
-            raise ValidationError(_('ETA receipt count changed while reading the result pages.'))
-        if count != total:
-            raise ValidationError(_('ETA receipt page count does not match the reported total.'))
-        yield from self._progress_iter(
-            pages, _('Saving ETA receipt pages'), total=len(pages))
 
     def _request_receipt_page(self, api_url, headers, params, page_no, page_size):
         sizes = (min(page_size, 100), 50, 10) if page_no == 1 else (min(page_size, 100),)
@@ -752,18 +211,17 @@ class EtaSync(models.Model):
                     headers=headers,
                     params={**params, 'PageNo': page_no, 'PageSize': candidate},
                     allow_no_result=True, allow_search_limit=True)
-            except UserError as exc:
-                message = str(exc).lower()
-                if (page_no == 1 and candidate != 10 and
-                        'http 400' in message and 'page' in message and 'size' in message):
+            except EtaPageSizeError:
+                if page_no == 1 and candidate != 10:
                     continue
-                raise
+                raise ValidationError(_('ETA receipt search returned an invalid page.'))
             return payload, candidate
         raise ValidationError(_('ETA receipt search returned an invalid page.'))
 
     def _request(self, method, url, allow_no_result=False, allow_search_limit=False,
                  request_session=None, request_attempts=4, rate_config=None,
-                 deadline=None, refresh_auth=None, **kwargs):
+                 deadline=None, refresh_auth=None, raw_response=False, **kwargs):
+        deadline = deadline or self.env.context.get('eta_retrieval_deadline')
         search_delay = {
             '/api/v1.0/documents/search': ETA_INVOICE_SEARCH_DELAY,
             '/api/v1/receipts/search': ETA_RECEIPT_SEARCH_DELAY,
@@ -785,8 +243,6 @@ class EtaSync(models.Model):
                 raise EtaRequestDeferred()
             if rate_config is not None:
                 rate_config._reserve_detail_request(endpoint, deadline or float('inf'))
-            if search_delay:
-                time.sleep(search_delay)
             request_timeout = timeout
             if deadline is not None:
                 remaining = deadline - time.monotonic()
@@ -798,34 +254,64 @@ class EtaSync(models.Model):
                 else:
                     request_timeout = min(timeout, remaining)
             try:
-                response = send(method, url, timeout=request_timeout, **kwargs)
+                if search_delay and search_owner is not None:
+                    # Serialize search starts across manual/cron runs and duplicate
+                    # configurations sharing credentials. No business-row locks.
+                    identity = '%s:%s:%s' % (search_owner.environment,
+                        search_owner.receipt_client_id if self.kind == 'receipt'
+                        and search_owner.receipt_auth_mode == 'pos'
+                        else search_owner.invoice_client_id, endpoint)
+                    lock_id = int.from_bytes(hashlib.sha256(identity.encode()).digest()[:4],
+                                             'big', signed=True)
+                    with self.env.registry.cursor() as slot_cr:
+                        slot_cr.execute('SELECT pg_try_advisory_xact_lock(%s, %s)',
+                                        (0x455442, lock_id))
+                        if not slot_cr.fetchone()[0]:
+                            raise EtaRequestDeferred()
+                        if deadline is not None and time.monotonic() + search_delay + 1 >= deadline:
+                            raise EtaRequestDeferred()
+                        # Sleep under the shared API lock, including across workers.
+                        time.sleep(search_delay)
+                        response = send(method, url, timeout=request_timeout, **kwargs)
+                else:
+                    response = send(method, url, timeout=request_timeout, **kwargs)
             except requests.RequestException:
                 if attempt == request_attempts - 1:
                     raise
+                if deadline is not None and time.monotonic() + 2 ** attempt + 2 >= deadline:
+                    raise EtaRequestDeferred()
                 time.sleep(2 ** attempt)
                 continue
             if response.status_code == 401 and refresh_auth is None and len(self) == 1:
                 refresh_auth = lambda: self.config_id._eta_auth_headers(
                     self.kind, session=request_session, force_refresh=True)[1]
             if response.status_code == 401 and refresh_auth:
+                response.close()
                 kwargs['headers'].update(refresh_auth())
                 return self._request(
                     method, url, allow_no_result=allow_no_result,
                     allow_search_limit=allow_search_limit,
                     request_session=request_session, request_attempts=request_attempts,
                     rate_config=rate_config, deadline=deadline, timeout=timeout,
-                    refresh_auth=False, **kwargs)
-            if response.status_code in (429, 503):
+                    refresh_auth=False, raw_response=raw_response, **kwargs)
+            if response.status_code in (429, 500, 502, 503, 504):
                 delay = eta_retry_delay(response.headers.get('Retry-After'), attempt)
+                _logger.warning('ETA transient HTTP status=%s endpoint=%s attempt=%s delay=%.1fs',
+                                response.status_code, urlsplit(url).path, attempt + 1, delay)
+                response.close()
                 if rate_config is not None:
                     rate_config._defer_detail_requests(endpoint, delay)
                     # Leave this UUID queued; do not hit other UUIDs during a throttle.
                     raise EtaRequestDeferred()
-                if attempt < request_attempts - 1 and delay <= 60:
+                if attempt < request_attempts - 1 and delay <= 30 and (
+                        deadline is None or time.monotonic() + delay + 2 < deadline):
                     time.sleep(delay)
                     continue
                 if search_owner is not None:
                     raise EtaRequestDeferred(search_owner, endpoint, delay)
+                if len(self) == 1:
+                    # Package polling also honors long Retry-After values.
+                    raise EtaRequestDeferred(delay=delay)
             if response.status_code == 400 and (allow_search_limit or allow_no_result):
                 try:
                     error = response.json()
@@ -837,6 +323,8 @@ class EtaSync(models.Model):
                     code = (error.get('code') or detail.get('code') or
                             (error_detail if isinstance(error_detail, str) else None))
                     message = str(error.get('message') or detail.get('message') or '').lower()
+                    if 'page' in message and 'size' in message and 'receipts/search' in url:
+                        raise EtaPageSizeError()
                     oversized_query = (code == 'ValidationError' and
                                        'query will return approximately' in message and
                                        'should be under' in message and
@@ -876,8 +364,10 @@ class EtaSync(models.Model):
                         detail = ': '.join(str(error.get(key, '')).strip()
                                            for key in ('code', 'message', 'target')
                                            if error.get(key))
-                if not detail and response.text:
-                    detail = ' '.join(response.text.split())[:1000]
+                # Never persist response bodies: errors can echo sensitive input.
+                if detail:
+                    detail = str(error_body.get('error', {}).get('code', '')) if isinstance(
+                        error_body.get('error'), dict) else 'ETAError'
                 correlation_id = response.headers.get('correlationId')
                 if correlation_id:
                     detail = f'{detail} (correlationId: {correlation_id})'.strip()
