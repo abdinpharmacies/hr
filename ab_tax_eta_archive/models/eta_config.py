@@ -20,6 +20,8 @@ class EtaConfig(models.Model):
     name = fields.Char(required=True, default='ETA Archive')
     active = fields.Boolean(default=True)
     safety_delay_hours = fields.Float(default=12, required=True)
+    detail_queue_progress = fields.Json(readonly=True, copy=False,
+                                        groups='ab_tax_eta_archive.group_eta_manager')
 
     @api.constrains('safety_delay_hours')
     def _check_safety_delay(self):

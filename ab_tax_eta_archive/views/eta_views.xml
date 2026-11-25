@@ -155,6 +155,13 @@
                 <field name="generation_retry_at" optional="hide"/>
                 <field name="revision"/>
                 <field name="record_count"/>
+                <field name="archived_count" optional="show"/>
+                <field name="details_ready" optional="show"/>
+                <field name="details_pending" optional="show"/>
+                <field name="details_failed" optional="show"/>
+                <field name="last_detail_error" optional="hide"/>
+                <field name="last_detail_fetch_at" optional="hide"/>
+                <field name="detail_rows_per_minute" optional="show"/>
                 <field name="file_content_digest" column_invisible="True"/>
                 <field name="file_verified_rows" optional="show" invisible="not file_content_digest"/>
                 <field name="checked_through"/>
@@ -169,6 +176,8 @@
                         invisible="telegram_sent_at or not file_data or not record_count or telegram_send_requested"/>
                 <button name="action_generate_files" type="object" string="Generate Files"
                         groups="ab_tax_eta_archive.group_eta_manager"/>
+                <button name="action_fetch_details" type="object" string="Fetch Missing Details"
+                        groups="ab_tax_eta_archive.group_eta_manager"/>
             </list>
         </field>
     </record>
@@ -182,6 +191,8 @@
                             class="btn-primary" groups="ab_tax_eta_archive.group_eta_manager"
                             invisible="telegram_sent_at or not file_data or not record_count or telegram_send_requested"/>
                     <button name="action_generate_files" type="object" string="Generate Files"
+                            groups="ab_tax_eta_archive.group_eta_manager"/>
+                    <button name="action_fetch_details" type="object" string="Fetch Missing Details"
                             groups="ab_tax_eta_archive.group_eta_manager"/>
                 </header>
                 <sheet>
@@ -203,6 +214,24 @@
                         <field name="telegram_message_id"/>
                         <field name="telegram_error"/>
                         <field name="telegram_send_requested"/>
+                    </group>
+                    <group string="Detail Retrieval">
+                        <group>
+                            <field name="archived_count"/>
+                            <field name="details_ready"/>
+                            <field name="details_pending"/>
+                            <field name="details_failed"/>
+                            <field name="last_detail_error"/>
+                        </group>
+                        <group>
+                            <field name="last_detail_fetch_at"/>
+                            <field name="detail_fetched_rows"/>
+                            <field name="detail_fetch_seconds"/>
+                            <field name="detail_rows_per_minute"/>
+                            <field name="detail_job_active"/>
+                            <field name="detail_job_lastcall"/>
+                            <field name="detail_job_nextcall"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

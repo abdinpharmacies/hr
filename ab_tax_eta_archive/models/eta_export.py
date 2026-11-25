@@ -226,7 +226,7 @@ class EtaExport(models.Model):
     filename = fields.Char(required=True, readonly=True)
     file_data = fields.Binary(attachment=True, readonly=True)
     file_size_mb = fields.Float(string='File Size (MB)', digits=(16, 2), readonly=True)
-    record_count = fields.Integer(readonly=True)
+    record_count = fields.Integer(string='Exported Rows', readonly=True)
     checked_through = fields.Date(string='Submission Days Checked Through', readonly=True)
     telegram_sent_at = fields.Datetime(readonly=True)
     telegram_message_id = fields.Char(readonly=True)
@@ -241,6 +241,92 @@ class EtaExport(models.Model):
     generation_retry_at = fields.Datetime(readonly=True)
     file_content_digest = fields.Char(readonly=True, copy=False)
     file_verified_rows = fields.Integer(string='File Rows', readonly=True, copy=False)
+    archived_count = fields.Integer(string='Archived Documents', compute='_compute_detail_status', compute_sudo=True)
+    details_ready = fields.Integer(string='Details Ready', compute='_compute_detail_status', compute_sudo=True)
+    details_pending = fields.Integer(string='Details Pending', compute='_compute_detail_status', compute_sudo=True)
+    details_failed = fields.Integer(string='Detail Errors', compute='_compute_detail_status', compute_sudo=True)
+    last_detail_error = fields.Char(string='Last Detail Error', compute='_compute_detail_status', compute_sudo=True)
+    last_detail_fetch_at = fields.Datetime(string='Last Detail Attempt', readonly=True, copy=False)
+    detail_fetched_rows = fields.Integer(string='Details Fetched in Last Batch', readonly=True, copy=False)
+    detail_fetch_seconds = fields.Float(string='Last Batch Duration (Seconds)', readonly=True, copy=False)
+    detail_rows_per_minute = fields.Float(string='Last Batch Rows per Minute', compute='_compute_detail_rate')
+    detail_job_active = fields.Boolean(string='Detail Job Enabled', compute='_compute_detail_job', compute_sudo=True)
+    detail_job_nextcall = fields.Datetime(string='Next Detail Run', compute='_compute_detail_job', compute_sudo=True)
+    detail_job_lastcall = fields.Datetime(string='Last Scheduled Detail Run', compute='_compute_detail_job', compute_sudo=True)
+
+    @api.depends('detail_fetched_rows', 'detail_fetch_seconds')
+    def _compute_detail_rate(self):
+        for export in self:
+            export.detail_rows_per_minute = (60 * export.detail_fetched_rows / export.detail_fetch_seconds
+                                            if export.detail_fetch_seconds > 0 else 0)
+
+    @api.depends('category')
+    def _compute_detail_job(self):
+        for export in self:
+            xmlid = 'cron_eta_receipt_uuid_details' if (export.category or '').endswith('receipt') else 'cron_eta_uuid_details'
+            cron = self.env.ref('ab_tax_eta_archive.' + xmlid, raise_if_not_found=False) if export.category else False
+            export.detail_job_active = bool(cron and cron.active)
+            trigger = self.env['ir.cron.trigger'].search(fields.Domain('cron_id', '=', cron.id),
+                order='call_at', limit=1) if cron and cron.active else False
+            export.detail_job_nextcall = (min(cron.nextcall, trigger.call_at) if trigger else cron.nextcall
+                                         ) if cron and cron.active else False
+            export.detail_job_lastcall = cron.lastcall if cron else False
+
+    @api.depends('config_id', 'report_date', 'category')
+    def _compute_detail_status(self):
+        for export in self:
+            export.archived_count = export.details_ready = export.details_pending = export.details_failed = 0
+            export.last_detail_error = False
+        for kind in ('invoice', 'receipt'):
+            exports = self.filtered(lambda row: (row.category or '').endswith(kind) and row.config_id and row.report_date)
+            if not exports:
+                continue
+            model = self.env['ab_tax_eta_archive_' + kind]
+            domain = (fields.Domain('config_id', 'in', exports.config_id.ids) &
+                      fields.Domain('report_date', 'in', exports.mapped('report_date')))
+            missing = fields.Domain('detail_json', '=', False) | fields.Domain('detail_json', '=', '')
+            keys = ['config_id', 'report_date:day', 'direction']
+            totals = {(config.id, day, direction): count for config, day, direction, count in
+                      model._read_group(domain, keys, ['__count'])}
+            pending = {(config.id, day, direction): count for config, day, direction, count in
+                       model._read_group(domain & missing, keys, ['__count'])}
+            failures = {(config.id, day, direction): count for config, day, direction, count in
+                        model._read_group(domain & missing & fields.Domain('detail_error', '!=', False),
+                                          keys, ['__count'])}
+            for export in exports:
+                direction = 'sent' if export.category.startswith('sent_') else 'received'
+                key = export.config_id.id, export.report_date, direction
+                export.archived_count = totals.get(key, 0)
+                export.details_pending = pending.get(key, 0)
+                export.details_ready = export.archived_count - export.details_pending
+                export.details_failed = failures.get(key, 0)
+                if export.details_failed:
+                    error = model.search(domain & missing & fields.Domain('detail_error', '!=', False) &
+                                         fields.Domain('config_id', '=', export.config_id.id) &
+                                         fields.Domain('report_date', '=', export.report_date) &
+                                         fields.Domain('direction', '=', direction),
+                                         order='detail_attempt_at desc NULLS LAST, id desc', limit=1)
+                    export.last_detail_error = error.detail_error
+
+    @api.model
+    def _detail_task(self, kind):
+        return 1 if kind == 'invoice' else 4
+
+    def action_fetch_details(self):
+        self.check_access('write')
+        deadline = time.monotonic() + 25
+        with requests.Session() as session:
+            for export in self:
+                _category, _label, kind, direction = next(row for row in CATEGORIES if row[0] == export.category)
+                with eta_task_lock(self.env, self._detail_task(kind)) as acquired:
+                    if acquired and time.monotonic() + 1 < deadline:
+                        self.with_context(eta_force_detail_retry=True)._enrich_details(
+                            export.config_id, kind, export.report_date, direction,
+                            deadline=deadline, session=session)
+                self._wake_detail_cron(kind)
+                if time.monotonic() < deadline:
+                    self._ensure_files(export.config_id, export.report_date, deadline=deadline)
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     def _valid_file_content(self, expected_count):
         self.ensure_one()
@@ -308,19 +394,34 @@ class EtaExport(models.Model):
     def _cron_fetch_details(self, kind='invoice'):
         if kind not in ('invoice', 'receipt'):
             raise ValueError('Unsupported ETA stream')
-        with eta_task_lock(self.env, 1) as acquired:
+        with eta_task_lock(self.env, self._detail_task(kind)) as acquired:
             if not acquired:
                 _logger.info('ETA detail queue already running; skipping duplicate %s task', kind)
                 if self.env.context.get('cron_id'):
                     self.env['ir.cron']._commit_progress(remaining=0)
                 return
-            handoff = self._fetch_details_batch(kind)
-        # Notify the next worker only after releasing the queue lock; an early
-        # notification could make it consume the trigger while the lock is busy.
-        if handoff:
-            self._wake_detail_cron(handoff)
-            if self.env.context.get('cron_id'):
-                self.env['ir.cron']._commit_progress(remaining=0)
+            self._fetch_details_batch(kind)
+
+    @api.model
+    def _next_detail_scope(self, configs, kind, domain):
+        """Rotate dates and connections; newer invoices cannot block receipts."""
+        model = self.env['ab_tax_eta_archive_' + kind]
+        choices = []
+        for config in configs:
+            progress = (config.detail_queue_progress or {}).get(kind, {})
+            scoped = (domain & fields.Domain('config_id', '=', config.id) &
+                      fields.Domain('received_at', '<', config._retrieval_cutoff().replace(tzinfo=None)))
+            previous = fields.Date.to_date(progress.get('date'))
+            head = model.search(scoped & fields.Domain('report_date', '<', previous),
+                                order=ETA_DETAIL_ORDER, limit=1) if previous else model.browse()
+            if not head:
+                head = model.search(scoped, order=ETA_DETAIL_ORDER, limit=1)
+            if head:
+                choices.append((progress.get('last_run') or 0, config.id, head.report_date))
+        if not choices:
+            return None
+        _last_run, config_id, day = min(choices)
+        return config_id, day
 
     @api.model
     def _detail_queue_domain(self, config_ids, today):
@@ -347,19 +448,26 @@ class EtaExport(models.Model):
         return kind, day
 
     @api.model
-    def _wake_detail_cron(self, kind):
+    def _wake_detail_cron(self, kind, at=None):
         xmlid = ('cron_eta_uuid_details' if kind == 'invoice'
                  else 'cron_eta_receipt_uuid_details')
-        self._wake_cron(xmlid)
+        self._wake_cron(xmlid, at=at)
 
     @api.model
-    def _wake_cron(self, xmlid):
-        if not self.env.context.get('cron_id'):
+    def _wake_cron(self, xmlid, at=None):
+        cron = self.env.ref('ab_tax_eta_archive.' + xmlid, raise_if_not_found=False)
+        if not cron:
+            _logger.warning('ETA scheduled job is missing: %s', xmlid)
             return
-        cron = self.env.ref('ab_tax_eta_archive.' + xmlid)
-        if not self.env['ir.cron.trigger'].sudo().search([
-                ('cron_id', '=', cron.id), ('call_at', '<=', fields.Datetime.now())], limit=1):
-            cron._trigger()
+        now = fields.Datetime.now()
+        at = at or now
+        domain = fields.Domain('cron_id', '=', cron.id) & fields.Domain('call_at', '<=', at)
+        if self.env.context.get('cron_id') == cron.id:
+            # Odoo clears the current trigger in another transaction. It must
+            # not suppress a future retry that this callback is scheduling.
+            domain &= fields.Domain('call_at', '>', now)
+        if not self.env['ir.cron.trigger'].sudo().search(domain, limit=1):
+            cron._trigger(at=at)
 
     @api.model
     def _fetch_details_batch(self, kind):
@@ -373,14 +481,28 @@ class EtaExport(models.Model):
             return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
         domain = self._detail_queue_domain(configs.ids, today)
-        next_work = self._next_detail_work(domain)
-        if not next_work or next_work[0] != kind:
+        next_work = self._next_detail_scope(configs, kind, domain)
+        if not next_work:
             if self.env.context.get('cron_id'):
                 self.env['ir.cron']._commit_progress(remaining=0)
-            return next_work[0] if next_work else None
+            return
+        config_id, work_day = next_work
+        config = self.env['ab_tax_eta_archive_config'].browse(config_id)
+        if not config.try_lock_for_update():
+            self._wake_detail_cron(kind, at=fields.Datetime.now() + timedelta(seconds=5))
+            if self.env.context.get('cron_id'):
+                self.env['ir.cron']._commit_progress(remaining=0)
+            return
+        config.invalidate_recordset(['detail_queue_progress'])
+        progress = dict(config.detail_queue_progress or {})
+        progress[kind] = {'date': fields.Date.to_string(work_day),
+                          'last_run': time.time()}
+        config.detail_queue_progress = progress
+        if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(0, remaining=1):
+            return
         model = self.env['ab_tax_eta_archive_' + kind]
         selected_batch = model.search(
-            domain & fields.Domain('report_date', '=', next_work[1]),
+            domain & fields.Domain('report_date', '=', work_day) & fields.Domain('config_id', '=', config_id),
             order=ETA_DETAIL_ORDER, limit=ETA_DETAIL_BATCH_SIZE)
         progress_offset = 0
         if selected_batch:
@@ -414,11 +536,10 @@ class EtaExport(models.Model):
                 finally:
                     _logger.info('ETA detail slice ended kind=%s attempted=%s selected=%s',
                                  kind, progress_offset, len(selected_batch))
-        next_work = self._next_detail_work(self._detail_queue_domain(configs.ids, today))
+        next_work = self._next_detail_scope(configs, kind, self._detail_queue_domain(configs.ids, today))
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(
-                remaining=int(bool(progress_offset) and bool(next_work) and next_work[0] == kind))
-        return next_work[0] if next_work and next_work[0] != kind else None
+                remaining=int(bool(progress_offset) and bool(next_work)))
 
     @api.model
     def _cron_prepare_files(self):
@@ -712,6 +833,8 @@ class EtaExport(models.Model):
             ('detail_error', '=', False),
             ('detail_attempt_at', '<', retry_before),
         ]
+        if self.env.context.get('eta_force_detail_retry'):
+            missing_domain = list(base_domain)
         missing_domain += [
             ('report_date', '<', datetime.now(pytz.timezone('Africa/Cairo')).date()),
             ('received_at', '<', config._retrieval_cutoff().replace(tzinfo=None)),
@@ -741,6 +864,8 @@ class EtaExport(models.Model):
                            'detail_attempt_at': attempted_at})
             _logger.warning('ETA UUID detail authentication failed for %s %s: %s',
                             kind, report_date, exc)
+            self._record_detail_batch(config, report_date, kind, direction,
+                                      ready=0, elapsed=time.monotonic() - batch_started_at)
             if self.env.context.get('cron_id'):
                 self.env['ir.cron']._commit_progress(len(missing), remaining=1)
             return 0
@@ -756,11 +881,9 @@ class EtaExport(models.Model):
         processed = 0
         ready = 0
         shape_logged = False
-        progress = getattr(self, 'web_progress_percent', None)
-        progress_message = self._detail_progress_message(kind, direction, report_date)
-        progress_total = progress_total or len(missing)
-        if progress and not progress_offset:
-            progress(0, msg=progress_message, cancellable=False)
+        # Background slices are queue work, not a single interactive operation.
+        # Their real counts/timing live on the daily file; do not leave duplicate
+        # web_progress cards running or label unfinished queues as Done.
         for record_id in missing.ids:
             # Keep each request's field prefetch bounded after progress commits.
             record = model.browse(record_id)
@@ -782,6 +905,9 @@ class EtaExport(models.Model):
                               'detail_attempt_at': fields.Datetime.now()})
                 ready += 1
             except EtaRequestDeferred:
+                resume_at = max(time.time() + 5,
+                                (rate_config.request_schedule or {}).get(kind + '_raw', 0))
+                self._wake_detail_cron(kind, at=datetime.utcfromtimestamp(resume_at))
                 break
             except (UserError, ValueError, requests.RequestException) as exc:
                 record.write({'detail_error': str(exc)[:500],
@@ -798,9 +924,6 @@ class EtaExport(models.Model):
                     shape_logged = True
                 _logger.warning('ETA export detail failed for %s: %s', record.uuid, exc)
             processed += 1
-            if progress:
-                progress(100.0 * (progress_offset + processed) / progress_total,
-                         msg=progress_message, cancellable=False)
             if (self.env.context.get('cron_id') and
                     not self.env['ir.cron']._commit_progress(1, remaining=1)):
                 break
@@ -809,10 +932,26 @@ class EtaExport(models.Model):
                      config.id, kind, direction, report_date, len(missing), processed,
                      ready, processed - ready, len(missing) - processed,
                      time.monotonic() - batch_started_at)
+        self._record_detail_batch(config, report_date, kind, direction,
+                                  ready=ready, elapsed=time.monotonic() - batch_started_at)
         if ready:
             self._queue_generation(config, report_date, kind, direction)
             self._wake_cron('cron_eta_prepare_files')
         return processed
+
+    @api.model
+    def _record_detail_batch(self, config, day, kind, direction, ready, elapsed):
+        category = next(row[0] for row in CATEGORIES if row[2:] == (kind, direction))
+        export = self.search(fields.Domain([
+            ('config_id', '=', config.id), ('report_date', '=', day),
+            ('category', '=', category)]), order='revision desc', limit=1)
+        if not export:
+            export = self.create({'config_id': config.id, 'report_date': day, 'category': category,
+                                  'filename': f'{category}_{day}_r1.xlsx'})
+        export.write({'last_detail_fetch_at': fields.Datetime.now(),
+                      'detail_fetched_rows': ready, 'detail_fetch_seconds': max(elapsed, 0)})
+        export.invalidate_recordset(['archived_count', 'details_ready', 'details_pending',
+                                     'details_failed', 'last_detail_error'])
 
     def _progress_iter(self, data, message, total=None):
         progress_iter = getattr(self, 'web_progress_iter', None)

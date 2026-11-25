@@ -1,5 +1,32 @@
 Current changes before commit:
 
+- Prevent newer invoice detail work from blocking receipts. Use independent invoice/receipt queue locks, rotate issue dates and connections, and retain a single receipt worker across manual and scheduled runs.
+- Add Fetch Missing Details for a specific file/date/stream with a bounded request slice, provider cooldown protection and safe file generation when all details become ready.
+- Wake the configured scheduled jobs from manual work too. Schedule deferred requests at the provider cooldown and prevent a currently consumed cron trigger from suppressing its own future retry.
+- Remove ETA detail-slice web_progress emissions that left inactive cards looking like concurrent receipt work; report real archive/detail counters, errors, last-batch timing/rate and scheduler enabled/last/next times on daily files instead.
+- Rename Record Count to Exported Rows; show Archived Documents, Details Ready, Details Pending and Detail Errors so a zero file count is not confused with missing archive data.
+- Append English/Arabic pairs in both catalogs and bump the module to 19.0.1.1.2. Retain records, files and configured scheduled intervals.
+
+Files changed:
+
+- ab_tax_eta_archive/__manifest__.py
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+
+Validation (2026-11-25):
+
+- Passed 48 integration tests, including receipt/invoice independence, date rotation, exclusive receipt workers, source counts, targeted detail fetching and file creation, scheduler visibility, manual wakeups and Retry-After scheduling.
+- A real Odoo receipt-detail cron with mocked HTTP processed the older receipt while newer invoices remained pending, generated its workbook, avoided repeated fetches and scheduled a 120-second provider retry.
+- Tests run only in eta_review_20261125. No production ETA traffic or production data edits were performed. Server cron-worker settings and live ETA permissions/errors still require verification on the deployment.
+
+26ab0dbe - yahyazakaria22 - 2026-11-25
+fix: validate ETA package downloads and rebuild empty export files
+
+
 - Fix the HTTP wrapper ignoring raw_response: keep package ZIP and 204 responses out of JSON parsing, request binary content, and preserve safe nested/flat error codes, targets and correlation IDs.
 - Poll documented, paginated package statuses before downloads. Distinguish preparing/available/failed/expired/missing states, recheck status after 400/404, and renew only confirmed expired requests with retained ID history and a two-renewal bound.
 - Replace the generic package-or-new diagnostic with package ID, window and imported offset. Retain package IDs and archive rows when a request is missing or fails.

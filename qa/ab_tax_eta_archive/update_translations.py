@@ -42,6 +42,15 @@ translations = {
     'ETA package status response is invalid.': 'استجابة حالة الحزمة من مصلحة الضرائب غير صالحة.',
     'Request History': 'سجل طلبات الحزمة',
     'File Content Digest': 'بصمة محتوى الملف', 'File Rows': 'صفوف الملف',
+    'Archived Documents': 'المستندات المؤرشفة', 'Detail Errors': 'أخطاء التفاصيل',
+    'Detail Job Enabled': 'مهمة جلب التفاصيل مفعلة', 'Detail Queue Progress': 'تقدم قائمة جلب التفاصيل',
+    'Detail Retrieval': 'جلب التفاصيل', 'Details Fetched in Last Batch': 'التفاصيل التي تم جلبها في آخر دفعة',
+    'Details Pending': 'التفاصيل المعلقة', 'Details Ready': 'التفاصيل الجاهزة',
+    'Exported Rows': 'الصفوف المصدرة', 'Fetch Missing Details': 'جلب التفاصيل الناقصة',
+    'Last Batch Duration (Seconds)': 'مدة آخر دفعة (بالثواني)',
+    'Last Batch Rows per Minute': 'صفوف آخر دفعة في الدقيقة',
+    'Last Detail Attempt': 'آخر محاولة لجلب التفاصيل', 'Last Detail Error': 'آخر خطأ في التفاصيل',
+    'Last Scheduled Detail Run': 'آخر تشغيل مجدول للتفاصيل', 'Next Detail Run': 'التشغيل القادم لجلب التفاصيل',
     'ETA package renewal limit reached; verify the request in the ETA portal.':
         'تم بلوغ الحد الأقصى لتجديد الحزمة؛ تحقق من الطلب في بوابة مصلحة الضرائب.',
 }

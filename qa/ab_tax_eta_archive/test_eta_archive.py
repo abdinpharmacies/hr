@@ -448,6 +448,8 @@ class EtaArchiveTests(unittest.TestCase):
         self.assertEqual(descriptions['safety_delay_hours']['string'],'مهلة الأمان بالساعات')
         file_labels=self.exports.with_context(lang='ar_001').fields_get(['file_verified_rows'])
         self.assertEqual(file_labels['file_verified_rows']['string'],'صفوف الملف')
+        detail_labels=self.exports.with_context(lang='ar_001').fields_get(['details_pending'])
+        self.assertEqual(detail_labels['details_pending']['string'],'التفاصيل المعلقة')
 
     def ready_day(self):
         day=self.today-timedelta(days=3)
@@ -607,6 +609,148 @@ class EtaArchiveTests(unittest.TestCase):
         session.request.side_effect=[response(429,headers={'Retry-After':'120'})]
         with self.assertRaises(EtaRequestDeferred):
             run._request('GET','https://eta.invalid/api/v1.0/documents/search',request_session=session)
+
+    def detail_row(self, day, uuid, kind='receipt', direction='sent', detail=False, error=False):
+        run=Mock(report_date=day)
+        values=self.env['ab_tax_eta_archive_'+kind]._eta_values(self.item(run,uuid),direction,self.config)
+        values.update(detail_json=detail,detail_error=error,
+                      detail_attempt_at=fields.Datetime.now() if error else False)
+        return self.env['ab_tax_eta_archive_'+kind].create(values)
+
+    def detail_response(self, uuid='detail'):
+        response=requests.Response(); response.status_code=200; response._content_consumed=True
+        response.url='https://eta.invalid/api/v1/receipts/'+uuid+'/raw'
+        response._content=json.dumps({'receipt':{'uuid':uuid,'seller':{},'buyer':{},
+            'documentType':{'receiptType':'s'},'itemData':[], 'currency':'EGP','totalAmount':10,
+            'taxTotals':[{'taxType':'T1','amount':1.4}]}}).encode()
+        return response
+
+    def test_detail_counts_explain_zero_exported_rows_and_errors(self):
+        day=self.ready_day()
+        self.detail_row(day,'ready',detail='{"taxes":{},"total":10}')
+        self.detail_row(day,'pending')
+        self.detail_row(day,'failed',error='HTTP 403 code=Forbidden')
+        self.detail_row(day,'other-direction',direction='received')
+        self.exports._ensure_files(self.config,day)
+        export=self.exports._latest_day_files(self.config,day)['sent_receipt']
+        self.assertEqual(export.generation_state,'details')
+        self.assertEqual(export.record_count,0)
+        self.assertEqual((export.archived_count,export.details_ready,export.details_pending,export.details_failed),
+                         (3,1,2,1))
+        self.assertIn('Forbidden',export.last_detail_error)
+        self.assertFalse(export.file_data)
+
+    def test_receipts_fetch_even_when_newer_invoices_remain_pending(self):
+        older=self.today-timedelta(days=3); newer=self.today-timedelta(days=1)
+        self.detail_row(older,'receipt-22')
+        self.detail_row(newer,'invoice-24',kind='invoice')
+        with patch.object(type(self.exports),'_enrich_details',return_value=0) as enrich:
+            self.exports._fetch_details_batch('receipt')
+        self.assertEqual(enrich.call_count,1)
+        self.assertEqual(enrich.call_args.args[1:3],('receipt',older))
+
+    def test_detail_dates_rotate_without_waiting_for_newest_day_to_finish(self):
+        older=self.today-timedelta(days=3); newer=self.today-timedelta(days=1)
+        self.detail_row(older,'receipt-old'); self.detail_row(newer,'receipt-new')
+        with patch.object(type(self.exports),'_enrich_details',return_value=0) as enrich:
+            self.exports._fetch_details_batch('receipt')
+            self.exports._fetch_details_batch('receipt')
+            self.exports._fetch_details_batch('receipt')
+        self.assertEqual([call.args[2] for call in enrich.call_args_list],[newer,older,newer])
+
+    def test_receipt_workers_are_exclusive_and_invoice_queue_is_independent(self):
+        with eta_task_lock(self.env,self.exports._detail_task('receipt')) as acquired:
+            self.assertTrue(acquired)
+            with patch.object(type(self.exports),'_fetch_details_batch') as fetch:
+                self.exports._cron_fetch_details('receipt')
+                self.assertFalse(fetch.called)
+                self.exports._cron_fetch_details('invoice')
+                self.assertEqual(fetch.call_args.args,('invoice',))
+
+    def test_targeted_receipt_details_fetch_generates_file_and_reports_progress(self):
+        day=self.ready_day()
+        target=self.detail_row(day,'target',error='previous failure')
+        other=self.detail_row(day,'other',direction='received')
+        self.exports._ensure_files(self.config,day)
+        export=self.exports._latest_day_files(self.config,day)['sent_receipt']
+        self.assertEqual(export.details_pending,1)
+        with patch('requests.sessions.Session.request',return_value=self.detail_response('target')) as request, \
+             patch.object(type(self.exports),'web_progress_percent',create=True) as progress:
+            export.action_fetch_details()
+        self.assertEqual(request.call_count,1)
+        self.assertIn('/receipts/target/raw',request.call_args.args[1])
+        self.assertFalse(progress.called)
+        self.assertTrue(target.detail_json)
+        self.assertFalse(other.detail_json)
+        self.assertTrue(export.file_data)
+        self.assertEqual(export.generation_state,'ready')
+        self.assertEqual((export.details_ready,export.details_pending,export.details_failed),(1,0,0))
+        self.assertEqual(export.detail_fetched_rows,1)
+        self.assertTrue(export.last_detail_fetch_at)
+        self.assertGreaterEqual(export.detail_rows_per_minute,0)
+
+    def test_targeted_fetch_respects_running_receipt_worker_and_provider_cooldown(self):
+        day=self.ready_day(); self.detail_row(day,'limited')
+        self.exports._ensure_files(self.config,day)
+        export=self.exports._latest_day_files(self.config,day)['sent_receipt']
+        with eta_task_lock(self.env,self.exports._detail_task('receipt')):
+            with patch.object(type(self.exports),'_enrich_details') as enrich:
+                export.action_fetch_details()
+            self.assertFalse(enrich.called)
+        response=requests.Response(); response.status_code=429
+        response.url='https://eta.invalid/api/v1/receipts/limited/raw'
+        response._content=b'{}'; response._content_consumed=True
+        response.headers['Retry-After']='120'
+        with patch('requests.sessions.Session.request',return_value=response) as request:
+            export.action_fetch_details()
+            export.action_fetch_details()
+        self.assertEqual(request.call_count,1)
+        self.assertEqual(export.details_pending,1)
+        self.assertFalse(export.file_data)
+
+    def test_manual_work_wakes_scheduled_details_without_cron_context(self):
+        cron=self.env.ref('ab_tax_eta_archive.cron_eta_receipt_uuid_details')
+        self.assertFalse(self.env.context.get('cron_id'))
+        triggers=self.env['ir.cron.trigger']
+        with patch.object(type(triggers),'search',return_value=triggers.browse()), \
+             patch.object(type(cron),'_trigger') as wake:
+            self.exports._wake_detail_cron('receipt')
+        self.assertTrue(wake.called)
+
+    def test_throttled_details_schedule_retry_after_provider_cooldown(self):
+        day=self.ready_day(); self.detail_row(day,'wait-for-provider')
+        self.exports._ensure_files(self.config,day)
+        export=self.exports._latest_day_files(self.config,day)['sent_receipt']
+        response=requests.Response(); response.status_code=429
+        response.url='https://eta.invalid/api/v1/receipts/wait-for-provider/raw'
+        response._content=b'{}'; response._content_consumed=True
+        response.headers['Retry-After']='120'
+        with patch('requests.sessions.Session.request',return_value=response), \
+             patch.object(type(self.exports),'_wake_detail_cron') as wake:
+            self.exports._enrich_details(self.config,'receipt',day,'sent',deadline=time.monotonic()+25)
+        retry_at=wake.call_args.kwargs['at']
+        self.assertGreaterEqual(retry_at,fields.Datetime.now()+timedelta(seconds=119))
+        self.assertFalse(export.file_data)
+
+    def test_current_cron_trigger_does_not_suppress_future_retry(self):
+        cron=self.env.ref('ab_tax_eta_archive.cron_eta_receipt_uuid_details')
+        triggers=self.env['ir.cron.trigger'].sudo()
+        future=fields.Datetime.now()+timedelta(seconds=120)
+        triggers.create({'cron_id':cron.id,'call_at':fields.Datetime.now()-timedelta(seconds=1)})
+        self.exports.with_context(cron_id=cron.id)._wake_detail_cron('receipt',at=future)
+        self.assertTrue(triggers.search([('cron_id','=',cron.id),('call_at','=',future)],limit=1))
+
+    def test_file_reports_disabled_scheduler_without_claiming_a_next_run(self):
+        cron=self.env.ref('ab_tax_eta_archive.cron_eta_receipt_uuid_details')
+        export=self.exports.create({'config_id':self.config.id,'report_date':self.today-timedelta(days=3),
+                                    'category':'sent_receipt','filename':'scheduler-check.xlsx'})
+        self.assertTrue(export.detail_job_active)
+        self.exports._wake_detail_cron('receipt',at=fields.Datetime.now()+timedelta(seconds=30))
+        self.assertTrue(export.detail_job_nextcall)
+        cron.active=False
+        export.invalidate_recordset(['detail_job_active','detail_job_nextcall','detail_job_lastcall'])
+        self.assertFalse(export.detail_job_active)
+        self.assertFalse(export.detail_job_nextcall)
 
     def test_sparse_receipt_request_count_benchmark(self):
         run=self.run_day('receipt')

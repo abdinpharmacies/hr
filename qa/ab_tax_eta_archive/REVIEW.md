@@ -1,9 +1,54 @@
 # ETA archive review — 25 November 2026
 
-Implemented version: **19.0.1.1.1**. Local source and running validation registry: **Odoo 19.0**.
+Implemented version: **19.0.1.1.2**. Local source and running validation registry: **Odoo 19.0**.
 Only the dedicated `eta_review_20261125` database was installed/upgraded. No live ETA,
 Telegram, production archive, inventory, or external database writes were performed.
 Tests live outside the production addon to keep its package runtime-only.
+
+## Follow-up: Nov 22 sent receipts stuck at Details incomplete
+
+The supplied file has no generated content yet. Its old Record Count is the exported-file
+count, not the archived-receipt count. Generation waits for missing UUID details.
+
+Confirmed queue causes: the detail selector chose one newest document type globally,
+allowing newer invoice work to keep receipt jobs from fetching anything. Within a stream,
+newest-first selection also delayed older dates. Manual actions did not wake scheduled
+jobs outside cron context. Stopped slices left web_progress cards ongoing, so several
+past slices could appear to be concurrent receipt workers.
+
+Version 19.0.1.1.2 changes:
+
+- Invoice and receipt queues run independently with one advisory lock per stream. Manual
+  and scheduled receipt fetches share the receipt lock; API budgets still share credential
+  owners and preserve the existing request pacing. Dates/connections rotate between slices.
+- Fetch Missing Details targets the selected connection, issue date and direction for at
+  most one 25-second slice. It can retry failed rows explicitly, while provider cooldowns
+  continue to apply. It generates the file only when all required details are ready.
+- Completed manual work wakes the relevant jobs. Throttled requests receive a future
+  trigger after the provider cooldown; the current trigger does not suppress that retry.
+- The file form/list reports Archived Documents, Details Ready, Details Pending and Detail
+  Errors. Last Detail Error explains failed requests. Exported Rows remains the file count.
+  Last batch row count, duration and rows/minute are observations of that batch, not a
+  prediction of sustained production throughput. Scheduler enabled/last/next times include
+  queued triggers and make disabled jobs visible.
+- Background detail slices no longer emit interactive progress-card percentages. Queue
+  counts and timestamps represent their progress; refresh the browser after deploying to
+  clear old cached cards. Shared web_progress code/templates are unchanged.
+
+Validation: 48 integration tests passed. A real `method_direct_trigger()` receipt-detail
+job processed a Nov-22-style older receipt despite newer pending invoices, then the actual
+file job generated a nonempty workbook. A second detail run did not refetch completed data.
+A provider 429 scheduled the next attempt after its 120-second Retry-After. HTTP is mocked;
+these results do not confirm production credentials, provider responses or throughput.
+The standalone `detail_cron_check.py` reproduces that committed scheduler path.
+
+Deployment: stop/restart all Odoo workers around the targeted module upgrade because lock
+ownership and Python queue logic changed. Pulling code alone does not reload Python in
+running workers. Open the Nov 22 Receipts sent record and use Fetch Missing Details; inspect
+pending/error counts and Last Detail Error. If Detail Job Enabled is false, enable the
+existing ETA: Fetch Receipt UUID Details job in Scheduled Actions. If enabled but its next
+run remains overdue without new batches, inspect the production cron workers, database
+filter and server logs; this coding environment cannot verify those server settings.
 
 ## Follow-up: package 205882 HTTP 400 and Done files without data
 
@@ -128,7 +173,7 @@ localized separately to handle DST days of different lengths.
 - `ab_tax_eta_archive/static/description/icon.png` (new): application icon.
 - `ab_tax_eta_archive/data/cron.xml`: adjustable five-minute defaults.
 - `ab_tax_eta_archive/i18n/ar.po`, `i18n/ar_001.po`: Arabic additions and Odoo references.
-- `ab_tax_eta_archive/__manifest__.py`: version 19.0.1.1.1.
+- `ab_tax_eta_archive/__manifest__.py`: version 19.0.1.1.2.
 - `ab_tax_eta_archive/changelog.d`: current changes and corrected recent-commit attribution.
 - `qa/ab_tax_eta_archive/`: standalone test/upgrade/cron/translation helpers and this report;
   generated logs, POT, snapshots and filestore are ignored.

@@ -1519,3 +1519,84 @@ msgstr "بصمة محتوى الملف"
 #: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__file_verified_rows
 msgid "File Rows"
 msgstr "صفوف الملف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__archived_count
+msgid "Archived Documents"
+msgstr "المستندات المؤرشفة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__details_failed
+msgid "Detail Errors"
+msgstr "أخطاء التفاصيل"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__detail_job_active
+msgid "Detail Job Enabled"
+msgstr "مهمة جلب التفاصيل مفعلة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_config__detail_queue_progress
+msgid "Detail Queue Progress"
+msgstr "تقدم قائمة جلب التفاصيل"
+
+#. module: ab_tax_eta_archive
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_form
+msgid "Detail Retrieval"
+msgstr "جلب التفاصيل"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__detail_fetched_rows
+msgid "Details Fetched in Last Batch"
+msgstr "التفاصيل التي تم جلبها في آخر دفعة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__details_pending
+msgid "Details Pending"
+msgstr "التفاصيل المعلقة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__details_ready
+msgid "Details Ready"
+msgstr "التفاصيل الجاهزة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__record_count
+msgid "Exported Rows"
+msgstr "الصفوف المصدرة"
+
+#. module: ab_tax_eta_archive
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_form
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_list
+msgid "Fetch Missing Details"
+msgstr "جلب التفاصيل الناقصة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__detail_fetch_seconds
+msgid "Last Batch Duration (Seconds)"
+msgstr "مدة آخر دفعة (بالثواني)"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__detail_rows_per_minute
+msgid "Last Batch Rows per Minute"
+msgstr "صفوف آخر دفعة في الدقيقة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__last_detail_fetch_at
+msgid "Last Detail Attempt"
+msgstr "آخر محاولة لجلب التفاصيل"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__last_detail_error
+msgid "Last Detail Error"
+msgstr "آخر خطأ في التفاصيل"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__detail_job_lastcall
+msgid "Last Scheduled Detail Run"
+msgstr "آخر تشغيل مجدول للتفاصيل"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__detail_job_nextcall
+msgid "Next Detail Run"
+msgstr "التشغيل القادم لجلب التفاصيل"
