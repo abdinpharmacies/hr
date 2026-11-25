@@ -99,7 +99,8 @@ class EtaRetrieval(models.Model):
                         return False
                     self.invalidate_recordset()
                     before = (self.checkpoint, self.item_count,
-                              [(p.id, p.state, p.package_id, p.import_offset, bool(p.payload_json))
+                              [(p.id, p.state, p.package_id, p.import_offset, bool(p.payload_json),
+                                p.status_page, p.remote_status)
                                for p in self.package_ids])
                     result = self._retrieve()
                     if result is None:
@@ -108,7 +109,8 @@ class EtaRetrieval(models.Model):
                                     'last_run_at': fields.Datetime.now(), 'error_message': False,
                                     'completed_at': False})
                         after = (self.checkpoint, self.item_count,
-                                 [(p.id, p.state, p.package_id, p.import_offset, bool(p.payload_json))
+                                 [(p.id, p.state, p.package_id, p.import_offset, bool(p.payload_json),
+                                   p.status_page, p.remote_status)
                                   for p in self.package_ids])
                         if before == after:
                             return False
@@ -138,12 +140,26 @@ class EtaRetrieval(models.Model):
                                 self._checkpoint_label(), type(exc).__name__)
                 return False
         self.env['ab_tax_eta_archive_export']._wake_detail_cron(self.kind)
+        if result is not None:
+            model = self.env['ab_tax_eta_archive_' + self.kind]
+            start, end = day_bounds(self.report_date)
+            for issue_day, in model._read_group(fields.Domain([
+                    ('config_id', '=', self.config_id.id), ('direction', '=', self.direction),
+                    ('received_at', '>=', start.replace(tzinfo=None)),
+                    ('received_at', '<', end.replace(tzinfo=None))]), ['report_date:day'], []):
+                self.env['ab_tax_eta_archive_export']._queue_generation(
+                    self.config_id, issue_day, self.kind, self.direction)
         return True
 
     def _checkpoint_label(self):
         queue = (self.checkpoint or {}).get('windows') or []
         if not queue:
-            return 'package-or-new'
+            part = self.package_ids.filtered(lambda row: row.state != 'split' and not row.imported).sorted(
+                'start_at', reverse=True)[:1]
+            if part:
+                return 'package=%s window=%s/%s imported=%s' % (
+                    part.package_id or 'not-requested', part.start_at, part.end_at, part.import_offset)
+            return 'new retrieval'
         win = queue[0]
         # Tokens and document identifiers must never appear in logs.
         return '%s/%s page=%s saved=%s' % (

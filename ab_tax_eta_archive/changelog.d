@@ -1,5 +1,34 @@
 Current changes before commit:
 
+- Fix the HTTP wrapper ignoring raw_response: keep package ZIP and 204 responses out of JSON parsing, request binary content, and preserve safe nested/flat error codes, targets and correlation IDs.
+- Poll documented, paginated package statuses before downloads. Distinguish preparing/available/failed/expired/missing states, recheck status after 400/404, and renew only confirmed expired requests with retained ID history and a two-renewal bound.
+- Replace the generic package-or-new diagnostic with package ID, window and imported offset. Retain package IDs and archive rows when a request is missing or fails.
+- Prioritize file dates when details/retrieval finish and pick up existing waiting or unverified files independently of the older sweep cursor. Add targeted Generate Files, scheduled retry cooldowns and independent category outcomes.
+- Validate actual XLSX data rows and file-content digests before cache reuse or delivery. Rebuild header-only/invalid files from archived rows, verify newly generated files, expose File Rows and preserve valid sent files without duplicate revisions.
+- Add paired Arabic labels in both catalogs, update standalone regression tests and bump to 19.0.1.1.1.
+
+Files changed:
+
+- ab_tax_eta_archive/__manifest__.py
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_package.py
+- ab_tax_eta_archive/models/eta_retrieval.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/views/eta_views.xml
+
+Validation (2026-11-25):
+
+- Passed 38 integration tests in 4.951 seconds. Regression tests cover the actual HTTP wrapper with ZIP/204 responses, safe 400 diagnostics, status pagination, expired/missing/failed packages, bounded renewal, old scan cursors, real XLSX data/UUID/VAT cells, header-only repair and valid sent-file reuse.
+- Targeted Odoo 19 upgrade passed in eta_review_20261125. All HTTP is mocked; the live cause of package 205882's HTTP 400 cannot be determined from the correlation ID alone.
+- Arabic entries were merged from a fresh Odoo POT and passed Babel checks. Runtime translation checks cover the new File Rows label. GNU msgfmt remains unavailable locally.
+
+9101eed48d32a3427c5671d40a35e7d6219b61c0 - yahyazakaria22 - 2026-11-25
+fix: make ETA retrieval resumable and daily exports reliable
+
+
 - Persist page/window checkpoints, distinguish Partial/Error from completed days, retain diagnostics and remove forced completion progress.
 - Enforce Cairo midnight and a configurable safety delay (default 12 hours), including fractional-second boundaries and complete-day export readiness.
 - Align receipt retrieval with submission dates while preserving issue-date exports. Enable historical packages with contiguous adaptive windows, bounded polling and resumable imports. Preserve old checkpoint evidence and archived data.

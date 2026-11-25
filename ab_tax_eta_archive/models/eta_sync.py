@@ -2,6 +2,7 @@ import logging
 import json
 import time
 import hashlib
+import re
 from email.utils import parsedate_to_datetime
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -40,6 +41,38 @@ class EtaSearchLimit(Exception):
 
 class EtaPageSizeError(Exception):
     """The server's configured maximum page size is below the requested size."""
+
+
+class EtaHttpError(UserError):
+    """HTTP diagnostics without retaining response payloads or credentials."""
+
+    def __init__(self, message, status_code):
+        super().__init__(message)
+        self.status_code = status_code
+
+
+def eta_error_codes(payload):
+    """Support standard nested errors and flat errors; retain only code/target."""
+    if not isinstance(payload, dict):
+        return ''
+    error = payload.get('error')
+    short_error = error if isinstance(error, str) and re.fullmatch(r'[A-Za-z][\w.-]{0,79}', error) else None
+    error = error if isinstance(error, dict) else payload
+    rows = [error] + (error.get('details') if isinstance(error.get('details'), list) else [])[:5]
+    diagnostics = []
+    if short_error and not error.get('code'):
+        diagnostics.append('code=' + short_error)
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        values = []
+        for name in ('code', 'target'):
+            value = row.get(name)
+            if isinstance(value, (str, int)) and re.fullmatch(r'[\w.\[\]-]{1,80}', str(value)):
+                values.append('%s=%s' % (name, value))
+        if values:
+            diagnostics.append(', '.join(values))
+    return '; '.join(diagnostics)
 
 
 class EtaRequestDeferred(Exception):
@@ -349,6 +382,8 @@ class EtaSync(models.Model):
                         raise EtaSearchNoResult()
             try:
                 response.raise_for_status()
+                if raw_response:
+                    return response
                 payload = response.json()
             except (requests.RequestException, ValueError) as exc:
                 endpoint = urlsplit(response.url)
@@ -358,16 +393,7 @@ class EtaSync(models.Model):
                     error_body = response.json()
                 except ValueError:
                     error_body = {}
-                if isinstance(error_body, dict):
-                    error = error_body.get('error')
-                    if isinstance(error, dict):
-                        detail = ': '.join(str(error.get(key, '')).strip()
-                                           for key in ('code', 'message', 'target')
-                                           if error.get(key))
-                # Never persist response bodies: errors can echo sensitive input.
-                if detail:
-                    detail = str(error_body.get('error', {}).get('code', '')) if isinstance(
-                        error_body.get('error'), dict) else 'ETAError'
+                detail = eta_error_codes(error_body)
                 correlation_id = response.headers.get('correlationId')
                 if correlation_id:
                     detail = f'{detail} (correlationId: {correlation_id})'.strip()
@@ -379,7 +405,8 @@ class EtaSync(models.Model):
                 )
                 if detail:
                     error_message = f'{error_message}: {detail}'
-                raise UserError(error_message) from exc
+                response.close()
+                raise EtaHttpError(error_message, response.status_code) from exc
             if not isinstance(payload, dict):
                 raise ValidationError(_('ETA returned an invalid JSON response.'))
             return payload

@@ -1411,3 +1411,111 @@ msgstr "محادثة تيليجرام"
 #: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__telegram_message_id
 msgid "Telegram Message"
 msgstr "رسالة تيليجرام"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__remote_status__2
+msgid "Available"
+msgstr "متاح"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_package.py:0
+msgid "ETA failed to prepare package %(package)s."
+msgstr "فشلت مصلحة الضرائب في تجهيز الحزمة %(package)s."
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_package.py:0
+msgid "ETA package %(package)s has expired or was deleted."
+msgstr "انتهت صلاحية الحزمة %(package)s لدى مصلحة الضرائب أو تم حذفها."
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_package.py:0
+msgid "ETA package %(package)s was not found; verify its ID and credentials."
+msgstr "لم يتم العثور على الحزمة %(package)s؛ تحقق من معرفها وبيانات الاتصال."
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_package.py:0
+msgid "ETA package status response is invalid."
+msgstr "استجابة حالة الحزمة من مصلحة الضرائب غير صالحة."
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__remote_status__4
+msgid "Expired or deleted"
+msgstr "منتهي الصلاحية أو محذوف"
+
+#. module: ab_tax_eta_archive
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_form
+#: model_terms:ir.ui.view,arch_db:ab_tax_eta_archive.view_eta_export_list
+msgid "Generate Files"
+msgstr "إنشاء الملفات"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__generation_requested
+msgid "Generation Requested"
+msgstr "إنشاء الملفات مطلوب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__generation_retry_at
+msgid "Generation Retry At"
+msgstr "موعد إعادة محاولة إنشاء الملفات"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__remote_status__missing
+msgid "Package not found"
+msgstr "الحزمة غير موجودة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__remote_status__3
+msgid "Preparation failed"
+msgstr "فشل التجهيز"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields.selection,name:ab_tax_eta_archive.selection__ab_tax_eta_archive_package__remote_status__1
+msgid "Preparing"
+msgstr "جارٍ التجهيز"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__remote_error
+msgid "Remote Error"
+msgstr "خطأ مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__remote_status
+msgid "Remote Status"
+msgstr "حالة الحزمة لدى مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__status_checked_at
+msgid "Status Checked At"
+msgstr "وقت فحص الحالة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__status_page
+msgid "Status Page"
+msgstr "صفحة فحص الحالة"
+
+#. module: ab_tax_eta_archive
+#. odoo-python
+#: code:addons/ab_tax_eta_archive/models/eta_package.py:0
+msgid ""
+"ETA package renewal limit reached; verify the request in the ETA portal."
+msgstr ""
+"تم بلوغ الحد الأقصى لتجديد الحزمة؛ تحقق من الطلب في بوابة مصلحة الضرائب."
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_package__request_history
+msgid "Request History"
+msgstr "سجل طلبات الحزمة"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__file_content_digest
+msgid "File Content Digest"
+msgstr "بصمة محتوى الملف"
+
+#. module: ab_tax_eta_archive
+#: model:ir.model.fields,field_description:ab_tax_eta_archive.field_ab_tax_eta_archive_export__file_verified_rows
+msgid "File Rows"
+msgstr "صفوف الملف"

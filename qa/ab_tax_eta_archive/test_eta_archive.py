@@ -236,13 +236,122 @@ class EtaArchiveTests(unittest.TestCase):
     def test_package_204_defers_polling_and_reuses_session(self):
         run=self.run_day('receipt',age=45); run._attempt()
         run.package_ids.package_id='pending-package'
+        run.package_ids.write({'remote_status':'2','status_checked_at':fields.Datetime.now()})
         response=requests.Response(); response.status_code=204; response.raw=io.BytesIO()
         with patch.object(type(run),'_request',return_value=response) as request:
-            self.assertFalse(run._attempt())
+            self.assertTrue(run._attempt())
             self.assertFalse(run._attempt())
             self.assertEqual(request.call_count,1)
         self.assertGreater(run.next_attempt_at,fields.Datetime.now())
         self.assertNotEqual(run.state,'done')
+
+    def test_real_request_keeps_zip_response_and_imports_package(self):
+        run=self.run_day('receipt',age=45); run._attempt()
+        part=run.package_ids
+        part.write({'package_id':'205882','remote_status':'2','status_checked_at':fields.Datetime.now()})
+        stamp=api_stamp(day_bounds(run.report_date)[0]+timedelta(hours=1))
+        items=[{'receipt':{'uuid':'zip-receipt','dateTimeIssued':stamp,'seller':{},
+                            'documentType':{},'itemData':[]},'dateTimeReceived':stamp}]
+        content=io.BytesIO()
+        with zipfile.ZipFile(content,'w') as archive:
+            archive.writestr('receipts.json',json.dumps(items))
+        response=requests.Response(); response.status_code=200
+        response._content=content.getvalue(); response._content_consumed=True
+        response.url='https://eta.invalid/api/v1.0/receiptpackages/205882'
+        session=Mock(); session.request.return_value=response
+        run.with_context(eta_request_session=session)._attempt()
+        self.assertEqual(session.request.call_args.kwargs['headers']['Accept'],'application/octet-stream')
+        self.assertEqual(part.state,'ready')
+        self.assertEqual(json.loads(part.payload_json),items)
+        run._attempt(); run._attempt()
+        self.assertEqual(run.state,'done')
+        self.assertEqual(run.item_count,1)
+
+    def test_real_request_returns_empty_204_without_json_parse(self):
+        run=self.run_day('receipt')
+        response=requests.Response(); response.status_code=204
+        response.url='https://eta.invalid/package'; response.raw=io.BytesIO()
+        session=Mock(); session.request.return_value=response
+        result=run._request('GET',response.url,raw_response=True,request_session=session)
+        self.assertIs(result,response)
+        result.close()
+
+    def test_flat_and_nested_http_diagnostics_preserve_codes_not_payload(self):
+        from odoo.addons.ab_tax_eta_archive.models.eta_sync import EtaHttpError
+        run=self.run_day('receipt')
+        for payload in ({'code':'BadArgument','target':'rid','message':'secret receipt contents'},
+                        {'error':{'code':'BadArgument','target':'rid','message':'secret receipt contents'}}):
+            response=requests.Response(); response.status_code=400
+            response._content=json.dumps(payload).encode(); response._content_consumed=True
+            response.url='https://eta.invalid/package'; response.headers['correlationId']='qa-correlation'
+            session=Mock(); session.request.return_value=response
+            with self.assertRaises(EtaHttpError) as caught:
+                run._request('GET',response.url,raw_response=True,request_session=session)
+            self.assertIn('code=BadArgument',str(caught.exception))
+            self.assertIn('target=rid',str(caught.exception))
+            self.assertIn('qa-correlation',str(caught.exception))
+            self.assertNotIn('secret receipt contents',str(caught.exception))
+
+    def test_package_status_pagination_and_no_download_before_ready(self):
+        run=self.run_day('receipt',age=45); run._attempt()
+        part=run.package_ids; part.package_id='205882'
+        with patch.object(type(run),'_request',side_effect=[
+                {'result':[{'packageId':'other','status':2}],'metadata':{'totalPages':2}},
+                {'result':[{'packageId':'205882','status':2}],'metadata':{'totalPages':2}}]) as request:
+            run._attempt()
+            self.assertEqual(part.status_page,1)
+            run._attempt()
+            self.assertEqual(request.call_count,2)
+            self.assertTrue(all(c.args[1].endswith('/requests') for c in request.call_args_list))
+        self.assertEqual(part.remote_status,'2')
+        self.assertEqual(run.state,'partial')
+
+    def test_package_failed_missing_never_mark_done_or_replace_id(self):
+        for remote in (3,None):
+            run=self.run_day('receipt',age=45+int(remote or 0)); run._attempt()
+            part=run.package_ids; part.package_id='205882'
+            rows=[] if remote is None else [{'packageId':'205882','status':remote}]
+            with patch.object(type(run),'_request',return_value={
+                    'result':rows,'metadata':{'totalPages':1}}) as request:
+                run._attempt(); run._attempt()
+            self.assertEqual(request.call_count,1)
+            self.assertTrue(run.error_message)
+            self.assertNotEqual(run.state,'done')
+            self.assertEqual(part.package_id,'205882')
+
+    def test_confirmed_expired_package_renews_with_history_and_bounded_attempts(self):
+        run=self.run_day('receipt',age=45); run._attempt()
+        part=run.package_ids; part.package_id='205882'
+        with patch.object(type(run),'_request',return_value={
+                'result':[{'packageId':'205882','status':4}], 'metadata':{'totalPages':1}}):
+            run._attempt(); run._attempt()
+        self.assertFalse(part.package_id)
+        self.assertEqual(part.request_history[0]['package_id'],'205882')
+        self.assertFalse(part.imported)
+        self.assertNotEqual(run.state,'done')
+        self.assertGreater(run.next_attempt_at,fields.Datetime.now())
+        run.next_attempt_at=False
+        part.write({'package_id':'expired-again','remote_status':'4',
+                    'status_checked_at':fields.Datetime.now(), 'remote_error':'expired',
+                    'request_history':[{'package_id':'old-one'},{'package_id':'old-two'}]})
+        with patch.object(type(run),'_request') as request:
+            run._attempt()
+        self.assertFalse(request.called)
+        self.assertIn('renewal limit',run.error_message)
+        self.assertEqual(part.package_id,'expired-again')
+
+    def test_package_400_rechecks_preparing_status_and_defers(self):
+        from odoo.addons.ab_tax_eta_archive.models.eta_sync import EtaHttpError
+        run=self.run_day('receipt',age=45); run._attempt()
+        part=run.package_ids
+        part.write({'package_id':'205882','remote_status':'2','status_checked_at':fields.Datetime.now()})
+        with patch.object(type(run),'_request',side_effect=[EtaHttpError('HTTP 400 correlation qa',400),
+                {'result':[{'packageId':'205882','status':1}],'metadata':{'totalPages':1}}]):
+            run._attempt()
+        self.assertEqual(part.remote_status,'1')
+        self.assertGreater(run.next_attempt_at,fields.Datetime.now())
+        self.assertNotEqual(run.state,'done')
+        self.assertIn('correlation qa',run.last_error)
 
     def test_cutoff_checkpoint_wait_does_not_spin(self):
         run=self.run_day(age=1)
@@ -337,6 +446,8 @@ class EtaArchiveTests(unittest.TestCase):
         self.assertNotEqual(action.with_context(lang='ar_001').name,action.with_context(lang='en_US').name)
         descriptions=self.config.with_context(lang='ar_001').fields_get(['safety_delay_hours'])
         self.assertEqual(descriptions['safety_delay_hours']['string'],'مهلة الأمان بالساعات')
+        file_labels=self.exports.with_context(lang='ar_001').fields_get(['file_verified_rows'])
+        self.assertEqual(file_labels['file_verified_rows']['string'],'صفوف الملف')
 
     def ready_day(self):
         day=self.today-timedelta(days=3)
@@ -353,7 +464,8 @@ class EtaArchiveTests(unittest.TestCase):
                                       ('direction','=',direction)])
                 model=self.env['ab_tax_eta_archive_'+kind]
                 values=model._eta_values(self.item(run,kind+direction),direction,self.config)
-                values['detail_json']=json.dumps({'taxes':{},'rates':{},'total':10,'currency':'EGP'})
+                values['detail_json']=json.dumps({'taxes':{'T1':1.4},'rates':{'T1':14},
+                                                   'total':10,'currency':'EGP'})
                 model.create(values)
         original=self.exports._prepare(self.config,day,'sent_receipt','receipt','sent')
         original_data=original.file_data
@@ -361,11 +473,98 @@ class EtaArchiveTests(unittest.TestCase):
         latest=self.exports._latest_day_files(self.config,day)
         self.assertEqual(len(latest),4)
         self.assertTrue(all(r.generation_state=='ready' for r in latest.values()))
+        from openpyxl import load_workbook
+        for category,export in latest.items():
+            workbook=load_workbook(io.BytesIO(base64.b64decode(export.file_data)),read_only=True)
+            rows=list(workbook.active.values)
+            self.assertEqual(len(rows),2)
+            self.assertEqual(rows[1][11 if category.endswith('receipt') else 10],1.4)
+            self.assertIn(category.replace('sent_','').replace('received_','')+
+                          ('sent' if category.startswith('sent_') else 'received'),rows[1])
+            workbook.close()
         self.assertEqual(original.file_data,original_data)
         self.assertTrue(self.exports._generation_complete(self.config,day))
         with patch.object(type(self.exports),'_prepare') as prepare:
             self.exports._ensure_files(self.config,day)
         self.assertFalse(prepare.called)
+
+    def test_ready_files_are_queued_ahead_of_an_older_scan_cursor(self):
+        day=self.ready_day()
+        self.config.start_date=day-timedelta(days=15)
+        old_cursor=day-timedelta(days=10)
+        self.config.file_scan_date=old_cursor
+        run=self.sync.search([('config_id','=',self.config.id),('kind','=','invoice'),('direction','=','sent')])
+        self.env['ab_tax_eta_archive_invoice'].create(dict(
+            self.env['ab_tax_eta_archive_invoice']._eta_values(self.item(run,'priority'),'sent',self.config),
+            detail_json=json.dumps({'taxes':{},'rates':{},'total':10,'currency':'EGP'})))
+        self.exports._queue_generation(self.config,day,'invoice','sent')
+        export=self.exports._latest_day_files(self.config,day)['sent_invoice']
+        self.assertTrue(export.generation_requested)
+        self.assertEqual(self.config.file_scan_date,old_cursor)
+        self.exports._prepare_files_batch()
+        self.assertTrue(export.file_data)
+        self.assertEqual(export.generation_state,'ready')
+        self.assertFalse(export.generation_requested)
+
+    def test_header_only_done_file_is_detected_and_rebuilt_without_new_data_event(self):
+        from openpyxl import Workbook, load_workbook
+        day=self.ready_day()
+        self.config.start_date=day-timedelta(days=15)
+        self.config.file_scan_date=day-timedelta(days=10)
+        run=self.sync.search([('config_id','=',self.config.id),('kind','=','invoice'),('direction','=','sent')])
+        self.env['ab_tax_eta_archive_invoice'].create([dict(
+            self.env['ab_tax_eta_archive_invoice']._eta_values(self.item(run,'must-be-in-file-'+str(n)),'sent',self.config),
+            detail_json=json.dumps({'taxes':{},'rates':{},'total':10,'currency':'EGP'})) for n in range(3)])
+        export=self.exports._prepare(self.config,day,'sent_invoice','invoice','sent')
+        workbook=Workbook(); workbook.active.append(['Header only'])
+        workbook.active.cell(2,1).number_format='0.00'  # Styled blank row is not data.
+        output=io.BytesIO(); workbook.save(output)
+        export.write({'file_data':base64.b64encode(output.getvalue()),'generation_state':'ready',
+                      'file_content_digest':False,'file_verified_rows':0})
+        self.assertFalse(export._valid_file_content(3))
+        self.exports._prepare_files_batch()
+        workbook=load_workbook(io.BytesIO(base64.b64decode(export.file_data)),read_only=True)
+        rows=list(workbook.active.values); workbook.close()
+        self.assertEqual(len(rows),4)
+        self.assertEqual({row[15] for row in rows[1:]},{'must-be-in-file-'+str(n) for n in range(3)})
+        self.assertEqual(export.file_verified_rows,3)
+        self.assertTrue(export._valid_file_content(3))
+
+    def test_valid_sent_file_is_verified_without_rebuild_or_duplicate_revision(self):
+        day=self.ready_day()
+        run=self.sync.search([('config_id','=',self.config.id),('kind','=','invoice'),('direction','=','sent')])
+        self.env['ab_tax_eta_archive_invoice'].create(dict(
+            self.env['ab_tax_eta_archive_invoice']._eta_values(self.item(run,'keep-file'),'sent',self.config),
+            detail_json=json.dumps({'taxes':{},'rates':{},'total':10,'currency':'EGP'})))
+        export=self.exports._prepare(self.config,day,'sent_invoice','invoice','sent')
+        original=export.file_data
+        export.write({'telegram_sent_at':fields.Datetime.now(),'file_content_digest':False,'file_verified_rows':0})
+        with patch.object(type(self.exports),'_prepare') as prepare:
+            self.exports._ensure_files(self.config,day)
+        self.assertFalse(prepare.called)
+        self.assertEqual(export.file_data,original)
+        self.assertEqual(export.revision,1)
+        self.assertEqual(export.file_verified_rows,1)
+
+    def test_file_generation_failure_is_queued_and_manual_retry_is_safe(self):
+        day=self.ready_day()
+        run=self.sync.search([('config_id','=',self.config.id),('kind','=','invoice'),('direction','=','sent')])
+        self.env['ab_tax_eta_archive_invoice'].create(dict(
+            self.env['ab_tax_eta_archive_invoice']._eta_values(self.item(run,'retry'),'sent',self.config),
+            detail_json=json.dumps({'taxes':{},'rates':{},'total':10,'currency':'EGP'})))
+        with patch.object(type(self.exports),'_prepare',side_effect=ValueError('test failure')):
+            self.exports._ensure_files(self.config,day)
+        export=self.exports._latest_day_files(self.config,day)['sent_invoice']
+        self.assertTrue(export.generation_requested)
+        self.assertGreater(export.generation_retry_at,fields.Datetime.now())
+        with patch.object(type(self.exports),'_prepare') as prepare:
+            self.exports.with_context(eta_generation_scheduled=True)._ensure_files(self.config,day)
+        self.assertFalse(prepare.called)
+        export.action_generate_files()
+        self.assertEqual(export.generation_state,'ready')
+        first=export.file_data
+        export.action_generate_files()
+        self.assertEqual(export.file_data,first)
 
     def test_empty_waiting_and_failed_files_are_distinct_and_retryable(self):
         day=self.ready_day()

@@ -11,7 +11,7 @@ import requests
 from odoo import fields, models, _
 from odoo.exceptions import ValidationError
 from .eta_export import _detail_values
-from .eta_sync import EtaSearchLimit, EtaSearchNoResult
+from .eta_sync import EtaHttpError, EtaSearchLimit, EtaSearchNoResult
 from .eta_policy import TICK, api_inclusive_end, split_interval
 
 _logger = logging.getLogger(__name__)
@@ -74,12 +74,57 @@ class EtaPackage(models.Model):
     imported = fields.Boolean(readonly=True)
     full_details = fields.Boolean(readonly=True)
     notified_at = fields.Datetime(readonly=True)
+    status_page = fields.Integer(readonly=True)
+    status_checked_at = fields.Datetime(readonly=True)
+    remote_status = fields.Selection([
+        ('1', 'Preparing'), ('2', 'Available'), ('3', 'Preparation failed'),
+        ('4', 'Expired or deleted'), ('missing', 'Package not found')], readonly=True)
+    remote_error = fields.Char(readonly=True)
+    request_history = fields.Json(readonly=True, copy=False,
+                                  groups='ab_tax_eta_archive.group_eta_manager')
     state = fields.Selection(selection_add=[('ready', 'Ready'), ('importing', 'Importing')],
                              ondelete={'ready': 'set default', 'importing': 'set default'})
 
 
 class EtaPackageSync(models.Model):
     _inherit = 'ab_tax_eta_archive_sync'
+
+    def _poll_receipt_package(self, part, api_url, headers, refresh_auth):
+        """Read one documented request-list page; never infer readiness from an ID."""
+        payload = self._request(
+            'GET', f'{api_url}/api/v1.0/receiptpackages/requests', headers=headers,
+            params={'pageNo': part.status_page, 'pageSize': 20}, refresh_auth=refresh_auth)
+        rows, metadata = payload.get('result'), payload.get('metadata')
+        if not isinstance(rows, list) or not isinstance(metadata, dict):
+            raise ValidationError(_('ETA package status response is invalid.'))
+        pages = metadata.get('totalPages')
+        if type(pages) is not int or pages < 0 or any(not isinstance(row, dict) for row in rows):
+            raise ValidationError(_('ETA package status response is invalid.'))
+        match = next((row for row in rows if str(row.get('packageId')) == part.package_id), None)
+        now = fields.Datetime.now()
+        if match:
+            status = '4' if match.get('isExpired') else str(match.get('status'))
+            if status not in ('1', '2', '3', '4'):
+                raise ValidationError(_('ETA package status response is invalid.'))
+            error = False
+            if status == '3':
+                error = _('ETA failed to prepare package %(package)s.', package=part.package_id)
+            elif status == '4':
+                error = _('ETA package %(package)s has expired or was deleted.', package=part.package_id)
+            part.write({'remote_status': status, 'remote_error': error,
+                        'status_checked_at': now, 'status_page': 0})
+            if status == '1':
+                self.next_attempt_at = now + timedelta(minutes=5)
+            _logger.info('ETA package status: connection=%s day=%s direction=%s package=%s status=%s',
+                         self.config_id.id, self.report_date, self.direction, part.package_id, status)
+            return status == '2'
+        last_page = part.status_page + 1 >= max(pages, 1)
+        part.write({'status_page': 0 if last_page else part.status_page + 1,
+                    'remote_status': 'missing' if last_page else False,
+                    'status_checked_at': now if last_page else False,
+                    'remote_error': (_('ETA package %(package)s was not found; verify its ID and credentials.',
+                                      package=part.package_id) if last_page else False)})
+        return False
 
     def _retrieve_historical_receipts(self):
         self.ensure_one()
@@ -174,13 +219,48 @@ class EtaPackageSync(models.Model):
                 _logger.info('ETA historical package requested: connection=%s package=%s day=%s',
                              self.config_id.id, part.package_id, self.report_date)
             return None
-        with self._request(
+        refresh_auth = lambda: self.config_id._eta_auth_headers(
+            'invoice', session=self.env.context.get('eta_request_session'), force_refresh=True)[1]
+        fresh_status = part.status_checked_at and part.status_checked_at > (
+            fields.Datetime.now() - timedelta(minutes=5))
+        if fresh_status and part.remote_status == '4':
+            history = list(part.request_history or [])
+            if len(history) >= 2:
+                raise ValidationError(_('ETA package renewal limit reached; verify the request in the ETA portal.'))
+            history.append({'package_id': part.package_id, 'status': part.remote_status,
+                            'error': part.remote_error,
+                            'replaced_at': fields.Datetime.to_string(fields.Datetime.now())})
+            self.last_error = part.remote_error
+            # Replace only a confirmed expired remote request, retaining its
+            # history and the same date window. Archived documents are untouched.
+            part.write({'request_history': history, 'package_id': False,
+                        'remote_status': False, 'remote_error': False,
+                        'status_checked_at': False, 'status_page': 0})
+            self.next_attempt_at = fields.Datetime.now() + timedelta(minutes=5)
+            return None
+        if fresh_status and part.remote_status in ('3', '4', 'missing'):
+            raise ValidationError(part.remote_error)
+        if not fresh_status or part.remote_status != '2':
+            self._poll_receipt_package(part, api_url, headers, refresh_auth)
+            return None
+        try:
+            response = self._request(
                 'GET', f'{api_url}/api/v1.0/receiptpackages/{quote(part.package_id, safe="")}',
-                headers=headers, timeout=(5, 15), stream=True, raw_response=True,
-                refresh_auth=lambda: self.config_id._eta_auth_headers(
-                    'invoice', session=self.env.context.get('eta_request_session'), force_refresh=True)[1]
-        ) as response:
+                headers={**headers, 'Accept': 'application/octet-stream'},
+                timeout=(5, 15), stream=True, raw_response=True,
+                refresh_auth=lambda: {**refresh_auth(), 'Accept': 'application/octet-stream'})
+        except EtaHttpError as exc:
+            if exc.status_code not in (400, 404):
+                raise
+            # Readiness may have changed since the previous status check. Retain
+            # the package ID and all saved rows; do not guess or recreate it.
+            if self._poll_receipt_package(part, api_url, headers, refresh_auth):
+                raise
+            self.last_error = str(exc)
+            return None
+        with response:
             if response.status_code == 204:
+                part.write({'remote_status': '1', 'status_checked_at': fields.Datetime.now()})
                 self.next_attempt_at = fields.Datetime.now() + timedelta(minutes=5)
                 _logger.info('ETA historical package preparing: package=%s', part.package_id)
                 return None

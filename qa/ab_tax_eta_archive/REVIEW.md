@@ -1,9 +1,46 @@
 # ETA archive review — 25 November 2026
 
-Implemented version: **19.0.1.1.0**. Local source and running validation registry: **Odoo 19.0**.
+Implemented version: **19.0.1.1.1**. Local source and running validation registry: **Odoo 19.0**.
 Only the dedicated `eta_review_20261125` database was installed/upgraded. No live ETA,
 Telegram, production archive, inventory, or external database writes were performed.
 Tests live outside the production addon to keep its package runtime-only.
+
+## Follow-up: package 205882 HTTP 400 and Done files without data
+
+The supplied correlation ID does not identify ETA's reason for the 400. No live response
+body or affected workbook/date was available. The following local faults were confirmed
+and repaired; successful production recovery still requires retrying the affected operation.
+
+- The HTTP wrapper accepted `raw_response=True` but never returned a raw response. Successful
+  ZIP downloads and empty 204 responses went through JSON parsing. It now returns the stream,
+  and binary downloads explicitly request `application/octet-stream`, including after refresh.
+- Flat HTTP error codes/targets were discarded; nested errors were reduced to code alone.
+  Safe codes, parameter targets and correlation IDs now remain available without response bodies.
+- Package readiness is checked through the documented, paginated
+  [request-status API](https://sdk.invoicing.eta.gov.eg/ereceiptapi/12-get-package-requests/).
+  Each status page is resumable. Preparing requests wait; failed/missing requests show explicit
+  errors and retain their ID. Confirmed expired requests retain history and can renew at most twice.
+  A download 400/404 rechecks status; a package still reported available preserves the original error.
+- Ready file dates previously waited behind `file_scan_date`. Retrieval/detail completion now
+  nominates the affected issue dates, and existing waiting/unverified files are considered first.
+  Failed builds retry after five minutes; blocked prerequisites are revisited hourly or immediately
+  when new retrieval/details nominate them. The ordinary historical sweep remains available.
+- Cache reuse trusted metadata, without checking actual workbook rows. Existing header-only or
+  invalid files can therefore appear ready. Reuse/delivery now checks the actual document-ID rows
+  and content digest; new files are checked before being marked generated. Valid sent files are
+  verified without changing bytes or adding a revision. A repaired sent file becomes a correction.
+- Daily Files now offers **Generate Files** for a targeted retry and **File Rows** after content
+  verification. An archived count of zero still means no records for that issue date; retrieval
+  Done alone is not evidence that there should be rows in every issue-date file.
+
+Validation: **38 integration tests passed in 4.951 seconds** (excluding Odoo startup).
+Regression coverage includes real HTTP-wrapper ZIP/204 handling, package status
+pagination and failures, expiry renewal limits, priority generation, actual XLSX UUID/VAT values,
+header-only/styled-blank-row repair without a new data event, valid sent-file reuse, and Arabic
+runtime labels. The earlier tests mocked the download helper and missed the raw-response bug.
+After deployment, upgrade only `ab_tax_eta_archive`, restart Odoo, retry the affected retrieval,
+and use Generate Files for the affected date. Inspect package Remote Status/Error and File Rows.
+No existing package IDs, archived documents or sent files need to be deleted.
 
 ## Findings and changes
 
@@ -54,7 +91,7 @@ timestamp tick before the next boundary. New stored timestamps retain Python/Pos
 microseconds, while raw JSON preserves the original timestamp text. Cairo day bounds are
 localized separately to handle DST days of different lengths.
 
-## Validation and performance
+## Initial review validation and performance
 
 - Clean install and targeted `-u ab_tax_eta_archive` upgrade passed in the isolated Odoo 19 DB.
 - **27 integration tests passed in 4.187 seconds** (excluding Odoo startup). The suite covers page completion, partial rollback/resume, duplicate detection,
@@ -91,7 +128,7 @@ localized separately to handle DST days of different lengths.
 - `ab_tax_eta_archive/static/description/icon.png` (new): application icon.
 - `ab_tax_eta_archive/data/cron.xml`: adjustable five-minute defaults.
 - `ab_tax_eta_archive/i18n/ar.po`, `i18n/ar_001.po`: Arabic additions and Odoo references.
-- `ab_tax_eta_archive/__manifest__.py`: version 19.0.1.1.0.
+- `ab_tax_eta_archive/__manifest__.py`: version 19.0.1.1.1.
 - `ab_tax_eta_archive/changelog.d`: current changes and corrected recent-commit attribution.
 - `qa/ab_tax_eta_archive/`: standalone test/upgrade/cron/translation helpers and this report;
   generated logs, POT, snapshots and filestore are ignored.

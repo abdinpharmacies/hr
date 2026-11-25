@@ -28,6 +28,22 @@ translations = {
     'Safety delay must be between 0 and 8760 hours.': 'يجب أن تكون مهلة الأمان بين صفر و8760 ساعة.',
     'Send to Telegram': 'إرسال إلى تيليجرام', 'Sync': 'الاسترجاع',
     'Telegram Chat': 'محادثة تيليجرام', 'Telegram Message': 'رسالة تيليجرام',
+    'Available': 'متاح', 'Preparing': 'جارٍ التجهيز', 'Preparation failed': 'فشل التجهيز',
+    'Expired or deleted': 'منتهي الصلاحية أو محذوف', 'Package not found': 'الحزمة غير موجودة',
+    'Remote Error': 'خطأ مصلحة الضرائب', 'Remote Status': 'حالة الحزمة لدى مصلحة الضرائب',
+    'Status Checked At': 'وقت فحص الحالة', 'Status Page': 'صفحة فحص الحالة',
+    'Generate Files': 'إنشاء الملفات', 'Generation Requested': 'إنشاء الملفات مطلوب',
+    'Generation Retry At': 'موعد إعادة محاولة إنشاء الملفات',
+    'ETA failed to prepare package %(package)s.': 'فشلت مصلحة الضرائب في تجهيز الحزمة %(package)s.',
+    'ETA package %(package)s has expired or was deleted.':
+        'انتهت صلاحية الحزمة %(package)s لدى مصلحة الضرائب أو تم حذفها.',
+    'ETA package %(package)s was not found; verify its ID and credentials.':
+        'لم يتم العثور على الحزمة %(package)s؛ تحقق من معرفها وبيانات الاتصال.',
+    'ETA package status response is invalid.': 'استجابة حالة الحزمة من مصلحة الضرائب غير صالحة.',
+    'Request History': 'سجل طلبات الحزمة',
+    'File Content Digest': 'بصمة محتوى الملف', 'File Rows': 'صفوف الملف',
+    'ETA package renewal limit reached; verify the request in the ETA portal.':
+        'تم بلوغ الحد الأقصى لتجديد الحزمة؛ تحقق من الطلب في بوابة مصلحة الضرائب.',
 }
 for language in ('ar', 'ar_001'):
     path = root / (language + '.po')

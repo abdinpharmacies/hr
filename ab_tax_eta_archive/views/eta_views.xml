@@ -151,8 +151,12 @@
                 <field name="category"/>
                 <field name="generation_state"/>
                 <field name="generation_error" optional="hide"/>
+                <field name="generation_requested" optional="hide"/>
+                <field name="generation_retry_at" optional="hide"/>
                 <field name="revision"/>
                 <field name="record_count"/>
+                <field name="file_content_digest" column_invisible="True"/>
+                <field name="file_verified_rows" optional="show" invisible="not file_content_digest"/>
                 <field name="checked_through"/>
                 <field name="filename"/>
                 <field name="file_size_mb" optional="show"/>
@@ -163,6 +167,8 @@
                 <button name="action_send_telegram" type="object" string="Send to Telegram"
                         groups="ab_tax_eta_archive.group_eta_manager"
                         invisible="telegram_sent_at or not file_data or not record_count or telegram_send_requested"/>
+                <button name="action_generate_files" type="object" string="Generate Files"
+                        groups="ab_tax_eta_archive.group_eta_manager"/>
             </list>
         </field>
     </record>
@@ -175,6 +181,8 @@
                     <button name="action_send_telegram" type="object" string="Send to Telegram"
                             class="btn-primary" groups="ab_tax_eta_archive.group_eta_manager"
                             invisible="telegram_sent_at or not file_data or not record_count or telegram_send_requested"/>
+                    <button name="action_generate_files" type="object" string="Generate Files"
+                            groups="ab_tax_eta_archive.group_eta_manager"/>
                 </header>
                 <sheet>
                     <group>
@@ -185,6 +193,8 @@
                         <field name="revision"/>
                         <field name="supersedes_id"/>
                         <field name="record_count"/>
+                        <field name="file_content_digest" invisible="True"/>
+                        <field name="file_verified_rows" invisible="not file_content_digest"/>
                         <field name="checked_through"/>
                         <field name="filename"/>
                         <field name="file_size_mb"/>
@@ -274,6 +284,8 @@
                             <field name="item_count"/><field name="import_offset"/>
                             <field name="imported"/><field name="full_details"/>
                             <field name="notified_at"/>
+                            <field name="remote_status"/><field name="remote_error"/>
+                            <field name="status_checked_at"/><field name="status_page" optional="hide"/>
                         </list>
                     </field>
                 </sheet>

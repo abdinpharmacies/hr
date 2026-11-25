@@ -5,6 +5,8 @@ import io
 import json
 import logging
 import time
+import zipfile
+from xml.etree import ElementTree
 from functools import partial
 from itertools import groupby
 from datetime import datetime, timedelta
@@ -33,6 +35,25 @@ CATEGORIES = (
 EXPORT_FORMAT_VERSION = 2
 ETA_DETAIL_BATCH_SIZE = 80
 ETA_DETAIL_ORDER = 'report_date desc, issued_at desc NULLS LAST, id desc'
+
+
+def xlsx_data_rows(content, uuid_column):
+    """Count actual data rows containing the document ID, not styled empty rows."""
+    count = 0
+    with zipfile.ZipFile(io.BytesIO(content)) as archive:
+        with archive.open('xl/worksheets/sheet1.xml') as sheet:
+            for _event, row in ElementTree.iterparse(sheet, events=('end',)):
+                if row.tag.rsplit('}', 1)[-1] != 'row':
+                    continue
+                if row.get('r') != '1':
+                    for cell in row:
+                        if ''.join(ch for ch in cell.get('r', '') if ch.isalpha()) == uuid_column:
+                            if any(node.tag.rsplit('}', 1)[-1] in ('t', 'v') and (node.text or '').strip()
+                                   for node in cell.iter()):
+                                count += 1
+                            break
+                row.clear()
+    return count
 
 INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
                    'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
@@ -216,6 +237,54 @@ class EtaExport(models.Model):
         ('empty', 'No records'), ('error', 'File generation failed'),
         ('ready', 'File generated')], default='waiting', readonly=True)
     generation_error = fields.Text(readonly=True)
+    generation_requested = fields.Boolean(readonly=True, index=True)
+    generation_retry_at = fields.Datetime(readonly=True)
+    file_content_digest = fields.Char(readonly=True, copy=False)
+    file_verified_rows = fields.Integer(string='File Rows', readonly=True, copy=False)
+
+    def _valid_file_content(self, expected_count):
+        self.ensure_one()
+        if not self.file_data:
+            return False
+        try:
+            content = base64.b64decode(self.file_data, validate=True)
+            digest = hashlib.sha256(content).hexdigest()
+            if self.file_content_digest == digest and self.file_verified_rows == expected_count:
+                return True
+            column = 'W' if self.category == 'received_invoice' else 'P'
+            actual_count = xlsx_data_rows(content, column)
+        except (binascii.Error, ValueError, TypeError, KeyError, zipfile.BadZipFile, ElementTree.ParseError):
+            return False
+        if actual_count != expected_count:
+            return False
+        self.write({'file_content_digest': digest, 'file_verified_rows': actual_count})
+        return True
+
+    @api.model
+    def _queue_generation(self, config, report_date, kind, direction):
+        category = next(row[0] for row in CATEGORIES if row[2:] == (kind, direction))
+        export = self.search(fields.Domain([
+            ('config_id', '=', config.id), ('report_date', '=', report_date),
+            ('category', '=', category)]), order='revision desc', limit=1)
+        if not export:
+            export = self.create({'config_id': config.id, 'report_date': report_date,
+                                  'category': category,
+                                  'filename': f'{category}_{report_date}_r1.xlsx'})
+        export.write({'generation_requested': True, 'generation_retry_at': False})
+        self._wake_cron('cron_eta_prepare_files')
+
+    def action_generate_files(self):
+        self.check_access('write')
+        deadline = time.monotonic() + 25
+        seen = set()
+        for export in self:
+            _category, _label, kind, direction = next(row for row in CATEGORIES if row[0] == export.category)
+            self._queue_generation(export.config_id, export.report_date, kind, direction)
+            key = export.config_id.id, export.report_date
+            if key not in seen and time.monotonic() < deadline:
+                self._ensure_files(export.config_id, export.report_date, deadline=deadline)
+                seen.add(key)
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     def _generation_complete(self, config, day):
         latest = self._latest_day_files(config, day)
@@ -361,11 +430,32 @@ class EtaExport(models.Model):
 
     @api.model
     def _prepare_files_batch(self):
+        self = self.with_context(eta_generation_scheduled=True)
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
         cutoff = today - timedelta(days=1)
         deadline = min(time.monotonic() + 25,
                        self.env.context.get('cron_end_time', float('inf')) - 2)
+        # New details and completed retrievals nominate their own issue dates.
+        # A scan cursor on an older date must not delay an already-ready file.
+        candidates = (fields.Domain('generation_requested', '=', True) |
+                      fields.Domain('generation_state', 'in', ['waiting', 'details', 'error']) |
+                      (fields.Domain('generation_state', '=', 'ready') &
+                       fields.Domain('file_content_digest', '=', False)))
+        requested = self.search(candidates & fields.Domain('config_id.active', '=', True) &
+            fields.Domain('report_date', '<', today) &
+            (fields.Domain('generation_retry_at', '=', False) |
+             fields.Domain('generation_retry_at', '<=', fields.Datetime.now())),
+            order='report_date desc, category', limit=200)
+        handled = set()
+        for export in requested:
+            if time.monotonic() >= deadline:
+                return
+            key = export.config_id.id, export.report_date
+            if key in handled:
+                continue
+            self._ensure_files(export.config_id, export.report_date, deadline=deadline)
+            handled.add(key)
         for config in self.env['ab_tax_eta_archive_config'].search([
             ('active', '=', True), ('start_date', '<', today),
         ]):
@@ -436,7 +526,7 @@ class EtaExport(models.Model):
         return (count > 0 and count == self.record_count and
                 self.source_updated_at == updated_at and
                 self.export_format_version == EXPORT_FORMAT_VERSION and
-                not model.search_count(domain & (
+                self._valid_file_content(count) and not model.search_count(domain & (
                     fields.Domain('detail_json', '=', False) | fields.Domain('detail_json', '=', ''))))
 
     @api.model
@@ -467,7 +557,8 @@ class EtaExport(models.Model):
                                       'category': category,
                                       'filename': f'{category}_{report_date}_r1.xlsx'})
             if not self._day_complete(config, report_date, kind=kind, direction=direction):
-                export.write({'generation_state': 'waiting'})
+                export.write({'generation_state': 'waiting', 'generation_requested': False,
+                              'generation_retry_at': fields.Datetime.now() + timedelta(hours=1)})
                 _logger.info('ETA file waiting for retrieval: connection=%s day=%s category=%s',
                              config.id, report_date, category)
                 continue
@@ -478,18 +569,23 @@ class EtaExport(models.Model):
                 ('direction', '=', direction),
             ], [], ['__count', 'write_date:max'])
             if not count:
-                export.write({'generation_state': 'empty', 'generation_error': False})
+                export.write({'generation_state': 'empty', 'generation_error': False,
+                              'generation_requested': False, 'generation_retry_at': False})
                 prepared.add(category)
                 continue
             if (export and export.file_data and count == export.record_count and
                     export.source_updated_at == updated_at and
-                    export.export_format_version == EXPORT_FORMAT_VERSION):
-                if export.generation_state != 'ready':
-                    export.write({'generation_state': 'ready', 'generation_error': False})
+                    export.export_format_version == EXPORT_FORMAT_VERSION and
+                    export._valid_file_content(count)):
+                export.write({'generation_state': 'ready', 'generation_error': False,
+                              'generation_requested': False, 'generation_retry_at': False})
                 prepared.add(category)
                 continue
             targets.append((category, kind, direction, export))
         for category, kind, direction, export in targets:
+            if (self.env.context.get('eta_generation_scheduled') and export.generation_retry_at
+                    and export.generation_retry_at > fields.Datetime.now()):
+                continue
             model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
                              else 'ab_tax_eta_archive_receipt']
             pending_details = model.search_count([
@@ -497,7 +593,8 @@ class EtaExport(models.Model):
                     ('direction', '=', direction),
                     '|', ('detail_json', '=', False), ('detail_json', '=', '')])
             if pending_details:
-                export.write({'generation_state': 'details'})
+                export.write({'generation_state': 'details', 'generation_requested': False,
+                              'generation_retry_at': fields.Datetime.now() + timedelta(hours=1)})
                 _logger.info('ETA file waiting for UUID details: connection=%s day=%s '
                              'category=%s pending=%s', config.id, report_date,
                              category, pending_details)
@@ -510,13 +607,16 @@ class EtaExport(models.Model):
                                             export=export)
             except (ValueError, TypeError, KeyError, UserError, OSError) as exc:
                 export.write({'generation_state': 'error',
-                              'generation_error': type(exc).__name__})
-                _logger.exception('ETA file generation failed: connection=%s day=%s category=%s',
-                                  config.id, report_date, category)
+                              'generation_error': type(exc).__name__,
+                              'generation_requested': True,
+                              'generation_retry_at': fields.Datetime.now() + timedelta(minutes=5)})
+                _logger.warning('ETA file generation failed: connection=%s day=%s category=%s error_type=%s',
+                                config.id, report_date, category, type(exc).__name__)
                 continue
             if not current:
                 continue
-            current.write({'generation_state': 'ready', 'generation_error': False})
+            current.write({'generation_state': 'ready', 'generation_error': False,
+                           'generation_requested': False, 'generation_retry_at': False})
             if current.checked_through != checked_through:
                 current.checked_through = checked_through
             prepared.add(category)
@@ -710,6 +810,7 @@ class EtaExport(models.Model):
                      ready, processed - ready, len(missing) - processed,
                      time.monotonic() - batch_started_at)
         if ready:
+            self._queue_generation(config, report_date, kind, direction)
             self._wake_cron('cron_eta_prepare_files')
         return processed
 
@@ -801,7 +902,8 @@ class EtaExport(models.Model):
             digest.update(b'\n')
         source_digest = digest.hexdigest()
         if (export and export.source_digest == source_digest and export.file_data and
-                export.export_format_version == EXPORT_FORMAT_VERSION):
+                export.export_format_version == EXPORT_FORMAT_VERSION and
+                export._valid_file_content(len(records))):
             export.source_updated_at = source_updated_at
             return export
 
@@ -857,6 +959,8 @@ class EtaExport(models.Model):
             sheet.append(row)
         output = io.BytesIO()
         workbook.save(output)
+        if xlsx_data_rows(output.getvalue(), 'W' if category == 'received_invoice' else 'P') != len(records):
+            raise ValueError('Generated workbook row count does not match archived records')
         revision = export.revision + 1 if export and export.telegram_sent_at else (export.revision if export else 1)
         filename = f'{category}_{report_date}_r{revision}.xlsx'
         values = {
@@ -867,6 +971,8 @@ class EtaExport(models.Model):
             'record_count': len(records), 'source_digest': source_digest,
             'source_updated_at': source_updated_at,
             'export_format_version': EXPORT_FORMAT_VERSION,
+            'file_content_digest': hashlib.sha256(output.getbuffer()).hexdigest(),
+            'file_verified_rows': len(records),
         }
         if export and not export.telegram_sent_at:
             export.write(values)
