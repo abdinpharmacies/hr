@@ -1,0 +1,735 @@
+{
+  "fixture": {
+    "conversations": 60,
+    "messages": 600,
+    "customers": 60,
+    "concurrent_sessions": 1
+  },
+  "samples": [
+    {
+      "correlation_id": "2d4f6c8a-8d72-4b1c-8952-a242abbcf128",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 458.9474640088156,
+      "error": false
+    },
+    {
+      "correlation_id": "b727f1b6-ac2f-45e9-b36e-4a22b79d0566",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 474.2422509007156,
+      "error": false
+    },
+    {
+      "correlation_id": "5fa9d722-8e3b-4029-bbd7-ed868c4680e7",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 525.3778109326959,
+      "error": false
+    },
+    {
+      "correlation_id": "cd0b85d1-037e-44cd-906e-df2b52cb00c6",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 514.0526889590546,
+      "error": false
+    },
+    {
+      "correlation_id": "8716aec6-73db-4f12-9512-cb1281b90233",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 492.84843204077333,
+      "error": false
+    },
+    {
+      "correlation_id": "b2dc85e6-b46e-4c20-8f2c-61b83ea9319a",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 468.7761599197984,
+      "error": false
+    },
+    {
+      "correlation_id": "e1ea9c52-20e6-4f72-9cf6-d3fe3fab83aa",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 475.19128397107124,
+      "error": false
+    },
+    {
+      "correlation_id": "42c49951-7f1b-41eb-894e-fc5bf80c3aec",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 455.4081850219518,
+      "error": false
+    },
+    {
+      "correlation_id": "22d0a97f-c5df-4081-ada4-ff32cf6bcf8a",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 471.3852769928053,
+      "error": false
+    },
+    {
+      "correlation_id": "c2f42f47-ef16-4873-b9fb-905028367353",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 472.94678806792945,
+      "error": false
+    },
+    {
+      "correlation_id": "c1f17faf-1da7-4712-8364-587c58744e5d",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 462.9901960724965,
+      "error": false
+    },
+    {
+      "correlation_id": "721d575b-a14c-4330-aaba-314a9e131678",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 478.52392098866403,
+      "error": false
+    },
+    {
+      "correlation_id": "d561e0ae-af6c-4c38-8f00-adfd74c7915c",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 506.96192996110767,
+      "error": false
+    },
+    {
+      "correlation_id": "8d4c94e0-7a66-4b52-8dcd-4e6ad27e76cd",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 485.3332369821146,
+      "error": false
+    },
+    {
+      "correlation_id": "19be99fa-d4d2-4208-8401-5a170fc753f4",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 564.4976020557806,
+      "error": false
+    },
+    {
+      "correlation_id": "fb770dd9-8c15-449d-b152-6e36e9f23eb5",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 517.7828489104286,
+      "error": false
+    },
+    {
+      "correlation_id": "b111428e-7637-4679-aba8-ad198044bd86",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 487.95799806248397,
+      "error": false
+    },
+    {
+      "correlation_id": "745575b5-52d1-4009-b3c9-0bdbfc3c1d8c",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 452.1911880001426,
+      "error": false
+    },
+    {
+      "correlation_id": "ff55386c-6ce9-4e46-a9f8-e91d273ba78c",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 475.69503693375736,
+      "error": false
+    },
+    {
+      "correlation_id": "b8b073a1-8b05-4408-800a-863c7f3daab8",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 479.1161229368299,
+      "error": false
+    },
+    {
+      "correlation_id": "77f210ac-c7d9-43b6-b00c-047204e8c057",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 473.60704198945314,
+      "error": false
+    },
+    {
+      "correlation_id": "a5cb5c34-9947-4854-a443-54abca9ab66a",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 469.64612207375467,
+      "error": false
+    },
+    {
+      "correlation_id": "af668ea8-03bb-4062-8eda-7b92bc525cf7",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 505.3770149825141,
+      "error": false
+    },
+    {
+      "correlation_id": "a7dcf3e0-13c4-451e-b9c9-883032bdb5ca",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 481.65320802945644,
+      "error": false
+    },
+    {
+      "correlation_id": "9c7a604d-fb7c-4f91-a286-084378c4ec7a",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 474.13515707012266,
+      "error": false
+    },
+    {
+      "correlation_id": "f9185b36-2959-4c5c-bd58-0922f2ff8567",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 469.86144001130015,
+      "error": false
+    },
+    {
+      "correlation_id": "ad91e415-4f33-4d21-aa49-01c5cfdf9b15",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 477.41212404798716,
+      "error": false
+    },
+    {
+      "correlation_id": "b235dc03-870d-4f27-b398-e18acbfa5cab",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 499.5548239676282,
+      "error": false
+    },
+    {
+      "correlation_id": "e550b3b5-527b-4cfc-976c-72bbb472e7a6",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 459.57857999019325,
+      "error": false
+    },
+    {
+      "correlation_id": "2391ab17-05dc-437e-9235-9844f28d548d",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 457.8721550060436,
+      "error": false
+    },
+    {
+      "correlation_id": "7e2ae86c-2472-4644-89f9-5e5e2013131d",
+      "stage": "notifications_first_page",
+      "duration_ms": 62.540987972170115,
+      "error": false
+    },
+    {
+      "correlation_id": "77a2909a-4b1a-4f40-97ea-20225a7938ab",
+      "stage": "notifications_first_page",
+      "duration_ms": 62.46802501846105,
+      "error": false
+    },
+    {
+      "correlation_id": "e5f150f3-a07a-4a12-a2b3-285308b360d1",
+      "stage": "notifications_first_page",
+      "duration_ms": 62.369727063924074,
+      "error": false
+    },
+    {
+      "correlation_id": "5104e5f4-9f65-41f2-92f5-ef2f2a969653",
+      "stage": "notifications_first_page",
+      "duration_ms": 57.62590002268553,
+      "error": false
+    },
+    {
+      "correlation_id": "c39ee60b-e62a-4a05-b9da-f5677284b8a9",
+      "stage": "notifications_first_page",
+      "duration_ms": 61.65039900224656,
+      "error": false
+    },
+    {
+      "correlation_id": "5751868f-3fea-4168-bcfb-a317c1b829a2",
+      "stage": "notifications_first_page",
+      "duration_ms": 59.14909299463034,
+      "error": false
+    },
+    {
+      "correlation_id": "f2c031e8-5753-47e0-ac9a-a660da695f7a",
+      "stage": "notifications_first_page",
+      "duration_ms": 61.64952600374818,
+      "error": false
+    },
+    {
+      "correlation_id": "4127776c-cb73-4143-aa2d-cdcd5b6bef07",
+      "stage": "notifications_first_page",
+      "duration_ms": 58.51173400878906,
+      "error": false
+    },
+    {
+      "correlation_id": "20653153-6eba-4303-bd73-43a532cd891b",
+      "stage": "notifications_first_page",
+      "duration_ms": 57.472727028653026,
+      "error": false
+    },
+    {
+      "correlation_id": "e05f1833-3e46-4802-845f-c2a2f77fd8a2",
+      "stage": "notifications_first_page",
+      "duration_ms": 59.33833902236074,
+      "error": false
+    },
+    {
+      "correlation_id": "cec88647-843c-4571-9413-5a14717bf8cf",
+      "stage": "notifications_first_page",
+      "duration_ms": 59.00785303674638,
+      "error": false
+    },
+    {
+      "correlation_id": "379685f6-9354-42dc-a0c7-9a5501075d63",
+      "stage": "notifications_first_page",
+      "duration_ms": 58.37264400906861,
+      "error": false
+    },
+    {
+      "correlation_id": "35619a58-a79d-46fc-8c0b-6e2102b823ab",
+      "stage": "notifications_first_page",
+      "duration_ms": 62.88984802085906,
+      "error": false
+    },
+    {
+      "correlation_id": "065b3e21-cc15-4242-af2b-8a889e058b26",
+      "stage": "notifications_first_page",
+      "duration_ms": 63.08146705850959,
+      "error": false
+    },
+    {
+      "correlation_id": "20930015-a6a0-405e-99a4-08474079195c",
+      "stage": "notifications_first_page",
+      "duration_ms": 61.511428910307586,
+      "error": false
+    },
+    {
+      "correlation_id": "bc5e348b-7f6d-42f1-9de5-aafbee967953",
+      "stage": "notifications_first_page",
+      "duration_ms": 58.25700098648667,
+      "error": false
+    },
+    {
+      "correlation_id": "db6957dd-d638-42eb-9d00-150c558fdab3",
+      "stage": "notifications_first_page",
+      "duration_ms": 57.56772996392101,
+      "error": false
+    },
+    {
+      "correlation_id": "e7ce3d56-1bf0-4cef-9757-ce6f9a2d3a02",
+      "stage": "notifications_first_page",
+      "duration_ms": 61.66543799918145,
+      "error": false
+    },
+    {
+      "correlation_id": "b1f857a7-4344-4a22-afbd-44b590f697d0",
+      "stage": "notifications_first_page",
+      "duration_ms": 64.34374302625656,
+      "error": false
+    },
+    {
+      "correlation_id": "d9524d2d-85e4-4e0f-b966-9076439da0d2",
+      "stage": "notifications_first_page",
+      "duration_ms": 66.08977692667395,
+      "error": false
+    },
+    {
+      "correlation_id": "6fc5c949-27e1-4390-9c26-a49f2b678de3",
+      "stage": "notifications_first_page",
+      "duration_ms": 63.7994350399822,
+      "error": false
+    },
+    {
+      "correlation_id": "53eb8335-dab0-4bda-9a7d-a24bb255e0b9",
+      "stage": "notifications_first_page",
+      "duration_ms": 61.701501021161675,
+      "error": false
+    },
+    {
+      "correlation_id": "d0d0c30b-9df8-4018-8535-166c4fda9b73",
+      "stage": "notifications_first_page",
+      "duration_ms": 65.97136508207768,
+      "error": false
+    },
+    {
+      "correlation_id": "2cbafe97-3a62-4427-b0bd-740dbd765e57",
+      "stage": "notifications_first_page",
+      "duration_ms": 68.22915398515761,
+      "error": false
+    },
+    {
+      "correlation_id": "3971be38-d454-470c-9928-be4749a80c03",
+      "stage": "notifications_first_page",
+      "duration_ms": 65.62101293820888,
+      "error": false
+    },
+    {
+      "correlation_id": "b2259e57-4975-4f99-b3be-f1185e681712",
+      "stage": "notifications_first_page",
+      "duration_ms": 69.07613901421428,
+      "error": false
+    },
+    {
+      "correlation_id": "a0bb0a78-bc95-4e9a-8bca-529c1d211d74",
+      "stage": "notifications_first_page",
+      "duration_ms": 67.54424190148711,
+      "error": false
+    },
+    {
+      "correlation_id": "08c89b56-8841-450e-9ef6-28b42789bab4",
+      "stage": "notifications_first_page",
+      "duration_ms": 65.62586303334683,
+      "error": false
+    },
+    {
+      "correlation_id": "41121120-765b-463e-8028-67b00bae0625",
+      "stage": "notifications_first_page",
+      "duration_ms": 67.98477098345757,
+      "error": false
+    },
+    {
+      "correlation_id": "8fb94eef-c703-40e3-822a-0023c11c40ac",
+      "stage": "notifications_first_page",
+      "duration_ms": 69.85589198302478,
+      "error": false
+    },
+    {
+      "correlation_id": "42ece89a-dff4-4cae-9599-6956c78f5362",
+      "stage": "inbox_first_page",
+      "duration_ms": 332.81145500950515,
+      "error": false
+    },
+    {
+      "correlation_id": "08d61b4e-d2b3-47e4-97cb-59b9cf69f47e",
+      "stage": "inbox_first_page",
+      "duration_ms": 333.2293020794168,
+      "error": false
+    },
+    {
+      "correlation_id": "a951753f-ed28-4e26-9981-818a92e4157f",
+      "stage": "inbox_first_page",
+      "duration_ms": 340.33697796985507,
+      "error": false
+    },
+    {
+      "correlation_id": "21b15dea-1349-4723-9226-5fc1fa23f17c",
+      "stage": "inbox_first_page",
+      "duration_ms": 317.5528100691736,
+      "error": false
+    },
+    {
+      "correlation_id": "47840e37-d6a1-4745-ae8a-b67de342c748",
+      "stage": "inbox_first_page",
+      "duration_ms": 325.301076984033,
+      "error": false
+    },
+    {
+      "correlation_id": "cd76e3a3-8b3f-4329-81a3-b9825a76448b",
+      "stage": "inbox_first_page",
+      "duration_ms": 291.4723790017888,
+      "error": false
+    },
+    {
+      "correlation_id": "8278917f-a588-419d-9b90-a1987463d253",
+      "stage": "inbox_first_page",
+      "duration_ms": 292.8681259509176,
+      "error": false
+    },
+    {
+      "correlation_id": "9c28c147-9da6-45e4-8a18-e58603d01a61",
+      "stage": "inbox_first_page",
+      "duration_ms": 287.38284402061254,
+      "error": false
+    },
+    {
+      "correlation_id": "9955e1ab-cb08-42cc-a52a-56fec244c534",
+      "stage": "inbox_first_page",
+      "duration_ms": 293.8913250109181,
+      "error": false
+    },
+    {
+      "correlation_id": "c44b6115-cd54-47fe-a66c-a0be7b45aa2f",
+      "stage": "inbox_first_page",
+      "duration_ms": 297.29590099304914,
+      "error": false
+    },
+    {
+      "correlation_id": "2de272f8-682c-4a57-b65b-94239350b3a7",
+      "stage": "inbox_first_page",
+      "duration_ms": 293.4070280753076,
+      "error": false
+    },
+    {
+      "correlation_id": "3574dd76-07ce-4e68-81dc-efd3d7948b91",
+      "stage": "inbox_first_page",
+      "duration_ms": 300.526684965007,
+      "error": false
+    },
+    {
+      "correlation_id": "8d46383c-4a6d-40db-a515-5c5f06a39b4f",
+      "stage": "inbox_first_page",
+      "duration_ms": 313.97856399416924,
+      "error": false
+    },
+    {
+      "correlation_id": "a62dcb21-9b42-43f1-a7f8-cb5ad30d88b1",
+      "stage": "inbox_first_page",
+      "duration_ms": 319.04991692863405,
+      "error": false
+    },
+    {
+      "correlation_id": "1acf1051-ac0e-47be-b877-3de87111bb3c",
+      "stage": "inbox_first_page",
+      "duration_ms": 340.44774901121855,
+      "error": false
+    },
+    {
+      "correlation_id": "9c1efb28-fcbb-42ad-b1f7-510bd8314c64",
+      "stage": "inbox_first_page",
+      "duration_ms": 359.2644069576636,
+      "error": false
+    },
+    {
+      "correlation_id": "58c1d2b8-4de0-4cf5-852d-1637313d4f45",
+      "stage": "inbox_first_page",
+      "duration_ms": 322.5359949283302,
+      "error": false
+    },
+    {
+      "correlation_id": "e263b834-30e7-4fbe-a9c2-89e4aec054bc",
+      "stage": "inbox_first_page",
+      "duration_ms": 385.78719494398683,
+      "error": false
+    },
+    {
+      "correlation_id": "0d16b671-2d64-4b3a-9c04-7f49fe945da4",
+      "stage": "inbox_first_page",
+      "duration_ms": 350.7794919423759,
+      "error": false
+    },
+    {
+      "correlation_id": "a9ff1e2a-f548-4995-a7f8-381130867a99",
+      "stage": "inbox_first_page",
+      "duration_ms": 300.07106508128345,
+      "error": false
+    },
+    {
+      "correlation_id": "7a70d83c-8c3b-4ed2-8ff9-63da57bf14ee",
+      "stage": "inbox_first_page",
+      "duration_ms": 306.4311749767512,
+      "error": false
+    },
+    {
+      "correlation_id": "b63cf97c-ae30-4ad1-8664-390412aefc14",
+      "stage": "inbox_first_page",
+      "duration_ms": 296.10079200938344,
+      "error": false
+    },
+    {
+      "correlation_id": "edc960b2-cba3-462d-8656-0bbeedb667c5",
+      "stage": "inbox_first_page",
+      "duration_ms": 289.3823250196874,
+      "error": false
+    },
+    {
+      "correlation_id": "2e20ffd9-8ba5-4832-b619-3aa0425da732",
+      "stage": "inbox_first_page",
+      "duration_ms": 289.7152580553666,
+      "error": false
+    },
+    {
+      "correlation_id": "c1f0321c-3af7-48b9-9b47-e83f8fcbe177",
+      "stage": "inbox_first_page",
+      "duration_ms": 284.41402898170054,
+      "error": false
+    },
+    {
+      "correlation_id": "aa40b22c-8072-4e9d-9105-f33da59bcb0e",
+      "stage": "inbox_first_page",
+      "duration_ms": 288.64568402059376,
+      "error": false
+    },
+    {
+      "correlation_id": "a9099369-b6e1-48d7-87c5-b53260586fd5",
+      "stage": "inbox_first_page",
+      "duration_ms": 311.51837192010134,
+      "error": false
+    },
+    {
+      "correlation_id": "dc92a176-a286-40ea-a00a-8a8710a117a1",
+      "stage": "inbox_first_page",
+      "duration_ms": 312.31787300202996,
+      "error": false
+    },
+    {
+      "correlation_id": "5e0a325c-c9ee-438f-bb54-544049bb3503",
+      "stage": "inbox_first_page",
+      "duration_ms": 326.29512099083513,
+      "error": false
+    },
+    {
+      "correlation_id": "ed171ac8-27c1-40dd-9d60-18f120f848c6",
+      "stage": "inbox_first_page",
+      "duration_ms": 331.3435200834647,
+      "error": false
+    },
+    {
+      "correlation_id": "c9e17b10-4891-426b-b9d7-702130f36107",
+      "stage": "contact_search_first_page",
+      "duration_ms": 71.75761996768415,
+      "error": false
+    },
+    {
+      "correlation_id": "589423db-1901-4465-9f2c-a10fea2714f3",
+      "stage": "contact_search_first_page",
+      "duration_ms": 67.27819098159671,
+      "error": false
+    },
+    {
+      "correlation_id": "0a47b35f-0223-44b2-9c29-49e523f41443",
+      "stage": "contact_search_first_page",
+      "duration_ms": 68.24509799480438,
+      "error": false
+    },
+    {
+      "correlation_id": "f0f937e1-944d-47ea-bfd7-dd019237c39f",
+      "stage": "contact_search_first_page",
+      "duration_ms": 69.82665706891567,
+      "error": false
+    },
+    {
+      "correlation_id": "709639e4-1a2c-45ef-8d52-2222cfe411f7",
+      "stage": "contact_search_first_page",
+      "duration_ms": 65.6151541043073,
+      "error": false
+    },
+    {
+      "correlation_id": "5bf0fe70-76ec-4f15-9844-a3abb56b9609",
+      "stage": "contact_search_first_page",
+      "duration_ms": 72.45559489820153,
+      "error": false
+    },
+    {
+      "correlation_id": "fe2ffa6d-78b3-4e52-9509-80b621fb40a2",
+      "stage": "contact_search_first_page",
+      "duration_ms": 73.06461001280695,
+      "error": false
+    },
+    {
+      "correlation_id": "dbae16fb-7acc-4c2f-96f4-4ccc884e7881",
+      "stage": "contact_search_first_page",
+      "duration_ms": 68.36360995657742,
+      "error": false
+    },
+    {
+      "correlation_id": "c9850e7a-9b7d-4f0f-b481-d43fedd79fb8",
+      "stage": "contact_search_first_page",
+      "duration_ms": 68.10874096117914,
+      "error": false
+    },
+    {
+      "correlation_id": "850e4def-9c7f-4d4d-93ee-8748b7270a14",
+      "stage": "contact_search_first_page",
+      "duration_ms": 69.27336100488901,
+      "error": false
+    },
+    {
+      "correlation_id": "b06a1026-5cc7-4cfe-8a0f-1a311f6d008b",
+      "stage": "contact_search_first_page",
+      "duration_ms": 69.42988594528288,
+      "error": false
+    },
+    {
+      "correlation_id": "0a181c24-9b72-4e14-aa24-b3f1f259a617",
+      "stage": "contact_search_first_page",
+      "duration_ms": 65.90807193424553,
+      "error": false
+    },
+    {
+      "correlation_id": "66beb9e0-4a8c-4937-90c4-b59be45fe483",
+      "stage": "contact_search_first_page",
+      "duration_ms": 71.24434900470078,
+      "error": false
+    },
+    {
+      "correlation_id": "f21e1aed-dfed-4dcd-9aa9-ff912380fd52",
+      "stage": "contact_search_first_page",
+      "duration_ms": 75.53586398717016,
+      "error": false
+    },
+    {
+      "correlation_id": "6ebcbc98-51fc-4a2d-a43e-bad07fb872f9",
+      "stage": "contact_search_first_page",
+      "duration_ms": 82.23309298045933,
+      "error": false
+    },
+    {
+      "correlation_id": "9b4ed86a-b037-4ef8-b00e-e47c90470f2d",
+      "stage": "contact_search_first_page",
+      "duration_ms": 100.58095003478229,
+      "error": false
+    },
+    {
+      "correlation_id": "c6ba90f5-a059-459c-b990-f877302dbd3d",
+      "stage": "contact_search_first_page",
+      "duration_ms": 70.34671900328249,
+      "error": false
+    },
+    {
+      "correlation_id": "303eb46d-1da6-41b5-8851-38ed29140410",
+      "stage": "contact_search_first_page",
+      "duration_ms": 67.16483097989112,
+      "error": false
+    },
+    {
+      "correlation_id": "53cd5fa6-e23c-429c-9351-7b9273a425c9",
+      "stage": "contact_search_first_page",
+      "duration_ms": 65.92750898562372,
+      "error": false
+    },
+    {
+      "correlation_id": "2ffed9bb-638f-4221-bb37-48fc4976ad98",
+      "stage": "contact_search_first_page",
+      "duration_ms": 68.90626903623343,
+      "error": false
+    },
+    {
+      "correlation_id": "be3f0f6f-70b8-41f6-bc31-dbde31ee79e1",
+      "stage": "contact_search_first_page",
+      "duration_ms": 71.23243703972548,
+      "error": false
+    },
+    {
+      "correlation_id": "74705d14-b309-4e11-a361-fb0fb093b73e",
+      "stage": "contact_search_first_page",
+      "duration_ms": 67.97203503083438,
+      "error": false
+    },
+    {
+      "correlation_id": "de20d6c9-908c-4cc4-bf38-62c0c5ac13be",
+      "stage": "contact_search_first_page",
+      "duration_ms": 68.49170697387308,
+      "error": false
+    },
+    {
+      "correlation_id": "e4dfbaad-079b-4187-bfc0-eb62db80b1dc",
+      "stage": "contact_search_first_page",
+      "duration_ms": 68.55097506195307,
+      "error": false
+    },
+    {
+      "correlation_id": "a3be4041-a8ab-4747-b610-a0db73417b6b",
+      "stage": "contact_search_first_page",
+      "duration_ms": 71.23666594270617,
+      "error": false
+    },
+    {
+      "correlation_id": "7d615dbd-7414-4c23-8a05-b1d381cb42e0",
+      "stage": "contact_search_first_page",
+      "duration_ms": 67.83897103741765,
+      "error": false
+    },
+    {
+      "correlation_id": "bda601ce-dc1f-4d43-9eea-a9a04f2c0693",
+      "stage": "contact_search_first_page",
+      "duration_ms": 67.88415089249611,
+      "error": false
+    },
+    {
+      "correlation_id": "4b76b835-4481-4188-b075-27a17fea590a",
+      "stage": "contact_search_first_page",
+      "duration_ms": 70.35798602737486,
+      "error": false
+    },
+    {
+      "correlation_id": "d0fccb1e-5802-4e04-8e90-2d346f864d89",
+      "stage": "contact_search_first_page",
+      "duration_ms": 67.98249098937958,
+      "error": false
+    },
+    {
+      "correlation_id": "51408c1a-a75a-40c8-a70f-9f955bbfd222",
+      "stage": "contact_search_first_page",
+      "duration_ms": 75.4225249402225,
+      "error": false
+    }
+  ],
+  "resource": {
+    "max_rss_kib": 157704
+  },
+  "queue_growth": null,
+  "sender_to_receiver": null
+}

@@ -1,0 +1,63 @@
+{
+  "before_failures": [
+    "TestWhatsAppBridge.test_agent_verified_link_and_name_persistence",
+    "TestWhatsAppBridge.test_channel_switch_validates_target_without_searching_computed_account",
+    "TestWhatsAppBridge.test_contact_phone_runtime_translations",
+    "TestWhatsAppBridge.test_customer_groups_paginate_before_expanding_streams",
+    "TestWhatsAppBridge.test_historical_status_diagnostics_in_both_arabic_catalogs",
+    "TestWhatsAppBridge.test_initialization_and_consolidation_preserve_conversation_ids",
+    "TestWhatsAppBridge.test_multiple_phones_review_search_and_primary_destination",
+    "TestWhatsAppBridge.test_phone_changes_invalidate_preview_and_shared_numbers_require_manager",
+    "TestWhatsAppBridge.test_reviewed_customer_group_and_shared_orders",
+    "TestWhatsAppBridge.test_same_phone_links_whatsapp_and_telegram_automatically_on_poll",
+    "TestWhatsAppBridge.test_telegram_links_saved_secondary_number_without_creating_contact",
+    "TestWhatsAppBridge.test_unknown_and_opaque_inbound_remain_accessible",
+    "TestWhatsAppBridge.test_unlink_separates_whatsapp_and_telegram",
+    "TestWhatsAppBrowser.test_channel_composition",
+    "TestWhatsAppBrowser.test_mobile_channel_composition"
+  ],
+  "after_failures": [
+    "TestWhatsAppBridge.test_agent_verified_link_and_name_persistence",
+    "TestWhatsAppBridge.test_channel_switch_validates_target_without_searching_computed_account",
+    "TestWhatsAppBridge.test_contact_phone_runtime_translations",
+    "TestWhatsAppBridge.test_customer_groups_paginate_before_expanding_streams",
+    "TestWhatsAppBridge.test_historical_status_diagnostics_in_both_arabic_catalogs",
+    "TestWhatsAppBridge.test_initialization_and_consolidation_preserve_conversation_ids",
+    "TestWhatsAppBridge.test_multiple_phones_review_search_and_primary_destination",
+    "TestWhatsAppBridge.test_phone_changes_invalidate_preview_and_shared_numbers_require_manager",
+    "TestWhatsAppBridge.test_reviewed_customer_group_and_shared_orders",
+    "TestWhatsAppBridge.test_same_phone_links_whatsapp_and_telegram_automatically_on_poll",
+    "TestWhatsAppBridge.test_telegram_links_saved_secondary_number_without_creating_contact",
+    "TestWhatsAppBridge.test_unknown_and_opaque_inbound_remain_accessible",
+    "TestWhatsAppBridge.test_unlink_separates_whatsapp_and_telegram",
+    "TestWhatsAppBrowser.test_channel_composition",
+    "TestWhatsAppBrowser.test_mobile_channel_composition"
+  ],
+  "same_failure_names": true,
+  "total_methods_each": 62,
+  "failed_each": 6,
+  "errors_each": 9,
+  "before_browser_failure_names": [
+    "@ab_crm_sales_workspace/chatter_ui/jump to latest acknowledges the latest incoming message and clears the unread marker",
+    "@ab_crm_sales_workspace/contact_phones/manual contact linking needs neither a reason nor same-person checkbox",
+    "@ab_crm_sales_workspace/feedback/a failed send is not retried and keeps text, attachments and quote",
+    "@ab_crm_sales_workspace/message/channel selection preserves separate drafts and attachments",
+    "@ab_crm_sales_workspace/message/retry warning changes on keyboard focus and channel colors remain scoped",
+    "@ab_crm_whatsapp_workspace/drafts/Telegram and WhatsApp drafts retain separate text, attachments and quotes",
+    "@ab_crm_whatsapp_workspace/drafts/contact toolbar links the selected channel through the contact picker",
+    "@ab_crm_whatsapp_workspace/drafts/customer inbox restores the selected stream without changing message destinations",
+    "@ab_crm_whatsapp_workspace/drafts/unlink is available only for grouped conversations and preserves the draft"
+  ],
+  "after_browser_failure_names": [
+    "@ab_crm_sales_workspace/chatter_ui/jump to latest acknowledges the latest incoming message and clears the unread marker",
+    "@ab_crm_sales_workspace/contact_phones/manual contact linking needs neither a reason nor same-person checkbox",
+    "@ab_crm_sales_workspace/feedback/a failed send is not retried and keeps text, attachments and quote",
+    "@ab_crm_sales_workspace/message/channel selection preserves separate drafts and attachments",
+    "@ab_crm_sales_workspace/message/retry warning changes on keyboard focus and channel colors remain scoped",
+    "@ab_crm_whatsapp_workspace/drafts/Telegram and WhatsApp drafts retain separate text, attachments and quotes",
+    "@ab_crm_whatsapp_workspace/drafts/contact toolbar links the selected channel through the contact picker",
+    "@ab_crm_whatsapp_workspace/drafts/customer inbox restores the selected stream without changing message destinations",
+    "@ab_crm_whatsapp_workspace/drafts/unlink is available only for grouped conversations and preserves the draft"
+  ],
+  "same_browser_failure_names": true
+}

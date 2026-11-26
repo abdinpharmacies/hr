@@ -1,0 +1,91 @@
+{
+  "before": {
+    "fixture": {
+      "conversations": 60,
+      "messages": 600,
+      "customers": 60,
+      "concurrent_sessions": 1
+    },
+    "metrics": {
+      "notifications_complete_snapshot": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 436.708,
+        "p95_ms": 596.135,
+        "p99_ms": 714.156
+      },
+      "notifications_first_page": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 373.47,
+        "p95_ms": 432.546,
+        "p99_ms": 466.122
+      },
+      "inbox_first_page": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 458.67,
+        "p95_ms": 564.747,
+        "p99_ms": 588.543
+      },
+      "contact_search_first_page": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 71.411,
+        "p95_ms": 78.474,
+        "p99_ms": 81.604
+      }
+    },
+    "resource": {
+      "max_rss_kib": 160756
+    },
+    "queue_growth": null,
+    "sender_to_receiver": null
+  },
+  "after": {
+    "fixture": {
+      "conversations": 60,
+      "messages": 600,
+      "customers": 60,
+      "concurrent_sessions": 1
+    },
+    "metrics": {
+      "notifications_complete_snapshot": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 475.191,
+        "p95_ms": 525.378,
+        "p99_ms": 564.498
+      },
+      "notifications_first_page": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 62.37,
+        "p95_ms": 69.076,
+        "p99_ms": 69.856
+      },
+      "inbox_first_page": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 311.518,
+        "p95_ms": 359.264,
+        "p99_ms": 385.787
+      },
+      "contact_search_first_page": {
+        "samples": 30,
+        "errors": 0,
+        "p50_ms": 68.906,
+        "p95_ms": 82.233,
+        "p99_ms": 100.581
+      }
+    },
+    "resource": {
+      "max_rss_kib": 157704
+    },
+    "queue_growth": null,
+    "sender_to_receiver": null
+  },
+  "staging_capacity": "Deferred by user; not certified",
+  "sustainable_messages_per_second": null,
+  "percentile_method": "Nearest rank; 30 sequential samples per endpoint"
+}
