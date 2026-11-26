@@ -14,6 +14,9 @@ from .storage import Store
 class Worker:
     def __init__(self, config, store, odoo, client, accounts=None):
         self.config, self.store, self.odoo, self.client = config, store, odoo, client
+        self._schedule_position = 0
+        self._receipt_position = 0
+        self._report_position = 0
         self.accounts = list(config.accounts) if accounts is None else list(accounts)
         if set(self.accounts) - config.accounts.keys():
             raise ValueError("Unknown worker account")
@@ -31,7 +34,7 @@ class Worker:
                     capabilities = {}
                 if not isinstance(capabilities, dict) or not capabilities.get('message_edits'):
                     self.store.defer_incoming(row)
-                    return
+                    return True
             method = 'receive_event' if row['kind'] == 'incoming' else 'receive_status'
             values = (
                 {'event': row['payload']}
@@ -88,13 +91,14 @@ class Worker:
         except MediaDependencyUnavailable:
             logging.warning('Incoming media deferred category=codec_unavailable')
             self.store.defer_incoming(row)
-            return
+            return True
         except OdooUnavailable:
             self.store.defer_incoming(row)
-            return
+            return True
         except Exception:
             pass
         self.store.finish_incoming(row, success)
+        return True
 
     def collect(self, code):
         if code not in self.accounts:
@@ -121,9 +125,15 @@ class Worker:
             receipt=row['receipt'],
         )
         self.store.mark_ready(row)
+        return True
 
     def recover_receipts(self):
-        for row in self.store.stored(self.accounts):
+        rows = self.store.stored(self.accounts)
+        if not rows:
+            return False
+        position = self._receipt_position % len(rows)
+        self._receipt_position = position + 1
+        for row in rows[position:position + 1]:
             try:
                 self.odoo.call(
                     'acknowledge_receipt',
@@ -134,6 +144,7 @@ class Worker:
                     receipt=row['receipt'],
                 )
                 self.store.mark_ready(row)
+                return True
             except Exception:
                 pass
 
@@ -172,17 +183,23 @@ class Worker:
                             'error': allowed['error'],
                         },
                     )
-                    return
+                    return True
                 allowed = False
             if not allowed:
                 self.store.defer_send(row)
-                return
+                return True
             with latency('provider_dispatch'):
                 outcome = self._send_operation(row)
             self.store.outcome(row, outcome)
+            return True
 
     def report(self):
-        for row in self.store.reports(self.accounts):
+        rows = self.store.reports(self.accounts)
+        if not rows:
+            return False
+        position = self._report_position % len(rows)
+        self._report_position = position + 1
+        for row in rows[position:position + 1]:
             try:
                 evidence = {
                     key: row['outcome'][key] for key in ('status', 'reference', 'error')
@@ -196,6 +213,7 @@ class Worker:
                     **evidence
                 )
                 self.store.reported(row)
+                return True
             except Exception:
                 logging.warning('Delivery evidence pending for operation %s', row['id'])
 
@@ -216,25 +234,39 @@ class Worker:
         outcome = row['result_status'] or send_read_receipt(self.client, account, row['reference'])
         self.store.finish_read_receipt(code, payload['token'], outcome)
         self.odoo.call('report_read_receipt', code, token=payload['token'], lease=payload['lease'], status=outcome)
+        return True
+
+    def _cycle_operations(self):
+        operations = [self.ingest, self.report, self.recover_receipts]
+        for code in self.accounts:
+            operations.append(lambda code=code: self.read_receipts(code))
+            if self.config.sending_enabled:
+                operations.append(lambda code=code: self.collect(code))
+        if self.config.sending_enabled:
+            operations.append(self.dispatch)
+        return operations
 
     def tick(self):
+        started = time.monotonic()
         self.store.recover_sending(self.accounts)
-        self.ingest()
-        self.report()
-        self.recover_receipts()
-        for code in self.accounts:
+        operations = self._cycle_operations()
+        completed = 0
+        idle = 0
+        for _ in range(25):
+            if time.monotonic() - started >= 0.250:
+                break
+            operation = operations[self._schedule_position % len(operations)]
+            self._schedule_position = (self._schedule_position + 1) % len(operations)
             try:
-                self.read_receipts(code)
+                progress = bool(operation())
             except Exception:
-                logging.warning('Read receipt deferred')
-        if self.config.sending_enabled:
-            for code, account in self.config.accounts.items():
-                if code in self.accounts and account.enabled and account.sending_enabled:
-                    try:
-                        self.collect(code)
-                    except Exception:
-                        logging.warning('Outgoing collection deferred')
-            self.dispatch()
+                logging.warning('Messaging operation deferred')
+                progress = False
+            completed += int(progress)
+            idle = 0 if progress else idle + 1
+            if idle >= len(operations):
+                break
+        return completed
 
 
 def main(provider=None):
@@ -256,10 +288,12 @@ def main(provider=None):
         )
         while True:
             try:
-                worker.tick()
+                progress = worker.tick()
             except Exception:
                 logging.warning('Messaging worker cycle deferred')
-            time.sleep(1)
+                progress = 0
+            if not progress:
+                time.sleep(1)
 
 
 if __name__ == '__main__':

@@ -146,10 +146,11 @@ class WebsiteWorker(Worker):
         self.chat_unavailable = {}
         self.lifecycle_capability = {}
 
-    def fetch(self, code):
+    def fetch(self, code, bounded=False):
         account = self.config.accounts[code]
         if not account.enabled:
             return
+        progress = False
         now = time.monotonic()
         capability = self.lifecycle_capability.get(code)
         if capability is None or now >= capability[1]:
@@ -163,12 +164,22 @@ class WebsiteWorker(Worker):
                 supported = 0
             self.lifecycle_capability[code] = (supported, now + 60)
         capability_version = self.lifecycle_capability[code][0]
-        for version in ((1, 3, 4, 2) if capability_version >= 4 else (1, 3, 2) if capability_version >= 3 else (1, 2)):
+        versions = (1, 3, 4, 2) if capability_version >= 4 else (1, 3, 2) if capability_version >= 3 else (1, 2)
+        if bounded:
+            positions = getattr(self, '_version_positions', {})
+            position = positions.get(code, 0) % len(versions)
+            positions[code] = position + 1
+            self._version_positions = positions
+            versions = (versions[position],)
+        for version in versions:
             if version > 1 and time.monotonic() < self.chat_unavailable.get((code, version), 0):
                 continue
             try:
                 events = exchange(self.client, account, 'fetch', version=version)
+                if bounded and isinstance(events, list):
+                    events = events[:25]
                 self._store_events(code, events, version)
+                progress = progress or bool(events)
                 if version > 1:
                     self.chat_unavailable.pop((code, version), None)
             except WebsiteChatUnavailable as error:
@@ -176,6 +187,7 @@ class WebsiteWorker(Worker):
                 self.chat_unavailable[(code, version)] = time.monotonic() + 60
             except Exception as error:
                 log_failure(code, 'fetch', version, error)
+        return progress
 
     def _store_events(self, code, events, version):
         account = self.config.accounts[code]
@@ -240,12 +252,13 @@ class WebsiteWorker(Worker):
         except OdooUnavailable as error:
             log_failure(row['account'], phase, version, error)
             self.store.defer_incoming(row)
-            return
+            return True
         except Exception as error:
             log_failure(row['account'], phase, version, error)
             self.store.finish_incoming(row, False)
-            return
+            return True
         self.store.finish_incoming(row, True)
+        return True
 
     def _send_operation(self, row):
         from urllib.parse import quote
@@ -308,29 +321,35 @@ class WebsiteWorker(Worker):
                 {'account_code': code, 'provider_account': account.provider_account,
                  'event_uuid': event['event_uuid'], 'attachment': item}, bytes(raw))
 
+    def _cycle_operations(self):
+        return super()._cycle_operations() + [self.fetch_next]
+
+    def fetch_next(self):
+        if not self.accounts:
+            return False
+        position = getattr(self, '_fetch_position', 0) % len(self.accounts)
+        code = self.accounts[position]
+        self._fetch_position = position + 1
+        try:
+            return bool(self.fetch(code, bounded=True))
+        except Exception as error:
+            log_failure(code, 'fetch', 1, error)
+            return False
+
     def tick(self):
         self.store.recover_website_sending(self.accounts)
-        for code in self.accounts:
-            try:
-                self.fetch(code)
-            except Exception as error:
-                log_failure(code, 'fetch', 1, error)
-        super().tick()
+        return super().tick()
 
     def read_receipts(self, code):
         return
 
 
-def main():
+def main(accounts=None):
     config = settings(load_provider_tokens=False)
     logging.basicConfig(level=logging.WARNING)
     logging.getLogger('httpx').setLevel(logging.CRITICAL)
     logging.getLogger('httpcore').setLevel(logging.CRITICAL)
-    accounts = [
-        code
-        for code, account in config.accounts.items()
-        if account.provider == 'website' and account.enabled
-    ]
+    accounts = select_accounts(config, accounts)
     with httpx.Client(timeout=20, follow_redirects=False) as client:
         worker = WebsiteWorker(
             config,
@@ -341,11 +360,29 @@ def main():
         )
         while True:
             try:
-                worker.tick()
+                progress = worker.tick()
             except Exception:
                 logging.warning('Website worker cycle deferred')
-            time.sleep(2)
+                progress = 0
+            if not progress:
+                time.sleep(2)
+
+
+def select_accounts(config, accounts=None):
+    selected = list(accounts) if accounts is not None else [
+        code for code, account in config.accounts.items()
+        if account.provider == 'website' and account.enabled
+    ]
+    if len(set(selected)) != len(selected) or any(
+        code not in config.accounts or config.accounts[code].provider != 'website'
+        or not config.accounts[code].enabled for code in selected
+    ):
+        raise ValueError('Invalid website worker account selection')
+    return selected
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--account', action='append')
+    main(parser.parse_args().account)

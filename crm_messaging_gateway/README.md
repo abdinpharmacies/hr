@@ -209,3 +209,22 @@ Website recovery and verified identity are described in `docs/website-reliable-c
 Website messages may carry up to four private files of 20 MB each. The queue stores immutable descriptors (stable ID, name, MIME type, byte length, SHA-256 digest, kind and available recording duration). Incoming bytes stream from the authenticated storefront media endpoint and upload to callcenter staging before the message is received. Acknowledgement follows durable storage of every attachment and the complete message. Partial uploads are safe to retry.
 
 Outgoing files use authenticated binary uploads before the small v4 receive request. The submission token, destination and complete descriptor list protect retries; an unsupported peer produces a media review result. Text-only v1/v2 and lifecycle v3 remain independent. Upgrade both adapters and this worker together, validate the round trip, then enable the storefront endpoint's v4 media flag. This change does not activate endpoints or restart services.
+
+## Bounded backlog cycles and website account isolation
+
+Workers now report completed progress and schedule at most 25 operations or
+250 ms between operations before yielding. A blocking network operation retains
+its existing timeout; the quantum does not preempt an in-flight send. Eligible
+work continues immediately. Idle messaging/website loops retain their respective
+one/two-second waits and existing failure backoff. Stored receipts and delivery
+reports rotate through their current bounded windows after a failure.
+
+Run website workers with repeated `--account CODE` arguments to select enabled
+website accounts explicitly. Unknown, disabled, duplicate and non-website account
+codes fail validation. The pilot and production `crm-messaging-website-*@.service`
+templates use separate private configuration files and conflict for the same
+instance. They are prepared templates, not installed/enabled services. Do not run
+one alongside an existing worker owning the same accounts. Both configurations
+retain the current storage backend, protocol and scoped credentials; they do not
+establish PostgreSQL independence. Validate disjoint account ownership before
+any separately approved rollout.
