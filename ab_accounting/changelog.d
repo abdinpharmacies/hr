@@ -94,8 +94,10 @@ Files changed:
 ## Current changes before commit:
 
 - Use the Odoo 19 account guide IDs for firing deductions and the due salaries journal test.
+- Export readable account statements without modifying the shared report definition or opening the company layout wizard.
 
 Files changed:
 - `models/ab_accounting_je_line.py`
+- `report_wizard/account_statement_wizard.py`
 - `tests/test_create_je.py`
 - `changelog.d`
