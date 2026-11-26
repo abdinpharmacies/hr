@@ -298,11 +298,12 @@ class AbCustodyReconciliationHeader(models.Model):
     #     return action.report_action(self)
 
     def btn_print_pdf_reconciliation(self):
+        self.check_access('read')
         print_all = self.env.context.get('print_all')
         self.sudo().print_all = print_all
         action = self.env.ref('ab_custody_reconciliation.ab_custody_reconciliation_header_pdf_report').sudo()
         self.message_post(body=f"Report is printed.")
-        return action.report_action(self)
+        return action.report_action(self, config=False)
 
     @api.model
     def _get_ar_lang(self):
