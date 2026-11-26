@@ -1,6 +1,14 @@
 # Preserve independent website targets during bounded workspace refresh
 
-Current changes before commit:
+Commit: `228a7930291af434730b039d0791c3c555e2c7e7`
+
+Author: Alhassan Hossny
+
+Date: 2026-11-26T09:20:18+02:00
+
+Original subject: `perf(ab_crm_website): aggregate independent target activity`
+
+Changes:
 
 - Cache canonical stream, target, preference and authorization lookups within the current request only.
 - Select website inbox activity through ORM aggregates, including legacy aliases; serialize only selected order/Support targets.
