@@ -1,0 +1,16 @@
+# FastRAG's own database. Never point this at an Odoo database.
+storage: pgvector
+
+database:
+  dsn: "host=/var/run/postgresql dbname=fastrag_db user=fastrag"
+  requests_per_minute: 300
+
+server:
+  host: "127.0.0.1"
+  port: 8111
+
+gemini:
+  api_key: "CHANGE_ME_GEMINI_API_KEY"
+  embedding_model: "gemini-embedding-2"
+  dimensions: 1536
+  generation_model: "gemini-2.5-flash"
