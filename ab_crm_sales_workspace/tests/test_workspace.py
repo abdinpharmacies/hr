@@ -2375,3 +2375,172 @@ class TestWorkspace(TransactionCase):
             self.assertIsNotNone(etree.fromstring(source))
             arch = self.env.ref(xmlid).with_context(read_arch_from_file=True)._get_combined_arch()
             self.assertEqual(arch.get('edit'), '0')
+
+    def test_performance_notifications_v2_pagination_and_old_conversation(self):
+        conversation = self.conversation()
+        self.receive(event_id='performance-second')
+        first = self.chatter_api.notifications_v2(self.session_token, limit=1)
+        self.assertEqual(sum(item['count'] for item in first['items']), 1)
+        self.assertTrue(first['has_more'])
+        second = self.chatter_api.notifications_v2(self.session_token, cursor=first['cursor'], limit=1)
+        self.assertFalse(second['has_more'])
+        ids = [mid for item in first['items'] + second['items'] for mid in item['message_ids']]
+        self.assertEqual(len(set(ids)), 2)
+        self.chatter_api.acknowledge_alert(self.session_token, conversation.id, ids)
+        cleared = self.chatter_api.notifications_v2(self.session_token, conversation_ids=[conversation.id])
+        self.assertFalse(cleared['items'])
+        self.assertEqual(cleared['replace_conversation_ids'], conversation.ids)
+        incoming = self.receive(event_id='performance-third')
+        refreshed = self.chatter_api.notifications_v2(self.session_token)
+        self.assertEqual(refreshed['items'][0]['message_ids'], [incoming['message_id']])
+        self.assertEqual(refreshed['items'][0]['unread_count'], 3)
+        for values in ({'limit': 101}, {'cursor': True}, {'conversation_ids': [True]},
+                       {'conversation_ids': [999999999]}):
+            with self.assertRaises(AccessError):
+                self.chatter_api.notifications_v2(self.session_token, **values)
+
+    def test_performance_inbox_serializes_only_page(self):
+        self.conversation()
+        model = type(self.env['ab_crm_conversation'])
+        original = model._workspace_serialize_candidate
+        serialized = []
+        def serialize(record, session, candidate):
+            serialized.append(record.id)
+            return original(record, session, candidate)
+        with patch.object(model, '_workspace_serialize_candidate', serialize):
+            result = self.env['ab_crm_conversation'].with_user(self.staff).with_context(
+                ab_chatter_session_token=self.session_token).workspace_customer_inbox(limit=1)
+        self.assertEqual(len(result['items']), 1)
+        self.assertEqual(serialized, [result['items'][0]['id']])
+
+    def test_performance_directory_query_equivalence_and_backfill(self):
+        names = ['Alpha %_ Literal', 'ALPHA plain', 'صيدلية النور', 'Straße']
+        contacts = [self.chatter_api.contact_save(self.session_token,
+            {'name': name, 'phone': '+20101234567' + str(index), 'address': ''},
+            branch_id=self.branch.id) for index, name in enumerate(names)]
+        model = self.env['ab_crm_customer']
+        model.flush_model()
+        original_dates = {record.id: record.write_date for record in model.browse([item['id'] for item in contacts])}
+        model.sudo()._backfill_directory_search(batch_size=2)
+        self.assertEqual({record.id: record.write_date for record in model.browse(list(original_dates))}, original_dates)
+        for query in ['alpha', '%_', 'النور', 'STRASSE', '01012345670', '201012345670']:
+            expected = model.browse([item['id'] for item in contacts]).filtered(
+                lambda customer: customer._matches_directory_query(query))
+            result = self.chatter_api.contact_search(self.session_token, query=query)
+            self.assertEqual({item['id'] for item in result['contacts']}, set(expected.ids), query)
+        with self.assertRaises(AccessError):
+            model.with_user(self.staff)._backfill_directory_search()
+        with self.assertRaises(AccessError):
+            model.browse(contacts[0]['id']).with_user(self.staff).write({'directory_name_key': 'forged'})
+        viewer = self.env['res.users'].create({'name': 'Directory viewer', 'login': 'directory-viewer',
+            'group_ids': [fields.Command.set([self.env.ref('base.group_user').id,
+                                             self.env.ref('ab_crm_core.group_user').id])]})
+        self.branch.write({'user_ids': [fields.Command.link(viewer.id)]})
+        contact = model.browse(contacts[0]['id']).with_user(viewer)
+        self.assertTrue(contact.read(['name']))
+        with self.assertRaises(AccessError):
+            contact.read(['directory_phone_key'])
+        searchable = model.browse(contacts[0]['id'])
+        searchable._save_phone('+442079460123', 'Alternate', 'Synthetic phone evidence', self.staff)
+        result = self.chatter_api.contact_search(self.session_token, query='79460123')
+        self.assertEqual([item['id'] for item in result['contacts']], searchable.ids)
+        searchable._save_phone('+442079460123', 'Alternate', 'Synthetic phone evidence', self.staff, active=False)
+        self.assertFalse(self.chatter_api.contact_search(self.session_token, query='79460123')['contacts'])
+        legacy = model.create({'name': 'Legacy searchable', 'phone': '+201055555555',
+                               'branch_id': self.branch.id, 'company_id': self.env.company.id})
+        result = self.chatter_api.contact_search(self.session_token, query='01055555555')
+        self.assertEqual([item['id'] for item in result['contacts']], legacy.ids)
+
+
+
+    def test_performance_request_cache_does_not_outlive_request(self):
+        from ..models.request_cache import _REQUEST, cached_scope, request_cache
+        calls = []
+        class Probe:
+            env = self.env
+            ids = [1]
+            @cached_scope
+            def resolve(probe):
+                calls.append(True)
+                return len(calls)
+            @request_cache
+            def run(probe):
+                return probe.resolve(), probe.resolve()
+        self.assertEqual(Probe().run(), (1, 1))
+        self.assertEqual(Probe().run(), (2, 2))
+        self.assertIsNone(_REQUEST.get())
+
+    def test_performance_api_measurements(self):
+        import json
+        import os
+        import resource
+        import time
+        from uuid import uuid4
+        gateway = self.env['ab_crm_messaging_api'].with_user(self.service)
+        for index in range(60):
+            for sequence in range(10):
+                gateway.receive_event('workspace-bot', '900000234', {
+                    'id': f'measure-{index}-{sequence}', 'sender': str(50000 + index),
+                    'body': 'Synthetic performance fixture', 'timestamp': '2026-01-01 12:00:00',
+                    'unsupported': False, 'source_digest': 'b' * 64})
+        for index in range(60):
+            self.chatter_api.contact_save(self.session_token,
+                {'name': f'Synthetic contact {index}', 'phone': '+20101234' + str(index).zfill(4),
+                 'address': ''}, branch_id=self.branch.id)
+        if hasattr(self.env['ab_crm_customer'], '_backfill_directory_search'):
+            self.env['ab_crm_customer'].sudo()._backfill_directory_search()
+        conversations = self.env['ab_crm_conversation'].with_user(self.staff).with_context(
+            ab_chatter_session_token=self.session_token)
+        notifications = getattr(self.chatter_api, 'notifications_v2', self.chatter_api.notifications)
+        def snapshot():
+            cursor = 0
+            while True:
+                values = {'cursor': cursor} if hasattr(self.chatter_api, 'notifications_v2') else {'after_id': cursor}
+                result = notifications(self.session_token, **values)
+                if not result['has_more']:
+                    return
+                cursor = result['cursor']
+        functions = {
+            'notifications_complete_snapshot': snapshot,
+            'notifications_first_page': lambda: notifications(self.session_token),
+            'inbox_first_page': lambda: conversations.workspace_customer_inbox(limit=30),
+            'contact_search_first_page': lambda: self.chatter_api.contact_search(self.session_token, query='Synthetic'),
+        }
+        samples = []
+        for name, operation in functions.items():
+            operation()
+            for _ in range(30):
+                self.env.invalidate_all()
+                started = time.perf_counter()
+                operation()
+                samples.append({'correlation_id': str(uuid4()), 'stage': name,
+                                'duration_ms': (time.perf_counter() - started) * 1000, 'error': False})
+        output = os.environ.get('CHATTER_PERFORMANCE_OUTPUT')
+        if output:
+            Path(output).write_text(json.dumps({'fixture': {'conversations': 60, 'messages': 600,
+                'customers': 60, 'concurrent_sessions': 1}, 'samples': samples,
+                'resource': {'max_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss},
+                'queue_growth': None, 'sender_to_receiver': None}, indent=2))
+
+    def test_performance_bus_invalidations_are_private_and_coalesced(self):
+        conversation = self.conversation()
+        self.env.cr.precommit.data.pop('ab_chatter_invalidations', None)
+        events = []
+        bus = type(self.env['bus.bus'])
+        with patch.object(bus, '_sendone', lambda record, target, kind, payload:
+                          events.append((target, kind, payload))):
+            conversation._invalidate_workspace()
+            conversation._invalidate_workspace()
+        self.assertTrue(events)
+        self.assertTrue(all(kind == 'ab_chatter.invalidate' for target, kind, payload in events))
+        self.assertTrue(all(set(payload) == {'company_id'} for target, kind, payload in events))
+        self.assertEqual(len(events), len({target.id for target, kind, payload in events}))
+        self.assertIn(self.staff.partner_id, [target for target, kind, payload in events])
+
+    def test_performance_v2_revoked_branch_is_not_visible(self):
+        conversation = self.conversation()
+        self.assertTrue(self.chatter_api.notifications_v2(self.session_token)['items'])
+        self.branch.write({'user_ids': [fields.Command.unlink(self.staff.id)]})
+        self.assertFalse(self.chatter_api.notifications_v2(self.session_token)['items'])
+        with self.assertRaises(AccessError):
+            self.chatter_api.notifications_v2(self.session_token, conversation_ids=conversation.ids)

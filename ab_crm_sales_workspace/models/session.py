@@ -1,3 +1,4 @@
+from .request_cache import cached_scope
 import secrets
 from datetime import timedelta
 from hashlib import sha256
@@ -120,6 +121,7 @@ class ChatterAPI(models.AbstractModel):
             and profile._effective_pos_permissions().get('allow_pos_screen')
         )
 
+    @cached_scope
     def _session(self, token):
         self._require_staff()
         if not isinstance(token, str) or not 20 <= len(token) <= 256:

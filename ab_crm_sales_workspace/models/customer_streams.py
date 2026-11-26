@@ -1,3 +1,4 @@
+from .request_cache import request_cache
 import hashlib
 import json
 
@@ -329,6 +330,7 @@ class Conversation(models.Model):
                     for message in messages), default=('1970-01-01 00:00:00', 0))
 
     @api.model
+    @request_cache
     def workspace_customer_inbox(self, query='', offset=0, limit=50, cursor=None):
         session = self._workspace_actor()
         if type(offset) is not int or offset < 0 or type(limit) is not int or not 1 <= limit <= 50:
@@ -342,24 +344,51 @@ class Conversation(models.Model):
         ])
         conversations = self.search(self._workspace_inbox_domain(query) + [
             ('channel_id.active', '=', True), ('channel_id', 'in', accounts.channel_id.ids)])
-        authorized = self.browse()
-        for conversation in conversations:
+        candidates = conversations._workspace_chat_candidates(session)
+        candidates.sort(key=lambda item: tuple(item['activity_cursor']), reverse=True)
+        candidates = [item for item in candidates
+                      if cursor is None or tuple(item['activity_cursor']) < tuple(cursor)]
+        selected = []
+        skipped = 0
+        for candidate in candidates:
+            conversation = self.browse(candidate['id'])
             try:
                 conversation._workspace_scope()
             except (AccessError, UserError):
                 continue
-            authorized |= conversation
-        items = []
-        for row in authorized._workspace_inbox_rows(session):
-            conversation = self.browse(row['id'])
-            for item in conversation._workspace_chat_rows(row):
-                if cursor is None or tuple(item['activity_cursor']) < tuple(cursor):
-                    items.append(item)
-        items.sort(key=lambda item: tuple(item['activity_cursor']), reverse=True)
-        page = items[offset:offset + limit]
-        return {'items': page, 'has_more': len(items) > offset + limit,
+            if skipped < offset:
+                skipped += 1
+                continue
+            selected.append(candidate)
+            if len(selected) > limit:
+                break
+        page_records = self.browse([candidate['id'] for candidate in selected[:limit]])
+        ordinary = page_records.filtered(lambda record: record.channel_id.provider != 'website')
+        rows = {row['id']: row for row in ordinary._workspace_inbox_rows(session)} if ordinary else {}
+        page = []
+        for candidate in selected[:limit]:
+            candidate = dict(candidate, _row=rows.get(candidate['id']))
+            conversation = self.browse(candidate['id'])
+            page.append(conversation._workspace_serialize_candidate(session, candidate))
+        return {'items': page, 'has_more': len(selected) > limit,
                 'next_offset': offset + limit,
                 'next_cursor': page[-1]['activity_cursor'] if page else None}
+
+    def _workspace_chat_candidates(self, session):
+        groups = self.env['ab_crm_message']._read_group([
+            ('conversation_id', 'in', self.ids), ('direction', '=', 'in'),
+            ('historical', '=', False)], ['conversation_id'], ['create_date:max', 'id:max'])
+        activity = {conversation.id: (fields.Datetime.to_string(at), mid)
+                    for conversation, at, mid in groups}
+        return [dict(id=conversation.id, group_key=f'conversation:{conversation.id}',
+                     activity_cursor=[*activity.get(conversation.id, ('1970-01-01 00:00:00', 0)),
+                                      f'conversation:{conversation.id}']) for conversation in self]
+
+    def _workspace_serialize_candidate(self, session, candidate):
+        row = candidate.get('_row') or self._workspace_inbox_rows(session)[0]
+        return dict(row, group_key=candidate['group_key'], activity_cursor=candidate['activity_cursor'],
+                    streams=[dict(row, account_id=self.messaging_account_id.id,
+                                  label=self.messaging_account_id.name)])
 
     def _workspace_chat_rows(self, row):
         self.ensure_one()

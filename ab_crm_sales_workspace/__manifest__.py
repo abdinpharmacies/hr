@@ -1,6 +1,6 @@
 {
     'name': 'Sales Chatter',
-    'version': '19.0.1.42.0',
+    'version': '19.0.1.43.0',
     'license': 'LGPL-3',
     'category': 'Sales',
     'author': 'Abdin Pharmacies',
@@ -8,6 +8,7 @@
     'application': True,
     'depends': [
         'web',
+        'bus',
         'ab_widgets',
         'ab_crm_telegram',
         'ab_sales',

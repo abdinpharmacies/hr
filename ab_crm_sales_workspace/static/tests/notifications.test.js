@@ -125,3 +125,38 @@ test("loading older history suspends automatic read advancement", async () => {
     expect(workspace.state.historyContext).toBe(true);
     expect(workspace.state.detail.messages.map(message => message.id)).toEqual([10, 20]);
 });
+
+test("notification snapshots coalesce requests and discard replaced employee results", async () => {
+    patchWithCleanup(sessionStorage, {getItem: () => null, setItem() {}, removeItem() {}});
+    const env = await makeMockEnv();
+    let release;
+    let calls = 0;
+    const added = [];
+    const listeners = new Map();
+    const subscriptions = new Map();
+    const service = registry.category("services").get("ab_chatter_session").start({bus: {trigger() {}}}, {
+        orm: {async call(model, method) {
+            expect(method).toBe("notifications_v2");
+            calls++;
+            await new Promise(resolve => { release = resolve; });
+            return {items: [entry(1, "customer:8", [11])], cursor: 11, has_more: false};
+        }},
+        notification: {add: (...values) => { added.push(values); return () => {}; }},
+        ab_chatter_feedback: env.services.ab_chatter_feedback,
+        action: {},
+        bus_service: {subscribe: (name, callback) => subscriptions.set(name, callback),
+            addEventListener: (name, callback) => listeners.set(name, callback)},
+    });
+    service.set({token: "old-employee", employee_id: 8});
+    await animationFrame();
+    await service.poll();
+    await service.poll();
+    expect(calls).toBe(1);
+    expect(subscriptions.has("ab_chatter.invalidate")).toBe(true);
+    expect(listeners.has("BUS:RECONNECT")).toBe(true);
+    service.clear();
+    release();
+    await animationFrame();
+    expect(added).toHaveLength(0);
+    expect(service.current).toBe(null);
+});

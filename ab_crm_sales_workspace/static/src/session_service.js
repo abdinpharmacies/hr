@@ -17,13 +17,15 @@ export function groupNotificationItems(items) {
 }
 
 registry.category("services").add("ab_chatter_session", {
-    dependencies: ["orm", "notification", "action", "localization", "ab_chatter_feedback"],
-    start(env, {orm, notification, action, ab_chatter_feedback: feedback}) {
+    dependencies: ["orm", "notification", "action", "localization", "ab_chatter_feedback", "bus_service"],
+    start(env, {orm, notification, action, ab_chatter_feedback: feedback, bus_service: busService}) {
         const key = `ab_chatter_session_v2_${user.userId}`;
         let session = null;
         let polling = false;
         let generation = 0;
         let repoll = false;
+        let invalidationTimer;
+        let company = user.activeCompany.id;
         const alerts = new Map();
         const dismissed = new Map();
         const channel = typeof BroadcastChannel === "undefined" ? null : new BroadcastChannel(`ab_chatter_alerts_${user.userId}`);
@@ -41,6 +43,7 @@ registry.category("services").add("ab_chatter_session", {
             workspaceDrafts: new Map(),
             focusHandler: null,
             set(value) {
+                company = user.activeCompany.id;
                 generation++;
                 dismissed.clear();
                 for (const alertKey of alerts.keys()) hide(alertKey);
@@ -72,29 +75,34 @@ registry.category("services").add("ab_chatter_session", {
                 }
             },
             async poll() {
+                if (company !== user.activeCompany.id) {
+                    company = user.activeCompany.id;
+                    service.clear();
+                }
                 if (!session) return;
                 if (polling) { repoll = true; return; }
                 const token = session.token;
+                const requestCompany = user.activeCompany.id;
                 const version = generation;
                 polling = true;
                 try {
                     let cursor = 0;
                     let more = true;
                     const pending = new Map();
-                    while (more && session?.token === token && version === generation) {
-                        const result = await feedback.call(orm, "ab_crm_chatter_api", "notifications", [], {token, after_id: cursor});
+                    while (more && session?.token === token && version === generation && requestCompany === user.activeCompany.id) {
+                        const result = await feedback.call(orm, "ab_crm_chatter_api", "notifications_v2", [], {token, cursor});
                         for (const item of result.items) {
                             const previous = pending.get(item.alert_key);
                             if (!previous) { pending.set(item.alert_key, item); continue; }
                             const messageIds = [...new Set([...previous.message_ids, ...item.message_ids])];
                             const latest = item.latest_message_id > previous.latest_message_id ? item : previous;
                             pending.set(item.alert_key, {...latest, message_ids: messageIds, count: messageIds.length,
-                                unread_count: previous.unread_count + item.unread_count});
+                                unread_count: Math.max(previous.unread_count, item.unread_count)});
                         }
                         cursor = result.cursor;
                         more = result.has_more;
                     }
-                    if (session?.token !== token || version !== generation) return;
+                    if (session?.token !== token || version !== generation || requestCompany !== user.activeCompany.id) return;
                     const groups = groupNotificationItems([...pending.values()]);
                     const keys = new Set(groups.map(group => group.key));
                     for (const alertKey of alerts.keys()) if (!keys.has(alertKey)) hide(alertKey);
@@ -135,6 +143,19 @@ registry.category("services").add("ab_chatter_session", {
         if (channel) channel.onmessage = ({data}) => {
             if (session?.employee_id === data.employee && user.activeCompany.id === data.company) { service.unreadChanged(false); }
         };
+        const invalidate = () => {
+            if (invalidationTimer) return;
+            invalidationTimer = setTimeout(() => {
+                invalidationTimer = null;
+                if (session) { env.bus.trigger("AB_CHATTER_UNREAD"); service.poll(); }
+            }, 75);
+        };
+        busService?.subscribe("ab_chatter.invalidate", payload => {
+            if (payload.company_id === user.activeCompany.id) invalidate();
+        });
+        busService?.addEventListener("BUS:RECONNECT", invalidate);
+        busService?.addEventListener("BUS:CONNECT", invalidate);
+        busService?.start?.();
         setInterval(() => service.poll(), 5000);
         service.poll();
         return service;

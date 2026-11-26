@@ -29,13 +29,13 @@ export class SalesWorkspace extends Component {
         this.chatterSession = useService("ab_chatter_session");
         this.loginClose = null;
         useBus(this.env.bus, "AB_CHATTER_SESSION", ({detail}) => {
-            if (!detail) {
+            if (!detail || this.state.loggedIn && detail.token !== this.state.token) {
                 this.navigationVersion++;
                 this.state.navigating = false;
                 if (this.previewClose) this.previewClose();
                 this.stopRecording(true);
                 this.rememberDraft();
-                if (this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, websiteTarget: this.state.detail?.website_target, contactId: this.state.contact?.id}});
+                if (this.employeeId) this.employeeDrafts.set(`${this.employeeCompanyId || user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, websiteTarget: this.state.detail?.website_target, contactId: this.state.contact?.id}});
                 this.state.token = "";
                 this.state.loggedIn = false;
                 this.state.inbox = [];
@@ -50,7 +50,8 @@ export class SalesWorkspace extends Component {
                 this.state.attachmentMenu = false;
                 this.emojiCaret = null;
                 this.drafts = new Map();
-                this.showLogin();
+                if (detail) this.run(() => this.restoreSession());
+                else this.showLogin();
             }
         });
         useBus(this.env.bus, "AB_CHATTER_UNREAD", () => {
@@ -138,7 +139,7 @@ export class SalesWorkspace extends Component {
                 }
             }, 5000);
         });
-        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, websiteTarget: this.state.detail?.website_target, contactId: this.state.contact?.id}}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); });
+        onWillUnmount(() => { if (this.chatterSession.focusHandler === this.focusHandler) this.chatterSession.focusHandler = null; this.destroyed = true; clearInterval(this.readTimer); if (this.previewClose) this.previewClose(); this.stopRecording(true); this.rememberDraft(); if (this.state.loggedIn && this.employeeId) this.employeeDrafts.set(`${this.employeeCompanyId || user.activeCompany.id}:${this.employeeId}`, {messages: this.drafts, mediaUrls: this.mediaUrls, streams: this.selectedStreams, selection: {conversationId: this.state.detail?.id, websiteTarget: this.state.detail?.website_target, contactId: this.state.contact?.id}}); clearInterval(this.timer); if (this.loginClose) this.loginClose(); });
     }
 
     get emojis() { return ["😀", "😂", "😍", "👍", "🙏", "🔥", "✅", "🎉", "❤️", "😢", "😮", "👏"]; }
@@ -199,6 +200,7 @@ export class SalesWorkspace extends Component {
     }
     restoreEmployeeDrafts(employeeId) {
         this.employeeId = employeeId;
+        this.employeeCompanyId = user.activeCompany.id;
         const preserved = this.employeeDrafts.get(`${user.activeCompany.id}:${employeeId}`);
         this.drafts = preserved?.messages || new Map();
         this.selectedStreams = preserved?.streams || new Map();
@@ -213,7 +215,8 @@ export class SalesWorkspace extends Component {
         });
     }
     async refresh() {
-        if (this.refreshing || this.destroyed || this.state.navigating) return;
+        if (this.destroyed || this.state.navigating) return;
+        if (this.refreshing) { this.refreshPending = true; return; }
         this.refreshing = true;
         const navigationVersion = this.navigationVersion;
         const readVersion = this.readVersion || 0;
@@ -277,7 +280,13 @@ export class SalesWorkspace extends Component {
                     }
                 }
             }
-        } finally { this.refreshing = false; }
+        } finally {
+            this.refreshing = false;
+            if (this.refreshPending && !this.destroyed) {
+                this.refreshPending = false;
+                setTimeout(() => this.refresh().catch(error => { this.state.error = feedbackError(this, error); }), 0);
+            }
+        }
     }
     draftKey(id) { return id; }
     rememberDraft() {

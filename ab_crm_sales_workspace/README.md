@@ -98,3 +98,28 @@ attachments and read position. Notifications open the exact notified target and
 message. Customer associations remain evidence; they do not combine chats.
 Manual chat linking and website reconciliation are disabled. The general Inbox
 Refresh remains available. See `RELEASE.md` for activation and rollback.
+
+## Performance API and search preparation
+
+`notifications_v2(token, cursor=0, limit=100, conversation_ids=None)` returns at most
+100 pending message candidates per request. The cursor belongs only to that
+snapshot traversal. Start at zero after reconnect or recovery so arrivals in old
+conversations remain visible. Targeted refreshes return `replace_conversation_ids`
+even when their items are empty; remove the previous alerts for those IDs before
+merging a completed targeted traversal. Existing `notifications` remains available
+for older clients. The current browser performs authoritative full traversals,
+coalesces invalidations and retains five-second recovery polling.
+
+New stored contact search keys have Odoo-managed indexes. In a separately approved
+targeted upgrade, run `env['ab_crm_customer'].sudo()._backfill_directory_search()`
+from an Odoo shell against the intended database. It recomputes and flushes at most
+1,000 customers per ORM batch, invalidates batch caches, and enables the new query
+path only after the entire backfill succeeds. Until then, contact search uses the
+compatibility path. Do not enable the readiness parameter manually before backfill.
+No direct database helper, ad-hoc record edit or runtime change is needed here.
+
+The inbox aggregates activity before selecting the page and serializes only that
+page. Candidate aggregate sorting still depends on the authorized target count;
+this release does not establish constant-cost processing for 100,000 targets.
+See `qa/chatter_performance/README.md` and the performance report for measured
+local results and staging acceptance that remains outstanding.

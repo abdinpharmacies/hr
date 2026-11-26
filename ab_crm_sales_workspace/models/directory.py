@@ -1,7 +1,15 @@
+from contextvars import ContextVar
+from .request_cache import cached_scope
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 from .workspace import normalized_phone, display_phone, _WORKSPACE
+
+
+_DIRECTORY_GROUPS = 'ab_crm_sales_workspace.group_agent,ab_crm_core.group_manager,base.group_system'
+_DIRECTORY_NORMALIZATION = ContextVar('ab_directory_normalization', default=False)
+_DIRECTORY_KEYS = {'directory_name_key', 'directory_chatter_name_key',
+                   'directory_phone_key', 'directory_legacy_phone'}
 
 
 class Customer(models.Model):
@@ -12,8 +20,78 @@ class Customer(models.Model):
     chatter_address = fields.Text(copy=False)
     chatter_override = fields.Boolean(copy=False)
 
+    directory_name_key = fields.Char(string='Name', compute='_compute_directory_keys', store=True, index='trigram', groups=_DIRECTORY_GROUPS)
+    directory_chatter_name_key = fields.Char(string='Name', compute='_compute_directory_keys', store=True, index='trigram', groups=_DIRECTORY_GROUPS)
+    directory_phone_key = fields.Text(string='Phone', compute='_compute_directory_keys', store=True, index='trigram', groups=_DIRECTORY_GROUPS)
+    directory_legacy_phone = fields.Char(string='Phone', compute='_compute_directory_keys', store=True, index=True, groups=_DIRECTORY_GROUPS)
+
+    @api.depends('name', 'chatter_name', 'phone', 'chatter_phone', 'chatter_override',
+                 'phone_ids.number', 'phone_ids.active', 'company_id.partner_id.country_id.code')
+    def _compute_directory_keys(self):
+        token = _DIRECTORY_NORMALIZATION.set(True)
+        try:
+            for customer in self:
+                customer.directory_name_key = (customer.name or '').casefold()
+                customer.directory_chatter_name_key = (customer.chatter_name or '').casefold()
+                numbers = customer._active_phone_numbers()
+                tokens = set(numbers)
+                tokens.update(''.join(filter(str.isdigit, number)) for number in numbers)
+                tokens.update(''.join(filter(str.isdigit, display_phone(number, customer.company_id.country_id.code)))
+                              for number in numbers)
+                customer.directory_phone_key = '\n'.join(sorted(tokens))
+                customer.directory_legacy_phone = numbers[0] if numbers and not customer.with_context(active_test=False).phone_ids else False
+        finally:
+            _DIRECTORY_NORMALIZATION.reset(token)
+
+    @api.model
+    def _backfill_directory_search(self, batch_size=1000):
+        if not self.env.su or type(batch_size) is not int or not 1 <= batch_size <= 1000:
+            raise AccessError(_('Invalid contact search.'))
+        cursor = 0
+        count = 0
+        while True:
+            batch = self.with_context(active_test=False).search([('id', '>', cursor)], order='id', limit=batch_size)
+            if not batch:
+                break
+            names = sorted(_DIRECTORY_KEYS)
+            for name in names:
+                self.env.add_to_compute(self._fields[name], batch)
+            batch._recompute_recordset(names)
+            batch.flush_recordset(names)
+            cursor = batch[-1].id
+            count += len(batch)
+            self.env.invalidate_all()
+        self.env['ir.config_parameter'].sudo().set_param('ab_crm_sales_workspace.directory_search_ready', '1')
+        return count
+
+    @api.model
+    def _directory_query_domain(self, query='', phone=False):
+        domain = fields.Domain.TRUE
+        if query:
+            needle = query.casefold().strip()
+            escaped = needle.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+            pattern = '%' + escaped + '%'
+            match = (fields.Domain('directory_name_key', '=like', pattern)
+                     | fields.Domain('directory_chatter_name_key', '=like', pattern))
+            digits = ''.join(filter(str.isdigit, query))
+            if digits:
+                match |= fields.Domain('directory_phone_key', '=like', '%' + digits + '%')
+            canonical = normalized_phone(query, self.env.company.country_id.code)
+            if canonical:
+                match |= fields.Domain('phone_ids', 'any', [('active', '=', True), ('number', '=', canonical)])
+                match |= fields.Domain('directory_legacy_phone', '=', canonical)
+            domain &= match
+        if phone:
+            domain &= (fields.Domain('phone_ids', 'any', [('active', '=', True), ('number', '=', phone)])
+                       | fields.Domain('directory_legacy_phone', '=', phone))
+        return domain
+
     @api.model_create_multi
     def create(self, values_list):
+        if not _DIRECTORY_NORMALIZATION.get() and (
+                any(_DIRECTORY_KEYS.intersection(values) for values in values_list)
+                or any('default_' + key in self.env.context for key in _DIRECTORY_KEYS)):
+            raise AccessError(self.env._('Use Contacts in Sales Chatter to edit this contact.'))
         if not _WORKSPACE.get() and any(
             any(key.startswith('chatter_') for key in values) for values in values_list
         ):
@@ -21,6 +99,8 @@ class Customer(models.Model):
         return super().create(values_list)
 
     def write(self, values):
+        if _DIRECTORY_KEYS.intersection(values) and not _DIRECTORY_NORMALIZATION.get():
+            raise AccessError(self.env._('Use Contacts in Sales Chatter to edit this contact.'))
         if not _WORKSPACE.get() and any(key.startswith('chatter_') for key in values):
             raise AccessError(_('Use Contacts in Sales Chatter to edit this contact.'))
         return super().write(values)
@@ -81,6 +161,7 @@ class WorkspaceAudit(models.Model):
 class ChatterAPI(models.AbstractModel):
     _inherit = 'ab_crm_chatter_api'
 
+    @cached_scope
     def _branch_scope(self, session, branch):
         branch.ensure_one()
         branch.check_access('read')
@@ -103,6 +184,7 @@ class ChatterAPI(models.AbstractModel):
             raise AccessError(_('The selected company or branch is not allowed.'))
         return branch
 
+    @cached_scope
     def _directory_branches(self, session):
         branches = self.env['ab_crm_branch'].search(
             [('company_id', '=', session.company_id.id)]
@@ -135,18 +217,24 @@ class ChatterAPI(models.AbstractModel):
             ('branch_id', 'in', branches.ids),
             ('company_id', '=', session.company_id.id),
         ]
-        if not query and not phone:
-            contacts = self.env['ab_crm_customer'].search(domain, order='id desc', offset=offset, limit=31)
-        else:
-            contacts = self.env['ab_crm_customer'].search(domain, order='id desc')
-        if query:
-            contacts = contacts.filtered(lambda contact: contact._matches_directory_query(query))
+        customer_model = self.env['ab_crm_customer']
+        ready = self.env['ir.config_parameter'].sudo().get_param('ab_crm_sales_workspace.directory_search_ready') == '1'
         if phone:
             phone = normalized_phone(phone, session.company_id.country_id.code)
             if not phone:
                 raise ValidationError(_('Enter a valid customer phone number.'))
-            contacts = contacts.filtered(lambda contact: phone in contact._active_phone_numbers())
-        if query or phone:
+        if ready:
+            contacts = customer_model.search(
+                fields.Domain(domain) & customer_model._directory_query_domain(query, phone),
+                order='id desc', offset=offset, limit=31)
+        elif not query and not phone:
+            contacts = customer_model.search(domain, order='id desc', offset=offset, limit=31)
+        else:
+            contacts = customer_model.search(domain, order='id desc')
+            if query:
+                contacts = contacts.filtered(lambda contact: contact._matches_directory_query(query))
+            if phone:
+                contacts = contacts.filtered(lambda contact: phone in contact._active_phone_numbers())
             contacts = contacts[offset:offset + 31]
         return {
             'contacts': [contact._directory_data() for contact in contacts[:30]],

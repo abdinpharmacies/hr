@@ -1,8 +1,8 @@
-# Independent chats release
+# Chatter performance release
 
-Upgrade `ab_crm_sales_workspace` to 19.0.1.42.0 together with `ab_crm_website`
-to 19.0.1.16.0. Activate the receiver modules together during an approved
-maintenance window. No storefront or gateway source update belongs to this release.
+Upgrade `ab_crm_sales_workspace` to 19.0.1.43.0 together with `ab_crm_website`
+to 19.0.1.17.0. Activate the receiver modules together during an approved
+maintenance window. The gateway worker changes are packaged separately. Pilot/production templates are not activated automatically.
 
 ## Manual activation
 
@@ -26,7 +26,7 @@ maintenance window. No storefront or gateway source update belongs to this relea
    separate order/Support entries, one Support departure notice, exact notification
    focus, independent drafts, English/Arabic labels and backlog drainage.
 
-No migration, hook, historical message movement, recovery or replay is included.
+Complete the private bounded ORM contact search-key backfill documented in Sales Chatter's README before enabling the indexed search path. No historical message movement, storage migration, recovery or replay is included.
 Existing order/payment/stock/identity transport rules and historical cutoff remain.
 Fresh synthetic QA is separate from production end-to-end acceptance. Existing
 production dispatch/media flags must be reviewed by the operator before promising

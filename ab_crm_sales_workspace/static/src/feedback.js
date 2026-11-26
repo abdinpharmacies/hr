@@ -9,7 +9,7 @@ export function isConnectionFailure(error) {
     return error instanceof ConnectionLostError || /^Connection (?:to ".*" )?couldn't be established or was interrupted$/.test(message);
 }
 
-const readMethods = new Set(["bootstrap", "notifications", "contact_search", "contact_accounts", "whatsapp_templates", "search_products", "preview_branch"]);
+const readMethods = new Set(["bootstrap", "notifications", "notifications_v2", "contact_search", "contact_accounts", "whatsapp_templates", "search_products", "preview_branch"]);
 const isRead = method => readMethods.has(method) || method.startsWith("workspace_") && method !== "workspace_acknowledge" || method.startsWith("action_preview_");
 
 export const chatterFeedbackService = {
@@ -58,7 +58,7 @@ export const chatterFeedbackService = {
                     return result;
                 } catch (error) {
                     if (isConnectionFailure(error)) {
-                        if (["workspace_customer_inbox", "notifications"].includes(method)) failedReads.add(route);
+                        if (["workspace_customer_inbox", "notifications", "notifications_v2"].includes(method)) failedReads.add(route);
                         service.report(error);
                     }
                     throw error;

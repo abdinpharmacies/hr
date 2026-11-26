@@ -1,3 +1,4 @@
+from .request_cache import cached_scope
 from contextvars import ContextVar
 
 import phonenumbers
@@ -144,6 +145,10 @@ class Customer(models.Model):
 
 class Message(models.Model):
     _inherit = 'ab_crm_message'
+
+    _workspace_incoming_idx = models.Index(
+        "(conversation_id, id) WHERE direction = 'in' AND NOT historical")
+    _workspace_preview_idx = models.Index('(conversation_id, timeline_at DESC, id DESC)')
 
     chatter_event_ids = fields.One2many(
         'ab_crm_messaging_event', 'message_id', string='Messaging Events', readonly=True
@@ -389,6 +394,7 @@ class Conversation(models.Model):
             self.env.context.get('ab_chatter_session_token')
         )
 
+    @cached_scope
     def _workspace_scope(self):
         self.ensure_one()
         self._authorize('read')
@@ -974,18 +980,27 @@ class Conversation(models.Model):
         conversations = self.search(domain, limit=50, order='id desc')
         return conversations._workspace_inbox_rows(session)
 
-    def _workspace_unread_messages(self, session):
+    def _workspace_unread_domain(self, session):
         positions = self.env['ab_crm_workspace_read'].sudo().search([
             ('conversation_id', 'in', self.ids), ('user_id', '=', self.env.uid),
             ('employee_id', '=', session.employee_id.id),
             ('company_id', '=', session.company_id.id),
         ])
-        seen = {row.conversation_id.id: row.last_message_id.id for row in positions}
-        messages = self.env['ab_crm_message'].search([
-            ('conversation_id', 'in', self.ids), ('direction', '=', 'in'),
-            ('historical', '=', False),
-        ] + self._workspace_visible_domain(), order='id')
-        return messages.filtered(lambda message: message.id > seen.get(message.conversation_id.id, 0))
+        seen = {row.conversation_id.id: row.last_message_id.id or 0 for row in positions}
+        buckets = {}
+        for cid, message_id in seen.items():
+            buckets.setdefault(message_id, []).append(cid)
+        unread = fields.Domain('conversation_id', 'in', (self - positions.conversation_id).ids)
+        unread |= fields.Domain.OR([
+            fields.Domain('conversation_id', 'in', ids) & fields.Domain('id', '>', message_id)
+            for message_id, ids in buckets.items()
+        ])
+        return (unread & fields.Domain('direction', '=', 'in')
+                & fields.Domain('historical', '=', False)
+                & fields.Domain(self._workspace_visible_domain()))
+
+    def _workspace_unread_messages(self, session):
+        return self.env['ab_crm_message'].search(self._workspace_unread_domain(session), order='id')
 
     def _display_destination(self):
         self.ensure_one()
@@ -996,12 +1011,19 @@ class Conversation(models.Model):
 
     def _workspace_inbox_rows(self, session):
         conversations = self
-        unread = self._workspace_unread_messages(session)
+        groups = self.env['ab_crm_message']._read_group(
+            self._workspace_unread_domain(session), ['conversation_id'], ['__count'])
+        unread_counts = {conversation.id: count for conversation, count in groups}
+        incoming_groups = self.env['ab_crm_message']._read_group(
+            fields.Domain('conversation_id', 'in', self.ids)
+            & fields.Domain('direction', '=', 'in') & fields.Domain('historical', '=', False)
+            & fields.Domain(self._workspace_visible_domain()), ['conversation_id'], ['__count'])
+        incoming_ids = {conversation.id for conversation, count in incoming_groups}
         result = []
         for record in conversations:
-            timeline = record.message_ids.filtered_domain(record._workspace_visible_domain())
-            messages = timeline.filtered(lambda m: m.direction == 'in' and not m.historical)
-            channels = {record.channel_id.provider} if messages else set()
+            domain = fields.Domain('conversation_id', '=', record.id) & fields.Domain(record._workspace_visible_domain())
+            timeline = self.env['ab_crm_message'].search(domain, order='timeline_at desc, id desc', limit=1)
+            channels = {record.channel_id.provider} if record.id in incoming_ids else set()
             result.append(
                 {
                     'id': record.id,
@@ -1011,10 +1033,8 @@ class Conversation(models.Model):
                     'name': record._customer_display_name(),
                     'provider': record.channel_id.provider,
                     'channels': sorted(channels),
-                    'preview': timeline.sorted(lambda m: (m.timeline_at, m.id))[-1:].body or '',
-                    'unread': len(
-                        unread.filtered(lambda m: m.conversation_id == record)
-                    ),
+                    'preview': timeline.body or '',
+                    'unread': unread_counts.get(record.id, 0),
                 }
             )
         return result
@@ -1190,6 +1210,7 @@ class ReadPosition(models.Model):
     last_message_id = fields.Many2one('ab_crm_message', ondelete='restrict')
     employee_id = fields.Many2one('ab_hr_employee', ondelete='restrict')
     read_at = fields.Datetime(default=fields.Datetime.now, readonly=True)
+    _actor_scope_idx = models.Index('(user_id, employee_id, company_id, conversation_id)')
     _reader_unique = models.Constraint(
         'UNIQUE(conversation_id, user_id, employee_id)',
         'Only one read position per user is allowed.',

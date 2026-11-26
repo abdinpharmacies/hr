@@ -607,6 +607,8 @@ msgstr "حساب المراسلة"
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__name
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_saved_reply__name
 #: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__directory_name_key
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__directory_chatter_name_key
 msgid "Name"
 msgstr "الاسم"
 
@@ -689,6 +691,8 @@ msgstr "الرقم السري"
 #. odoo-javascript
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_channel_order__phone
 #: code:addons/ab_crm_sales_workspace/static/src/contacts.xml:0
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__directory_phone_key
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_customer__directory_legacy_phone
 msgid "Phone"
 msgstr "الهاتف"
 
@@ -2239,6 +2243,7 @@ msgstr "%s رسائل معلّقة · %s"
 
 #. module: ab_crm_sales_workspace
 #: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_workspace_alert__acknowledged_ids
+#: model:ir.model.fields,field_description:ab_crm_sales_workspace.field_ab_crm_message__workspace_alert_ids
 msgid "Acknowledged messages"
 msgstr "الرسائل التي تم تأكيد الاطلاع عليها"
 
