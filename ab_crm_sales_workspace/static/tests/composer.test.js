@@ -105,7 +105,7 @@ test("branch details checkbox adds details while always sharing the location", a
     expect(sends[0].args[5]).toBe(true);
 });
 
-test("refresh updates visible messages without changing drafts", async () => {
+test("refresh updates edited messages in loaded older history without changing drafts", async () => {
     const calls = [];
     const workspace = {
         loadCustomerInbox: SalesWorkspace.prototype.loadCustomerInbox,
@@ -114,12 +114,12 @@ test("refresh updates visible messages without changing drafts", async () => {
         call: async (model, method, args, values) => {
             calls.push({method, values});
             if (method === "workspace_customer_inbox") return {items: [{id: 1, group_key: "test", streams: [{id: 1}]}], has_more: false};
-            return {id: 1, owned: true, last_update_at: "after", messages: [], changed_messages: [{id: 1, body: "Edited text", edited_at: "now"}]};
+            return {id: 1, owned: true, last_update_at: "after", messages: values.message_ids ? [{id: 1, body: "Edited text", edited_at: "now"}] : values.after_id ? [] : [{id: 60, body: "Recent"}]};
         },
     };
     await SalesWorkspace.prototype.refresh.call(workspace);
     expect(workspace.state.detail.messages[0].body).toBe("Edited text");
-    expect(calls.find(call => call.method === "workspace_updates").values.visible_ids).toEqual([1, 60]);
+    expect(calls.at(-1).values.message_ids).toEqual([1]);
     expect(workspace.state.reply).toBe("Draft");
     expect(workspace.state.attachments).toEqual([{name: "draft.pdf"}]);
 });

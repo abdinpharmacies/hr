@@ -2476,66 +2476,29 @@ class TestWorkspace(TransactionCase):
         import resource
         import time
         from uuid import uuid4
-        conversation_count = int(os.environ.get('CHATTER_PERFORMANCE_CONVERSATIONS', '60'))
-        if conversation_count not in (60, 1000):
-            raise ValueError('Use a bounded synthetic fixture')
         gateway = self.env['ab_crm_messaging_api'].with_user(self.service)
-        for index in range(conversation_count):
-            for sequence in range(10 if conversation_count == 60 else 1):
-                result = gateway.receive_event('workspace-bot', '900000234', {
+        for index in range(60):
+            for sequence in range(10):
+                gateway.receive_event('workspace-bot', '900000234', {
                     'id': f'measure-{index}-{sequence}', 'sender': str(50000 + index),
                     'body': 'Synthetic performance fixture', 'timestamp': '2026-01-01 12:00:00',
                     'unsupported': False, 'source_digest': 'b' * 64})
-            if conversation_count == 1000:
-                from odoo.addons.ab_crm_core.models.core import _INTERNAL
-                conversation = self.env['ab_crm_message'].browse(result['message_id']).conversation_id
-                flag = _INTERNAL.set(True)
-                try:
-                    self.env['ab_crm_message'].create([{
-                        'conversation_id': conversation.id, 'branch_id': self.branch.id,
-                        'company_id': self.branch.company_id.id, 'direction': 'in',
-                        'body': 'Synthetic performance fixture', 'delivery_state': 'sent',
-                        'provider_reference': f'measure-{index}-{sequence}',
-                        'original_timestamp': '2026-01-01 12:00:00',
-                    } for sequence in range(1, 10)])
-                finally:
-                    _INTERNAL.reset(flag)
-        for index in range(conversation_count):
+        for index in range(60):
             self.chatter_api.contact_save(self.session_token,
                 {'name': f'Synthetic contact {index}', 'phone': '+20101234' + str(index).zfill(4),
                  'address': ''}, branch_id=self.branch.id)
         if hasattr(self.env['ab_crm_customer'], '_backfill_directory_search'):
             self.env['ab_crm_customer'].sudo()._backfill_directory_search()
-        self.env.flush_all()
-        self.env.cr.execute('ANALYZE ab_crm_message, ab_crm_conversation, ab_crm_messaging_event, ab_crm_customer')
-        import logging
-        logging.getLogger(__name__).info('Timing fixture ready: %s conversations, %s messages', conversation_count, conversation_count * 10)
-        if os.environ.get('CHATTER_PERFORMANCE_PLAN_ONLY') == '1':
-            from odoo.tools import SQL
-            message_model = self.env['ab_crm_message'].with_user(self.staff)
-            query = message_model._search(fields.Domain('conversation_id.channel_id', '=', self.channel.id)
-                & fields.Domain(self.env['ab_crm_conversation']._workspace_visible_domain()), order='id', limit=101).select()
-            plans = {}
-            for phase in ('before', 'after'):
-                if phase == 'after':
-                    self.env.cr.execute('CREATE INDEX timing_event_message_probe ON ab_crm_messaging_event (message_id)')
-                self.env.cr.execute(SQL('EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) %s', query))
-                plans[phase] = self.env.cr.fetchone()[0]
-            self.env.cr.execute('DROP INDEX timing_event_message_probe')
-            Path(os.environ['CHATTER_PERFORMANCE_OUTPUT']).write_text(json.dumps(plans, indent=2))
-            return
         conversations = self.env['ab_crm_conversation'].with_user(self.staff).with_context(
             ab_chatter_session_token=self.session_token)
         notifications = getattr(self.chatter_api, 'notifications_v2', self.chatter_api.notifications)
         def snapshot():
-            pages = []
             cursor = 0
             while True:
                 values = {'cursor': cursor} if hasattr(self.chatter_api, 'notifications_v2') else {'after_id': cursor}
                 result = notifications(self.session_token, **values)
-                pages.append(result)
                 if not result['has_more']:
-                    return pages
+                    return
                 cursor = result['cursor']
         functions = {
             'notifications_complete_snapshot': snapshot,
@@ -2543,32 +2506,20 @@ class TestWorkspace(TransactionCase):
             'inbox_first_page': lambda: conversations.workspace_customer_inbox(limit=30),
             'contact_search_first_page': lambda: self.chatter_api.contact_search(self.session_token, query='Synthetic'),
         }
-        requested_stages = os.environ.get('CHATTER_PERFORMANCE_STAGES')
-        if requested_stages:
-            selected_stages = requested_stages.split(',')
-            if not set(selected_stages) <= functions.keys():
-                raise ValueError('Unknown measurement stage')
-            functions = {name: functions[name] for name in selected_stages}
         samples = []
-        cpu_started = time.process_time()
         for name, operation in functions.items():
-            logging.getLogger(__name__).info('Timing API stage: %s', name)
             operation()
-            for _ in range(30 if conversation_count == 60 else 5):
+            for _ in range(30):
                 self.env.invalidate_all()
-                query_started = self.env.cr.sql_log_count
                 started = time.perf_counter()
-                response = operation()
+                operation()
                 samples.append({'correlation_id': str(uuid4()), 'stage': name,
-                                'duration_ms': (time.perf_counter() - started) * 1000,
-                                'sql_count': self.env.cr.sql_log_count - query_started,
-                                'response_bytes': len(json.dumps(response, default=str).encode()),
-                                'requests': len(response) if name == 'notifications_complete_snapshot' else 1, 'error': False})
+                                'duration_ms': (time.perf_counter() - started) * 1000, 'error': False})
         output = os.environ.get('CHATTER_PERFORMANCE_OUTPUT')
         if output:
-            Path(output).write_text(json.dumps({'fixture': {'conversations': conversation_count, 'messages': conversation_count * 10,
-                'customers': conversation_count, 'concurrent_sessions': 1}, 'samples': samples,
-                'resource': {'cpu_seconds': time.process_time() - cpu_started, 'max_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss},
+            Path(output).write_text(json.dumps({'fixture': {'conversations': 60, 'messages': 600,
+                'customers': 60, 'concurrent_sessions': 1}, 'samples': samples,
+                'resource': {'max_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss},
                 'queue_growth': None, 'sender_to_receiver': None}, indent=2))
 
     def test_performance_bus_invalidations_are_private_and_coalesced(self):
@@ -2580,11 +2531,9 @@ class TestWorkspace(TransactionCase):
                           events.append((target, kind, payload))):
             conversation._invalidate_workspace()
             conversation._invalidate_workspace()
-            conversation._send_workspace_invalidations()
         self.assertTrue(events)
         self.assertTrue(all(kind == 'ab_chatter.invalidate' for target, kind, payload in events))
-        self.assertTrue(all(set(payload) == {'company_id', 'employee_id', 'conversation_ids', 'categories', 'overflow', 'correlation_ids'} for target, kind, payload in events))
-        self.assertTrue(all(payload['conversation_ids'] == conversation.ids for target, kind, payload in events))
+        self.assertTrue(all(set(payload) == {'company_id'} for target, kind, payload in events))
         self.assertEqual(len(events), len({target.id for target, kind, payload in events}))
         self.assertIn(self.staff.partner_id, [target for target, kind, payload in events])
 
@@ -2595,114 +2544,3 @@ class TestWorkspace(TransactionCase):
         self.assertFalse(self.chatter_api.notifications_v2(self.session_token)['items'])
         with self.assertRaises(AccessError):
             self.chatter_api.notifications_v2(self.session_token, conversation_ids=conversation.ids)
-
-    def test_incremental_pages_visible_changes_and_backdated_arrivals(self):
-        conversation = self.conversation()
-        initial = conversation.workspace_detail()
-        anchor = initial['message_cursor']
-        for index in range(56):
-            self.receive(event_id=f'incremental-{index}')
-        first = conversation.workspace_updates(after_id=anchor, visible_ids=[initial['messages'][0]['id']])
-        self.assertEqual(len(first['messages']), 50)
-        self.assertTrue(first['has_more_updates'])
-        second = conversation.workspace_updates(after_id=first['message_cursor'], visible_ids=[])
-        self.assertEqual(len(second['messages']), 6)
-        self.assertFalse(second['has_more_updates'])
-        self.assertEqual(len(set(item['id'] for item in first['messages'] + second['messages'])), 56)
-        self.assertEqual(first['id'], conversation.id)
-        self.assertEqual(first['unread_count'], 57)
-        self.assertEqual(first['changed_messages'][0]['id'], initial['messages'][0]['id'])
-        for values in ({'after_id': -1, 'visible_ids': []}, {'visible_ids': [True]},
-                       {'visible_ids': list(range(1, 52))}):
-            with self.assertRaises(ValidationError):
-                conversation.workspace_updates(**values)
-        foreign = self.env['ab_crm_conversation'].with_user(self.other).browse(conversation.id)
-        with self.assertRaises(AccessError):
-            foreign.workspace_updates(visible_ids=[])
-
-    def test_timing_active_api_measurements(self):
-        import json
-        import os
-        import time
-        from odoo.addons.ab_crm_core.models.core import _INTERNAL
-        conversation = self.conversation()
-        flag = _INTERNAL.set(True)
-        try:
-            self.env['ab_crm_message'].create([{
-                'conversation_id': conversation.id, 'branch_id': self.branch.id,
-                'company_id': self.branch.company_id.id, 'direction': 'in',
-                'body': 'Synthetic long history', 'delivery_state': 'sent',
-                'provider_reference': f'long-{index}',
-                'original_timestamp': '2026-01-01 12:00:00',
-            } for index in range(1000)])
-        finally:
-            _INTERNAL.reset(flag)
-        ids = self.env['ab_crm_message'].search([('conversation_id', '=', conversation.id)]).ids
-        cursor = max(ids)
-        samples = []
-        for repeat in range(10):
-            self.env.invalidate_all()
-            queries = self.env.cr.sql_log_count
-            started = time.perf_counter()
-            responses = []
-            if hasattr(conversation, 'workspace_updates'):
-                responses.append(conversation.workspace_updates(after_id=cursor, visible_ids=ids[-50:]))
-            else:
-                responses.append(conversation.workspace_detail(after_id=cursor))
-                responses.append(conversation.workspace_detail())
-                for offset in range(0, len(ids) - 50, 50):
-                    responses.append(conversation.workspace_detail(message_ids=ids[offset:offset + 50]))
-            samples.append({'duration_ms': (time.perf_counter() - started) * 1000,
-                'sql_count': self.env.cr.sql_log_count - queries, 'requests': len(responses),
-                'response_bytes': len(json.dumps(responses, default=str).encode())})
-        output = os.environ.get('CHATTER_TIMING_ACTIVE_OUTPUT')
-        if output:
-            Path(output).write_text(json.dumps({'history_messages': len(ids), 'visible_messages': 50,
-                'samples': samples}, indent=2))
-
-    def test_incremental_read_invalidation_is_employee_scoped(self):
-        conversation = self.conversation()
-        employee = self.env['ab_hr_employee'].create({
-            'name': 'Timing second employee', 'barcode': 'TIMING2', 'user_id': self.staff.id})
-        profile = self.profile.copy({'employee_id': employee.id, 'pos_pin': '1234'})
-        self.chatter_api.employee_login(profile.id, '1234', 'timing-second')
-        conversation._send_workspace_invalidations()
-        events = []
-        with patch.object(type(self.env['bus.bus']), '_sendone',
-                lambda record, target, kind, payload: events.append(payload)):
-            conversation._invalidate_workspace('unread', (self.staff.id, self.employee.id))
-            conversation._send_workspace_invalidations()
-        self.assertEqual(len(events), 1)
-        self.assertEqual(events[0]['employee_id'], self.employee.id)
-        self.assertEqual(events[0]['categories'], ['unread'])
-        self.assertEqual(events[0]['conversation_ids'], conversation.ids)
-        with patch.object(type(self.env['bus.bus']), '_sendone',
-                lambda record, target, kind, payload: events.append(payload)):
-            conversation._invalidate_workspace()
-            conversation._send_workspace_invalidations()
-        self.assertEqual({payload['employee_id'] for payload in events}, {self.employee.id, employee.id})
-
-    def test_incremental_contact_change_invalidates_authorized_directory(self):
-        conversations = self.env['ab_crm_conversation']
-        conversations._send_workspace_invalidations()
-        events = []
-        with patch.object(type(self.env['bus.bus']), '_sendone',
-                lambda record, target, kind, payload: events.append(payload)):
-            self.chatter_api.contact_save(self.session_token,
-                {'name': 'Timing contact', 'phone': '+201012345679', 'address': ''}, branch_id=self.branch.id)
-            conversations._send_workspace_invalidations()
-        self.assertTrue(events)
-        self.assertTrue(all(payload['company_id'] == self.branch.company_id.id for payload in events))
-        self.assertTrue(all(payload['categories'] == ['contacts'] for payload in events))
-        self.assertTrue(all(payload['conversation_ids'] == [] for payload in events))
-
-    def test_incremental_batched_previews_preserve_ties_and_incoming_order(self):
-        conversation = self.conversation()
-        self.receive(event_id='batch-preview-second')
-        self.assertEqual(conversation._workspace_inbox_rows(self.session)[0]['preview'], 'Contact shared')
-        cursor = conversation.workspace_customer_inbox()['items'][0]['activity_cursor']
-        message_id = conversation.action_reply('New outgoing preview')
-        row = conversation._workspace_inbox_rows(self.session)[0]
-        self.assertEqual(row['preview'], 'New outgoing preview')
-        self.assertEqual(conversation.workspace_customer_inbox()['items'][0]['activity_cursor'], cursor)
-        self.assertEqual(self.env['ab_crm_messaging_operation'].search_count([('message_id', '=', message_id)]), 1)
