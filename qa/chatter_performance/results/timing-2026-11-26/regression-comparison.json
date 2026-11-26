@@ -1,0 +1,41 @@
+{
+  "baseline": [
+    "TestWorkspace.test_admin_legacy_service_role_can_work_after_employee_login",
+    "TestWorkspace.test_ambiguous_ingestion_retains_unlinked_evidence",
+    "TestWorkspace.test_auto_prompt_profile_and_contact_after_claim",
+    "TestWorkspace.test_automatic_link_preserves_branch_isolation_and_phone_archive",
+    "TestWorkspace.test_automatic_link_rejects_ambiguous_archived_and_third_party_numbers",
+    "TestWorkspace.test_catalog_review_requires_manager_and_scoped_candidate",
+    "TestWorkspace.test_contact_directory_overrides_archive_and_audit",
+    "TestWorkspace.test_customer_alert_group_keeps_independent_channel_read_positions",
+    "TestWorkspace.test_customer_label_excludes_legacy_destination_and_employee",
+    "TestWorkspace.test_legacy_archive_translations",
+    "TestWorkspace.test_manual_customer_link_without_confirmation_or_reason",
+    "TestWorkspace.test_owned_contact_and_dedup",
+    "TestWorkspace.test_returning_identity_and_read_position",
+    "TestWorkspace.test_third_party_and_typed_require_confirmation",
+    "TestWorkspace.test_unique_duplicate_and_scoped_catalog",
+    "TestWorkspace.test_unique_verified_phone_links_without_reason_and_preserves_history",
+    "TestWorkspace.test_unlink_customer_splits_all_inboxes_and_preserves_history"
+  ],
+  "current": [
+    "TestWorkspace.test_admin_legacy_service_role_can_work_after_employee_login",
+    "TestWorkspace.test_ambiguous_ingestion_retains_unlinked_evidence",
+    "TestWorkspace.test_auto_prompt_profile_and_contact_after_claim",
+    "TestWorkspace.test_automatic_link_preserves_branch_isolation_and_phone_archive",
+    "TestWorkspace.test_automatic_link_rejects_ambiguous_archived_and_third_party_numbers",
+    "TestWorkspace.test_catalog_review_requires_manager_and_scoped_candidate",
+    "TestWorkspace.test_contact_directory_overrides_archive_and_audit",
+    "TestWorkspace.test_customer_alert_group_keeps_independent_channel_read_positions",
+    "TestWorkspace.test_customer_label_excludes_legacy_destination_and_employee",
+    "TestWorkspace.test_legacy_archive_translations",
+    "TestWorkspace.test_manual_customer_link_without_confirmation_or_reason",
+    "TestWorkspace.test_owned_contact_and_dedup",
+    "TestWorkspace.test_returning_identity_and_read_position",
+    "TestWorkspace.test_third_party_and_typed_require_confirmation",
+    "TestWorkspace.test_unique_duplicate_and_scoped_catalog",
+    "TestWorkspace.test_unique_verified_phone_links_without_reason_and_preserves_history",
+    "TestWorkspace.test_unlink_customer_splits_all_inboxes_and_preserves_history"
+  ],
+  "same_failures": true
+}

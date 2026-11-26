@@ -1,0 +1,11 @@
+{
+  "run": "browser-ten-foreground.json",
+  "outcome": "failed_timeout",
+  "completed_inbound_messages": 25,
+  "next_arrival_timed_out_seconds": 30,
+  "late_durable_event_recovered": true,
+  "final_durable_inbound_done": 213,
+  "final_durable_inbound_pending": 0,
+  "final_outgoing_operations": 90,
+  "distinct_outgoing_message_ids": 90
+}

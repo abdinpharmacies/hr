@@ -1,0 +1,286 @@
+{
+  "fixture": {
+    "conversations": 60,
+    "messages": 600,
+    "customers": 60,
+    "concurrent_sessions": 1
+  },
+  "samples": [
+    {
+      "correlation_id": "61dde9b9-d093-4881-a540-9dacf9963cc7",
+      "stage": "inbox_first_page",
+      "duration_ms": 127.07073695492,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "e5aebc05-db1a-4016-ae7b-7daf9e1d755c",
+      "stage": "inbox_first_page",
+      "duration_ms": 130.2421489963308,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "e80f274d-d833-40db-811d-5d04c90e2117",
+      "stage": "inbox_first_page",
+      "duration_ms": 131.7195569863543,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "7806d451-d4fe-40a1-8faf-3e7ed906f8bf",
+      "stage": "inbox_first_page",
+      "duration_ms": 133.87886004056782,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "2a287977-5ed1-4c90-be13-b1edc17652ed",
+      "stage": "inbox_first_page",
+      "duration_ms": 120.84029300604016,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "57352d7c-d105-43dc-a03a-24bf8ff121f2",
+      "stage": "inbox_first_page",
+      "duration_ms": 124.20603295322508,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "d0aa20eb-fe6b-41ec-9231-d16c7954ec94",
+      "stage": "inbox_first_page",
+      "duration_ms": 111.4039319800213,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "fbbec80b-1faa-457c-aa29-2ebdcb56280d",
+      "stage": "inbox_first_page",
+      "duration_ms": 104.75351102650166,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "d51abdbc-c206-486e-808b-531fd8d3ecf1",
+      "stage": "inbox_first_page",
+      "duration_ms": 117.5764249637723,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "35ad3bc5-fa5f-4a24-ab94-3d0009415da3",
+      "stage": "inbox_first_page",
+      "duration_ms": 129.3070240644738,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "66450225-cbf8-4fe2-824b-4ed47ac9b184",
+      "stage": "inbox_first_page",
+      "duration_ms": 125.20084402058274,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "5b0cd79a-46be-4060-bb49-7ff3f22904ff",
+      "stage": "inbox_first_page",
+      "duration_ms": 115.6946939881891,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "05417d1d-9376-42a0-8646-02ffbdf01288",
+      "stage": "inbox_first_page",
+      "duration_ms": 123.60068794805557,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "5a4ff31d-02b2-4755-9594-4232f1c3438e",
+      "stage": "inbox_first_page",
+      "duration_ms": 116.10326496884227,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "e8350707-90ad-44c2-86ac-cbe0c9cf38fd",
+      "stage": "inbox_first_page",
+      "duration_ms": 112.42729099467397,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "7bfccf14-0743-4648-9895-11d296ca27eb",
+      "stage": "inbox_first_page",
+      "duration_ms": 113.89233497902751,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "787de473-c9fa-42e9-9054-85c0d9df13cb",
+      "stage": "inbox_first_page",
+      "duration_ms": 125.29543600976467,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "7a8e25bf-14b9-4a5c-b638-c52de53beb28",
+      "stage": "inbox_first_page",
+      "duration_ms": 131.19731203187257,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "d00291cd-0ab4-4715-8a7b-9ea07339fa37",
+      "stage": "inbox_first_page",
+      "duration_ms": 169.22774992417544,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "38c2b7d0-78d0-44df-b304-ce1a6a3ef599",
+      "stage": "inbox_first_page",
+      "duration_ms": 143.10585998464376,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "4b5a5041-d9d7-425b-8a78-061bd7c78ea7",
+      "stage": "inbox_first_page",
+      "duration_ms": 124.27783396560699,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "5137a2ac-df03-4692-98ad-f92cd491f205",
+      "stage": "inbox_first_page",
+      "duration_ms": 127.07270099781454,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "036b1af7-07ca-4192-b8c8-67b6e2332e6a",
+      "stage": "inbox_first_page",
+      "duration_ms": 130.18889992963523,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "bb5c4471-aaf3-4d20-a9d8-d3340ff0d26b",
+      "stage": "inbox_first_page",
+      "duration_ms": 121.42172001767904,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "bf6943ef-6123-487e-b37e-c63275bb3789",
+      "stage": "inbox_first_page",
+      "duration_ms": 123.5816670814529,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "14409929-394b-4bb9-b2eb-a792ba3a42b7",
+      "stage": "inbox_first_page",
+      "duration_ms": 124.41892898641527,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "de387e3d-8293-4441-83ca-2ffb24b6da74",
+      "stage": "inbox_first_page",
+      "duration_ms": 127.39603198133409,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "bf05e69a-1be4-4ca1-87a1-e1abd87d5d1f",
+      "stage": "inbox_first_page",
+      "duration_ms": 136.70770497992635,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "951393b6-6ba1-4352-bc67-d57d7cbc40bc",
+      "stage": "inbox_first_page",
+      "duration_ms": 150.21484601311386,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "2b11c31b-3b4e-46f1-a417-2438646120b4",
+      "stage": "inbox_first_page",
+      "duration_ms": 133.10618803370744,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    }
+  ],
+  "resource": {
+    "cpu_seconds": 2.8153174759999997,
+    "max_rss_kib": 157524
+  },
+  "queue_growth": null,
+  "sender_to_receiver": null
+}

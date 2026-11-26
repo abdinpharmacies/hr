@@ -1,0 +1,61 @@
+{
+  "fixture": {
+    "conversations": 1000,
+    "messages": 10000,
+    "customers": 1000,
+    "concurrent_sessions": 1
+  },
+  "samples": [
+    {
+      "correlation_id": "d98fe2e4-ca56-4df8-8001-0a8254fdce0e",
+      "stage": "inbox_first_page",
+      "duration_ms": 359.50318293180317,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "be020c96-1c62-4da9-8b94-bbd3f33ab3a3",
+      "stage": "inbox_first_page",
+      "duration_ms": 421.9579619821161,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "326764af-7151-4839-aad9-b1f4710b8d6c",
+      "stage": "inbox_first_page",
+      "duration_ms": 489.15835900697857,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "801da951-b209-4ba7-b49b-8bcffe54e152",
+      "stage": "inbox_first_page",
+      "duration_ms": 292.63723094481975,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    },
+    {
+      "correlation_id": "94cf3ee8-1aec-4b28-b1f5-abf8d4565d00",
+      "stage": "inbox_first_page",
+      "duration_ms": 344.6000129915774,
+      "sql_count": 61,
+      "response_bytes": 18896,
+      "requests": 1,
+      "error": false
+    }
+  ],
+  "resource": {
+    "cpu_seconds": 0.7548007990000016,
+    "max_rss_kib": 181036
+  },
+  "queue_growth": null,
+  "sender_to_receiver": null
+}

@@ -1,0 +1,66 @@
+{
+  "history_messages": 1001,
+  "visible_messages": 50,
+  "samples": [
+    {
+      "duration_ms": 288.42997504398227,
+      "sql_count": 85,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 154.7828719485551,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 152.4174560327083,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 184.5283879665658,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 242.7022809861228,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 155.45799699611962,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 217.39922103006393,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 155.10275005362928,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 155.62567207962275,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    },
+    {
+      "duration_ms": 127.40675802342594,
+      "sql_count": 43,
+      "requests": 1,
+      "response_bytes": 42934
+    }
+  ]
+}

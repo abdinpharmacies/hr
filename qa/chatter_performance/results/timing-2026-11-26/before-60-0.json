@@ -1,0 +1,976 @@
+{
+  "fixture": {
+    "conversations": 60,
+    "messages": 600,
+    "customers": 60,
+    "concurrent_sessions": 1
+  },
+  "samples": [
+    {
+      "correlation_id": "57c1c4ff-cd2d-439c-a636-6395f3b6254b",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 505.1123530138284,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "f7408edd-6fe8-4a7d-bf37-4870ad5d2385",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 520.7410560688004,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "03afc795-d72a-46df-9bd8-69163735af04",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 504.2018729727715,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "dd33007c-8216-492b-af59-dbcced90aa76",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 581.3058060593903,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "89aef490-11aa-48bc-83e0-189234afbc33",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 593.9705360215157,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "37d7a955-6389-4dbf-89e6-f0c0067b647d",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 623.4264870872721,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "a9826e3c-c9aa-4bf6-a6c4-cb38bc342469",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 591.7141960235313,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "8615548f-addd-4a83-8638-7c14f30f5bf2",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 602.850632974878,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "2a1b94f0-16d9-40c4-b600-fdbd1b7aa3bc",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 554.889566032216,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "b3adf464-1b05-4211-8730-43460d6e9c40",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 521.3786270469427,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "b74b5fcd-6b16-4e01-8f55-dabc1ad7ba67",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 550.8162300102413,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "d9a15202-b76a-41b1-a475-0fb1f6ff5bb4",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 670.3863169532269,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "ad3d87ae-f928-48e1-9fd1-6abdae801c4b",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 965.3186239302158,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "1f4dcbf1-842b-4ef1-92c9-6a19b2df9c6c",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 905.8054309571162,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "c986610d-1304-4e05-9832-798024bbf2c5",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 921.1479200748727,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "ac390969-237e-45f0-aca4-96c077e95daa",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 648.0740909464657,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "62a280bd-fbf7-4564-a607-d09c93c3c8b4",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 655.547374044545,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "57c6d7ba-5b84-48c8-9a9d-de0519327f33",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 576.6548969550058,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "683e51b2-b51c-4344-bd11-65bd6275a544",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 612.6342479838058,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "e792c707-b6b7-45b2-92e5-879f361196fe",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 638.471411075443,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "0a0990b5-8b49-44e0-9d71-54b4ef6c2e33",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 680.4927319753915,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "fbed69ba-f34a-44eb-b58e-7e4b99555456",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 640.2289438992739,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "ee4359ce-c6f5-41f8-92a7-5c1fa0fded5e",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 643.2257030392066,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "4ac4a529-90e7-477f-b066-65aadd0de7cf",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 638.8162630610168,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "780021bc-d7c1-41bb-8e77-8cee1c607c94",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 575.7310920162126,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "308d84f3-88ab-435f-adfc-bd2f60cc5192",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 532.9077519709244,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "e719ef96-3083-46e9-bf7b-4e866b2d3af3",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 610.007597017102,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "fbb0b265-3f21-4d08-a5d1-edaea89e4664",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 677.2191659547389,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "a797410a-79f1-4835-a9af-3eb7d8b5ec0d",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 690.366521012038,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "86f38ea4-d41e-42b1-9136-c3728eb18d0b",
+      "stage": "notifications_complete_snapshot",
+      "duration_ms": 656.6377410199493,
+      "sql_count": 79,
+      "response_bytes": 4,
+      "error": false
+    },
+    {
+      "correlation_id": "a78f7198-d55b-464c-b336-23b648ce1e90",
+      "stage": "notifications_first_page",
+      "duration_ms": 79.6471209032461,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "36592349-f351-42fd-b6dd-b47cc8993916",
+      "stage": "notifications_first_page",
+      "duration_ms": 94.76070397067815,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "cbd22a9c-6a81-478f-bd11-7916b02e86c2",
+      "stage": "notifications_first_page",
+      "duration_ms": 80.20753599703312,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "061fd660-14e7-4dba-9501-c00c54714411",
+      "stage": "notifications_first_page",
+      "duration_ms": 77.56303891073912,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "916b9b88-5f93-427d-a470-e85d6e24cc11",
+      "stage": "notifications_first_page",
+      "duration_ms": 87.33397396281362,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "32855c78-abdb-4f6b-8c48-5c54a8f8de09",
+      "stage": "notifications_first_page",
+      "duration_ms": 79.75423999596387,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "4c71197d-3aa7-497d-aca3-b7bac2c820a2",
+      "stage": "notifications_first_page",
+      "duration_ms": 77.48858106788248,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "1f8f87c3-e5e2-49b1-98d9-aaeb1e8a07b9",
+      "stage": "notifications_first_page",
+      "duration_ms": 81.57393999863416,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "83da5015-d5e2-4833-9a04-b3ea0fbf05d7",
+      "stage": "notifications_first_page",
+      "duration_ms": 76.24925300478935,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "166cdd56-c6e2-4619-9736-c6a2617f8db9",
+      "stage": "notifications_first_page",
+      "duration_ms": 75.33549296204001,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "a726e5a8-4ca4-4154-93bb-e4248a4f30dc",
+      "stage": "notifications_first_page",
+      "duration_ms": 76.89135102555156,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "72e204b5-eb36-4fc5-85bb-dacb1f3732d6",
+      "stage": "notifications_first_page",
+      "duration_ms": 77.10825395770371,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "d363a332-8b59-43b0-adfd-e5dab6aab498",
+      "stage": "notifications_first_page",
+      "duration_ms": 75.12552000116557,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "8ee99886-87a1-424c-b29e-82f03502d8ab",
+      "stage": "notifications_first_page",
+      "duration_ms": 75.8942459942773,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "8e072d89-8652-4f20-b31c-e426e8aba4c9",
+      "stage": "notifications_first_page",
+      "duration_ms": 76.78305695299059,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "25f9d1cb-eca9-47af-99d8-3f32c6bc7df3",
+      "stage": "notifications_first_page",
+      "duration_ms": 67.07694195210934,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "2d6b3aa1-072a-4fb9-a99e-c223e551da43",
+      "stage": "notifications_first_page",
+      "duration_ms": 65.07313903421164,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "98bb1f3c-9f86-4cfb-a6be-7ed07f6101d6",
+      "stage": "notifications_first_page",
+      "duration_ms": 73.52942496072501,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "0d7d019b-6e9e-4246-bef4-ffe2c2bc518b",
+      "stage": "notifications_first_page",
+      "duration_ms": 77.08291697781533,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "52e03904-5f37-4ab2-92c5-a524351c92df",
+      "stage": "notifications_first_page",
+      "duration_ms": 80.83531202282757,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "73186cb0-8a28-4605-ab64-bdfb850d4965",
+      "stage": "notifications_first_page",
+      "duration_ms": 78.84400500915945,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "dd5b05b0-a147-4557-a0ab-2938b5267cd0",
+      "stage": "notifications_first_page",
+      "duration_ms": 78.34150607232004,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "a7d408c0-7452-4133-981e-6308c891e232",
+      "stage": "notifications_first_page",
+      "duration_ms": 79.92197794374079,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "b87dba3d-0151-4990-9da1-32d4987f89ea",
+      "stage": "notifications_first_page",
+      "duration_ms": 76.51875098235905,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "ffe0723d-b26b-4e2b-be5b-5dfaee9c6a1d",
+      "stage": "notifications_first_page",
+      "duration_ms": 76.22101798187941,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "88ed9a19-dffa-4a67-8225-f6abfa7133b7",
+      "stage": "notifications_first_page",
+      "duration_ms": 68.00680491141975,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "3347c570-178e-4c2d-afc0-61f084a6aaf1",
+      "stage": "notifications_first_page",
+      "duration_ms": 72.07628199830651,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "35cd65b6-00e3-4767-9939-fbbe687d08f8",
+      "stage": "notifications_first_page",
+      "duration_ms": 72.8280950570479,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "173df8e1-4c96-4443-904c-0f6548aa18af",
+      "stage": "notifications_first_page",
+      "duration_ms": 75.85506199393421,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "ef9871a5-82a7-4237-b98e-bc2b2274c427",
+      "stage": "notifications_first_page",
+      "duration_ms": 71.66854909155518,
+      "sql_count": 29,
+      "response_bytes": 4453,
+      "error": false
+    },
+    {
+      "correlation_id": "e3ab5a9b-f14b-4d65-b2c1-cb063185035a",
+      "stage": "inbox_first_page",
+      "duration_ms": 394.8178669670597,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "56f240a7-5fc8-46da-9890-1fe878afbc51",
+      "stage": "inbox_first_page",
+      "duration_ms": 391.8890579370782,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "3aa88bf7-ea13-453f-89f8-291328e6ef2e",
+      "stage": "inbox_first_page",
+      "duration_ms": 420.8204329479486,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "028058f1-d049-4f88-9827-e0c0f15a5c38",
+      "stage": "inbox_first_page",
+      "duration_ms": 462.130906060338,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "06f208f3-20bc-44be-8872-ca90244f1774",
+      "stage": "inbox_first_page",
+      "duration_ms": 421.3132970035076,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "a000311d-043b-40cf-ac67-6ee55f73db4f",
+      "stage": "inbox_first_page",
+      "duration_ms": 424.144929042086,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "f7512443-b0cf-47dc-8892-6e0847747793",
+      "stage": "inbox_first_page",
+      "duration_ms": 387.5319299986586,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "c73dc574-3430-411f-a043-58548c8ce4e5",
+      "stage": "inbox_first_page",
+      "duration_ms": 406.05326602235436,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "058423a5-31b1-4e7d-ad88-28a3370676ac",
+      "stage": "inbox_first_page",
+      "duration_ms": 362.3639460420236,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "a657948f-5886-45ea-b381-b808e97b08f2",
+      "stage": "inbox_first_page",
+      "duration_ms": 401.61543095018715,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "71798209-8f30-41fb-be16-ab853d14f6ed",
+      "stage": "inbox_first_page",
+      "duration_ms": 361.24147404916584,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "12e8f102-800a-4a17-b8a6-bcf36a2fe9d8",
+      "stage": "inbox_first_page",
+      "duration_ms": 388.7140540173277,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "b05c8d42-50e6-4fb1-8e2c-fe5461d271cd",
+      "stage": "inbox_first_page",
+      "duration_ms": 399.9058899935335,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "2af08c95-ec8d-4639-93f2-f5268325349c",
+      "stage": "inbox_first_page",
+      "duration_ms": 422.6985559798777,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "b26a7931-331a-42a0-a0e9-6916df7a32dd",
+      "stage": "inbox_first_page",
+      "duration_ms": 381.143556907773,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "6050ca4e-4fbf-4a0e-a909-345d64d69ef6",
+      "stage": "inbox_first_page",
+      "duration_ms": 376.89072894863784,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "4a9084e9-2ef5-4aff-b595-e2197c34eaa3",
+      "stage": "inbox_first_page",
+      "duration_ms": 387.9691279726103,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "a661a11b-8ae4-4313-a5e9-39b3dd016066",
+      "stage": "inbox_first_page",
+      "duration_ms": 399.34515801724046,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "13709b77-9ea9-4fc9-8cf4-b347ba4caf4b",
+      "stage": "inbox_first_page",
+      "duration_ms": 373.0331080732867,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "3b83f77f-e365-411e-96bb-7842334d1a21",
+      "stage": "inbox_first_page",
+      "duration_ms": 384.7056239610538,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "20ce1c36-75a8-46db-8dd3-2fff7ad67720",
+      "stage": "inbox_first_page",
+      "duration_ms": 358.0365319503471,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "8da9c05e-f0fc-407a-9ea3-3e3e58998892",
+      "stage": "inbox_first_page",
+      "duration_ms": 340.0709410198033,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "a84f2b6c-8583-49b6-a3ab-648e7d28dcea",
+      "stage": "inbox_first_page",
+      "duration_ms": 398.91855500172824,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "e90ff809-13cd-45cb-88ad-2c5f26c86961",
+      "stage": "inbox_first_page",
+      "duration_ms": 457.2371890535578,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "740cdd92-3997-4fd8-80fe-3e573bcbbeee",
+      "stage": "inbox_first_page",
+      "duration_ms": 373.51304898038507,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "4f5ef04e-9e02-47eb-8f02-b706b129a5a5",
+      "stage": "inbox_first_page",
+      "duration_ms": 368.71970095671713,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "b1070a4a-e925-4c8e-9c41-b2bc2f26cd8a",
+      "stage": "inbox_first_page",
+      "duration_ms": 398.16933090332896,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "41f16cd8-0221-4964-9a14-9bbb80d144d2",
+      "stage": "inbox_first_page",
+      "duration_ms": 362.1991550317034,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "322abe46-483a-4e35-bbf0-4566f4296a9c",
+      "stage": "inbox_first_page",
+      "duration_ms": 388.80182697903365,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "1249758e-d795-402d-bc4c-a1d6c4187c74",
+      "stage": "inbox_first_page",
+      "duration_ms": 508.7516310159117,
+      "sql_count": 118,
+      "response_bytes": 18865,
+      "error": false
+    },
+    {
+      "correlation_id": "9f043c59-d7bc-486c-b5aa-351f1eb60b60",
+      "stage": "contact_search_first_page",
+      "duration_ms": 88.281562901102,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "5bf22140-48ba-47c3-bc2a-6f0d9439c8b4",
+      "stage": "contact_search_first_page",
+      "duration_ms": 82.97826396301389,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "3ec3c0fa-1bf1-47ef-98c1-27117c7c361f",
+      "stage": "contact_search_first_page",
+      "duration_ms": 89.13534099701792,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "bb077a26-40a5-4ab9-bf7f-f271546c0f0e",
+      "stage": "contact_search_first_page",
+      "duration_ms": 75.88475395459682,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "3a0af41c-e7f6-4514-9dc5-f7e5de980a8a",
+      "stage": "contact_search_first_page",
+      "duration_ms": 74.40506399143487,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "a7e87887-8a35-4bbd-9b4e-dee852672d0a",
+      "stage": "contact_search_first_page",
+      "duration_ms": 79.28883808199316,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "6f1e9585-d319-413e-bac7-4563fe1e53c5",
+      "stage": "contact_search_first_page",
+      "duration_ms": 78.7213200237602,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "cdf9f198-04bc-4d21-969e-a8f50b6ccf54",
+      "stage": "contact_search_first_page",
+      "duration_ms": 78.62316002137959,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "28628fb3-b4d0-4f71-bcba-239d087e3731",
+      "stage": "contact_search_first_page",
+      "duration_ms": 112.19241202343255,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "6650ba2c-1c92-486c-8133-a2f0fcca4e6e",
+      "stage": "contact_search_first_page",
+      "duration_ms": 90.5573150375858,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "7d2ec2e9-e3a6-455f-b980-71d7e8988e10",
+      "stage": "contact_search_first_page",
+      "duration_ms": 98.05159899406135,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "a951559e-89ef-46ae-9c76-d8c85028946b",
+      "stage": "contact_search_first_page",
+      "duration_ms": 101.71339404769242,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "b5b1afce-7676-4008-93fd-70b59980c26d",
+      "stage": "contact_search_first_page",
+      "duration_ms": 102.67813398968428,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "9fca3c08-5083-4bee-b0ea-4a180c6d6339",
+      "stage": "contact_search_first_page",
+      "duration_ms": 84.7882229136303,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "5757a7ff-ae51-4d25-8cc0-2fe81d4575a3",
+      "stage": "contact_search_first_page",
+      "duration_ms": 88.198954006657,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "5e7b030b-0202-42b2-9fae-8fcfa88ee41a",
+      "stage": "contact_search_first_page",
+      "duration_ms": 87.26740092970431,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "a5ae4caf-5f69-4a24-93a5-46dcb36fedcd",
+      "stage": "contact_search_first_page",
+      "duration_ms": 85.31685697380453,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "ef8769f3-fb62-400f-98c2-2d99cb4bf8ad",
+      "stage": "contact_search_first_page",
+      "duration_ms": 81.24906895682216,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "14640e3f-0237-481b-92d3-69413866bea9",
+      "stage": "contact_search_first_page",
+      "duration_ms": 84.4448150601238,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "9d5d074b-a0f0-48d4-aef1-e6bc3db64b9e",
+      "stage": "contact_search_first_page",
+      "duration_ms": 83.14116997644305,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "c6849746-4fd8-4c07-b40a-657af43c7d9a",
+      "stage": "contact_search_first_page",
+      "duration_ms": 81.32986701093614,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "b9806cf7-f8e2-4a19-8028-dbd674cb9723",
+      "stage": "contact_search_first_page",
+      "duration_ms": 80.5584070039913,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "ab42f49c-60f5-44d0-9490-dd6d704a9424",
+      "stage": "contact_search_first_page",
+      "duration_ms": 82.57282397244126,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "4f4f064f-5632-4c92-9b5f-836253208bc7",
+      "stage": "contact_search_first_page",
+      "duration_ms": 83.2718760939315,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "9ab687c1-5336-4ad7-a552-b41c3c3c4fa3",
+      "stage": "contact_search_first_page",
+      "duration_ms": 74.61105694528669,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "305a2a80-4f18-4622-aed9-1ab5844e8c15",
+      "stage": "contact_search_first_page",
+      "duration_ms": 83.7509660050273,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "7f9170c9-a071-4153-a0a9-d2046cd3f2e5",
+      "stage": "contact_search_first_page",
+      "duration_ms": 87.01412205118686,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "b1b32611-15c6-4d8e-b745-4e723afdee0c",
+      "stage": "contact_search_first_page",
+      "duration_ms": 79.00153496302664,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "57697862-82ec-4fc3-8aaf-c6b902924e08",
+      "stage": "contact_search_first_page",
+      "duration_ms": 84.77640605997294,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    },
+    {
+      "correlation_id": "9a697acd-76d2-435a-837a-e1b62171efcb",
+      "stage": "contact_search_first_page",
+      "duration_ms": 73.1398849748075,
+      "sql_count": 49,
+      "response_bytes": 10736,
+      "error": false
+    }
+  ],
+  "resource": {
+    "cpu_seconds": 13.637962416,
+    "max_rss_kib": 160448
+  },
+  "queue_growth": null,
+  "sender_to_receiver": null
+}

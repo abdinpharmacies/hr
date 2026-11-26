@@ -24,17 +24,24 @@ def main():
             if not path.is_file() or path.is_symlink():
                 continue
             relative = path.relative_to(source)
-            if any(part in {'tests', '__pycache__', 'migrations', '.pytest_cache'} for part in relative.parts):
+            if any(part in {'tests', '__pycache__', '.pytest_cache'} for part in relative.parts):
+                continue
+            if module != 'crm_messaging_gateway' and 'migrations' in relative.parts:
                 continue
             if path.suffix in {'.pyc', '.pyo'} or path.name in {'requirements-dev.txt', 'benchmark.py'}:
                 continue
             if module == 'crm_messaging_gateway' and (
-                relative.parts[0] not in {'app', 'deploy', 'changelog.d'}
+                relative.parts[0] not in {'app', 'deploy', 'changelog.d', 'migrations'}
                 and relative.name not in {'requirements.lock', 'README.md'}):
                 continue
             if path.suffix == '.py':
                 ast.parse(path.read_text(), filename=str(relative))
-            members.append((relative, path.read_bytes()))
+            data = path.read_bytes()
+            if relative.name == '__manifest__.py' and module != 'crm_messaging_gateway':
+                packaged = ast.literal_eval(data.decode())
+                packaged.get('assets', {}).pop('web.assets_unit_tests', None)
+                data = (repr(packaged) + '\n').encode()
+            members.append((relative, data))
         checksum = '\n'.join(hashlib.sha256(data).hexdigest() + '  ' + str(relative)
                              for relative, data in members) + '\n'
         destination = arguments.output / (module + '.zip')
