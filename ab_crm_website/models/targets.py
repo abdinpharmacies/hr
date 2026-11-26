@@ -1,3 +1,4 @@
+from odoo.addons.ab_crm_sales_workspace.models.request_cache import cached_scope
 from contextvars import ContextVar
 from uuid import UUID
 
@@ -22,6 +23,7 @@ class TargetPreference(models.Model):
     kind = fields.Selection([('order', 'Order'), ('livechat', 'Support')], required=True)
     target_uuid = fields.Char(required=True)
     last_message_id = fields.Integer()
+    _actor_scope_idx = models.Index('(user_id, employee_id, company_id, last_message_id)')
     _unique_target = models.Constraint('UNIQUE(account_id, user_id, employee_id, kind, target_uuid)', 'Chat preference already exists.')
 
     @api.model_create_multi
@@ -33,7 +35,17 @@ class TargetPreference(models.Model):
     def write(self, values):
         if not _PREFERENCE.get():
             raise AccessError(_('Use personal chat controls.'))
-        return super().write(values)
+        result = super().write(values)
+        self._invalidate_workspace()
+        return result
+
+    def _invalidate_workspace(self):
+        for preference in self:
+            account = preference.account_id
+            self.env['ab_crm_conversation'].sudo().search([
+                ('channel_id', '=', account.channel_id.id),
+                ('company_id', '=', preference.company_id.id),
+                ('branch_id', '=', preference.branch_id.id)], limit=1)._invalidate_workspace()
 
     def unlink(self):
         raise AccessError(_('Use personal chat controls.'))
@@ -54,6 +66,7 @@ class WebsiteOrder(models.Model):
 class Conversation(models.Model):
     _inherit = 'ab_crm_conversation'
 
+    @cached_scope
     def _website_targets(self):
         self.ensure_one()
         self._workspace_scope()
@@ -66,6 +79,7 @@ class Conversation(models.Model):
         sessions = self.env['ab_crm_website_session'].search(scope & fields.Domain('conversation_id', 'in', streams.ids), order='id desc')
         return orders, sessions
 
+    @cached_scope
     def _website_target(self, target, allow_default=False):
         orders, sessions = self._website_targets()
         if target is None and allow_default:
@@ -87,6 +101,7 @@ class Conversation(models.Model):
             raise AccessError(_('Invalid website target.')) from None
         return kind, record
 
+    @cached_scope
     def _website_target_domain(self, kind, record):
         if kind == 'order':
             events = self.env['ab_crm_website_event'].search([
@@ -116,6 +131,7 @@ class Conversation(models.Model):
         except LockError:
             raise ConcurrencyError('Concurrent website chat update') from None
 
+    @cached_scope
     def _website_preference(self, kind, record, create=False):
         actor, stores = self._workspace_scope()
         target_uuid = record.order_uuid if kind == 'order' else record.session_uuid
@@ -127,14 +143,17 @@ class Conversation(models.Model):
             self._website_lock_account()
             preference = preferences.search(domain, limit=1)
             if not preference:
-                positions = self.env['ab_crm_workspace_read'].sudo().search([
-                    ('conversation_id', 'in', self._website_timeline_streams().ids), ('user_id', '=', self.env.uid),
-                    ('employee_id', '=', actor.employee_id.id), ('company_id', '=', self.company_id.id)])
-                seen = {position.conversation_id.id: position.last_message_id.id for position in positions}
-                messages = self._website_target_messages(kind, record).filtered(lambda item:
-                    item.direction == 'in' and not item.historical and not item.website_closure_notice)
-                unread = messages.filtered(lambda item: item.id > seen.get(item.conversation_id.id, 0))
-                initial = max(messages.filtered(lambda item: not unread or item.id < unread[0].id).ids, default=0)
+                streams = self._website_timeline_streams()
+                message_domain = (fields.Domain('conversation_id', 'in', streams.ids)
+                          & self._website_target_domain(kind, record)
+                          & fields.Domain('direction', '=', 'in')
+                          & fields.Domain('historical', '=', False)
+                          & fields.Domain('website_closure_notice', '=', False))
+                message_model = self.env['ab_crm_message']
+                unread = message_model.search(message_domain & super(Conversation, streams)._workspace_unread_domain(actor),
+                                              order='id', limit=1)
+                initial_domain = message_domain & fields.Domain('id', '<', unread.id) if unread else message_domain
+                initial = message_model.search(initial_domain, order='id desc', limit=1).id or 0
                 flag = _PREFERENCE.set(True)
                 try:
                     try:
@@ -157,12 +176,16 @@ class Conversation(models.Model):
 
     def _website_target_data(self, kind, record):
         preference = self._website_preference(kind, record, create=True)
-        messages = self._website_target_messages(kind, record).filtered(lambda item:
-            item.direction == 'in' and not item.historical and not item.website_closure_notice)
+        domain = (fields.Domain('conversation_id', 'in', self._website_timeline_streams().ids)
+                  & self._website_target_domain(kind, record)
+                  & fields.Domain('direction', '=', 'in') & fields.Domain('historical', '=', False)
+                  & fields.Domain('website_closure_notice', '=', False)
+                  & fields.Domain('id', '>', preference.last_message_id))
+        unread = self.env['ab_crm_message'].search_count(domain) if preference else 0
         return {'kind': kind, 'uuid': record.order_uuid if kind == 'order' else record.session_uuid,
             'label': (record.public_reference or record.reference) if kind == 'order' else _('Support') + ' · ' + record.session_uuid[:8],
             'closed': record.chat_closed if kind == 'order' else record.ended,
-            'unread': len(messages.filtered(lambda item: item.id > preference.last_message_id)) if preference else 0}
+            'unread': unread}
 
     def workspace_reply(self, message_id, target=None, combine=False):
         if self.channel_id.provider != 'website':
@@ -250,24 +273,106 @@ class Conversation(models.Model):
             row['unread'] = sum(item['unread'] for item in row['website_targets'])
         return rows
 
-    def _workspace_chat_rows(self, row):
+    def _workspace_chat_candidates(self, session):
+        ordinary = self.filtered(lambda conversation: conversation.channel_id.provider != 'website')
+        result = super(Conversation, ordinary)._workspace_chat_candidates(session)
+        websites = self - ordinary
+        if not websites:
+            return result
+        aliases = websites.with_context(active_test=False).search([
+            ('website_canonical_id', 'in', websites.ids),
+            ('company_id', '=', session.company_id.id)])
+        streams = websites | aliases
+        canonical = {item.id: (item.website_canonical_id or item).id for item in streams}
+        accounts = websites.messaging_account_id
+        orders = self.env['ab_crm_website_order'].search([
+            ('account_id', 'in', accounts.ids), ('company_id', '=', session.company_id.id),
+            ('branch_id', 'in', websites.branch_id.ids),
+            '|', ('conversation_id', 'in', streams.ids),
+            ('account_identity', 'in', websites.mapped('website_account_identity'))])
+        sessions = self.env['ab_crm_website_session'].search([
+            ('account_id', 'in', accounts.ids), ('company_id', '=', session.company_id.id),
+            ('branch_id', 'in', websites.branch_id.ids), ('conversation_id', 'in', streams.ids)])
+        owners = {(item.messaging_account_id.id, item.website_account_identity): item.id
+                  for item in websites if item.website_account_identity}
+        targets = {}
+        by_uuid = {}
+        for kind, records in [('order', orders), ('livechat', sessions)]:
+            for record in records:
+                cid = canonical.get(record.conversation_id.id)
+                if kind == 'order':
+                    cid = owners.get((record.account_id.id, record.account_identity), cid)
+                if not cid:
+                    continue
+                uuid = record.order_uuid if kind == 'order' else record.session_uuid
+                key = f'website:{record.account_id.id}:{kind}:{uuid}'
+                targets[(kind, record.id)] = dict(id=cid, group_key=key,
+                    website_target={'kind': kind, 'uuid': uuid},
+                    activity_cursor=['1970-01-01 00:00:00', 0, key])
+                if kind == 'order':
+                    by_uuid[(record.account_id.id, uuid)] = record.id
+        message_model = self.env['ab_crm_message']
+        incoming = [('conversation_id', 'in', streams.ids), ('direction', '=', 'in'),
+                    ('historical', '=', False), ('website_closure_notice', '=', False)]
+        for field, kind in [('website_order_id', 'order'), ('website_session_id', 'livechat')]:
+            groups = message_model._read_group(incoming + [(field, '!=', False)],
+                [field], ['create_date:max', 'id:max'])
+            for record, at, mid in groups:
+                candidate = targets.get((kind, record.id))
+                if candidate:
+                    candidate['activity_cursor'] = [fields.Datetime.to_string(at), mid, candidate['group_key']]
+        events = self.env['ab_crm_website_event'].search([
+            ('account_id', 'in', accounts.ids), ('order_uuid', 'in', orders.mapped('order_uuid'))])
+        event_targets = {event.event_uuid: by_uuid.get((event.account_id.id, event.order_uuid)) for event in events}
+        if event_targets:
+            legacy = message_model._read_group(incoming + [
+                ('website_order_id', '=', False), ('provider_reference', 'in', list(event_targets))],
+                ['provider_reference'], ['create_date:max', 'id:max'])
+            for reference, at, mid in legacy:
+                candidate = targets.get(('order', event_targets[reference]))
+                if candidate:
+                    activity = [fields.Datetime.to_string(at), mid, candidate['group_key']]
+                    candidate['activity_cursor'] = max(candidate['activity_cursor'], activity)
+        return result + list(targets.values())
+
+    def _workspace_serialize_candidate(self, session, candidate):
+        if self.channel_id.provider != 'website':
+            return super()._workspace_serialize_candidate(session, candidate)
+        target = candidate['website_target']
+        self._website_target(target)
+        row = {'id': self.id, 'customer_id': self.customer_id.id, 'destination': self.external_key,
+               'display_destination': self._display_destination(), 'name': self._customer_display_name(),
+               'provider': 'website', 'channels': ['website']}
+
+        rows = self._workspace_chat_rows(row, selected_target=target)
+        return next(item for item in rows if item['group_key'] == candidate['group_key'])
+
+    def _workspace_chat_rows(self, row, selected_target=None):
         if self.channel_id.provider != 'website':
             return super()._workspace_chat_rows(row)
         orders, sessions = self._website_targets()
+        if selected_target is not None:
+            kind, record = self._website_target(selected_target)
+            orders, sessions = (record, sessions.browse()) if kind == 'order' else (orders.browse(), record)
         items = []
         for kind, records in [('order', orders), ('livechat', sessions)]:
             for record in records:
                 data = self._website_target_data(kind, record)
                 target = {'kind': kind, 'uuid': data['uuid']}
-                messages = self._website_target_messages(kind, record).filtered(
-                    lambda message: not message.website_closure_notice)
-                incoming = messages.filtered(lambda message: message.direction == 'in' and not message.historical)
-                activity = max(((fields.Datetime.to_string(message.create_date), message.id)
-                                for message in incoming), default=('1970-01-01 00:00:00', 0))
+                domain = (fields.Domain('conversation_id', 'in', self._website_timeline_streams().ids)
+                          & self._website_target_domain(kind, record)
+                          & fields.Domain('website_closure_notice', '=', False))
+                message_model = self.env['ab_crm_message']
+                groups = message_model._read_group(
+                    domain & fields.Domain('direction', '=', 'in') & fields.Domain('historical', '=', False),
+                    [], ['create_date:max', 'id:max'])
+                at, mid = groups[0]
+                activity = (fields.Datetime.to_string(at), mid) if mid else ('1970-01-01 00:00:00', 0)
+                preview = message_model.search(domain, order='timeline_at desc, id desc', limit=1).body or ''
                 key = f"website:{self.messaging_account_id.id}:{kind}:{data['uuid']}"
                 item = dict(row, website_target=target, website_target_label=data['label'],
                             website_target_closed=data['closed'], unread=data['unread'],
-                            preview=messages.sorted(lambda message: (message.timeline_at, message.id))[-1:].body or '',
+                            preview=preview,
                             group_key=key, activity_cursor=[*activity, key])
                 item['streams'] = [dict(item, account_id=self.messaging_account_id.id, label=data['label'])]
                 items.append(item)
@@ -396,6 +501,44 @@ class Conversation(models.Model):
 class ChatterAPI(models.AbstractModel):
     _inherit = 'ab_crm_chatter_api'
 
+    def _notification_streams(self, conversation):
+        if conversation.channel_id.provider == 'website':
+            return conversation._website_timeline_streams()
+        return super()._notification_streams(conversation)
+
+    def _notification_group_domain(self, conversation, target):
+        if conversation.channel_id.provider == 'website':
+            kind, record = conversation._website_target(target)
+            return (fields.Domain('conversation_id', 'in', conversation._website_timeline_streams().ids)
+                    & conversation._website_target_domain(kind, record))
+        return super()._notification_group_domain(conversation, target)
+
+    def _notification_candidate_domain(self, session):
+        domain = fields.Domain(super()._notification_candidate_domain(session))
+        domain &= fields.Domain('website_closure_notice', '=', False)
+        preferences = self.env['ab_crm_website_target_preference'].sudo().search([
+            ('user_id', '=', self.env.uid), ('employee_id', '=', session.employee_id.id),
+            ('company_id', '=', session.company_id.id), ('last_message_id', '>', 0)])
+        orders = preferences.filtered(lambda item: item.kind == 'order')
+        events = self.env['ab_crm_website_event'].search([
+            ('account_id', 'in', orders.account_id.ids),
+            ('order_uuid', 'in', orders.mapped('target_uuid'))]) if orders else self.env['ab_crm_website_event']
+        references = {}
+        for event in events:
+            references.setdefault((event.account_id.id, event.order_uuid), []).append(event.event_uuid)
+        for preference in preferences:
+            uuid_field, message_field = (
+                ('order_uuid', 'website_order_id') if preference.kind == 'order'
+                else ('session_uuid', 'website_session_id'))
+            channel = fields.Domain('conversation_id.channel_id', '=', preference.account_id.channel_id.id)
+            target = fields.Domain(message_field + '.' + uuid_field, '=', preference.target_uuid) & channel
+            if preference.kind == 'order':
+                target |= (channel & fields.Domain('website_order_id', '=', False)
+                           & fields.Domain('provider_reference', 'in',
+                               references.get((preference.account_id.id, preference.target_uuid), [])))
+            domain &= ~target | fields.Domain('id', '>', preference.last_message_id)
+        return list(domain)
+
     def _notification_conversation(self, conversation):
         if conversation.channel_id.provider == 'website':
             return conversation.website_canonical_id or conversation
@@ -407,6 +550,7 @@ class ChatterAPI(models.AbstractModel):
             return conversation._website_timeline_streams()
         return super()._alert_conversations(conversation, target)
 
+    @cached_scope
     def _notification_chat(self, message):
         conversation = message.conversation_id
         if conversation.channel_id.provider != 'website':

@@ -113,6 +113,20 @@ class TestIndependentChats(TestChatUX):
         pending = self.chatter_api.notifications(self.session_token)['items']
         self.assertFalse(any(item.get('website_target') == self.target(order) for item in pending))
 
+    def test_performance_v2_independent_targets_and_read_removal(self):
+        conversation, orders, identity = self.pair()
+        self.chat(conversation, orders[0], identity=identity)
+        support = self.chat(conversation, identity=identity)
+        before = self.chatter_api.notifications_v2(self.session_token)
+        targets = {item['website_target']['uuid'] for item in before['items']}
+        self.assertIn(orders[0].order_uuid, targets)
+        self.assertIn(support['destination']['uuid'], targets)
+        item = next(item for item in before['items'] if item['website_target'] == self.target(orders[0]))
+        conversation.workspace_acknowledge(item['latest_message_id'], target=item['website_target'])
+        after = self.chatter_api.notifications_v2(self.session_token, conversation_ids=conversation.ids)
+        self.assertNotIn(orders[0].order_uuid, {item['website_target']['uuid'] for item in after['items']})
+        self.assertIn(support['destination']['uuid'], {item['website_target']['uuid'] for item in after['items']})
+
 
 class TestIndependentChatsBrowser(TestIndependentChats, HttpCase):
     def browser(self, language, mobile=False):

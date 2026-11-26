@@ -1,3 +1,4 @@
+from odoo.addons.ab_crm_sales_workspace.models.request_cache import cached_scope
 import hashlib
 import json
 import re
@@ -878,6 +879,7 @@ class Conversation(models.Model):
             )
         return domain
 
+    @cached_scope
     def _website_timeline_streams(self):
         self.ensure_one()
         self._workspace_scope()
