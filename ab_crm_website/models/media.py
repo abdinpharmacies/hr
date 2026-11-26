@@ -87,10 +87,10 @@ class Conversation(models.Model):
         except (ValueError, TypeError, KeyError):
             raise ValidationError(_('Invalid website media.')) from None
 
-    def _website_selected_target(self, reply_id=False, order_id=False, session_id=False):
+    def _website_selected_target(self, reply_id=False, order_id=False, session_id=False, *, for_update=True):
         self.ensure_one()
         if not reply_id:
-            return self._website_reply_target(order_id, session_id)
+            return self._website_reply_target(order_id, session_id, for_update=for_update)
         if type(reply_id) is not int:
             raise AccessError(_('Select a message from this conversation.'))
         message = self.env['ab_crm_message'].search([
@@ -110,7 +110,8 @@ class Conversation(models.Model):
                 ], limit=1)
         if (bool(order) == bool(session) or (order_id and order.id != order_id) or (session_id and session.id != session_id)):
             raise AccessError(_('Invalid website order.'))
-        return self._website_reply_target(order.id if order else False, session.id if session else False)
+        return self._website_reply_target(
+            order.id if order else False, session.id if session else False, for_update=for_update)
 
 
 class Gateway(models.AbstractModel):

@@ -69,3 +69,7 @@ alias pages advance by ingestion ID while the UI retains timeline ordering.
 Personal read invalidations identify the exact target conversation and employee.
 Upgrade with Sales Chatter 19.0.1.44.0 and reload assets after the operator's Odoo
 restart. See [timing validation](../docs/sales-chatter-timing-2026-11-26.md).
+
+## Reply preview concurrency 19.0.1.18.1
+
+Workspace detail and update polling validate reply destinations without locking website orders or Support sessions. Reply submissions, uploads, approvals and outgoing delivery retain their existing locks and closure checks. This avoids transaction retries when website intake updates an order during a workspace poll. Restart the Python server to load this code change; no schema change is required.

@@ -1019,7 +1019,7 @@ class Conversation(models.Model):
             phone = order.phone
         return super().action_identify(phone, customer_id, confirmed)
 
-    def _website_reply_target(self, website_order_id=False, website_session_id=False):
+    def _website_reply_target(self, website_order_id=False, website_session_id=False, *, for_update=True):
         self.ensure_one()
         if website_session_id:
             if type(website_session_id) is not int or website_order_id:
@@ -1031,8 +1031,9 @@ class Conversation(models.Model):
             ], limit=1)
             if not session:
                 raise AccessError(_('Invalid website order.'))
-            session.lock_for_update()
-            session.invalidate_recordset(['ended'])
+            if for_update:
+                session.lock_for_update()
+                session.invalidate_recordset(['ended'])
             if session.ended:
                 raise AccessError(_('The guest has left the conversation.') if session.identity_kind == 'visitor' and not session.account_identity else _('This website chat has ended.'))
             return False, session
@@ -1047,8 +1048,9 @@ class Conversation(models.Model):
             ], limit=1)
             if not order:
                 raise AccessError(_('Invalid website order.'))
-            order.lock_for_update()
-            order.invalidate_recordset(['chat_closed'])
+            if for_update:
+                order.lock_for_update()
+                order.invalidate_recordset(['chat_closed'])
             if order.chat_closed:
                 raise UserError(_('This chat has ended. Your order has been sent for delivery.'))
             return order, False
@@ -1206,7 +1208,7 @@ class Conversation(models.Model):
                 data['website_order_id'] = order.id
                 data['website_order_reference'] = order.reference
             try:
-                self._website_selected_target(message.id)
+                self._website_selected_target(message.id, for_update=False)
                 data['actions']['reply'] = {'enabled': message.direction == 'in' and bool(result.get('can_send')),
                     'reason': result.get('send_reason') or ''}
             except (AccessError, UserError, ValidationError) as error:
