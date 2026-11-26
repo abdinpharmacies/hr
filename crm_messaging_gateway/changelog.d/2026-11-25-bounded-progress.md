@@ -1,6 +1,14 @@
 # Drain eligible work in fair bounded scheduling cycles
 
-Current changes before commit:
+Commit: `2e0a1bdff1c9f0138344e8f8ad8dead234f711fd`
+
+Author: Alhassan Hossny
+
+Date: 2026-11-26T09:20:46+02:00
+
+Original subject: `perf(crm_messaging_gateway): drain eligible work in fair bounded cycles`
+
+Changes:
 
 - Report durable progress, including deferrals, from queue operations; continue immediately while eligible work remains.
 - Rotate operation/account scheduling within 25 operations or 250 ms between operations, retaining existing leases, provider timeouts, retries and uncertain-send review.
