@@ -1263,11 +1263,13 @@ class Conversation(models.Model):
         result['has_older'] = len(messages) > 50 or any(
             detail['has_older'] for detail in details.values()
         )
-        result['messages'] = messages[:50] if kwargs.get('after_id') else messages[-50:]
+        incremental = kwargs.get('after_id', False) is not False
+        selected = sorted(messages, key=lambda message: message['id'])[:50] if incremental else messages[-50:]
+        result['messages'] = sorted(selected, key=lambda message: (message['timestamp'] or '', message['id']))
         result['message_cursor'] = max(
             [detail['message_cursor'] or 0 for detail in details.values()], default=0
         )
-        if kwargs.get('after_id') and result['messages']:
+        if incremental and result['messages']:
             result['message_cursor'] = max(message['id'] for message in result['messages'])
         unread = [detail['first_unread_message_id'] for detail in details.values()
                   if detail['first_unread_message_id']]

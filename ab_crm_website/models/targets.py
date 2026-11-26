@@ -1,10 +1,12 @@
 from odoo.addons.ab_crm_sales_workspace.models.request_cache import cached_scope
+import json
 from contextvars import ContextVar
 from uuid import UUID
 
 from psycopg2.errors import UniqueViolation
 
 from odoo import api, fields, models, _
+from odoo.tools import SQL
 from odoo.exceptions import AccessError, ConcurrencyError, LockError, UserError, ValidationError
 
 
@@ -41,11 +43,12 @@ class TargetPreference(models.Model):
 
     def _invalidate_workspace(self):
         for preference in self:
-            account = preference.account_id
-            self.env['ab_crm_conversation'].sudo().search([
-                ('channel_id', '=', account.channel_id.id),
-                ('company_id', '=', preference.company_id.id),
-                ('branch_id', '=', preference.branch_id.id)], limit=1)._invalidate_workspace()
+            model = 'ab_crm_website_order' if preference.kind == 'order' else 'ab_crm_website_session'
+            field = 'order_uuid' if preference.kind == 'order' else 'session_uuid'
+            target = self.env[model].sudo().search([
+                ('account_id', '=', preference.account_id.id), (field, '=', preference.target_uuid),
+                ('company_id', '=', preference.company_id.id), ('branch_id', '=', preference.branch_id.id)], limit=1)
+            target.conversation_id._invalidate_workspace('unread', (preference.user_id.id, preference.employee_id.id))
 
     def unlink(self):
         raise AccessError(_('Use personal chat controls.'))
@@ -169,10 +172,12 @@ class Conversation(models.Model):
                     _PREFERENCE.reset(flag)
         return preference
 
-    def _website_target_messages(self, kind, record):
-        return self.env['ab_crm_message'].search(
-            fields.Domain('conversation_id', 'in', self._website_timeline_streams().ids)
-            & self._website_target_domain(kind, record), order='id')
+    def _website_target_messages(self, kind, record, message_id=None):
+        domain = (fields.Domain('conversation_id', 'in', self._website_timeline_streams().ids)
+                  & self._website_target_domain(kind, record))
+        if message_id is not None:
+            domain &= fields.Domain('id', '=', message_id)
+        return self.env['ab_crm_message'].search(domain, order='id')
 
     def _website_target_data(self, kind, record):
         preference = self._website_preference(kind, record, create=True)
@@ -191,7 +196,7 @@ class Conversation(models.Model):
         if self.channel_id.provider != 'website':
             return super().workspace_reply(message_id)
         kind, record = self._website_target(target)
-        message = self._website_target_messages(kind, record).filtered(lambda item: item.id == message_id)
+        message = self._website_target_messages(kind, record, message_id=message_id)
         if not message or message.website_closure_notice:
             return {'available': False}
         detail = self.workspace_detail(target=target, through_id=message.id, combine=combine)
@@ -208,7 +213,7 @@ class Conversation(models.Model):
             orders, sessions = (record, sessions.browse()) if kind == 'order' else (orders.browse(), record)
         for kind, records in [('order', orders), ('livechat', sessions)]:
             for record in records:
-                message = self._website_target_messages(kind, record).filtered(lambda item: item.id == message_id)
+                message = self._website_target_messages(kind, record, message_id=message_id)
                 if message and not message.website_closure_notice:
                     target = {'kind': kind, 'uuid': record.order_uuid if kind == 'order' else record.session_uuid}
                     detail = self.workspace_detail(target=target, through_id=message.id)
@@ -222,7 +227,7 @@ class Conversation(models.Model):
         kind, record = self._website_target(target or self.env.context.get('ab_website_target'))
         if type(message_id) is not int:
             raise AccessError(_('Invalid read position.'))
-        message = self._website_target_messages(kind, record).filtered(lambda item: item.id == message_id)
+        message = self._website_target_messages(kind, record, message_id=message_id)
         if not message or message.website_closure_notice:
             raise AccessError(_('Invalid read position.'))
         if type(combine) is not bool:
@@ -237,6 +242,19 @@ class Conversation(models.Model):
                 _PREFERENCE.reset(flag)
         return True
 
+    def _workspace_unread_metadata(self, session):
+        target = self.env.context.get('ab_website_target')
+        if self.channel_id.provider != 'website' or not target:
+            return super()._workspace_unread_metadata(session)
+        kind, record = self._website_target(target)
+        preference = self._website_preference(kind, record, create=True)
+        domain = (fields.Domain('conversation_id', '=', self.id) & self._website_target_domain(kind, record)
+                  & fields.Domain('direction', '=', 'in') & fields.Domain('historical', '=', False)
+                  & fields.Domain('website_closure_notice', '=', False)
+                  & fields.Domain('id', '>', preference.last_message_id))
+        messages = self.env['ab_crm_message']
+        return messages.search(domain, order='id', limit=1).id or False, messages.search_count(domain)
+
     def _workspace_unread_messages(self, session):
         messages = super()._workspace_unread_messages(session).filtered(lambda item: not item.website_closure_notice)
         visible = self.env['ab_crm_message']
@@ -249,7 +267,7 @@ class Conversation(models.Model):
             remaining = scoped
             for kind, records in [('order', orders), ('livechat', sessions)]:
                 for record in records:
-                    target_messages = conversation._website_target_messages(kind, record) & scoped
+                    target_messages = scoped.filtered_domain(conversation._website_target_domain(kind, record))
                     preference = conversation._website_preference(kind, record, create=True)
                     visible |= target_messages.filtered(lambda item: item.id > preference.last_message_id)
                     remaining -= target_messages
@@ -409,6 +427,22 @@ class Conversation(models.Model):
             return super(Conversation, self.with_context(ab_website_target=target) if target else self).website_action_reply(body, website_order_id, attachments, reply_id,
                 website_session_id, submission_uuid)
 
+    def _workspace_updates_scope(self, target):
+        if self.channel_id.provider != 'website':
+            return super()._workspace_updates_scope(target)
+        self._workspace_scope()
+        canonical = self.website_canonical_id or self
+        canonical._workspace_scope()
+        kind, record = canonical._website_target(target or self.env.context.get('ab_website_target'), allow_default=True)
+        selected = {'kind': kind, 'uuid': record.order_uuid if kind == 'order' else record.session_uuid} if record else None
+        return canonical.with_context(ab_website_target=selected)
+
+    def _workspace_updates_domain(self):
+        if self.channel_id.provider != 'website':
+            return super()._workspace_updates_domain()
+        return (fields.Domain('conversation_id', 'in', self._website_timeline_streams().ids)
+                & fields.Domain(self._workspace_visible_domain()))
+
     def workspace_detail(self, *args, target=None, combine=False, **kwargs):
         if self.channel_id.provider != 'website':
             return super().workspace_detail(*args, **kwargs)
@@ -440,40 +474,43 @@ class Conversation(models.Model):
         result['can_send'] = bool(result['can_send'] and not closed and channel)
         if closed:
             result['send_reason'] = _('This website chat has ended.')
-        incoming = self.env['ab_crm_message']
-        target_messages = {}
-        target_by_message = {}
-        for item_kind, item in channel:
-            item_target = {'kind': item_kind, 'uuid': item.order_uuid if item_kind == 'order' else item.session_uuid}
-            messages = self._website_target_messages(item_kind, item)
-            target_messages[item_target['uuid']] = messages
-            target_by_message.update({message.id: item_target for message in messages})
-            preference = self._website_preference(item_kind, item, create=True)
-            incoming |= messages.filtered(lambda value: value.direction == 'in' and not value.historical
-                and not value.website_closure_notice and value.id > preference.last_message_id)
-        result['first_unread_message_id'] = min(incoming.ids, default=False)
-        result['unread_count'] = len(incoming)
+        message_model = self.env['ab_crm_message']
+        domain = (fields.Domain('conversation_id', 'in', self._website_timeline_streams().ids)
+                  & self._website_target_domain(kind, record))
+        preference = self._website_preference(kind, record, create=True)
+        unread_domain = (domain & fields.Domain('direction', '=', 'in')
+                         & fields.Domain('historical', '=', False)
+                         & fields.Domain('website_closure_notice', '=', False)
+                         & fields.Domain('id', '>', preference.last_message_id))
+        result['first_unread_message_id'] = message_model.search(unread_domain, order='id', limit=1).id or False
+        result['unread_count'] = message_model.search_count(unread_domain)
+        visible_ids = [message['id'] for message in result['messages'] if message['id'] > 0]
+        evidence_by_id = {message.id: message for message in message_model.browse(visible_ids)}
         for message in result['messages']:
-            evidence = self.env['ab_crm_message'].browse(message['id'])
-            message['website_target'] = target_by_message.get(message['id'])
+            evidence = evidence_by_id[message['id']]
+            message['website_target'] = selected
             message['item_type'] = 'information' if evidence.website_closure_notice else 'message'
             if evidence.website_closure_notice:
                 message.update(media=[], quote=False, reactions=[], can_reply=False, actions={})
-        events = self.env['ab_crm_website_chat_event'].search([
-            ('account_id', '=', self.messaging_account_id.id),
-            ('branch_id', '=', self.branch_id.id), ('company_id', '=', self.company_id.id)], order='id')
-        for item_kind, item in channel:
-            item_target = {'kind': item_kind, 'uuid': item.order_uuid if item_kind == 'order' else item.session_uuid}
-            if target_messages[item_target['uuid']].filtered('website_closure_notice'):
-                continue
-            lifecycle = events.filtered(lambda value: value.envelope.get('destination') == item_target
-                and value.envelope.get('kind') == ('order_dispatched' if item_kind == 'order' else 'session_ended'))[:1]
-            if lifecycle and (item_kind == 'order' or (item.identity_kind == 'visitor' and not item.account_identity)):
-                result['messages'].append({'id': -lifecycle.id, 'item_type': 'information',
-                    'website_target': item_target,
-                    'body': _('This chat has ended. Your order has been sent for delivery.') if item_kind == 'order' else _('The guest has left the conversation.'),
-                    'timestamp': fields.Datetime.to_string(lifecycle.create_date), 'direction': 'information',
-                    'historical': False, 'media': [], 'reactions': [], 'quote': False, 'actions': {}})
+        has_notice = message_model.search_count(domain & fields.Domain('website_closure_notice', '=', True), limit=1)
+        lifecycle = self.env['ab_crm_website_chat_event']
+        if not has_notice:
+            lifecycle.check_access('read')
+            self.env.cr.execute(SQL(
+                'SELECT id FROM ab_crm_website_chat_event WHERE account_id = %s '
+                'AND branch_id = %s AND company_id = %s AND envelope @> %s::jsonb ORDER BY id LIMIT 1',
+                self.messaging_account_id.id, self.branch_id.id, self.company_id.id,
+                json.dumps({'destination': selected,
+                    'kind': 'order_dispatched' if kind == 'order' else 'session_ended'})))
+            row = self.env.cr.fetchone()
+            lifecycle = lifecycle.search([('id', '=', row[0])], limit=1) if row else lifecycle
+
+        if lifecycle and (kind == 'order' or (record.identity_kind == 'visitor' and not record.account_identity)):
+            result['messages'].append({'id': -lifecycle.id, 'item_type': 'information',
+                'website_target': selected,
+                'body': _('This chat has ended. Your order has been sent for delivery.') if kind == 'order' else _('The guest has left the conversation.'),
+                'timestamp': fields.Datetime.to_string(lifecycle.create_date), 'direction': 'information',
+                'historical': False, 'media': [], 'reactions': [], 'quote': False, 'actions': {}})
         information = {}
         for item in result['messages']:
             if item['item_type'] == 'information':
@@ -491,7 +528,7 @@ class Conversation(models.Model):
             result['messages'] = [item for item in result['messages'] if item['item_type'] != 'information']
         elif kwargs.get('before_id') or kwargs.get('through_id'):
             anchor = self.env['ab_crm_message'].browse(kwargs.get('before_id') or kwargs.get('through_id')).exists()
-            if anchor and anchor.id in target_by_message:
+            if anchor and message_model.search_count(domain & fields.Domain('id', '=', anchor.id), limit=1):
                 result['messages'] = [item for item in result['messages'] if item['item_type'] != 'information'
                     or item['timestamp'] < fields.Datetime.to_string(anchor.timeline_at)]
         result['messages'].sort(key=lambda item: (item['timestamp'] or '', item['item_type'] == 'information', item['id']))

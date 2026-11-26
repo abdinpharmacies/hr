@@ -60,3 +60,12 @@ attachments and read position. Notifications open the exact notified target and
 message. Customer associations remain evidence; they do not combine chats.
 Manual chat linking and website reconciliation are disabled. The general Inbox
 Refresh remains available. See `RELEASE.md` for activation and rollback.
+
+## Timing update 19.0.1.18.0
+
+Independent website targets participate in authorized incremental updates.
+Target reads, unread counts and lifecycle lookup use scoped queries; incremental
+alias pages advance by ingestion ID while the UI retains timeline ordering.
+Personal read invalidations identify the exact target conversation and employee.
+Upgrade with Sales Chatter 19.0.1.44.0 and reload assets after the operator's Odoo
+restart. See [timing validation](../docs/sales-chatter-timing-2026-11-26.md).
