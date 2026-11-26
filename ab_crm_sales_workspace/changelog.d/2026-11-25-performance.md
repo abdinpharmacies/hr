@@ -1,6 +1,14 @@
 # Bounded notifications, contact queries and page serialization
 
-Current changes before commit:
+Commit: `6a8d4ead5ccccd9fe1799a043072b211d487e012`
+
+Author: Alhassan Hossny
+
+Date: 2026-11-26T09:20:04+02:00
+
+Original subject: `perf(ab_crm_sales_workspace): bound notifications and inbox queries`
+
+Changes:
 
 - Add bounded v2 unread snapshots and targeted replacement/removal semantics while preserving legacy notifications and employee-specific read/alert evidence.
 - Group alert counts once, apply read positions in ORM domains, and cache authorization only during the current request.
