@@ -94,3 +94,15 @@ class TestBranchBrowser(HttpCase):
                     console.log('test successful');
                 })();
             ''', ready='!!(odoo.__WOWL_DEBUG__ && odoo.__WOWL_DEBUG__.root)', login='admin', timeout=90)
+
+    @no_retry
+    def test_timing_components(self):
+        for suite in ('timing', 'composer', 'notifications', 'navigation'):
+            value = 0
+            for char in '@ab_crm_sales_workspace/' + suite:
+                value = ((value << 5) - value + ord(char)) & 0xFFFFFFFF
+            self.browser_js(
+                f'/web/tests?headless&loglevel=2&preset=desktop&timeout=15000&id={value:08x}',
+                '', '', login='admin', timeout=180,
+                success_signal='[HOOT] Test suite succeeded',
+                error_checker=unit_test_error_checker)

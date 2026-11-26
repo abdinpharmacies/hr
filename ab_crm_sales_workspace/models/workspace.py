@@ -1,4 +1,5 @@
-from .request_cache import cached_scope
+from .timing import message_correlation
+from .request_cache import cached_scope, request_cache
 from contextvars import ContextVar
 
 import phonenumbers
@@ -999,6 +1000,11 @@ class Conversation(models.Model):
                 & fields.Domain('historical', '=', False)
                 & fields.Domain(self._workspace_visible_domain()))
 
+    def _workspace_unread_metadata(self, session):
+        domain = self._workspace_unread_domain(session)
+        messages = self.env['ab_crm_message']
+        return messages.search(domain, order='id', limit=1).id or False, messages.search_count(domain)
+
     def _workspace_unread_messages(self, session):
         return self.env['ab_crm_message'].search(self._workspace_unread_domain(session), order='id')
 
@@ -1019,10 +1025,24 @@ class Conversation(models.Model):
             & fields.Domain('direction', '=', 'in') & fields.Domain('historical', '=', False)
             & fields.Domain(self._workspace_visible_domain()), ['conversation_id'], ['__count'])
         incoming_ids = {conversation.id for conversation, count in incoming_groups}
+        timelines = {}
+        if len(conversations) > 1 and all(record.channel_id.provider != 'website' for record in conversations):
+            message_model = self.env['ab_crm_message']
+            domain = (fields.Domain('conversation_id', 'in', conversations.ids)
+                      & fields.Domain(self._workspace_visible_domain()))
+            timestamps = message_model._read_group(domain, ['conversation_id'], ['timeline_at:max'])
+            latest = fields.Domain.OR([fields.Domain('conversation_id', '=', record.id)
+                & fields.Domain('timeline_at', '=', timestamp) for record, timestamp in timestamps])
+            latest_ids = message_model._read_group(domain & latest, ['conversation_id'], ['id:max'])
+            messages = message_model.browse([message_id for record, message_id in latest_ids])
+            timelines = {message.conversation_id.id: message for message in messages}
         result = []
         for record in conversations:
-            domain = fields.Domain('conversation_id', '=', record.id) & fields.Domain(record._workspace_visible_domain())
-            timeline = self.env['ab_crm_message'].search(domain, order='timeline_at desc, id desc', limit=1)
+            if timelines:
+                timeline = timelines.get(record.id, self.env['ab_crm_message'])
+            else:
+                domain = fields.Domain('conversation_id', '=', record.id) & fields.Domain(record._workspace_visible_domain())
+                timeline = self.env['ab_crm_message'].search(domain, order='timeline_at desc, id desc', limit=1)
             channels = {record.channel_id.provider} if record.id in incoming_ids else set()
             result.append(
                 {
@@ -1037,6 +1057,39 @@ class Conversation(models.Model):
                     'unread': unread_counts.get(record.id, 0),
                 }
             )
+        return result
+
+    def _workspace_updates_scope(self, target):
+        self._workspace_scope()
+        return self
+
+    def _workspace_updates_domain(self):
+        return fields.Domain('conversation_id', '=', self.id) & fields.Domain(self._workspace_visible_domain())
+
+    @request_cache
+    def workspace_updates(self, after_id=0, visible_ids=None, target=None, combine=False):
+        self.ensure_one()
+        if (type(after_id) is not int or after_id < 0 or not isinstance(visible_ids, list)
+                or len(visible_ids) > 50 or type(combine) is not bool
+                or any(type(value) is not int or value <= 0 for value in visible_ids)):
+            raise ValidationError(_('Invalid conversation search.'))
+        scoped = self._workspace_updates_scope(target)
+        options = {'target': scoped.env.context.get('ab_website_target'), 'combine': False} if scoped.channel_id.provider == 'website' else {}
+        new = self.env['ab_crm_message'].search(
+            scoped._workspace_updates_domain() & fields.Domain('id', '>', after_id), order='id', limit=50)
+        requested = list(set(new.ids + visible_ids))
+        closure = scoped.channel_id.provider == 'website' and any(new.mapped('website_closure_notice'))
+        if len(requested) <= 50 and not closure:
+            result = scoped.workspace_detail(message_ids=requested, **options)
+            serialized = result['messages']
+            result['messages'] = [item for item in serialized if item['id'] in new.ids]
+            result['changed_messages'] = [item for item in serialized if item['id'] in visible_ids]
+        else:
+            result = scoped.workspace_detail(after_id=after_id, **options)
+            changed = scoped.workspace_detail(message_ids=visible_ids, **options) if visible_ids else None
+            result['changed_messages'] = changed['messages'] if changed else []
+        result['message_cursor'] = max(new.ids, default=after_id)
+        result['has_more_updates'] = len(new) == 50
         return result
 
     def workspace_detail(
@@ -1063,11 +1116,11 @@ class Conversation(models.Model):
                            ('timeline_at', '=', anchor.timeline_at), ('id', '<=' if through_id else '<', anchor.id)]
             else:
                 domain.append(('id', '<', int(before_id)))
-        if after_id:
+        if after_id is not False:
             domain.append(('id', '>', int(after_id)))
         messages = (
             self.env['ab_crm_message']
-            .search(domain, limit=50, order='id asc' if after_id else 'timeline_at desc, id desc')
+            .search(domain, limit=50, order='id asc' if after_id is not False else 'timeline_at desc, id desc')
             .sorted(lambda m: (m.timeline_at, m.id))
         )
         events = self.env['ab_crm_messaging_event'].search(
@@ -1082,9 +1135,7 @@ class Conversation(models.Model):
                 limit=1,
             )
         )
-        unread = self._workspace_unread_messages(session)
-        first_unread = unread[:1]
-        unread_count = len(unread)
+        first_unread_id, unread_count = self._workspace_unread_metadata(session)
         streams = self._workspace_streams()
         stream_unread = {row['id']: row['unread'] for row in streams._workspace_inbox_rows(session)}
         references = list(set(messages.mapped('reply_reference')) - {False, ''})
@@ -1104,7 +1155,7 @@ class Conversation(models.Model):
         outgoing = self.env['ab_crm_message'].search([
             ('conversation_id', '=', self.id), ('direction', '=', 'out'),
         ], order='id desc', limit=1)
-        message_cursor = max(messages.ids, default=after_id) if after_id else self.env['ab_crm_message'].search([
+        message_cursor = max(messages.ids, default=after_id) if after_id is not False else self.env['ab_crm_message'].search([
             ('conversation_id', '=', self.id),
         ], order='id desc', limit=1).id
         return {
@@ -1128,7 +1179,7 @@ class Conversation(models.Model):
             'last_incoming_at': fields.Datetime.to_string(self.messaging_last_inbound or incoming.create_date),
             'latest_outgoing_status': outgoing._display_status()['status'] if outgoing else '',
             'has_older': has_older,
-            'first_unread_message_id': first_unread.id or False,
+            'first_unread_message_id': first_unread_id,
             'unread_count': unread_count,
             'streams': [
                 {'id': r.id, 'provider': r.channel_id.provider, 'unread': stream_unread.get(r.id, 0),
@@ -1154,6 +1205,7 @@ class Conversation(models.Model):
             'messages': [
                 {
                     'id': m.id,
+                    'correlation_id': message_correlation(m),
                     'historical': m.historical,
                     'body': '' if m._current_media() and m.body in ('Attachment', _('Attachment')) else m.body,
                     'edited_at': (m.provider_edit_content or {}).get('date', False),

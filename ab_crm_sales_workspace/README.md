@@ -123,3 +123,15 @@ page. Candidate aggregate sorting still depends on the authorized target count;
 this release does not establish constant-cost processing for 100,000 targets.
 See `qa/chatter_performance/README.md` and the performance report for measured
 local results and staging acceptance that remains outstanding.
+
+## Timing update 19.0.1.44.0
+
+The open conversation refreshes independently of inbox and contact lists.
+Incremental updates fetch at most 50 new messages and 50 visible message IDs;
+older loaded messages refresh when scrolled into view. Notifications replace
+only authorized affected conversations, with complete recovery reconciliation.
+Directory changes refresh contact lists. Read invalidations remain employee scoped.
+
+Upgrade this addon with Website Sales Chatter 19.0.1.18.0, restart the operator's
+Odoo process, then reload browser assets. Runtime rollout and measured limits are
+recorded in [the timing report](../docs/sales-chatter-timing-2026-11-26.md).

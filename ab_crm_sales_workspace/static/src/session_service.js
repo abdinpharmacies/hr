@@ -1,3 +1,4 @@
+import {traceTiming} from "./timing";
 /** @odoo-module **/
 
 import {registry} from "@web/core/registry";
@@ -22,8 +23,15 @@ registry.category("services").add("ab_chatter_session", {
         const key = `ab_chatter_session_v2_${user.userId}`;
         let session = null;
         let polling = false;
+        let pollingIds = null;
         let generation = 0;
         let repoll = false;
+        let pendingIds = new Set();
+        let pendingFull = false;
+        let invalidatedIds = new Set();
+        let invalidatedCategories = new Set();
+        let invalidatedFull = false;
+        const snapshot = new Map();
         let invalidationTimer;
         let company = user.activeCompany.id;
         const alerts = new Map();
@@ -45,22 +53,32 @@ registry.category("services").add("ab_chatter_session", {
             set(value) {
                 company = user.activeCompany.id;
                 generation++;
+                clearTimeout(invalidationTimer);
+                invalidationTimer = null;
+                invalidatedIds.clear();
+                invalidatedCategories.clear();
+                invalidatedFull = false;
                 dismissed.clear();
+                snapshot.clear();
                 for (const alertKey of alerts.keys()) hide(alertKey);
                 session = value; save(); env.bus.trigger("AB_CHATTER_SESSION", session);
                 service.poll();
             },
             clear() { service.set(null); },
-            unreadChanged(broadcast = true) {
+            unreadChanged(broadcast = true, conversationIds = null) {
+                if (polling) {
+                    if (pollingIds === null) pendingFull = true;
+                    else for (const id of pollingIds) pendingIds.add(id);
+                }
                 generation++;
-                env.bus.trigger("AB_CHATTER_UNREAD");
-                if (broadcast && session) channel?.postMessage({employee: session.employee_id, company: user.activeCompany.id});
-                service.poll();
+                env.bus.trigger("AB_CHATTER_UNREAD", {conversation_ids: conversationIds, categories: ["unread"]});
+                if (broadcast && session) channel?.postMessage({employee: session.employee_id, company: user.activeCompany.id, conversation_ids: conversationIds});
+                service.poll(conversationIds);
             },
             async acknowledge(item, token) {
                 if (session?.token !== token) return;
                 await feedback.call(orm, "ab_crm_chatter_api", "acknowledge_alert", [], {token, conversation_id: item.conversation_id, message_ids: [...item.message_ids], target: item.website_target || null});
-                if (session?.token === token) service.unreadChanged();
+                if (session?.token === token) service.unreadChanged(true, [item.conversation_id]);
             },
             async open(item, token) {
                 if (session?.token !== token) return;
@@ -74,23 +92,30 @@ registry.category("services").add("ab_chatter_session", {
                     feedback.report(error);
                 }
             },
-            async poll() {
+            async poll(conversationIds = null) {
                 if (company !== user.activeCompany.id) {
                     company = user.activeCompany.id;
                     service.clear();
                 }
                 if (!session) return;
-                if (polling) { repoll = true; return; }
+                if (polling) {
+                    repoll = true;
+                    if (conversationIds === null) pendingFull = true;
+                    else for (const id of conversationIds) pendingIds.add(id);
+                    if (pendingIds.size > 50) pendingFull = true;
+                    return;
+                }
                 const token = session.token;
                 const requestCompany = user.activeCompany.id;
                 const version = generation;
                 polling = true;
+                pollingIds = conversationIds;
                 try {
                     let cursor = 0;
                     let more = true;
                     const pending = new Map();
                     while (more && session?.token === token && version === generation && requestCompany === user.activeCompany.id) {
-                        const result = await feedback.call(orm, "ab_crm_chatter_api", "notifications_v2", [], {token, cursor});
+                        const result = await feedback.call(orm, "ab_crm_chatter_api", "notifications_v2", [], {token, cursor, ...(conversationIds ? {conversation_ids: conversationIds} : {})});
                         for (const item of result.items) {
                             const previous = pending.get(item.alert_key);
                             if (!previous) { pending.set(item.alert_key, item); continue; }
@@ -103,7 +128,10 @@ registry.category("services").add("ab_chatter_session", {
                         more = result.has_more;
                     }
                     if (session?.token !== token || version !== generation || requestCompany !== user.activeCompany.id) return;
-                    const groups = groupNotificationItems([...pending.values()]);
+                    if (conversationIds === null) snapshot.clear();
+                    else for (const [key, item] of snapshot) if (conversationIds.includes(item.conversation_id)) snapshot.delete(key);
+                    for (const [key, item] of pending) snapshot.set(key, item);
+                    const groups = groupNotificationItems([...snapshot.values()]);
                     const keys = new Set(groups.map(group => group.key));
                     for (const alertKey of alerts.keys()) if (!keys.has(alertKey)) hide(alertKey);
                     for (const group of groups) {
@@ -136,25 +164,44 @@ registry.category("services").add("ab_chatter_session", {
                     else feedback.report(error);
                 } finally {
                     polling = false;
-                    if (repoll) { repoll = false; service.poll(); }
+                    pollingIds = null;
+                    if (repoll) {
+                        const ids = pendingFull ? null : [...pendingIds];
+                        repoll = false; pendingFull = false; pendingIds = new Set();
+                        service.poll(ids);
+                    }
                 }
             },
         };
         if (channel) channel.onmessage = ({data}) => {
-            if (session?.employee_id === data.employee && user.activeCompany.id === data.company) { service.unreadChanged(false); }
+            if (session?.employee_id === data.employee && user.activeCompany.id === data.company) { service.unreadChanged(false, data.conversation_ids || null); }
         };
-        const invalidate = () => {
+        const invalidate = (payload = null) => {
+            if (!payload || payload.overflow || !Array.isArray(payload.conversation_ids)) invalidatedFull = true;
+            else for (const id of payload.conversation_ids) if (Number.isInteger(id) && id > 0) invalidatedIds.add(id);
+            for (const category of payload?.categories || []) invalidatedCategories.add(category);
+            if (invalidatedIds.size > 50) invalidatedFull = true;
             if (invalidationTimer) return;
             invalidationTimer = setTimeout(() => {
                 invalidationTimer = null;
-                if (session) { env.bus.trigger("AB_CHATTER_UNREAD"); service.poll(); }
+                const ids = invalidatedFull ? null : [...invalidatedIds];
+                const categories = [...invalidatedCategories];
+                invalidatedIds = new Set(); invalidatedCategories = new Set(); invalidatedFull = false;
+                if (session) {
+                    env.bus.trigger('AB_CHATTER_UNREAD', {conversation_ids: ids, categories});
+                    service.poll(ids);
+                }
             }, 75);
         };
-        busService?.subscribe("ab_chatter.invalidate", payload => {
-            if (payload.company_id === user.activeCompany.id) invalidate();
+        busService?.subscribe('ab_chatter.invalidate', payload => {
+            if (payload.company_id === user.activeCompany.id &&
+                (!payload.employee_id || payload.employee_id === session?.employee_id)) {
+                traceTiming('browser_notification', payload.correlation_ids || []);
+                invalidate(payload);
+            }
         });
-        busService?.addEventListener("BUS:RECONNECT", invalidate);
-        busService?.addEventListener("BUS:CONNECT", invalidate);
+        busService?.addEventListener('BUS:RECONNECT', () => invalidate());
+        busService?.addEventListener('BUS:CONNECT', () => invalidate());
         busService?.start?.();
         setInterval(() => service.poll(), 5000);
         service.poll();

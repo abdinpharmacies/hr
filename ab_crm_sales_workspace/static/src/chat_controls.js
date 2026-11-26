@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+import {user} from "@web/core/user";
 import {patch} from "@web/core/utils/patch";
 import {SalesWorkspace} from "./workspace";
 
@@ -19,7 +20,7 @@ patch(SalesWorkspace.prototype, {
         return target ? `${id}:${target.kind}:${target.uuid}` : super.draftKey(id);
     },
     async call(model, method, args = [], kwargs = {}) {
-        if (model === "ab_crm_conversation" && method === "workspace_detail") {
+        if (model === "ab_crm_conversation" && ["workspace_detail", "workspace_updates"].includes(method)) {
             const id = args[0]?.[0];
             const initial = this.props?.action?.context?.chatter_alert;
             const target = kwargs.target || this.websiteTargets?.get(id) ||
@@ -35,8 +36,11 @@ patch(SalesWorkspace.prototype, {
             kwargs = {...kwargs, target: message?.website_target || this.state.detail.website_target,
                 combine: false};
         }
+        const company = user.activeCompany.id;
+        const version = this.navigationVersion;
+        const token = this.state.token;
         const result = await super.call(model, method, args, kwargs);
-        if (result?.website_target && model === "ab_crm_conversation" && ["workspace_detail", "workspace_channel", "workspace_focus"].includes(method)) {
+        if (!this.destroyed && company === user.activeCompany.id && version === this.navigationVersion && token === this.state.token && result?.website_target && model === "ab_crm_conversation" && ["workspace_detail", "workspace_channel", "workspace_focus"].includes(method)) {
             this.websiteTargets.set(result.id, result.website_target);
         }
         return result;

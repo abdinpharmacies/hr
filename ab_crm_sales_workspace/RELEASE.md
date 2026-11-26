@@ -50,3 +50,10 @@ The separate storefront Refresh TODO affects the button in
 five seconds and on online, pageshow and visibility changes; `native_history.js`
 also catches up every five seconds and on those recovery events. Their removal
 requires a separate user decision. Keep Callcenter's general Inbox Refresh.
+
+## 19.0.1.44.0 — Sales Chatter timing
+
+Independent active-chat refresh, capped incremental message/status updates,
+authorized targeted invalidations, batched page previews and optional opaque
+latency tracing. Website requires its matching 19.0.1.18.0 update.
+See [measurements, rollout prerequisites and rollback](../docs/sales-chatter-timing-2026-11-26.md).
