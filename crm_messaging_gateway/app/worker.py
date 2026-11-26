@@ -1,3 +1,4 @@
+from .timing import trace
 import logging
 import time
 from .odoo import Odoo, OdooUnavailable
@@ -25,6 +26,7 @@ class Worker:
         row = self.store.claim_incoming(self.accounts)
         if not row:
             return
+        trace('worker_claim', row['account'], row['payload'].get('id', row.get('id')))
         success = False
         try:
             if row['kind'] == 'incoming' and row['payload'].get('edit'):
@@ -42,6 +44,7 @@ class Worker:
                 else row['payload']
             )
             result = self.odoo.call(method, row['account'], **values)
+            trace('odoo_response', row['account'], row['payload'].get('id', row.get('id')))
             if row['kind'] == 'incoming' and row['payload'].get('media') and not (
                 isinstance(result, dict) and result.get('media_required') is False
             ):
@@ -188,8 +191,10 @@ class Worker:
             if not allowed:
                 self.store.defer_send(row)
                 return True
+            trace('provider_request', row['account'], row['token'])
             with latency('provider_dispatch'):
                 outcome = self._send_operation(row)
+            trace('provider_result', row['account'], row['token'])
             self.store.outcome(row, outcome)
             return True
 
@@ -293,7 +298,7 @@ def main(provider=None):
                 logging.warning('Messaging worker cycle deferred')
                 progress = 0
             if not progress:
-                time.sleep(1)
+                time.sleep(config.worker_idle_seconds)
 
 
 if __name__ == '__main__':

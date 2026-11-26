@@ -1,3 +1,4 @@
+from .timing import trace
 import argparse
 from datetime import datetime, timezone
 import logging
@@ -64,9 +65,13 @@ class Receiver:
             except (ValueError, TypeError, KeyError, AttributeError, OverflowError):
                 raise ReceiverStopped('malformed_event') from None
             offset = update_id + 1
+        for key, kind, payload in events:
+            trace('reception', self.code, payload.get('id', key))
         self.store.persist_poll(
             conn, self.code, self.account.provider_account, events, offset
         )
+        for key, kind, payload in events:
+            trace('durable_queue', self.code, payload.get('id', key))
         timestamps = [
             (payload.get('edit') or {}).get('date', payload['timestamp'])
             for key, kind, payload in events if kind == 'incoming'

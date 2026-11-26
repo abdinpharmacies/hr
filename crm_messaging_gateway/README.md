@@ -228,3 +228,27 @@ one alongside an existing worker owning the same accounts. Both configurations
 retain the current storage backend, protocol and scoped credentials; they do not
 establish PostgreSQL independence. Validate disjoint account ownership before
 any separately approved rollout.
+
+### Sales Chatter timing controls
+
+`worker_idle_seconds` and `website_idle_seconds` default to `0.25` seconds and
+accept finite values from `0.1` to `2.0`. Workers continue immediately after
+progress and keep the existing bounded, fair scheduler. The legacy idle waits
+are available with `worker_idle_seconds: 1.0` and `website_idle_seconds: 2.0`.
+The Telegram receiver retains its 30-second long poll.
+
+Run account-selected website workers with the matching protected configuration:
+
+```bash
+CRM_MESSAGING_CONFIG=/private/website-production.json python -m app.website --account PRODUCTION_ACCOUNT_CODE
+CRM_MESSAGING_CONFIG=/private/website-pilot.json python -m app.website --account PILOT_ACCOUNT_CODE
+```
+
+Use distinct reviewed account selections; the existing production/pilot service
+units remain available. A blocking provider request can still occupy its worker
+until its HTTP timeout. Idle tuning does not interrupt network calls.
+
+For isolated diagnostics, `CRM_MESSAGING_TRACE=1` emits timestamps and hashed
+correlation IDs for reception, durable enqueue, claim, Odoo response and provider
+request/result. It does not log message bodies or credentials. See
+[the timing validation report](../docs/sales-chatter-timing-2026-11-26.md).

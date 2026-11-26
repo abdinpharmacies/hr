@@ -87,3 +87,26 @@ def test_deferred_incoming_does_not_delay_next_eligible_item():
     assert worker.tick() == 2
     store.defer_incoming.assert_called_once_with(first)
     store.finish_incoming.assert_called_once_with(second, True)
+
+
+@pytest.mark.parametrize('field', ['worker_idle_seconds', 'website_idle_seconds'])
+@pytest.mark.parametrize('value', [0, 0.099, 2.01, float('inf'), float('nan')])
+def test_worker_idle_configuration_is_bounded(field, value):
+    values = configuration().model_dump()
+    values[field] = value
+    with pytest.raises(ValueError):
+        Settings(**values)
+
+
+def test_worker_idle_legacy_rollback_intervals():
+    values = configuration().model_dump()
+    assert Settings(**dict(values, worker_idle_seconds=1, website_idle_seconds=2))
+
+
+def test_timing_correlations_are_opaque_and_destination_specific():
+    from app.timing import correlation_id
+    one = correlation_id('synthetic', '12345:1')
+    assert len(one) == 32
+    assert one == correlation_id('synthetic', '12345:1')
+    assert one != correlation_id('synthetic', '67890:1')
+    assert '12345' not in one

@@ -1,3 +1,4 @@
+from .timing import trace
 import json
 
 from fastapi import FastAPI, HTTPException, Request
@@ -83,7 +84,11 @@ def create_app(config=None, store=None):
             logger.warning('webhook_rejected provider=%s category=%s', provider, category)
             raise HTTPException(400, 'Invalid webhook') from None
         try:
+            for key, kind, payload in events:
+                trace('reception', code, payload.get('id', key))
             await run_in_threadpool(store.ingest, code, events)
+            for key, kind, payload in events:
+                trace('durable_queue', code, payload.get('id', key))
         except Conflict:
             raise HTTPException(409, 'Conflicting event identity') from None
         except Exception:

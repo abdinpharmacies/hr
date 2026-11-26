@@ -1,3 +1,4 @@
+from .timing import trace
 import base64
 import hashlib
 import json
@@ -216,7 +217,9 @@ class WebsiteWorker(Worker):
             rows.append((key, 'incoming', payload))
         for row in rows:
             try:
+                trace('reception', code, row[0])
                 self.store.ingest(code, [row])
+                trace('durable_queue', code, row[0])
             except Conflict:
                 digest = hashlib.sha256(json.dumps(row[2], sort_keys=True).encode()).hexdigest()
                 self.store.ingest(code, [('conflict:' + digest, 'incoming', dict(row[2], review_reason='conflicting_website_event'))])
@@ -225,6 +228,7 @@ class WebsiteWorker(Worker):
         row = self.store.claim_incoming(self.accounts)
         if not row:
             return
+        trace('worker_claim', row['account'], row['payload'].get('website_event', {}).get('event_uuid', row.get('id')))
         phase = 'receiver_intake'
         version = row['payload'].get('version', 1)
         try:
@@ -236,6 +240,7 @@ class WebsiteWorker(Worker):
             result = self.odoo.call(
                 {1: 'receive_website_event', 2: 'receive_website_chat', 3: 'receive_website_lifecycle', 4: 'receive_website_chat'}[row['payload'].get('version', 1)], row['account'], event=event
             )
+            trace('odoo_response', row['account'], event['event_uuid'])
             if result != {'received': True, 'event_uuid': event['event_uuid']}:
                 raise ValueError('Invalid destination receipt')
             phase = 'acknowledge'
@@ -365,7 +370,7 @@ def main(accounts=None):
                 logging.warning('Website worker cycle deferred')
                 progress = 0
             if not progress:
-                time.sleep(2)
+                time.sleep(config.website_idle_seconds)
 
 
 def select_accounts(config, accounts=None):

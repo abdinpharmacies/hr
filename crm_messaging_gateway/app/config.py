@@ -99,6 +99,8 @@ class Settings(BaseModel):
     accounts: dict[str, Account]
     encrypted_storage_confirmed: bool = False
     sending_enabled: bool = False
+    worker_idle_seconds: float = Field(default=0.25, ge=0.1, le=2.0, allow_inf_nan=False)
+    website_idle_seconds: float = Field(default=0.25, ge=0.1, le=2.0, allow_inf_nan=False)
     allow_loopback_http: bool = False
     odoo_transport: Literal['json2', 'controller_v1'] = 'json2'
 
