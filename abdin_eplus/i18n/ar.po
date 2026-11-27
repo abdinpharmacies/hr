@@ -1,0 +1,411 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__available_fields_html
+msgid "Available Fields Html"
+msgstr "الحقول المتاحة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__bill_day
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_search_view
+msgid "Bill Day"
+msgstr "تاريخ الفاتورة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__sth_id
+msgid "Bill ID"
+msgstr "مسلسل الفاتورة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__sec_insert_date_h
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_list_view
+msgid "Bill Time"
+msgstr "توقيت الفاتورة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__bill_type
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_search_view
+msgid "Bill Type"
+msgstr "نوع الفاتورة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__cash_h
+msgid "Cash H"
+msgstr "القيمة نقدي"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__cc_id
+msgid "Cc"
+msgstr "التعاقد"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__cc_cust_id
+msgid "Cc Cust"
+msgstr "تعاقد العميل"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.tables_menu
+msgid "Config"
+msgstr "الإعدادات"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_region__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_supplier__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store_trans_h__create_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_vendor__create_uid
+msgid "Created by"
+msgstr "إنشاء بواسطة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_region__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_supplier__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store_trans_h__create_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_vendor__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__credit_value_contract
+msgid "Credit Value Contract"
+msgstr "قيمة الآجل تعاقد"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__cust_id
+msgid "Cust"
+msgstr "العميل"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__cust_code
+msgid "Cust Code"
+msgstr "كود العميل"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__cust_name_ar
+msgid "Cust Name Ar"
+msgstr "اسم العميل بالعربي"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__cust_parent
+msgid "Cust Parent"
+msgstr "العميل الأب"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__cust_id
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_search_view
+msgid "Customer"
+msgstr "العميل"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__cust_parent
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_search_view
+msgid "Customer Parent"
+msgstr "العميل/الشركة"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.abdin_eplus_customer_menu
+msgid "Customers"
+msgstr "العملاء"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.abdin_eplus_customer_contracts_menu
+msgid "Customers Contracts"
+msgstr "عقود العملاء"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__date_begin
+msgid "Date Begin"
+msgstr "من"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__date_end
+msgid "Date End"
+msgstr "إلى"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_region__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_supplier__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store_trans_h__display_name
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_vendor__display_name
+msgid "Display Name"
+msgstr "الاسم"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__e_code
+msgid "E Code"
+msgstr "كود الموظف"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__e_name
+msgid "E Name"
+msgstr "اسم الموظف"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__employee
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_search_view
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.abdin_eplus_employee_menu
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__extra_expenses_h
+msgid "Extra Expenses H"
+msgstr "مصاريف إضافية"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__fields_comma_seperated
+msgid "Fields Comma Seperated"
+msgstr "الحقول مفصولة بكوما"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_region__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_supplier__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store_trans_h__id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_vendor__id
+msgid "ID"
+msgstr "م"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__is_delivery
+msgid "Is Delivery"
+msgstr "توصيل منزلي؟"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__is_visa
+msgid "Is Visa"
+msgstr "فيزا؟"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.abdin_eplus_item_catalog_menu
+msgid "Items Catalogue"
+msgstr "الأصناف"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__items_count
+msgid "Items Count"
+msgstr "عدد الأصناف"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__itm_id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__itm_id
+msgid "Itm"
+msgstr "الصنف"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__itm_code
+msgid "Itm Code"
+msgstr "كود الصنف"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__itm_name_ar
+msgid "Itm Name Ar"
+msgstr "اسم الصنف بالعربي"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_region__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_supplier__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store_trans_h__write_uid
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_vendor__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_region__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_ab_supplier__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_customer_contracts__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_employee__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_item_catalog__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_d__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_replication__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store_trans_h__write_date
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_vendor__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث بواسطة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__loaded_value_contract
+msgid "Loaded Value Contract"
+msgstr "قيمة التحمل"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.purchase_menu
+msgid "Purchase"
+msgstr "المشتريات"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.pur_trans_h_menu
+msgid "Purchase Bills"
+msgstr "فواتير الموردين"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.pur_trans_d_menu
+msgid "Purchase Items"
+msgstr "أصناف فواتير الموردين"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.replicate_sales
+msgid "Replicate Sales"
+msgstr "استنساخ المبيعات"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.replicate_trans_menu
+msgid "Replicate Transfers"
+msgstr "استنساخ التحويلات"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.replicate_purchase
+msgid "Replicate purchase"
+msgstr "استنساخ فواتير الموردين"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.replicate_tables
+msgid "Replicate tables"
+msgstr "استساخ الجداول الأساسية"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.sales_menu
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.r_sales_trans_h_menu
+msgid "Sales from ePlus"
+msgstr "المبيعات من بي كونكت"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_pur_trans_h__sto_id
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__sto_id
+msgid "Sto"
+msgstr "مسلسل الفرع"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__sto_code
+msgid "Sto Code"
+msgstr "كود الفرع"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_store__sto_name_ar
+msgid "Sto Name Ar"
+msgstr "اسم الفرع بالعربي"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__sto_id
+#: model_terms:ir.ui.view,arch_db:abdin_eplus.r_sales_trans_h_search_view
+msgid "Store"
+msgstr "الفرع"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.abdin_eplus_store_menu
+msgid "Stores"
+msgstr "الفروع"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_bill_after_disc_d
+msgid "Total Bill After Disc D"
+msgstr "إجمالي الفاتورة بعد الخصم(من التفصيلي)"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_bill_after_disc_h
+msgid "Total Bill After Disc H"
+msgstr "إجمالي بعد الخصم"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_disc_money_h
+msgid "Total Disc Money H"
+msgstr "خصم نقدا"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_disc_percent_h
+msgid "Total Disc Percent H"
+msgstr "خصم نسبة"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_exchange_h
+msgid "Total Exchange H"
+msgstr "إجمالي الاستبدالات"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_imported_d
+msgid "Total Imported D"
+msgstr "إجمالي المستورد"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_local_d
+msgid "Total Local D"
+msgstr "إجمالي المحلي"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_sales_d
+msgid "Total Sales D"
+msgstr "إجمالي الفاتورة (من التفصيلي)"
+
+#. module: abdin_eplus
+#: model:ir.model.fields,field_description:abdin_eplus.field_abdin_eplus_r_sales_trans_h__total_sales_h
+msgid "Total Sales H"
+msgstr "إجمالي الفاتورة"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.store_trans_h_menu
+msgid "Transfers"
+msgstr "التحويلات"
+
+#. module: abdin_eplus
+#: model:ir.ui.menu,name:abdin_eplus.abdin_eplus_vendor_menu
+msgid "vendors"
+msgstr "الموردين"
