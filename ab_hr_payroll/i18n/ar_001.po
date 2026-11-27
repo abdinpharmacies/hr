@@ -68,3 +68,911 @@ msgstr "تجري معالجة هذا القيد حالياً. يرجى المح�
 #: code:addons/ab_hr_payroll/models/account_header_salaries_inherit.py:0
 msgid "No unpaid salary balance was found for the selected employees."
 msgstr "لم يتم العثور على رصيد رواتب مستحق للموظفين المحددين."
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_due_salaries_qry__account_id
+msgid "Account"
+msgstr "حساب"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__account_header_id
+msgid "Account Header"
+msgstr "رأس القيد"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_section__type__accounts
+msgid "Accounting"
+msgstr "بند حسابات"
+
+#. module: ab_hr_payroll
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_hr_action_wizard_menu
+msgid "Action"
+msgstr "إنشاء حركة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_needaction
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_needaction
+msgid "Action Needed"
+msgstr "الإجراء المطلوب"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__action_status
+msgid "Action Status"
+msgstr "حالة الحركة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__action_taken
+msgid "Action Taken"
+msgstr "تم التنفيذ"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__active
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_ids
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_state
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_type_icon
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_je_header__allowed_negative
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_recon_header__allowed_negative
+msgid "Allowed Negative"
+msgstr "السماح بالرصيد السالب"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Are you sure"
+msgstr "هل انت متأكد؟"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_attachment_count
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد الملحقات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_due_salaries_qry__balance
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__territory__3
+msgid "Both"
+msgstr "إدارة عامة"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_search
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Browse"
+msgstr "عرض"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Browse Issues"
+msgstr "عرض المشكلات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__accid
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__comparing_end_month
+msgid "Comparing End Month"
+msgstr "مقارنة بآخر الشهر"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__comparing_start_month
+msgid "Comparing Start Month"
+msgstr "مقارنة أول الشهر"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__confirm
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__confirm_deletion
+msgid "Confirm Deletion"
+msgstr "تأكيد الحذف"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_due_salaries_qry__costcenter_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__costcenter_id
+msgid "Costcenter"
+msgstr "مركز التكلفة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_due_salaries_qry__costcenter_code
+msgid "Costcenter Code"
+msgstr "كود مركز التكلفة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_je_header__costcenter_codes
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_recon_header__costcenter_codes
+msgid "Costcenter Codes"
+msgstr "أكواد مراكز التكلفة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__costcenter_name
+msgid "Costcenter Name"
+msgstr "اسم مركز التكلفة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__create_date
+msgid "Create Date"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_accounting_je_header_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Create JE"
+msgstr "إنشاء قيد محاسبي"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_accounting_je_header_view_form_inherit
+msgid "Create JE, are you sure?"
+msgstr "إنشاء القيود المحاسبية، هل انت متأكد؟"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__create_uid
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__create_uid
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__create_uid
+msgid "Created by"
+msgstr "إنشاء بواسطة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__create_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__create_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__create_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__credit_account_id
+msgid "Credit Account"
+msgstr "حساب دائن"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "DELETE RECORDS"
+msgstr "حذف السجلات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__date_begin
+msgid "Date Begin"
+msgstr "من تاريخ"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__date_end
+msgid "Date End"
+msgstr "إلى تاريخ"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__debit_account_id
+msgid "Debit Account"
+msgstr "حساب مدين"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_accounting_je_header__je_type__deduction
+msgid "Deductions"
+msgstr "الاستقطاعات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_job_occupied__default_salary
+msgid "Default Salary"
+msgstr "الراتب الافتراضي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_due_salaries_qry__display_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__display_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__display_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__display_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_employee__display_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__display_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__display_name
+msgid "Display Name"
+msgstr "الاسم الظاهر في العرض"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__do_action
+msgid "Do Action"
+msgstr "تنفيذ الإجراء"
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/action_wizard.py:0
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__due_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__due_date
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_je_header__due_month
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_recon_header__due_month
+msgid "Due Month"
+msgstr "شهر الاستحقاق"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_due_salaries_qry_view_form
+msgid "Due Salaries Details"
+msgstr "تفاصيل الأجور المستحقة"
+
+#. module: ab_hr_payroll
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_due_salaries_qry_menu
+msgid "Due Salaries Enquiry"
+msgstr "تقرير أجور عاملين مستحقة"
+
+#. module: ab_hr_payroll
+#: model:ir.actions.act_window,name:ab_hr_payroll.ab_due_salaries_qry_action
+msgid "Due Salaries Report"
+msgstr "تقرير الأجور المستحقة"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_due_salaries_qry_view_search
+msgid "Due Salaries Search"
+msgstr "بحث الأجور المستحقة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__e_code
+msgid "E Code"
+msgstr "كود الموظف"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__employee_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__employee_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__employee_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_payroll_search
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_search
+msgid "Employee Code"
+msgstr "كود الموظف"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_action_wizard__pasted_type__employee
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__sal_count
+msgid "Employees Count"
+msgstr "عدد الموظفين"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Employees Count:"
+msgstr "عدد الموظفين"
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__explain
+msgid "Explain"
+msgstr "الشرح"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Export Excel"
+msgstr "تصدير إكسل"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "FOR MANAGER stage"
+msgstr "إلى مرحلة مراجعة م الإدارة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__file_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__file_name
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Filter"
+msgstr "فلتر"
+
+#. module: ab_hr_payroll
+#: model:ab_hr_payment_type,name:ab_hr_payroll.payment_type_firing
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_accounting_je_header__je_type__firing
+msgid "Firing"
+msgstr "إنهاء الخدمة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_follower_ids
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_partner_ids
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__status__for_entry
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "For Entry"
+msgstr "تحت الإدخال"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__for_entry_count
+msgid "For Entry Count"
+msgstr "عدد سجلات الإدخال"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__status__for_manager
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "For Manager"
+msgstr "تحت مراجعة مدير الإدارة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__for_manager_count
+msgid "For Manager Count"
+msgstr "عدد السجلات لدى المدير"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__status__for_reviewer
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "For Reviewer"
+msgstr "تحت مراجعة المراجع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__for_reviewer_count
+msgid "For Reviewer Count"
+msgstr "عدد السجلات لدى المراجع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_section__type__hr
+msgid "HR"
+msgstr "الموارد البشرية"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__hr_name_entry
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__hr_name_entry
+msgid "HR Name"
+msgstr "اسم الموظف"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__has_message
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__has_message
+msgid "Has Message"
+msgstr "توجد رسالة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_due_salaries_qry__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_employee__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_job_occupied__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_employee__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_report_ab_hr_salary_details_report_model__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_report_salaries_compare_xlsx__id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_report_salaries_xlsx_model__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_action_wizard__activity_exception_icon
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_payroll__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى عمل/ نشاط استثنائي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_action_wizard__message_needaction
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_payroll__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "تستدعي الرسائل الجديدة انتباهك عند الفحص"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_is_follower
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_je_header__je_type
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_accounting_recon_header__je_type
+msgid "Je Type"
+msgstr "نوع القيود"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__job_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__job_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__job_id
+msgid "Job"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__write_uid
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__write_uid
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__write_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__write_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__write_date
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__write_date
+msgid "Last Updated on"
+msgstr "حدث آخر مرة بتاريخ"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__max_ratio
+msgid "Max Ratio"
+msgstr "أقصى نسبة مسموحة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_has_error
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في وصول الرسالة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_ids
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__min_ratio
+msgid "Min Ratio"
+msgstr "أقل نسبة مسموحة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payment_type__name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__status__negative_salaries
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Negative Salaries"
+msgstr "المرتبات السالبة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__negative_salaries_count
+msgid "Negative Salaries Count"
+msgstr "عدد المرتبات السالبة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__net_salary
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__net_salary
+msgid "Net Salary"
+msgstr "صافي المرتب"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الميعاد النهائي للنشاط التالي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_summary
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_type_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_action_wizard__confirm__no
+msgid "No"
+msgstr "لا"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__no_of_records
+msgid "No Of Records"
+msgstr "عدد السجلات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__territory__1
+msgid "North"
+msgstr "الشمالي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_action_wizard__message_has_error_counter
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_payroll__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي تعذّر تسليمها"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__status__paid
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Paid"
+msgstr "تم الدفع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__paid_count
+msgid "Paid Count"
+msgstr "عدد السجلات المدفوعة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__pasted_salaries
+msgid "Pasted Salaries"
+msgstr "لصق اكواد المرتبات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__pasted_type
+msgid "Pasted Type"
+msgstr "النوع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_accounting_je_header__je_type__pay
+msgid "Pay with Bank Transfer"
+msgstr "الدفع عن طريق تحويل بنكي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_accounting_je_header__je_type__pay_cash
+msgid "Pay with Cash"
+msgstr "الدفع نقدا"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__user_line_owner
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__user_line_owner
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_employee__payment_name
+msgid "Payment Name"
+msgstr "اسم طريقة الدفع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_employee__payment_no
+msgid "Payment No"
+msgstr "رقم حساب طريقة الدفع"
+
+#. module: ab_hr_payroll
+#: model:ir.actions.act_window,name:ab_hr_payroll.ab_hr_payment_type_act
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__payment_type_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__payment_type_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__payment_type_id
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_hr_payment_type_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_payment_type_form
+msgid "Payment Type"
+msgstr "نوع الدفع"
+
+#. module: ab_hr_payroll
+#: model:ir.model,name:ab_hr_payroll.model_ab_hr_payroll
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_hr_salaries_root
+#: model:ir.actions.act_window,name:ab_hr_payroll.ab_hr_payroll_act
+msgid "Payroll"
+msgstr "المرتبات"
+
+#. module: ab_hr_payroll
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_hr_payroll_menu
+msgid "Payroll Entry"
+msgstr "مدخلات المرتبات"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Payroll List"
+msgstr "قائمة المرتبات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__payroll_month
+msgid "Payroll Month"
+msgstr "شهر الراتب"
+
+#. module: ab_hr_payroll
+#: model:ir.model,name:ab_hr_payroll.model_ab_hr_payroll_report
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_hr_payroll_report_menu
+msgid "Payroll Report"
+msgstr "تقارير المرتبات"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_payroll_search
+msgid "Payroll search"
+msgstr "بحث المرتبات"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Print PDF"
+msgstr "طباعة PDF"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_accounting_je_header_view_form_inherit
+msgid "Remove all JE, are you sure?"
+msgstr "مسح كل القيود المحاسبية، هل انت متأكد؟"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__activity_user_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسئول"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__message_has_sms_error
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسائل القصيرة"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Salaries"
+msgstr "المرتبات"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_search
+msgid "Salaries Actions"
+msgstr "حركات المرتبات"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_list
+msgid "Salaries Actions List"
+msgstr "قائمة الحركات"
+
+#. module: ab_hr_payroll
+#: model:ir.model,name:ab_hr_payroll.model_ab_hr_payroll_employee
+msgid "Salaries Before Payment Report"
+msgstr "مرتبات الموظفين"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__salaries_html
+msgid "Salaries Html"
+msgstr "المرتبات"
+
+#. module: ab_hr_payroll
+#: model:ir.actions.act_window,name:ab_hr_payroll.ab_accounting_je_header_salaries_action
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_accounting_je_header_salaries_menu
+msgid "Salaries Processes"
+msgstr "قيود أجور العاملين المستحقة"
+
+#. module: ab_hr_payroll
+#: model:ir.actions.report,name:ab_hr_payroll.ab_hr_salary_details_report
+#: model:ir.actions.report,name:ab_hr_payroll.action_pdf_salaries
+#: model:ir.actions.report,name:ab_hr_payroll.action_pdf_salaries_compare
+#: model:ir.model,name:ab_hr_payroll.model_report_salaries_xlsx_model
+msgid "Salaries Report"
+msgstr "تقرير المرتبات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__sal_ids
+msgid "Salaries records"
+msgstr "سجلات المرتبات"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_action_wizard__pasted_type__salary_id
+msgid "Salary IDs"
+msgstr "مسلسلات المرتبات"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Search Criteria"
+msgstr "خانات البحث"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__section
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__section
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__section
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Section"
+msgstr "اسم البند"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__section_type
+msgid "Section Type"
+msgstr "نوع البند"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__section_value
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__section_value
+msgid "Section Value"
+msgstr "قيمة البند"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__section_value1
+msgid "Section Value1"
+msgstr "إلى"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__section_value2
+msgid "Section Value2"
+msgstr "من"
+
+#. module: ab_hr_payroll
+#: model:ir.ui.menu,name:ab_hr_payroll.ab_hr_section_menu
+msgid "Sections"
+msgstr "البنود"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__sheet_name
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__sheet_name
+msgid "Sheet Name"
+msgstr "اسم الشيت"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__territory__2
+msgid "South"
+msgstr "الجنوبي"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__status
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__status
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__store_ids
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__store_id
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_payroll__status__suspended_salaries
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Suspended Salaries"
+msgstr "المرتبات الموقوفة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__suspended_salaries_count
+msgid "Suspended Salaries Count"
+msgstr "عدد المرتبات الموقوفة"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__territory
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__territory
+msgid "Territory"
+msgstr "الإقليم"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "This action will create JE, are you sure?"
+msgstr "إنشاء قيود محاسبية، هل انت متأكد؟"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__section_type
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__section_type
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_section__type
+msgid "Type"
+msgstr "النوع"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_action_wizard__activity_exception_decoration
+#: model:ir.model.fields,help:ab_hr_payroll.field_ab_hr_payroll__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي المسجل/ المرصود"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_employee__user_line_owner
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__user_line_owner
+msgid "User Line Owner"
+msgstr "مسؤول الصرف"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_action_wizard__workplace
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll__workplace
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__workplace
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Workplace"
+msgstr "جهة العمل"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields,field_description:ab_hr_payroll.field_ab_hr_payroll_report__write_date
+msgid "Write Date"
+msgstr "تاريخ التحديث"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "Write an Explain for your action"
+msgstr "اكتب شرحا للحركة:"
+
+#. module: ab_hr_payroll
+#: model:ir.model.fields.selection,name:ab_hr_payroll.selection__ab_hr_action_wizard__confirm__yes
+msgid "Yes"
+msgstr "نعم"
+
+#. module: ab_hr_payroll
+#. odoo-python
+#: code:addons/ab_hr_payroll/models/payroll.py:0
+msgid "You Must Set Branch"
+msgstr "يجب تحديد الفرع"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "action taken"
+msgstr "تم التنفيذ"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr_payroll
+#: model_terms:ir.ui.view,arch_db:ab_hr_payroll.ab_hr_action_wizard_form
+msgid "salaries action form"
+msgstr "حركات المرتبات المستحقة"
