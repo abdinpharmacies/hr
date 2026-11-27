@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__code
+msgid "Code"
+msgstr "كود مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.actions.act_window,name:ab_costcenter.ab_costcenter_action
+#: model_terms:ir.ui.view,arch_db:ab_costcenter.ab_costcenter_search
+msgid "Cost Centers"
+msgstr "مراكز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__costcenter_type
+msgid "Costcenter Type"
+msgstr "نوع مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__hr_name
+msgid "Hr Name"
+msgstr "اسم الموظف الرسمي"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__name
+msgid "Name"
+msgstr "اسم مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__tel_no
+msgid "Tel No"
+msgstr "رقم التواصل"
