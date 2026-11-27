@@ -4,6 +4,7 @@
 #
 msgid ""
 msgstr ""
+"Language: ar_001\n"
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-06-22 10:15+0000\n"
