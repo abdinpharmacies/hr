@@ -4,6 +4,7 @@
 #
 msgid ""
 msgstr ""
+"Language: ar_001\n"
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-29 09:37+0000\n"
@@ -73,6 +74,9 @@ msgstr "تجميل"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__create_uid
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__create_uid
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__create_uid
 msgid "Created by"
 msgstr "انشئ بواسطة"
 
@@ -83,6 +87,9 @@ msgstr "انشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__create_date
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__create_date
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__create_date
 msgid "Created on"
 msgstr "تاريخ الانشاء"
 
@@ -110,6 +117,7 @@ msgstr "الشرح"
 
 #. module: ab_supplier
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__discount
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__discount
 msgid "Discount"
 msgstr "نسبة الخصم"
 
@@ -120,6 +128,9 @@ msgstr "نسبة الخصم"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__display_name
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__display_name
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__display_name
 msgid "Display Name"
 msgstr "المسمي علي برنامج الاي بلاس"
 
@@ -145,6 +156,9 @@ msgstr "من تاريخ الفاتورة"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__id
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__id
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__id
 msgid "ID"
 msgstr "بطاقة التعريف"
 
@@ -185,6 +199,9 @@ msgstr "تاريخ اخر تحديث"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__write_uid
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__write_uid
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__write_uid
 msgid "Last Updated by"
 msgstr "اخر تحديث بواسطة"
 
@@ -195,6 +212,9 @@ msgstr "اخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__write_date
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__write_date
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__write_date
 msgid "Last Updated on"
 msgstr "اخر تحديث في"
 
@@ -221,6 +241,7 @@ msgstr "أدويه"
 #. module: ab_supplier
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__name
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_payment_type__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -269,6 +290,8 @@ msgstr "القسم"
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__supplier_id
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__supplier_id
 #: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__supplier_id
 msgid "Supplier"
 msgstr "اسم المورد"
 
@@ -484,3 +507,8 @@ msgstr "مثال: شركة ابن سينا فارما"
 #: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
 msgid "supplier Name"
 msgstr "اسم المورد"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_bracket_action
+msgid "Supplier Bracket"
+msgstr "حد ائتمان الموردين"
