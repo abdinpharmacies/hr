@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_store
+#: model:ir.model.fields,field_description:ab_store.field_ab_store__code
+msgid "Code"
+msgstr "كود الفرع"
+
+#. module: ab_store
+#: model:ir.model.fields,field_description:ab_store.field_ab_store__name
+msgid "Name"
+msgstr "اسم الفرع"
+
+#. module: ab_store
+#: model:ir.actions.act_window,name:ab_store.ab_store_action
+msgid "store"
+msgstr "الفروع"
