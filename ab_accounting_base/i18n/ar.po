@@ -1,0 +1,214 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__currency_id
+msgid "Account Currency"
+msgstr "عملة الحساب"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__reconcile
+msgid "Allow Reconciliation"
+msgstr "السماح بالتسوية"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__internal_group__asset
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_group__asset
+msgid "Asset"
+msgstr "اصول"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_type__bank
+msgid "Bank"
+msgstr "بنك"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_type__cash
+msgid "Cash"
+msgstr "نقدية"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__child_ids
+msgid "Child Accounts"
+msgstr "الحسابات المتفرعة"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__code
+msgid "Code"
+msgstr "كود"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__create_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__create_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__create_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__create_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__create_uid
+msgid "Created by"
+msgstr "منشا بواسطة"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__create_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__create_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__create_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__create_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__create_date
+msgid "Created on"
+msgstr "تاريخ الانشاء"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__nature__credit
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__nature__credit
+msgid "Credit"
+msgstr "دائن"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__nature__debit
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__nature__debit
+msgid "Debit"
+msgstr "مدين"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__note
+msgid "Description"
+msgstr "التوصيف"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__display_name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__display_name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__display_name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__display_name
+msgid "Display Name"
+msgstr "الاسم"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__internal_group__equity
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_group__equity
+msgid "Equity"
+msgstr "حقوق ملكية"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__internal_group__expense
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_group__expense
+msgid "Expense"
+msgstr "مصروفات"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__has_due_date
+msgid "Has Due Date"
+msgstr "له تاريخ استحقاق"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__id
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__id
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__id
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__internal_group__income
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_group__income
+msgid "Income"
+msgstr "دخول"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__internal_group
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__internal_group
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__internal_group
+msgid "Internal Group"
+msgstr "مجموعة الحساب (اصول - التزامات - ...)"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__internal_type
+msgid "Internal Type"
+msgstr "نوع الحساب (دفع - قبض - سيولة - ...)"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__is_final
+msgid "Is Final"
+msgstr "حساب نهائي"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__write_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__write_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__write_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__write_uid
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__write_uid
+msgid "Last Updated by"
+msgstr "تحديث بواسطة"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__write_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__write_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__write_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__write_date
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__write_date
+msgid "Last Updated on"
+msgstr "تاريخ التحديث"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__internal_group__liability
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_group__liability
+msgid "Liability"
+msgstr "التزامات"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__max_negative_value
+msgid "Max Negative Value"
+msgstr "اقصى قيمة سالبة"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_second_level__name
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_doctype__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account__nature
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_first_level__nature
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__nature
+msgid "Nature"
+msgstr "طبيعة الحساب"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__internal_group__off_balance
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_group__off_balance
+msgid "Off Balance"
+msgstr "خارج الموازنة"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__parent_id
+msgid "Parent Account"
+msgstr "الحساب الاب"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields,field_description:ab_accounting_base.field_ab_accounting_account_guide__parent_path
+msgid "Parent Path"
+msgstr "مسار الحساب الاب"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_type__payable
+msgid "Payable"
+msgstr "دفع"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__internal_type__receivable
+msgid "Receivable"
+msgstr "قبض"
+
+#. module: ab_accounting_base
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_first_level__nature__switch
+#: model:ir.model.fields.selection,name:ab_accounting_base.selection__ab_accounting_account_guide__nature__switch
+msgid "Switch"
+msgstr "سويتش"

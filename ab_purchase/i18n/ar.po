@@ -130,3 +130,8 @@ msgid ""
 msgstr ""
 "خطأ: لا يجوز أن تكون التكلفة الإجمالية مساوية لإجمالي سعر بيع المنتجات أو "
 "أكبر منه."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_accounting_account_guide__internal_type
+msgid "Internal Type"
+msgstr "نوع الحساب (دفع - قبض - سيولة - ...)"

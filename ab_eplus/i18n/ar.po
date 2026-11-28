@@ -1,0 +1,21 @@
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_eplus
+#: model:ir.ui.menu,name:ab_eplus.ab_delivery_points_payroll_menu
+msgid "Delivery Points"
+msgstr "نقاط التوصيل المنزلي"
+
+#. module: ab_eplus
+#: model:ir.ui.menu,name:ab_eplus.ab_delivery_points_wizard_menu
+msgid "Delivery Points Wizard"
+msgstr "معالج نقاط التوصيل المنزلي"
+
+#. module: ab_eplus
+#: model:ir.ui.menu,name:ab_eplus.ab_accounting_menu_generate_employees
+#: model:ir.ui.menu,name:ab_eplus.ab_hr_menu_generate_employees
+msgid "Get Employees From BConnect"
+msgstr "تحديث بيانات الموظفين من بي كونكت"

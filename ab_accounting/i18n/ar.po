@@ -768,6 +768,8 @@ msgstr "التوصيف"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_report_ab_accounting_account_statement_excel__display_name
 msgid "Display Name"
 msgstr "الاسم"
 
@@ -1048,6 +1050,8 @@ msgstr "الفرع"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__id
+#: model:ir.model.fields,field_description:ab_accounting.field_report_ab_accounting_account_statement_excel__id
 msgid "ID"
 msgstr "م"
 

@@ -20,7 +20,7 @@ class TestJournalEntries(TransactionCase):
         print(f"user created with id {self.accountant.id}")
 
         self.account_header = self.env['ab_accounting_je_header'].with_user(self.accountant).create({
-            'account_id': self.env.ref('ab_accounting.ab_accounting_account_guide_due_salaries').id,
+            'account_id': self.env.ref('ab_accounting_base.ab_accounting_account_guide_due_salaries').id,
             'doctype_id': 7,
         })
         store_id = self.env['ab_store'].search([('code', '=', '6')]).id

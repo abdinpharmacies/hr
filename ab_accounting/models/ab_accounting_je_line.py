@@ -387,7 +387,7 @@ class JournalEntries(models.Model):
         return total_debit == total_credit, total_debit, total_credit
 
     def check_valid_deduction(self):
-        firing_parent_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_firing_parent').id
+        firing_parent_account_id = self.env.ref('ab_accounting_base.ab_accounting_account_guide_firing_parent').id
 
         if self.account_id.parent_id.id == firing_parent_account_id:  # سلف وعهد وخصومات
             is_costcenter_forbidden = self.env['ab_costcenter_deduction_forbidden'].sudo().search_count(

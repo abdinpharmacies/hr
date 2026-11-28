@@ -4,6 +4,7 @@
 #
 msgid ""
 msgstr ""
+"Language: ar_001\n"
 "Project-Id-Version: Odoo Server 13.0-20221003\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 11:19+0000\n"
@@ -83,4 +84,9 @@ msgstr "اي بي الفرع"
 #. module: ab_store
 #: model:ir.actions.act_window,name:ab_store.ab_store_action
 msgid "Stores"
+msgstr "الفروع"
+
+#. module: ab_store
+#: model:ir.actions.act_window,name:ab_store.ab_store_action
+msgid "store"
 msgstr "الفروع"

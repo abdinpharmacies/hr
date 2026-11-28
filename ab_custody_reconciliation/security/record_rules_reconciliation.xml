@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="access_custody_reconciliation_header_accountant_ro" model="ir.model.access">
+            <field name="name">access_custody_reconciliation_header_accountant_ro</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_header"/>
+            <field name="group_id" ref="ab_accounting.group_ab_accounting_accountant"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_reconciliation_header_accountant_read_own" model="ir.rule">
+            <field name="name">rule_reconciliation_header_accountant_read_own</field>
+            <field name="model_id" ref="model_ab_custody_reconciliation_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
         <!--        ### Concerned Department Rules ####### -->
         <record id="rule_ab_custody_reconciliation_line_user_can_approve" model="ir.rule">
             <field name="name">rule_ab_custody_reconciliation_line_user_can_approve</field>

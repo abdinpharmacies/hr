@@ -72,9 +72,9 @@ class AccountStatementReport(models.Model):
 
     ################################################################################
     def btn_export_excel_account_statement(self):
+        self.check_access('read')
         action = self.env.ref('ab_accounting.action_export_account_statement_excel')
-        action[0].name = "Account Statement"
-        return action.report_action(self)
+        return action.report_action(self, config=False)
 
     def btn_browse_account_statement(self):
         data = self.get_account_statement_data()

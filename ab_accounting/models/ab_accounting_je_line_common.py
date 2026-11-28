@@ -50,6 +50,8 @@ class JELineCommon(models.AbstractModel):
         acc_guide_mo = self.env['ab_accounting_account_guide'].with_context(active_test=False)
         if operator in ('any', 'any!'):
             accounts_ids = acc_guide_mo.search(val).ids
+        elif operator == 'in':
+            accounts_ids = acc_guide_mo.search(fields.Domain('id', 'in', val)).ids
         elif operator == '=':
             accounts_ids = acc_guide_mo.search([('id', '=', val)]).ids
         elif operator == 'ilike' and '%' not in val:
@@ -61,10 +63,7 @@ class JELineCommon(models.AbstractModel):
         else:
             accounts_ids = [record_id for record_id, label in acc_guide_mo.name_search(name=val, operator=operator, limit=1000)]
 
-        domains = [[('account_id', 'child_of', account_id)] for account_id in accounts_ids]
-        domain = list(fields.Domain.OR(domains)) if domains else [(0, '=', 1)]
-
-        return domain
+        return fields.Domain('account_id', 'child_of', accounts_ids) if accounts_ids else fields.Domain.FALSE
 
     @api.constrains('doc_no')
     def constrains_je_line_doc_no(self):

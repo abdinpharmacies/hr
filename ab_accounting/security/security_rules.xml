@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+        <record id="access_ab_costcenter_account_manager" model="ir.model.access">
+            <field name="name">access_ab_costcenter_account_manager</field>
+            <field name="model_id" ref="ab_costcenter.model_ab_costcenter"/>
+            <field name="group_id" ref="group_ab_accounting_manager"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
         <!--        ################# Accountant RULES ##################################-->
         <record id="rule_ab_accounting_je_line_prevent_all" model="ir.rule">
             <field name="name">rule_ab_accounting_je_line_prevent_all</field>

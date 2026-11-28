@@ -95,3 +95,11 @@ Files changed:
 - ab_purchase_accounting/security/security_rules.xml
 - ab_purchase_accounting/views/configuration.xml
 - ab_purchase_accounting/views/review.xml
+
+## Current changes before commit:
+
+- Use the Odoo 19 supplier, inventory, and tax account guide IDs when validating posting accounts.
+
+Files changed:
+- `models/configuration.py`
+- `changelog.d`
